@@ -4,8 +4,7 @@ ohidata
 This GitHub repository is intened to store the code and small files used to generate the data layers for the Ocean Health Index. We seperate files into these categories:
 
 * `code` any scripts, especially R or Python, used to generate data. Also any ancillary files (must be less than 100 MB) used to document the data products. These files will be versioned using GitHub.
-* `data` all other files, particularly binary non-text files which are larger, especially anything 100 MB or larger. These files will be stored on our file server NEPTUNE, where backups get performed (nightly, weekly, monthly).
-
+* `data` all other files, particularly binary non-text files which are larger, especially anything 100 MB or larger. These files will be stored on our file server NEPTUNE, where backups get performed (nightly, weekly, monthly) and not here in the GitHub repository.
 
 ## Data Products
 
