@@ -23,3 +23,5 @@ Top level folders indicate the study area which correspond to the prefix on nept
  * `FJ` Fiji
  * `GL` Global
  * `MA` Massachusetts
+
+For more, see the [ohidata wiki](https://github.com/OHI-Science/ohidata/wiki/_pages).
