@@ -16,12 +16,14 @@ where:
 
 All entries above should be in CamelCase.
 
-Top level folders indicate the study area which correspond to the prefix on neptune's folders:
- * `AQ` Antarctica
- * `BR` Brazil
- * `CC` CaliforniaCurrent
- * `FJ` Fiji
- * `GL` Global
- * `MA` Massachusetts
-
-For more, see the [ohidata wiki](https://github.com/OHI-Science/ohidata/wiki/_pages).
+All CamelCase top level folders indicate the study area which correspond to the prefix on neptune's folders:
+* `AQ` Antarctica
+* `BR` Brazil
+* `CC` CaliforniaCurrent
+* `FJ` Fiji
+* `GL` Global
+* `MA` Massachusetts
+ 
+Other folders are:
+* `src` source files for general R and Python code 
+* `wiki` files, particularly images, used by the [ohidata wiki](https://github.com/OHI-Science/ohidata/wiki/_pages)
