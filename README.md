@@ -1,5 +1,5 @@
-ohidata
-=======
+ohiprepgit
+==========
 
 This GitHub repository is intended to store the code and small files used to generate the data layers for the Ocean Health Index. We seperate all files into these categories:
 
