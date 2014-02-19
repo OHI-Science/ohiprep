@@ -56,6 +56,17 @@ rad = rad %.%
 status_metric_2012 = read.csv(file.path(dir_local, 'src/model/global2013/livelihoods/status/data_2012/global_li_status_model_combined.csv'), na.strings='') # head(status_metric_2012)
 status_metric_2013 = read.csv(file.path(dir_local, 'src/model/global2013/livelihoods/status/data_2013/global_li_status_model_combined.csv'), na.strings='') # head(status_metric_2013)
 
+# get 2013 region names per Nature 2012 country
+rgn_country = read.csv(file.path(dir_data, 'model/GL-NCEAS-OceanRegions_v2013a/manual_output/rgn2013_to_country2012.csv'), na.strings='') # head(rgn_country)
+rgn_country = rgn_country %.%
+  select(rgn_id, country_id) %.%
+  rename(c(rgn_id='region_id', country_id='iso3166')) %.%
+  merge(rgns, by='region_id')
+
+# update status_metrics with 2013 region ids and names
+status_metric_2012 = merge(status_metric_2012, rgn_country, by='iso3166')
+status_metric_2013 = merge(status_metric_2013, rgn_country, by='iso3166')
+
 # info function for comparing
 info = function(x){ print(head(x)); print(dim(x)); print(summary(x)) }
 ```
@@ -66,7 +77,7 @@ info = function(x){ print(head(x)); print(dim(x)); print(summary(x)) }
 # query
 q1 = rad %.%
   filter(goal=='ECO', dimension=='score') %.%
-  dcast(region_name + region_id ~ scenario, value.var='value') %.%
+  dcast(region_id + region_name ~ scenario, value.var='value') %.%
   rename(c('2012'='score_2012', '2013'='score_2013')) %.%
   mutate(dif_abs = abs(score_2013 - score_2012)) %.%
   filter(dif_abs > 10) %.%
@@ -84,9 +95,10 @@ kable(q1, format='html', row.names=T)
 ```{r q2, results='asis', echo=FALSE}
 
 # query
-q2 = anti_join(status_metric_2013, status_metric_2012, by=c('metric','iso3166')) %.%
+q2 = anti_join(status_metric_2013, status_metric_2012, by=c('metric','iso3166','region_id','region_name')) %.%
   filter(metric=='rev') %.%
-  arrange(score)
+  arrange(iso3166, region_name) %.%
+  select(iso3166, region_id, region_name, score, n_sector)
 
 # write
 write.csv(q2, file.path(dir_out, 'q2.csv'))
@@ -101,7 +113,7 @@ kable(q2, format='html', row.names=T)
 # query
 q3 = rad %.%
   filter(goal=='LIV', dimension=='score') %.%
-  dcast(region_name + region_id ~ scenario, value.var='value') %.%
+  dcast(region_id + region_name ~ scenario, value.var='value') %.%
   rename(c('2012'='score_2012', '2013'='score_2013')) %.%
   mutate(dif_abs = abs(score_2013 - score_2012)) %.%
   filter(dif_abs > 10) %.%
@@ -121,9 +133,9 @@ kable(q3, format='html', row.names=T)
 ```{r q4_2012, results='asis', echo=FALSE}
 
 q4_2012 = status_metric_2012 %.%
-  dcast(iso3166 ~ metric, value.var='score') %.%
+  dcast(iso3166 + region_id + region_name ~ metric, value.var='score') %.%
   filter(!is.na(jobs) & is.na(wage)) %.%
-  select(iso3166, jobs, wage)
+  select(iso3166, region_id, region_name, jobs, wage)
 
 # write
 write.csv(q4_2012, file.path(dir_out, 'q4_2012.csv'))
@@ -137,9 +149,9 @@ kable(q4_2012, format='html', row.names=T)
 ```{r q4_2013, results='asis', echo=FALSE}
 
 q4_2013 = status_metric_2013 %.%
-  dcast(iso3166 ~ metric, value.var='score') %.%
+  dcast(iso3166 + region_id + region_name ~ metric, value.var='score') %.%
   filter(!is.na(jobs) & is.na(wage)) %.%
-  select(iso3166, jobs, wage)
+  select(iso3166, region_id, region_name, jobs, wage)
 
 # write
 write.csv(q4_2013, file.path(dir_out, 'q4_2013.csv'))
@@ -153,8 +165,9 @@ kable(q4_2013, format='html', row.names=T)
 ```{r q5, results='asis', echo=FALSE}
 
 # query
-q5 = anti_join(status_metric_2013, status_metric_2012, by=c('metric','iso3166')) %.%
-  filter(metric=='jobs')
+q5 = anti_join(status_metric_2013, status_metric_2012, by=c('metric','iso3166','region_id','region_name')) %.%
+  filter(metric=='jobs') %.%
+  select(iso3166, region_id, region_name, score, n_sector)
 
 # write
 write.csv(q5, file.path(dir_out, 'q5.csv'))
@@ -168,9 +181,10 @@ None
 ```{r q6, results='asis', echo=FALSE}
 
 # query
-q6 = anti_join(status_metric_2013, status_metric_2012, by=c('metric','iso3166')) %.%
+q6 = anti_join(status_metric_2013, status_metric_2012, by=c('metric','iso3166','region_id','region_name')) %.%
   filter(metric=='wage') %.%
-  arrange(score)
+  arrange(iso3166, region_name) %.%
+  select(iso3166, region_id, region_name, score, n_sector)
 
 # write
 write.csv(q6, file.path(dir_out, 'q6.csv'))
