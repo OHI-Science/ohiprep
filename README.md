@@ -1,7 +1,7 @@
 ohidata
 =======
 
-This GitHub repository is intened to store the code and small files used to generate the data layers for the Ocean Health Index. We seperate files into these categories:
+This GitHub repository is intended to store the code and small files used to generate the data layers for the Ocean Health Index. We seperate files into these categories:
 
 * `code` any scripts, especially R or Python, used to generate data. Also any ancillary files (must be less than 100 MB) used to document the data products. These files will be versioned using **GitHub** and generated using **RStudio**. To see why we chose this software, see [Software Features](https://github.com/OHI-Science/ohidata/wiki/Software-Features). For help setting up the software, see [Install](https://github.com/OHI-Science/ohidata/wiki/Install).
 
