@@ -120,7 +120,7 @@ q3 = rad %.%
   arrange(desc(dif_abs))
 
 # write
-write.csv(q3, file.path(dir_out, 'q1.csv'))
+write.csv(q3, file.path(dir_out, 'q3.csv'))
 
 # display
 row.names(q3) = 1:nrow(q3)
