@@ -1,20 +1,19 @@
+library(reshape2)
 library(plyr)
-library(gdata)
-library(sqldf)
+library(dplyr)
 
 # get configuration based on host machine name
 conf = list(
   'AMPHITRITE'=list(  # BB's Windows 8 on MacBook Pro VMWare
     root_git = 'G:/ohigit'
     root_big = 'N:/'))[[Sys.info()['nodename']]]
-
   
 #wd = 'N:/model/GL-NCEAS-OceanRegions_v2013a'
 wd = file.path(conf$root_code, 'Global/NCEAS-Regions_v2014')
 setwd(wd)
 
 # open eez to regions lookup with eez_key
-rz = rename(read.csv('manual_output/eez_rgn_2013master.csv'),
+er = read.csv('manual_output/eez_rgn_2013master.csv')
             c('rgn_id_2013'='rgn_id','rgn_key_2013'='rgn_key','rgn_nam_2013'='rgn_nam'))[,c('eez_id','eez_key','rgn_typ','rgn_id','rgn_key','rgn_nam','rgn_iso2')]
 
 # create eez details

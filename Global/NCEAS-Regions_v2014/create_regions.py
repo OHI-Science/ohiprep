@@ -27,6 +27,8 @@ import arcpy, os, re, numpy
 from numpy.lib import recfunctions
 arcpy.SetLogHistory(True) # C:\Users\bbest\AppData\Roaming\ESRI\Desktop10.2\ArcToolbox\History
 
+# N:\model\GL-FAO-CCAMLR_v2014\orig\FAO_AREAS\FAO_AREAS.shp
+
 # set your own paths
 lwd      = 'E:/bbest/CN-NCEAS-Regions'    # local working directory
 gdb      = lwd+'/scratch.gdb'             # scratch file geodatabase (LOCAL)
