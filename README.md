@@ -5,7 +5,7 @@ This GitHub repository is intended to store the versioned code and small files u
 
 1. `git` any scripts, especially R or Python, used to generate data. Also any ancillary files (must be less than 100 MB) used to document the data products. These files will be versioned using **GitHub** and generated using **RStudio**. To see why we chose this software, see [Software Features](https://github.com/OHI-Science/ohidata/wiki/Software-Features). For help setting up the software, see [Setup](https://github.com/OHI-Science/ohidata/wiki/Setup).
 
-1. `big` all other files, particularly binary non-text files which are larger, especially anything 50 MB or larger. These files will be stored on our file server NEPTUNE, where backups get performed (nightly, weekly, monthly) and not here in the GitHub repository. For more details, see [Accessing Data Files](https://github.com/OHI-Science/ohidata/wiki/Accessing-Data-Files).
+1. `big` all other files, particularly binary non-text files which are larger, especially anything 50 MB or larger. These files will be stored on our file server NEPTUNE, where backups get performed (nightly, weekly, monthly) and not here in the GitHub repository. For more details, see [Accessing Big Data Files](https://github.com/OHI-Science/ohidata/wiki/Accessing-Big-Data-Files).
 
 ## Data Products
 
