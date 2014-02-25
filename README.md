@@ -9,6 +9,10 @@ This GitHub repository is intended to store the versioned code and small files u
 
 
 TODO: Latest thinking is to use a cache folder, which could be set to being on a local offline drive, that copies all sources into the cache. This then allows for offline analysis of a given product. Now that we have access to Neptune's shares from any internet connection by using a VPN connection, we can simply run a little helper function to copy all remote data into a local cache and rock on offline.
+ * inputs
+   - inputs.csv with source paths (and output paths, eg inputs folder or ArcGIS geodatabase)
+   - inputs directory
+   - get_inputs() function
 
 ## Data Products
 
