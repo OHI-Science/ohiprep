@@ -14,6 +14,10 @@ TODO: Latest thinking is to use a cache folder, which could be set to being on a
    - inputs directory
    - get_inputs() function
 
+ * connect to Neptune anywhere using UCSB VPN, requiring:
+   - [UCSBNetID](http://www.identity.ucsb.edu/customers/provisioning/) with [affiliate option](http://www.identity.ucsb.edu/customers/affiliates/)
+   - [UCSB VPN client software](http://www.oit.ucsb.edu/network_services/VPN_service/get_connected.asp)
+
 ## Data Products
 
 Folders herein should generally be organizied like so:
