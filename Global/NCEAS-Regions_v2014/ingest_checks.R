@@ -7,7 +7,11 @@ library(dplyr)
 conf = list(
   'AMPHITRITE'=list(  # BB's Windows 8 on MacBook Pro VMWare
     dir_git   = 'G:/ohigit',
-    dir_annex = 'Z:/bbest On My Mac/neptune_cyberduck'))[[Sys.info()['nodename']]] # N: # temp working from UCSB campus
+    dir_annex = 'Z:/bbest On My Mac/neptune_cyberduck')
+  'BEASTIE3'=list(  # Melanie's Windows 8 on MacBook Pro VMWare
+    dir_git   = 'C:/Users/Melanie/Github/ohiprep',
+    dir_annex = 'N:/')
+  )[[Sys.info()['nodename']]] # N: # temp working from UCSB campus
   
 # paths
 wd               = file.path(conf$dir_git  , 'Global/NCEAS-Regions_v2014')
@@ -60,9 +64,9 @@ print(subset(m, rgn_type=='eez' & ( eez_name_shp != eez_name | is.na(eez_name_sh
              c(eez_id, rgn_type, rgn_id, rgn_name, eez_name, eez_name_shp)), row.names=F)  # only accented names showing up
 #  eez_id rgn_type rgn_id            rgn_name             eez_name        eez_name_shp
 #     252      eez    255            DISPUTED Disputed Sudan-Egypt               Egypt
-#     100      eez    100 Republique du Congo  R_publique du Congo République du Congo
-#     244      eez    244             Curacao              Curacao             Curaçao
-#      32      eez     32             Reunion              R_union             Réunion
+#     100      eez    100 Republique du Congo  R_publique du Congo Rï¿½publique du Congo
+#     244      eez    244             Curacao              Curacao             Curaï¿½ao
+#      32      eez     32             Reunion              R_union             Rï¿½union
 # OK: just wierd accents in eez_name_shp so not matching eez_name
 
 # Antarctica
