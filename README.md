@@ -1,9 +1,12 @@
 ohiprep
 =======
 
+mucking...for kicks
+
+
 This GitHub repository is intended to store the versioned code and other text files, including csv, used to prepare the data layers for the Ocean Health Index. We have seperate methods for handling files based on type:
 
-1. `text` any scripts, especially R or Python, and other text files, like READMEs or csv, used to generate data. All files must be less than 100 MB and are preferably text. These files will be versioned using **GitHub** and most often generated using **RStudio**. To see why we chose this software, see [Software Features](https://github.com/OHI-Science/ohidata/wiki/Software-Features). For help setting up the software, see [Setup](https://github.com/OHI-Science/ohidata/wiki/Setup).
+1. `text` any scripts, especially R or Python or Matlab, and other text files, like READMEs or csv, used to generate data. All files must be less than 100 MB and are preferably text. These files will be versioned using **GitHub** and most often generated using **RStudio**. To see why we chose this software, see [Software Features](https://github.com/OHI-Science/ohidata/wiki/Software-Features). For help setting up the software, see [Setup](https://github.com/OHI-Science/ohidata/wiki/Setup).
 
 1. `binary` all other files, particularly binary non-text files which are larger, especially anything 50 MB or larger. These files will be stored on our file server NEPTUNE, where backups are performed (nightly, weekly, monthly) and not here in the GitHub repository. For more details, see [Accessing Big Data Files](https://github.com/OHI-Science/ohidata/wiki/Accessing-Big-Data-Files).
 
