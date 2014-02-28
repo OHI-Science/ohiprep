@@ -11,13 +11,13 @@ library(rgdal)
 # configuration based on machine name
 conf = list(
   'AMPHITRITE'=list(  # BB's Windows 8 on MacBook Pro VMWare
-    root_git = 'G:/ohigit',
-    root_big = 'N:/'        ))[[Sys.info()['nodename']]]
+    dir_git = 'G:/ohigit',
+    dir_big = 'N:/'       ))[[Sys.info()['nodename']]]
 
 # paths
-shp_in  = file.path(conf$root_big, 'model/GL-FAO-CCAMLR_v2014/orig/FAO_AREAS/FAO_AREAS')
-shp_out = file.path(conf$root_big, 'model/GL-FAO-CCAMLR_v2014/data/fao_ccamlr_gcs')
-wd      = file.path(conf$root_git, 'Global/FAO-CCAMLR_v2014')
+shp_in  = file.path(conf$dir_big, 'model/GL-FAO-CCAMLR_v2014/orig/FAO_AREAS/FAO_AREAS')
+shp_out = file.path(conf$dir_big, 'model/GL-FAO-CCAMLR_v2014/data/fao_ccamlr_gcs')
+wd      = file.path(conf$dir_big, 'Global/FAO-CCAMLR_v2014')
 setwd(wd)
 
 # read shapefile

@@ -1,6 +1,45 @@
 NCEAS-Regions_v2014
 ===================
 
+model_create_regions.py: create OHI 2014 regions
+bbest@nceas.ucsb.edu 2014-02-27
+
+## Description
+The OHI 2014 regions cover the entire earth with non-overlapping regions with the following fields:
+* rgn_type, having possible values:
+  - eez: exclusive economic zone (EEZ)
+  - land: terrestrial land
+  - fao: offshore Food & Agriculture Organization (FAO) Major Fishing Areas, with EEZs erased
+  - land-noeez: land without any EEZ
+  - disputed-eez: disputed EEZ
+  - disputed-land: disputed land
+* rgn_id: unique identifier (within same rgn_type)
+* rgn_name: name for region
+
+## Inputs
+* EEZ, EEZ_land (http://marineregions.org)
+* FAO: Food & Agriculture Organization (FAO) Major Fishing Areas, including CCAMLR Antarctica regions (http://www.fao.org/fishery/area/search/en)
+* Z: master lookup table to go from EEZ to OHI regions from 2013 regions
+
+## Process
+* remove Antarctica from EEZ
+* erase EEZ_land from FAO
+* dissolve CCAMLR regions in FAO to create Antarctica EEZ
+* add 1000 to FAO ids to create FAO rgn_id
+* erase EEZ from EEZ_land to get land
+* replace some iso3 in land to match EEZ ('MNP++' to 'MNP', 'ABW' to 'AW', 'BES' to 'BQ')
+* select out land parts either misidentified ('SHN' for eezs 'ASC', 'TAA') or iso3 is duplicated having several eez_ids
+iso3 IN ('SHN','ATF','AUS','BRA','CHL','ECU','ESP','IND','KIR','PRT','TLS','UMI','USA','ZAF')
+* associate these land parts with the neighboring EEZs
+* create Antarctica land by erasing rest from earth box and dissolving every polygon with a centroid less than 60 degrees latitude
+* go through slivers of FAO and holes from earth box erased by the rest and manually associate with legit region
+* convert EEZ of Caspian and Black Seas to land
+* merge all products and peform checks for overlap and geometry repair
+
+  
+NCEAS-Regions_v2012
+===================
+
 Source: GL-FAO-FisheryAreas, GL-NCEAS-EEZ, GL-NCEAS-Landsea
 
 We created 186 oceanic regions for every cell in our ocean raster, where

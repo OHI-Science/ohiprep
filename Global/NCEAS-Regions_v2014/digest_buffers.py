@@ -1,7 +1,3 @@
-# create_regions.py: generate non-overlapping regions extending administrative areas into the ocean 
-# within the exclusive economic zone by a given buffer. For the latest version,
-# see: https://gist.github.com/bbest/7650602.
-#
 # This generates the following shapefiles in the output directory:
 #   rgns_[offshore|inland]{distance}{units}_[gcs|mol]
 # where:
@@ -22,41 +18,14 @@
 # 
 # Run on cmd: C:\Python27\ArcGISx6410.2\python.exe N:\model\CN-NCEAS-Regions\model.py
 
-# modules
-import arcpy, os, re, numpy
-from numpy.lib import recfunctions
-arcpy.SetLogHistory(True) # C:\Users\bbest\AppData\Roaming\ESRI\Desktop10.2\ArcToolbox\History
 
-# N:\model\GL-FAO-CCAMLR_v2014\orig\FAO_AREAS\FAO_AREAS.shp
-
-# set your own paths
-lwd      = 'E:/bbest/CN-NCEAS-Regions'    # local working directory
-gdb      = lwd+'/scratch.gdb'             # scratch file geodatabase (LOCAL)
-rwd      = 'N:/model/CN-NCEAS-Regions'
-eez      = rwd+'/tmp/eez_v7_gcs.shp'      # Exclusive Economic Zones (http://marineregions.org)
-eezland  = rwd+'/tmp/EEZ_land_v1.shp'     # EEZ plus land (http://marineregions.org)
-gadm     = rwd+'/tmp/gadm2.gdb/gadm2'     # Global Administrative Areas (http://gadm.org)
-gshhs    = rwd+'/tmp/GSHHS_f_L1.shp'      # Global Self-consistent, Hierarchical, High-resolution Geography Database (http://www.ngdc.noaa.gov/mgg/shorelines/gshhs.html)
-outdir   = rwd+'/data'                    # output directory
-
-# set these variables
-country = 'China'
+# TODO: buffers
 buffers = ['offshore3nm','offshore100nm','offshore1km','inland1km','inland25km']
 
 # buffer units dictionary
 buf_units_d = {'nm':'NauticalMiles',
                'km':'Kilometers',
                'mi':'Miles'}
-
-# projections
-sr_mol = arcpy.SpatialReference('Mollweide (world)') # projected Mollweide (54009)
-sr_gcs = arcpy.SpatialReference('WGS 1984')          # geographic coordinate system WGS84 (4326)
-
-# environment
-if not arcpy.Exists(gdb): arcpy.CreateFileGDB_management(os.path.dirname(gdb), os.path.basename(gdb))
-arcpy.env.workspace       = gdb
-arcpy.env.overwriteOutput = True
-arcpy.env.outputCoordinateSystem = sr_mol
 
 # select
 arcpy.Select_analysis(eez,     'eez_mol', '"Country" = \'%s\'' % country)
