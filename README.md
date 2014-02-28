@@ -1,7 +1,10 @@
 ohiprep
 =======
 
-mucking...for giggles! and again
+real deal is [here](http://github.com/ohi-science/ohiprep).
+ * just testing
+ * again
+ * and again
 
 
 This GitHub repository is intended to store the versioned code and other text files, including csv, used to prepare the data layers for the Ocean Health Index. We have seperate methods for handling files based on type:
