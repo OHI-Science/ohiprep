@@ -4,13 +4,11 @@ library(plyr)
 library(dplyr)
 
 # get paths configuration based on host machine name
-conf = list(
-  'AMPHITRITE'=list(  # BB's Windows 8 on MacBook Pro VMWare
-    dir_git   = 'G:/ohigit',
-    dir_annex = 'Z:/bbest On My Mac/neptune_cyberduck'))[[Sys.info()['nodename']]] # N: # temp working from UCSB campus
-  
+
+source('../../src/R/common.R')
+
 # paths
-wd               = file.path(conf$dir_git  , 'Global/NCEAS-Regions_v2014')
+wd               = file.path(dir_ohiprep   , 'Global/NCEAS-Regions_v2014')
 eez_dbf          = file.path(conf$dir_annex, 'stable/GL-VLIZ-EEZs_v7/data/eez_v7_gcs.dbf')
 land_dbf         = file.path(conf$dir_annex, 'stable/GL-VLIZ-EEZs_v7/data/EEZ_land_v1.dbf')
 eez_rgn_2013_csv = file.path(conf$dir_annex, 'model/GL-NCEAS-OceanRegions_v2013a/manual_output/eez_rgn_2013master.csv')
@@ -60,9 +58,9 @@ print(subset(m, rgn_type=='eez' & ( eez_name_shp != eez_name | is.na(eez_name_sh
              c(eez_id, rgn_type, rgn_id, rgn_name, eez_name, eez_name_shp)), row.names=F)  # only accented names showing up
 #  eez_id rgn_type rgn_id            rgn_name             eez_name        eez_name_shp
 #     252      eez    255            DISPUTED Disputed Sudan-Egypt               Egypt
-#     100      eez    100 Republique du Congo  R_publique du Congo République du Congo
-#     244      eez    244             Curacao              Curacao             Curaçao
-#      32      eez     32             Reunion              R_union             Réunion
+#     100      eez    100 Republique du Congo  R_publique du Congo R?publique du Congo
+#     244      eez    244             Curacao              Curacao             Cura?ao
+#      32      eez     32             Reunion              R_union             R?union
 # OK: just wierd accents in eez_name_shp so not matching eez_name
 
 # Antarctica
