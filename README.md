@@ -1,12 +1,6 @@
 ohiprep
 =======
 
-
-
-*** ><> **   ><>  ><>   ><>  ><> ******
-
-blah blah blah blah
-
 This GitHub repository is intended to store the versioned code and other text files, including csv, used to prepare the data layers for the Ocean Health Index. We have seperate methods for handling files based on type:
 
 1. `text` any scripts, especially R or Python, and other text files, like READMEs or csv, used to generate data. All files must be less than 100 MB and are preferably text. These files will be versioned using **GitHub** and most often generated using **RStudio**. To see why we chose this software, see [Software Features](https://github.com/OHI-Science/ohidata/wiki/Software-Features). For help setting up the software, see [Setup](https://github.com/OHI-Science/ohidata/wiki/Setup).
@@ -35,7 +29,9 @@ where:
  * `study area` geographic extent of data corresponding to intended OHI study area of analysis 
  * `provider` original provider, which is NCEAS for custom products
  * `product` basic description of what the data product is
- * `version` for NCEAS products: v[year]{suffix}. Otherwise version is given by provider
+ * `version` for NCEAS products: 
+    - product version OR the most recent year of the whole data product
+    - subsets of this data product can then be put in the data folder annexed by the OHI assessment year
 
 All entries above should be in CamelCase.
 
