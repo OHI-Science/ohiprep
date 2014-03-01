@@ -7,7 +7,7 @@ library(dplyr)
 conf = list(
   'AMPHITRITE'=list(  # BB's Windows 8 on MacBook Pro VMWare
     dir_git   = 'G:/ohigit',
-    dir_annex = 'Z:/bbest On My Mac/neptune_cyberduck')
+    dir_annex = 'Z:/bbest On My Mac/neptune_cyberduck'),
   'BEASTIE3'=list(  # Melanie's Windows 8 on MacBook Pro VMWare
     dir_git   = 'C:/Users/Melanie/Github/ohiprep',
     dir_annex = 'N:/')
