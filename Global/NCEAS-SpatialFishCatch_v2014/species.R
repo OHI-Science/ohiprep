@@ -2,17 +2,18 @@
 #
 # Created 3.3.2014 by JAfflerbach
 
+source('./Global/NCEAS-SpatialFishCatch_v2014/common.R')
 
-fao.raw = read.csv("J:\\SpatialFishCatch\\raw\\FAO_raw_clean.csv") #Raw FAO data
-fao.sp = read.csv("J:\\SpatialFishCatch\\data\\FAO_species.csv") #FAO species list - created in "FAO_species.R"
+fao.raw = read.csv(file.path(dd, 'data/FAO_raw_clean.csv')) #Raw FAO data
+fao.sp = read.csv(file.path(dd, 'data/FAO_species.csv')) #FAO species list - created in "FAO_species.R"
 
 #AquaMaps data from OHI_2012
-am.2012 = read.csv("J:\\SpatialFishCatch\\data\\ohi_spp\\data\\spp.csv")
+am.2012 = read.csv(file.path(nd, 'model/GL-NCEAS-SpeciesDiversity/ohi_spp/data/spp.csv'))
 am.2012 = subset(am, src_distn=="SAUP") #10,554 AquaMaps species
 am.2012$datayear = "2012" #"datayear" column identifies what year the data comes from (2012 from spp.csv, 2013 for am_spp_data.csv) - only using this for reference
 
 #AquaMaps data from OHI_2013
-am.2013 = read.csv("C:\\Users\\Afflerbach\\GL-NCEAS-SpeciesDiversity_v2013a\\tmp\\am_spp_data.csv")
+am.2013 = read.csv(file.path(nd, 'model\GL-NCEAS-SpeciesDiversity_v2013a/tmp/am_spp_data.csv'))
 am.2013$scientific <- paste(am.2013$Genus, am.2013$Species, sep=" ")
 am.2013$datayear = "2013"
 
