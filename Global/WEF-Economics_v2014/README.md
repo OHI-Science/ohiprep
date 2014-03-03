@@ -6,6 +6,7 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit HTML** button a web page will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
+## easy automatic output of table
 
 ```r
 summary(cars)
@@ -21,6 +22,32 @@ summary(cars)
 ##  Max.   :25.0   Max.   :120
 ```
 
+```r
+head(cars)
+```
+
+```
+##   speed dist
+## 1     4    2
+## 2     4   10
+## 3     7    4
+## 4     7   22
+## 5     8   16
+## 6     9   10
+```
+
+
+## explicit pretty table
+|  speed|  dist|
+|------:|-----:|
+|      4|     2|
+|      4|    10|
+|      7|     4|
+|      7|    22|
+|      8|    16|
+|      9|    10|
+
+
 
 You can also embed plots, for example:
 
@@ -29,6 +56,6 @@ You can also embed plots, for example:
 plot(cars)
 ```
 
-![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
 
 
