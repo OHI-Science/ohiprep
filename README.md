@@ -3,20 +3,10 @@ ohiprep
 
 This GitHub repository is intended to store the versioned code and other text files, including csv, used to prepare the data layers for the Ocean Health Index. We have seperate methods for handling files based on type:
 
-1. `text` any scripts, especially R or Python, and other text files, like READMEs or csv, used to generate data. All files must be less than 100 MB and are preferably text. These files will be versioned using **GitHub** and most often generated using **RStudio**. To see why we chose this software, see [Software Features](https://github.com/OHI-Science/ohidata/wiki/Software-Features). For help setting up the software, see [Setup](https://github.com/OHI-Science/ohidata/wiki/Setup).
+1. `text` any scripts, especially R or Python, and other text files, like READMEs or csv, used to generate data. All files must be less than 100 MB and are preferably text. These files will be versioned using **GitHub** and most often generated using **RStudio**. To see why we chose this software, see [Software Features](https://github.com/OHI-Science/ohidata/wiki/Software-Features). 
+2. . `binary` all other files, particularly binary non-text files which are larger, especially anything 50 MB or larger. These files will be stored on our file server NEPTUNE, where backups are performed (nightly, weekly, monthly) and not here in the GitHub repository.
 
-1. `binary` all other files, particularly binary non-text files which are larger, especially anything 50 MB or larger. These files will be stored on our file server NEPTUNE, where backups are performed (nightly, weekly, monthly) and not here in the GitHub repository. For more details, see [Accessing Big Data Files](https://github.com/OHI-Science/ohidata/wiki/Accessing-Big-Data-Files).
-
-
-TODO: Latest thinking is to use a cache folder, which could be set to being on a local offline drive, that copies all sources into the cache. This then allows for offline analysis of a given product. Now that we have access to Neptune's shares from any internet connection by using a VPN connection, we can simply run a little helper function to copy all remote data into a local cache and rock on offline.
- * inputs
-   - inputs.csv with source paths (and output paths, eg inputs folder or ArcGIS geodatabase)
-   - inputs directory
-   - get_inputs() function
-
- * connect to Neptune anywhere using UCSB VPN, requiring:
-   - [UCSBNetID](http://www.identity.ucsb.edu/customers/provisioning/) with [affiliate option](http://www.identity.ucsb.edu/customers/affiliates/)
-   - [UCSB VPN client software](http://www.oit.ucsb.edu/network_services/VPN_service/get_connected.asp)
+For help setting up the software, see [Setup](https://github.com/OHI-Science/ohidata/wiki/Setup).
 
 ## Data Products
 
