@@ -1,15 +1,37 @@
 README.md
 ========================================================
 
-Need to fill in this content
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring web pages (click the **Help** toolbar button for more details on using R Markdown).
+Original data downloaded as a pdf from [World Economic Forum](http://www.weforum.org/issues/global-competitiveness) at this [link] (http://www3.weforum.org/docs/WEF_GlobalCompetitivenessReport_2013-14.pdf). This pdf is stored on Neptune on data_edit: git-annex/Global/WEF-Economics_v2014/WEF_GlobalCompetitivenessReport_2013-14.pdf
 
+To create .csv files from these pdf tables, follow these steps 
+TODO: make a python script for this:
+
+* To copy data, use Adobe Acrobat Pro 9.0 
+* Table was copied into WEF_GCI_2013-2014_Table3.txt and WEF_TTCI_2013-2014_Table1.txt 
+* Table saved as WEF_GCI_2013-2014_Table3_reformatted.csv and WEF_TTCI_2013-2014_Table1_reformatted.csv with TextWrangler: 
+  + add quotes around countries with commas (~5 of these) 
+  + add commas to make it csv: 
+    - search '(\w) (\d)' replace '\1,\2'; 
+    - search '(\d) (\d)' replace '\1,\2'; 
+    - search ' (n\/a)' replace ',NA' 
+    - simplify/rename headers with tabs
+
+WEF_GCI_2013-2014_Table3_reformatted.csv is processed further by 
+
+
+Example content
 When you click the **Knit HTML** button a web page will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-## easy automatic output of table
 
-```r
+## easy automatic output of table
+```{r}
 summary(cars)
+head(cars)
+```
+
+## explicit pretty table
+```{r, echo=FALSE, results='asis'}
+kable(head(cars))
 ```
 
 ```
