@@ -3,8 +3,8 @@ README.md
 
 Final file created, ready for Toolbox: 
 
-* rgn_wef_gci_2014a_rescaled.csv
-
+* Final WEF GCI data located in /ohiprep/Global/WEF-Economics_v2014/data/rgn_wef_gci_2014a_rescaled.csv,
+* Note:: Final WEF TTCI data was not updated; this is still on Neptune data_edit: /model/GL-WEF-Economics_v2013/data/rgn_wef_ttci_2013a.csv
 
 Original data downloaded as a pdf from [World Economic Forum](http://www.weforum.org/issues/global-competitiveness) at this [link] (http://www3.weforum.org/docs/WEF_GlobalCompetitivenessReport_2013-14.pdf). This pdf is stored on Neptune on data_edit: git-annex/Global/WEF-Economics_v2014/WEF_GlobalCompetitivenessReport_2013-14.pdf
 
