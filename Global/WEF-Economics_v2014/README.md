@@ -14,7 +14,7 @@ TODO: make a python script for this:
     - search '(\w) (\d)' replace '\1,\2'; 
     - search '(\d) (\d)' replace '\1,\2'; 
     - search ' (n\/a)' replace ',NA' 
-    - simplify/rename headers with tabs
+    - simplify/rename headers with commas
 
 WEF_GCI_2013-2014_Table3_reformatted.csv is processed further by 
 
