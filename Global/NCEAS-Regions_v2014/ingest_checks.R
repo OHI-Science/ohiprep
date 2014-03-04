@@ -6,15 +6,16 @@ library(dplyr)
 # get paths configuration based on host machine name
 conf = list(
   'AMPHITRITE'=list(  # BB's Windows 8 on MacBook Pro VMWare
-    dir_git   = 'G:/ohigit',
-    dir_annex = 'Z:/bbest On My Mac/neptune_cyberduck'))[[Sys.info()['nodename']]] # N: # temp working from UCSB campus
+    dir_git     = 'G:/ohigit',
+    dir_neptune = 'N:',
+    dir_annex   = 'N:/git-annex'))[[Sys.info()['nodename']]] # N: # temp working from UCSB campus
   
 # paths
-wd               = file.path(conf$dir_git  , 'Global/NCEAS-Regions_v2014')
-eez_dbf          = file.path(conf$dir_annex, 'stable/GL-VLIZ-EEZs_v7/data/eez_v7_gcs.dbf')
-land_dbf         = file.path(conf$dir_annex, 'stable/GL-VLIZ-EEZs_v7/data/EEZ_land_v1.dbf')
-eez_rgn_2013_csv = file.path(conf$dir_annex, 'model/GL-NCEAS-OceanRegions_v2013a/manual_output/eez_rgn_2013master.csv')
-fao_dbf          = file.path(conf$dir_annex, 'model/GL-FAO-CCAMLR_v2014/data/fao_ccamlr_gcs.dbf')
+wd               = file.path(conf$dir_git  ,   'Global/NCEAS-Regions_v2014')
+eez_dbf          = file.path(conf$dir_annex,   'Global/MarineRegions_EEZ_v8/raw/World_EEZ_v8_2014_HR.dbf')
+land_dbf         = file.path(conf$dir_neptune, 'stable/GL-VLIZ-EEZs_v7/data/EEZ_land_v1.dbf')
+eez_rgn_2013_csv = file.path(conf$dir_neptune, 'model/GL-NCEAS-OceanRegions_v2013a/manual_output/eez_rgn_2013master.csv')
+fao_dbf          = file.path(conf$dir_neptune, 'model/GL-FAO-CCAMLR_v2014/data/fao_ccamlr_gcs.dbf')
 setwd(wd)
 
 # read data tables ----
@@ -26,12 +27,12 @@ z    = read.csv(eez_rgn_2013_csv, stringsAsFactors=F); head(z); tail(z); summary
 
 # merge data ----
 m = z %.%
-  rename(c(rgn_typ      = 'rgn_type',
-           rgn_id_2013  = 'rgn_id',
-           rgn_nam_2013 = 'rgn_name',
-           eez_nam      = 'eez_name')) %.%
-  select(rgn_type, rgn_id, rgn_name, 
-         eez_id, eez_name, eez_iso3) %.%
+  select(rgn_typ      = 'rgn_type', 
+         rgn_id_2013  = 'rgn_id', 
+         rgn_nam_2013 = 'rgn_name', 
+         eez_id, 
+         eez_nam      = 'eez_name', 
+         eez_iso3) %.%
   merge(
     eez %.%
       rename(c(Country = 'eez_name_shp',
