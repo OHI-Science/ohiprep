@@ -44,8 +44,8 @@ add_rgn_id = function(uidata, uifilesave) {
   
 
   ## read in more offical (by BB) and redundant (by JS) lists with 2-letter OHI region codes, combine into one data.frame 
-  rk = read.csv(file.path(dpath, 'eez_rgn_2013master.csv')
-  rk2 = read.csv(file.path(dpath, 'rgn_eez_v2013a_synonyms.csv')
+  rk = read.csv(file.path(dpath, 'eez_rgn_2013master.csv'))
+  rk2 = read.csv(file.path(dpath, 'rgn_eez_v2013a_synonyms.csv'))
   
   # manage official region_id data
   rk = rk[rk$rgn_id_2013 < 255,]# remove high seas and non-regions

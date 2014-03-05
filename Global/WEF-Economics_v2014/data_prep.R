@@ -18,6 +18,8 @@
 #     dir_git = 'G:/ohigit',
 #     dir_big = 'N:/'       ))[[Sys.info()['nodename']]]
 
+# setup
+source('/Users/jstewart/github/ohiprep/src/R/ohi_clean_fxns.R') # also fix this directory
 dir1 = ('/Users/jstewart/github/ohiprep/Global/WEF-Economics_v2014') # also fix this directory
 wd = file.path(dir1, 'raw')
 setwd(wd)
@@ -25,7 +27,6 @@ setwd(wd)
 library(reshape2)
 library(gdata)
 options(max.print=5E6)
-source('/Users/jstewart/github/ohiprep/src/R/ohi_clean_fxns.R') # also fix this directory
 
 # read in files
 d.gci = read.csv('WEF_GCI_2013-2014_Table3_reformatted.csv'); head(d.gci)

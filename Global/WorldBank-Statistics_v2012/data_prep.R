@@ -13,16 +13,16 @@
 #   georegional gapfilling with add_gapfill.r
 #   translation from rgn_id to cntry_id and country_id: scroll way down, there is a lot...
 
+# setup
+source('/Users/jstewart/github/ohiprep/src/R/ohi_clean_fxns.R') # also fix this directory
 dir1 = ('/Users/jstewart/github/ohiprep/Global/WorldBank-Statistics_v2012') # also fix this directory
 wd = file.path(dir1, 'raw')
 setwd(wd)
-
 
 library(reshape2)
 library(gdata)
 library(plyr)
 options(max.print=5E6)
-source('/Users/jstewart/github/ohiprep/src/R/ohi_clean_fxns.R') # also fix this directory
 
 # read in files
 d.all =  matrix(nrow=0, ncol=0)
