@@ -404,33 +404,29 @@ temporal.gapfill = function(data, fld.id = 'rgn_id', fld.value = 'value', fld.ye
 }
 
 
-# JS
 add_gapfill = function(cleaned_data, layersave, s_island_val=NULL,
-                       dpath = '/Users/jstewart/github/ohiprep/src/LookupTables', # fix this with more portable code
+                       dpath = '/Users/jstewart/github/ohiprep/src/LookupTables',   
                        rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'),
-                       rgns.csv           = file.path(dpath, 'rgn_details.csv') {
-  # BB NOTE: rgn_georegions.csv used to be 'rgn_un_georegions.csv' which is now called 'rgn_georegions_2013a.csv' and updated with 'rgn_georegions_2013b.csv' 
-  # use SQLite to add UN gapfilling regions and save as new file (J. Stewart, Aug 2013) 
-  # debug: cleaned_data=s; layersave=file.path(td, 'sanitation_gapfilled_2013b.csv'); s_island_val=NULL; rgn_georegions.csv = '/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/manual_output/rgn_georegions_2013b.csv'; rgns.csv           = '/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/data/rgn_details.csv'
+                       rgns.csv           = file.path(dpath, 'rgn_details.csv')) {
+
+# debug: cleaned_data=s; layersave=file.path(td, 'sanitation_gapfilled_2013b.csv'); s_island_val=NULL; dpath = '/Users/jstewart/github/ohiprep/src/LookupTables'; rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'), rgns.csv = file.path(dpath, 'rgn_details.csv')
   
   print('-->>> add_gapfill.r substitutes UN georegions means for NA values')
-  #print('.')
-  #print('..')
   
   library(reshape2)
   library(gdata)
   library(plyr)
+  library(dplyr)
   options(gsubfn.engine = "R") # otherwise, get X11 launching for sqldf package
   require(sqldf)  
   
-  # FIRST, average each UN r2 georegion and each UN r1 georegion
-  # This will provide an r2 average if at least one of the countries in that region are present.
+  # FIRST, average each UN r2 georegion and each UN r1 georegion. This will provide an r2 average if at least one of the countries in that region are present.
   
   #tidy cleaned_data
   cleandata = cleaned_data
   cleandata$rgn_nam = NULL
   n = names(cleandata)
-  names(cleandata)[2] = 'value' # BB: what if year is the second column? this breaks.
+  names(cleandata)[2] = 'value' # BB: what if year is the second column? this breaks. Maybe take the column of whatever is not rgn_id, cntry_id, year, category
   
 # should only be run when temporal gapfilling has already occurred--maybe move it to those individual clean_.*.r file by JS.  
 #   #deal with cleaned_data; remove any that were not temporally gapfilled so they can be georegionally gapfilled here. 
@@ -451,15 +447,11 @@ add_gapfill = function(cleaned_data, layersave, s_island_val=NULL,
 #   
   
   # read in files
-  gf = read.csv(rgn_georegions.csv)
+  gf = read.csv(rgn_georegions.csv); head(gf)
   
   # join r2 to cleandata
-  clean_r2 = sqldf("SELECT a.*, b.r2, b.r1, b.r0
-                 FROM cleandata AS a
-                 LEFT OUTER JOIN (
-                     SELECT rgn_id, r2, r1, r0
-                     FROM gf
-                     ) AS b ON b.rgn_id = a.rgn_id") 
+  clean_r2 = left_join(x=cleandata, y=gf, by=c('rgn_id'), copy=F); head(clean_r2) 
+  clean_r2$r2_label = NULL; clean_r2$r1_label = NULL; clean_r2$r0_label = NULL; clean_r2$rgn_nam = NULL; head(clean_r2) # until learn how to only return some columns?
   
   # BB: TODO: check that all rows are unique by rgn_id & year. otherwise mean of value not trustworthy.
   

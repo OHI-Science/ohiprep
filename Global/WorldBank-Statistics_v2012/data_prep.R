@@ -13,6 +13,12 @@
 #   georegional gapfilling with add_gapfill.r
 #   translation from rgn_id to cntry_id and country_id: scroll way down, there is a lot...
 
+#  from get paths configuration based on host machine name
+source('src/R/common.R') # set dir_neptune_data
+# Otherwise, presume that scripts are always working from your default ohiprep folder
+dir_d = 'Global/NCEAS-Regions_v2014'
+
+
 # setup
 source('/Users/jstewart/github/ohiprep/src/R/ohi_clean_fxns.R') # also fix this directory
 dir1 = ('/Users/jstewart/github/ohiprep/Global/WorldBank-Statistics_v2012') # also fix this directory

@@ -1,5 +1,6 @@
 # data_prep.R: reformat and add rgn_ids to World Economic Forum (WEF) data 
-# by JStewartLowndes Mar2014; updated from 'clean_WEF.R' by JStewart in May 2013)
+#
+# by JStewartLowndes Mar2014; updated from 'clean_WEF.R' by JStewart in May 2013
 #   Data: 
 #       Global Competitiveness Index (GCI)
 #       Travel and Tourist Competitiveness Index (TTCI)
