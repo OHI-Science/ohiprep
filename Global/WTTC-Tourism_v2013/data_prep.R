@@ -32,22 +32,15 @@ for (f in list.files(pattern=glob2rx('*.xls'))){
   d[,1] = col1
   d.1 = d[d[,1] != metric,]; head(d.1) # remove all the spacer lines 
   
-  # some name cleaning. # for dealing with FNA, not an elegant way, but it works!
+  # some name cleaning, and partition Former Netherlands Antilles
   d.1 <- d.1[d.1[,1] != "Other Oceania",] # remove
   d.1[,1] = gsub('St Kitts', 'Saint Kitts and Nevis', d.1[,1]) # rename
-  d.1 = rbind(d.1, d.1[d.1[,1] == 'Former Netherlands Antilles',]) # FNA must be split into 'Sint Maarten', 'Curacao', 'Bonaire','Saba', 'Sint Eustasius' (Aruba reported separately)
-  d.1[length(d.1[,1]),1] = 'Sint Maarten' 
-  d.1 = rbind(d.1, d.1[d.1[,1] == 'Former Netherlands Antilles',])
-  d.1[length(d.1[,1]),1] = 'Curacao' 
-  d.1 = rbind(d.1, d.1[d.1[,1] == 'Former Netherlands Antilles',])
-  d.1[length(d.1[,1]),1] = 'Bonaire' 
-  d.1 = rbind(d.1, d.1[d.1[,1] == 'Former Netherlands Antilles',])
-  d.1[length(d.1[,1]),1] = 'Saba' 
-  d.1 = rbind(d.1, d.1[d.1[,1] == 'Former Netherlands Antilles',])
-  d.1[length(d.1[,1]),1] = 'Sint Eustasius' 
-  d.1 <- d.1[d.1[,1] != "Former Netherlands Antilles",] # now delete FNA 
-  tail(d.1)
-
+  # partition Netherland Antilles
+  ind = d.m4$country %in% c('Former Netherlands Antilles')
+  d.m5 = rbind(d.m4[!ind,],
+               data.frame(country=c('Sint Maarten', 'Curacao', 'Bonaire', 'Saba', 'Sint Eustasius'), # Aruba reported separately
+                          score=rep(d.m4$score[ind], 5),
+                          year=rep(d.m4$year[ind], 5)))
   
   # add data indicator 
   v = strsplit(as.character(f), '\\_') 

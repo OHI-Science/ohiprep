@@ -406,8 +406,9 @@ temporal.gapfill = function(data, fld.id = 'rgn_id', fld.value = 'value', fld.ye
 
 # JS
 add_gapfill = function(cleaned_data, layersave, s_island_val=NULL,
-                       rgn_georegions.csv = '/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/manual_output/rgn_georegions_wide_2013b.csv',
-                       rgns.csv           = '/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/data/rgn_details.csv') {
+                       dpath = '/Users/jstewart/github/ohiprep/src/LookupTables', # fix this with more portable code
+                       rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'),
+                       rgns.csv           = file.path(dpath, 'rgn_details.csv') {
   # BB NOTE: rgn_georegions.csv used to be 'rgn_un_georegions.csv' which is now called 'rgn_georegions_2013a.csv' and updated with 'rgn_georegions_2013b.csv' 
   # use SQLite to add UN gapfilling regions and save as new file (J. Stewart, Aug 2013) 
   # debug: cleaned_data=s; layersave=file.path(td, 'sanitation_gapfilled_2013b.csv'); s_island_val=NULL; rgn_georegions.csv = '/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/manual_output/rgn_georegions_2013b.csv'; rgns.csv           = '/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/data/rgn_details.csv'

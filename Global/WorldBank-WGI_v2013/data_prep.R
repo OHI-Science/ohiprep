@@ -118,8 +118,10 @@ d.m5 = rbind(d.m4[!ind,],
             year=rep(d.m4$year[ind], 5)))
 
 ## run add_rgn_id and save
-uifilesave = paste(dir1, 'data/', 'GL-WorldBank-WGI_v2011-cleaned.csv', sep='')
+uifilesave = file.path(wd, 'GL-WorldBank-WGI_v2011-cleaned.csv')
 add_rgn_id(d.m5, uifilesave)
+
+
 
 # ------------- gapfill
 ## sovereignty (parent-children) gapfilling with add_gapfill_sov.r
