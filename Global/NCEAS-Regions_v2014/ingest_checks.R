@@ -13,7 +13,7 @@ eez_dbf          = file.path(dir_neptune_data, 'git-annex/Global/MarineRegions_E
 land_dbf         = file.path(dir_neptune_data, 'stable/GL-VLIZ-EEZs_v7/data/EEZ_land_v1.dbf')
 eez_rgn_2013_csv = file.path(dir_neptune_data, 'model/GL-NCEAS-OceanRegions_v2013a/manual_output/eez_rgn_2013master.csv')
 fao_dbf          = file.path(dir_neptune_data, 'model/GL-FAO-CCAMLR_v2014/data/fao_ccamlr_gcs.dbf')
-eez_rgn_2014_csv = file.path(dir_d, 'tmp/eez_rgn_2014.csv')
+eez_rgn_2014_csv = file.path(dir_d           , 'tmp/eez_rgn_2014.csv')
 
 # create tmp dir if doesn't exist
 dir.create(file.path(dir_d, 'tmp'), showWarnings=F)

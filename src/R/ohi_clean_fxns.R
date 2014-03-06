@@ -25,9 +25,9 @@ add_rgn_id = function(uidata, uifilesave) {
   library(gdata)
   options(gsubfn.engine = "R") # otherwise, get X11 launching for sqldf package
   require(sqldf)
-#   library(plyr)
-#   library(dplyr)
-
+  #   library(plyr)
+  #   library(dplyr)
+  
   dpath = '/Users/jstewart/github/ohiprep/src/LookupTables' # fix this with more portable code
   
   
@@ -42,7 +42,7 @@ add_rgn_id = function(uidata, uifilesave) {
   uidata[,col_num] = gsub('Saint Barth.+', 'Saint Barthelemy', uidata[,col_num]) # Saint Barthelemy 
   uidata[,col_num] = gsub('.+Principe', 'Sao Tome and Principe', uidata[,col_num]) # Sao Tome and Principe
   
-
+  
   ## read in more offical (by BB) and redundant (by JS) lists with 2-letter OHI region codes, combine into one data.frame 
   rk = read.csv(file.path(dpath, 'eez_rgn_2013master.csv'))
   rk2 = read.csv(file.path(dpath, 'rgn_eez_v2013a_synonyms.csv'))
@@ -51,7 +51,7 @@ add_rgn_id = function(uidata, uifilesave) {
   rk = rk[rk$rgn_id_2013 < 255,]# remove high seas and non-regions
   rk$rgn_typ = rep(NA, length(rk[,1]))
   rk$rgn_typ[!is.na(rk$rgn_id_2013)] = 'ohi_region'
- 
+  
   # manage synonym region_id data
   rkb = data.frame(rk$rgn_id_2013, rk$rgn_key_2013, rk$rgn_nam_2013, rk$region_id_2012, rk$rgn_typ) 
   rk2b = data.frame(rk2$rgn_id_2013, rk2$rgn_key_2013, rk2$rgn_nam_2013, rk2$region_id_2012, rk2$rgn_typ)
@@ -75,7 +75,7 @@ add_rgn_id = function(uidata, uifilesave) {
   unique(uidata2$rgn_typ)
   uidata3 = subset(uidata2, (rgn_typ == 'ohi_region' | is.na(rgn_typ))) # keep NAs because they need to be assigned later on
   #uidata3 = uidata3[uidata3$rgn_id < 255,] # Also removed disputed. for high-seas stuff, would want this to just say !=255 to exclude disputed areas
-   
+  
   # indicate which were removed
   print('These landlocked/largescale countries were removed:')
   RemovedMatrix = subset(uidata2, (rgn_typ == 'landlocked' | rgn_typ == 'largescale' | rgn_typ == 'disputed')) 
@@ -87,7 +87,7 @@ add_rgn_id = function(uidata, uifilesave) {
   print('These non-landlocked countries were not matched with OHI rgn_id codes:')
   uidata3.na = subset(uidata3,  is.na(rgn_typ)) 
   print(unique(data.frame(uidata3.na$country_id)))
-   
+  
   print('TRUE if everything is working properly: ')
   print(dim(uidata3)[1] + dim(RemovedMatrix)[1] == dim(uidata2)[1]) # make sure this is TRUE
   
@@ -95,15 +95,15 @@ add_rgn_id = function(uidata, uifilesave) {
   
   ## save
   uidata4$rgn_typ <- NULL
- # uidata4$country_id <- NULL # we need this in there to ID which countries aren't matched. remove in add_gapfill.r
+  # uidata4$country_id <- NULL # we need this in there to ID which countries aren't matched. remove in add_gapfill.r
   names(uidata4)[c(1,2)] = c('rgn_id', 'rgn_nam')
   uidata4 = uidata4[order(uidata4$rgn_id),]
-
+  
   
   print('Be sure to inspect saved .csv file for additional or missing rgn_ids.')
   write.csv(uidata4, uifilesave, na = '', row.names=FALSE)
   
-#  write.table(regionkey, '/Users/jstewart/Desktop/regionkeytest.txt', sep='\t', row.names=FALSE)
+  #  write.table(regionkey, '/Users/jstewart/Desktop/regionkeytest.txt', sep='\t', row.names=FALSE)
 }
 
 
@@ -116,7 +116,7 @@ update_rgn_id_sov = function(nature2012data, nature2012filesave, nature2012_rgn_
   library(gdata)
   options(gsubfn.engine = "R") # otherwise, get X11 launching for sqldf package
   require(sqldf)
-    
+  
   ## read in  offical (by BB) lists with 2-letter OHI region codes
   rk = read.csv('/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/manual_output/eez_rgn_2013master.csv')
   regionkey = rk
@@ -139,9 +139,9 @@ update_rgn_id_sov = function(nature2012data, nature2012filesave, nature2012_rgn_
   }
   
   if(sum(is.na(natureb$rgn_id_2013) > 0)){
-  natureb[is.na(natureb$rgn_id_2013),]
-  print((sprintf('there are %d Nature2012 regions that were not matched with 2013 regions and were removed from all \'levels\': ', length(unique(natureb$country_id[is.na(natureb$rgn_id_2013)])))))
-  print(unlist(unique(natureb$country_id[is.na(natureb$rgn_id_2013)])))
+    natureb[is.na(natureb$rgn_id_2013),]
+    print((sprintf('there are %d Nature2012 regions that were not matched with 2013 regions and were removed from all \'levels\': ', length(unique(natureb$country_id[is.na(natureb$rgn_id_2013)])))))
+    print(unlist(unique(natureb$country_id[is.na(natureb$rgn_id_2013)])))
   }else{
     cat(print('everything is working properly, no unmatched OHI regions'))
   }
@@ -161,7 +161,7 @@ update_rgn_id_sov = function(nature2012data, nature2012filesave, nature2012_rgn_
 disaggregate = function(csv.in, csv.out, flds.id='region_id', fld.value=NA,
                         region_id.exclude=c(162),
                         weight.csv  = NA, weight.fld = NA){
-
+  
   # load libraries
   #library(reshape2)
   #library(gdata)
@@ -170,27 +170,27 @@ disaggregate = function(csv.in, csv.out, flds.id='region_id', fld.value=NA,
   library(plyr)
   
   # area-weighted example
-#   csv.in     = '/Volumes/local_edit/src/toolbox/data/global_2012_nature/layers/p_sp_alien.csv'
-#   csv.out    = '/Volumes/data_edit/model/GL-NCEAS-Resilience_v2013a/data/p_sp_alien_dis2012area.csv'
-#   weight.csv  = '/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/data/rgn_area.csv'
-#   weight.fld = 'area_km2'
-#   flds.id='region_id'
-#   fld.value=NA
+  #   csv.in     = '/Volumes/local_edit/src/toolbox/data/global_2012_nature/layers/p_sp_alien.csv'
+  #   csv.out    = '/Volumes/data_edit/model/GL-NCEAS-Resilience_v2013a/data/p_sp_alien_dis2012area.csv'
+  #   weight.csv  = '/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/data/rgn_area.csv'
+  #   weight.fld = 'area_km2'
+  #   flds.id='region_id'
+  #   fld.value=NA
   
   # pop-weighted example  
   #totalpop   = '/Volumes/data_edit/model/GL-WorldBank-Statistics_v2012/data/rgn_wb_pop.csv'
   #coastalpop = '/Volumes/data_edit/model/GL-NCEAS-CoastalPopulation_v2013/data/rgn_popsum2013_inland25mi_complete.csv'
   
   # sovereignty example
-#   csv.in  = '/Volumes/local_edit/src/toolbox/data/global_2012_nature/layers/r_cites.csv'
-#   csv.out = '/Volumes/data_edit/model/GL-NCEAS-Resilience_v2013a/data/r_cites_test.csv'
-#   weight.csv  = NA
-#   weight.fld = NA
-#   flds.id='region_id'
-#   fld.value=NA
-# disaggregate(csv.in='/Volumes/local_edit/src/toolbox/data/global_2012_nature/layers/r_cites.csv', 
-#              csv.out= '/Volumes/data_edit/model/GL-NCEAS-Resilience_v2013a/data/r_cites_test.csv')
-
+  #   csv.in  = '/Volumes/local_edit/src/toolbox/data/global_2012_nature/layers/r_cites.csv'
+  #   csv.out = '/Volumes/data_edit/model/GL-NCEAS-Resilience_v2013a/data/r_cites_test.csv'
+  #   weight.csv  = NA
+  #   weight.fld = NA
+  #   flds.id='region_id'
+  #   fld.value=NA
+  # disaggregate(csv.in='/Volumes/local_edit/src/toolbox/data/global_2012_nature/layers/r_cites.csv', 
+  #              csv.out= '/Volumes/data_edit/model/GL-NCEAS-Resilience_v2013a/data/r_cites_test.csv')
+  
   
   # TODO: example with category/year for muliple flds.id
   # layer=rnk_np_product_weight
@@ -200,7 +200,7 @@ disaggregate = function(csv.in, csv.out, flds.id='region_id', fld.value=NA,
   if (!is.na(weight.csv)){
     weight = read.csv(weight.csv, na.strings='')
   }
-    
+  
   # get lookup files for translating Nature 2012 to 2013a regions and countries
   dir.lookups = '/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/manual_output'
   cntry2013_country2012 = read.csv(file.path(dir.lookups, 'cntry2013_country2012.csv'), na='')
@@ -233,7 +233,7 @@ disaggregate = function(csv.in, csv.out, flds.id='region_id', fld.value=NA,
     
     # ensure rgn_id_2013 is not duplicated
     stopifnot(any(!duplicated(m$rgn_id_2013)))
-
+    
     if (!is.na(weight.csv)){
       d = merge(x=m, by.x='rgn_id_2013', all.x=T,
                 y=weight, by.y='rgn_id')
@@ -249,9 +249,9 @@ disaggregate = function(csv.in, csv.out, flds.id='region_id', fld.value=NA,
       }
       
     } else {
-        d = m
+      d = m
     }    
-
+    
     # need to order by other fields as well too
     
     # output 2013 csv
@@ -259,14 +259,14 @@ disaggregate = function(csv.in, csv.out, flds.id='region_id', fld.value=NA,
     write.csv(rename(d[,c('rgn_id_2013', fld.value)],
                      c('rgn_id_2013'='rgn_id')),
               csv.out, row.names=F, na='')
-
+    
   } else if(flds.id[1] == 'country_id') {
-#     natureb = sqldf("SELECT b.rgn_id_2013, b.rgn_key_2013, a.*
-#                  FROM nature2012data AS a
-#                  LEFT OUTER JOIN (
-#                      SELECT DISTINCT rgn_id_2013, rgn_key_2013, rgn_key_2012
-#                      FROM regionkey 
-#                      ) AS b ON b.rgn_key_2012 = a.country_id") 
+    #     natureb = sqldf("SELECT b.rgn_id_2013, b.rgn_key_2013, a.*
+    #                  FROM nature2012data AS a
+    #                  LEFT OUTER JOIN (
+    #                      SELECT DISTINCT rgn_id_2013, rgn_key_2013, rgn_key_2012
+    #                      FROM regionkey 
+    #                      ) AS b ON b.rgn_key_2012 = a.country_id") 
   }  
 }
 # disaggregate(csv.in='/Volumes/local_edit/src/toolbox/data/global_2012_nature/layers/r_cites.csv', 
@@ -280,33 +280,33 @@ disaggregate = function(csv.in, csv.out, flds.id='region_id', fld.value=NA,
 
 
 save_pressure_layers_2012a_2013a = function(data, filesave2012a, filesave2013a) {
-
-data = na.omit(data)
-
-# just 3 years, so go through and take max of each time
-rgn_uni = unique(data$rgn_id)
-d_12 = data.frame(matrix(nrow=length(rgn_uni), ncol=dim(data)[2]))
-d_13 = data.frame(matrix(NA, length(rgn_uni), dim(data)[2]))
-names(d_12) = names(data) 
-names(d_13) = names(data) 
-
-for(i in 1:length(rgn_uni)){
- a = data[data$rgn_id == rgn_uni[i],]
- al = dim(a)[1]
- d_13[i,] = a[al,]
- if(al>=2){
-   d_12[i,] = a[al-1,]
- }else{
-   d_12[i,] = a[al,]
- }
-}
-
-d_12$year = NULL
-d_13$year = NULL
-
-write.csv(d_12, filesave2012a, na = '', row.names=FALSE)
-write.csv(d_13, filesave2013a, na = '', row.names=FALSE)
-
+  
+  data = na.omit(data)
+  
+  # just 3 years, so go through and take max of each time
+  rgn_uni = unique(data$rgn_id)
+  d_12 = data.frame(matrix(nrow=length(rgn_uni), ncol=dim(data)[2]))
+  d_13 = data.frame(matrix(NA, length(rgn_uni), dim(data)[2]))
+  names(d_12) = names(data) 
+  names(d_13) = names(data) 
+  
+  for(i in 1:length(rgn_uni)){
+    a = data[data$rgn_id == rgn_uni[i],]
+    al = dim(a)[1]
+    d_13[i,] = a[al,]
+    if(al>=2){
+      d_12[i,] = a[al-1,]
+    }else{
+      d_12[i,] = a[al,]
+    }
+  }
+  
+  d_12$year = NULL
+  d_13$year = NULL
+  
+  write.csv(d_12, filesave2012a, na = '', row.names=FALSE)
+  write.csv(d_13, filesave2013a, na = '', row.names=FALSE)
+  
 }
 
 # by BB
@@ -340,7 +340,7 @@ temporal.gapfill = function(data, fld.id = 'rgn_id', fld.value = 'value', fld.ye
   # rename fields to generically handle the data
   d = plyr::rename(na.omit(data[, c(fld.id, fld.value, fld.year)]), 
                    setNames(c(         'id',   'value',   'year'  ),
-                                  c(fld.id, fld.value, fld.year)))
+                            c(fld.id, fld.value, fld.year)))
   
   # initialize data frame of filled data
   d.filled = d[0,]
@@ -375,7 +375,7 @@ temporal.gapfill = function(data, fld.id = 'rgn_id', fld.value = 'value', fld.ye
       if (nrow(d.id.yrs) < 2){
         next
       }
-
+      
       # fit linear model
       mdl = lm(value ~ year, d.id.yrs)      
       
@@ -390,11 +390,11 @@ temporal.gapfill = function(data, fld.id = 'rgn_id', fld.value = 'value', fld.ye
                                   whence_details=whence_details))
     }
   }
-
+  
   # bind to original with additional whence field
   # d$whence = 'original' # JS commented out bc causing errors Aug 27 2013 17h00
   # d.filled$whence = paste(deparse(sys.call()), collapse='') # gettting the call to the function
-
+  
   d = plyr::rbind.fill(d, d.filled)
   d = d[order(d$id, d$year), ]
   d = plyr::rename(d, 
@@ -404,132 +404,119 @@ temporal.gapfill = function(data, fld.id = 'rgn_id', fld.value = 'value', fld.ye
 }
 
 
-add_gapfill = function(cleaned_data, layersave, s_island_val=NULL,
+add_gapfill = function(cleandata, layersave, s_island_val=NULL,
                        dpath = '/Users/jstewart/github/ohiprep/src/LookupTables',   
                        rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'),
                        rgns.csv           = file.path(dpath, 'rgn_details.csv')) {
-
-# debug: cleaned_data=s; layersave=file.path(td, 'sanitation_gapfilled_2013b.csv'); s_island_val=NULL; dpath = '/Users/jstewart/github/ohiprep/src/LookupTables'; rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'), rgns.csv = file.path(dpath, 'rgn_details.csv')
   
+  # debug: cleaned_data=s; layersave=file.path(td, 'sanitation_gapfilled_2013b.csv'); s_island_val=NULL; dpath = '/Users/jstewart/github/ohiprep/src/LookupTables'; rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'); rgns.csv = file.path(dpath, 'rgn_details.csv')
+  
+  
+  # setup ----
   print('-->>> add_gapfill.r substitutes UN georegions means for NA values')
   
+  # load libraries
   library(reshape2)
   library(gdata)
   library(plyr)
   library(dplyr)
-  options(gsubfn.engine = "R") # otherwise, get X11 launching for sqldf package
-  require(sqldf)  
   
-  # FIRST, average each UN r2 georegion and each UN r1 georegion. This will provide an r2 average if at least one of the countries in that region are present.
+  # read in lookup files
+  gf = read.csv(rgn_georegions.csv); head(gf) # georegions file
+  rf = read.csv(rgns.csv); head(rf) # rgns file
   
-  #tidy cleaned_data
-  cleandata = cleaned_data
+  # should only be run when temporal gapfilling has already occurred--maybe move it to those individual clean_.*.r file by JS.  
+  #   #deal with cleaned_data; remove any that were not temporally gapfilled so they can be georegionally gapfilled here. 
+  #   runi = unique(cleandata$rgn_id)
+  #   rgn_toremove = NA; names(rgn_toremove) = 'rgn_id'
+  #   for(r in runi){
+  #     g = cleandata[(cleandata$rgn_id == r),]
+  #     g = na.omit(g)
+  #     g_rows = dim(g)[1]
+  #     if(g_rows < 5){ # BB: why remove regions with less than 5 rows of data? JS: since they had <5 yrs of data they were not temporally gapfilled; remove them so they can be georegionally gapfilled
+  #       rgn_toremove = rbind(rgn_toremove, r)
+  #     }
+  #   }
+  #   rgn_toremove = na.omit(rgn_toremove) # BB: whoah, this is kinda wierd? try: na.omit(setNames(NA,'rgn_toremove'))
+  #   for(rr in rgn_toremove){
+  #     cleandata = cleandata[cleandata$rgn_id != rr,]
+  #   }
+  #   
+  
+  #tidy cleandata
   cleandata$rgn_nam = NULL
   n = names(cleandata)
   names(cleandata)[2] = 'value' # BB: what if year is the second column? this breaks. Maybe take the column of whatever is not rgn_id, cntry_id, year, category
   
-# should only be run when temporal gapfilling has already occurred--maybe move it to those individual clean_.*.r file by JS.  
-#   #deal with cleaned_data; remove any that were not temporally gapfilled so they can be georegionally gapfilled here. 
-#   runi = unique(cleandata$rgn_id)
-#   rgn_toremove = NA; names(rgn_toremove) = 'rgn_id'
-#   for(r in runi){
-#     g = cleandata[(cleandata$rgn_id == r),]
-#     g = na.omit(g)
-#     g_rows = dim(g)[1]
-#     if(g_rows < 5){ # BB: why remove regions with less than 5 rows of data? JS: since they had <5 yrs of data they were not temporally gapfilled; remove them so they can be georegionally gapfilled
-#       rgn_toremove = rbind(rgn_toremove, r)
-#     }
-#   }
-#   rgn_toremove = na.omit(rgn_toremove) # BB: whoah, this is kinda wierd? try: na.omit(setNames(NA,'rgn_toremove'))
-#   for(rr in rgn_toremove){
-#     cleandata = cleandata[cleandata$rgn_id != rr,]
-#   }
-#   
   
-  # read in files
-  gf = read.csv(rgn_georegions.csv); head(gf)
+  # average each UN georegions (r2, r1, r0) ----
+  # this will calculate georegional averages based on cleandata if at least one of the countries in that georegion are present
   
-  # join r2 to cleandata
-  clean_r2 = left_join(x=cleandata, y=gf, by=c('rgn_id'), copy=F); head(clean_r2) 
-  clean_r2$r2_label = NULL; clean_r2$r1_label = NULL; clean_r2$r0_label = NULL; clean_r2$rgn_nam = NULL; head(clean_r2) # until learn how to only return some columns?
+  # join r2 to cleandata, and calculate mean values of r2, r1, and r0 -- grouped by year
+  d_r2 = cleandata %.%
+    left_join(gf, by='rgn_id') %.%
+    group_by(r2, year) %.%
+    summarize(r2mean = mean(value, na.rm=T)) 
+  d_r2$r2year = as.numeric(as.character(d_r2$year)) # to track years used in gapfilling by georegion
   
-  # BB: TODO: check that all rows are unique by rgn_id & year. otherwise mean of value not trustworthy.
+  d_r1 = cleandata %.%
+    left_join(gf, by='rgn_id') %.%
+    group_by(r1, year) %.%
+    summarize(r1mean = mean(value, na.rm=T))
+  d_r1$r1year = as.numeric(as.character(d_r1$year))  
   
-  # transpose then recast, calculating mean value of r2 grouped by year. And for r1
-  r2mean_wide = dcast(clean_r2, r2 ~ year, fun.aggregate = mean, na.rm=T) # mean(clean_r2$value[(clean_r2$r2 == 29) & clean_r2$year == 2011], na.rm=T) # quick check
-  r2mean_long = melt(data=r2mean_wide, id.vars=names(r2mean_wide)[1], variable.name = 'year', value.name = 'r2mean')
-  r2mean_long = r2mean_long[order(r2mean_long$r2,r2mean_long$year),]
-  r2mean_long$r2year = as.numeric(as.character(r2mean_long$year))  
+  d_r0 = cleandata %.%
+    left_join(gf, by='rgn_id') %.%
+    group_by(r0, year) %.%
+    summarize(r0mean = mean(value, na.rm=T))
+  d_r0$r0year = as.numeric(as.character(d_r0$year))
   
-  r1mean_wide = dcast(clean_r2, r1 ~ year, fun.aggregate = mean, na.rm=T) 
-  r1mean_long = melt(data=r1mean_wide, id.vars=names(r1mean_wide)[1], variable.name = 'year', value.name = 'r1mean')
-  r1mean_long = r1mean_long[order(r1mean_long$r1,r1mean_long$year),]
-  r1mean_long$r1year = as.numeric(as.character(r1mean_long$year))  
+  # combine
+  #d_all =   
   
-  r0mean_wide = dcast(clean_r2, r0 ~ year, fun.aggregate = mean, na.rm=T) 
-  r0mean_long = melt(data=r0mean_wide, id.vars=names(r0mean_wide)[1], variable.name = 'year', value.name = 'r1mean')
-  r0mean_long = r0mean_long[order(r0mean_long$r1,r0mean_long$year),]
-  r0mean_long$r0year = as.numeric(as.character(r0mean_long$year))  
+  # work with the rgn_ids that must be gapfilled ----
   
-  # SECOND, use the master OHI region list (to identify which rgn_id_2013s are missing) and join to the UN georegions so they can then be joined to cleandata to see how to gapfill. 
+  # identify which rgn_ids are missing from cleandata (using anti_join); then left_join to the UN georegions  
+  rgn_gf = rf %.%
+    select(rgn_id, rgn_nam) %.%
+    anti_join(cleandata, by='rgn_id') %.%
+    left_join(gf %.% 
+                select(rgn_id, r2, r1), 
+              , by='rgn_id') 
   
-  # read in master OHI list with 2letter code; region ids
-  #rk = read.csv('/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/manual_output/eez_rgn_2013master.csv'); head(rk)
-  # BUG FIX: above produces duplicate regions where EEZs are aggregated, eg Ecuador & Galapagos
-  r = subset(read.csv(rgns.csv), rgn_id < 255); head(r)
-  #rk = rk[order(rk$rgn_id),]
-  #rkx = rk[rk$rgn_id < 255,]# remove high seas and non-regions
-  #rk_uni = unique(rkx) # unique now b/c using proper rgns.csv which is already unique by rgn_id
-  rgn_tofill = sqldf("SELECT a.rgn_id, a.rgn_nam
-                 FROM r AS a
-                 LEFT OUTER JOIN (
-                     SELECT DISTINCT rgn_id
-                     FROM cleandata
-                     ) AS b USING (rgn_id)
-                  WHERE b.rgn_id IS null") # BB: but this is for all regions and not specific to year
+  # prepare to gapfill for every year: 
   
-  # read in gap-filling UN region document and join to rgn_tofill
-  rgn_gf = sqldf("SELECT a.rgn_id, a.rgn_nam, b.r2, b.r1
-                 FROM rgn_tofill AS a
-                 LEFT OUTER JOIN (
-                     SELECT rgn_id, r2, r1
-                     FROM gf
-                     ) AS b USING (rgn_id)") 
-  
-  # THIRD, join r2s and gapfill
+  #THIRD, join r2s and gapfill so they can then be joined to cleandata to see how to gapfill.
   # do this for every year: 
   
-  yrtrix = unique(r2mean_long$year)
+  yrtrix = unique(d_r2$year)
   Count = 0
   for(yr in yrtrix) { # yr = 2010
-    trixtmp = r2mean_long[r2mean_long$r2year == yr,]
+    tmp_r2 = d_r2[d_r2$r2year == yr,]
+    tmp_r1 = d_r1[d_r1$r1year == yr,]
     
-    rgn_gf_r2 = sqldf("SELECT a.*, b.r2mean, b.r2year
-                          FROM rgn_gf AS a
-                          LEFT OUTER JOIN (
-                          SELECT r2, r2mean, r2year
-                          FROM trixtmp
-                          ) AS b ON b.r2 = a.r2") 
+    rgn_gf_r2r1 = rgn_gf %.%
+      left_join(tmp_r2, by='r2') %.%
+      left_join(tmp_r1, by=c('r1', 'year'))
     
-    # fix a few NAs by hand
-    if (!is.null(s_island_val)){ # BB wrapped below in conditional that s_island_val set to something other than default NULL
-      rgn_gf_r2$r2mean[rgn_gf_r2$r2 == 999] = s_island_val # sub in the southern island regions
-      rgn_gf_r2$r2year[rgn_gf_r2$r2 == 999] = yr
+    # hardcode identifiers for southern islands
+    if (!is.null(s_island_val)){
+      rgn_gf_r2$r2mean[rgn_gf_r2$r2 == 999] = s_island_val; rgn_gf_r2$r2year[rgn_gf_r2$r2 == 999] = yr
     }
-    rgn_gf_r2 <- rgn_gf_r2[rgn_gf_r2$rgn_id != 213,] # remove Antarctica
     
-    # identify when rgn_gf_r2 is na (=no data for that r2 region)
-    idx = which(is.na(rgn_gf_r2$r2mean)) 
-    
-    if(length(idx) > 0) {
-      trixtmp2 = r1mean_long[r1mean_long$year == yr,]
-      rgn_gf_r2r1 = sqldf("SELECT a.*, b.r1mean, b.r1year
-                 FROM rgn_gf_r2 AS a
-                 LEFT OUTER JOIN (
-                     SELECT r1, r1mean, r1year
-                     FROM trixtmp2
-                     ) AS b ON b.r1 = a.r1") 
+#     # if there are no data for that r2 georegion, work with r1 georegion
+#     idx = which(is.na(rgn_gf_r2$r2mean)) # if no r2mean value, then no data for that r2 region
+#     if(length(idx) > 0) {
+#       
+#       
+#       rgn_gf_r2r1 = sqldf("SELECT a.*, b.r1mean, b.r1year
+#                  FROM rgn_gf_r2 AS a
+#                  LEFT OUTER JOIN (
+#                      SELECT r1, r1mean, r1year
+#                      FROM trixtmp2
+#                      ) AS b ON b.r1 = a.r1"); head(rgn_gf_r2r1)
       
+## JSL: come back and think about this logic
       
       # switch out r1mean where r2mean=NA
       rgn_gf_combo = rgn_gf_r2r1
@@ -596,8 +583,8 @@ add_gapfill = function(cleaned_data, layersave, s_island_val=NULL,
 
 # JS
 add_gapfill_singleyear = function(cleaned_data, layersave, s_island_val=NULL,
-                       rgn_georegions.csv = '/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/manual_output/rgn_georegions_wide_2013b.csv',
-                       rgns.csv           = '/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/data/rgn_details.csv') {
+                                  rgn_georegions.csv = '/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/manual_output/rgn_georegions_wide_2013b.csv',
+                                  rgns.csv           = '/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/data/rgn_details.csv') {
   # use SQLite to add UN gapfilling regions and save as new file (J. Stewart, Aug 2013) 
   
   
@@ -618,7 +605,7 @@ add_gapfill_singleyear = function(cleaned_data, layersave, s_island_val=NULL,
   # read in files
   gf = read.csv(rgn_georegions.csv)
   
-   #tidy cleaned_data
+  #tidy cleaned_data
   cleandata = cleaned_data
   cleandata$rgn_nam = NULL
   n = names(cleandata)
@@ -706,7 +693,7 @@ add_gapfill_singleyear = function(cleaned_data, layersave, s_island_val=NULL,
   
   
   #TODO: logic to fill for the world
-   
+  
   # prep to combine, account for category column
   clean_r2b = clean_r2
   clean_r2b$r2 = NULL; clean_r2b$r1 = NULL; clean_r2b$r0 = NULL
