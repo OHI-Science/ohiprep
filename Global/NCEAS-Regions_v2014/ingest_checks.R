@@ -3,20 +3,27 @@ library(reshape2)
 library(plyr)
 library(dplyr)
 
-# get paths configuration based on host machine name
-conf = list(
-  'AMPHITRITE'=list(  # BB's Windows 8 on MacBook Pro VMWare
-    dir_git     = 'G:/ohigit',
-    dir_neptune = 'N:',
-    dir_annex   = 'N:/git-annex'))[[Sys.info()['nodename']]] # N: # temp working from UCSB campus
-  
-# paths
-wd               = file.path(conf$dir_git  ,   'Global/NCEAS-Regions_v2014')
-eez_dbf          = file.path(conf$dir_annex,   'Global/MarineRegions_EEZ_v8/raw/World_EEZ_v8_2014_HR.dbf')
-land_dbf         = file.path(conf$dir_neptune, 'stable/GL-VLIZ-EEZs_v7/data/EEZ_land_v1.dbf')
-eez_rgn_2013_csv = file.path(conf$dir_neptune, 'model/GL-NCEAS-OceanRegions_v2013a/manual_output/eez_rgn_2013master.csv')
-fao_dbf          = file.path(conf$dir_neptune, 'model/GL-FAO-CCAMLR_v2014/data/fao_ccamlr_gcs.dbf')
-setwd(wd)
+#  from get paths configuration based on host machine name
+source('src/R/common.R') # set dir_neptune_data
+# Otherwise, presume that scripts are always working from your default ohiprep folder
+dir_d = 'Global/NCEAS-Regions_v2014'
+
+# data paths
+eez_dbf          = file.path(dir_neptune_data, 'git-annex/Global/MarineRegions_EEZ_v8/raw/World_EEZ_v8_2014_HR.dbf')
+land_dbf         = file.path(dir_neptune_data, 'stable/GL-VLIZ-EEZs_v7/data/EEZ_land_v1.dbf')
+eez_rgn_2013_csv = file.path(dir_neptune_data, 'model/GL-NCEAS-OceanRegions_v2013a/manual_output/eez_rgn_2013master.csv')
+fao_dbf          = file.path(dir_neptune_data, 'model/GL-FAO-CCAMLR_v2014/data/fao_ccamlr_gcs.dbf')
+eez_rgn_2014_csv = file.path(dir_d, 'tmp/eez_rgn_2014.csv')
+
+# create tmp dir if doesn't exist
+dir.create(file.path(dir_d, 'tmp'), showWarnings=F)
+
+# data prep ----
+
+# write new eez for 2014
+write.csv(eez_rgn_2013_csv, eez_rgn_2014_csv, na='', row.names=F)
+
+
 
 # read data tables ----
 eez  = foreign::read.dbf(eez_dbf, as.is=T); head(eez); summary(eez)
@@ -27,43 +34,45 @@ z    = read.csv(eez_rgn_2013_csv, stringsAsFactors=F); head(z); tail(z); summary
 
 # merge data ----
 m = z %.%
-  select(rgn_typ      = 'rgn_type', 
-         rgn_id_2013  = 'rgn_id', 
-         rgn_nam_2013 = 'rgn_name', 
-         eez_id, 
-         eez_nam      = 'eez_name', 
-         eez_iso3) %.%
+  select(eez_id, eez_iso3,
+         rgn_type = rgn_typ, 
+         rgn_id   = rgn_id_2013,
+         rgn_name = rgn_nam_2013) %.%
   merge(
     eez %.%
-      rename(c(Country = 'eez_name_shp',
-               EEZ_ID  = 'eez_id')) %.%
-      select(eez_id, eez_name_shp), 
+      select(eez_id       = EEZ_ID, 
+             eez_name_shp = Country,
+             eez_iso3_shp = ISO_3digit), 
     by='eez_id', all=T) %.%
   merge(
     fao %.%
-      rename(c(SOURCE = 'fao_source',
-               F_CODE = 'fao_code',
-               OCEAN  = 'fao_ocean')) %.%
+      select(fao_source = SOURCE,
+             fao_code   = F_CODE,
+             fao_ocean  = OCEAN) %.%
       filter(fao_source!='CCAMLR') %.%  # exclude Antarctica (213)
       mutate(eez_id = as.integer(fao_code) + 1000) %.%
       select(eez_id, fao_code, fao_source, fao_ocean),
     by='eez_id', all=T) %.%
   merge(
     land %.%
-      rename(c(ISO_3digit = 'eez_iso3',
-               Country    = 'land_name')) %.%
+      select(eez_iso3  = ISO_3digit,
+             land_name = Country) %.%
       filter(eez_iso3!='-'), 
-    by='eez_iso3', all=T)
+    by='eez_iso3', all=T) %.%
+  select(rgn_type, rgn_id, rgn_name, rgn_name, eez_id, eez_name_shp, eez_iso3_shp, fao_source, fao_code, fao_ocean, land_name) %.%
+  arrange(rgn_type, rgn_id, rgn_name, eez_id, eez_name_shp, fao_code, land_name)
 head(m); tail(m)
+
+# TODO: look at duplicates
 
 # check for missing or mismatched eez's
 print(subset(m, rgn_type=='eez' & ( eez_name_shp != eez_name | is.na(eez_name_shp) | is.na(eez_name) ), 
              c(eez_id, rgn_type, rgn_id, rgn_name, eez_name, eez_name_shp)), row.names=F)  # only accented names showing up
 #  eez_id rgn_type rgn_id            rgn_name             eez_name        eez_name_shp
 #     252      eez    255            DISPUTED Disputed Sudan-Egypt               Egypt
-#     100      eez    100 Republique du Congo  R_publique du Congo République du Congo
-#     244      eez    244             Curacao              Curacao             Curaçao
-#      32      eez     32             Reunion              R_union             Réunion
+#     100      eez    100 Republique du Congo  R_publique du Congo R?publique du Congo
+#     244      eez    244             Curacao              Curacao             Cura?ao
+#      32      eez     32             Reunion              R_union             R?union
 # OK: just wierd accents in eez_name_shp so not matching eez_name
 
 # Antarctica
@@ -187,18 +196,18 @@ r = ddply(m, .(rgn_id), summarize,
           rgn_iso2 = rgn_iso2[1],
           eez_cnt  = length(eez_id),
           eezs     = paste(sprintf('%s (%d|%s)', eez_nam, eez_id, eez_key), collapse=', '))
-write.csv(r, 'data/rgn_details.csv', na='', row.names=F)
+write.csv(r, file.path(dir_d, 'data/rgn_details.csv'), na='', row.names=F)
 #shell.exec(file.path(wd,'data/rgn_details.csv'))
 
 # create layer rtk_rgn_labels
 rl.flds = c('rgn_id'='rgn_id', 'rgn_typ'='type', 'rgn_nam'='label')
 rl = rename(r, rl.flds)[,rl.flds]; tail(rl); summary(rl)
-write.csv(rl, 'data/rgn_labels.csv', na='', row.names=F)
+write.csv(rl, file.path(dir_d, 'data/rgn_labels.csv'), na='', row.names=F)
 
 # create layer rnk_rgn_global (subset to those analysed)
 rg.flds = c('rgn_id'='rgn_id', 'rgn_typ'='type', 'rgn_nam'='label')
 rg = rename(subset(r, rgn_typ=='eez' & rgn_nam!='DISPUTED'), rg.flds)[,rg.flds]; tail(rg); summary(rg)
-write.csv(rg[,c('rgn_id','label')], 'data/rgn_global.csv', na='', row.names=F)
+write.csv(rg[,c('rgn_id','label')], file.path(dir_d, 'data/rgn_global.csv'), na='', row.names=F)
 
 # s = rename(read.xls('manual_output/ISOcodes_UNregions_scraped.xlsx', na.strings=''),
 #            c('Name'='iso_nam','Alpha2_code'='iso_2code','Alpha3_code'='iso_3code','Numeric_code'='iso_id','Status'='iso_status'))
