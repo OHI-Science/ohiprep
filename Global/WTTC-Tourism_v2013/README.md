@@ -3,24 +3,22 @@ GL-WTTC-Tourism_v2013
 
 WTTC: World Travel and Tourism Council www.wttc.org
 
-Data processing data accessed through 2013:
-
-* Direct Contribution To Employment
-	+ see model/GL-NCEAS-TR_v2013a/README.md for further handling
-* Total Contribution To Employment
-* Total Contribution to GDP: processed here then further in manage_revenue.r
-	+ See model/GL-NCEAS-Livelihoods_v2013a/README.md for further handling
-
-/* Note: Data are available for many years into the future; therefore it is not clear where 'real' data end and modeled data start. However, because there are monthly updates available in near-real time (as of March 5, 2014, an update is available for February 2014), we will use data from 2013 under the assumption that these are real values. JSL wrote to WTTC to enquire but has not heard back.
+Data processing data accessed through 2013
+/*/* Note: Data are available for many years into the future; therefore it is not clear where 'real' data end and modeled data start. However, because there are monthly updates available in near-real time (as of March 5, 2014, an update is available for February 2014), we will use data from 2013 under the assumption that these are real values. JSL wrote to WTTC to enquire but has not heard back.
 
 
 Files produced
 ==============
 FILES: 
 
-* rgn_wttc_empd_2013a.csv
-* rgn_wttc_empt_2013a.csv (not incorporated into v2013)
-* rgn_wttc_gdpt_2013a.csv
+* rgn_wttc_empd_2014a.csv : Direct Contribution To Employment
+* rgn_wttc_empt_2014a.csv : Total Contribution To Employment
+* rgn_wttc_gdpt_2014a.csv : Total Contribution to GDP
+
+Currently these data are not gapfilled and are as rgn_id. To see what happened to these data beyond data_prep.R in 2013a, see:
+* see model/GL-NCEAS-TR_v2013a/README.md for further handling
+* processed here then further in manage_revenue.r
+	+ See model/GL-NCEAS-Livelihoods_v2013a/README.md for further handling
 
 
 Description
@@ -65,7 +63,7 @@ DETAILS: will be gapfilled further along
 update marine jobs: rgn_wttc_empt_2013a.csv wasn't incorporated into v2013 due to lack of time. (it was the only jobs sector updated in 2013)
 
 
-Methods
+Methods 2013
 =======
 
 (TO REMOVE FROM METHODS: 5.39. Marine jobs: tourism
