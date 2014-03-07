@@ -98,7 +98,7 @@ d.2 = d.2[!is.na(d.2$rgn_id),]; tail(d.2)
 
 # save files as 2014a (population data hasn't been updated so no special considerations. See clean_WB gapfilling for those).
 layer_uni = unique(d.2$layer)
-layernames = sprintf('rgn_wb_%s_2014a.csv', tolower(layer_uni))
+layernames = sprintf('rgn_wb_%s_2014a', tolower(layer_uni))
 s_island_val = NA # assign what southern islands will get. this could be something fancier, depending on the dataset. 
 
 for(k in 1:length(layer_uni)) { # k=1
@@ -108,12 +108,13 @@ for(k in 1:length(layer_uni)) { # k=1
   cleaned_layer$units = NULL; tail(cleaned_layer)
   
   # save 2014a files
-  layersave = file.path(dir_d, 'data', layernames[k]) 
+  layersave = layernames[k]
+  dirsave = file.path(dir_d, 'data')
   cleaned_layer$rgn_nam = NULL
   
   cleaned_layert = temporal.gapfill(cleaned_layer, fld.id = 'rgn_id', fld.value = names(cleaned_layer)[2], fld.year = 'year', verbose=F); head(cleaned_layert) 
   cleaned_layert2 = cleaned_layert; cleaned_layert2$whence = NULL; cleaned_layert2$whence_details = NULL
-  add_gapfill(cleaned_layert2, layersave, s_island_val, dir_d)
+  add_gapfill(cleaned_layert2, dirsave, layersave, s_island_val, )
 } 
 
 # #### 

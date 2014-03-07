@@ -404,7 +404,7 @@ temporal.gapfill = function(data, fld.id = 'rgn_id', fld.value = 'value', fld.ye
 }
 
 
-add_gapfill = function(cleandata, layersave, s_island_val=NULL, dirsave,
+add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL, 
                        dpath = '/Users/jstewart/github/ohiprep/src/LookupTables',   
                        rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'),
                        rgns.csv           = file.path(dpath, 'rgn_details.csv')) {
@@ -435,11 +435,11 @@ add_gapfill = function(cleandata, layersave, s_island_val=NULL, dirsave,
   # we exclude r0; we would want to do something before it came to that
   
   # calculate mean values of r2, r1 for each year using values from cleandata
-  d_r2 = cleandata %.%
+  d_r2a = cleandata %.%
     left_join(gf, by='rgn_id') %.%
-    group_by(r2, year) %.%  
-#    # write.csv(file.path(dirsave, 'whence.csv'), na = '', row.names=FALSE) 
-#   d_r2 = d_r2 %.%
+    group_by(r2, year)  
+   
+  d_r2 = d_r2a %.%  # Have to split this chain so can save whence information below...
     summarize(r2mean = mean(value, na.rm=T)); head(d_r2)
   d_r2$r2year = as.numeric(as.character(d_r2$year)); head(d_r2) # to track years used in gapfilling by georegion
   
@@ -459,7 +459,7 @@ add_gapfill = function(cleandata, layersave, s_island_val=NULL, dirsave,
     left_join(gf %.% 
                 select(rgn_id, r2, r1), 
               , by='rgn_id') %.%
-    arrange(rgn_id); head(rgn_gf2)
+    arrange(rgn_id)
   
   # join regions to be gapfilled with georegional averages for each year available  
   rgn_gf_combo = rgn_gf %.%
@@ -502,8 +502,15 @@ add_gapfill = function(cleandata, layersave, s_island_val=NULL, dirsave,
   names(finaldata) = n; head(finaldata) # rename original header
   
   print('Final data layer saved: ')
-  print(layersave)
-  write.csv(finaldata, layersave, na = '', row.names=FALSE)
+  print(paste(layersave, '.csv', sep=''))
+  write.csv(finaldata, file.path(dirsave, paste(layersave, '.csv', sep='')), na = '', row.names=FALSE)
+  
+  # whence bookkeeping ----
+  
+  whence_r2 = d_r2a %.%
+    select(-r0, -r0_label) 
+  write.csv(whence_r2, file.path(dirsave, paste(layersave, '_whencev01.csv', sep='')), na = '', row.names=FALSE) 
+  
 }
 
 
