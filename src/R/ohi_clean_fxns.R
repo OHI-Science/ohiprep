@@ -404,7 +404,7 @@ temporal.gapfill = function(data, fld.id = 'rgn_id', fld.value = 'value', fld.ye
 }
 
 
-add_gapfill = function(cleandata, layersave, s_island_val=NULL,
+add_gapfill = function(cleandata, layersave, s_island_val=NULL, dirsave,
                        dpath = '/Users/jstewart/github/ohiprep/src/LookupTables',   
                        rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'),
                        rgns.csv           = file.path(dpath, 'rgn_details.csv')) {
@@ -425,39 +425,23 @@ add_gapfill = function(cleandata, layersave, s_island_val=NULL,
   gf = read.csv(rgn_georegions.csv); head(gf) # georegions file
   rf = read.csv(rgns.csv); head(rf) # rgns file
   
-  # should only be run when temporal gapfilling has already occurred--maybe move it to those individual clean_.*.r file by JS.  
-  #   #deal with cleaned_data; remove any that were not temporally gapfilled so they can be georegionally gapfilled here. 
-  #   runi = unique(cleandata$rgn_id)
-  #   rgn_toremove = NA; names(rgn_toremove) = 'rgn_id'
-  #   for(r in runi){
-  #     g = cleandata[(cleandata$rgn_id == r),]
-  #     g = na.omit(g)
-  #     g_rows = dim(g)[1]
-  #     if(g_rows < 5){ # BB: why remove regions with less than 5 rows of data? JS: since they had <5 yrs of data they were not temporally gapfilled; remove them so they can be georegionally gapfilled
-  #       rgn_toremove = rbind(rgn_toremove, r)
-  #     }
-  #   }
-  #   rgn_toremove = na.omit(rgn_toremove) # BB: whoah, this is kinda wierd? try: na.omit(setNames(NA,'rgn_toremove'))
-  #   for(rr in rgn_toremove){
-  #     cleandata = cleandata[cleandata$rgn_id != rr,]
-  #   }
-  #   
-  
   #tidy cleandata
   cleandata$rgn_nam = NULL
   n = names(cleandata)
-  names(cleandata)[2] = 'value' # BB: what if year is the second column? this breaks. Maybe take the column of whatever is not rgn_id, cntry_id, year, category
+  names(cleandata)[!names(cleandata) %in% c('rgn_id', 'year')] = 'value' # call this value for processing; revert back below
   
-  
-  # average each UN georegions (r2, r1, r0) ----
+  # create lookup tables of average values for each UN georegions (r2, r1) ----
   # this will calculate georegional averages based on cleandata if at least one of the countries in that georegion are present
+  # we exclude r0; we would want to do something before it came to that
   
-  # join r2 to cleandata, and calculate mean values of r2, r1, and r0 -- grouped by year
+  # calculate mean values of r2, r1 for each year using values from cleandata
   d_r2 = cleandata %.%
     left_join(gf, by='rgn_id') %.%
-    group_by(r2, year) %.%
-    summarize(r2mean = mean(value, na.rm=T)) 
-  d_r2$r2year = as.numeric(as.character(d_r2$year)) # to track years used in gapfilling by georegion
+    group_by(r2, year) %.%  
+#    # write.csv(file.path(dirsave, 'whence.csv'), na = '', row.names=FALSE) 
+#   d_r2 = d_r2 %.%
+    summarize(r2mean = mean(value, na.rm=T)); head(d_r2)
+  d_r2$r2year = as.numeric(as.character(d_r2$year)); head(d_r2) # to track years used in gapfilling by georegion
   
   d_r1 = cleandata %.%
     left_join(gf, by='rgn_id') %.%
@@ -465,14 +449,6 @@ add_gapfill = function(cleandata, layersave, s_island_val=NULL,
     summarize(r1mean = mean(value, na.rm=T))
   d_r1$r1year = as.numeric(as.character(d_r1$year))  
   
-  d_r0 = cleandata %.%
-    left_join(gf, by='rgn_id') %.%
-    group_by(r0, year) %.%
-    summarize(r0mean = mean(value, na.rm=T))
-  d_r0$r0year = as.numeric(as.character(d_r0$year))
-  
-  # combine
-  #d_all =   
   
   # work with the rgn_ids that must be gapfilled ----
   
@@ -482,98 +458,48 @@ add_gapfill = function(cleandata, layersave, s_island_val=NULL,
     anti_join(cleandata, by='rgn_id') %.%
     left_join(gf %.% 
                 select(rgn_id, r2, r1), 
-              , by='rgn_id') 
+              , by='rgn_id') %.%
+    arrange(rgn_id); head(rgn_gf2)
   
-  # prepare to gapfill for every year: 
+  # join regions to be gapfilled with georegional averages for each year available  
+  rgn_gf_combo = rgn_gf %.%
+    inner_join(d_r2, by='r2'); head(rgn_gf_combo)
+  rgn_gf_combo$value = rgn_gf_combo$r2mean; rgn_gf_combo$r2mean = NULL; head(rgn_gf_combo) # this is a hack, but %.% select(r2mean = value) isn't working
   
-  #THIRD, join r2s and gapfill so they can then be joined to cleandata to see how to gapfill.
-  # do this for every year: 
-  
-  yrtrix = unique(d_r2$year)
-  Count = 0
-  for(yr in yrtrix) { # yr = 2010
-    tmp_r2 = d_r2[d_r2$r2year == yr,]
-    tmp_r1 = d_r1[d_r1$r1year == yr,]
+  # if no r2 georegional average, join with r1 georegional averages for each year available, and combine back with rgn_gf_combo  
+  if(sum(is.na(rgn_gf_combo$value))>0){
+    rgn_gf_combo1 = rgn_gf_combo[is.na(rgn_gf_combo$r2mean0),]
+    inner_join(d_r1, by='r1') %.%
+      select(r1mean = value)
     
-    rgn_gf_r2r1 = rgn_gf %.%
-      left_join(tmp_r2, by='r2') %.%
-      left_join(tmp_r1, by=c('r1', 'year'))
-    
-    # hardcode identifiers for southern islands
-    if (!is.null(s_island_val)){
-      rgn_gf_r2$r2mean[rgn_gf_r2$r2 == 999] = s_island_val; rgn_gf_r2$r2year[rgn_gf_r2$r2 == 999] = yr
-    }
-    
-#     # if there are no data for that r2 georegion, work with r1 georegion
-#     idx = which(is.na(rgn_gf_r2$r2mean)) # if no r2mean value, then no data for that r2 region
-#     if(length(idx) > 0) {
-#       
-#       
-#       rgn_gf_r2r1 = sqldf("SELECT a.*, b.r1mean, b.r1year
-#                  FROM rgn_gf_r2 AS a
-#                  LEFT OUTER JOIN (
-#                      SELECT r1, r1mean, r1year
-#                      FROM trixtmp2
-#                      ) AS b ON b.r1 = a.r1"); head(rgn_gf_r2r1)
-      
-## JSL: come back and think about this logic
-      
-      # switch out r1mean where r2mean=NA
-      rgn_gf_combo = rgn_gf_r2r1
-      rgn_gf_combo$r21mean = rgn_gf_combo$r2mean
-      rgn_gf_combo$r21year = rgn_gf_combo$r2year
-      rdex = which((is.na(rgn_gf_combo$r21mean) & rgn_gf_combo$r2 != 999))
-      ndex = which((is.na(rgn_gf_combo$r21year) & rgn_gf_combo$r2 != 999))
-      rgn_gf_combo$r21mean[rdex] = rgn_gf_combo$r1mean[rdex]
-      rgn_gf_combo$r21year[ndex] = rgn_gf_combo$r1year[ndex]
-      rgn_gf_combo = data.frame(cbind(rgn_gf_combo$rgn_id, rgn_gf_combo$r21mean, rgn_gf_combo$r21year))  
-      names(rgn_gf_combo) = c('rgn_id', 'r21mean', 'r21year')
-      
-      #check this
-      if(length(rdex>0)){
-        Count = Count+1
-      }
-      
-    } else {
-      rgn_gf_combo = rgn_gf_r2
-      rgn_gf_combo = data.frame(cbind(rgn_gf_combo$rgn_id, rgn_gf_combo$r2mean, rgn_gf_combo$r2year))  
-      names(rgn_gf_combo) = c('rgn_id', 'r21mean', 'r21year')
-    }
-    
-    
-    if (!exists('rgn_gf_r2_all')){
-      rgn_gf_r2_all = rgn_gf_combo
-    } else {
-      rgn_gf_r2_all = rbind(rgn_gf_r2_all, rgn_gf_combo)
-    }
-    
+    rgn_gf_combo = rbind(rgn_gf_combo, rgn_gf_combo1)   
+    rgn_gf_combo$r21mean = rgn_gf_combo$r2mean    
   }
   
-  #TODO: logic to fill for the world
-  # rgn_mean[3,(is.na(rgn_mean$rgnmean) & rgn_mean$year == ),] =  # have to account by year
-  
-  # prep to combine, account for category column
-  clean_r2b = clean_r2
-  clean_r2b$r2 = NULL; clean_r2b$r1 = NULL; clean_r2b$r0 = NULL
-  
-  col_diff = dim(clean_r2b)[2] - dim(rgn_gf_r2_all)[2]
-  if(col_diff != 0) {
-    if(col_diff == 1) {
-      rgn_gf_r2_all$units = rep(clean_r2b$units[1], dim(rgn_gf_r2_all)[1])
-    } else {
-      print('problem with too many data columns')
-    }
+  # hardcode identifiers for southern islands
+  if (!is.null(s_island_val)){
+    rgn_gf_combo$r2mean[rgn_gf_combo$r2 == 999] = s_island_val
   }
   
-  names(clean_r2b) = n
-  names(rgn_gf_r2_all) = n
   
-  # combine finally:
-  findat = rbind(clean_r2b, rgn_gf_r2_all)
+  # combine gapfilled data with original data; save ----
+  
+  # prepare to combine; add whencev01 columns
+  rgn_gf_fin = rgn_gf_combo %.%
+    select(rgn_id, year, value) %.% 
+    mutate(whencev01 = rep('SG', length(rgn_gf_combo$year))) 
+  
+  cleandata = cleandata %.%
+    mutate(whencev01 = rep('OG', length(cleandata$year)))
+    
+  # combine finally
+  findat = rbind(cleandata, rgn_gf_fin); head(findat)
   findat$rgn_id = as.numeric(findat$rgn_id)
   findat$year = as.numeric(findat$year)
-  finaldata = findat[order(findat$rgn_id, findat$year),]
-  
+  finaldata = findat %.%
+    arrange(rgn_id, year)
+  n = c(n, 'whencev01')
+  names(finaldata) = n; head(finaldata) # rename original header
   
   print('Final data layer saved: ')
   print(layersave)
