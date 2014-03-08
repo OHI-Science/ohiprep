@@ -13,28 +13,30 @@
 #   georegional gapfilling with add_gapfill.r
 #   translation from rgn_id to cntry_id and country_id: scroll way down, there is a lot...
 
-#  from get paths configuration based on host machine name
-source('src/R/common.R') # set dir_neptune_data
-# Otherwise, presume that scripts are always working from your default ohiprep folder
-dir_d = 'Global/NCEAS-Regions_v2014'
+# setup ----
 
-
-# setup
-source('/Users/jstewart/github/ohiprep/src/R/ohi_clean_fxns.R') # also fix this directory
-dir1 = ('/Users/jstewart/github/ohiprep/Global/WorldBank-Statistics_v2012') # also fix this directory
-wd = file.path(dir1, 'raw')
-setwd(wd)
-
+# load libraries
 library(reshape2)
 library(gdata)
 library(plyr)
 options(max.print=5E6)
 
-# read in files
+
+# from get paths configuration based on host machine name
+source('src/R/common.R') # set dir_neptune_data
+# Otherwise, presume that scripts are always working from your default ohiprep folder
+dir_d = 'Global/WorldBank-Statistics_v2012'
+
+# get functions
+source('src/R/ohi_clean_fxns.R')
+
+# read in files ----
 d.all =  matrix(nrow=0, ncol=0)
 count = 0
-for (f in list.files(pattern=glob2rx('*xls'))){
+for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), full.names=T){ 
+  # f = list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), full.names=T)[1]
   count = count + 1
+  #d = read.xls(file.path(dir_d, 'raw', f), sheet=1, skip=1, check.names=F) # do not add the stupid X in front of the numeric column names
   d = read.xls(f, sheet=1, skip=1, check.names=F) # do not add the stupid X in front of the numeric column names
   
   # remove final year column if it is completely NAs
@@ -57,7 +59,8 @@ for (f in list.files(pattern=glob2rx('*xls'))){
   names(d.m) = c('country','year','value'); head(d.m)
   
   # add layer column
-  a = strsplit(f, '.', fixed=TRUE)
+  #a = strsplit(f, '.', fixed=TRUE)
+  a = strsplit(basename(f), '.', fixed=TRUE) # tools::file_path_sans_ext(basename(f))
   d.m$layer = rep.int(unlist(a)[2], length(d.m$year)) 
   lkup = c('gdp' = 'usd', 
            'tlf' = 'count',
@@ -81,7 +84,7 @@ print('these are all the variables that are included in the cleaned file: ')
 print(data.frame(unique(d.all3$layer)))
 
 ## run add_rgn_id and save
-uifilesave = file.path(wd, 'GL-WorldBank-Statistics_v2012-cleaned.csv')
+uifilesave = file.path(dir_d, 'raw', 'GL-WorldBank-Statistics_v2012-cleaned.csv')
 add_rgn_id(d.all3, uifilesave)
 
 
@@ -95,7 +98,7 @@ d.2 = d.2[!is.na(d.2$rgn_id),]; tail(d.2)
 
 # save files as 2014a (population data hasn't been updated so no special considerations. See clean_WB gapfilling for those).
 layer_uni = unique(d.2$layer)
-layernames = sprintf('rgn_wb_%s_2014a.csv', tolower(layer_uni))
+layernames = sprintf('rgn_wb_%s_2014a', tolower(layer_uni))
 s_island_val = NA # assign what southern islands will get. this could be something fancier, depending on the dataset. 
 
 for(k in 1:length(layer_uni)) { # k=1
@@ -105,13 +108,13 @@ for(k in 1:length(layer_uni)) { # k=1
   cleaned_layer$units = NULL; tail(cleaned_layer)
   
   # save 2014a files
-  layersave = file.path(dir1, 'data', layernames[k]) 
+  layersave = layernames[k]
+  dirsave = file.path(dir_d, 'data')
   cleaned_layer$rgn_nam = NULL
   
   cleaned_layert = temporal.gapfill(cleaned_layer, fld.id = 'rgn_id', fld.value = names(cleaned_layer)[2], fld.year = 'year', verbose=F); head(cleaned_layert) 
   cleaned_layert2 = cleaned_layert; cleaned_layert2$whence = NULL; cleaned_layert2$whence_details = NULL
-  add_gapfill(cleaned_layert2, layersave, s_island_val)
-  
+  add_gapfill(cleaned_layert2, dirsave, layersave, s_island_val, )
 } 
 
 # #### 
