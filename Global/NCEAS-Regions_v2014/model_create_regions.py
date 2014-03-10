@@ -43,34 +43,37 @@ arcpy.SetLogHistory(True) # C:\Users\bbest\AppData\Roaming\ESRI\Desktop10.2\ArcT
 # configuration based on machine name
 conf = {
     'Amphitrite':
-    {'dir_git':'G:/ohigit',
-     'dir_big':'N:',
-     'dir_tmp':'C:/tmp',
+    {'dir_git'    :'G:/ohiprep',
+     'dir_neptune':'N:',
+     'dir_tmp'    :'C:/tmp',
      }}[socket.gethostname()]
 
 # paths
-nm      = 'NCEAS-Regions_v2014'                          # name of data product
-td      = '{0}/{1}'.format(conf['dir_tmp'], nm)          # temp directory
-gd      = '{0}/{1}'.format(conf['dir_big'], nm)          # git directory
-bd      = '{0}/model/GL-{1}'.format(conf['dir_big'], nm) # big directory
-gdb     = '{0}/geodb.gdb'.format(td)                     # file geodatabase
+nm      = 'NCEAS-Regions_v2014'                              # name of data product
+td      = '{0}/{1}'.format(conf['dir_tmp'], nm)              # temp directory
+gd      = '{0}/{1}'.format(conf['dir_neptune'], nm)          # git directory
+gdb     = '{0}/geodb.gdb'.format(td)                         # file geodatabase
 
 # data inputs
 # EEZ plus land (http://marineregions.org)
-eez      = '{0}/stable/GL-VLIZ-EEZs_v7/data/eez_v7_gcs.shp'.format(conf['dir_big'])
-eezland  = '{0}/stable/GL-VLIZ-EEZs_v7/data/EEZ_land_v1.shp'.format(conf['dir_big'])
+eez      = '{0}/stable/GL-VLIZ-EEZs_v7/data/eez_v7_gcs.shp'.format(conf['dir_neptune'])
+eez      = '{0}/git-annex/Global/MarineRegions_EEZ_v8/raw/World_EEZ_v8_2014_HR.shp'.format(conf['dir_neptune'])
+eezland  = '{0}/stable/GL-VLIZ-EEZs_v7/data/EEZ_land_v1.shp'.format(conf['dir_neptune'])
 # FAO for open ocean regions, with CCAMLR Antarctica regions
-fao      = '{0}/model/GL-FAO-CCAMLR_v2014/data/fao_ccamlr_gcs.shp'.format(conf['dir_big'])
+fao      = '{0}/model/GL-FAO-CCAMLR_v2014/data/fao_ccamlr_gcs.shp'.format(conf['dir_neptune'])
 # master lookup table to go from EEZ to OHI regions
-z_csv    = '{0}/model/GL-NCEAS-OceanRegions_v2013a/manual_output/eez_rgn_2013master.csv'.format(conf['dir_big'])
+z_csv    = '{0}/model/GL-NCEAS-OceanRegions_v2013a/manual_output/eez_rgn_2013master.csv'.format(conf['dir_neptune'])
 # slivers
 slivers  = '{0}/manual_output/slivers_tofix_manual.shp'.format(td)
 # polygon surrounding Caspian and Black Seas to convert from EEZ to land for OHI purposes
 eeztoland  = '{0}/manual_output/CaspianBlackSeas_EEZexclusionpoly.shp'.format(td)
-# final product
-rgns_gcs = '{0}/data/rgns_ohi2014_gcs.shp'.format(td)
 
-# TODO: create td folders if don't exist
+# data outputs
+# Antarctica CCAMLR
+ant_ccamlr_all = '{0}/git-annex/Global/{1}/data/antarctica_ccamlr_alleez_gcs.shp'.format(conf['dir_neptune'], nm)
+ant_ccamlr_ohi = '{0}/git-annex/Global/{1}/data/antarctica_ccamlr_ohi2014_gcs.shp'.format(conf['dir_neptune'], nm)
+# final regions product
+rgns_gcs   = '{0}/data/rgns_ohi2014_gcs.shp'.format(conf['dir_neptune'])
 
 # projections
 sr_mol = arcpy.SpatialReference('Mollweide (world)') # projected Mollweide (54009)
@@ -105,6 +108,31 @@ z.dtype.names = [{'rgn_id_2013' :'rgn_id',
 # Antarctica: remove from fao, dissolve CCAMLR to create region
 arcpy.Select_analysis('fao_noeez', 'fao_noeez_noant', "SOURCE <> 'CCAMLR'")
 arcpy.Select_analysis('fao_noeez', 'fao_noeez_ant'  , "SOURCE  = 'CCAMLR'")
+
+# calculate proportion of
+arcpy.Select_analysis('fao'   , 'fao_ant', "SOURCE = 'CCAMLR'")
+arcpy.AddField_management(      'fao_ant', 'area_orig_km2', 'FLOAT')
+arcpy.CalculateField_management('fao_ant', 'area_orig_km2', '!shape.area@squarekilometers!', 'PYTHON_9.3')
+arcpy.CopyFeatures_management('fao_noeez_ant', ant_ccamlr_all)
+arcpy.Intersect_analysis(['fao_noeez_ant', 'fao_ant'], 'fao_ant_inx')
+arcpy.AddField_management(      'fao_ant_inx', 'area_km2', 'FLOAT')
+arcpy.CalculateField_management('fao_ant_inx', 'area_km2', '!shape.area@squarekilometers!', 'PYTHON_9.3')
+
+arcpy.AddField_management(      'fao_ant_inx', 'area_pct_orig', 'FLOAT')
+arcpy.CalculateField_management('fao_ant_inx', 'area_pct_orig', '!area_km2!/!area_orig_km2!*100', 'PYTHON_9.3')
+# check why getting > 100% area of original. slivers? no
+#arcpy.Intersect_analysis(['fao_noeez_ant', 'slivers'], 'fao_ant_inx_slivers')
+# clean up fields
+[arcpy.DeleteField_management('fao_ant_inx', f.name) for f in arcpy.ListFields('fao_ant_inx') if f.name not in
+ ['OBJECTID','Shape','Shape_Length','Shape_Area','SOURCE','F_CODE', u'F_CODE2', u'F_LEVEL','area_orig_km2','area_km2','area_pct_orig']]
+
+# export final
+arcpy.CalculateField_management('fao_ant_inx', 'area_pct_orig', '!area_km2!/!area_orig_km2!*100', 'PYTHON_9.3')
+arcpy.CopyFeatures_management('fao_ant_inx', ant_ccamlr_ohi)
+
+# export original FAO without other EEZs clipped
+arcpy.CopyFeatures_management('fao_ant', ant_ccamlr_all)
+
 arcpy.Dissolve_management('fao_noeez_ant', 'eez_ant')
 a = numpy.array([(1, 213, 'eez', 'Antarctica')],
                 numpy.dtype([('OBJECTID', '<i4'  ),

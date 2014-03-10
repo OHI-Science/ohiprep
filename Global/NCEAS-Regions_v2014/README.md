@@ -36,7 +36,15 @@ iso3 IN ('SHN','ATF','AUS','BRA','CHL','ECU','ESP','IND','KIR','PRT','TLS','UMI'
 * convert EEZ of Caspian and Black Seas to land
 * merge all products and peform checks for overlap and geometry repair
 
-  
+
+## Antarctica
+
+Note that the EEZ's have been clipped from the original CCAMLR regions as described in the FAO Major Fishing Areas. Here's the original non-overlapping CCAMLR regions for Antarctica and the OHI subset of regions with the EEZs clipped, as well as proportion of original.
+
+![Antarctica CCAMLR regions: original(top), clipped (middle) and percent original (bottom)](fig/NCEAS-Regions_v2014_Antarctica.png)
+
+Some of the regions slightly exceed 100% of the original region. This is presumably related to some strange ArcGIS geodesic area calculation differences, since slivers were not otherwise added to the OHI version.
+
 NCEAS-Regions_v2012
 ===================
 
