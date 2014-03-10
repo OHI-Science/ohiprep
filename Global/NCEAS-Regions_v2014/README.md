@@ -45,6 +45,19 @@ Note that the EEZ's have been clipped from the original CCAMLR regions as descri
 
 Some of the regions slightly exceed 100% of the original region. This is presumably related to some strange ArcGIS geodesic area calculation differences, since slivers were not otherwise added to the OHI version.
 
+Made an Antarctic specific set of shapefiles here:
+
+    \\neptune\data_edit\git-annex\Global\NCEAS-Regions_v2014\data
+
+* antarctica_ccamlr_alleez_gcs.shp: CCAMLR regions before being clipped by EEZs
+  - area_orig_ -> area_orig_km2
+* antarctica_ccamlr_ohi2014_gcs.shp: CCAMLR regions after being clipped by EEZs with the following fields explained:
+  - area_orig_ -> area_orig_km2
+  - area_km2
+  - area_pct_o -> area_pct_orig: area_km2 / area_orig_km2 * 100
+  
+This limitation of 10 characters for shapefiles is uber lame. I'm looking into using the R and Python packages for this simple data package format.
+
 NCEAS-Regions_v2012
 ===================
 
