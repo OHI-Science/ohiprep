@@ -425,6 +425,7 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
   #tidy cleandata
   cleandata$rgn_nam = NULL
   n = names(cleandata)
+  value_nam = names(cleandata)[!names(cleandata) %in% c('rgn_id', 'year')]
   names(cleandata)[!names(cleandata) %in% c('rgn_id', 'year')] = 'value' # call this value for processing; revert back below 
   
   # create lookup tables of average values for each UN georegions (r2, r1) ----
@@ -434,7 +435,7 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
   d_r2a = cleandata %.%
     left_join(gf, by='rgn_id') %.%
     group_by(r2, year); head(d_r2a)
-  # mutate(whence_choice = rep('r2')) # unfortunately need this here and just below because summarize() will remove it
+  #delete mutate(whence_choice = rep('r2')) # unfortunately need this here and just below because summarize() will remove it
   
   d_r2 = d_r2a %.%  # Have to split this chain so can save whence information below...
     summarize(r2mean = mean(value, na.rm=T))%.%  
@@ -461,7 +462,7 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
   # join regions to be gapfilled with georegional averages for each year available  
   rgn_gapfilled = rgn_to_gapfill %.%
     left_join(d_r2, by='r2') %.%
-    select(rgn_id:year, value=r2mean) %.% # select all, but rename r2mean to value #see 2 lines below, because this isn't working
+    # select(rgn_id:year, value=r2mean) %.% ## this was an attempt to rename and isn't working; lines 2 below do this instead
     mutate(whence_choice = rep('r2')); head(rgn_gapfilled) 
   rgn_gapfilled$value = rgn_gapfilled$r2mean; rgn_gapfilled$r2mean = NULL # hack because select isn't allowing
   
@@ -508,16 +509,19 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
   
   # whence bookkeeping ----
   
-  d_r2a_whence = d_r2a %.%
-    select(-r0, -r0_label, -r2_label, -r1_label) %.%
-    mutate(whencev01 = rep('OD')) %.%
-    mutate(whence_choice = rep('OD')); head(d_r2a_whence) 
-  
-  whence_data = rbind(d_r2a_whence, rgn_gapfilled)
-  whence_data = arrange(whence_data, rgn_id, year); head(whence_data) # don't chain this or will get errors with rbind
-  names(whence_data) = c(n, 'rgn_nam', 'r1', 'r2', 'whencev01', 'whence_choice')
-  
-  write.csv(whence_data, file.path(dirsave, paste(layersave, '_whencev01.csv', sep='')), na = '', row.names=FALSE)   
+  # join each rgn_id that was gapfilled, by year, with all rgn_ids that had data within the georegion (identified by whence_choice)
+  rgn_gapfilled_whence = rgn_gapfilled %.%
+    left_join(d_r2a %.%
+                select(year, r2,
+                       rgn_id_whence = rgn_id,
+                       rgn_nam_whence = rgn_nam,
+                       value_whence = value), 
+              by=c('r2', 'year')) %.%
+    arrange(rgn_id, year, rgn_id_whence) %.%
+    select(rgn_id, rgn_nam, r2, r1, whence_choice, year, value, rgn_id_whence, rgn_nam_whence, value_whence) ; head(rgn_gapfilled_whence,20)
+  rgn_gapfilled_whence = rename(rgn_gapfilled_whence, replace=c('value' = value_nam, 'value_whence' = paste(value_nam, '_whence', sep='')))
+
+  write.csv(rgn_gapfilled_whence, file.path(dirsave, paste(layersave, '_whencev01.csv', sep='')), na = '', row.names=FALSE)   
 }
 
 
