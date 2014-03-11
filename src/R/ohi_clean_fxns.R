@@ -416,9 +416,9 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
   print('-->>> add_gapfill.r substitutes UN georegions means for NA values')
   
   # load libraries
-  library(reshape2)
-  library(gdata)
-  library(plyr)
+ # library(reshape2)
+  #library(gdata)
+  #library(plyr)
   library(dplyr)
   
   # read in lookup files
@@ -428,26 +428,28 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
   #tidy cleandata
   cleandata$rgn_nam = NULL
   n = names(cleandata)
-  names(cleandata)[!names(cleandata) %in% c('rgn_id', 'year')] = 'value' # call this value for processing; revert back below
+  names(cleandata)[!names(cleandata) %in% c('rgn_id', 'year')] = 'value' # call this value for processing; revert back below 
   
   # create lookup tables of average values for each UN georegions (r2, r1) ----
-  # this will calculate georegional averages based on cleandata if at least one of the countries in that georegion are present
-  # we exclude r0; we would want to do something before it came to that
+  # calculates georegional averages using cleandata >= 1 of the countries in that georegion are present. We exclude r0; we would want a different solution if that were necessary
   
   # calculate mean values of r2, r1 for each year using values from cleandata
   d_r2a = cleandata %.%
     left_join(gf, by='rgn_id') %.%
-    group_by(r2, year)  
+    group_by(r2, year) %.%
+    mutate(whence_choice = rep('r2')) # unfortunately need this here and just below because summarize() will remove it
    
   d_r2 = d_r2a %.%  # Have to split this chain so can save whence information below...
-    summarize(r2mean = mean(value, na.rm=T)); head(d_r2)
-  d_r2$r2year = as.numeric(as.character(d_r2$year)); head(d_r2) # to track years used in gapfilling by georegion
+    summarize(r2mean = mean(value, na.rm=T))%.%  
+    mutate(whence_choice = rep('r2')); head(d_r2)
+  #delete::d_r2$r2year = as.numeric(as.character(d_r2$year)) # to track years used in gapfilling by georegion
   
   d_r1 = cleandata %.%
     left_join(gf, by='rgn_id') %.%
     group_by(r1, year) %.%
-    summarize(r1mean = mean(value, na.rm=T))
-  d_r1$r1year = as.numeric(as.character(d_r1$year))  
+    summarize(r1mean = mean(value, na.rm=T)) %.%
+    mutate(whence_choice = rep('r1'))
+  #delete::d_r1$r1year = as.numeric(as.character(d_r1$year)); head(d_r1)
   
   
   # work with the rgn_ids that must be gapfilled ----
@@ -459,26 +461,30 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
     left_join(gf %.% 
                 select(rgn_id, r2, r1), 
               , by='rgn_id') %.%
-    arrange(rgn_id)
-  
+    arrange(rgn_id); head(rgn_gf)
+ 
   # join regions to be gapfilled with georegional averages for each year available  
   rgn_gf_combo = rgn_gf %.%
-    inner_join(d_r2, by='r2'); head(rgn_gf_combo)
-  rgn_gf_combo$value = rgn_gf_combo$r2mean; rgn_gf_combo$r2mean = NULL; head(rgn_gf_combo) # this is a hack, but %.% select(r2mean = value) isn't working
-  
+    left_join(d_r2, by='r2') %.%
+    select(rgn_id:year, value=r2mean); head(rgn_gf_combo) # select all, but rename r2mean to value
+ 
+  #delete::rgn_gf_combo[rgn_gf_combo$rgn_id==169, 7] = NA # test whether this works
+ 
   # if no r2 georegional average, join with r1 georegional averages for each year available, and combine back with rgn_gf_combo  
   if(sum(is.na(rgn_gf_combo$value))>0){
-    rgn_gf_combo1 = rgn_gf_combo[is.na(rgn_gf_combo$r2mean0),]
-    inner_join(d_r1, by='r1') %.%
-      select(r1mean = value)
+    rgn_gf_combo1 = rgn_gf_combo %.%
+      filter(is.na(value), !is.na(r2)) %.% # also removes open ocean and disputed 
+      select(rgn_id, rgn_nam, r1, r2) %.%
+      left_join(d_r1, by='r1') %.%
+      select(rgn_id:year, 
+             value=r1mean); head(rgn_gf_combo1)
     
-    rgn_gf_combo = rbind(rgn_gf_combo, rgn_gf_combo1)   
-    rgn_gf_combo$r21mean = rgn_gf_combo$r2mean    
-  }
-  
-  # hardcode identifiers for southern islands
-  if (!is.null(s_island_val)){
-    rgn_gf_combo$r2mean[rgn_gf_combo$r2 == 999] = s_island_val
+    # hardcode identifiers for southern islands
+    rgn_gf_combo1$value[rgn_gf_combo1$r2 == 999] = s_island_val
+    rgn_gf_combo1$whence_choice[rgn_gf_combo1$r2 == 999] = 'XSI'
+
+    rgn_gf_combo = rbind(rgn_gf_combo[!is.na(rgn_gf_combo$value),], 
+                         rgn_gf_combo1)      
   }
   
   
@@ -486,20 +492,21 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
   
   # prepare to combine; add whencev01 columns
   rgn_gf_fin = rgn_gf_combo %.%
-    select(rgn_id, year, value) %.% 
     mutate(whencev01 = rep('SG', length(rgn_gf_combo$year))) 
   
-  cleandata = cleandata %.%
-    mutate(whencev01 = rep('OG', length(cleandata$year)))
-    
+ cleandata = cleandata %.%
+   mutate(whencev01 = rep('OD')) %.%
+   mutate(whence_choice = rep('OD'))
+ 
   # combine finally
-  findat = rbind(cleandata, rgn_gf_fin); head(findat)
+  findat = rbind(cleandata, 
+                 select(rgn_gf_fin, rgn_id, year, value, whencev01, whence_choice)); head(findat)
   findat$rgn_id = as.numeric(findat$rgn_id)
   findat$year = as.numeric(findat$year)
   finaldata = findat %.%
     arrange(rgn_id, year)
-  n = c(n, 'whencev01')
-  names(finaldata) = n; head(finaldata) # rename original header
+  n2 = c(n, 'whencev01', 'whence_choice')
+  names(finaldata) = n2; head(finaldata) # rename original header
   
   print('Final data layer saved: ')
   print(paste(layersave, '.csv', sep=''))
@@ -507,9 +514,21 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
   
   # whence bookkeeping ----
   
-  whence_r2 = d_r2a %.%
-    select(-r0, -r0_label) 
+ d_r2a_whence = d_r2a %.%
+   select(-r0, -r0_label, -r2_label, -r1_label) %.%
+   mutate(whencev01 = rep('OD')) 
+ 
+ whence_data = rbind(d_r2a_whence, rgn_gf_fin); head(whence_data)
+ 
+   
+ 
+ ; head(rgn_gf_fin)
   write.csv(whence_r2, file.path(dirsave, paste(layersave, '_whencev01.csv', sep='')), na = '', row.names=FALSE) 
+  
+ whence_choice
+  whence_category
+  value->usd
+  XSI
   
 }
 

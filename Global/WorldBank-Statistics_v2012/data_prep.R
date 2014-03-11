@@ -114,7 +114,7 @@ for(k in 1:length(layer_uni)) { # k=1
   
   cleaned_layert = temporal.gapfill(cleaned_layer, fld.id = 'rgn_id', fld.value = names(cleaned_layer)[2], fld.year = 'year', verbose=F); head(cleaned_layert) 
   cleaned_layert2 = cleaned_layert; cleaned_layert2$whence = NULL; cleaned_layert2$whence_details = NULL
-  add_gapfill(cleaned_layert2, dirsave, layersave, s_island_val, )
+  add_gapfill(cleaned_layert2, dirsave, layersave, s_island_val)
 } 
 
 # #### 
