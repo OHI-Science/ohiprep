@@ -20,17 +20,16 @@ dir.create(file.path(dir_d, 'tmp'), showWarnings=F)
 
 # data prep ----
 
-# write new eez for 2014
-write.csv(eez_rgn_2013_csv, eez_rgn_2014_csv, na='', row.names=F)
-
-
-
 # read data tables ----
 eez  = foreign::read.dbf(eez_dbf, as.is=T); head(eez); summary(eez)
 fao  = foreign::read.dbf(fao_dbf, as.is=T); head(fao); summary(fao)
 land = foreign::read.dbf(land_dbf, as.is=T); head(fao); summary(land)
 z    = read.csv(eez_rgn_2013_csv, stringsAsFactors=F); head(z); tail(z); summary(z)
 
+# split
+
+# write new eez for 2014
+write.csv(z, eez_rgn_2014_csv, na='', row.names=F)
 
 # merge data ----
 m = z %.%
@@ -66,14 +65,16 @@ head(m); tail(m)
 # TODO: look at duplicates
 
 # check for missing or mismatched eez's
-print(subset(m, rgn_type=='eez' & ( eez_name_shp != eez_name | is.na(eez_name_shp) | is.na(eez_name) ), 
-             c(eez_id, rgn_type, rgn_id, rgn_name, eez_name, eez_name_shp)), row.names=F)  # only accented names showing up
+print(subset(m, rgn_type=='eez' & ( eez_name_shp != rgn_name | is.na(eez_name_shp) | is.na(rgn_name) ), 
+             c(eez_id, rgn_type, rgn_id, rgn_name, eez_name_shp)), row.names=F)  # only accented names showing up
 #  eez_id rgn_type rgn_id            rgn_name             eez_name        eez_name_shp
 #     252      eez    255            DISPUTED Disputed Sudan-Egypt               Egypt
 #     100      eez    100 Republique du Congo  R_publique du Congo R?publique du Congo
 #     244      eez    244             Curacao              Curacao             Cura?ao
 #      32      eez     32             Reunion              R_union             R?union
 # OK: just wierd accents in eez_name_shp so not matching eez_name
+
+eez %.% sort(eez$EEZ)
 
 # Antarctica
 print(subset(m, rgn_name=='Antarctica'), row.names=F)

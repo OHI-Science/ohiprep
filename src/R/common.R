@@ -1,6 +1,6 @@
 
 # set the neptune data_edit share based on operating system
-dir_neptune_data = c('Windows' = '//neptune/data_edit',
+dir_neptune_data = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
                      'Darwin'  = '/Volumes/data_edit',
                      'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
 
