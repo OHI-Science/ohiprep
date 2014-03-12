@@ -372,7 +372,7 @@ temporal.gapfill = function(data, fld.id = 'rgn_id', fld.value = 'value', fld.ye
       d.id.yrs = subset(d.id, year >= yr.min & year <= yr.max)      
       
       # skip if insufficient data to gap fill
-      if (nrow(d.id.yrs) < 2){
+      if (nrow(d.id.yrs) < 2){    # TODO: maybe flag this to gapfill
         next
       }
       
@@ -427,6 +427,8 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
   n = names(cleandata)
   value_nam = names(cleandata)[!names(cleandata) %in% c('rgn_id', 'year')]
   names(cleandata)[!names(cleandata) %in% c('rgn_id', 'year')] = 'value' # call this value for processing; revert back below 
+  head(cleandata)
+  
   
   # create lookup tables of average values for each UN georegions (r2, r1) ----
   # calculates georegional averages using cleandata >= 1 of the countries in that georegion are present. We exclude r0; we would want a different solution if that were necessary
@@ -435,33 +437,47 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
   d_r2a = cleandata %.%
     left_join(gf, by='rgn_id') %.%
     group_by(r2, year); head(d_r2a)
-  #delete mutate(whence_choice = rep('r2')) # unfortunately need this here and just below because summarize() will remove it
   
   d_r2 = d_r2a %.%  # Have to split this chain so can save whence information below...
-    summarize(r2mean = mean(value, na.rm=T))%.%  
+    summarize(r2mean = mean(value, na.rm=T)) %.%  # if this gives errors check to make sure this is dplyr::summarize not plyr::summarize
     mutate(whence_choice = rep('r2')); head(d_r2)
   
   d_r1 = cleandata %.%
     left_join(gf, by='rgn_id') %.%
     group_by(r1, year) %.%
     summarize(r1mean = mean(value, na.rm=T)) %.%
-    mutate(whence_choice = rep('r1'))
+    mutate(whence_choice = rep('r1')); head(d_r1)
   
   
   # work with the rgn_ids that must be gapfilled ----
   
-  # identify which rgn_ids are missing from cleandata (using anti_join); then left_join to the UN georegions  
-  rgn_to_gapfill = rf %.%
+  # identify which rgn_ids are missing from cleandata (using anti_join); then left_join to the UN georegions. Will need to add appropriate years.  
+  rgn_to_gapfill_tmp = rf %.%
     select(rgn_id, rgn_nam) %.%
     anti_join(cleandata, by='rgn_id') %.%
     left_join(gf %.% 
                 select(rgn_id, r2, r1), 
               , by='rgn_id') %.%
-    arrange(rgn_id); head(rgn_to_gapfill)
+    mutate(year = unique(cleandata$year)[1]) %.%  
+    arrange(rgn_id); head(rgn_to_gapfill_tmp)
   
+  # create rows in rgn_to_gapfill_tmp for each unique year
+  ind = c((rgn_to_gapfill_tmp$rgn_id %in% 213) | (!rgn_to_gapfill_tmp$r2 %in% NA)) # removes open ocean and disputed 
+  year_uni = as.data.frame(unique(cleandata$year))
+  names(year_uni) = 'year'
+  year_uni$year = as.numeric(year_uni$year)
+  
+  rgn_to_gapfill = data.frame(rgn_id=rep(rgn_to_gapfill_tmp$rgn_id[ind], dim(year_uni)[1]), 
+                          rgn_nam=rep(rgn_to_gapfill_tmp$rgn_nam[ind], dim(year_uni)[1]), 
+                          r2=rep(rgn_to_gapfill_tmp$r2[ind], dim(year_uni)[1]),
+                          r1=rep(rgn_to_gapfill_tmp$r1[ind], dim(year_uni)[1]),
+                          year=unique(cleandata$year))
+  rgn_to_gapfill = arrange(rgn_to_gapfill, rgn_id, year); head(rgn_to_gapfill)
+  
+    
   # join regions to be gapfilled with georegional averages for each year available  
   rgn_gapfilled = rgn_to_gapfill %.%
-    left_join(d_r2, by='r2') %.%
+    left_join(d_r2, by=c('r2', 'year')) %.%
     # select(rgn_id:year, value=r2mean) %.% ## this was an attempt to rename and isn't working; lines 2 below do this instead
     mutate(whence_choice = rep('r2')); head(rgn_gapfilled) 
   rgn_gapfilled$value = rgn_gapfilled$r2mean; rgn_gapfilled$r2mean = NULL # hack because select isn't allowing
@@ -469,7 +485,7 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
   # if no r2 georegional average, join with r1 georegional averages for each year available, and combine back with rgn_gapfilled  
   if(sum(is.na(rgn_gapfilled$value))>0){
     rgn_gapfilledb = rgn_gapfilled %.%
-      filter(is.na(value), !is.na(r2)) %.% # also removes open ocean and disputed 
+      filter(is.na(value)) %.% 
       select(rgn_id, rgn_nam, year, r1, r2) %.%
       left_join(d_r1, by=c('r1', 'year')) %.%
       select(rgn_id, rgn_nam, r1, r2, year, whence_choice, value=r1mean); head(rgn_gapfilledb)     
@@ -487,7 +503,8 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
   
   # prepare to combine; add whencev01 columns
   rgn_gapfilled = rgn_gapfilled %.%
-    mutate(whencev01 = rep('SG', length(rgn_gapfilled$year))); head(rgn_gapfilled) 
+    mutate(whencev01 = rep('SG', length(rgn_gapfilled$year))) %.%
+    arrange(rgn_id, year); head(rgn_gapfilled) 
   
   cleandata = cleandata %.%
     mutate(whencev01 = rep('OD')) %.%
@@ -519,150 +536,9 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
               by=c('r2', 'year')) %.%
     arrange(rgn_id, year, rgn_id_whence) %.%
     select(rgn_id, rgn_nam, r2, r1, whence_choice, year, value, rgn_id_whence, rgn_nam_whence, value_whence) ; head(rgn_gapfilled_whence,20)
-  rgn_gapfilled_whence = rename(rgn_gapfilled_whence, replace=c('value' = value_nam, 'value_whence' = paste(value_nam, '_whence', sep='')))
+  rgn_gapfilled_whence = plyr::rename(rgn_gapfilled_whence, replace=c('value' = value_nam, 'value_whence' = paste(value_nam, '_whence', sep='')))
 
   write.csv(rgn_gapfilled_whence, file.path(dirsave, paste(layersave, '_whencev01.csv', sep='')), na = '', row.names=FALSE)   
-}
-
-
-# JS
-add_gapfill_singleyear = function(cleaned_data, layersave, s_island_val=NULL,
-                                  rgn_georegions.csv = '/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/manual_output/rgn_georegions_wide_2013b.csv',
-                                  rgns.csv           = '/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/data/rgn_details.csv') {
-  # use SQLite to add UN gapfilling regions and save as new file (J. Stewart, Aug 2013) 
-  
-  
-  print('-->>> add_gapfill.r substitutes UN georegions means for NA values')
-  print('.')
-  print('..')
-  
-  library(reshape2)
-  library(gdata)
-  library(plyr)
-  options(gsubfn.engine = "R") # otherwise, get X11 launching for sqldf package
-  require(sqldf)
-  
-  
-  # FIRST, average each UN r2 georegion and each UN r1 georegion
-  # This will provide an r2 average if at least one of the countries in that region are present.
-  
-  # read in files
-  gf = read.csv(rgn_georegions.csv)
-  
-  #tidy cleaned_data
-  cleandata = cleaned_data
-  cleandata$rgn_nam = NULL
-  n = names(cleandata)
-  names(cleandata)[2] = 'value' # BB: what if year is the second column? this breaks.
-  
-  # join r2 to cleandata
-  clean_r2 = sqldf("SELECT a.*, b.r2, b.r1, b.r0
-                 FROM cleandata AS a
-                 LEFT OUTER JOIN (
-                     SELECT rgn_id, r2, r1, r0
-                     FROM gf
-                     ) AS b ON b.rgn_id = a.rgn_id") 
-  
-  # transpose then recast, calculating mean value of r2 grouped by year. And for r1
-  r2mean_long = dcast(clean_r2, r2 ~ r0, fun.aggregate = mean, na.rm=T) # mean(clean_r2$value[clean_r2$r2 == 5]) # quick check
-  names(r2mean_long)[2] = 'r2mean'
-  
-  r1mean_long = dcast(clean_r2, r1 ~ r0, fun.aggregate = mean, na.rm=T) 
-  names(r1mean_long)[2] = 'r1mean'
-  
-  r0mean_long = data.frame(clean_r2$r0, mean(clean_r2$value))   
-  names(r0mean_long) = c('r0', 'r0mean')
-  r0mean_long = r0mean_long[1,]
-  
-  # SECOND, use the master OHI region list (to identify which rgn_ids are missing) and join to the UN georegions so they can then be joined to cleandata to see how to gapfill. 
-  
-  # read in master OHI list with 2letter code; region ids
-  rk = read.csv('/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/manual_output/eez_rgn_2013master.csv')
-  rk = rk[order(rk$rgn_id),]
-  rkx = rk[rk$rgn_id < 255,]# remove high seas and non-regions
-  rk_uni = unique(rkx)
-  rgn_tofill = sqldf("SELECT a.rgn_id_2013, a.rgn_nam_2013
-                 FROM rk_uni AS a
-                 LEFT OUTER JOIN (
-                     SELECT DISTINCT rgn_id
-                     FROM cleandata
-                     ) AS b ON b.rgn_id = a.rgn_id_2013
-                  WHERE b.rgn_id IS null") 
-  
-  # read in gap-filling UN region document and join to rgn_tofill
-  rgn_gf = sqldf("SELECT a.rgn_id_2013, a.rgn_nam_2013, b.r2, b.r1
-                 FROM rgn_tofill AS a
-                 LEFT OUTER JOIN (
-                     SELECT rgn_id, r2, r1
-                     FROM gf
-                     ) AS b ON b.rgn_id = a.rgn_id_2013") 
-  
-  # THIRD, join r2s and gapfill
-  
-  trixtmp = r2mean_long
-  rgn_gf_r2 = sqldf("SELECT a.*, b.r2mean
-                          FROM rgn_gf AS a
-                          LEFT OUTER JOIN (
-                          SELECT r2, r2mean
-                          FROM trixtmp
-                          ) AS b ON b.r2 = a.r2") 
-  
-  # fix a few NAs by hand
-  rgn_gf_r2$r2mean[rgn_gf_r2$r2 == 999] = s_island_val # sub in the southern island regions
-  rgn_gf_r2 <- rgn_gf_r2[rgn_gf_r2$rgn_id != 213,] # remove Antarctica
-  
-  # identify when rgn_gf_r2 is na (=no data for that r2 region)
-  idx = which(is.na(rgn_gf_r2$r2mean)) 
-  
-  if(length(idx) > 0) {
-    trixtmp2 = r1mean_long
-    rgn_gf_r2r1 = sqldf("SELECT a.*, b.r1mean
-                 FROM rgn_gf_r2 AS a
-                 LEFT OUTER JOIN (
-                     SELECT r1, r1mean
-                     FROM trixtmp2
-                     ) AS b ON b.r1 = a.r1") 
-  }
-  
-  # switch out r1mean where r2mean=NA
-  rgn_gf_combo = rgn_gf_r2r1
-  rgn_gf_combo$r21mean = rgn_gf_combo$r2mean
-  rdex = which((is.na(rgn_gf_combo$r21mean) & rgn_gf_combo$r2 != 999))
-  rgn_gf_combo$r21mean[rdex] = rgn_gf_combo$r1mean[rdex]
-  #r0dex = which(rgn_gf_combo$r21mean == NA & rgn_gf_combo$r2 != 999)
-  rgn_gf_combo = data.frame(cbind(rgn_gf_combo$rgn_id_2013, rgn_gf_combo$r21mean))  
-  names(rgn_gf_combo) = c('rgn_id', 'r21mean')
-  
-  rgn_gf_r2_all = rgn_gf_combo
-  
-  
-  #TODO: logic to fill for the world
-  
-  # prep to combine, account for category column
-  clean_r2b = clean_r2
-  clean_r2b$r2 = NULL; clean_r2b$r1 = NULL; clean_r2b$r0 = NULL
-  
-  col_diff = dim(clean_r2b)[2] - dim(rgn_gf_r2_all)[2]
-  if(col_diff != 0) {
-    if(col_diff == 1) {
-      rgn_gf_r2_all$units = rep(clean_r2b$units[1], dim(rgn_gf_r2_all)[1])
-    } else {
-      print('problem with too many data columns')
-    }
-  }
-  
-  names(clean_r2b) = n
-  names(rgn_gf_r2_all) = n
-  
-  # combine finally:
-  findat = rbind(clean_r2b, rgn_gf_r2_all)
-  finaldata = findat[order(findat$rgn_id),]
-  
-  
-  
-  print('Final data layer saved: ')
-  print(layersave)
-  write.csv(finaldata, layersave, na = '', row.names=FALSE)
 }
 
 

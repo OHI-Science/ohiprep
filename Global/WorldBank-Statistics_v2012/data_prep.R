@@ -18,7 +18,7 @@
 # load libraries
 library(reshape2)
 library(gdata)
-library(plyr)
+#library(plyr)
 options(max.print=5E6)
 
 
@@ -100,6 +100,7 @@ d.2 = d.2[!is.na(d.2$rgn_id),]; tail(d.2)
 layer_uni = unique(d.2$layer)
 layernames = sprintf('rgn_wb_%s_2014a', tolower(layer_uni))
 s_island_val = NA # assign what southern islands will get. this could be something fancier, depending on the dataset. 
+dirsave = file.path(dir_d, 'data')
 
 for(k in 1:length(layer_uni)) { # k=1
   cleaned_layer = d.2[d.2$layer == layer_uni[k],]
@@ -109,7 +110,6 @@ for(k in 1:length(layer_uni)) { # k=1
   
   # save 2014a files
   layersave = layernames[k]
-  dirsave = file.path(dir_d, 'data')
   cleaned_layer$rgn_nam = NULL
   
   cleaned_layert = temporal.gapfill(cleaned_layer, fld.id = 'rgn_id', fld.value = names(cleaned_layer)[2], fld.year = 'year', verbose=F); head(cleaned_layert) 
