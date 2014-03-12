@@ -9,16 +9,6 @@
 #   georegional gapfilling with add_gapfill.r 
 #   final processing by hand: see end of script
 
-# TODO: make this work across machines
-# configuration based on machine name
-# conf = list(
-#   'AMPHITRITE'=list(  # BB's Windows 8 on MacBook Pro VMWare
-#     dir_git = 'G:/ohigit',
-#     dir_big = 'N:/'       )
-#   'gore.nceas.ucsb.edu'=list(  # JSL's iMac
-#     dir_git = 'G:/ohigit',
-#     dir_big = 'N:/'       ))[[Sys.info()['nodename']]]
-
 # setup
 source('/Users/jstewart/github/ohiprep/src/R/ohi_clean_fxns.R') # also fix this directory
 dir1 = ('/Users/jstewart/github/ohiprep/Global/WEF-Economics_v2014') # also fix this directory
