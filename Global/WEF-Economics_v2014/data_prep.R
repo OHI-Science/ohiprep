@@ -9,7 +9,15 @@
 #   georegional gapfilling with add_gapfill.r 
 #   final processing by hand: see end of script
 
+<<<<<<< HEAD
 # setup ----
+=======
+# setup
+source('/Users/jstewart/github/ohiprep/src/R/ohi_clean_fxns.R') # also fix this directory
+dir1 = ('/Users/jstewart/github/ohiprep/Global/WEF-Economics_v2014') # also fix this directory
+wd = file.path(dir1, 'raw')
+setwd(wd)
+>>>>>>> FETCH_HEAD
 
 # load libraries
 library(reshape2)
