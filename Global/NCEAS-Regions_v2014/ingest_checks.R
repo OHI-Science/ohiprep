@@ -74,7 +74,8 @@ print(subset(m, rgn_type=='eez' & ( eez_name_shp != rgn_name | is.na(eez_name_sh
 #      32      eez     32             Reunion              R_union             R?union
 # OK: just wierd accents in eez_name_shp so not matching eez_name
 
-eez %.% sort(eez$EEZ)
+eez %.% arrange(EEZ, Country) %.% select(EEZ_ID, EEZ, Country, ISO_3digit)
+names(eez)
 
 # Antarctica
 print(subset(m, rgn_name=='Antarctica'), row.names=F)
