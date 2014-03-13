@@ -20,7 +20,9 @@ dir_d = 'Global/WorldBank-WGI_v2013'
 # get functions
 source('src/R/ohi_clean_fxns.R')
 
-# **  it takes about 10 mins to make GL-WorldBank-WGI_v2011-cleaned.csv
+
+# **  it takes about 10 mins to make GL-WorldBank-WGI_v2011-cleaned.csv using add_rgn_id.r
+## calculations from raw data to add_rgn_id.r ----
 
 filein = 'wgidataset.xlsx'
 wgisheetNames = gsub(" ", "", sheetNames(file.path(dir_d, 'raw', filein)))
@@ -113,46 +115,45 @@ d.m5 = rbind(d.m4[!ind,],
             score=rep(d.m4$score[ind], 5),
             year=rep(d.m4$year[ind], 5)))
 
-## run add_rgn_id and save
+## run add_rgn_id and save ----
 uifilesave = file.path(dir_d, 'raw', 'GL-WorldBank-WGI_v2011-cleaned.csv')
 add_rgn_id(d.m5, uifilesave)
 
-
-## gapfilling ----
+# rescaling ----
 
 cleaned_layer = read.csv(uifilesave)
 
+rng = c(-2.5, 2.5)
+cleaned_layer = within(cleaned_layer,{
+  score = (score - rng[1]) / (rng[2] - rng[1])})
+
+## gapfilling ----
+
 # temporal gapfilling with temporal.gapfill.r
-cleaned_layert_tmp = temporal.gapfill(cleaned_layer, fld.id = 'rgn_id', fld.value = names(cleaned_layer)[3], fld.year = 'year', verbose=F); head(cleaned_layert_tmp) 
+cleaned_layert_tmp = temporal.gapfill(cleaned_layer, 
+                                      fld.id = 'rgn_id', 
+                                      fld.value = names(cleaned_layer)[3], 
+                                      fld.year = 'year', verbose=F); head(cleaned_layert_tmp) 
 cleaned_layert = cleaned_layert_tmp; cleaned_layert$whence = NULL; cleaned_layert$whence_details = NULL; head(cleaned_layert) 
-
+cleaned_layert = cleaned_layert %.% 
+  select(rgn_id, year, score)
+  
 # sovereignty (parent-children) gapfilling with add_gapfill_sov.r 
-cleaned_data_sov =  add_gapfill_sov(cleaned_layert) 
-
-## do I need to run spatial gapfilling next?
-
-## come back here for more thinkings about what to do with returned value
-
-# combine and clean
-cleaned_data2 = rbind(cleaned_data, cleaned_data_sov)
-cleaned_data2 = cleaned_data2[order(cleaned_data2$rgn_id),]
-cleaned_data2[cleaned_data2$rgn_id_2013 != 213,] # remove Antarctica
-cleaned_data2$rgn_nam = NULL
-
-# save all (interim file)
-print('Final data layer saved: ')
-layersave = paste(dir1, 'data/', 'rgn_wb_wgi_all.csv', sep='')
-write.csv(cleaned_data2, layersave, na = '', row.names=FALSE)
+dirsave = file.path(dir_d, 'data')
+layersave = 'rgn_wb_wgi_2014a'
+add_gapfill_sov(cleaned_layert, dirsave, layersave)
 
 
-### save as 2012a and 2013a files:
+# calculate inverse file and save ----
+cleaned_data_sov =  read.csv(file.path(dir_d, 'data', paste(layersave, '.csv', sep=''))); head(cleaned_data_sov) 
+cleaned_data_sov_inverse = cleaned_data_sov %.%
+  mutate(score_inverse = (1-score)) %.%
+  select(rgn_id, year,
+         score = score_inverse, 
+         whencev01, whence_choice); head(cleaned_data_sov_inverse)
 
-d_all = read.csv(layersave)
-filesave2012a = paste(dir1, 'data/', 'rgn_wb_wgi_2012a.csv', sep='')
-filesave2013a = paste(dir1, 'data/', 'rgn_wb_wgi_2013a.csv', sep='')
-save_pressure_layers_2012a_2013a(d_all, filesave2012a, filesave2013a)
+write.csv(cleaned_data_sov_inverse, 
+          file.path(dirsave, paste(layersave, '_inverse.csv', sep='')), na = '', row.names=FALSE)
 
-
-
-
+## --- fin
 

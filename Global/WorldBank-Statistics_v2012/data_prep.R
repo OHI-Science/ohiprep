@@ -30,7 +30,7 @@ dir_d = 'Global/WorldBank-Statistics_v2012'
 # get functions
 source('src/R/ohi_clean_fxns.R')
 
-# read in files ----
+# read in and process files ----
 d.all =  matrix(nrow=0, ncol=0)
 count = 0
 for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), full.names=T){ 
@@ -83,7 +83,7 @@ d.all3 = d.all2[order(d.all2$layer, d.all2$country,  d.all2$year),]
 print('these are all the variables that are included in the cleaned file: ')
 print(data.frame(unique(d.all3$layer)))
 
-## run add_rgn_id and save
+## run add_rgn_id and save ----
 uifilesave = file.path(dir_d, 'raw', 'GL-WorldBank-Statistics_v2012-cleaned.csv')
 add_rgn_id(d.all3, uifilesave)
 

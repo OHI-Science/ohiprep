@@ -405,11 +405,11 @@ temporal.gapfill = function(data, fld.id = 'rgn_id', fld.value = 'value', fld.ye
 
 #JS
 add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL, 
-                       dpath = '/Users/jstewart/github/ohiprep/src/LookupTables',   
+                       dpath = 'src/LookupTables',   
                        rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'),
                        rgns.csv           = file.path(dpath, 'rgn_details.csv')) {
   
-  # debug: cleaned_data=s; layersave=file.path(td, 'sanitation_gapfilled_2013b.csv'); s_island_val=NULL; dpath = '/Users/jstewart/github/ohiprep/src/LookupTables'; rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'); rgns.csv = file.path(dpath, 'rgn_details.csv')
+  # debug: cleaned_data=s; layersave=file.path(td, 'sanitation_gapfilled_2013b.csv'); s_island_val=NULL; dpath = 'src/LookupTables'; rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'); rgns.csv = file.path(dpath, 'rgn_details.csv')
   
   
   # setup ----
@@ -545,12 +545,11 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
 
 
 # JS  # sovereignty
-add_gapfill_sov = function(cleaned_data,
-                           dpath = '/Users/jstewart/github/ohiprep/src/LookupTables',   
-                           rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'),
+add_gapfill_sov = function(cleaned_data, dirsave, layersave,
+                           dpath = 'src/LookupTables',   
                            rgn_master.csv     = file.path(dpath, 'eez_rgn_2013master.csv')) {
   
-  # debug:: dpath = '/Users/jstewart/github/ohiprep/src/LookupTables'; rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'); rgn_master.csv= file.path(dpath, 'eez_rgn_2013master.csv')
+  # debug:: dpath = 'src/LookupTables'; rgn_master.csv= file.path(dpath, 'eez_rgn_2013master.csv')
   
  
   # setup ----
@@ -560,8 +559,9 @@ add_gapfill_sov = function(cleaned_data,
   library(dplyr)
   
   # read in lookup files
-  gf = read.csv(rgn_georegions.csv); head(gf) # georegions file
   rk = read.csv(rgn_master.csv); head(rk) # master file
+  rkf = rk %.%
+    filter(rgn_id_2013 < 255) # remove disputed and open ocean
   
   #tidy cleandata
   cleandata = cleaned_data
@@ -574,7 +574,7 @@ add_gapfill_sov = function(cleaned_data,
     
   # join cleandata with master sovereignty list and identify regions to gapfill
   d_sov = cleandata %.%
-    left_join(rk %.%
+    left_join(rkf %.%
                 select(rgn_id = rgn_id_2013, 
                        rgn_nam = rgn_nam_2013, 
                        sov_id, sov_nam),
@@ -582,7 +582,7 @@ add_gapfill_sov = function(cleaned_data,
   
   
   # identify which rgn_ids are missing from cleandata (using anti_join); then left_join to the sovereign regions. 
-  rgn_to_gapfill = rk %.%
+  rgn_to_gapfill = rkf %.%
     select(rgn_id = rgn_id_2013, 
            rgn_nam = rgn_nam_2013, 
            sov_id, sov_nam) %.%
@@ -620,6 +620,13 @@ add_gapfill_sov = function(cleaned_data,
   n2 = c(n, 'whencev01', 'whence_choice')
   names(finaldata) = n2; head(finaldata) # rename original header
   
-  return(finaldata)
+  print('Final data layer saved: ')
+  print(paste(layersave, '.csv', sep=''))
+  write.csv(finaldata, file.path(dirsave, paste(layersave, '.csv', sep='')), na = '', row.names=FALSE)
+  
+  print('..')
+  print('Check to see whether any further georegional gapfilling is required')
+  
+  # return(finaldata) # this is how it was done in the past
   
 }
