@@ -1,6 +1,8 @@
 GL-WorldBank-WGI_v2013
 ===========================
 
+\* next time try using WorldBank R packaged: https://github.com/OHI-Science/ohiprep/issues/11
+
 The Worldwide Governance Indicators, 2012 Update
 Aggregate Indicators of Governance 1996-2011.
 

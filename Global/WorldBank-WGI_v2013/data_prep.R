@@ -4,40 +4,45 @@
 
 # gapfilling: sovereignty (parent-children) gapfilling with add_gapfill_sov.r
 
-# setup
-source('/Users/jstewart/github/ohiprep/src/R/ohi_clean_fxns.R') # also fix this directory
-dir1 = ('/Users/jstewart/github/ohiprep/Global/WorldBank-WGI_v2013') # also fix this directory
-wd = file.path(dir1, 'raw')
-setwd(wd)
 
-library(mgcv) # for troubleshooting below
+# setup ----
+
+# load libraries
 library(reshape2)
-library(gdata) # to enable read.xls
-options(max.print=5E6)
+library(gdata)
+library(dplyr)
+
+# from get paths configuration based on host machine name
+source('src/R/common.R') # set dir_neptune_data
+# Otherwise, presume that scripts are always working from your default ohiprep folder
+dir_d = 'Global/WorldBank-WGI_v2013'
+
+# get functions
+source('src/R/ohi_clean_fxns.R')
+
+# **  it takes about 10 mins to make GL-WorldBank-WGI_v2011-cleaned.csv
 
 filein = 'wgidataset.xlsx'
-wgisheetNames = gsub(" ", "", sheetNames(filein))
+wgisheetNames = gsub(" ", "", sheetNames(file.path(dir_d, 'raw', filein)))
 wgisheets = 2:7 # the six WGI indicators, each on a separate sheet
 headerID = 'Country/Territory'
 
 # read in two header rows, collapse into one header title, read in the rest of the data with those header names.
 d.all =  matrix(nrow=0, ncol=0)
-for (s in wgisheets){
+for (s in wgisheets){ # s=2
   rm(d, d.m, d.c)
   
-  hdr = read.xls(filein, sheet=s, blank.lines.skip=F, skip=13, nrows=2, header=F) 
+  hdr = read.xls(file.path(dir_d, 'raw', filein), sheet=s, blank.lines.skip=F, skip=13, nrows=2, header=F) 
   hdr = apply(hdr, 2, function(x) paste(rev(x),collapse='.'))
   hdr[1:2] = gsub('\\.','',hdr[1:2]) # clean two first column headers
   hdr = gsub('\\-','',hdr) # 
   hdr = gsub('.+ank','PercRank',hdr) # make this consistent: P-Rank and Rank were used in different sheets but are same value. 
   
-  d = read.xls(filein, sheet=s, blank.lines.skip=F, skip=15, header=F, col.names=hdr) 
-  # head(dat)
+  d = read.xls(file.path(dir_d, 'raw', filein), sheet=s, blank.lines.skip=F, skip=15, header=F, col.names=hdr)
   
   # melt data
   d.m = melt(data=d, id.vars=names(d)[1:2], variable.name='stat')
-  names(d.m) = c('country','countryID','stat','value')
-  #head(d.m)
+  names(d.m) = c('country','countryID','stat','value');head(d.m)
   
   # change NAs
   d.m$value[d.m$value == '#N/A'] = NA 
@@ -91,15 +96,6 @@ names(d.all2)[c(2,4)] = c('score', 'category')
 # transpose with mean aggregate function to average over 6 indicator subcategories
 d.all2$score = as.numeric(d.all2$score)
 d.t = dcast(d.all2, value.var="score", country ~ year, fun.aggregate = mean, na.rm = T) 
-
-# # check for rows that are all NA: None
-# d.t2 = matrix(nrow=0, ncol=0)
-# for(i in 1:dim(d.t)[1]){             
-#   bb = dim(d.t)[2] - sum(is.na(d.t[i,]))
-#   if(bb == 1) { # this means just the countryname and country code name are not NA
-#     cat(d.t$country[i])# d.2 = rbind(d.2,d.1[i,])
-#   }
-# }
   
 # remelt for final
 d.m2 = melt(data=d.t, id.vars=names(d.all)[1], variable.name='year')
@@ -118,15 +114,24 @@ d.m5 = rbind(d.m4[!ind,],
             year=rep(d.m4$year[ind], 5)))
 
 ## run add_rgn_id and save
-uifilesave = file.path(wd, 'GL-WorldBank-WGI_v2011-cleaned.csv')
+uifilesave = file.path(dir_d, 'raw', 'GL-WorldBank-WGI_v2011-cleaned.csv')
 add_rgn_id(d.m5, uifilesave)
 
 
+## gapfilling ----
 
-# ------------- gapfill
-## sovereignty (parent-children) gapfilling with add_gapfill_sov.r
-cleaned_data = read.csv(uifilesave)
-cleaned_data_sov =  add_gapfill_sov(cleaned_data) 
+cleaned_layer = read.csv(uifilesave)
+
+# temporal gapfilling with temporal.gapfill.r
+cleaned_layert_tmp = temporal.gapfill(cleaned_layer, fld.id = 'rgn_id', fld.value = names(cleaned_layer)[3], fld.year = 'year', verbose=F); head(cleaned_layert_tmp) 
+cleaned_layert = cleaned_layert_tmp; cleaned_layert$whence = NULL; cleaned_layert$whence_details = NULL; head(cleaned_layert) 
+
+# sovereignty (parent-children) gapfilling with add_gapfill_sov.r 
+cleaned_data_sov =  add_gapfill_sov(cleaned_layert) 
+
+## do I need to run spatial gapfilling next?
+
+## come back here for more thinkings about what to do with returned value
 
 # combine and clean
 cleaned_data2 = rbind(cleaned_data, cleaned_data_sov)

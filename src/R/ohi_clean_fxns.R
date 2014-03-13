@@ -403,7 +403,7 @@ temporal.gapfill = function(data, fld.id = 'rgn_id', fld.value = 'value', fld.ye
   return(d)
 }
 
-
+#JS
 add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL, 
                        dpath = '/Users/jstewart/github/ohiprep/src/LookupTables',   
                        rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'),
@@ -451,7 +451,7 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
   
   # work with the rgn_ids that must be gapfilled ----
   
-  # identify which rgn_ids are missing from cleandata (using anti_join); then left_join to the UN georegions. Will need to add appropriate years.  
+  # identify which rgn_ids are missing from cleandata (using anti_join); then left_join to the UN georegions. 
   rgn_to_gapfill_tmp = rf %.%
     select(rgn_id, rgn_nam) %.%
     anti_join(cleandata, by='rgn_id') %.%
@@ -468,13 +468,15 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
   year_uni$year = as.numeric(year_uni$year)
   
   rgn_to_gapfill = data.frame(rgn_id=rep(rgn_to_gapfill_tmp$rgn_id[ind], dim(year_uni)[1]), 
-                          rgn_nam=rep(rgn_to_gapfill_tmp$rgn_nam[ind], dim(year_uni)[1]), 
-                          r2=rep(rgn_to_gapfill_tmp$r2[ind], dim(year_uni)[1]),
-                          r1=rep(rgn_to_gapfill_tmp$r1[ind], dim(year_uni)[1]),
-                          year=unique(cleandata$year))
+                              rgn_nam=rep(rgn_to_gapfill_tmp$rgn_nam[ind], dim(year_uni)[1]), 
+                              r2=rep(rgn_to_gapfill_tmp$r2[ind], dim(year_uni)[1]),
+                              r1=rep(rgn_to_gapfill_tmp$r1[ind], dim(year_uni)[1]),
+                              year=unique(cleandata$year))
   rgn_to_gapfill = arrange(rgn_to_gapfill, rgn_id, year); head(rgn_to_gapfill)
   
-    
+  
+  ## gapfill data
+  
   # join regions to be gapfilled with georegional averages for each year available  
   rgn_gapfilled = rgn_to_gapfill %.%
     left_join(d_r2, by=c('r2', 'year')) %.%
@@ -537,71 +539,87 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
     arrange(rgn_id, year, rgn_id_whence) %.%
     select(rgn_id, rgn_nam, r2, r1, whence_choice, year, value, rgn_id_whence, rgn_nam_whence, value_whence) ; head(rgn_gapfilled_whence,20)
   rgn_gapfilled_whence = plyr::rename(rgn_gapfilled_whence, replace=c('value' = value_nam, 'value_whence' = paste(value_nam, '_whence', sep='')))
-
+  
   write.csv(rgn_gapfilled_whence, file.path(dirsave, paste(layersave, '_whencev01.csv', sep='')), na = '', row.names=FALSE)   
 }
 
 
-# JS
-add_gapfill_sov = function(cleaned_data) {
-  # sovereignty
-  # use SQLite to add UN gapfilling regions and save as new file (J. Stewart, Aug 2013) 
+# JS  # sovereignty
+add_gapfill_sov = function(cleaned_data,
+                           dpath = '/Users/jstewart/github/ohiprep/src/LookupTables',   
+                           rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'),
+                           rgn_master.csv     = file.path(dpath, 'eez_rgn_2013master.csv')) {
   
+  # debug:: dpath = '/Users/jstewart/github/ohiprep/src/LookupTables'; rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'); rgn_master.csv= file.path(dpath, 'eez_rgn_2013master.csv')
   
+ 
+  # setup ----
   print('-->>> add_gapfill_sov.r gives children the parent values based on sovereignty')
-  print('.')
-  print('..')
   
-  library(reshape2)
-  library(gdata)
-  library(plyr)
-  options(gsubfn.engine = "R") # otherwise, get X11 launching for sqldf package
-  require(sqldf)
+  # load libraries
+  library(dplyr)
   
+  # read in lookup files
+  gf = read.csv(rgn_georegions.csv); head(gf) # georegions file
+  rk = read.csv(rgn_master.csv); head(rk) # master file
+  
+  #tidy cleandata
   cleandata = cleaned_data
-  n = names(cleaned_data)
-  names(cleandata)[3] = 'value'
+  n = names(cleandata)
+  value_nam = names(cleandata)[!names(cleandata) %in% c('rgn_id', 'year')]
+  names(cleandata)[!names(cleandata) %in% c('rgn_id', 'year')] = 'value';  head(cleandata)
   
-  # SECOND, use the master OHI region list (to identify which rgn_ids are missing) and join to the sovereignty so they can then be joined to cleandata to see how to gapfill. 
-  
-  # read in master OHI list with 2letter code; region ids
-  rk = read.csv('/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/manual_output/eez_rgn_2013master.csv')
-  rk = rk[order(rk$rgn_id_2013),]
-  rkx = rk[rk$rgn_id_2013 < 255,]# remove high seas and non-regions
-  rk_uni = unique(rkx)
-  rgn_tofill = sqldf("SELECT a.rgn_id_2013, a.rgn_nam_2013, a.sov_id, a.sov_nam
-                 FROM rk_uni AS a
-                 LEFT OUTER JOIN (
-                     SELECT DISTINCT rgn_id
-                     FROM cleandata
-                     ) AS b ON b.rgn_id = a.rgn_id_2013
-                  WHERE b.rgn_id IS null") 
-  
-  # THIRD, join and gapfill
-  # do this for every year: 
-  
-  yrtrix = unique(cleandata$year)
-  rgn_gf_sov_all = matrix(nrow=0, ncol=0)
-  for(yr in yrtrix) {
-    trixtmp = cleandata[cleandata$year == yr,]
+   
+  ## identify gaps and fill ----
     
-    rgn_gf_sov = sqldf("SELECT a.*, b.value, b.year
-                          FROM rgn_tofill AS a
-                          LEFT OUTER JOIN (
-                          SELECT value, rgn_id, year
-                          FROM trixtmp
-                          ) AS b ON b.rgn_id = a.sov_id") 
-    
-    
-    rgn_gf_sov_all = rbind(rgn_gf_sov_all, rgn_gf_sov)
-    
-  }
+  # join cleandata with master sovereignty list and identify regions to gapfill
+  d_sov = cleandata %.%
+    left_join(rk %.%
+                select(rgn_id = rgn_id_2013, 
+                       rgn_nam = rgn_nam_2013, 
+                       sov_id, sov_nam),
+              by='rgn_id'); head(d_sov)
   
-  rgn_gf_sov_all = rgn_gf_sov_all[order(rgn_gf_sov_all$rgn_id, rgn_gf_sov_all$year),]
   
-  cleaned_data_sov = rgn_gf_sov_all[,c(1,2,dim(rgn_gf_sov_all)[2]-1, dim(rgn_gf_sov_all)[2])]
-  names(cleaned_data_sov) = n
+  # identify which rgn_ids are missing from cleandata (using anti_join); then left_join to the sovereign regions. 
+  rgn_to_gapfill = rk %.%
+    select(rgn_id = rgn_id_2013, 
+           rgn_nam = rgn_nam_2013, 
+           sov_id, sov_nam) %.%
+    anti_join(cleandata, by='rgn_id') %.%
+    arrange(rgn_id); head(rgn_to_gapfill)
+ 
   
-  return(cleaned_data_sov)
+  # gapfill using d_sov created above
+  rgn_gapfilled = rgn_to_gapfill %.%
+    left_join(d_sov %.%
+                select(value, year, sov_id, sov_nam),
+              by=c('sov_id', 'sov_nam')); head(rgn_gapfilled) 
+  
+ 
+  # combine gapfilled data with original data; save ----
+
+  
+  # prepare to combine; add whencev01 columns
+  rgn_gapfilled = rgn_gapfilled %.%
+    mutate(whencev01 = rep('SCG', length(rgn_gapfilled$year))) %.%
+    arrange(rgn_id, year); head(rgn_gapfilled) 
+  
+  cleandata = cleandata %.%
+    mutate(whencev01 = rep('OD')) %.%
+    mutate(whence_choice = rep('OD')); head(cleandata)
+  
+  # combine finally
+  findat = rbind(cleandata, 
+                 select(rgn_gapfilled, rgn_id, year, value, whencev01,
+                        whence_choice = sov_nam)); head(findat)
+  findat$rgn_id = as.numeric(findat$rgn_id)
+  findat$year = as.numeric(findat$year)
+  finaldata = findat %.%
+    arrange(rgn_id, year)
+  n2 = c(n, 'whencev01', 'whence_choice')
+  names(finaldata) = n2; head(finaldata) # rename original header
+  
+  return(finaldata)
   
 }

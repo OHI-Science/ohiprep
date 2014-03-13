@@ -9,15 +9,8 @@
 #   georegional gapfilling with add_gapfill.r 
 #   final processing by hand: see end of script
 
-<<<<<<< HEAD
+
 # setup ----
-=======
-# setup
-source('/Users/jstewart/github/ohiprep/src/R/ohi_clean_fxns.R') # also fix this directory
-dir1 = ('/Users/jstewart/github/ohiprep/Global/WEF-Economics_v2014') # also fix this directory
-wd = file.path(dir1, 'raw')
-setwd(wd)
->>>>>>> FETCH_HEAD
 
 # load libraries
 library(reshape2)
@@ -46,11 +39,11 @@ rng = c(1, 7)
 gci = within(gci,{
     score = (score - rng[1]) / (rng[2] - rng[1])}); head(gci)
 
-## run add_rgn_id and save
+## run add_rgn_id and save ----
 uifilesave = file.path(dir_d, 'raw', 'WEF_GCI_rescaled-cleaned.csv')
 add_rgn_id(gci, uifilesave)
 
-## georegional gapfilling with add_gapfill.r 
+## georegional gapfilling with add_gapfill.r ----
 cleaned_data1 = read.csv(uifilesave)
 s_island_val = NA # assign what southern islands will get. 
 dirsave = file.path(dir_d, 'data')
