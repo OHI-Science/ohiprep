@@ -4,40 +4,47 @@
 
 # gapfilling: sovereignty (parent-children) gapfilling with add_gapfill_sov.r
 
-# setup
-source('/Users/jstewart/github/ohiprep/src/R/ohi_clean_fxns.R') # also fix this directory
-dir1 = ('/Users/jstewart/github/ohiprep/Global/WorldBank-WGI_v2013') # also fix this directory
-wd = file.path(dir1, 'raw')
-setwd(wd)
 
-library(mgcv) # for troubleshooting below
+# setup ----
+
+# load libraries
 library(reshape2)
-library(gdata) # to enable read.xls
-options(max.print=5E6)
+library(gdata)
+library(dplyr)
+
+# from get paths configuration based on host machine name
+source('src/R/common.R') # set dir_neptune_data
+# Otherwise, presume that scripts are always working from your default ohiprep folder
+dir_d = 'Global/WorldBank-WGI_v2013'
+
+# get functions
+source('src/R/ohi_clean_fxns.R')
+
+
+# **  it takes about 10 mins to make GL-WorldBank-WGI_v2011-cleaned.csv using add_rgn_id.r
+## calculations from raw data to add_rgn_id.r ----
 
 filein = 'wgidataset.xlsx'
-wgisheetNames = gsub(" ", "", sheetNames(filein))
+wgisheetNames = gsub(" ", "", sheetNames(file.path(dir_d, 'raw', filein)))
 wgisheets = 2:7 # the six WGI indicators, each on a separate sheet
 headerID = 'Country/Territory'
 
 # read in two header rows, collapse into one header title, read in the rest of the data with those header names.
 d.all =  matrix(nrow=0, ncol=0)
-for (s in wgisheets){
+for (s in wgisheets){ # s=2
   rm(d, d.m, d.c)
   
-  hdr = read.xls(filein, sheet=s, blank.lines.skip=F, skip=13, nrows=2, header=F) 
+  hdr = read.xls(file.path(dir_d, 'raw', filein), sheet=s, blank.lines.skip=F, skip=13, nrows=2, header=F) 
   hdr = apply(hdr, 2, function(x) paste(rev(x),collapse='.'))
   hdr[1:2] = gsub('\\.','',hdr[1:2]) # clean two first column headers
   hdr = gsub('\\-','',hdr) # 
   hdr = gsub('.+ank','PercRank',hdr) # make this consistent: P-Rank and Rank were used in different sheets but are same value. 
   
-  d = read.xls(filein, sheet=s, blank.lines.skip=F, skip=15, header=F, col.names=hdr) 
-  # head(dat)
+  d = read.xls(file.path(dir_d, 'raw', filein), sheet=s, blank.lines.skip=F, skip=15, header=F, col.names=hdr)
   
   # melt data
   d.m = melt(data=d, id.vars=names(d)[1:2], variable.name='stat')
-  names(d.m) = c('country','countryID','stat','value')
-  #head(d.m)
+  names(d.m) = c('country','countryID','stat','value');head(d.m)
   
   # change NAs
   d.m$value[d.m$value == '#N/A'] = NA 
@@ -91,15 +98,6 @@ names(d.all2)[c(2,4)] = c('score', 'category')
 # transpose with mean aggregate function to average over 6 indicator subcategories
 d.all2$score = as.numeric(d.all2$score)
 d.t = dcast(d.all2, value.var="score", country ~ year, fun.aggregate = mean, na.rm = T) 
-
-# # check for rows that are all NA: None
-# d.t2 = matrix(nrow=0, ncol=0)
-# for(i in 1:dim(d.t)[1]){             
-#   bb = dim(d.t)[2] - sum(is.na(d.t[i,]))
-#   if(bb == 1) { # this means just the countryname and country code name are not NA
-#     cat(d.t$country[i])# d.2 = rbind(d.2,d.1[i,])
-#   }
-# }
   
 # remelt for final
 d.m2 = melt(data=d.t, id.vars=names(d.all)[1], variable.name='year')
@@ -117,37 +115,45 @@ d.m5 = rbind(d.m4[!ind,],
             score=rep(d.m4$score[ind], 5),
             year=rep(d.m4$year[ind], 5)))
 
-## run add_rgn_id and save
-uifilesave = file.path(wd, 'GL-WorldBank-WGI_v2011-cleaned.csv')
+## run add_rgn_id and save ----
+uifilesave = file.path(dir_d, 'raw', 'GL-WorldBank-WGI_v2011-cleaned.csv')
 add_rgn_id(d.m5, uifilesave)
 
+# rescaling ----
+
+cleaned_layer = read.csv(uifilesave)
+
+rng = c(-2.5, 2.5)
+cleaned_layer = within(cleaned_layer,{
+  score = (score - rng[1]) / (rng[2] - rng[1])})
+
+## gapfilling ----
+
+# temporal gapfilling with temporal.gapfill.r
+cleaned_layert_tmp = temporal.gapfill(cleaned_layer, 
+                                      fld.id = 'rgn_id', 
+                                      fld.value = names(cleaned_layer)[3], 
+                                      fld.year = 'year', verbose=F); head(cleaned_layert_tmp) 
+cleaned_layert = cleaned_layert_tmp; cleaned_layert$whence = NULL; cleaned_layert$whence_details = NULL; head(cleaned_layert) 
+cleaned_layert = cleaned_layert %.% 
+  select(rgn_id, year, score)
+  
+# sovereignty (parent-children) gapfilling with add_gapfill_sov.r 
+dirsave = file.path(dir_d, 'data')
+layersave = 'rgn_wb_wgi_2014a'
+add_gapfill_sov(cleaned_layert, dirsave, layersave)
 
 
-# ------------- gapfill
-## sovereignty (parent-children) gapfilling with add_gapfill_sov.r
-cleaned_data = read.csv(uifilesave)
-cleaned_data_sov =  add_gapfill_sov(cleaned_data) 
+# calculate inverse file and save ----
+cleaned_data_sov =  read.csv(file.path(dir_d, 'data', paste(layersave, '.csv', sep=''))); head(cleaned_data_sov) 
+cleaned_data_sov_inverse = cleaned_data_sov %.%
+  mutate(score_inverse = (1-score)) %.%
+  select(rgn_id, year,
+         score = score_inverse, 
+         whencev01, whence_choice); head(cleaned_data_sov_inverse)
 
-# combine and clean
-cleaned_data2 = rbind(cleaned_data, cleaned_data_sov)
-cleaned_data2 = cleaned_data2[order(cleaned_data2$rgn_id),]
-cleaned_data2[cleaned_data2$rgn_id_2013 != 213,] # remove Antarctica
-cleaned_data2$rgn_nam = NULL
+write.csv(cleaned_data_sov_inverse, 
+          file.path(dirsave, paste(layersave, '_inverse.csv', sep='')), na = '', row.names=FALSE)
 
-# save all (interim file)
-print('Final data layer saved: ')
-layersave = paste(dir1, 'data/', 'rgn_wb_wgi_all.csv', sep='')
-write.csv(cleaned_data2, layersave, na = '', row.names=FALSE)
-
-
-### save as 2012a and 2013a files:
-
-d_all = read.csv(layersave)
-filesave2012a = paste(dir1, 'data/', 'rgn_wb_wgi_2012a.csv', sep='')
-filesave2013a = paste(dir1, 'data/', 'rgn_wb_wgi_2013a.csv', sep='')
-save_pressure_layers_2012a_2013a(d_all, filesave2012a, filesave2013a)
-
-
-
-
+## --- fin
 

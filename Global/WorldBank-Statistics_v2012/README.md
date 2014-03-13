@@ -1,6 +1,8 @@
 GL-WorldBank-Statistics_v2012
 =============================
 
+\* next time try using WorldBank R packaged: https://github.com/OHI-Science/ohiprep/issues/11. https://github.com/vincentarelbundock/WDI, http://cran.r-project.org/web/packages/WDI/index.html. This does not work for WGI, but it does for all other World Bank indicators
+
 Files produced
 ==============
 
