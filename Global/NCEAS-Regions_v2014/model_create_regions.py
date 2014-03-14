@@ -47,7 +47,7 @@
 import arcpy, os, re, numpy as np, socket, pandas as pd
 from collections import Counter
 from numpy.lib import recfunctions
-arcpy.SetLogHistory(True) # C:\Users\bbest\AppData\Roaming\ESRI\Desktop10.2\ArcToolbox\History
+arcpy.SetLogHistory(True) # %USERPROFILE%\AppData\Roaming\ESRI\Desktop10.2\ArcToolbox\History
 
 # configuration based on machine name
 conf = {
@@ -94,364 +94,246 @@ arcpy.env.workspace       = gdb
 arcpy.env.overwriteOutput = True
 arcpy.env.outputCoordinateSystem = sr_gcs
 
-# copy data inputs into gdb
-for v in ['eez', 'eezland', 'fao', 'eez_inland_area']:
-    if not arcpy.Exists('%s/%s' % (gdb,v)):
-        arcpy.FeatureClassToFeatureClass_conversion(eval(v), gdb, v) 
-arcpy.TableToTable_conversion(z_csv, gdb, 'z')
-    
-# Antarctica: remove from eez, eezland and fao
-arcpy.Select_analysis('eez', 'eez_noant', "Country <> 'Antarctica'")
-arcpy.Select_analysis('eezland', 'eezland_noant', "Country <> 'Antarctica'")
-arcpy.Select_analysis('fao', 'fao_noant', "SOURCE <> 'CCAMLR'")
-
-# fao: erase eezland
-arcpy.Erase_analysis('fao', 'eezland_noant', 'fao_noeez')
-
-# Antarctica: extract CCAMLR from FAO, erase EEZ, dissolve to create OHI region
-arcpy.Select_analysis('fao_noeez', 'fao_noeez_noant', "SOURCE <> 'CCAMLR'")
-arcpy.Select_analysis('fao_noeez', 'fao_noeez_ant'  , "SOURCE  = 'CCAMLR'")
-arcpy.Select_analysis('fao'   , 'fao_ant', "SOURCE = 'CCAMLR'")
-arcpy.AddField_management(      'fao_ant', 'area0_km2', 'FLOAT')
-arcpy.CalculateField_management('fao_ant', 'area0_km2', '!shape.area@squarekilometers!', 'PYTHON_9.3')
-arcpy.CopyFeatures_management('fao_noeez_ant', ant_ccamlr_all)
-arcpy.AddField_management(      'fao_noeez_ant', 'area_km2', 'FLOAT')
-arcpy.CalculateField_management('fao_noeez_ant', 'area_km2', '!shape.area@squarekilometers!', 'PYTHON_9.3')
-arcpy.Intersect_analysis(      ['fao_noeez_ant', 'fao_ant'], 'fao_ant_inx')
-arcpy.AddField_management(      'fao_ant_inx', 'area0_pct', 'FLOAT')
-arcpy.CalculateField_management('fao_ant_inx', 'area0_pct', '!area_km2!/!area0_km2!*100', 'PYTHON_9.3')
-arcpy.JoinField_management('fao_noeez_ant', 'F_CODE2', 'fao_ant_inx', 'F_CODE2', ['area0_km2','area0_pct'])
-# export Antarctica shapefiles with and without EEZ clipped
-arcpy.CopyFeatures_management('fao_noeez_ant', ant_ccamlr_ohi)
-arcpy.CopyFeatures_management('fao_ant'      , ant_ccamlr_all)
-### dissolve CCAMLR to get OHI version of single Antarctica EEZ
-##arcpy.Dissolve_management('fao_noeez_ant', 'ant_eez')
+### copy data inputs into gdb
+##for v in ['eez', 'eezland', 'fao', 'eez_inland_area']:
+##    if not arcpy.Exists('%s/%s' % (gdb,v)):
+##        arcpy.FeatureClassToFeatureClass_conversion(eval(v), gdb, v) 
+##arcpy.TableToTable_conversion(z_csv, gdb, 'z')
+##    
+### Antarctica: remove from eez, eezland and fao
+##arcpy.Select_analysis('eez', 'eez_noant', "Country <> 'Antarctica'")
+##arcpy.Select_analysis('eezland', 'eezland_noant', "Country <> 'Antarctica'")
+##arcpy.Select_analysis('fao', 'fao_noant', "SOURCE <> 'CCAMLR'")
+##
+### fao: erase eezland
+##arcpy.Erase_analysis('fao', 'eezland_noant', 'fao_noeez')
+##
+### Antarctica: extract CCAMLR from FAO, erase EEZ
+##arcpy.Select_analysis('fao_noeez', 'fao_noeez_noant', "SOURCE <> 'CCAMLR'")
+##arcpy.Select_analysis('fao_noeez', 'fao_noeez_ant'  , "SOURCE  = 'CCAMLR'")
+##arcpy.Select_analysis('fao'   , 'fao_ant', "SOURCE = 'CCAMLR'")
+##arcpy.AddField_management(      'fao_ant', 'area0_km2', 'FLOAT')
+##arcpy.CalculateField_management('fao_ant', 'area0_km2', '!shape.area@squarekilometers!', 'PYTHON_9.3')
+##arcpy.CopyFeatures_management('fao_noeez_ant', ant_ccamlr_all)
+##arcpy.AddField_management(      'fao_noeez_ant', 'area_km2', 'FLOAT')
+##arcpy.CalculateField_management('fao_noeez_ant', 'area_km2', '!shape.area@squarekilometers!', 'PYTHON_9.3')
+##arcpy.Intersect_analysis(      ['fao_noeez_ant', 'fao_ant'], 'fao_ant_inx')
+##arcpy.AddField_management(      'fao_ant_inx', 'area0_pct', 'FLOAT')
+##arcpy.CalculateField_management('fao_ant_inx', 'area0_pct', '!area_km2!/!area0_km2!*100', 'PYTHON_9.3')
+##arcpy.JoinField_management('fao_noeez_ant', 'F_CODE2', 'fao_ant_inx', 'F_CODE2', ['area0_km2','area0_pct'])
+### export Antarctica shapefiles with and without EEZ clipped
+##arcpy.CopyFeatures_management('fao_noeez_ant', ant_ccamlr_ohi)
+##arcpy.CopyFeatures_management('fao_ant'      , ant_ccamlr_all)
+##### dissolve CCAMLR to get OHI version of single Antarctica EEZ
+####arcpy.Dissolve_management('fao_noeez_ant', 'ant_eez')
+####r = np.rec.fromrecords(
+####    [(1, 213, u'eez', u'Antarctica', u'ATA')],
+####    formats = '<i4, <i4, <U255, <U255, <U255',
+####    names   = 'OBJECTID, orig_id, orig_type, orig_name, orig_code')
+####arcpy.da.ExtendTable('ant_eez', 'OBJECTID', r, 'OBJECTID', append_only=False)
+##arcpy.CopyFeatures_management('fao_ant', 'ant_ccamlr')
+##r = arcpy.da.TableToNumPyArray('ant_ccamlr', ['OBJECTID','F_CODE'])
+##r.dtype.names = [{'F_CODE'    :'raw_name'}.get(x, x) for x in r.dtype.names]
+##raw_type = np.zeros((len(r),), dtype=[('raw_type','<U20')]); raw_type.fill('ccamlr')
+##raw_id   = np.zeros((len(r),), dtype=[('raw_id'  ,'<i4' )]); raw_id[:] = r['OBJECTID']
+##raw_code = np.zeros((len(r),), dtype=[('raw_code','<U10')]) #; raw_type.fill('')
+##rf = np.lib.recfunctions.merge_arrays([r, raw_type, raw_id, raw_code], flatten=True)
+##arcpy.da.ExtendTable('ant_ccamlr', 'OBJECTID', rf, 'OBJECTID', append_only=False)
+##
+### Antarctica land
+##arcpy.CreateFishnet_management('ant_box', '-180 -90', '-180 -80', '360', '30', '1', '1', geometry_type='POLYGON')
+##arcpy.Erase_analysis('ant_box', 'fao', 'ant_land')
 ##r = np.rec.fromrecords(
-##    [(1, 213, u'eez', u'Antarctica', u'ATA')],
-##    formats = '<i4, <i4, <U255, <U255, <U255',
-##    names   = 'OBJECTID, orig_id, orig_type, orig_name, orig_code')
-##arcpy.da.ExtendTable('ant_eez', 'OBJECTID', r, 'OBJECTID', append_only=False)
-arcpy.CopyFeatures_management('fao_ant', 'ant_ccamlr')
-r = arcpy.da.TableToNumPyArray('ant_ccamlr', ['OBJECTID','F_CODE'])
-r.dtype.names = [{'F_CODE'    :'raw_name'}.get(x, x) for x in r.dtype.names]
-raw_type = np.zeros((len(r),), dtype=[('raw_type','<U20')]); raw_type.fill('antarctica-ccamlr')
-raw_id   = np.zeros((len(r),), dtype=[('raw_id'  ,'<i4' )]); raw_id[:] = r['OBJECTID']
-raw_code = np.zeros((len(r),), dtype=[('raw_code','<U10')]) #; raw_type.fill('')
-rf = np.lib.recfunctions.merge_arrays([r, raw_type, raw_id, raw_code], flatten=True)
-arcpy.da.ExtendTable('ant_ccamlr', 'OBJECTID', rf, 'OBJECTID', append_only=False)
+##    [(1, u'eez', 213, u'Antarctica', u'ATA')],
+##    formats = '<i4, <U20, <i4, <U255, <U10', # ESRI bug: for some reason the text strings double in size on arcpy.da.ExtendTable
+##    names   = 'OBJECTID, raw_type, raw_id, raw_name, raw_code')
+##arcpy.da.ExtendTable('ant_land', 'OBJECTID', r, 'OBJECTID') # , append_only=False
+##
+### eez-inland: Caspian and Black Seas
+##r = arcpy.da.TableToNumPyArray('eez_noant', ['OBJECTID','EEZ_ID','Country','ISO_3digit'])
+##r.dtype.names = [{'EEZ_ID'    :'raw_id',
+##                  'Country'   :'raw_name',
+##                  'ISO_3digit':'raw_code'}.get(x, x) for x in r.dtype.names]
+##raw_type = np.zeros((len(r),), dtype=[('raw_type','<U20')]); raw_type.fill('eez')
+##rf = np.lib.recfunctions.merge_arrays([r, raw_type], flatten=True)
+##arcpy.da.ExtendTable('eez_noant', 'OBJECTID', rf, 'OBJECTID', append_only=False)
+##arcpy.MultipartToSinglepart_management('eez_noant', 'eez_noant_p')
+##arcpy.Intersect_analysis(['eez_noant_p', 'eez_inland_area'], 'eez_noant_p_inland')
+##arcpy.CalculateField_management('eez_noant_p_inland', 'raw_type', "'eez-inland'", 'PYTHON_9.3')
+##arcpy.Erase_analysis('eez_noant_p', 'eez_noant_p_inland', 'eez_noant_p_noeezinland')
+##arcpy.Merge_management(['eez_noant_p_noeezinland','eez_noant_p_inland'], 'eez_noant_p_inland_eez')
+##arcpy.Dissolve_management('eez_noant_p_inland_eez', 'eez_noant_typed', ['raw_type','raw_id','raw_name','raw_code'])
+##
+### fao: prep for merging
+##r = arcpy.da.TableToNumPyArray('fao_noeez_noant', ['OBJECTID','F_CODE'])
+##r.dtype.names = [{'F_CODE'    :'raw_name'}.get(x, x) for x in r.dtype.names]
+##raw_type = np.zeros((len(r),), dtype=[('raw_type','<U20')]); raw_type.fill('fao')
+##raw_id   = np.zeros((len(r),), dtype=[('raw_id'  ,'<i4' )]); raw_id[:] = r['raw_name'].astype('<i4')
+##raw_code = np.zeros((len(r),), dtype=[('raw_code','<U10')]) #; raw_type.fill('')
+##rf = np.lib.recfunctions.merge_arrays([r, raw_type, raw_id, raw_code], flatten=True)
+##arcpy.da.ExtendTable('fao_noeez_noant', 'OBJECTID', rf, 'OBJECTID', append_only=False)
+##
+### land: erase eez, split into parts
+##arcpy.Erase_analysis('eezland_noant', 'eez', 'land')
+### fix overlaps with Peru & Chile [arcpy.PolygonNeighbors_analysis('land', 'land_nbrs', ['OBJECTID','Country','ISO_3digit'], 'AREA_OVERLAP', out_linear_units='kilometers')]
+##arcpy.MakeFeatureLayer_management('land','lyr_land', "Country IN ('Peru (Chilean point of view)','Chile (Peruvian point of view)')")
+##arcpy.DeleteFeatures_management('lyr_land')
+##r = arcpy.da.TableToNumPyArray('land', ['OBJECTID','Country','ISO_3digit'])
+##r.dtype.names = [{'Country'   :'raw_name',
+##                  'ISO_3digit':'raw_code'}.get(x, x) for x in r.dtype.names]
+##raw_type = np.zeros((len(r),), dtype=[('raw_type','<U20')]); raw_type.fill('land')
+##raw_id   = np.zeros((len(r),), dtype=[('raw_id','<i4')])
+##rf = np.lib.recfunctions.merge_arrays([r, raw_type, raw_id], flatten=True)
+##arcpy.da.ExtendTable('land', 'OBJECTID', rf, 'OBJECTID', append_only=False)
+##arcpy.MultipartToSinglepart_management('land', 'land_p')
+##
+### merge, earth box, slivers
+##arcpy.Merge_management(['ant_ccamlr','ant_land','eez_noant_typed','fao_noeez_noant','land_p'],'m')
+###arcpy.CreateFishnet_management('box', "-180 -90", "-180 -80", "360", "180", "1", "1", "", "NO_LABELS", "-180 -90 180 90", "POLYGON")
+###arcpy.DefineProjection_management('box', sr_gcs)
+##arcpy.Clip_analysis('m', 'box', 'm_c')
+##arcpy.Erase_analysis('box','m_c', 'm_other')
+##arcpy.MultipartToSinglepart_management('m_other', 'slivers')
+##r = arcpy.da.TableToNumPyArray('slivers', ['OBJECTID'])
+##f = np.zeros((len(r),), dtype=[('raw_type','<U20'),('raw_id','<i4'),('raw_name','<U255'),('raw_code','<U10')]); f['raw_type'].fill('sliver')
+##rf = np.lib.recfunctions.merge_arrays([r, f], flatten=True)
+##arcpy.da.ExtendTable('slivers', 'OBJECTID', rf, 'OBJECTID', append_only=False)
+##arcpy.Merge_management(['m_c','slivers'],'m_c_s')
+##arcpy.PolygonNeighbors_analysis('m_c_s', 'nbrs_m_c_s', ['OBJECTID','raw_type','raw_id','raw_name','raw_code'], 'NO_AREA_OVERLAP')
 
-# Antarctica land
-arcpy.CreateFishnet_management('ant_box', '-180 -90', '-180 -80', '360', '30', '1', '1', geometry_type='POLYGON')
-arcpy.Erase_analysis('ant_box', 'fao', 'ant_land')
-r = np.rec.fromrecords(
-    [(1, u'eez', 213, u'Antarctica', u'ATA')],
-    formats = '<i4, <U20, <i4, <U255, <U10', # ESRI bug: for some reason the text strings double in size on arcpy.da.ExtendTable
-    names   = 'OBJECTID, raw_type, raw_id, raw_name, raw_code')
-arcpy.da.ExtendTable('ant_land', 'OBJECTID', r, 'OBJECTID') # , append_only=False
+# get merged data, add empty spatial sp_* fields and use PANDAS data frame
+m = arcpy.da.TableToNumPyArray('m_c_s', ['OBJECTID','raw_type','raw_id','raw_name','raw_code'])
+f = np.zeros((len(m),), dtype=[('sp_type','<U20'),('sp_id','<i4'),('sp_name','<U255'),('sp_code','<U10')])
+m = pd.DataFrame(np.lib.recfunctions.merge_arrays([m, f], flatten=True), index=m['OBJECTID'])
 
-# eez-inland: Caspian and Black Seas
-r = arcpy.da.TableToNumPyArray('eez', ['OBJECTID','EEZ_ID','Country','ISO_3digit'])
-r.dtype.names = [{'EEZ_ID'    :'raw_id',
-                  'Country'   :'raw_name',
-                  'ISO_3digit':'raw_code'}.get(x, x) for x in r.dtype.names]
-raw_type = np.zeros((len(r),), dtype=[('raw_type','<U20')]); raw_type.fill('eez')
-rf = np.lib.recfunctions.merge_arrays([r, raw_type], flatten=True)
-arcpy.da.ExtendTable('eez', 'OBJECTID', rf, 'OBJECTID', append_only=False)
-arcpy.MultipartToSinglepart_management('eez', 'eez_p')
-arcpy.Intersect_analysis(['eez_p', 'eez_inland_area'], 'eez_p_inland')
-arcpy.CalculateField_management('eez_p_inland', 'raw_type', "'eez-inland'", 'PYTHON_9.3')
-arcpy.Erase_analysis('eez_p', 'eez_p_inland', 'eez_p_noeezinland')
-arcpy.Merge_management(['eez_p_noeezinland','eez_p_inland'], 'eez_p_inland_eez')
-arcpy.Dissolve_management('eez_p_inland_eez', 'eez_typed', ['raw_type','raw_id','raw_name','raw_code'])
+# fao bordering land: presume land gap filled by fao
+print('fao bordering land: presume land gap filled by fao')
+# OLD...
+d = n[n.groupby(['src_OBJECTID'])['LENGTH'].transform(max) == n['LENGTH']]
+for i,r in d.iterrows(): # r = next(d.iterrows())[1]
+    idx = m.OBJECTID == r['src_OBJECTID']
+    m.ix[idx, 'sp_type'] = 'fao-land'
+    m.ix[idx, 'sp_id']   = r['nbr_raw_id']
+    m.ix[idx, 'sp_name'] = r['nbr_raw_name']
+    m.ix[idx, 'sp_code'] = r['nbr_raw_code']
+# NEW...
+n = pd.DataFrame(arcpy.da.TableToNumPyArray(
+    'nbrs_m_c_s',
+    ['src_OBJECTID','src_raw_type','src_raw_id','src_raw_name','src_raw_code',
+     'nbr_OBJECTID','nbr_raw_type','nbr_raw_id','nbr_raw_name','nbr_raw_code','LENGTH'],
+    "src_raw_type = 'fao' AND nbr_raw_type = 'land' AND LENGTH > 0"))
+d = n.groupby(['src_OBJECTID']).agg(lambda df: df.iloc[df['LENGTH'].values.argmax()])
+m.loc[d.index, 'sp_type'] = 'fao-land' # d['sp_type']
+m.loc[d.index, 'sp_id']   = d['nbr_raw_id']
+m.loc[d.index, 'sp_name'] = d['nbr_raw_name']
+m.loc[d.index, 'sp_code'] = d['nbr_raw_code']
 
-# fao: prep for merging
-r = arcpy.da.TableToNumPyArray('fao_noeez_noant', ['OBJECTID','F_CODE'])
-r.dtype.names = [{'F_CODE'    :'raw_name'}.get(x, x) for x in r.dtype.names]
-raw_type = np.zeros((len(r),), dtype=[('raw_type','<U20')]); raw_type.fill('antarctica-ccamlr')
-raw_id   = np.zeros((len(r),), dtype=[('raw_id'  ,'<i4' )]); raw_id[:] = r['raw_name'].astype('<i4')
-raw_code = np.zeros((len(r),), dtype=[('raw_code','<U10')]) #; raw_type.fill('')
-rf = np.lib.recfunctions.merge_arrays([r, raw_type, raw_id, raw_code], flatten=True)
-arcpy.da.ExtendTable('fao_noeez_noant', 'OBJECTID', rf, 'OBJECTID', append_only=False)
+# iso_code='TUR'; group = n.ix[n.groupby(['src_OBJECTID']).groups[iso_code]]; print(iso_code); print(group)
+idx = n.iloc[n['LENGTH'].argmax()]
 
-# land: erase eez, split into parts
-arcpy.Erase_analysis('eezland_noant', 'eez', 'land')
-# TODO: overlaps with Peru & Chile. overlap check above
-arcpy.PolygonNeighbors_analysis('eez' , 'eez_nbrs' , ['OBJECTID','EEZ_ID','Country','ISO_3digit'], 'AREA_OVERLAP', out_linear_units='kilometers')
-arcpy.PolygonNeighbors_analysis('land', 'land_nbrs', ['OBJECTID','Country','ISO_3digit'], 'AREA_OVERLAP', out_linear_units='kilometers')
-arcpy.PolygonNeighbors_analysis('fao' , 'fao_nbrs' , ['OBJECTID','F_CODE'], 'AREA_OVERLAP', out_linear_units='kilometers')
-
-'eez', 'eez_noant', "Country <> 'Antarctica'")
-arcpy.Select_analysis('eezland', 'eezland_noant', "Country <> 'Antarctica'")
-arcpy.Select_analysis('fao'
-
-
-r = arcpy.da.TableToNumPyArray('eez', ['OBJECTID','Country','ISO_3digit'])
-r.dtype.names = [{'Country'   :'raw_name',
-                  'ISO_3digit':'raw_code'}.get(x, x) for x in r.dtype.names]
-raw_type = np.zeros((len(r),), dtype=[('raw_type','<U20')]); raw_type.fill('land')
-raw_id   = np.zeros((len(r),), dtype=[('raw_id','<U20')])
-rf = np.lib.recfunctions.merge_arrays([r, raw_type, raw_id], flatten=True)
-                      
-arcpy.da.ExtendTable('land', 'OBJECTID', rf, 'OBJECTID', append_only=False)
-arcpy.MultipartToSinglepart_management('eez', 'eez_p')
-
-
-# slivers
-arcpy.Merge_management(['ant_ccamlr','ant_land','eez_typed','fao_noeez_noant','s_land_p'],'m1')
-arcpy.Dissolve_management('m1', 'm1_d')
-
-# merge: []
-arcpy.Merge_management(['ant_ccamlr','ant_land','eez_typed','fao_noeez_noant','s_land_p'],'s_m1')
-
-
-# TODO: clip to earth box
-arcpy.AddField_management(      'fao_noeez_ant', 's_code', 'TEXT')
-arcpy.CalculateField_management('fao_noeez_ant', 's_code', "'FAO-CCAMLR_'+!F_CODE!", 'PYTHON_9.3')
-arcpy.Dissolve_management(      'fao_noeez_ant', 's_ant', 's_code')
-
-##arcpy.Dissolve_management('fao_noeez_ant', 'eez_ant')
-##a = numpy.array([(1, 213, 'eez', 'Antarctica')],
-##                numpy.dtype([('OBJECTID', '<i4'  ),
-##                             ('rgn_id'  , '<i4'  ),
-##                             ('rgn_type', '<U255'),
-##                             ('rgn_name', '<U255')]))
-##arcpy.da.ExtendTable('eez_ant', 'OBJECTID', a, 'OBJECTID')
-
-### master eez OHI region lookup, rename fields
-##z = arcpy.da.TableToNumPyArray('z', ['eez_id','eez_iso3', 'rgn_typ', 'rgn_id_2013', 'rgn_nam_2013'])
-##z.dtype.names = [{'rgn_id_2013' :'rgn_id',
-##                  'rgn_typ'     :'rgn_type',
-##                  'rgn_nam_2013':'rgn_name'}.get(x, x) for x in z.dtype.names]
-
-### fao: add 1000 to get unique eez_id, extend with OHI region fields
-##arcpy.AddField_management(      'fao_noeez_noant', 'eez_id', 'LONG')
-##arcpy.CalculateField_management('fao_noeez_noant', 'eez_id', "int(!F_CODE!) + 1000", 'PYTHON_9.3')
-##arcpy.da.ExtendTable('fao_noeez_noant', 'eez_id',
-##                     z[z['rgn_type']=='fao'],
-##                     'eez_id', append_only=False)
-
-# fao
-arcpy.AddField_management(      'fao_noeez_noant', 's_code', 'TEXT')
-arcpy.CalculateField_management('fao_noeez_noant', 's_code', "'FAO_'+!F_CODE!", 'PYTHON_9.3')
-arcpy.Dissolve_management(      'fao_noeez_ant'  , 's_fao', 's_code')
-
-# land: erase eez
-arcpy.Erase_analysis('eezland_noant', 'eez', 'land')
-arcpy.AddField_management(      'land', 's_code', 'TEXT')
-arcpy.CalculateField_management('land', 's_code', "'land_%s[%s]' % (!Country!, !ISO_3digit!)", 'PYTHON_9.3')
-arcpy.Dissolve_management(      'land', 's_land', 's_code')
+groups = n.groupby(['src_OBJECTID'])
+g = groups.ix[0]
+.agg(lambda x: x.iloc[x['LENGTH'].argmax()])
 
 
-# s_eez
-arcpy.AddField_management(      'eez', 's_code', 'TEXT')
-arcpy.CalculateField_management('eez', 's_code', "'eez_%s[%s]{%d}' % (!Country!, !ISO_3digit!, !EEZ_ID!)", 'PYTHON_9.3')
-arcpy.Dissolve_management(      'eez', 's_eez', 's_code')
 
-# merge eez, fao and land parts. run neighbor analysis. use max LENGTH shared to assign to EEZ.
-arcpy.MultipartToSinglepart_management('s_land', 's_land_p')
+       
 
+# land bordering fao: presume overextended land from landeez
+print('land bordering fao: presume overextended land from landeez')
+n = pd.DataFrame(arcpy.da.TableToNumPyArray(
+    'nbrs_m_c_s',
+    ['src_OBJECTID','src_raw_type','src_raw_id','src_raw_name','src_raw_code',
+     'nbr_OBJECTID','nbr_raw_type','nbr_raw_id','nbr_raw_name','nbr_raw_code','LENGTH'],
+    "src_raw_type = 'land' AND nbr_raw_type = 'fao' AND LENGTH > 0"))
+d = n[n.groupby(['src_OBJECTID'])['LENGTH'].transform(max) == n['LENGTH']]
+for i,r in d.iterrows(): # r = next(d.iterrows())[1]
+    idx = m.OBJECTID == r['src_OBJECTID']
+    m.ix[idx, 'sp_type'] = 'land-fao'
+    m.ix[idx, 'sp_id']   = r['nbr_raw_id']
+    m.ix[idx, 'sp_name'] = r['nbr_raw_name']
+    m.ix[idx, 'sp_code'] = r['nbr_raw_code']
 
-####
-arcpy.Merge_management(['s_eez', 's_land_p', 's_fao'],'s_m1')
-arcpy.PolygonNeighbors_analysis('s_m1', 's_m1_nbrs', ['OBJECTID','s_code'], 'NO_AREA_OVERLAP', out_linear_units='kilometers')
-nbrs = arcpy.da.TableToNumPyArray('s_m1_nbrs', ['src_OBJECTID','src_s_code','nbr_s_code','LENGTH'],
-                                  "src_s_code LIKE 'land_%' AND nbr_s_code LIKE 'eez_%' AND LENGTH > 0")
-df = pd.DataFrame(nbrs)
-idx = df.groupby(['src_OBJECTID'])['LENGTH'].transform(max) == df['LENGTH'] # 17173
-arr = df[idx][['src_OBJECTID','nbr_s_code']].to_records()
-arr = arr.astype([('src_OBJECTID', '<i4'), ('nbr_s_code', '<U255')])
-##arcpy.da.ExtendTable('s_m1', 'OBJECTID', arr, 'src_OBJECTID', append_only=False)
+# land bordering eez: apply eez with greatest shared LENGTH
+print('land bordering eez: apply eez with greatest shared LENGTH')
+n = pd.DataFrame(arcpy.da.TableToNumPyArray(
+    'nbrs_m_c_s',
+    ['src_OBJECTID','nbr_raw_id','nbr_raw_name','nbr_raw_code','LENGTH'],
+    "src_raw_type = 'land' AND nbr_raw_type = 'eez' AND LENGTH > 0"))
+d = n[n.groupby(['src_OBJECTID'])['LENGTH'].transform(max) == n['LENGTH']]
+for i,r in d.iterrows(): # r = next(d.iterrows())[1]
+    idx = m.OBJECTID == r['src_OBJECTID']
+    m.ix[idx, 'sp_type'] = 'land'
+    m.ix[idx, 'sp_id']   = r['nbr_raw_id']
+    m.ix[idx, 'sp_name'] = r['nbr_raw_name']
+    m.ix[idx, 'sp_code'] = r['nbr_raw_code']
 
-# landonly, land DISPUTED if ISO_3digit='-'
-code_block = """
-def get(fld, objid, iso, cntry, rgn_type, rgn_id, rgn_name):
-    if eval(fld) is None:
-        if iso == '-':
-            return {'rgn_type':'disputed-land',
-                    'rgn_id'  : 2550,
-                    'rgn_name':'DISPUTED'}[fld]
-        else:
-            return {'rgn_type':'land-noeez',
-                    'rgn_id'  : 3000 + objid,
-                    'rgn_name': cntry}[fld]
+# land not bordering eez: use raw values
+print('land not bordering eez: use raw values')
+idx = (m['sp_name'] == '') & (m['raw_type']=='land')
+m.ix[idx, 'sp_type'] = 'land'
+m.ix[idx, 'sp_id']   = r['nbr_raw_id']
+m.ix[idx, 'sp_name'] = r['nbr_raw_name']
+m.ix[idx, 'sp_code'] = r['nbr_raw_code']
+
+# determine land-noeez
+d = m[(m['sp_id'] == 0) & (m['sp_name']!='Australia')].groupby(['raw_name'])
+for raw_name, group in d: # name, group = next(d.groups.iteritems)
+    # iso_code='TUR'; group = m.ix[d.groups[iso_code]]; print(iso_code); print(group)
+    idx = (m['raw_name']==raw_name) & (m['raw_type']=='eez')
+    if sum(idx) > 0:
+        v = m[idx].iloc[0]
+        m.ix[idx, 'sp_type'] = 'land'
+        m.ix[idx, 'sp_id']   = v['raw_id']
+        m.ix[idx, 'sp_name'] = v['raw_name']
+        m.ix[idx, 'sp_code'] = v['raw_code']
     else:
-        return {'rgn_type':'land',
-                'rgn_id'  : rgn_id,
-                'rgn_name': rgn_name}[fld]
-"""
-arcpy.CalculateField_management('land_eezmatched', 'rgn_type', "get('rgn_type', !OBJECTID!, !ISO_3digit!, !Country!, !rgn_type!, !rgn_id!, !rgn_name!)",'PYTHON_9.3', code_block)
-arcpy.CalculateField_management('land_eezmatched', 'rgn_id'  , "get('rgn_id'  , !OBJECTID!, !ISO_3digit!, !Country!, !rgn_type!, !rgn_id!, !rgn_name!)",'PYTHON_9.3', code_block)
-arcpy.CalculateField_management('land_eezmatched', 'rgn_name', "get('rgn_name', !OBJECTID!, !ISO_3digit!, !Country!, !rgn_type!, !rgn_id!, !rgn_name!)",'PYTHON_9.3', code_block)
+        m.ix[idx, 'sp_type'] = 'land-noeez'
+# TODO: apply unique sp_id's to land-noeez, which are so far sp_id=0
+
+# copy the rest
+print('copy the rest')
+idx = (m['sp_name'] == '')
+m.ix[idx, 'sp_type'] = m[idx]['raw_type']
+m.ix[idx, 'sp_id']   = m[idx]['raw_id']
+m.ix[idx, 'sp_name'] = m[idx]['raw_name']
+m.ix[idx, 'sp_code'] = m[idx]['raw_code']
+
+# TODO: check USA eez m.OBJECTID=31645 changing to land?
+
+# apply new fields and dissolve
+r = m.to_records(index=False)
+r = r.astype([('OBJECTID', '<i4'),('sp_type','<U20'),('sp_id','<i4'),('sp_name','<U255'),('sp_code','<U10')])
+arcpy.da.ExtendTable('m_c_s', 'OBJECTID', r, 'OBJECTID', append_only=False)
+arcpy.Dissolve_management('m_c_s', 'm_c_s_d', ['sp_type','sp_id','sp_name','sp_code'])
+
+# copy final features
+arcpy.CopyFeatures_management('m_c_s_d', 'sp_gcs')
 
 
+# TODO: manually: assign slivers, check fao-land / land-fao, assign sp_ids
+
+# TODO: inspect map by creating Relate:nbrs_src on m_c_s:OBJECTID <-> nbrs_m_c_s:src_OBJECTID, Relate:nbrs_nbr on m_c_s:OBJECTID <-> nbrs_m_c_s:nbr_OBJECTID
 
 
-# ( (src_s_code LIKE 'land_%' AND nbr_s_code LIKE 'eez_%') OR (src_s_code LIKE 'eez_%' AND nbr_s_code LIKE 'land_%') ) AND NODE_COUNT > 0 AND
-# src_OBJECTID=277 OR nbr_OBJECTID=277
+# TODO: create lookup from OHI fine spatial (sp*) to OHI regions (rgns*)
 
-
-# land: assign eez_id where either land misidentified ('SHN' for eezs 'ASC', 'TAA') or eez_iso3 is duplicated having several eez_ids
-arcpy.MultipartToSinglepart_management('land', 'land_p')
-arcpy.SpatialJoin_analysis('land_p','eez_noant','land_p_z', 'JOIN_ONE_TO_MANY','KEEP_ALL',"#",'BOUNDARY_TOUCHES')
-# TODO MANUAL: review Join_Count > 1. OK.
-# TODO MANUAL: associate land touching high seas FAO with the high seas FAO
-arcpy.MakeFeatureLayer_management('land_p_z', 'lyr_land_p_z')
-arcpy.SelectLayerByLocation_management('lyr_land_p_z', 'BOUNDARY_TOUCHES', 'fao_noeez_noant')
-arcpy.
-
-
-
-arcpy.Dissolve_management('land_p_j', 'land_p_j_d', 'EEZ_ID')
-
-
-
-
-
-
-
-
-### land: replace values to match EEZ
-##a_land = arcpy.da.TableToNumPyArray('land', ['OBJECTID', 'ISO_3digit'])
-##d_iso3 = {
-##    'MNP++':'MNP',
-##    'ABW':'AW',
-##    'BES':'BQ'}
-##for x in a_land['ISO_3digit']:
-##    a_land['ISO_3digit'][a_land['ISO_3digit']==x] = d_iso3.get(x, x)
-##arcpy.da.ExtendTable('land', 'OBJECTID', a_land, 'OBJECTID', append_only=False)
-
-# land: assign eez_id where either land misidentified ('SHN' for eezs 'ASC', 'TAA') or eez_iso3 is duplicated having several eez_ids
-z_eez = z[ numpy.all([z['rgn_type']=='eez', z['rgn_name']!='DISPUTED'], axis=0) ]
-eez_iso3_dupes = sorted([item for item, count in Counter(z_eez['eez_iso3']).iteritems() if count > 1])
-z_eez_iso3_nodupes = z_eez[ numpy.where([x not in eez_iso3_dupes for x in z_eez['eez_iso3'].tolist()])[0] ]
-arcpy.MakeFeatureLayer_management('land', 'lyr_land', "ISO_3digit IN ('SHN','%s')" % "','".join(eez_iso3_dupes))
-arcpy.MultipartToSinglepart_management('lyr_land', 'land_p')
-arcpy.DeleteFeatures_management('lyr_land')
-arcpy.da.ExtendTable('land', 'ISO_3digit', z_eez_iso3_nodupes,'eez_iso3', append_only=False)
-# TODO MANUAL: review Join_Count > 1. OK.
-arcpy.SpatialJoin_analysis('land_p','eez_noant','land_p_j', 'JOIN_ONE_TO_ONE','KEEP_ALL',"#",'BOUNDARY_TOUCHES')
-arcpy.Dissolve_management('land_p_j', 'land_p_j_d', 'EEZ_ID')
-arcpy.da.ExtendTable('land_p_j_d', 'EEZ_ID', z[ z['rgn_type']=='eez' ],'eez_id', append_only=False)
-arcpy.Merge_management(['land', 'land_p_j_d'],'land_eezmatched')
-
-# landonly, land DISPUTED if ISO_3digit='-'
-code_block = """
-def get(fld, objid, iso, cntry, rgn_type, rgn_id, rgn_name):
-    if eval(fld) is None:
-        if iso == '-':
-            return {'rgn_type':'disputed-land',
-                    'rgn_id'  : 2550,
-                    'rgn_name':'DISPUTED'}[fld]
-        else:
-            return {'rgn_type':'land-noeez',
-                    'rgn_id'  : 3000 + objid,
-                    'rgn_name': cntry}[fld]
-    else:
-        return {'rgn_type':'land',
-                'rgn_id'  : rgn_id,
-                'rgn_name': rgn_name}[fld]
-"""
-arcpy.CalculateField_management('land_eezmatched', 'rgn_type', "get('rgn_type', !OBJECTID!, !ISO_3digit!, !Country!, !rgn_type!, !rgn_id!, !rgn_name!)",'PYTHON_9.3', code_block)
-arcpy.CalculateField_management('land_eezmatched', 'rgn_id'  , "get('rgn_id'  , !OBJECTID!, !ISO_3digit!, !Country!, !rgn_type!, !rgn_id!, !rgn_name!)",'PYTHON_9.3', code_block)
-arcpy.CalculateField_management('land_eezmatched', 'rgn_name', "get('rgn_name', !OBJECTID!, !ISO_3digit!, !Country!, !rgn_type!, !rgn_id!, !rgn_name!)",'PYTHON_9.3', code_block)
-
-# merge with common fields
-arcpy.Merge_management(['eez_noant', 'eez_ant', 'fao_noeez_noant', 'land_eezmatched'], 'all')
-arcpy.Dissolve_management('all', 'all_d', ['rgn_type','rgn_id','rgn_name'])
-
-# get earth box for defining Antarctica and clipping to extent
-arcpy.CreateFishnet_management('box', "-180 -90", "-180 -80", "360", "180", "1", "1", "", "NO_LABELS", "-180 -90 180 90", "POLYGON")
-arcpy.DefineProjection_management('box', sr_gcs)
-arcpy.Clip_analysis('all_d', 'box', 'all_d_c')
-arcpy.Erase_analysis('box', 'all_d_c', 'boxnotall')
-arcpy.MultipartToSinglepart_management('boxnotall', 'boxnotall_p')
-arcpy.AddField_management('boxnotall_p', 'rgn_name', 'TEXT')
-code_block = """
-def get(y):
-    if y < -60:
-        return 'Antarctica'"""
-arcpy.CalculateField_management('boxnotall_p', 'rgn_name', 'get(!shape.centroid.Y!)', 'PYTHON_9.3', code_block)
-arcpy.MakeFeatureLayer_management('boxnotall_p', 'lyr_land_ant', "rgn_name = 'Antarctica'")
-arcpy.Dissolve_management('lyr_land_ant', 'land_ant', 'rgn_name')
-a = numpy.array([(213, 'land', 'Antarctica')],
-                numpy.dtype([('rgn_id'  , '<i4'  ),
-                             ('rgn_type', '<U255'),
-                             ('rgn_name', '<U255')]))
-arcpy.da.ExtendTable('land_ant', 'rgn_name', a, 'rgn_name')
-arcpy.DeleteFeatures_management('lyr_land_ant')
-
-# deal with slivers, some FAO slivers inland
-arcpy.MakeFeatureLayer_management('all_d_c', 'lyr_fao', "rgn_type = 'fao'")
-arcpy.MultipartToSinglepart_management('lyr_fao', 'fao_p')
-arcpy.MakeFeatureLayer_management('fao_p', 'lyr_fao', 'Shape_Area < 1 OR ( Shape_Area > 4.5 AND Shape_Area < 5 )')
-arcpy.Merge_management(['fao_slivers_tofix', 'boxnotall_p'], 'slivers_tofix')
-
-# TODO MANUAL: copy to slivers_tofix -> slivers_tofix_manual and edit with appropriate info
-
-# replace slivers, merge with Antarctica land
-arcpy.FeatureClassToFeatureClass_conversion(slivers, gdb, 'slivers')
-arcpy.Erase_analysis('all_d_c', 'slivers', 'all_d_c_e')
-arcpy.Merge_management(['slivers', 'all_d_c_e', 'land_ant'], 'all_d_c_e_m')
-
-# change rgn_type='eez'->'disputed-eez' where rgn_name='DISPUTED'
-arcpy.MakeFeatureLayer_management('all_d_c_e_m', 'lyr_all', "rgn_id = 255")
-arcpy.CalculateField_management('lyr_all', 'rgn_type', "'disputed-eez'")
-
-# dissolve to regions
-arcpy.Dissolve_management('all_d_c_e_m', 'all_d_c_e_m_d', ['rgn_type','rgn_id','rgn_name'])
-
-# check that no more missing slivers and no overlap
-arcpy.Erase_analysis('box', 'all_d_c_e_m_d', 'boxnotall2') # GOOD: zero rows
-arcpy.PolygonNeighbors_analysis('all_d_c_e_m_d', 'nbrs_all', 'OBJECTID', 'AREA_OVERLAP') # GOOD: all AreaOverlap is 0
-
-# final 
-arcpy.RepairGeometry_management('all_d_c_e_m_d')
-
-# post-hoc fixes: rgn_type of '0'
-arcpy.MakeFeatureLayer_management("all_d_c_e_m_d", "lyr_other", "rgn_id = 255 OR rgn_type = '0' OR rgn_name = 'DISPUTED'")
-arcpy.CopyFeatures_management('all_d_c_e_m_d', 'rgns')
-code_block = """
-def get(fld, objid, rgn_type, rgn_id, rgn_name):
-    if rgn_type=='0' and rgn_name!='DISPUTED':
-        return {'rgn_type':'land-noeez',
-                'rgn_id'  : 3500 + objid,
-                'rgn_name': rgn_name}[fld]
-    elif rgn_type=='0' and rgn_name=='DISPUTED':
-            return {'rgn_type':'disputed-eez',
-                    'rgn_id'  : 255,
-                    'rgn_name':'DISPUTED'}[fld]
-    else:
-        return {'rgn_type': rgn_type,
-                'rgn_id'  : rgn_id,
-                'rgn_name': rgn_name}[fld]
-"""
-arcpy.CalculateField_management('rgns', 'rgn_type', "get('rgn_type', !OBJECTID!, !rgn_type!, !rgn_id!, !rgn_name!)",'PYTHON_9.3', code_block)
-arcpy.CalculateField_management('rgns', 'rgn_id'  , "get('rgn_id'  , !OBJECTID!, !rgn_type!, !rgn_id!, !rgn_name!)",'PYTHON_9.3', code_block)
-arcpy.CalculateField_management('rgns', 'rgn_name', "get('rgn_name', !OBJECTID!, !rgn_type!, !rgn_id!, !rgn_name!)",'PYTHON_9.3', code_block)
-
-# convert Caspian and Black Seas from rgn_type eez to land
-arcpy.MultipartToSinglepart_management('rgns', 'rgns_p')
-arcpy.MakeFeatureLayer_management('rgns_p', 'lyr_eez', "rgn_type = 'eez'")
-arcpy.Intersect_analysis([eeztoland, 'lyr_eez'], 'eez_CaspianBlackSea')
-arcpy.CalculateField_management('eez_CaspianBlackSea', 'rgn_type', "'land'", 'PYTHON_9.3')
-arcpy.Erase_analysis('rgns', 'eez_CaspianBlackSea', 'rgns_e')
-arcpy.Merge_management(['rgns_e','eez_CaspianBlackSea'], 'rgns_e_m')
-arcpy.Dissolve_management('rgns_e_m', 'rgns_e_m_d', ['rgn_type','rgn_id','rgn_name'])
-
-# copy final
-arcpy.CopyFeatures_management('rgns_e_m_d', 'rgns_gcs')
-#arcpy.RepairGeometry_management('rgns_gcs')
-arcpy.CopyFeatures_management('rgns_gcs', rgns_gcs)
-
-# TODO: simplify and TopoJSON
-# Simplify lake polygons.
-arcpy.cartography.SimplifyPolygon('rgns_gcs', 'rgns_simplify_gcs', 'POINT_REMOVE', 0.01, 200, "RESOLVE_ERRORS", "KEEP_COLLAPSED_POINTS", "CHECK")
- 
-# Smooth lake polygons.
-arcpy.cartography.SmoothPolygon(simplifiedFeatures, smoothedFeatures, "PAEK", 100, "FLAG_ERRORS")
-
-
-# TODO: check that rgn_id is unique, and that all rgn_type=='eez' have a matching 'rgn_type'=='land'
+##arcpy.Dissolve_management('rgns_e_m', 'rgns_e_m_d', ['rgn_type','rgn_id','rgn_name'])
+##
+### copy final
+##arcpy.CopyFeatures_management('rgns_e_m_d', 'rgns_gcs')
+##arcpy.RepairGeometry_management('rgns_gcs')
+##arcpy.CopyFeatures_management('rgns_gcs', rgns_gcs)
+##
+### TODO: simplify and TopoJSON
+### Simplify lake polygons.
+##arcpy.cartography.SimplifyPolygon('rgns_gcs', 'rgns_simplify_gcs', 'POINT_REMOVE', 0.01, 200, "RESOLVE_ERRORS", "KEEP_COLLAPSED_POINTS", "CHECK")
+## 
+### Smooth lake polygons.
+##arcpy.cartography.SmoothPolygon(simplifiedFeatures, smoothedFeatures, "PAEK", 100, "FLAG_ERRORS")
+##
+##
+### TODO: check that rgn_id is unique, and that all rgn_type=='eez' have a matching 'rgn_type'=='land'
 
 
 
