@@ -18,8 +18,6 @@
 # load libraries
 library(reshape2)
 library(gdata)
-#library(plyr)
-options(max.print=5E6)
 
 
 # from get paths configuration based on host machine name

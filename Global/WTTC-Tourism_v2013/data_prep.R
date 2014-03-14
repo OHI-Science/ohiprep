@@ -1,4 +1,5 @@
 # data_prep.R. 
+
 # Add rgn_ids for World Travel and Tourism Council (WTTC)
 # Previously had been named clean_WTTC.r (by JStewart May2013). This script created by JStewartLowndes Mar2014.
 #
@@ -8,18 +9,24 @@
 #   adds identifier and units columns, and then runs add_rgn_id.r. 
 #   no georegional gapfilling -- but save as separate files  
 
-# setup
-source('/Users/jstewart/github/ohiprep/src/R/ohi_clean_fxns.R') # also fix this directory
-dir1 = ('/Users/jstewart/github/ohiprep/Global/WTTC-Tourism_v2013') # also fix this directory
-wd = file.path(dir1, 'raw')
-setwd(wd)
+# setup ----
 
+# load libraries
 library(mgcv) # for troubleshooting below
 library(reshape2)
-library(gdata) # to enable read.xls
-options(max.print=5E6)
+library(gdata)
+library(dplyr)
 
-# read in files
+# from get paths configuration based on host machine name
+source('src/R/common.R') # set dir_neptune_data
+# Otherwise, presume that scripts are always working from your default ohiprep folder
+dir_d = 'Global/WTTC-Tourism_v2013'
+
+# get functions
+source('src/R/ohi_clean_fxns.R')
+
+
+# read in and process files ----
 d.all =  matrix(nrow=0, ncol=0)
 for (f in list.files(pattern=glob2rx('*.xls'))){ 
   
@@ -78,7 +85,7 @@ names(d.all2)[c(1,2,4,5)] = c('country', 'value_num', 'layer', 'units')
 d.all3 = d.all2[order(d.all2$layer, d.all2$country, d.all2$year),]
 
 ## run add_rgn_id and save
-uifilesave = file.path(wd, 'GL-WTTC-Tourism_v2013-cleaned.csv')
+uifilesave = file.path(dir_d, 'raw', 'WTTC-Tourism_v2013-cleaned.csv')
 add_rgn_id(d.all3, uifilesave)
 
 

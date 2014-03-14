@@ -4,7 +4,8 @@
 # location of original file on Neptune local_edit: /src/R/jstewart/ohi_clean_fxns.R
 
 # add rgn_id
-add_rgn_id = function(uidata, uifilesave) {
+add_rgn_id = function(uidata, uifilesave, 
+                      dpath = 'src/LookupTables') {
   # example: uidata     = '/Volumes/ohi/Work/2013Update/data/GL-FAO-Commodities/data/cleaned/GL-FAO-Commodities.csv'
   #          uifilesave = '/Volumes/ohi/Work/2013Update/data/GL-FAO-Commodities/data/cleaned/GL-FAO-Commodities-cleaned.csv'
   
@@ -28,8 +29,6 @@ add_rgn_id = function(uidata, uifilesave) {
   #   library(plyr)
   #   library(dplyr)
   
-  dpath = '/Users/jstewart/github/ohiprep/src/LookupTables' # fix this with more portable code
-  
   
   # remove accents
   col_num = grep('country', names(uidata), ignore.case = TRUE)
@@ -43,7 +42,8 @@ add_rgn_id = function(uidata, uifilesave) {
   uidata[,col_num] = gsub('.+Principe', 'Sao Tome and Principe', uidata[,col_num]) # Sao Tome and Principe
   
   
-  ## read in more offical (by BB) and redundant (by JS) lists with 2-letter OHI region codes, combine into one data.frame 
+  ## read in more offical (by BB) and redundant (by JS) lists with 2-letter OHI
+  ## region codes, combine into one data.frame
   rk = read.csv(file.path(dpath, 'eez_rgn_2013master.csv'))
   rk2 = read.csv(file.path(dpath, 'rgn_eez_v2013a_synonyms.csv'))
   
@@ -53,11 +53,12 @@ add_rgn_id = function(uidata, uifilesave) {
   rk$rgn_typ[!is.na(rk$rgn_id_2013)] = 'ohi_region'
   
   # manage synonym region_id data
-  rkb = data.frame(rk$rgn_id_2013, rk$rgn_key_2013, rk$rgn_nam_2013, rk$region_id_2012, rk$rgn_typ) 
+  rkb  = data.frame(rk$rgn_id_2013,  rk$rgn_key_2013,  rk$rgn_nam_2013,  rk$region_id_2012,  rk$rgn_typ) 
   rk2b = data.frame(rk2$rgn_id_2013, rk2$rgn_key_2013, rk2$rgn_nam_2013, rk2$region_id_2012, rk2$rgn_typ)
   
   # combine official and synonym region_id data
-  names(rkb) = c('rgn_id_2013', 'rgn_key_2013', 'rgn_nam_2013', 'region_id_2012', 'rgn_typ'); names(rk2b) = c('rgn_id_2013', 'rgn_key_2013', 'rgn_nam_2013', 'region_id_2012', 'rgn_typ')
+  names(rkb)  = c('rgn_id_2013', 'rgn_key_2013', 'rgn_nam_2013', 'region_id_2012', 'rgn_typ')
+  names(rk2b) = c('rgn_id_2013', 'rgn_key_2013', 'rgn_nam_2013', 'region_id_2012', 'rgn_typ')
   regionkey = rbind(rkb, rk2b)
   
   
@@ -409,7 +410,7 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
                        rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'),
                        rgns.csv           = file.path(dpath, 'rgn_details.csv')) {
   
-  # debug: cleaned_data=s; layersave=file.path(td, 'sanitation_gapfilled_2013b.csv'); s_island_val=NULL; dpath = 'src/LookupTables'; rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'); rgns.csv = file.path(dpath, 'rgn_details.csv')
+  # debug: dpath = 'src/LookupTables'; rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'); rgns.csv = file.path(dpath, 'rgn_details.csv')
   
   
   # setup ----
@@ -442,9 +443,11 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
     summarize(r2mean = mean(value, na.rm=T)) %.%  # if this gives errors check to make sure this is dplyr::summarize not plyr::summarize
     mutate(whence_choice = rep('r2')); head(d_r2)
   
-  d_r1 = cleandata %.%
+  d_r1a = cleandata %.%
     left_join(gf, by='rgn_id') %.%
-    group_by(r1, year) %.%
+    group_by(r1, year); head(d_r1a)
+  
+  d_r1 = d_r1a %.%
     summarize(r1mean = mean(value, na.rm=T)) %.%
     mutate(whence_choice = rep('r1')); head(d_r1)
   
@@ -528,17 +531,39 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
   
   # whence bookkeeping ----
   
-  # join each rgn_id that was gapfilled, by year, with all rgn_ids that had data within the georegion (identified by whence_choice)
-  rgn_gapfilled_whence = rgn_gapfilled %.%
-    left_join(d_r2a %.%
+  # join each rgn_id that was gapfilled, by year, with all rgn_ids that had data
+  # within the georegion (identified by whence_choice)
+  
+  # whence first with r2
+  rgn_gapfilled_whence_r2 = rgn_gapfilled %.%
+    left_join(d_r2a %.% 
                 select(year, r2,
                        rgn_id_whence = rgn_id,
                        rgn_nam_whence = rgn_nam,
                        value_whence = value), 
               by=c('r2', 'year')) %.%
+    select(rgn_id, rgn_nam, r2, r1, whence_choice, year, value, rgn_id_whence, rgn_nam_whence, value_whence)
+   head(rgn_gapfilled_whence_r2,10)
+  
+  # whence then with r1
+  rgn_gapfilled_whence_r1 = rgn_gapfilled_whence_r2 %.%
+    filter(is.na(rgn_id_whence)) %.%
+    select(rgn_id:value) %.%
+    left_join(d_r1a %.% 
+                select(year, r1,
+                       rgn_id_whence = rgn_id,
+                       rgn_nam_whence = rgn_nam,
+                       value_whence = value), by=c('r1', 'year')) %.%
+    select(rgn_id, rgn_nam, r2, r1, whence_choice, year, value, rgn_id_whence, rgn_nam_whence, value_whence)
+  head(rgn_gapfilled_whence_r1)
+    
+  # combine r2 and r1
+  rgn_gapfilled_whence = rgn_gapfilled_whence_r2 %.%
+    filter(!is.na(rgn_id_whence)) %.%
+    rbind(rgn_gapfilled_whence_r1) %.%
     arrange(rgn_id, year, rgn_id_whence) %.%
-    select(rgn_id, rgn_nam, r2, r1, whence_choice, year, value, rgn_id_whence, rgn_nam_whence, value_whence) ; head(rgn_gapfilled_whence,20)
-  rgn_gapfilled_whence = plyr::rename(rgn_gapfilled_whence, replace=c('value' = value_nam, 'value_whence' = paste(value_nam, '_whence', sep='')))
+    plyr::rename(replace=c('value' = value_nam, 
+                           'value_whence' = paste(value_nam, '_whence', sep=''))); head(rgn_gapfilled_whence,20)
   
   write.csv(rgn_gapfilled_whence, file.path(dirsave, paste(layersave, '_whencev01.csv', sep='')), na = '', row.names=FALSE)   
 }
@@ -551,7 +576,7 @@ add_gapfill_sov = function(cleaned_data, dirsave, layersave,
   
   # debug:: dpath = 'src/LookupTables'; rgn_master.csv= file.path(dpath, 'eez_rgn_2013master.csv')
   
- 
+  
   # setup ----
   print('-->>> add_gapfill_sov.r gives children the parent values based on sovereignty')
   
@@ -569,9 +594,9 @@ add_gapfill_sov = function(cleaned_data, dirsave, layersave,
   value_nam = names(cleandata)[!names(cleandata) %in% c('rgn_id', 'year')]
   names(cleandata)[!names(cleandata) %in% c('rgn_id', 'year')] = 'value';  head(cleandata)
   
-   
+  
   ## identify gaps and fill ----
-    
+  
   # join cleandata with master sovereignty list and identify regions to gapfill
   d_sov = cleandata %.%
     left_join(rkf %.%
@@ -588,7 +613,7 @@ add_gapfill_sov = function(cleaned_data, dirsave, layersave,
            sov_id, sov_nam) %.%
     anti_join(cleandata, by='rgn_id') %.%
     arrange(rgn_id); head(rgn_to_gapfill)
- 
+  
   
   # gapfill using d_sov created above
   rgn_gapfilled = rgn_to_gapfill %.%
@@ -596,9 +621,9 @@ add_gapfill_sov = function(cleaned_data, dirsave, layersave,
                 select(value, year, sov_id, sov_nam),
               by=c('sov_id', 'sov_nam')); head(rgn_gapfilled) 
   
- 
+  
   # combine gapfilled data with original data; save ----
-
+  
   
   # prepare to combine; add whencev01 columns
   rgn_gapfilled = rgn_gapfilled %.%
