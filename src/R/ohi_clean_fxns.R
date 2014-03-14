@@ -447,7 +447,7 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
     left_join(gf, by='rgn_id') %.%
     group_by(r1, year); head(d_r1a)
   
-  dr1 = d_r1a %.%
+  d_r1 = d_r1a %.%
     summarize(r1mean = mean(value, na.rm=T)) %.%
     mutate(whence_choice = rep('r1')); head(d_r1)
   
