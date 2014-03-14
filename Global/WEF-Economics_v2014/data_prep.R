@@ -47,18 +47,51 @@ add_rgn_id(gci, uifilesave)
 cleaned_data1 = read.csv(uifilesave)
 s_island_val = NA # assign what southern islands will get. 
 dirsave = file.path(dir_d, 'data')
-layersave = 'rgn_wef_gci_2014a_rescaled'
-cleaned_data1 = mutate(cleaned_data1, year=rep(2014)) # required for running add_gapfill
+layersave = 'rgn_wef_gci_2014a' # don't name it rescaled--it just is. 
+cleaned_data1 = mutate(cleaned_data1, year=rep(2014)) # required for running add_gapfill (add_gapfill_oneyear.r is deleted)
 add_gapfill(cleaned_data1, dirsave, layersave, s_island_val)
 
 
+## last step: give North Korea the minimum value ----
 
-# Final steps:
-## Layernames files were combined into rgn_wef_BHgapfilling.csv; BH then gapfilled things that would have needed an r0 value by hand. [all Pacific Islands]
-##this file was then saved as separate two separate files with the correct columns (year = 2013 all the way was added, and label was changed from 'IndexScore2013' to simply 'score'
-## North Korea was also given the minimum value (see BH's gapfilling notes in rgn_wef_BHgapfilling.csv)
-# FINAL files: rgn_wef_gci_2013a.csv and rgn_wef_ttci_2013a.csv
+gapfilled_data = read.csv(file.path(dirsave, paste(layersave, '.csv', sep=''))); head(gapfilled_data)
+whence_data = read.csv(file.path(dirsave, paste(layersave, '_whencev01.csv', sep=''))); head(whence_data)
 
+# find minimum
+gapfilled_data_noNA = gapfilled_data %.%
+  filter(!is.na(score))
+
+s_min = min(gapfilled_data_noNA$score)
+
+# replace North Korea (rgn_id == 21) in gapfilled_data
+gapfilled_data$score[gapfilled_data$rgn_id == 21] = s_min 
+
+gapfilled_data$whencev01 = as.character(gapfilled_data$whencev01)
+gapfilled_data$whencev01[gapfilled_data$rgn_id == 21] = 'XH'
+
+gapfilled_data$whence_choice = as.character(gapfilled_data$whence_choice)
+gapfilled_data$whence_choice[gapfilled_data$rgn_id == 21] = 'XH'
+
+
+# replace North Korea (rgn_id == 21) in whence_data
+whence_data$score[whence_data$rgn_id == 21] = s_min 
+
+whence_data$whence_choice = as.character(whence_data$whence_choice)
+whence_data$whence_choice[whence_data$rgn_id == 21] = 'XH' 
+
+whence_data$rgn_id_whence[whence_data$rgn_id == 21] = 'XH' 
+whence_data$rgn_nam_whence = as.character(whence_data$rgn_nam_whence)
+whence_data$rgn_nam_whence[whence_data$rgn_id == 21] = 'XH' 
+whence_data$score_whence[whence_data$rgn_id == 21] = 'XH' 
+
+# whence_data[whence_data$rgn_id == 21,]
+
+# save
+write.csv(gapfilled_data, file.path(dirsave, paste(layersave, '.csv', sep='')), na = '', row.names=FALSE)   
+write.csv(whence_data, file.path(dirsave, paste(layersave, '_whencev01.csv', sep='')), na = '', row.names=FALSE)   
+
+
+# --- fin
 
 
 # ## 2013 stuff to clean TTCI data. Not done in 2014 so would have to be updated a bit for nextime data are updated
@@ -91,18 +124,4 @@ add_gapfill(cleaned_data1, dirsave, layersave, s_island_val)
 #   layersave = paste(dir1, 'raw/', layernames[i], sep='')    
 #   add_gapfill_singleyear(cleaned_layer, layersave, s_island_val)
 # }
-# 
-# # Final steps:
-# ## Layernames files were combined into rgn_wef_BHgapfilling.csv; BH then gapfilled things that would have needed an r0 value by hand. [all Pacific Islands]
-# ##this file was then saved as separate two separate files with the correct columns (year = 2013 all the way was added, and label was changed from 'IndexScore2013' to simply 'score'
-# ## North Korea was also given the minimum value (see BH's gapfilling notes in rgn_wef_BHgapfilling.csv)
-# # FINAL files: rgn_wef_gci_2013a.csv and rgn_wef_ttci_2013a.csv
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
 # 
