@@ -4,7 +4,8 @@
 # location of original file on Neptune local_edit: /src/R/jstewart/ohi_clean_fxns.R
 
 # add rgn_id
-add_rgn_id = function(uidata, uifilesave) {
+add_rgn_id = function(uidata, uifilesave, 
+                      dpath = 'src/LookupTables') {
   # example: uidata     = '/Volumes/ohi/Work/2013Update/data/GL-FAO-Commodities/data/cleaned/GL-FAO-Commodities.csv'
   #          uifilesave = '/Volumes/ohi/Work/2013Update/data/GL-FAO-Commodities/data/cleaned/GL-FAO-Commodities-cleaned.csv'
   
@@ -28,8 +29,6 @@ add_rgn_id = function(uidata, uifilesave) {
   #   library(plyr)
   #   library(dplyr)
   
-  dpath = '/Users/jstewart/github/ohiprep/src/LookupTables' # fix this with more portable code
-  
   
   # remove accents
   col_num = grep('country', names(uidata), ignore.case = TRUE)
@@ -43,7 +42,8 @@ add_rgn_id = function(uidata, uifilesave) {
   uidata[,col_num] = gsub('.+Principe', 'Sao Tome and Principe', uidata[,col_num]) # Sao Tome and Principe
   
   
-  ## read in more offical (by BB) and redundant (by JS) lists with 2-letter OHI region codes, combine into one data.frame 
+  ## read in more offical (by BB) and redundant (by JS) lists with 2-letter OHI
+  ## region codes, combine into one data.frame
   rk = read.csv(file.path(dpath, 'eez_rgn_2013master.csv'))
   rk2 = read.csv(file.path(dpath, 'rgn_eez_v2013a_synonyms.csv'))
   
@@ -53,11 +53,12 @@ add_rgn_id = function(uidata, uifilesave) {
   rk$rgn_typ[!is.na(rk$rgn_id_2013)] = 'ohi_region'
   
   # manage synonym region_id data
-  rkb = data.frame(rk$rgn_id_2013, rk$rgn_key_2013, rk$rgn_nam_2013, rk$region_id_2012, rk$rgn_typ) 
+  rkb  = data.frame(rk$rgn_id_2013,  rk$rgn_key_2013,  rk$rgn_nam_2013,  rk$region_id_2012,  rk$rgn_typ) 
   rk2b = data.frame(rk2$rgn_id_2013, rk2$rgn_key_2013, rk2$rgn_nam_2013, rk2$region_id_2012, rk2$rgn_typ)
   
   # combine official and synonym region_id data
-  names(rkb) = c('rgn_id_2013', 'rgn_key_2013', 'rgn_nam_2013', 'region_id_2012', 'rgn_typ'); names(rk2b) = c('rgn_id_2013', 'rgn_key_2013', 'rgn_nam_2013', 'region_id_2012', 'rgn_typ')
+  names(rkb)  = c('rgn_id_2013', 'rgn_key_2013', 'rgn_nam_2013', 'region_id_2012', 'rgn_typ')
+  names(rk2b) = c('rgn_id_2013', 'rgn_key_2013', 'rgn_nam_2013', 'region_id_2012', 'rgn_typ')
   regionkey = rbind(rkb, rk2b)
   
   
