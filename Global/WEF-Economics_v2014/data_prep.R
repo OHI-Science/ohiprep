@@ -43,8 +43,9 @@ gci = within(gci,{
 uifilesave = file.path(dir_d, 'raw', 'WEF_GCI_rescaled-cleaned.csv')
 add_rgn_id(gci, uifilesave)
 
+
 ## georegional gapfilling with add_gapfill.r ----
-cleaned_data1 = read.csv(uifilesave)
+cleaned_data1 =  read.csv(uifilesave)
 s_island_val = NA # assign what southern islands will get. 
 dirsave = file.path(dir_d, 'data')
 layersave = 'rgn_wef_gci_2014a' # don't name it rescaled--it just is. 
@@ -89,6 +90,8 @@ whence_data$score_whence[whence_data$rgn_id == 21] = 'XH'
 # save
 write.csv(gapfilled_data, file.path(dirsave, paste(layersave, '.csv', sep='')), na = '', row.names=FALSE)   
 write.csv(whence_data, file.path(dirsave, paste(layersave, '_whencev01.csv', sep='')), na = '', row.names=FALSE)   
+
+
 
 
 # --- fin

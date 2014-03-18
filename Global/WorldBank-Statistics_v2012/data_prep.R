@@ -8,7 +8,7 @@
 #         PPP = Purchase power parity
 #         PPPpcGDP = GDP adjusted per capita by PPP     
 #         POP = Total population count
-                                  
+
 #   call add_rgn_id.r to add OHI region_ids
 #   georegional gapfilling with add_gapfill.r
 #   translation from rgn_id to cntry_id and country_id: scroll way down, there is a lot...
@@ -18,6 +18,7 @@
 # load libraries
 library(reshape2)
 library(gdata)
+library(dplyr)
 
 
 # from get paths configuration based on host machine name
@@ -31,11 +32,10 @@ source('src/R/ohi_clean_fxns.R')
 # read in and process files ----
 d.all =  matrix(nrow=0, ncol=0)
 count = 0
-for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), full.names=T){ 
-  # f = list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), full.names=T)[1]
+for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), full.names=T)) {  # f = "Global/WorldBank-Statistics_v2012/raw/sl.uem.totl.zs_Indicator_en_excel_v2.xls"
   count = count + 1
   #d = read.xls(file.path(dir_d, 'raw', f), sheet=1, skip=1, check.names=F) # do not add the stupid X in front of the numeric column names
-  d = read.xls(f, sheet=1, skip=1, check.names=F) # do not add the stupid X in front of the numeric column names
+  d = read.xls(f, sheet=1, skip=1, check.names=F) # head(d) # do not add the stupid X in front of the numeric column names
   
   # remove final year column if it is completely NAs
   aa = dim(d)[1] - sum(is.na(d[,dim(d)[2]]))
@@ -86,11 +86,105 @@ uifilesave = file.path(dir_d, 'raw', 'GL-WorldBank-Statistics_v2012-cleaned.csv'
 add_rgn_id(d.all3, uifilesave)
 
 
-# GAP FILLING 
-## georegional gapfilling with add_gapfill.r
+## check for duplicate regions, deal with appropriately ----
+d = read.csv(uifilesave); head(d)
+
+d.dup = d[duplicated(d[,c('rgn_id', 'year', 'layer', 'units')]),]; head(d.dup)
+d.dup_id = unique(d.dup$rgn_id) # 13, 116, 209, NA
+
+# explore
+filter(d, rgn_id == 13, year == 1960)
+filter(d, rgn_id == 116, year == 1960)
+filter(d, rgn_id == 209, year == 1960)
+
+## fix Northern Mariana Islands and Guam (rgn_id=13) ----
+# join all three
+dn = filter(d, rgn_nam == 'Northern Mariana Islands'); head(dn)
+dg = filter(d, rgn_nam == 'Guam'); head(dg)
+
+nmi = dn %.%
+  left_join(dg, by=c('rgn_id', 'year', 'layer', 'units')); head(nmi)
+
+# calculate sum--causing weirdness otherwise: sum giving different values with rm.na=T (??!)
+nmi_sum = nmi %.%
+  select(value.x, value.y)
+nmi_sum$value_tot = rowSums(nmi_sum, na.rm = T); tail(nmi_sum)
+nmi_sum$value_tot[is.na(nmi_sum$value.x) & is.na(nmi_sum$value.y)] = NA; tail(nmi_sum) # fix because NA+NA=0
+
+# cbind sum in place of individual values
+nmi_tot = cbind(nmi, nmi_sum) %.%
+  mutate(rgn_nam_tot = 'Northern Mariana Islands and Guam') %.%
+  select(rgn_id, 
+         rgn_nam = rgn_nam_tot,
+         value = value_tot,
+         units, layer, year); tail(nmi_tot)
+
+## fix Puerto Rico and Virgin Islands of the United States (rgn_id=116) ----
+# join all three
+dp = filter(d, rgn_nam == 'Puerto Rico'); head(dp)
+dv = filter(d, rgn_nam == 'Virgin Islands (U.S.)'); head(dv)
+
+prvi = dp %.%
+  left_join(dv, by=c('rgn_id', 'year', 'layer', 'units')); head(prvi)
+
+# calculate sum--causing weirdness otherwise: sum giving different values with rm.na=T (??!)
+prvi_sum = prvi %.%
+  select(value.x, value.y)
+prvi_sum$value_tot = rowSums(prvi_sum, na.rm = T); head(prvi_sum)
+prvi_sum$value_tot[is.na(prvi_sum$value.x) & is.na(prvi_sum$value.y)] = NA; head(prvi_sum) # fix because NA+NA=0
+
+# cbind sum in place of individual values
+prvi_tot = cbind(prvi, prvi_sum) %.%
+  mutate(rgn_nam_tot = 'Puerto Rico and Virgin Islands of the United States') %.%
+  select(rgn_id, 
+         rgn_nam = rgn_nam_tot,
+         value = value_tot,
+         units, layer, year); head(prvi_tot)
+
+## fix China (rgn_id=209) ----
+# join all three
+dh = filter(d, rgn_nam == 'Hong Kong SAR, China'); head(dh)
+dm = filter(d, rgn_nam == 'Macao SAR, China'); head(dm)
+dc = filter(d, rgn_nam == 'China'); head(dc)
+
+chn = dc %.%
+  left_join(dm, by=c('rgn_id', 'year', 'layer', 'units')) %.%
+  left_join(dh, by=c('rgn_id', 'year', 'layer', 'units')); head(chn)
+
+# calculate sum--causing weirdness otherwise: sum giving different values with rm.na=T (??!)
+chn_sum = chn %.%
+  select(value.x, value.y, value)
+chn_sum$value_tot = rowSums(chn_sum, na.rm = T); head(chn_sum)
+chn_sum$value_tot[is.na(chn_sum$value.x) & is.na(chn_sum$value.y) & is.na(chn_sum$value)] = NA; tail(chn_sum) # fix because NA+NA=0
+
+
+# cbind sum in place of individual values
+chn_tot = cbind(chn, chn_sum) %.%
+  select(rgn_id, 
+         rgn_nam = rgn_nam.x,
+         value = value_tot,
+         units, layer, year); head(chn_tot)
+
+
+## rbind all total values for all duplicates ----
+d_fix = data.frame(rbind(d %.%
+                              filter(rgn_id != 13, rgn_id !=116, rgn_id != 209),
+                            nmi_tot, 
+                            prvi_tot,
+                            chn_tot)) %.%
+  arrange(rgn_id); head(d_fix)
+
+# confirm
+filter(d_fix, rgn_id == 13, year == 1960)
+filter(d_fix, rgn_id == 116, year == 1960)
+filter(d_fix, rgn_id == 209, year == 1960)
+
+
+
+## georegional gapfilling with add_gapfill.r ----
 
 # remove anything without a rgn_id after confirming that the list printed does not contain any actual regions
-d.2 = read.csv(uifilesave); tail(d.2)
+d.2 = d_fix; tail(d.2)
 unique(d.2$rgn_nam[is.na(d.2$rgn_id)])
 d.2 = d.2[!is.na(d.2$rgn_id),]; tail(d.2)
 
@@ -146,7 +240,7 @@ for(k in 1:length(layer_uni)) { # k=1
 #   
 #   f = read.csv(file.path(fpath, csv.in)) #these are the files created above
 #   
-#   a = merge(x = f, y = cntry_rgn_2013, by.x = 'rgn_id', by.y = 'rgn_id', all.x = T); head(a); summary(a)  
+#   a = merge(x = f, y = cntry_rgn_2013, by.x = 'rgn_id', by.y = 'rgn_id', all.x = T); head(a); sudmary(a)  
 #   ####problem here bc gives the value for rgn_id to all associated; so to both Trindade and Brazil
 #   a.duplicated = a[a$rgn_id %in% a[duplicated(a[,c('rgn_id','year')]),'rgn_id'], ]
 #   table(a.duplicated$rgn_id, as.character(a.duplicated$cntry_key))
@@ -174,9 +268,9 @@ for(k in 1:length(layer_uni)) { # k=1
 # p = read.csv('/Volumes/data_edit/model/GL-WorldBank-Statistics_v2012/data/rgn_wb_gdppcppp_2013a.csv'); head(p)
 # names(p)[2] = 'LCUpUSD';head(p)
 # 
-# # lumpers: remove duplicates by summing LCUpUSD across all uniquely identified columns
+# # lumpers: remove duplicates by sudming LCUpUSD across all uniquely identified columns
 # p[duplicated(p[,c('rgn_id','year')]),]
-# p = ddply(p, .(rgn_id, year), summarize, LCUpUSD = mean(LCUpUSD, na.rm=T)) #average!!
+# p = ddply(p, .(rgn_id, year), sudmarize, LCUpUSD = mean(LCUpUSD, na.rm=T)) #average!!
 # 
 # # translate new from rgn_id_2013 to country_id_2012 using a lookup:
 # country12_rgn13 = read.csv('/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/manual_output/rgn2013_to_country2012_oneUSA.csv'); head(country12_rgn13)
@@ -188,7 +282,7 @@ for(k in 1:length(layer_uni)) { # k=1
 # 
 # p_m = merge(x=p, by.x='rgn_id',
 #              y=country12_rgn13, by.y='rgn_id',
-#              all.x=T); head(p_m); summary(p_m)
+#              all.x=T); head(p_m); sudmary(p_m)
 # 
 # # splitters: ok b/c children = parent
 # head(subset(p_m, duplicated_rgn==1))
@@ -197,7 +291,7 @@ for(k in 1:length(layer_uni)) { # k=1
 # table(p_m[duplicated(p_m[,c('country_id','year')]), 'country_id'])
 # # ANT MYS 
 # # 132  33
-# p_m = ddply(p_m, .(country_id, year), summarize, LCUpUSD = mean(LCUpUSD, na.rm=T)) #average!!
+# p_m = ddply(p_m, .(country_id, year), sudmarize, LCUpUSD = mean(LCUpUSD, na.rm=T)) #average!!
 # 
 # # write file
 # write.csv(arrange(p_m, country_id, country_id, year), '/Volumes/data_edit/model/GL-WorldBank-Statistics_v2012/data/country_wb_gdppcppp_2013a.csv', row.names=F, na='')
@@ -207,16 +301,16 @@ for(k in 1:length(layer_uni)) { # k=1
 # # GDP!! And now make  rgn_wb_ppp_2013a.csv -> country_wb_ppp_2013a.csv # simpler than cntry_wb_ppp_2013a.csv -> country_wb_ppp_2013a.csv Sept 16 
 # p = read.csv('/Volumes/data_edit/model/GL-WorldBank-Statistics_v2012/data/rgn_wb_gdp_2013a.csv'); head(p)
 # 
-# # lumpers: remove duplicates by summing LCUpUSD across all uniquely identified columns
+# # lumpers: remove duplicates by sudming LCUpUSD across all uniquely identified columns
 # p[duplicated(p[,c('rgn_id','year')], fromLast=F) | duplicated(p[,c('rgn_id','year')], fromLast=T),]
-# p = ddply(p, .(rgn_id, year), summarize, USD = sum(USD, na.rm=T)) ##sum!!
+# p = ddply(p, .(rgn_id, year), sudmarize, USD = sum(USD, na.rm=T)) ##sum!!
 # 
 # # translate new from rgn_id_2013 to country_id_2012 using a lookup:
 # country12_rgn13 = read.csv('/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/manual_output/rgn2013_to_country2012.csv'); head(country12_rgn13)
 # 
 # p_m = merge(x=p, by.x='rgn_id',
 #              y=country12_rgn13, by.y='rgn_id',
-#              all.x=T); head(p_m); summary(p_m)
+#              all.x=T); head(p_m); sudmary(p_m)
 # 
 # # splitters: children != parents, so split original rgn value by coastal population into country value
 # table(subset(p_m, duplicated_rgn==1, country_id))
@@ -228,7 +322,7 @@ for(k in 1:length(layer_uni)) { # k=1
 # #                52                52                52
 # # MNP=GUM, PRI=VIR, ECU=Galapagos Islands, GLP=MTQ, USA=Alaska=Hawaii, BRA=Trindade, Easter Island=CHL
 # cp = read.csv('/Volumes/data_edit/model/GL-NCEAS-CoastalPopulation_v2013/data/cntry_popsum2013_inland25mi_complete.csv', na.strings=''); head(cp)
-# cp.rgnsum = ddply(cp, .(rgn_id), summarize, rgn_popsum2013_inland25mi = sum(cntry_popsum2013_inland25mi, na.rm=T)); head(cp.rgnsum)
+# cp.rgnsum = ddply(cp, .(rgn_id), sudmarize, rgn_popsum2013_inland25mi = sum(cntry_popsum2013_inland25mi, na.rm=T)); head(cp.rgnsum)
 # cp = merge(cp, cp.rgnsum, by.x='rgn_id', by.y='rgn_id', all.x=T)
 # cp$cp_ratio = with(cp, cntry_popsum2013_inland25mi/rgn_popsum2013_inland25mi); head(cp)
 # p.country = merge(p_m, subset(cp, cntry_key %in% p_m[p_m$duplicated_rgn==1,'cntry_key'], c(cntry_key, cp_ratio)), by.x='cntry_key', by.y='cntry_key', all.x=T); head(p.country); dim(p_m); dim(p.country)
@@ -244,7 +338,7 @@ for(k in 1:length(layer_uni)) { # k=1
 #                   duplicated(p.country[,c('country_id','year')], fromLast=T), 'country_id'])
 # # ANT MYS 
 # # 226  94 
-# p.lumped = ddply(p.country, .(country_id, year), summarize, USD = sum(USD, na.rm=T)) ##sum!!
+# p.lumped = ddply(p.country, .(country_id, year), sudmarize, USD = sum(USD, na.rm=T)) ##sum!!
 # p.lumped = arrange(p.lumped, country_id, year)
 # 
 # # write file
@@ -329,7 +423,7 @@ for(k in 1:length(layer_uni)) { # k=1
 # pclean = na.omit(pclean)
 # 
 # # BB checking corrections via KL 2013-08-30
-# p  = read.csv('/Volumes/data_edit/model/GL-WorldBank-Statistics_v2012/data/rgn_wb_pop_2013a.csv'); head(p); summary(p); dim(p)
+# p  = read.csv('/Volumes/data_edit/model/GL-WorldBank-Statistics_v2012/data/rgn_wb_pop_2013a.csv'); head(p); sudmary(p); dim(p)
 # #      rgn_id          count                year     
 # #  Min.   :  1.0   Min.   :0.000e+00   Min.   :1960  
 # #  1st Qu.: 65.0   1st Qu.:2.997e+05   1st Qu.:1973  
