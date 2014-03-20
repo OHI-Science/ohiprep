@@ -4,7 +4,8 @@ GL-CITES-Signatories_v2013
 Final file for model 
 ====================
 
-GL-CITES-Signatories_v2013-cleaned.csv
+cites_2014a.csv
+
 
 Raw data files downloaded
 =========================
@@ -12,23 +13,23 @@ Raw data files downloaded
 Data accessed from CITES: Convention on International Trade in Endangered Species of Wild Fauna and Flora. 
 www.cites.org. 
 
-\*\*Data accessed April 2013: 178 total. 3 new countries are signatories since 2012 access: 
+\*\*Data accessed March 2014: 180 total. 2 new countries are signatories since April 2013 access: 
 
-* Bahrain
-* Maldives
-* Lebanon
+* Angola
+* Iraq
+
 
 http://www.cites.org/eng/disc/parties/chronolo.php
-copied and saved into CITES_MemberCountries_2013Apr.xlsx
+copied and saved into CITES_MemberCountries_2014Mar.xlsx
 saved as CITES_MemberCountries_2013Apr.csv (metadata removed and pasted below).
 
 
 Cleaning
 ========
 
-Cleaned data has been processed from raw using clean_CITES.r and add_ISO.r:
+Cleaned data has been processed from raw using data_prep.r (previously clean_CITES.r) and add_rgn_id.r:
+Also, join all other regions (boolean==0)
 
-* clean_CO.r loads data from CITES_MemberCountries_2013Apr.csv and calls add_ISO.r to save as GL-CITES-Signatories_v2013-cleaned.csv
 
 Methods
 =======
@@ -39,9 +40,8 @@ An updated list of CITES signatories was accessed in April 2013 (http://www.cite
 Metadata
 ========
 
-The CITES Signatories list has been updated for the 2013 OHI assessment. Three new countries were added as signatories to CITES since the 2012 OHI assessment: Bahrain, Maldives and Lebanon.
 
-(in chronological order) 
+(in chronological order)
 
 Order: Chronological order
 ISO: Two-letter ISO country code
