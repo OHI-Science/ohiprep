@@ -1,20 +1,31 @@
 NCEAS-Regions_v2014
 ===================
 
-model_create_regions.py: create OHI 2014 regions
-bbest@nceas.ucsb.edu 2014-02-27
-
 ## Description
-The OHI 2014 regions cover the entire earth with non-overlapping regions with the following fields:
-* rgn_type, having possible values:
+The OHI 2014 regions cover the entire earth with non-overlapping regions having the following fields:
+* **rgn_type**, having possible values (types to be filtered out for OHI analysis indicated by ~~strikethrough~~):
   - eez: exclusive economic zone (EEZ)
-  - land: terrestrial land
+  - ~~eez-disputed~~: disputed EEZ
+  - ~~eez-inland~~: inland EEZ of Caspian and Black Seas
   - fao: offshore Food & Agriculture Organization (FAO) Major Fishing Areas, with EEZs erased
-  - land-noeez: land without any EEZ
-  - disputed-eez: disputed EEZ
-  - disputed-land: disputed land
-* rgn_id: unique identifier (within same rgn_type)
-* rgn_name: name for region
+  - land: terrestrial land having same name and id as the corresponding EEZ
+  - ~~land-disputed~~: disputed land
+  - ~~land-noeez~~: land without any corresponding EEZ (not including eez-inland)
+* **rgn_id**: unique identifier (within same rgn_type)
+* **rgn_name**: name for region
+
+## Outputs
+
+The two main outputs are in geographic coordinate system (gcs):
+* **sp_gcs***: spatial areas  based on original EEZs v8 and Antarctica CCAMLR subregions. Version 8 of the EEZs introduced [changes](http://www.marineregions.org/files/eez_v8_changes.php) including splitting of EEZs (Guadeloupe and Martinique; Puerto Rico and Virgin Islands of the United States), which got merged back to form the same regions as OHI 2013.
+
+* **rgn_gcs***: OHI regions dissolved on these fields in sp_gcs: rgn_type, rgn_id, rgn_name, rgn_key. Most significantly, the Antarctica CCAMLR regions become a single Antarctica EEZ, and several of the EEZs get merged into a single OHI region. The correspondence between sp and rgn is maintained by [manual_output/sp_rgn_manual.csv](https://github.com/OHI-Science/ohiprep/blob/master/Global/NCEAS-Regions_v2014/manual_output/sp_rgn_manual.csv).
+
+The two formats (and locations) for the outputs are in:
+* **\*.shp** in `\\neptune\git_annex\Global\NCEAS-Regions_v2014\data\`
+* **\*_data.csv** in [`data/`](https://github.com/OHI-Science/ohiprep/tree/master/Global/NCEAS-Regions_v2014/data).
+
+![map of outputs](https://raw.githubusercontent.com/OHI-Science/ohiprep/master/Global/NCEAS-Regions_v2014/fig/NCEAS-Regions_v2014_sp_rgn_map.png)
 
 ## Inputs
 * EEZ, EEZ_land (http://marineregions.org)
@@ -36,7 +47,28 @@ iso3 IN ('SHN','ATF','AUS','BRA','CHL','ECU','ESP','IND','KIR','PRT','TLS','UMI'
 * convert EEZ of Caspian and Black Seas to land
 * merge all products and peform checks for overlap and geometry repair
 
+
+## Antarctica
+
+Note that the EEZ's have been clipped from the original CCAMLR regions as described in the FAO Major Fishing Areas. Here's the original non-overlapping CCAMLR regions for Antarctica and the OHI subset of regions with the EEZs clipped, as well as proportion of original.
+
+![Antarctica CCAMLR regions: original(top), clipped (middle) and percent original (bottom)](fig/NCEAS-Regions_v2014_Antarctica.png)
+
+Some of the regions slightly exceed 100% of the original region. This is presumably related to some strange ArcGIS geodesic area calculation differences, since slivers were not otherwise added to the OHI version.
+
+Made an Antarctic specific set of shapefiles here:
+
+    \\neptune\data_edit\git-annex\Global\NCEAS-Regions_v2014\data
+
+* antarctica_ccamlr_alleez_gcs.shp: CCAMLR regions before being clipped by EEZs
+  - area_orig_ -> area_orig_km2
+* antarctica_ccamlr_ohi2014_gcs.shp: CCAMLR regions after being clipped by EEZs with the following fields explained:
+  - area_orig_ -> area_orig_km2
+  - area_km2
+  - area_pct_o -> area_pct_orig: area_km2 / area_orig_km2 * 100
   
+This limitation of 10 characters for shapefiles is uber lame. I'm looking into using the R and Python packages for this simple data package format.
+
 NCEAS-Regions_v2012
 ===================
 
