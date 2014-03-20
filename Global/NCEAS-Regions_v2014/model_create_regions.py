@@ -42,12 +42,6 @@
 #   - 140 Guadeloupe and Martinique
 #   - 116 Puerto Rico and Virgin Islands of the United States
 
-# TODO:
-#  * integrate Caspian and Black Sea removal earlier
-#  * remove overlapping Peru / Chile land
-#  * check for and remove any land slivers next to FAO high seas
-#  * split Guadalupe & Martinique
-
 import arcpy, os, re, numpy as np, socket, pandas as pd
 from collections import Counter
 from numpy.lib import recfunctions
@@ -134,13 +128,6 @@ arcpy.JoinField_management('fao_noeez_ant', 'F_CODE2', 'fao_ant_inx', 'F_CODE2',
 # export Antarctica shapefiles with and without EEZ clipped
 arcpy.CopyFeatures_management('fao_noeez_ant', ant_ccamlr_ohi)
 arcpy.CopyFeatures_management('fao_ant'      , ant_ccamlr_all)
-### dissolve CCAMLR to get OHI version of single Antarctica EEZ
-##arcpy.Dissolve_management('fao_noeez_ant', 'ant_eez')
-##r = np.rec.fromrecords(
-##    [(1, 213, u'eez', u'Antarctica', u'ATA')],
-##    formats = '<i4, <i4, <U255, <U255, <U255',
-##    names   = 'OBJECTID, raw_id, raw_type, raw_name, raw_key')
-##arcpy.da.ExtendTable('ant_eez', 'OBJECTID', r, 'OBJECTID', append_only=False)
 arcpy.CopyFeatures_management('fao_noeez_ant', 'ant_ccamlr_noeez')
 r = arcpy.da.TableToNumPyArray('ant_ccamlr_noeez', ['OBJECTID','F_CODE'])
 r.dtype.names = [{'F_CODE'    :'raw_name'}.get(x, x) for x in r.dtype.names]

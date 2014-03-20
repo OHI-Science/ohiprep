@@ -1,11 +1,8 @@
 NCEAS-Regions_v2014
 ===================
 
-model_create_regions.py: create OHI 2014 regions
-bbest@nceas.ucsb.edu 2014-02-27
-
 ## Description
-The OHI 2014 regions cover the entire earth with non-overlapping regions with the following fields:
+The OHI 2014 regions cover the entire earth with non-overlapping regions having the following fields:
 * rgn_type, having possible values:
   - eez: exclusive economic zone (EEZ)
   - land: terrestrial land
@@ -15,6 +12,19 @@ The OHI 2014 regions cover the entire earth with non-overlapping regions with th
   - disputed-land: disputed land
 * rgn_id: unique identifier (within same rgn_type)
 * rgn_name: name for region
+
+## Outputs
+
+The two main outputs are in geographic coordinate system (gcs):
+* **sp_gcs***: spatial areas  based on original EEZs v8 and Antarctica CCAMLR subregions. Version 8 of the EEZs introduced [changes](http://www.marineregions.org/files/eez_v8_changes.php) including splitting of EEZs (Guadeloupe and Martinique; Puerto Rico and Virgin Islands of the United States), which got merged back to form the same regions as OHI 2013.
+
+* **rgn_gcs***: OHI regions dissolved on these fields in sp_gcs: rgn_type, rgn_id, rgn_name, rgn_key. Most significantly, the Antarctica CCAMLR regions become a single Antarctica EEZ, and several of the EEZs get merged into a single OHI region. The correspondence between sp and rgn is maintained by [manual_output/sp_rgn_manual.csv](https://github.com/OHI-Science/ohiprep/blob/master/Global/NCEAS-Regions_v2014/manual_output/sp_rgn_manual.csv).
+
+The two formats (and locations) for the outputs are in:
+* ***.shp** in `\\neptune\git_annex\Global\NCEAS-Regions_v2014\data\`
+* ***_data.csv** in [`data/`](https://github.com/OHI-Science/ohiprep/tree/master/Global/NCEAS-Regions_v2014/data).
+
+![map of outputs](https://raw.githubusercontent.com/OHI-Science/ohiprep/master/Global/NCEAS-Regions_v2014/fig/NCEAS-Regions_v2014_sp_rgn_map.png)
 
 ## Inputs
 * EEZ, EEZ_land (http://marineregions.org)
