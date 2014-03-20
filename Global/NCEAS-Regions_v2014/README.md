@@ -3,15 +3,16 @@ NCEAS-Regions_v2014
 
 ## Description
 The OHI 2014 regions cover the entire earth with non-overlapping regions having the following fields:
-* rgn_type, having possible values:
+* **rgn_type**, having possible values (types to be filtered out for OHI analysis indicated by ~~strikethrough~~):
   - eez: exclusive economic zone (EEZ)
-  - land: terrestrial land
+  - ~~eez-disputed~~: disputed EEZ
+  - ~~eez-inland~~: inland EEZ of Caspian and Black Seas
   - fao: offshore Food & Agriculture Organization (FAO) Major Fishing Areas, with EEZs erased
-  - land-noeez: land without any EEZ
-  - disputed-eez: disputed EEZ
-  - disputed-land: disputed land
-* rgn_id: unique identifier (within same rgn_type)
-* rgn_name: name for region
+  - land: terrestrial land having same name and id as the corresponding EEZ
+  - ~~land-disputed~~: disputed land
+  - ~~land-noeez~~: land without any corresponding EEZ (not including eez-inland)
+* **rgn_id**: unique identifier (within same rgn_type)
+* **rgn_name**: name for region
 
 ## Outputs
 
