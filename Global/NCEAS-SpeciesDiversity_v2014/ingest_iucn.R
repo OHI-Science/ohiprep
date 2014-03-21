@@ -2,15 +2,15 @@
 # Now using 2013.1 as of July 1st, 2013
 
 # load packages
-library(ohi)
+#library(ohi)
 library(RCurl)
 library(XML)
 library(parallel)
 library(plyr)
 
 # set working directory
-#wd = '/var/data/ohi/model/GL-NCEAS-SpeciesDiversity_2013' # (Mac/Linux)
-wd = 'N:/model/GL-NCEAS-SpeciesDiversity_v2013a' # Windows
+source('src/R/common.R')
+wd = file.path(dir_neptune_data, '/git-annex/Global/NCEAS-SpeciesDiversity_v2014')
 setwd(wd)
 
 # flags & vars
