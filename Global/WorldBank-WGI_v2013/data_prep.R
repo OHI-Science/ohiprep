@@ -137,19 +137,19 @@ filter(cleaned_layer, rgn_id == 116, year == 1996)
 filter(cleaned_layer, rgn_id == 209, year == 1996)
 
 # sum duplicates
-cleaned_layer_nodup = sum_duplicates(cleaned_layer, dup_ids)
+cleaned_layer_nodup = sum_duplicates(cleaned_layer, dup_ids); head(cleaned_layer_nodup)
 
 # confirm no more dups
-filter(d_fix, rgn_id == 116, year == 1996)
-filter(d_fix, rgn_id == 209, year == 1996)
+filter(cleaned_layer_nodup, rgn_id == 116, year == 1996)
+filter(cleaned_layer_nodup, rgn_id == 209, year == 1996)
 
 
 ## gapfilling ----
 
 # temporal gapfilling with temporal.gapfill.r
-cleaned_layert_tmp = temporal.gapfill(cleaned_layer, 
+cleaned_layert_tmp = temporal.gapfill(cleaned_layer_nodup, 
                                       fld.id = 'rgn_id', 
-                                      fld.value = names(cleaned_layer)[3], 
+                                      fld.value = names(cleaned_layer_nodup)[3], 
                                       fld.year = 'year', verbose=F); head(cleaned_layert_tmp) 
 cleaned_layert = cleaned_layert_tmp; cleaned_layert$whence = NULL; cleaned_layert$whence_details = NULL; head(cleaned_layert) 
 cleaned_layert = cleaned_layert %.% 
@@ -160,6 +160,7 @@ dirsave = file.path(dir_d, 'data')
 layersave = 'rgn_wb_wgi_2014a'
 add_gapfill_sov(cleaned_layert, dirsave, layersave)
 
+# no further gapfilling required
 
 # calculate inverse file and save ----
 cleaned_data_sov =  read.csv(file.path(dir_d, 'data', paste(layersave, '.csv', sep=''))); head(cleaned_data_sov) 
