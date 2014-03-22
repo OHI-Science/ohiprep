@@ -16,11 +16,7 @@ add_rgn_id = function(uidata, uifilesave,
   print('-->>> add_rgn_id.r expects that the first two columns of the matrix will be country_name, value_units ')
   
   # load libraries
-  #   library(reshape2)
-  #   library(gdata)
-  #   options(gsubfn.engine = "R") # otherwise, get X11 launching for sqldf package
-  #   require(sqldf)
-  library(dplyr)
+    library(dplyr)
   
   # read in lookup files, combine into one dataframe
   rk = read.csv(rgn_master.csv); head(rk) # master file by BB
@@ -41,6 +37,7 @@ add_rgn_id = function(uidata, uifilesave,
   names(rk2b) = c('rgn_id_2013', 'rgn_key_2013', 'rgn_nam_2013', 'region_id_2012', 'rgn_typ')
   regionkey = rbind(rkb, rk2b)
   regionkey$rgn_nam_2013 = as.character(regionkey$rgn_nam_2013)
+  regionkey = regionkey[!duplicated(regionkey), ] # remove duplicate rows in regionkey. this is what SELECT DISTINCT rgn_nam_2013, rgn_key_2013, rgn_id_2013, rgn_typ did with SQlite
   
   # remove accents
   col_num = grep('country', names(uidata), ignore.case = TRUE)
@@ -61,7 +58,7 @@ add_rgn_id = function(uidata, uifilesave,
     select(rgn_id = rgn_id_2013,
            rgn_nam = rgn_nam_2013, 
            rgn_typ) %.%
-    inner_join(uidata, by = 'rgn_nam'); head(uidata_regionkey)
+    inner_join(uidata, by = 'rgn_nam'); head(uidata_regionkey) 
   
   # only keep ohi_regions
   uidata_rgn = uidata_regionkey %.%

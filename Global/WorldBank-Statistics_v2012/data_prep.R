@@ -35,7 +35,7 @@ count = 0
 for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), full.names=T)) {  # f = "Global/WorldBank-Statistics_v2012/raw/sl.uem.totl.zs_Indicator_en_excel_v2.xls"
   count = count + 1
   #d = read.xls(file.path(dir_d, 'raw', f), sheet=1, skip=1, check.names=F) # do not add the stupid X in front of the numeric column names
-  d = read.xls(f, sheet=1, skip=1, check.names=F) # head(d) # do not add the stupid X in front of the numeric column names
+  d = read.xls(f, sheet=1, skip=1, check.names=F);  head(d) # do not add the stupid X in front of the numeric column names
   
   # remove final year column if it is completely NAs
   aa = dim(d)[1] - sum(is.na(d[,dim(d)[2]]))
@@ -86,95 +86,17 @@ uifilesave = file.path(dir_d, 'raw', 'GL-WorldBank-Statistics_v2012-cleaned.csv'
 add_rgn_id(d.all3, uifilesave)
 
 
-## check for duplicate regions, deal with appropriately ----
+## check for duplicate regions, sum them ----
+
+# explore; identify dups
 d = read.csv(uifilesave); head(d)
-
 d.dup = d[duplicated(d[,c('rgn_id', 'year', 'layer', 'units')]),]; head(d.dup)
-d.dup_id = unique(d.dup$rgn_id) # 13, 116, 209, NA
-
-# explore
+dup_ids = unique(d.dup$rgn_id) # 13, 116, 209, NA
 filter(d, rgn_id == 13, year == 1960)
 filter(d, rgn_id == 116, year == 1960)
 filter(d, rgn_id == 209, year == 1960)
 
-filter(d, rgn_id == 137, year == 1960)
-
-# ## fix Northern Mariana Islands and Guam (rgn_id=13) ----
-# # join all three
-# dn = filter(d, rgn_nam == 'Northern Mariana Islands'); head(dn)
-# dg = filter(d, rgn_nam == 'Guam'); head(dg)
-# 
-# nmi = dn %.%
-#   left_join(dg, by=c('rgn_id', 'year', 'layer', 'units')); head(nmi)
-# 
-# # calculate sum--causing weirdness otherwise: sum giving different values with rm.na=T (??!)
-# nmi_sum = nmi %.%
-#   select(value.x, value.y)
-# nmi_sum$value_tot = rowSums(nmi_sum, na.rm = T); tail(nmi_sum)
-# nmi_sum$value_tot[is.na(nmi_sum$value.x) & is.na(nmi_sum$value.y)] = NA; tail(nmi_sum) # fix because NA+NA=0
-# 
-# # cbind sum in place of individual values
-# nmi_tot = cbind(nmi, nmi_sum) %.%
-#   mutate(rgn_nam_tot = 'Northern Mariana Islands and Guam') %.%
-#   select(rgn_id, 
-#          rgn_nam = rgn_nam_tot,
-#          value = value_tot,
-#          units, layer, year); tail(nmi_tot)
-# 
-# ## fix Puerto Rico and Virgin Islands of the United States (rgn_id=116) ----
-# # join all three
-# dp = filter(d, rgn_nam == 'Puerto Rico'); head(dp)
-# dv = filter(d, rgn_nam == 'Virgin Islands (U.S.)'); head(dv)
-# 
-# prvi = dp %.%
-#   left_join(dv, by=c('rgn_id', 'year', 'layer', 'units')); head(prvi)
-# 
-# # calculate sum--causing weirdness otherwise: sum giving different values with rm.na=T (??!)
-# prvi_sum = prvi %.%
-#   select(value.x, value.y)
-# prvi_sum$value_tot = rowSums(prvi_sum, na.rm = T); head(prvi_sum)
-# prvi_sum$value_tot[is.na(prvi_sum$value.x) & is.na(prvi_sum$value.y)] = NA; head(prvi_sum) # fix because NA+NA=0
-# 
-# # cbind sum in place of individual values
-# prvi_tot = cbind(prvi, prvi_sum) %.%
-#   mutate(rgn_nam_tot = 'Puerto Rico and Virgin Islands of the United States') %.%
-#   select(rgn_id, 
-#          rgn_nam = rgn_nam_tot,
-#          value = value_tot,
-#          units, layer, year); head(prvi_tot)
-# 
-# ## fix China (rgn_id=209) ----
-# # join all three
-# dh = filter(d, rgn_nam == 'Hong Kong SAR, China'); head(dh)
-# dm = filter(d, rgn_nam == 'Macao SAR, China'); head(dm)
-# dc = filter(d, rgn_nam == 'China'); head(dc)
-# 
-# chn = dc %.%
-#   left_join(dm, by=c('rgn_id', 'year', 'layer', 'units')) %.%
-#   left_join(dh, by=c('rgn_id', 'year', 'layer', 'units')); head(chn)
-# 
-# # calculate sum--causing weirdness otherwise: sum giving different values with rm.na=T (??!)
-# chn_sum = chn %.%
-#   select(value.x, value.y, value)
-# chn_sum$value_tot = rowSums(chn_sum, na.rm = T); head(chn_sum)
-# chn_sum$value_tot[is.na(chn_sum$value.x) & is.na(chn_sum$value.y) & is.na(chn_sum$value)] = NA; tail(chn_sum) # fix because NA+NA=0
-# 
-# 
-# # cbind sum in place of individual values
-# chn_tot = cbind(chn, chn_sum) %.%
-#   select(rgn_id, 
-#          rgn_nam = rgn_nam.x,
-#          value = value_tot,
-#          units, layer, year); head(chn_tot)
-# 
-# 
-# ## rbind all total values for all duplicates ----
-# d_fix = data.frame(rbind(d %.%
-#                               filter(rgn_id != 13, rgn_id !=116, rgn_id != 209),
-#                             nmi_tot, 
-#                             prvi_tot,
-#                             chn_tot)) %.%
-#   arrange(rgn_id); head(d_fix)
+d_fix = sum_duplicates(d, dup_ids); head(d_fix)
 
 # confirm
 filter(d_fix, rgn_id == 13, year == 1960)
