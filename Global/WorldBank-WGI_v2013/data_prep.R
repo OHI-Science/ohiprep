@@ -127,6 +127,23 @@ rng = c(-2.5, 2.5)
 cleaned_layer = within(cleaned_layer,{
   score = (score - rng[1]) / (rng[2] - rng[1])})
 
+
+## check for duplicate regions, sum them ----
+
+# explore; identify dups
+dup = cleaned_layer[duplicated(cleaned_layer[,c('rgn_id', 'year')]),]; head(dup)
+dup_ids = unique(dup$rgn_id) # 116, 209
+filter(cleaned_layer, rgn_id == 116, year == 1996)
+filter(cleaned_layer, rgn_id == 209, year == 1996)
+
+# sum duplicates
+cleaned_layer_nodup = sum_duplicates(cleaned_layer, dup_ids)
+
+# confirm no more dups
+filter(d_fix, rgn_id == 116, year == 1996)
+filter(d_fix, rgn_id == 209, year == 1996)
+
+
 ## gapfilling ----
 
 # temporal gapfilling with temporal.gapfill.r

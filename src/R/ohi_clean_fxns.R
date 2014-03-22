@@ -88,7 +88,7 @@ add_rgn_id = function(uidata, uifilesave,
   uidata_rgn = uidata_rgn %.%
     arrange(rgn_id); head(uidata_rgn)
   
-
+  
   print('Be sure to inspect saved .csv file for additional or missing rgn_ids.')
   write.csv(uidata_rgn, uifilesave, na = '', row.names=FALSE)
   
@@ -640,5 +640,105 @@ add_gapfill_sov = function(cleaned_data, dirsave, layersave,
   print('Check to see whether any further georegional gapfilling is required')
   
   # return(finaldata) # this is how it was done in the past
+  
+}
+
+
+sum_duplicates = function(cleandata, dup_ids) {
+  
+  d = cleandata
+  
+  n = names(d)
+  value_nam = names(d)[!names(d) %in% c('rgn_id', 'rgn_nam', 'year')]
+  names(d)[!names(d) %in% c('rgn_id', 'rgn_nam', 'year')] = 'value' # call this value for processing; revert back below 
+  fld_ids_join = names(d)[!names(d) %in% c('rgn_nam', 'value')]
+  head(d)
+  
+  # to rbind all
+  d.all =  matrix(nrow=0, ncol=0) 
+  
+  ## fix Northern Mariana Islands and Guam (rgn_id=13) ----
+  if (13 %in% dup_ids) { 
+    dn = filter(d, rgn_nam == 'Northern Mariana Islands'); head(dn)
+    dg = filter(d, rgn_nam == 'Guam'); head(dg)
+    
+    nmi = dn %.%
+      left_join(dg, by=fld_ids_join); head(nmi) 
+    
+    # calculate sum--causing weirdness otherwise: sum giving different values with rm.na=T (??!)
+    nmi_sum = nmi %.%
+      select(value.x, value.y)
+    nmi_sum$value_tot = rowSums(nmi_sum, na.rm = T); tail(nmi_sum)
+    nmi_sum$value_tot[is.na(nmi_sum$value.x) & is.na(nmi_sum$value.y)] = NA; tail(nmi_sum) # fix because NA+NA=0
+    
+    # cbind sum in place of individual values
+    nmi_tot = cbind(nmi, nmi_sum) %.%
+      mutate(rgn_nam_tot = 'Northern Mariana Islands and Guam'); head(nmi_tot)
+    nmi_tot$rgn_nam.x = NULL; nmi_tot$rgn_nam.y = NULL; nmi_tot$value.x = NULL; nmi_tot$value.y = NULL; 
+    nmi_tot = plyr::rename(nmi_tot, 
+                            c('value_tot' = 'value', 'rgn_nam_tot' = 'rgn_nam')); head(nmi_tot)
+    
+    d.all = rbind(d.all, nmi_tot)
+  }
+  
+  
+  ## fix Puerto Rico and Virgin Islands of the United States (rgn_id=116) ----
+  if (116 %in% dup_ids) { 
+    dp = filter(d, rgn_nam == 'Puerto Rico'); head(dp)
+    dv = filter(d, rgn_nam == 'Virgin Islands (U.S.)'); head(dv)
+    
+    prvi = dp %.%
+      left_join(dv, by=fld_ids_join); head(prvi)
+    
+    # calculate sum--causing weirdness otherwise: sum giving different values with rm.na=T (??!)
+    prvi_sum = prvi %.%
+      select(value.x, value.y)
+    prvi_sum$value_tot = rowSums(prvi_sum, na.rm = T); head(prvi_sum)
+    prvi_sum$value_tot[is.na(prvi_sum$value.x) & is.na(prvi_sum$value.y)] = NA; head(prvi_sum) # fix because NA+NA=0
+    
+    # cbind sum in place of individual values. Easier this way rather than 'select' since you don't know all the columns involved in fld_ids_join
+    prvi_tot = cbind(prvi, prvi_sum) %.%
+      mutate(rgn_nam_tot = 'Puerto Rico and Virgin Islands of the United States'); head(prvi_tot)
+    prvi_tot$rgn_nam.x = NULL; prvi_tot$rgn_nam.y = NULL; prvi_tot$value.x = NULL; prvi_tot$value.y = NULL; 
+    prvi_tot = plyr::rename(prvi_tot, 
+                 c('value_tot' = 'value', 'rgn_nam_tot' = 'rgn_nam')); head(prvi_tot)
+    
+    d.all = rbind(d.all, prvi_tot)
+  }
+  
+  ## fix China (rgn_id=209) ----
+  if (209 %in% dup_ids) { 
+    dh = filter(d, rgn_nam == 'Hong Kong SAR, China'); head(dh)
+    dm = filter(d, rgn_nam == 'Macao SAR, China'); head(dm)
+    dc = filter(d, rgn_nam == 'China'); head(dc)
+    
+    chn = dc %.%
+      left_join(dm, by=fld_ids_join) %.%
+      left_join(dh, by=fld_ids_join); head(chn)
+    
+    # calculate sum--causing weirdness otherwise: sum giving different values with rm.na=T (??!)
+    chn_sum = chn %.%
+      select(value.x, value.y, value)
+    chn_sum$value_tot = rowSums(chn_sum, na.rm = T); head(chn_sum)
+    chn_sum$value_tot[is.na(chn_sum$value.x) & is.na(chn_sum$value.y) & is.na(chn_sum$value)] = NA; tail(chn_sum) # fix because NA+NA=0
+    
+    # cbind sum in place of individual values
+    chn_tot = cbind(chn, chn_sum) %.%
+      mutate(rgn_nam_tot = 'China'); head(chn_tot)
+    chn_tot$rgn_nam = NULL; chn_tot$rgn_nam.x = NULL; chn_tot$rgn_nam.y = NULL; 
+    chn_tot$value = NULL; chn_tot$value.x = NULL; chn_tot$value.y = NULL; 
+    chn_tot = plyr::rename(chn_tot, 
+                            c('value_tot' = 'value', 'rgn_nam_tot' = 'rgn_nam')); head(chn_tot)
+    
+    d.all = rbind(d.all, chn_tot)
+  }
+  
+  ## rbind all total values for all duplicates ----
+  d_fix = data.frame(rbind(d %.%
+                             filter(rgn_id != 13, rgn_id !=116, rgn_id != 209), 
+                           d.all)) %.%
+    arrange(rgn_id); head(d_fix)
+  
+  return(d_fix)
   
 }
