@@ -44,6 +44,14 @@ uifilesave = file.path(dir_d, 'raw', 'WEF_GCI_rescaled-cleaned.csv')
 add_rgn_id(gci, uifilesave)
 
 
+## check for duplicate regions, sum them ----
+
+# explore; identify dups
+dclean = read.csv(uifilesave); head(dclean)
+d.dup = dclean[duplicated(dclean[,c('rgn_id', 'rgn_nam', 'score')]),]; head(d.dup)
+
+# no duplicates
+
 ## georegional gapfilling with add_gapfill.r ----
 cleaned_data1 =  read.csv(uifilesave)
 s_island_val = NA # assign what southern islands will get. 

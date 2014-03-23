@@ -28,7 +28,7 @@ source('src/R/ohi_clean_fxns.R')
 
 # read in and process files ----
 d.all =  matrix(nrow=0, ncol=0)
-for (f in list.files(pattern=glob2rx('*.xls'))){ 
+for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), full.names=T)){ # f='Global/WTTC-Tourism_v2013/raw/WTTC_DirectContributionToEmployment_2013.xls'
   
   d = read.xls(f, sheet=1, blank.lines.skip=F, skip=7, header=T, check.names=F); head(d)
   
@@ -40,19 +40,15 @@ for (f in list.files(pattern=glob2rx('*.xls'))){
   d.1 = d[d[,1] != metric,]; head(d.1) # remove all the spacer lines 
   
   # some name cleaning, and partition Former Netherlands Antilles
+  names(d.1)[1] = 'rgn_nam'
   d.1 <- d.1[d.1[,1] != "Other Oceania",] # remove
   d.1[,1] = gsub('St Kitts', 'Saint Kitts and Nevis', d.1[,1]) # rename
-  # partition Netherland Antilles
-  ind = d.m4$country %in% c('Former Netherlands Antilles')
-  d.m5 = rbind(d.m4[!ind,],
-               data.frame(country=c('Sint Maarten', 'Curacao', 'Bonaire', 'Saba', 'Sint Eustasius'), # Aruba reported separately
-                          score=rep(d.m4$score[ind], 5),
-                          year=rep(d.m4$year[ind], 5)))
   
   # add data indicator 
-  v = strsplit(as.character(f), '\\_') 
-  v.1= strsplit(unlist(v)[2], '\\.') 
-  Identifier = rep.int(unlist(v.1)[1], dim(d.1)[1])
+  v = strsplit(as.character(f), '\\/') 
+  v.1 = strsplit(unlist(v)[4], '\\_') 
+  v.2= strsplit(unlist(v.1)[2], '\\.') 
+  Identifier = rep.int(unlist(v.2)[1], dim(d.1)[1])
   Units = rep.int(metric, dim(d.1)[1])
   d.2 = cbind(d.1[,1], Identifier, Units, d.1[,2:dim(d.1)[2]])
   names(d.2)[1] = 'Country'
@@ -64,7 +60,7 @@ for (f in list.files(pattern=glob2rx('*.xls'))){
 
 # melt together
 d.allm = melt(data=d.all, id.vars=names(d.2)[1:3], variable.name='year')
-d.allm$year = as.numeric(as.character(d.allm$year)) 
+d.allm$year = as.numeric(as.character(d.allm$year)); head(d.allm) 
 
 # Print out all the unique indicators
 print('these are all the variables that are included in the cleaned file: ')
@@ -82,11 +78,38 @@ d.allm$Units = gsub('2011 US\\$ bn', 'USD', d.allm$Units)
 d.all2 = d.allm[,c(1,5,4,2,3)] 
 d.all2[,2] = as.numeric(as.character(factor(d.all2[,2])))
 names(d.all2)[c(1,2,4,5)] = c('country', 'value_num', 'layer', 'units')
-d.all3 = d.all2[order(d.all2$layer, d.all2$country, d.all2$year),]
+d.all3 = d.all2[order(d.all2$layer, d.all2$country, d.all2$year),]; head(d.all3)
+
+# partition Netherland Antilles
+ind = d.all3$country %in% c('Former Netherlands Antilles') 
+d.all4 = rbind(d.all3[!ind,],
+             data.frame(country=c('Sint Maarten', 'Curacao', 'Bonaire', 'Saba', 'Sint Eustasius'), # Aruba reported separately
+                        value_num=rep(d.all3$value_num[ind], 5),
+                        year=rep(d.all3$year[ind], 5),
+                        layer=rep(d.all3$layer[ind], 5),
+                        units=rep(d.all3$units[ind], 5)))
 
 ## run add_rgn_id and save
 uifilesave = file.path(dir_d, 'raw', 'WTTC-Tourism_v2013-cleaned.csv')
-add_rgn_id(d.all3, uifilesave)
+add_rgn_id(d.all4, uifilesave)
+
+
+## check for duplicate regions, sum them ----
+
+# explore; identify dups
+dclean = read.csv(uifilesave); head(dclean)
+d.dup = dclean[duplicated(dclean[,c('rgn_id', 'year', 'layer', 'units')]),]; head(d.dup)
+dup_ids = unique(d.dup$rgn_id) # 116, 140, 209
+filter(dclean, rgn_id == 116, year == 2013)
+filter(dclean, rgn_id == 140, year == 2013)
+filter(dclean, rgn_id == 209, year == 2013)
+
+# remove duplicates with sum_duplicates.r
+d_fix = sum_duplicates(dclean, dup_ids, fld.nam = 'value_num'); head(d_fix)
+
+filter(d_fix, rgn_id == 116, year == 2013)
+filter(d_fix, rgn_id == 140, year == 2013)
+filter(d_fix, rgn_id == 209, year == 2013)
 
 
 ## no georegional gapfilling--but do save as separate files
