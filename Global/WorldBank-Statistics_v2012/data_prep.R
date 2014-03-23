@@ -82,21 +82,22 @@ print('these are all the variables that are included in the cleaned file: ')
 print(data.frame(unique(d.all3$layer)))
 
 ## run add_rgn_id and save ----
-uifilesave = file.path(dir_d, 'raw', 'GL-WorldBank-Statistics_v2012-cleaned.csv')
+uifilesave = file.path(dir_d, 'raw', 'WorldBank-Statistics_v2012-cleaned.csv')
 add_rgn_id(d.all3, uifilesave)
 
 
 ## check for duplicate regions, sum them ----
 
 # explore; identify dups
-d = read.csv(uifilesave); head(d)
-d.dup = d[duplicated(d[,c('rgn_id', 'year', 'layer', 'units')]),]; head(d.dup)
+dclean = read.csv(uifilesave); head(dclean)
+d.dup = dclean[duplicated(dclean[,c('rgn_id', 'year', 'layer', 'units')]),]; head(d.dup)
 dup_ids = unique(d.dup$rgn_id) # 13, 116, 209, NA
-filter(d, rgn_id == 13, year == 1960)
-filter(d, rgn_id == 116, year == 1960)
-filter(d, rgn_id == 209, year == 1960)
+filter(dclean, rgn_id == 13, year == 1960)
+filter(dclean, rgn_id == 116, year == 1960)
+filter(dclean, rgn_id == 209, year == 1960)
 
-d_fix = sum_duplicates(d, dup_ids); head(d_fix)
+# remove duplicates with sum_duplicates.r
+d_fix = sum_duplicates(dclean, dup_ids, fld.nam = 'value'); head(d_fix)
 
 # confirm
 filter(d_fix, rgn_id == 13, year == 1960)
@@ -120,14 +121,14 @@ dirsave = file.path(dir_d, 'data')
 for(k in 1:length(layer_uni)) { # k=1
   cleaned_layer = d.2[d.2$layer == layer_uni[k],]
   cleaned_layer$layer = NULL; head(cleaned_layer)
-  names(cleaned_layer)[3] = as.character(cleaned_layer$units[2])
+  names(cleaned_layer)[5] = as.character(cleaned_layer$units[2])
   cleaned_layer$units = NULL; tail(cleaned_layer)
   
   # save 2014a files
   layersave = layernames[k]
-  cleaned_layer$rgn_nam = NULL
+  cleaned_layer$rgn_nam = NULL; tail(cleaned_layer)
   
-  cleaned_layert = temporal.gapfill(cleaned_layer, fld.id = 'rgn_id', fld.value = names(cleaned_layer)[2], fld.year = 'year', verbose=F); head(cleaned_layert) 
+  cleaned_layert = temporal.gapfill(cleaned_layer, fld.id = 'rgn_id', fld.value = names(cleaned_layer)[3], fld.year = 'year', verbose=F); head(cleaned_layert) 
   cleaned_layert2 = cleaned_layert; cleaned_layert2$whence = NULL; cleaned_layert2$whence_details = NULL
   add_gapfill(cleaned_layert2, dirsave, layersave, s_island_val)
 } 

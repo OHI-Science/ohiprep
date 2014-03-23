@@ -91,14 +91,13 @@ add_rgn_id = function(uidata, uifilesave,
   
 }
 
-sum_duplicates = function(cleandata, dup_ids) {
+sum_duplicates = function(cleandata, dup_ids, fld.nam = 'value') {
   
   d = cleandata
   
   n = names(d)
-  names(d)[!names(d) %in% c('rgn_id', 'rgn_nam', 'year')] = 'value' # call this value for processing; revert back below 
-  fld_ids_join = names(d)[!names(d) %in% c('rgn_nam', 'value')]
-  head(d)
+  fld_ids_join = names(d)[!names(d) %in% c('rgn_nam', fld.nam)]
+  names(d)[names(d) %in% fld.nam] = 'value'; head(d) # call this value for processing; revert back below 
   
   # to rbind all
   d.all =  matrix(nrow=0, ncol=0) 
