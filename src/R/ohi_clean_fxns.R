@@ -91,6 +91,7 @@ add_rgn_id = function(uidata, uifilesave,
   
 }
 
+# identify duplicate regions and sum them (currently supports rgn_id = 13, 116, 140, 209) 
 sum_duplicates = function(cleandata, dup_ids, fld.nam = 'value') {
   
   d = cleandata
@@ -130,7 +131,7 @@ sum_duplicates = function(cleandata, dup_ids, fld.nam = 'value') {
   ## fix Puerto Rico and Virgin Islands of the United States (rgn_id=116) ----
   if (116 %in% dup_ids) { 
     dp = filter(d, rgn_nam == 'Puerto Rico'); head(dp)
-    dv = filter(d, rgn_nam == 'Virgin Islands (U.S.)'); head(dv)
+    dv = filter(d, rgn_nam == 'Virgin Islands (U.S.)' | rgn_nam == 'US Virgin Islands'); head(dv)
     
     prvi = dp %.%
       left_join(dv, by=fld_ids_join); head(prvi)
@@ -151,9 +152,33 @@ sum_duplicates = function(cleandata, dup_ids, fld.nam = 'value') {
     d.all = rbind(d.all, prvi_tot)
   }
   
+  ## fix Guadeloupe and Martinique (rgn_id=140) ----
+  if (140 %in% dup_ids) { 
+    du = filter(d, rgn_nam == 'Guadeloupe'); head(du)
+    da = filter(d, rgn_nam == 'Martinique'); head(da)
+    
+    gma = du %.%
+      left_join(da, by=fld_ids_join); head(gma) 
+    
+    # calculate sum--causing weirdness otherwise: sum giving different values with rm.na=T (??!)
+    gma_sum = gma %.%
+      select(value.x, value.y)
+    gma_sum$value_tot = rowSums(gma_sum, na.rm = T); tail(gma_sum)
+    gma_sum$value_tot[is.na(gma_sum$value.x) & is.na(gma_sum$value.y)] = NA; tail(gma_sum) # fix because NA+NA=0
+    
+    # cbind sum in place of individual values
+    gma_tot = cbind(gma, gma_sum) %.%
+      mutate(rgn_nam_tot = 'Guadeloupe and Martinique'); head(gma_tot)
+    gma_tot$rgn_nam.x = NULL; gma_tot$rgn_nam.y = NULL; gma_tot$value.x = NULL; gma_tot$value.y = NULL; 
+    gma_tot = plyr::rename(gma_tot, 
+                           c('value_tot' = 'value', 'rgn_nam_tot' = 'rgn_nam')); head(gma_tot)
+    
+    d.all = rbind(d.all, gma_tot)
+  }
+  
   ## fix China (rgn_id=209) ----
   if (209 %in% dup_ids) { 
-    dh = filter(d, rgn_nam == 'Hong Kong SAR, China'); head(dh)
+    dh = filter(d, rgn_nam == 'Hong Kong SAR, China' | rgn_nam == 'China, Hong Kong SAR'); head(dh)
     dm = filter(d, rgn_nam == 'Macao SAR, China'); head(dm)
     dc = filter(d, rgn_nam == 'China'); head(dc)
     
@@ -180,7 +205,7 @@ sum_duplicates = function(cleandata, dup_ids, fld.nam = 'value') {
   
   ## rbind all total values for all duplicates ----
   d_fix = data.frame(rbind(d %.%
-                             filter(rgn_id != 13, rgn_id !=116, rgn_id != 209), 
+                             filter(rgn_id != 13, rgn_id !=116, rgn_id !=140, rgn_id != 209), 
                            d.all)) %.%
     arrange(rgn_id); head(d_fix)
   

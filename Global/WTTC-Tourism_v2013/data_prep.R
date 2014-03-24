@@ -18,12 +18,10 @@ library(gdata)
 library(dplyr)
 
 # from get paths configuration based on host machine name
+source('src/R/ohi_clean_fxns.R') # get functions
 source('src/R/common.R') # set dir_neptune_data
 # Otherwise, presume that scripts are always working from your default ohiprep folder
 dir_d = 'Global/WTTC-Tourism_v2013'
-
-# get functions
-source('src/R/ohi_clean_fxns.R')
 
 
 # read in and process files ----
@@ -39,7 +37,7 @@ for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), fu
   d[,1] = col1
   d.1 = d[d[,1] != metric,]; head(d.1) # remove all the spacer lines 
   
-  # some name cleaning, and partition Former Netherlands Antilles
+  # some name cleaning
   names(d.1)[1] = 'rgn_nam'
   d.1 <- d.1[d.1[,1] != "Other Oceania",] # remove
   d.1[,1] = gsub('St Kitts', 'Saint Kitts and Nevis', d.1[,1]) # rename
@@ -89,7 +87,7 @@ d.all4 = rbind(d.all3[!ind,],
                         layer=rep(d.all3$layer[ind], 5),
                         units=rep(d.all3$units[ind], 5)))
 
-## run add_rgn_id and save
+## run add_rgn_id and save ----
 uifilesave = file.path(dir_d, 'raw', 'WTTC-Tourism_v2013-cleaned.csv')
 add_rgn_id(d.all4, uifilesave)
 
@@ -113,22 +111,21 @@ filter(d_fix, rgn_id == 209, year == 2013)
 
 
 ## no georegional gapfilling--but do save as separate files
-cleaned_data1 = read.csv(uifilesave)
-cleaned_data1$layer = gsub('DirectContributionToEmployment', 'empd', cleaned_data1$layer) 
-cleaned_data1$layer = gsub('TotalContributionToEmployment', 'empt', cleaned_data1$layer) 
-cleaned_data1$layer = gsub('TotalContributionToGDP', 'gdpt', cleaned_data1$layer)   
+d_fix$layer = gsub('DirectContributionToEmployment', 'empd', d_fix$layer) 
+d_fix$layer = gsub('TotalContributionToEmployment', 'empt', d_fix$layer) 
+d_fix$layer = gsub('TotalContributionToGDP', 'gdpt', d_fix$layer)   
 
-layer_uni = unique(cleaned_data1$layer)
+layer_uni = unique(d_fix$layer)
 layernames = sprintf('rgn_wttc_%s_2014a.csv', tolower(layer_uni))
 
 for(i in 1:length(layer_uni)) { #i=1
-  cleaned_layer = cleaned_data1[cleaned_data1$layer == layer_uni[i],]
+  cleaned_layer = d_fix[d_fix$layer == layer_uni[i],]
   cleaned_layer$layer = NULL
   cleaned_layer$rgn_nam = NULL
-  names(cleaned_layer)[2] = as.character(cleaned_layer$units[2])
+  names(cleaned_layer)[4] = as.character(cleaned_layer$units[2])
   cleaned_layer$units = NULL
   
-  layersave = file.path(dir1, 'data', layernames[i]) 
+  layersave = file.path(dir_d, 'data', layernames[i]) 
   write.csv(cleaned_layer, layersave, na = '', row.names=FALSE)
   print('WTTC non-gapilled data layer saved: ')
   print(layersave)
