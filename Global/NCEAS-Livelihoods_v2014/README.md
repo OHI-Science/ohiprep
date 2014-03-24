@@ -14,8 +14,6 @@ FILES:
 Description
 ===========
 
-update_layer.r adds new jobs data from FAO (aq = mariculture, cf = commercial fishing) and WTTC (tour = direct contribution to tourism employees) to the 2013a file (liv_jobs.csv)
+update_layer.r adds new jobs data from FAO (aq = mariculture, cf = commercial fishing) and WTTC (tour = direct contribution to tourism employees) to the 2013a file (liv_jobs.csv). Removes duplicates. 
 
 
-R scripts involved
-==================
