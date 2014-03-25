@@ -1,10 +1,14 @@
+# libraries
 library(raster)
 library(dplyr)
+library(RColorBrewer)
+library(maps)
 
 # paths
 source('src/R/common.R') # get dir_neptune_data based on platform
 dir_cells = file.path(dir_neptune_data, 'model/GL-NCEAS-SpeciesDiversity/ohi_spp/data')
 dir_aqua  = file.path(dir_neptune_data, 'ingest/GL-SAUP-AquaMaps/tmp')
+dir_tmp   = file.path(getwd(), 'Global/NCEAS-SpeciesDiversity_v2014/tmp')
 
 # data
 csqu_spp  = read.csv(file.path(dir_aqua , 'tbl_hcaf_species_native2.csv'), 
@@ -36,3 +40,10 @@ sp_cells = filter(cells_spp, species_id==sp_id)
 # substitute values of raster cid with spp_cells' probability
 r_sp = subs(r, sp_cells[,c('cid','probability')], by='cid', which='probability', subsWithNA=T)
 spplot(r_sp)
+
+# plot
+png(file.path(dir_tmp, 'plot-sp-probability_Eubalaena-glacialis.png'), width=1500, height=800)
+cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
+plot(r_sp, col=cols)
+map('world',col='gray95',fill=T,border='gray80',add=T)
+dev.off()
