@@ -7,32 +7,41 @@ library(RCurl)
 library(XML)
 library(parallel)
 library(plyr)
+library(dplyr)
 
-# set working directory
+# paths
 source('src/R/common.R')
-wd = file.path(dir_neptune_data, '/git-annex/Global/NCEAS-SpeciesDiversity_v2014')
-setwd(wd)
+# working dir in local github repo
+wd = file.path(getwd(), 'Global/NCEAS-SpeciesDiversity_v2014')
+# data dir
+dd = file.path(dir_neptune_data, 'git-annex/Global/NCEAS-SpeciesDiversity_v2014')
+# cache dir
+cd = file.path(dd, 'cache/iucn_details')
+# files
+spp_iucn_all_csv      = file.path(wd, 'tmp/spp_iucn_all.csv')
+spp_iucn_habitats_csv = file.path(wd, 'tmp/spp_iucn_habitats.csv')
+
 
 # flags & vars
 reload = F
 
 # cache dir
-if (file.exists('cache/iucn_details') & reload) unlink('cache', recursive=T)
-dir.create('cache/iucn_details', showWarnings=F, recursive=T)
+if (file.exists(cd) & reload) unlink('cache', recursive=T)
+dir.create(cd, showWarnings=F, recursive=T)
 
 # get all species
-if (!file.exists('tmp/spp_iucn_all.csv') | reload){
+if (!file.exists(spp_iucn_all_csv) | reload){
   spp_iucn_all = read.csv('http://api.iucnredlist.org/index/all.csv')         # nrows = 72,329
   spp_iucn_all = spp_iucn_all[!duplicated(spp_iucn_all),] # remove duplicates # nrows = 72,329
-  write.csv(spp_iucn_all, 'tmp/spp_iucn_all.csv', row.names=F, na='')
+  write.csv(spp_iucn_all, spp_iucn_all_csv, row.names=F, na='')
 } else {
-  spp_iucn_all = read.csv('tmp/spp_iucn_all.csv')
+  spp_iucn_all = read.csv(spp_iucn_all_csv)
 }
 
 # function to extract just habitat from the IUCN API given the Red.List.Species.ID
 getHabitats = function(sid, download.tries=10){
   url = sprintf('http://api.iucnredlist.org/details/%d/0', sid)
-  htm = sprintf('cache/iucn_details/%d.htm', sid)
+  htm = sprintf('%s/%d.htm', cd, sid)
   i=0
   while ( !file.exists(htm) | (file.info(htm)$size==0 & i<download.tries) ){
     download.file(url, htm, method='auto', quiet=T, mode='wb')
@@ -48,56 +57,99 @@ getHabitats = function(sid, download.tries=10){
 # unlink('tmp/spp_iucn_habitats.csv')    # DEBUG
 #options(error=recover)       # 46181060 # DEBUG    
 
-if (!file.exists('tmp/spp_iucn_habitats.csv') | reload){  
+if (!file.exists(spp_iucn_habitats_csv) | reload){  
   print(system.time({    
     #r = lapply(spp_iucn_all$Red.List.Species.ID, getHabitats) # DEBUG
     r = mclapply(spp_iucn_all$Red.List.Species.ID, getHabitats, mc.cores=detectCores(), mc.preschedule=F) # took ~ 4 hrs on neptune
   }))
   r = unlist(r)
   spp_iucn_habitats = data.frame(sid = r, habitat = names(r))
-  write.csv(spp_iucn_habitats, 'tmp/spp_iucn_habitats.csv', row.names=F, na='')
+  write.csv(spp_iucn_habitats, spp_iucn_habitats_csv, row.names=F, na='')
 } else {
-  spp_iucn_habitats = read.csv('tmp/spp_iucn_habitats.csv')
+  spp_iucn_habitats = read.csv(spp_iucn_habitats_csv)
 }
 
+# TODO: check 0kb files?
+#user    system   elapsed 
+#2164.751  2908.729 16357.848
+
 # check no remaining download errors. might need to manually run. should be 0:
-subset(spp_iucn_habitats, is.na(habitat))
+print(subset(spp_iucn_habitats, is.na(habitat)), row.names=F)
 
 # species without habitats assigned (n=67) - mostly birds (n=58)
 sid.miss = setdiff(spp_iucn_all$Red.List.Species.ID, spp_iucn_habitats$sid)
-print(addmargins(table(subset(spp_iucn_all, Red.List.Species.ID %in% sid.miss)$Class, useNA='ifany')))
+print(addmargins(table(subset(spp_iucn_all, Red.List.Species.ID %in% sid.miss)$Class, useNA='ifany')), row.names=F)
+# 2013
 #       AMPHIBIA           AVES CHONDRICHTHYES      CRUSTACEA     GASTROPODA  HOLOTHUROIDEA        INSECTA       MAMMALIA            Sum 
 #              1             58              1              1              2              2              1              1             67
 
+# 2014:
+#           BIVALVIA         GASTROPODA           REPTILIA                Sum
+#                  2                  2                  1                  5
+
 # get counts of species / subpopulations
-print(addmargins(table(spp_iucn_habitats$habitat, useNA='ifany')))
+print(addmargins(table(spp_iucn_habitats$habitat, useNA='ifany')), row.names=F)
 #head(spp_iucn_habitats[is.na(spp_iucn_habitats$habitat),])
+# 2013:
 #  Freshwater      Marine Terrestrial         Sum 
 #       25245        8380       50135       83760 
+#
+# 2014:
+#  Freshwater      Marine Terrestrial         Sum 
+#       40595       16789       70194      127582 
 
 # get distinct marine species
 options('stringsAsFactors'=T)
-spp_iucn_all = read.csv('tmp/spp_iucn_all.csv')
-spp_iucn_habitats = read.csv('tmp/spp_iucn_habitats.csv')
-d = merge(spp_iucn_all, subset(spp_iucn_habitats, habitat=='Marine'), by.x='Red.List.Species.ID', by.y='sid')
-nrow(d) # 8380
-length(unique(d$Scientific.Name)) # 8178
-print(addmargins(table(d$Class, useNA='ifany')))
+spp_iucn_all      = read.csv(spp_iucn_all_csv)
+spp_iucn_habitats = read.csv(spp_iucn_habitats_csv)
+d = spp_iucn_habitats %.%
+  filter(habitat=='Marine') %.%
+  merge(spp_iucn_all %.%
+          rename(c('Red.List.Species.ID'='sid','Scientific.Name'='sciname')), 
+        by='sid')
+names(d) = tolower(names(d)); print(paste(names(d), collapse=','))
+# sid,habitat,sciname,primary,class,order,family,genus,species,authority,infrarank,infrarank.type,infrarank.authority,modified.year,category,criteria
+d = d[, !names(d) %in% c('primary')]
+
+cat(sprintf('\nRows of Marine species: %d\nUnique Marine species : %d\n\n', nrow(d), length(unique(d$sciname))))
+# 2013:
+#   Rows of Marine species:  8,380
+#   Unique Marine species :  8,178
+# 2014:
+#   Rows of Marine species: 79,382
+#   Unique Marine species : 16,315
+
+print(addmargins(table(as.character(d$class))), row.names=F)
+# 2013:
 #     ACTINOPTERYGII           ANTHOZOA               AVES           BIVALVIA CEPHALASPIDOMORPHI        CEPHALOPODA      CHLOROPHYCEAE     CHONDRICHTHYES          CRUSTACEA         ECHINOIDEA             ENOPLA 
 #               3332                842                839                 34                  4                195                  1               1113                256                  1                  1 
 #    FLORIDEOPHYCEAE         GASTROPODA      HOLOTHUROIDEA           HYDROZOA            INSECTA         LILIOPSIDA      MAGNOLIOPSIDA           MAMMALIA        MEROSTOMATA             MYXINI       PHAEOPHYCEAE 
 #                 58                806                369                 16                  1                 78                 64                170                  4                 76                 15 
 #         POLYCHAETA     POLYPODIOPSIDA           REPTILIA      SARCOPTERYGII        ULVOPHYCEAE                Sum 
 #                  2                  3                 97                  2                  1               8380
-names(d) = tolower(names(d))
-d = rename(d, c('red.list.species.id'='sid','scientific.name'='sciname'))
-d = d[, !names(d) %in% c('primary')]
-
+# 2014:
+#     ACTINOPTERYGII           ANTHOZOA               AVES           BIVALVIA CEPHALASPIDOMORPHI 
+#              57836               1026               1299                552                 15 
+#        CEPHALOPODA      CHLOROPHYCEAE     CHONDRICHTHYES         ECHINOIDEA             ENOPLA 
+#                594                  1               3071                  1                  4 
+#    FLORIDEOPHYCEAE         GASTROPODA      HOLOTHUROIDEA           HYDROZOA            INSECTA 
+#                101              10614               1009                 16                  1 
+#         LILIOPSIDA      MAGNOLIOPSIDA       MALACOSTRACA           MAMMALIA        MAXILLOPODA 
+#                325                 79               1321                367                  4 
+#        MEROSTOMATA             MYXINI       PHAEOPHYCEAE         POLYCHAETA     POLYPODIOPSIDA 
+#                  7                271                 36                  5                  3 
+#           REPTILIA      SARCOPTERYGII        ULVOPHYCEAE                Sum 
+#                821                  2                  1              79382
+      
 # remove infraranks: 30 subspecies records ('ssp.')
 d = subset(d, infrarank.type!='ssp.', !names(d) %in% c('infrarank','infrarank.type','infrarank.authority'))
 table(d$category)
+# 2013:
 #    CR    DD    EN    EW    EX    LC LR/cd LR/lc LR/nt    NT    VU 
 #   147  2175   228     0    24  4557     6     5    12   518   678
+# 2014:
+#    CR    DD    EN    EW    EX    LC LR/cd LR/lc LR/nt    NT    VU 
+#   371  8450   598     0    38 63906    30    13   167  2121  2613
 
 # convert IUCN category from IUCN Red List Categories & Criteria v2.3 (1994-2000) to v3.1 (since 2001)
 # http://en.wikipedia.org/wiki/Wikipedia:Conservation_status
@@ -113,8 +165,12 @@ for (i in 1:length(x.cat)){ # g = c('LR/cd'='NT','LR/nt'='NT','LR/lc'='LC')[1]
 d$category = factor(x=as.character(d$category), 
                                   levels=c('DD','LC','NT','VU','EN','CR','EX'), ordered=T)
 table(d$category)
-#   DD   LC   NT   VU   EN   CR   EX 
-# 2175 4580  518  678  228  147   24
+# 2013:
+#    DD    LC    NT    VU    EN    CR    EX 
+#  2175  4580   518   678   228   147    24
+# 2014:
+#    DD    LC    NT    VU    EN    CR    EX 
+#  8450 63906  2331  2613   598   371    38
 
 # categories used:
 #   EX = Extinct (if not EX in 2012)           
@@ -140,15 +196,12 @@ table(d$category)
 # subset(d, category=='EX' & sciname %in% sci.ex)
 # d = subset(d, category !='EX' | sciname %in% sci.ex)
 # table(d$category)
-#   DD   LC   NT   VU   EN   CR   EX 
-# 2175 4580  518  678  228  147    5
 
-table(d$category)
-#   DD   LC   NT   VU   EN   CR   EX 
-# 2175 4580  518  678  228  147   24
 
-nrow(subset(d, category!='DD')) # 6175
-write.csv(d, 'tmp/spp_iucn_marine.csv', row.names=F, na='')
+nrow(subset(d, category!='DD')) # 2013: 6175. 2014: 69857
+write.csv(d, file.path(wd, 'tmp/spp_iucn_marine.csv'), row.names=F, na='')
+
+# TODO: RESUME HERE 2013-04-25...
 
 # get list of unique species and their global extinction status
 d = read.csv('tmp/spp_iucn_marine.csv')
