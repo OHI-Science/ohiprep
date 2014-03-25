@@ -1,4 +1,4 @@
-# update_layer.R. 
+# update_jobs.R. 
 
 # combine updated jobs data from FAO and WTTC (total contribution) to 2013a file 'liv_jobs.csv'
 # by JStewartLowndes Mar2014.
@@ -28,7 +28,7 @@ lkup = read.csv('src/LookupTables/cntry_rgn_2013.csv'); head(lkup)
 
 # new data 
 fismar = read.csv('Global/FAO-Fishers_v2012/data/rgn_fao_jobs_fismar_v2012.csv'); head(fismar)
-tour = read.csv('Global/WTTC-Tourism_v2013/data/rgn_wttc_empt_2014a.csv') %.%
+tour = read.csv('Global/WTTC-Tourism_v2013/data/rgn_wttc_empt_2014a.csv') %.% # total contribution
   mutate(sector = 'tour'); head(tour)
 
 

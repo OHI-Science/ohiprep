@@ -7,7 +7,7 @@ Files produced
 
 * rgn_fao_jobs_fismar_v2012.csv
 
-Further processed using Global/NCEAS-Livelihoods_v2014/update_layer.r and saved as: cntry_jobs_2014a.csv
+Further processed using Global/NCEAS-Livelihoods_v2014/update_jobs.r and saved as: cntry_jobs_2014a.csv
 
 
 Description
