@@ -15,40 +15,70 @@ library(plyr)
 
 setwd('/var/data/ohi/model/GL-HS-AQ-PressuresSummary_v2013')
 
-# SST ----
-# take a look at SST raster that I need to extract data from:
-SST <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/sst_05_10-82_86i_mol.tif")
-
-# take a look at region file, make a few changes:
+# Region file: 
 regions <- readOGR(dsn=".", layer="sp_mol")
 regions@data[regions@data$sp_type=="ccamlr",]
 table(regions@data$sp_type)
 table(regions@data$rgn_type)
 regions <- regions[regions@data$sp_type %in% c("ccamlr", "fao", "eez"), ]
 regions@data$sp_id <- as.numeric(1:dim(regions@data)[1])  
-  
+
+############################
+## SST ----
+############################
+
+# take a look at SST raster that I need to extract data from:
+SST <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/sst_05_10-82_86i_mol.tif")
+SST_oldData <- read.dbf("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/rgn_fao_mol_sst_05_10-82_86i_mol.dbf")
+
 plot(SST)
 plot(regions, add=TRUE)
-################################################
-## Preparing zone data
-## (should only need to be done once)
-################################################
+
 #convert to raster
 rasterize(regions, SST, 
           field="sp_id", 
-          filename="sp_mol_raster", overwrite=TRUE, 
+          filename="sp_mol_raster_SST", overwrite=TRUE, 
           progress="text")
 
 
-regions_raster <- raster("sp_mol_raster")
+regions_raster <- raster("sp_mol_raster_SST")
 
 regions_stats <- zonal(SST,  regions_raster, progress="text")
 
 data <- merge(regions@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
-data <- subset(data, select=c(-Shape_Leng, -Shape_Area))
 
-write.csv(data,"SST_SummaryData.csv", 
+write.csv(data,"SST_ZonalMean.csv", 
           row.names=FALSE)  
+#NOTE: Need to standardize - but need to ask ben about a discrepancy between
+# the model_rasters_output.csv and the data results in the final table (cc_sst_2013.csv)
+
+
+
+############################
+## ACID ----
+############################
+acid <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/masked_impacts_acid.tif")
+#acid_oldData <- read.dbf("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/rgn_fao_mol_sst_05_10-82_86i_mol.dbf")
+
+plot(acid)
+plot(regions, add=TRUE)
+
+#convert to raster
+rasterize(regions, acid, 
+          field="sp_id", 
+          filename="sp_mol_raster_acid", overwrite=TRUE, 
+          progress="text")
+
+
+regions_ras hter <- raster("sp_mol_raster_acid")
+
+regions_stats <- zonal(acid,  regions_raster, progress="text")
+
+data <- merge(regions@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
+
+write.csv(data,"acid_ZonalMean.csv", 
+          row.names=FALSE)  
+
 
 
 ################################################
@@ -124,13 +154,6 @@ stack2013 <- stack(artisanal_fishing_combo,
 # Zonal Statistics: 2013 data
 #-----------------------------------------------
 
-FAO_CCAMLR_stats <- zonal(stack2013,  FAO_CCAMLR_raster, progress="text")
-
-data <- merge(FAO_CCAMLR@data, FAO_CCAMLR_stats, all.y=TRUE, by.x="rgn_id", by.y="zone") 
-data <- subset(data, select=c(-Shape_Leng, -Shape_Area))
-
-write.csv(data,"N:\\model\\GL-HS-AQ-PressuresSummary_v2013\\SummaryData.csv", 
-          row.names=FALSE)  
 
 
 ####
