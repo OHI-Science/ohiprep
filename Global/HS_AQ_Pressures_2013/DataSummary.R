@@ -15,13 +15,23 @@ library(plyr)
 
 setwd('/var/data/ohi/model/GL-HS-AQ-PressuresSummary_v2013')
 
-# Region file: 
+# Region mollwide file: 
 regions <- readOGR(dsn=".", layer="sp_mol")
 regions@data[regions@data$sp_type=="ccamlr",]
 table(regions@data$sp_type)
 table(regions@data$rgn_type)
 regions <- regions[regions@data$sp_type %in% c("ccamlr", "fao", "eez"), ]
 regions@data$sp_id <- as.numeric(1:dim(regions@data)[1])  
+
+# Region GCS file:
+regions_gcs <- readOGR(dsn="/var/data/ohi/git-annex/Global/NCEAS-Regions_v2014/data", layer="sp_gcs")
+regions_gcs@data[regions_gcs@data$sp_type=="ccamlr",]
+table(regions_gcs@data$sp_type)
+table(regions_gcs@data$rgn_type)
+regions_gcs <- regions_gcs[regions_gcs@data$sp_type %in% c("ccamlr", "fao", "eez"), ]
+regions_gcs@data$sp_id <- as.numeric(1:dim(regions_gcs@data)[1])  
+
+
 
 ############################
 ## SST ----
@@ -78,6 +88,34 @@ data <- merge(regions@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone"
 
 write.csv(data,"acid_ZonalMean.csv", 
           row.names=FALSE)  
+
+
+############################
+## UV ----
+############################
+uv <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/impact_layers_2013_redo/impact_layers/work/uv/uv_baseline_anomaly/omi_aura_uv_anomaly_2008m01-2012m12_trans.tif")
+#uv_oldData <- read.dbf("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/rgn_fao_mol_sst_05_10-82_86i_mol.dbf")
+
+plot(uv)
+plot(regions_gcs, add=TRUE)
+
+#convert to raster
+rasterize(regions_gcs, uv, 
+          field="sp_id", 
+          filename="sp_gcs_raster_uv", overwrite=TRUE, 
+          progress="text")
+
+
+regions_raster <- raster("sp_gcs_raster_uv")
+
+regions_stats <- zonal(uv,  regions_raster, progress="text")
+
+data <- merge(regions_gcs@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
+
+write.csv(data,"uv_ZonalMean.csv", 
+          row.names=FALSE)  
+
+
 
 
 
