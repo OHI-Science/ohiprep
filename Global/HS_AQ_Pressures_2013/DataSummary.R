@@ -6,7 +6,7 @@
 
 ## Downloading packages
 library(rgdal)
-library(raster)
+library(raster) 
 library(sp)
 library(maptools)
 library(rgeos)
@@ -115,8 +115,55 @@ data <- merge(regions_gcs@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="z
 write.csv(data,"uv_ZonalMean.csv", 
           row.names=FALSE)  
 
+############################
+## Commercial High Bycatch
+############################
+hb_dem <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/fp_com_hb_dem_2013_rescaled.tif")
+hb_dem_nd <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/fp_com_hb_dem_nd_2013_rescaled.tif")
+hb_pel <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/fp_com_hb_pel_2013_rescaled.tif")
+
+plot(hb_dem)
+plot(regions, add=TRUE)
+
+#convert to raster
+rasterize(regions, hb_dem, 
+          field="sp_id", 
+          filename="sp_mol_raster_ComHBC", overwrite=TRUE, 
+          progress="text")
 
 
+regions_raster <- raster("sp_mol_raster_ComHBC")
+
+CommercialHBC <- stack(hb_dem, hb_dem_nd, hb_pel)
+
+regions_stats <- zonal(CommercialHBC,  regions_raster, progress="text")
+
+data <- merge(regions@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
+
+write.csv(data,"CommHBC_ZonalMean.csv", 
+          row.names=FALSE)  
+
+
+############################
+## Commercial Low Bycatch
+############################
+lb_dem <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/fp_com_lb_dem_nd_2013_rescaled.tif")
+lb_pel <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/fp_com_lb_pel_2013_rescaled.tif")
+
+plot(lb_dem)
+plot(regions, add=TRUE)
+
+#can use the same region raster as the high by-catch
+regions_raster <- raster("sp_mol_raster_ComHBC")
+
+CommercialHBC <- stack(lb_dem, lb_pel)
+
+regions_stats <- zonal(CommercialHBC,  regions_raster, progress="text")
+
+data <- merge(regions@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
+
+write.csv(data,"CommLBC_ZonalMean.csv", 
+          row.names=FALSE)  
 
 
 ################################################
