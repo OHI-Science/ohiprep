@@ -25,9 +25,6 @@ regions@data$sp_id <- as.numeric(1:dim(regions@data)[1])
 
 # Region GCS file:
 regions_gcs <- readOGR(dsn="/var/data/ohi/git-annex/Global/NCEAS-Regions_v2014/data", layer="sp_gcs")
-regions_gcs@data[regions_gcs@data$sp_type=="ccamlr",]
-table(regions_gcs@data$sp_type)
-table(regions_gcs@data$rgn_type)
 regions_gcs <- regions_gcs[regions_gcs@data$sp_type %in% c("ccamlr", "fao", "eez"), ]
 regions_gcs@data$sp_id <- as.numeric(1:dim(regions_gcs@data)[1])  
 
@@ -164,6 +161,51 @@ data <- merge(regions@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone"
 
 write.csv(data,"CommLBC_ZonalMean.csv", 
           row.names=FALSE)  
+
+
+############################
+## SLR
+############################
+slr <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/impact_layers_2013_redo/impact_layers/work/sea_level_rise/final_products/slr_oct1992_dec2012_gcs_wgs84_normalized.tif")
+slr <- rotate(slr) # scales the data to start at -180 rather than 0
+
+plot(slr)
+plot(regions_gcs, add=TRUE)
+hist(slr)
+
+#convert to raster
+rasterize(regions_gcs, slr, 
+          field="sp_id", 
+          filename="sp_gcs_raster_slr", overwrite=TRUE, 
+          progress="text")
+
+regions_raster <- raster("sp_gcs_raster_slr")                                                                                                                                                                                                                                                                                                                                                                            
+
+regions_stats <- zonal(slr,  regions_raster, progress="text")
+
+data <- merge(regions@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
+
+write.csv(data,"slr_ZonalMean.csv", 
+          row.names=FALSE)                               
+
+test <- extract(slr, regions_gcs[25, ], fun=mean, na.rm=TRUE, weights=TRUE)
+test <- extract(slr, regions_gcs[25, ], fun=mean, na.rm=TRUE, weights=TRUE)
+
+
+
+2+2
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ################################################
