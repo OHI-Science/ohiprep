@@ -1,25 +1,26 @@
-# setup ----
+
+<!-- saved from url=(0103)https://raw.githubusercontent.com/OHI-Science/ohiprep/master/Global/NCEAS-Regions_v2014/ingest_checks.R -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css"></style></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;"># setup ----
 library(reshape2)
 library(plyr)
 library(dplyr)
 
-# get paths configuration based on host machine name
-conf = list(
-  'AMPHITRITE'=list(  # BB's Windows 8 on MacBook Pro VMWare
-    dir_git   = 'G:/ohigit',
-    dir_annex = 'Z:/bbest On My Mac/neptune_cyberduck'),
-  'BEASTIE3'=list(  # Melanie's Windows 8 on MacBook Pro VMWare
-    dir_git   = 'C:/Users/Melanie/Github/ohiprep',
-    dir_annex = 'N:/')
-  )[[Sys.info()['nodename']]] # N: # temp working from UCSB campus
-  
-# paths
-wd               = file.path(conf$dir_git  , 'Global/NCEAS-Regions_v2014')
-eez_dbf          = file.path(conf$dir_annex, 'stable/GL-VLIZ-EEZs_v7/data/eez_v7_gcs.dbf')
-land_dbf         = file.path(conf$dir_annex, 'stable/GL-VLIZ-EEZs_v7/data/EEZ_land_v1.dbf')
-eez_rgn_2013_csv = file.path(conf$dir_annex, 'model/GL-NCEAS-OceanRegions_v2013a/manual_output/eez_rgn_2013master.csv')
-fao_dbf          = file.path(conf$dir_annex, 'model/GL-FAO-CCAMLR_v2014/data/fao_ccamlr_gcs.dbf')
-setwd(wd)
+#  from get paths configuration based on host machine name
+source('src/R/common.R') # set dir_neptune_data
+# Otherwise, presume that scripts are always working from your default ohiprep folder
+dir_d = 'Global/NCEAS-Regions_v2014'
+
+# data paths
+eez_dbf          = file.path(dir_neptune_data, 'git-annex/Global/MarineRegions_EEZ_v8/raw/World_EEZ_v8_2014_HR.dbf')
+land_dbf         = file.path(dir_neptune_data, 'stable/GL-VLIZ-EEZs_v7/data/EEZ_land_v1.dbf')
+eez_rgn_2013_csv = file.path(dir_neptune_data, 'model/GL-NCEAS-OceanRegions_v2013a/manual_output/eez_rgn_2013master.csv')
+fao_dbf          = file.path(dir_neptune_data, 'model/GL-FAO-CCAMLR_v2014/data/fao_ccamlr_gcs.dbf')
+eez_rgn_2014_csv = file.path(dir_d           , 'tmp/eez_rgn_2014.csv')
+
+# create tmp dir if doesn't exist
+dir.create(file.path(dir_d, 'tmp'), showWarnings=F)
+
+# data prep ----
 
 # read data tables ----
 eez  = foreign::read.dbf(eez_dbf, as.is=T); head(eez); summary(eez)
@@ -27,101 +28,110 @@ fao  = foreign::read.dbf(fao_dbf, as.is=T); head(fao); summary(fao)
 land = foreign::read.dbf(land_dbf, as.is=T); head(fao); summary(land)
 z    = read.csv(eez_rgn_2013_csv, stringsAsFactors=F); head(z); tail(z); summary(z)
 
+# split
+
+# write new eez for 2014
+write.csv(z, eez_rgn_2014_csv, na='', row.names=F)
 
 # merge data ----
 m = z %.%
-  rename(c(rgn_typ      = 'rgn_type',
-           rgn_id_2013  = 'rgn_id',
-           rgn_nam_2013 = 'rgn_name',
-           eez_nam      = 'eez_name')) %.%
-  select(rgn_type, rgn_id, rgn_name, 
-         eez_id, eez_name, eez_iso3) %.%
+  select(eez_id, eez_iso3,
+         rgn_type = rgn_typ, 
+         rgn_id   = rgn_id_2013,
+         rgn_name = rgn_nam_2013) %.%
   merge(
     eez %.%
-      rename(c(Country = 'eez_name_shp',
-               EEZ_ID  = 'eez_id')) %.%
-      select(eez_id, eez_name_shp), 
+      select(eez_id       = EEZ_ID, 
+             eez_name_shp = Country,
+             eez_iso3_shp = ISO_3digit), 
     by='eez_id', all=T) %.%
   merge(
     fao %.%
-      rename(c(SOURCE = 'fao_source',
-               F_CODE = 'fao_code',
-               OCEAN  = 'fao_ocean')) %.%
+      select(fao_source = SOURCE,
+             fao_code   = F_CODE,
+             fao_ocean  = OCEAN) %.%
       filter(fao_source!='CCAMLR') %.%  # exclude Antarctica (213)
       mutate(eez_id = as.integer(fao_code) + 1000) %.%
       select(eez_id, fao_code, fao_source, fao_ocean),
     by='eez_id', all=T) %.%
   merge(
     land %.%
-      rename(c(ISO_3digit = 'eez_iso3',
-               Country    = 'land_name')) %.%
+      select(eez_iso3  = ISO_3digit,
+             land_name = Country) %.%
       filter(eez_iso3!='-'), 
-    by='eez_iso3', all=T)
+    by='eez_iso3', all=T) %.%
+  select(rgn_type, rgn_id, rgn_name, rgn_name, eez_id, eez_name_shp, eez_iso3_shp, fao_source, fao_code, fao_ocean, land_name) %.%
+  arrange(rgn_type, rgn_id, rgn_name, eez_id, eez_name_shp, fao_code, land_name)
 head(m); tail(m)
 
+# TODO: look at duplicates
+
 # check for missing or mismatched eez's
-print(subset(m, rgn_type=='eez' & ( eez_name_shp != eez_name | is.na(eez_name_shp) | is.na(eez_name) ), 
-             c(eez_id, rgn_type, rgn_id, rgn_name, eez_name, eez_name_shp)), row.names=F)  # only accented names showing up
+print(subset(m, rgn_type=='eez' &amp; ( eez_name_shp != rgn_name | is.na(eez_name_shp) | is.na(rgn_name) ), 
+             c(eez_id, rgn_type, rgn_id, rgn_name, eez_name_shp)), row.names=F)  # only accented names showing up
 #  eez_id rgn_type rgn_id            rgn_name             eez_name        eez_name_shp
 #     252      eez    255            DISPUTED Disputed Sudan-Egypt               Egypt
-#     100      eez    100 Republique du Congo  R_publique du Congo R�publique du Congo
-#     244      eez    244             Curacao              Curacao             Cura�ao
-#      32      eez     32             Reunion              R_union             R�union
+#     100      eez    100 Republique du Congo  R_publique du Congo R?publique du Congo
+#     244      eez    244             Curacao              Curacao             Cura?ao
+#      32      eez     32             Reunion              R_union             R?union
 # OK: just wierd accents in eez_name_shp so not matching eez_name
+
+eez %.% arrange(EEZ, Country) %.% select(EEZ_ID, EEZ, Country, ISO_3digit)
+names(eez)
 
 # Antarctica
 print(subset(m, rgn_name=='Antarctica'), row.names=F)
 #  eez_iso3 eez_id rgn_type rgn_id   rgn_name   eez_name eez_name_shp fao_code fao_source fao_ocean  land_name
-#       ATA    213      eez    213 Antarctica Antarctica   Antarctica     <NA>       <NA>      <NA> Antarctica
+#       ATA    213      eez    213 Antarctica Antarctica   Antarctica     &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt; Antarctica
 
 # check for missing fao's
-print(subset(m, rgn_type=='fao' & is.na(fao_ocean), 
+print(subset(m, rgn_type=='fao' &amp; is.na(fao_ocean), 
              c(eez_id, rgn_type, rgn_id, rgn_name, eez_name, fao_ocean)), row.names=F)
 #  eez_id rgn_type rgn_id                             rgn_name                             eez_name fao_ocean
-#    1048      fao    268                  Atlantic, Antarctic                  Atlantic, Antarctic      <NA>
-#    1088      fao    278                   Pacific, Antarctic                   Pacific, Antarctic      <NA>
-#    1037      fao    265          Mediterranean And Black Sea          Mediterranean And Black Sea      <NA>
-#    1058      fao    271 Indian Ocean, Antarctic And Southern Indian Ocean, Antarctic And Southern      <NA>
+#    1048      fao    268                  Atlantic, Antarctic                  Atlantic, Antarctic      &lt;NA&gt;
+#    1088      fao    278                   Pacific, Antarctic                   Pacific, Antarctic      &lt;NA&gt;
+#    1037      fao    265          Mediterranean And Black Sea          Mediterranean And Black Sea      &lt;NA&gt;
+#    1058      fao    271 Indian Ocean, Antarctic And Southern Indian Ocean, Antarctic And Southern      &lt;NA&gt;
 # OK: just Antarctica or Mediterranean (which has no FAO non-EEZ area)
 # remove these fao's
-m = subset(m, !(rgn_type=='fao' & is.na(fao_ocean)))
+m = subset(m, !(rgn_type=='fao' &amp; is.na(fao_ocean)))
 
 # check for EEZs missing land
-m_land_noeez = subset(m, rgn_type=='eez' & is.na(land_name) & rgn_name!='DISPUTED', 
+m_land_noeez = subset(m, rgn_type=='eez' &amp; is.na(land_name) &amp; rgn_name!='DISPUTED', 
                       c(eez_id, rgn_type, rgn_id, rgn_name, eez_iso3, eez_name, land_name))
 print(m_land_noeez, row.names=F)
 #  eez_id rgn_type rgn_id                          rgn_name eez_iso3                          eez_name land_name
-#      85      eez     85                         Ascension      ASC                         Ascension      <NA>
-#     250      eez    250                             Aruba       AW                             Aruba      <NA>
-#     245      eez    245                           Bonaire       BQ                           Bonaire      <NA>
-#      13      eez     13 Northern Mariana Islands and Guam      MNP Northern Mariana Islands and Guam      <NA>
-#      88      eez     88                  Tristan da Cunha      TAA                  Tristan da Cunha      <NA>
+#      85      eez     85                         Ascension      ASC                         Ascension      &lt;NA&gt;
+#     250      eez    250                             Aruba       AW                             Aruba      &lt;NA&gt;
+#     245      eez    245                           Bonaire       BQ                           Bonaire      &lt;NA&gt;
+#      13      eez     13 Northern Mariana Islands and Guam      MNP Northern Mariana Islands and Guam      &lt;NA&gt;
+#      88      eez     88                  Tristan da Cunha      TAA                  Tristan da Cunha      &lt;NA&gt;
 # TODO MANUAL: inspect these regions manually to determine which ISO needs to be selected, split into parts and assigned new values
 cat(sprintf("arcpy.Select_analysis('eez', 'eez_noland', \"ISO_3digit IN ('%s')\")", paste(m_land_noeez$eez_iso3, collapse="','")))
-# These are cases where land iso3 needs to be replaced to erroneous iso3 of eez (land -> eez):
+# These are cases where land iso3 needs to be replaced to erroneous iso3 of eez (land -&gt; eez):
 #   1) land is falsely associated with other EEZ iso3 and needs to be subsequently split: 
 #      * SHN for ASC and TAA
 #   2) land eez iso3 does not match eez iso3, so just rename land's iso3: 
-#      * MNP++ -> MNP
-#      * ABW   -> AW
-#      * BES   -> BQ
+#      * MNP++ -&gt; MNP
+#      * ABW   -&gt; AW
+#      * BES   -&gt; BQ
 
 
 # duplicate EEZs?
 m_eez_duplicated = m %.%
-  subset(rgn_type=='eez' & rgn_name!='DISPUTED' & 
+  subset(rgn_type=='eez' &amp; rgn_name!='DISPUTED' &amp; 
            ( duplicated(eez_iso3, fromLast=T) | duplicated(eez_iso3, fromLast=F) )) %.%
   select(eez_iso3, land_name, rgn_name, eez_name, eez_id) %.%
   arrange(eez_iso3, land_name, rgn_name, eez_name, eez_id)
 head(m_eez_duplicated)
 tail(m_eez_duplicated)
 #   eez_iso3                         land_name                               rgn_name                               eez_name eez_id
-# 1      ATF French Southern & Antarctic Lands Amsterdam Island and Saint Paul Island Amsterdam Island and Saint Paul Island     92
-# 2      ATF French Southern & Antarctic Lands                        Bassas da India                        Bassas da India     34
-# 3      ATF French Southern & Antarctic Lands                         Crozet Islands                         Crozet Islands     91
-# 4      ATF French Southern & Antarctic Lands                       Glorioso Islands                       Glorioso Islands     30
-# 5      ATF French Southern & Antarctic Lands                             Ile Europa                             Ile Europa     35
-# 6      ATF French Southern & Antarctic Lands                           Ile Tromelin                           Ile Tromelin     36
+# 1      ATF French Southern &amp; Antarctic Lands Amsterdam Island and Saint Paul Island Amsterdam Island and Saint Paul Island     92
+# 2      ATF French Southern &amp; Antarctic Lands                        Bassas da India                        Bassas da India     34
+# 3      ATF French Southern &amp; Antarctic Lands                         Crozet Islands                         Crozet Islands     91
+# 4      ATF French Southern &amp; Antarctic Lands                       Glorioso Islands                       Glorioso Islands     30
+# 5      ATF French Southern &amp; Antarctic Lands                             Ile Europa                             Ile Europa     35
+# 6      ATF French Southern &amp; Antarctic Lands                           Ile Tromelin                           Ile Tromelin     36
 # ...
 #    eez_iso3                            land_name              rgn_name              eez_name eez_id
 # 47      UMI United States Minor Outlying Islands           Wake Island           Wake Island     12
@@ -151,7 +161,7 @@ unique(m_eez_duplicated$eez_iso3)
 # TODO: select these land regions, split, neighbor analysis and assign
 # TODO: why are BES,DOM,PER showing up as duplicates since only one instance in z, so must be in merging?
 
-# TODO: Chile & Peru selections
+# TODO: Chile &amp; Peru selections
 
 # check for multiple regions per single land iso
 
@@ -190,18 +200,18 @@ r = ddply(m, .(rgn_id), summarize,
           rgn_iso2 = rgn_iso2[1],
           eez_cnt  = length(eez_id),
           eezs     = paste(sprintf('%s (%d|%s)', eez_nam, eez_id, eez_key), collapse=', '))
-write.csv(r, 'data/rgn_details.csv', na='', row.names=F)
+write.csv(r, file.path(dir_d, 'data/rgn_details.csv'), na='', row.names=F)
 #shell.exec(file.path(wd,'data/rgn_details.csv'))
 
 # create layer rtk_rgn_labels
 rl.flds = c('rgn_id'='rgn_id', 'rgn_typ'='type', 'rgn_nam'='label')
 rl = rename(r, rl.flds)[,rl.flds]; tail(rl); summary(rl)
-write.csv(rl, 'data/rgn_labels.csv', na='', row.names=F)
+write.csv(rl, file.path(dir_d, 'data/rgn_labels.csv'), na='', row.names=F)
 
 # create layer rnk_rgn_global (subset to those analysed)
 rg.flds = c('rgn_id'='rgn_id', 'rgn_typ'='type', 'rgn_nam'='label')
-rg = rename(subset(r, rgn_typ=='eez' & rgn_nam!='DISPUTED'), rg.flds)[,rg.flds]; tail(rg); summary(rg)
-write.csv(rg[,c('rgn_id','label')], 'data/rgn_global.csv', na='', row.names=F)
+rg = rename(subset(r, rgn_typ=='eez' &amp; rgn_nam!='DISPUTED'), rg.flds)[,rg.flds]; tail(rg); summary(rg)
+write.csv(rg[,c('rgn_id','label')], file.path(dir_d, 'data/rgn_global.csv'), na='', row.names=F)
 
 # s = rename(read.xls('manual_output/ISOcodes_UNregions_scraped.xlsx', na.strings=''),
 #            c('Name'='iso_nam','Alpha2_code'='iso_2code','Alpha3_code'='iso_3code','Numeric_code'='iso_id','Status'='iso_status'))
@@ -292,4 +302,4 @@ write.csv(rg[,c('rgn_id','label')], 'data/rgn_global.csv', na='', row.names=F)
 #   ZonalStatisticsAsTable(in_zone_data, zone_field, in_value_raster, out_table, {ignore_nodata}, {statistics_type})
 
 # TODO: arcpy.BuildRasterAttributeTable_management("c:/data/image.tif", "Overwrite")
-# TODO: check differences with 2012 regions
+# TODO: check differences with 2012 regions</pre></body></html>
