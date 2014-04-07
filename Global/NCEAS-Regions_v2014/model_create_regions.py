@@ -328,6 +328,7 @@ for col in ['sp_id','sp_type','sp_name','sp_key']:
 #m.to_csv(sp_rgn_csv, index=False, encoding='utf-8')
 
 # import and merge git/manual_output/sp_rgn_manual.csv for editing
+#arcpy.Dissolve_management('sp_m', 'sp_m_d', ['sp_type','sp_id','sp_name','sp_key']) # redo sp_id ...
 d = pd.DataFrame(arcpy.da.TableToNumPyArray('sp_m_d', ['OBJECTID','sp_type','sp_id','sp_name','sp_key'])) # print(set(d['sp_type'])) # set([u'ccamlr', u'land', u'eez', u'land-noeez', u'fao', u'eez-inland'])
 # convert from Unicode to ASCII for matching lookup
 for u,a in {u'Curaçao':'Curacao', u'République du Congo':'Republique du Congo', u'Réunion':'Reunion'}.iteritems(): # u=u'Réunion'; a='Reunion'
