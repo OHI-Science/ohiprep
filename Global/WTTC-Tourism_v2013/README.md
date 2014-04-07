@@ -4,18 +4,18 @@ GL-WTTC-Tourism_v2013
 WTTC: World Travel and Tourism Council www.wttc.org
 
 Data processing data accessed through 2013
-/*/* Note: Data are available for many years into the future; therefore it is not clear where 'real' data end and modeled data start. However, because there are monthly updates available in near-real time (as of March 5, 2014, an update is available for February 2014), we will use data from 2013 under the assumption that these are real values. JSL wrote to WTTC to enquire but has not heard back.
+/*/* Note: WTTC now indicates what is real and what is projected data: 'Actual data to 2013, forecast data 2014 onwards'
 
 
 Files produced
 ==============
 FILES: 
 
-* rgn_wttc_empd_2014a.csv : Direct Contribution To Employment
-* rgn_wttc_empt_2014a.csv : Total Contribution To Employment
-* rgn_wttc_gdpt_2014a.csv : Total Contribution to GDP
+* rgn_wttc_empd_2013.csv : Direct Contribution To Employment
+* rgn_wttc_empt_2013.csv : Total Contribution To Employment
+* rgn_wttc_gdpt_2013.csv : Total Contribution to GDP
 
-Currently these data are not gapfilled and are as rgn_id. To see what happened to these data beyond data_prep.R in 2013a, see:
+Currently these data are not gapfilled and are as rgn_id. To see what happened to these data beyond data_prep.R in 2013a, see on Neptune:
 * see model/GL-NCEAS-TR_v2013a/README.md for further handling
 * processed here then further in manage_revenue.r
 	+ See model/GL-NCEAS-Livelihoods_v2013a/README.md for further handling
