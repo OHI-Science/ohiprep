@@ -52,7 +52,7 @@ cites_all = rbind(cleaned_layer, cites_0) %.%
   select(rgn_id, boolean) %.%
   arrange(rgn_id); head(cites_all)
   
-f_save = 'cites_2014a.csv'
+f_save = 'rgn_cites_2014a.csv'
 write.csv(cites_all, file.path(dir_d, 'data', f_save), na = '', row.names=FALSE)
   
   
