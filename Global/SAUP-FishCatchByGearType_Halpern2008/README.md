@@ -13,7 +13,7 @@ Files are to be found at:
 1. **catch**: average catch rate (tons per km2 per year) by gear type for all reported fish species caught 1999-2003. 360 rows and 720 columns.
 1. **fishprod**: catch divided by average productivity (g Carbon/m2/yr) using Vertically Generalized Production Model (VGPM). 1024 rows and 2048 columns.
 
-An area raster is given for each product.
+An area raster (in km2) is given for each product.
 
 ## Gear Types
 
