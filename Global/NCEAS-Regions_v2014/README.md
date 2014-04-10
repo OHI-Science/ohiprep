@@ -27,6 +27,41 @@ The two formats (and locations) for the outputs are in:
 
 ![map of outputs](https://raw.githubusercontent.com/OHI-Science/ohiprep/master/Global/NCEAS-Regions_v2014/fig/NCEAS-Regions_v2014_sp_rgn_map.png)
 
+## Identifiers
+
+The **_sp_rgns_.sp_id** is an integer translated from the original source ID like so:
+
+  source | sp_id scheme | applicable sp_types
+  ------:|:-------------|:-------------------
+  **EEZ** | id | eez, eez-disputed, eez-inland, land, land-disputed
+  **FAO** | 1,000 + FAO id (18, ..., 87) | _**fao**_
+  **CCAMLR** | 200,000 + CCAMLR id (48.1, ...,  58.4.4.b, ..., 88.3) | ccamlr
+
+resulting in sample rows like:
+
+  sp_id|sp_type|sp_name_orig|sp_name
+  ----:|:------|:-----------|:------
+  0|eez|Australia|Australia
+  0|land|Australia|Australia
+  74|eez-inland|Georgia|Georgia
+  74|land-noeez|Georgia|Georgia
+  165|eez-disputed|Colombia - Jamaica|Colombia - Jamaica
+  165|land-disputed|Colombia - Jamaica|Colombia - Jamaica
+  210|land|Japan|Japan
+  211|eez-disputed|Japan - Korea|Japan - Korea
+  260|eez-disputed|Trinidad and Tobago/Venezuela/Guyana|Trinidad and Tobago/Venezuela/Guyana
+  301|land-noeez|Afghanistan|Afghanistan
+  337|land-noeez|Zimbabwe|Zimbabwe
+  1018|fao|18|Arctic Sea
+  1021|fao|21|Atlantic, Northwest
+  1047|fao|47|Atlantic, Southeast
+  1087|fao|87|Pacific, Southeast
+  248100|ccamlr|48.1|CCAMLR 48.1
+  258420|ccamlr|58.4.2|CCAMLR 58.4.2
+  258431|ccamlr|58.4.3.a|CCAMLR 58.4.3.a
+  258432|ccamlr|58.4.3.b|CCAMLR 58.4.3.b
+  288300|ccamlr|88.3|CCAMLR 88.3
+
 ## Inputs
 * EEZ, EEZ_land (http://marineregions.org)
 * FAO: Food & Agriculture Organization (FAO) Major Fishing Areas, including CCAMLR Antarctica regions (http://www.fao.org/fishery/area/search/en)
