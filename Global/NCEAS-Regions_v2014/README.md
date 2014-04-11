@@ -25,7 +25,7 @@ The two formats (and locations) for the outputs are in:
 * **\*.shp** in `\\neptune\git_annex\Global\NCEAS-Regions_v2014\data\`
 * **\*_data.csv** in [`data/`](https://github.com/OHI-Science/ohiprep/tree/master/Global/NCEAS-Regions_v2014/data).
 
-![map of outputs](https://raw.githubusercontent.com/OHI-Science/ohiprep/master/Global/NCEAS-Regions_v2014/fig/NCEAS-Regions_v2014_sp_rgn_map.png)
+![map of outputs](https://raw.githubusercontent.com/OHI-Science/ohiprep/master/Global/NCEAS-Regions_v2014/fig/NCEAS-Regions_v2014.png)
 
 ## Identifiers
 
