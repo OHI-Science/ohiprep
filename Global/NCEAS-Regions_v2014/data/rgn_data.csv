@@ -66,7 +66,7 @@ eez,67,Libya,LBY,356904.347731
 eez,68,Malta,MLT,55570.044708
 eez,69,Latvia,LVA,28956.5603995
 eez,70,Estonia,EST,36458.0532637
-eez,73,Russia,RUS,7557186.14022
+eez,73,Russia,RUS,7557186.1405
 eez,76,Turkey,TUR,83056.0795597
 eez,77,Syria,SYR,10180.578115
 eez,78,Lebanon,LBN,19266.8826238
@@ -137,7 +137,7 @@ eez,147,French Polynesia,PYF,4771710.01669
 eez,148,Line Group,KIR,1645364.31396
 eez,149,Jarvis Island,UMI,316555.566299
 eez,150,Palmyra Atoll,UMI,350841.46697
-eez,151,American Samoa,ASM,404370.433189
+eez,151,American Samoa,ASM,404370.43319
 eez,152,Samoa,WSM,131511.659346
 eez,153,Cook Islands,COK,1960033.62365
 eez,154,Niue,NIU,316592.585807
@@ -160,7 +160,7 @@ eez,173,Uruguay,URY,129812.72951
 eez,174,Finland,FIN,79641.3713854
 eez,175,Denmark,DNK,100848.713387
 eez,176,Germany,DEU,56482.2641824
-eez,177,Netherlands,NLD,64317.391168
+eez,177,Netherlands,NLD,64317.3911679
 eez,178,Poland,POL,32013.9687605
 eez,179,France,FRA,343888.912434
 eez,180,United Kingdom,GBR,725225.9736
@@ -253,14 +253,14 @@ land,8,Palau,PLW,497.858646127
 land,9,Micronesia,FSM,811.86102303
 land,10,Nauru,NRU,22.6330231787
 land,11,Marshall Islands,MHL,280.131902333
-land,12,Wake Island,UMI,8.66503036757
+land,12,Wake Island,UMI,8.66503036756
 land,13,Northern Mariana Islands and Guam,MNP,1056.26192118
 land,14,Taiwan,TWN,36082.5543177
 land,15,Philippines,PHL,296951.3913
 land,16,Australia,AUS,7689722.07535
 land,17,Papua New Guinea,PNG,463725.099601
 land,18,Fiji,FJI,19050.0982767
-land,19,Tuvalu,TUV,41.5262017892
+land,19,Tuvalu,TUV,41.5262017913
 land,20,South Korea,KOR,99390.7604535
 land,21,North Korea,PRK,122204.999423
 land,24,Cambodia,KHM,182083.640378
@@ -298,7 +298,7 @@ land,56,Cape Verde,CPV,4125.39896078
 land,57,Madeira,PRT,817.496011312
 land,58,Canary Islands,ESP,7506.96853424
 land,59,Belgium,BEL,30637.3318435
-land,60,Gibraltar,GIB,7.62949731989
+land,60,Gibraltar,GIB,7.62949731988
 land,61,Tunisia,TUN,156009.749635
 land,62,Morocco,MAR,403237.754402
 land,63,Western Sahara,ESH,269329.699315
@@ -324,7 +324,7 @@ land,88,Tristan da Cunha,TAA,203.065591078
 land,89,South Georgia and the South Sandwich Islands,SGS,3980.48967258
 land,90,Prince Edward Islands,ZAF,341.170044205
 land,91,Crozet Islands,ATF,364.61831263
-land,92,Amsterdam Island and Saint Paul Island,ATF,72.9300817556
+land,92,Amsterdam Island and Saint Paul Island,ATF,72.9300817557
 land,93,Kerguelen Islands,ATF,7391.98567344
 land,94,Heard and McDonald Islands,HMD,391.927499608
 land,95,Falkland Islands,FLK,12420.2525901
@@ -339,7 +339,7 @@ land,103,Sao Tome and Principe,STP,982.638805548
 land,104,Equatorial Guinea,GNQ,26993.6291177
 land,105,Bouvet Island,BVT,50.7489554448
 land,106,Ghana,GHA,238687.050357
-land,107,Clipperton Island,CPT,8.75687338112
+land,107,Clipperton Island,CPT,8.75687338111
 land,108,Bermuda,BMU,72.2697917812
 land,110,Bahamas,BHS,13400.7193753
 land,111,Turks and Caicos Islands,TCA,1013.2195745
@@ -378,17 +378,17 @@ land,145,Greenland,GRL,2165771.03524
 land,146,Pitcairn,PCN,45.3890113822
 land,147,French Polynesia,PYF,3758.45322117
 land,148,Line Group,KIR,616.209577835
-land,149,Jarvis Island,UMI,4.38154148902
-land,150,Palmyra Atoll,UMI,335.532653352
-land,151,American Samoa,ASM,209.343506107
+land,149,Jarvis Island,UMI,4.38154148208
+land,150,Palmyra Atoll,UMI,335.532653351
+land,151,American Samoa,ASM,209.343506106
 land,152,Samoa,WSM,2876.74582692
 land,153,Cook Islands,COK,256.791363537
 land,154,Niue,NIU,266.346905676
-land,155,Tonga,TON,762.539373363
-land,156,Tokelau,TKL,15.0853018066
-land,157,Phoenix Group,KIR,54.9339905248
-land,158,Howland Island and Baker Island,UMI,4.22710012975
-land,159,Johnston Atoll,UMI,3.40431495634
+land,155,Tonga,TON,762.539373362
+land,156,Tokelau,TKL,15.0853018065
+land,157,Phoenix Group,KIR,54.9339905281
+land,158,Howland Island and Baker Island,UMI,4.22710012985
+land,159,Johnston Atoll,UMI,3.40431495628
 land,161,Wallis and Futuna,WLF,179.528610469
 land,162,New Zealand,NZL,269440.34248
 land,163,United States,USA,9482775.4056
@@ -400,7 +400,7 @@ land,169,French Guiana,GUF,82833.4736676
 land,171,Brazil,BRA,8475861.19042
 land,172,Argentina,ARG,2782246.91452
 land,173,Uruguay,URY,177774.967429
-land,174,Finland,FIN,339778.525738
+land,174,Finland,FIN,339778.525737
 land,175,Denmark,DNK,45063.248293
 land,176,Germany,DEU,357771.6347
 land,177,Netherlands,NLD,35184.9545335
@@ -436,7 +436,7 @@ land,207,Vietnam,VNM,327324.067715
 land,208,Singapore,SGP,600.601005371
 land,209,China,CHN,9376105.90604
 land,210,Japan,JPN,373422.012542
-land,212,Kiribati,KIR,354.525333743
+land,212,Kiribati,KIR,354.525333745
 land,213,Antarctica,ATA,12403390.0598
 land,214,Egypt,EGY,998917.275949
 land,215,Jordan,JOR,95080.9316734
@@ -444,7 +444,7 @@ land,216,Indonesia,IDN,1894309.62555
 land,218,Canada,CAN,9985172.69415
 land,219,Saint Pierre and Miquelon,SPM,237.097037718
 land,220,Sint Maarten,SXM,39.87977422
-land,221,Northern Saint-Martin,MAF,80.6076972461
+land,221,Northern Saint-Martin,MAF,80.6076972462
 land,222,Sweden,SWE,451321.190917
 land,223,Norway,NOR,396424.931284
 land,224,Chile,CHL,755426.282299
@@ -495,7 +495,7 @@ land-noeez,325,Nepal,NPL,147162.793399
 land-noeez,326,Niger,NER,1182007.78129
 land-noeez,327,Paraguay,PRY,398805.713223
 land-noeez,328,Rwanda,RWA,25136.7054735
-land-noeez,329,San Marino,SMR,59.8654658685
+land-noeez,329,San Marino,SMR,59.8654658686
 land-noeez,330,Serbia,SRB,88136.042383
 land-noeez,331,Slovakia,SVK,48926.5232024
 land-noeez,332,Switzerland,CHE,41489.3105416

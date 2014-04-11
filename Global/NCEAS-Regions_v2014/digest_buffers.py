@@ -2,8 +2,8 @@
 #   rgns_[offshore|inland]{distance}{units}_[gcs|mol]
 # where:
 #   rgns = regions
-#   offshore = zone extending from shore to the EEZ
-#   inland = zone extending from shore inland
+#   offshore = zone extending from shore to the EEZ. rgn_type: eez, eez-disputed, eez-inland, fao, ccamlr.
+#   inland = zone extending from shore inland. rgn_type: land, land-disputed.
 #   distance = integer of distance {optional}
 #   units = one of: nm (nautical miles), km (kilometers), mi (miles) {optional}
 #   gcs = geographic coordinate system
@@ -18,14 +18,53 @@
 # 
 # Run on cmd: C:\Python27\ArcGISx6410.2\python.exe N:\model\CN-NCEAS-Regions\model.py
 
+# modules
+import arcpy, os, re, numpy as np
+from numpy.lib import recfunctions
+arcpy.SetLogHistory(True) # C:\Users\bbest\AppData\Roaming\ESRI\Desktop10.2\ArcToolbox\History
 
-# TODO: buffers
+# configuration based on machine name
+conf = {
+    'Amphitrite':
+    {'dir_git'    :'G:/ohiprep',
+     'dir_neptune':'N:',
+     'dir_tmp'    :'C:/tmp',
+     }}[socket.gethostname()]
+
+# paths
+nm      = 'NCEAS-Regions_v2014'                                      # name of data product
+td      = '{0}/{1}'.format(conf['dir_tmp'], nm)                      # temp directory on local filesystem
+gdb     = '{0}/geodb.gdb'.format(td)                                 # file geodatabase
+ad      = '{0}/git-annex/Global/{1}'.format(conf['dir_neptune'], nm) # git annex directory on neptune
+gd      = '{0}/Global/{1}'.format(conf['dir_git'], nm)               # git directory on local filesystem
+
+# inputs
+sp_gcs = '{0}/sp_gcs'.format(gdb)
 buffers = ['offshore3nm','offshore100nm','offshore1km','inland1km','inland25km']
 
 # buffer units dictionary
 buf_units_d = {'nm':'NauticalMiles',
                'km':'Kilometers',
                'mi':'Miles'}
+
+# projections
+sr_mol = arcpy.SpatialReference('Mollweide (world)') # projected Mollweide (54009)
+sr_gcs = arcpy.SpatialReference('WGS 1984')          # geographic coordinate system WGS84 (4326)
+
+# environment
+if not os.path.exists(td): os.makedirs(td)
+if not arcpy.Exists(gdb): arcpy.CreateFileGDB_management(os.path.dirname(gdb), os.path.basename(gdb))
+arcpy.env.workspace       = gdb
+arcpy.env.overwriteOutput = True
+arcpy.env.outputCoordinateSystem = sr_gcs
+
+# sp_offshore
+arcpy.Select_analysis(sp_gcs, 'eez_mol', '"Country" = \'%s\'' % country)
+
+# sp_inland
+arcpy.Select_analysis(sp_gcs, 'eez_mol', '"Country" = \'%s\'' % country)
+
+
 
 # select
 arcpy.Select_analysis(eez,     'eez_mol', '"Country" = \'%s\'' % country)
