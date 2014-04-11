@@ -34,8 +34,8 @@ The **_sp_rgns_.sp_id** is an integer translated from the original source ID lik
   source | sp_id scheme | applicable sp_types
   ------:|:-------------|:-------------------
   **EEZ** | id | eez, eez-disputed, eez-inland, land, land-disputed
-  **FAO** | 1,000 + FAO id (18, ..., 87) | _**fao**_
-  **CCAMLR** | 200,000 + CCAMLR id (48.1, ...,  58.4.4.b, ..., 88.3) | ccamlr
+  **FAO** | 1,000 + FAO id (18, ..., 87) | fao
+  **CCAMLR** | 200,000 + CCAMLR id (48.1, ...,  58.4.4.b, ..., 88.3) | eez-ccamlr, land-ccamlr
 
 resulting in sample rows like:
 
@@ -56,11 +56,13 @@ resulting in sample rows like:
   1021|fao|21|Atlantic, Northwest
   1047|fao|47|Atlantic, Southeast
   1087|fao|87|Pacific, Southeast
-  248100|ccamlr|48.1|CCAMLR 48.1
-  258420|ccamlr|58.4.2|CCAMLR 58.4.2
-  258431|ccamlr|58.4.3.a|CCAMLR 58.4.3.a
-  258432|ccamlr|58.4.3.b|CCAMLR 58.4.3.b
-  288300|ccamlr|88.3|CCAMLR 88.3
+  248100|eez-ccamlr|48.1|CCAMLR 48.1
+  258420|eez-ccamlr|58.4.2|CCAMLR 58.4.2
+  258431|eez-ccamlr|58.4.3.a|CCAMLR 58.4.3.a
+  258432|eez-ccamlr|58.4.3.b|CCAMLR 58.4.3.b
+  288300|eez-ccamlr|88.3|CCAMLR 88.3
+
+# TODO: check Ukraine (any EEZ? 57), Tuvalu (19)
 
 ## Inputs
 * EEZ, EEZ_land (http://marineregions.org)
