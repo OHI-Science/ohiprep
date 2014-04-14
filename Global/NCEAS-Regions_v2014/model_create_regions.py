@@ -378,31 +378,31 @@ d = pd.DataFrame(arcpy.da.TableToNumPyArray('rgn_gcs', ['rgn_type','rgn_id','rgn
 d.to_csv(rgn_csv, index=False)
 print('done (%s)' % time.strftime('%H:%M:%S'))
 
-# Caspian sea ad-hoc re-add (https://github.com/OHI-Science/ohicore/issues/63)
-arcpy.Erase_analysis('CaspianBlackSeas_EEZexclusionpoly', 'BlackSea_eez-inland_idpoly', 'CaspianSea_poly')
+# Black sea ad-hoc re-add (https://github.com/OHI-Science/ohicore/issues/63)
+arcpy.Erase_analysis('CaspianBlackSeas_EEZexclusionpoly', 'BlackSea_eez-inland_idpoly', 'BlackSea_poly')
 arcpy.MakeFeatureLayer_management('sp_gcs','lyr_sp_eezinland',"rgn_type = 'eez-inland'")
-arcpy.Intersect_analysis(['lyr_sp_eezinland', 'CaspianSea_poly'], 'sp_Caspian')
-arcpy.CalculateField_management('sp_Caspian', 'sp_type', "'eez'", 'PYTHON_9.3')
-arcpy.CalculateField_management('sp_Caspian', 'rgn_type', "'eez'", 'PYTHON_9.3')
-flds_del = list(set([x.name for x in arcpy.ListFields('sp_Caspian')]).difference(set([x.name for x in arcpy.ListFields('sp_gcs')])))
-arcpy.DeleteField_management('sp_Caspian', flds_del)
-arcpy.CopyFeatures_management('sp_gcs', 'sp_inlandeezCaspian')
-arcpy.Erase_analysis('sp_inlandeezCaspian', 'sp_Caspian', 'sp_noCaspian')
-arcpy.Merge_management(['sp_noCaspian_gcs', 'sp_Caspian'], 'sp_okCaspian')
-names_Caspian = ['Bulgaria','Georgia','Romania','Russia','Turkey','Ukraine']
-arcpy.MakeFeatureLayer_management('sp_okCaspian', 'lyr', "sp_type = 'land-noeez' AND sp_name IN ('%s')" % "','".join(names_Caspian))
+arcpy.Intersect_analysis(['lyr_sp_eezinland', 'BlackSea_poly'], 'sp_Black')
+arcpy.CalculateField_management('sp_Black', 'sp_type', "'eez'", 'PYTHON_9.3')
+arcpy.CalculateField_management('sp_Black', 'rgn_type', "'eez'", 'PYTHON_9.3')
+flds_del = list(set([x.name for x in arcpy.ListFields('sp_Black')]).difference(set([x.name for x in arcpy.ListFields('sp_gcs')])))
+arcpy.DeleteField_management('sp_Black', flds_del)
+arcpy.CopyFeatures_management('sp_gcs', 'sp_inlandeezBlack')
+arcpy.Erase_analysis('sp_inlandeezBlack', 'sp_Black', 'sp_noBlack')
+arcpy.Merge_management(['sp_noBlack_gcs', 'sp_Black'], 'sp_okBlack')
+names_Black = ['Bulgaria','Georgia','Romania','Russia','Turkey','Ukraine']
+arcpy.MakeFeatureLayer_management('sp_okBlack', 'lyr', "sp_type = 'land-noeez' AND sp_name IN ('%s')" % "','".join(names_Black))
 arcpy.CalculateField_management('lyr', 'sp_type', "'land'", 'PYTHON_9.3')
 arcpy.CalculateField_management('lyr', 'rgn_type', "'land'", 'PYTHON_9.3')
 # still need to dissolve
 
 # add-hoc Antarctica
 arcpy.env.outputCoordinateSystem = sr_ant
-arcpy.MakeFeatureLayer_management('sp_okCaspian', 'lyr', "sp_type = 'land' AND sp_name ='Antarctica'")
+arcpy.MakeFeatureLayer_management('sp_okBlack', 'lyr', "sp_type = 'land' AND sp_name ='Antarctica'")
 arcpy.Dissolve_management('lyr', 'aq_land')
 arcpy.DeleteFeatures_management('lyr')
-arcpy.MakeFeatureLayer_management('sp_okCaspian', 'lyr', "sp_type = 'ccamlr'")
+arcpy.MakeFeatureLayer_management('sp_okBlack', 'lyr', "sp_type = 'ccamlr'")
 arcpy.CalculateField_management('lyr','sp_type',"'eez-ccamlr'",'PYTHON_9.3')
-arcpy.Select_analysis('sp_okCaspian', 'aq_ccamlr', "sp_type = 'ccamlr'")
+arcpy.Select_analysis('sp_okBlack', 'aq_ccamlr', "sp_type = 'ccamlr'")
 
 # create theissen polygons used to split slivers
 arcpy.Densify_edit('aq_ccamlr', 'DISTANCE', '10 Kilometers')
@@ -429,13 +429,15 @@ arcpy.CalculateField_management('aq_thiessen_d_land','rgn_type',"'land'",'PYTHON
 arcpy.env.outputCoordinateSystem = sr_gcs
 arcpy.CopyFeatures_management('aq_thiessen_d_land','aq_landccamlr_gcs')
 arcpy.RepairGeometry_management('aq_landccamlr_gcs')
-flds_del = list(set([x.name for x in arcpy.ListFields('aq_landccamlr_gcs')]).difference(set([x.name for x in arcpy.ListFields('sp_okCaspian')])))
+flds_del = list(set([x.name for x in arcpy.ListFields('aq_landccamlr_gcs')]).difference(set([x.name for x in arcpy.ListFields('sp_okBlack')])))
 arcpy.DeleteField_management('aq_landccamlr_gcs', flds_del)
-arcpy.Merge_management(['sp_okCaspian', 'aq_landccamlr_gcs'], 'sp_okAQ')
+arcpy.Merge_management(['sp_okBlack', 'aq_landccamlr_gcs'], 'sp_okAQ')
 
 arcpy.Clip_analysis('sp_okAQ', 'box', 'sp_okAQ_c')
-arcpy.Dissolve_management('sp_okAQ_c', 'sp_gcs' , ['sp_type','sp_id','sp_name','sp_key','rgn_type','rgn_id','rgn_name','rgn_key','cntry_id12','rgn_id12','rgn_name12'])
-arcpy.Dissolve_management('sp_okAQ_c', 'rgn_gcs', ['rgn_type','rgn_id','rgn_name','rgn_key'])
+arcpy.Dissolve_management('sp_okAQ_c', 'sp_gcs' ,['sp_type' ,'sp_id' ,'sp_name' ,'sp_key',
+                                                  'rgn_type','rgn_id','rgn_name','rgn_key',
+                                                  'cntry_id12','rgn_id12','rgn_name12'])
+arcpy.Dissolve_management('sp_okAQ_c', 'rgn_gcs',['rgn_type','rgn_id','rgn_name','rgn_key'])
 arcpy.RepairGeometry_management('sp_gcs')
 arcpy.RepairGeometry_management('rgn_gcs')
 

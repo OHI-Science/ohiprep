@@ -65,7 +65,6 @@ arcpy.Select_analysis(sp_gcs, 'eez_mol', '"Country" = \'%s\'' % country)
 arcpy.Select_analysis(sp_gcs, 'eez_mol', '"Country" = \'%s\'' % country)
 
 
-
 # select
 arcpy.Select_analysis(eez,     'eez_mol', '"Country" = \'%s\'' % country)
 arcpy.Select_analysis(eezland, 'eezland', '"Country" = \'%s\'' % country)
