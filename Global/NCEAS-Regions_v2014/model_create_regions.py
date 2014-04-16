@@ -42,7 +42,7 @@
 #   - 140 Guadeloupe and Martinique
 #   - 116 Puerto Rico and Virgin Islands of the United States
 
-import arcpy, os, re, numpy as np, socket, pandas as pd
+import arcpy, os, re, numpy as np, socket, pandas as pd, time
 from collections import Counter
 from numpy.lib import recfunctions
 arcpy.SetLogHistory(True) # %USERPROFILE%\AppData\Roaming\ESRI\Desktop10.2\ArcToolbox\History
