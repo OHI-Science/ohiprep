@@ -16,18 +16,19 @@ wd = file.path(getwd(), 'Global/NCEAS-SpeciesDiversity_v2014')
 # data dir
 dd = file.path(dir_neptune_data, 'git-annex/Global/NCEAS-SpeciesDiversity_v2014')
 # cache dir
-cd = file.path(dd, 'cache/iucn_details')
+#cd = file.path(dd, 'cache/iucn_details')
+cd = file.path(dd, 'cache')
 # files
-spp_iucn_all_csv      = file.path(wd, 'tmp/spp_iucn_all.csv')
-spp_iucn_habitats_csv = file.path(wd, 'tmp/spp_iucn_habitats.csv')
+spp_iucn_all_csv      = file.path(cd, 'spp_iucn_all.csv')
+spp_iucn_habitats_csv = file.path(cd, 'spp_iucn_habitats.csv')
 
 
 # flags & vars
 reload = F
 
-# cache dir
-if (file.exists(cd) & reload) unlink('cache', recursive=T)
-dir.create(cd, showWarnings=F, recursive=T)
+# cache dirs
+if (file.exists(file.path(cd, 'iucn_details')) & reload) unlink('cache', recursive=T)
+dir.create(file.path(cd, 'iucn_details'), showWarnings=F, recursive=T)
 
 # get all species
 if (!file.exists(spp_iucn_all_csv) | reload){
@@ -41,7 +42,7 @@ if (!file.exists(spp_iucn_all_csv) | reload){
 # function to extract just habitat from the IUCN API given the Red.List.Species.ID
 getHabitats = function(sid, download.tries=10){
   url = sprintf('http://api.iucnredlist.org/details/%d/0', sid)
-  htm = sprintf('%s/%d.htm', cd, sid)
+  htm = sprintf('%s/iucn_details/%d.htm', cd, sid)
   i=0
   while ( !file.exists(htm) | (file.info(htm)$size==0 & i<download.tries) ){
     download.file(url, htm, method='auto', quiet=T, mode='wb')
@@ -196,21 +197,19 @@ table(d$category)
 # subset(d, category=='EX' & sciname %in% sci.ex)
 # d = subset(d, category !='EX' | sciname %in% sci.ex)
 # table(d$category)
-
-
 nrow(subset(d, category!='DD')) # 2013: 6175. 2014: 69857
-write.csv(d, file.path(wd, 'tmp/spp_iucn_marine.csv'), row.names=F, na='')
+write.csv(d, file.path(cd, 'spp_iucn_marine.csv'), row.names=F, na='')
 
 # TODO: RESUME HERE 2013-04-25...
 
 # get list of unique species and their global extinction status
-d = read.csv('tmp/spp_iucn_marine.csv')
+d = read.csv(file.path(cd, 'spp_iucn_marine.csv'))
 
 # function to extract just habitat from the IUCN API given the Red.List.Species.ID
 getDetails = function(sid, download.tries=10){
   # example species Oncorhynchus nerka: sid=135301 # (parent) ## sid=135322 # (child)  # sid=4162
   url = sprintf('http://api.iucnredlist.org/details/%d/0', sid)
-  htm = sprintf('cache/iucn_details/%d.htm', sid) # htm = '135322.htm'
+  htm = sprintf('%s/iucn_details/%d.htm', cd, sid) # htm = '135322.htm'
   i=0
   while ( !file.exists(htm) | (file.info(htm)$size==0 & i<download.tries) ){
     download.file(url, htm, method='auto', quiet=T, mode='wb')
@@ -300,8 +299,8 @@ spp_subpop = merge(spp_subpop, d[, c('sid','sciname','category','popn_trend')], 
 spp_subpop_countries = subset(spp_countries, sid %in% spp_subpop$sid)
 cat(sprintf('\nFound %d marine subpopulations for %d species in %d countries.\n', nrow(spp_subpop), length(unique(spp_subpop$parent_sid)), nrow(spp_subpop_countries)))
 # Found 177 marine subpopulations for 51 species in 736 countries.
-write.csv(spp_subpop          , 'tmp/spp_iucn_marine_subpop.csv'          , row.names=F, na='')
-write.csv(spp_subpop_countries, 'tmp/spp_iucn_marine_subpop_countries.csv', row.names=F, na='')
+write.csv(spp_subpop          , file.path(cd, 'spp_iucn_marine_subpop.csv')          , row.names=F, na='')
+write.csv(spp_subpop_countries, file.path(cd, 'spp_iucn_marine_subpop_countries.csv'), row.names=F, na='')
 
 # get list of all master species populations (ie not a subpopulation, used to extract IUCN rangemaps and apply category globally) 
 # tmp/spp_iucn_marine_global.csv: sid, sciname, category
@@ -309,49 +308,46 @@ write.csv(spp_subpop_countries, 'tmp/spp_iucn_marine_subpop_countries.csv', row.
 spp_global           = subset(d            , !sid %in% spp_subpop$sid)
 spp_global_countries = subset(spp_countries,  sid %in% spp_global$sid)
 cat(sprintf('\nFound %d marine global species in %d countries.\n', nrow(spp_global), nrow(spp_global_countries)))
-# Found 8173 marine global species in 120469 countries.
+# 2013: Found 8173 marine global species in 120469 countries.
 
 # check for duplicate scientific names
 subset(spp_global, sciname %in% spp_global$sciname[duplicated(spp_global$sciname)])
 
 # assign popn_trend to spp_global
 
-
 # Found 8181 marine global species in 120,563 countries.
-write.csv(spp_global          , 'tmp/spp_iucn_marine_global.csv'          , row.names=F, na='')
-write.csv(spp_global_countries, 'tmp/spp_iucn_marine_global_countries.csv', row.names=F, na='')
+write.csv(spp_global          , file.path(cd, 'spp_iucn_marine_global.csv')          , row.names=F, na='')
+write.csv(spp_global_countries, file.path(cd, 'spp_iucn_marine_global_countries.csv'), row.names=F, na='')
 
 # get distinct countries for doing an eez lookup (and later distribution for global species or catgory override for subpopulation)
 spp_countries_distinct = as.data.frame(table(subset(spp_countries, sid %in% d$sid, country)))
 spp_countries_distinct = rename(spp_countries_distinct[order(as.character(spp_countries_distinct[[1]])),],
                                 c('Var1'='country','Freq'='count'))
-write.csv(spp_countries_distinct, 'tmp/spp_iucn_marine_distinct_countries.csv', row.names=F, na='')
+write.csv(spp_countries_distinct, file.path(cd, 'spp_iucn_marine_distinct_countries.csv'), row.names=F, na='')
 
 
 # supplement with Davies & Baum (2012) ------------------------------------
 
-# clean excess white spaces
-spp_db12 = read.csv('raw/DaviesBaum2012/DaviesBaum2012.csv', stringsAsFactors=F)
-require(gdata)
-for (fld in names(spp_db12)){ # fld = names(spp_db12)[1] # fld = 'Scientific_name'
-  if (class(spp_db12[[fld]])=='character'){
-    spp_db12[[fld]] = gdata::trim(spp_db12[[fld]])
-  }
-}
-# lowercase field names
-names(spp_db12) = tolower(names(spp_db12))
-write.csv(spp_db12, 'tmp/DaviesBaum2012.csv', row.names=F, na='')
-
-# find spp not already in IUCN
-spp_db12 = read.csv('tmp/DaviesBaum2012.csv', stringsAsFactors=F)
-nrow(spp_db12) # 166 populations
-length(unique(spp_db12$scientific_name)) # 94 unique species
-spp_db12_notiucn = subset(spp_db12, !scientific_name %in% d$sciname)
-cat(sprintf('\nFound %d populations for %d species with Davies and Baum (2012) novel to IUCN species.\n', nrow(spp_db12_notiucn), length(unique(spp_db12_notiucn$scientific_name))))
-# Found 110 populations for 69 species with Davies and Baum (2012) novel to IUCN species.
-write.csv(spp_db12_notiucn, 'tmp/spp_DaviesBaum2012_notIUCN.csv', row.names=F, na='')
-
-
+# # clean excess white spaces
+# spp_db12 = read.csv('raw/DaviesBaum2012/DaviesBaum2012.csv', stringsAsFactors=F)
+# require(gdata)
+# for (fld in names(spp_db12)){ # fld = names(spp_db12)[1] # fld = 'Scientific_name'
+#   if (class(spp_db12[[fld]])=='character'){
+#     spp_db12[[fld]] = gdata::trim(spp_db12[[fld]])
+#   }
+# }
+# # lowercase field names
+# names(spp_db12) = tolower(names(spp_db12))
+# write.csv(spp_db12, 'tmp/DaviesBaum2012.csv', row.names=F, na='')
+# 
+# # find spp not already in IUCN
+# spp_db12 = read.csv('tmp/DaviesBaum2012.csv', stringsAsFactors=F)
+# nrow(spp_db12) # 166 populations
+# length(unique(spp_db12$scientific_name)) # 94 unique species
+# spp_db12_notiucn = subset(spp_db12, !scientific_name %in% d$sciname)
+# cat(sprintf('\nFound %d populations for %d species with Davies and Baum (2012) novel to IUCN species.\n', nrow(spp_db12_notiucn), length(unique(spp_db12_notiucn$scientific_name))))
+# # Found 110 populations for 69 species with Davies and Baum (2012) novel to IUCN species.
+# write.csv(spp_db12_notiucn, 'tmp/spp_DaviesBaum2012_notIUCN.csv', row.names=F, na='')
 
 # old circa 2011 code ----
 
