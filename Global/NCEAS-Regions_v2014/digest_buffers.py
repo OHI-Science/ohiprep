@@ -56,6 +56,20 @@ buf_units_d = {'nm':'NauticalMiles',
                'km':'Kilometers',
                'mi':'Miles'}
 
+# fields
+sp_flds = ['sp_type' ,'sp_id' ,'sp_name' ,'sp_key',
+           'rgn_type','rgn_id','rgn_name','rgn_key',
+           'cntry_id12','rgn_id12','rgn_name12']
+rgn_flds = ['rgn_type','rgn_id','rgn_name','rgn_key']
+sp_area_flds  = [ 'sp_type', 'sp_id', 'sp_name', 'sp_key','area_km2']
+rgn_area_flds = ['rgn_type','rgn_id','rgn_name','rgn_key','area_km2']
+
+# feature classes to use depending on direction of buffer (diced sp_*_d50k_gcs generated below)
+dict_zone = {'inland'  :{'buffer'   :'sp_offshore_d50k_gcs',
+                         'intersect':'sp_inland_gcs'},
+             'offshore':{'buffer'   :'sp_inland_d50k_gcs',
+                         'intersect':'sp_offshore_gcs'}}
+
 # projections
 sr_mol = arcpy.SpatialReference('Mollweide (world)') # projected Mollweide (54009)
 sr_gcs = arcpy.SpatialReference('WGS 1984')          # geographic coordinate system WGS84 (4326)
@@ -67,14 +81,7 @@ arcpy.env.workspace       = gdb
 arcpy.env.overwriteOutput = True
 arcpy.env.outputCoordinateSystem = sr_gcs
 
-# fields
-sp_flds = ['sp_type' ,'sp_id' ,'sp_name' ,'sp_key',
-           'rgn_type','rgn_id','rgn_name','rgn_key',
-           'cntry_id12','rgn_id12','rgn_name12']
-rgn_flds = ['rgn_type','rgn_id','rgn_name','rgn_key']
-sp_area_flds  = [ 'sp_type', 'sp_id', 'sp_name', 'sp_key','area_km2']
-rgn_area_flds = ['rgn_type','rgn_id','rgn_name','rgn_key','area_km2']
-
+# functions
 def add_area(fc, fld_area='area_km2'):
     if fld_area in [fld.name for fld in arcpy.ListFields(fc)]:
         arcpy.DeleteField_management(fc, fld_area)
@@ -110,29 +117,27 @@ def export_shpcsv(fc, flds, shp, csv):
 ##    shp  = '{0}/data/rgn_gcs.shp'.format(ad),
 ##    csv  = '{0}/data/rgn_data.csv'.format(gd))
 
-
 # onshore or offshore. note: excluding potential sp_types: eez-inland, land-disputed & eez-disputed
 ##print('selecting [sp|rgn]_[inland|offshore]_gcs (%s)' % time.strftime('%H:%M:%S'))
 ##arcpy.Select_analysis('sp_gcs',  ' sp_inland_gcs'  , "\"sp_type\"  IN ('land','land-ccamlr')")
 ##arcpy.Select_analysis('sp_gcs',   'sp_offshore_gcs', "\"sp_type\"  IN ('eez','fao','eez-ccamlr')")
-##arcpy.Select_analysis('rgn_gcs', 'rgn_inland_gcs'  , "\"rgn_type\" IN ('land')")
-##arcpy.Select_analysis('rgn_gcs', 'rgn_offshore_gcs', "\"rgn_type\" IN ('eez','fao')")
 
 # dice so buffering doesn't take forever
 ##arcpy.Dice_management('sp_inland_gcs'  , 'sp_inland_d50k_gcs'  , 50000)
 ##arcpy.Dice_management('sp_offshore_gcs', 'sp_offshore_d50k_gcs', 50000)
 
-dict_zone = {'inland'  :{'buffer'   :'sp_offshore_d50k_gcs',
-                         'intersect':'sp_inland_gcs'},
-             'offshore':{'buffer'   :'sp_inland_d50k_gcs',
-                         'intersect':'sp_offshore_gcs'}}
-
-# get list of spatial ids over which to iterate (b/c buffering all at once not working)
-sp_ids_names = dict(arcpy.da.TableToNumPyArray('sp_gcs', ['sp_id', 'sp_name']))
+# get list of spatial ids over which to iterate (b/c buffering all at once not working), skip ids without both inland and offshore components
+sp_dict_inland   = dict(arcpy.da.TableToNumPyArray('sp_inland_gcs', ['sp_id', 'sp_name']))
+sp_dict_offshore = dict(arcpy.da.TableToNumPyArray('sp_offshore_gcs', ['sp_id', 'sp_name']))
+sp_ids_offshore_withland    = sorted(set(sp_dict_offshore.keys()) & set(sp_dict_inland.keys())) # fao or ccamlr regions without land
+sp_ids_offshore_withoutland = sorted(set(sp_dict_offshore.keys()) - set(sp_dict_inland.keys()))
+print 'skipping offshore sp_gcs without land (fao, ccamlr):'
+print '\n  '.join(['%d: %s' % (id, sp_dict_offshore[id]) for id in sorted(sp_ids_offshore_withoutland)])
+sp_dict = {x: sp_dict_inland[x] for x in sp_ids_offshore_withland}
 
 # buffer
-for buf in buffers:
-##for buf in ['inland1km']:
+for buf in buffers:  # buf = 'inland1km'
+##for buf in ['inland1km']: 
     
     # identify buffer
     sp_buf  = 'sp_%s_gcs' % buf
@@ -140,27 +145,34 @@ for buf in buffers:
     print('buffering: %s (%s)' % (sp_buf, time.strftime('%H:%M:%S')))    
     buf_zone, buf_dist, buf_units = re.search('(\\D+)(\\d+)(\\D+)', buf).groups()    
 
-    for i, sp_id in enumerate(sorted(sp_ids_names.iterkeys())):
-        sp_name = sp_ids_names[sp_id]
+    for i, sp_id in enumerate(sorted(sp_dict.iterkeys())):
+        sp_name = sp_dict[sp_id]
         buf_sp = 'buf_%s_%06d' % (buf, sp_id)
-        print('    (%03d of %d, %s) %06d %s ' % (i+1, len(sp_ids_names), time.strftime('%H:%M:%S'), sp_id, sp_name))            
-        # TODO: missing 83?
+        if not arcpy.Exists(buf_sp):
+            print('    (%03d of %d, %s) %06d %s ' % (i+1, len(sp_dict), time.strftime('%H:%M:%S'), sp_id, sp_name))            
+            # TODO: missing 83?
 
-        # clean up    
-        ##for fc in ('buf_sel','buf_buf','buf_inx'):
-        ##    if arcpy.Exists(fc): arcpy.Delete_management(fc)
+            # clean up    
+            ##for fc in ('buf_sel','buf_buf','buf_inx'):
+            ##    if arcpy.Exists(fc): arcpy.Delete_management(fc)
 
-        # buffer
-        arcpy.Select_analysis(dict_zone[buf_zone]['buffer'],'buf_tmp_sp', '"sp_id"=%d' % sp_id)
-        arcpy.Buffer_analysis('buf_tmp_sp', buf_sp, '%s %s' % (buf_dist, buf_units_d[buf_units]), 'FULL', 'ROUND', 'ALL')
+            # buffer
+            arcpy.Select_analysis(dict_zone[buf_zone]['buffer'],'buf_tmp_sp', '"sp_id"=%d' % sp_id)
+            arcpy.Buffer_analysis('buf_tmp_sp', buf_sp, '%s %s' % (buf_dist, buf_units_d[buf_units]), 'FULL', 'ROUND', 'ALL')
+        if not arcpy.Exists('%s_d' % buf_sp):
+            arcpy.Dissolve_management(buf_sp, '%s_d' % buf_sp)            
 
-    print('  buf_%s_merged (%s)' % (buf, time.strftime('%H:%M:%S')))
-    arcpy.Merge_management(['buf_%s_%06d' % (buf, sp_id) for sp_id in sorted(sp_ids_names.keys())], 'buf_%s_merged' % buf)
+    print('  buf_%s_merge (%s)' % (buf, time.strftime('%H:%M:%S')))
+    arcpy.Merge_management(['buf_%s_%06d_d' % (buf, sp_id) for sp_id in sorted(sp_ids_names.keys())], 'buf_%s_merge' % buf)
     #arcpy.Merge_management(['buf_%s_%06d' % (buf, sp_id) for sp_id in (46, 288300)], 'buf_%s_merged' % buf)
 
+    print('  buf_%s_dissolve (%s)' % (buf, time.strftime('%H:%M:%S')))
+    arcpy.Dissolve_management('buf_%s_merge' % buf, 'buf_%s_dissolve' % buf)
+    ##arcpy.RepairGeometry_management('buf_%s_dissolve' % buf)
+
     print('  buf_%s_intersect (%s)' % (buf, time.strftime('%H:%M:%S')))
-    arcpy.Intersect_analysis(['buf_%s_merged' % buf, dict_zone[buf_zone]['intersect']], 'buf_%s_intersect' % buf, 'NO_FID')
-    
+    arcpy.Intersect_analysis(['buf_%s_dissolve' % buf, dict_zone[buf_zone]['intersect']], 'buf_%s_intersect' % buf, 'NO_FID')
+
     print('  dissolving to %s, %s (%s)' % (sp_buf, rgn_buf, time.strftime('%H:%M:%S')))
     arcpy.Dissolve_management('buf_%s_intersect' % buf,  sp_buf,  sp_flds)
     arcpy.Dissolve_management(sp_buf, rgn_buf, rgn_flds)
