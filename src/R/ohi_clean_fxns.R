@@ -5,34 +5,43 @@
 
 # add rgn_id
 add_rgn_id = function(uidata, uifilesave, 
-                      dpath = 'src/LookupTables') {
-  # example: uidata     = '/Volumes/ohi/Work/2013Update/data/GL-FAO-Commodities/data/cleaned/GL-FAO-Commodities.csv'
-  #          uifilesave = '/Volumes/ohi/Work/2013Update/data/GL-FAO-Commodities/data/cleaned/GL-FAO-Commodities-cleaned.csv'
+                      dpath = 'src/LookupTables',
+                      rgn_master.csv   = file.path(dpath, 'eez_rgn_2013master.csv'),
+                      rgn_synonyms.csv = file.path(dpath, 'rgn_eez_v2013a_synonyms.csv')) {
   
-  # add_ISO.r: use SQLite to add OHI region codes and save as new file (J. Stewart, B. Best Apr 2013) 
-  #   read in user-specified data file that needs ISO codes (tbd)
-  #   rename anything with accents (Cote d'Ivoire->Ivory Coast, Reunion, Republique)
-  #   read in official list of OHI regions (countries) and ISO codes: eez_rgn_2013master.csv (this is BB's file based on BH's xls for Radical)
-  #   read in supplementary list of OHI regions/ISO codes: rgn_eez_v2013a_synonyms.csv (this is JS's file based on BB's file with 2-letter OHI regionkeys. Also exists one saved from BH's Radical file with 3-digit codes)
-  #   query user-specified file to the ISO codes and save as a new file
-  #   
-  #   Note: the beginnings of regions_eezSynonyms.xlsx came from here, included at the bottom
+  # debug: dpath = 'src/LookupTables'; rgn_master.csv   = file.path(dpath, 'eez_rgn_2013master.csv'); rgn_synonyms.csv = file.path(dpath, 'rgn_eez_v2013a_synonyms.csv')
   
+  
+  ##  setup ----
   print('-->>> add_rgn_id.r expects that the first two columns of the matrix will be country_name, value_units ')
-  print('.')
-  print('..')
   
-  library(reshape2)
-  library(gdata)
-  options(gsubfn.engine = "R") # otherwise, get X11 launching for sqldf package
-  require(sqldf)
-  #   library(plyr)
-  #   library(dplyr)
+  # load libraries
+    library(dplyr)
   
+  # read in lookup files, combine into one dataframe
+  rk = read.csv(rgn_master.csv); head(rk) # master file by BB
+  rk2 = read.csv(rgn_synonyms.csv); head(rk2) # synonym file by JS
+  
+  # manage master rk
+  rk = rk %.%
+    filter(rgn_id_2013 < 255) %.% # remove open ocean and disputed
+    mutate(rgn_typ = 'ohi_region') %.%
+    arrange(rgn_id_2013)
+  
+  # manage synonym rk2
+  rkb  = data.frame(rk$rgn_id_2013,  rk$rgn_key_2013,  rk$rgn_nam_2013,  rk$region_id_2012,  rk$rgn_typ) 
+  rk2b = data.frame(rk2$rgn_id_2013, rk2$rgn_key_2013, rk2$rgn_nam_2013, rk2$region_id_2012, rk2$rgn_typ)
+  
+  # create regionkey: combine official and synonym region_id data
+  names(rkb)  = c('rgn_id_2013', 'rgn_key_2013', 'rgn_nam_2013', 'region_id_2012', 'rgn_typ')
+  names(rk2b) = c('rgn_id_2013', 'rgn_key_2013', 'rgn_nam_2013', 'region_id_2012', 'rgn_typ')
+  regionkey = rbind(rkb, rk2b)
+  regionkey$rgn_nam_2013 = as.character(regionkey$rgn_nam_2013)
+  regionkey = regionkey[!duplicated(regionkey), ] # remove duplicate rows in regionkey. this is what SELECT DISTINCT rgn_nam_2013, rgn_key_2013, rgn_id_2013, rgn_typ did with SQlite
   
   # remove accents
   col_num = grep('country', names(uidata), ignore.case = TRUE)
-  names(uidata)[col_num] = 'country_id'
+  names(uidata)[col_num] = 'rgn_nam'
   uidata[,col_num] = gsub('^\'', '', uidata[,col_num]) # get rid of any errant quotes
   uidata[,col_num] = gsub('.+voire', 'Ivory Coast', uidata[,col_num]) # Ivory Coast
   uidata[,col_num] = gsub('.+union', 'Reunion', uidata[,col_num]) # Reunion
@@ -40,71 +49,169 @@ add_rgn_id = function(uidata, uifilesave,
   uidata[,col_num] = gsub('Cura.+', 'Curacao', uidata[,col_num]) # Curacao 
   uidata[,col_num] = gsub('Saint Barth.+', 'Saint Barthelemy', uidata[,col_num]) # Saint Barthelemy 
   uidata[,col_num] = gsub('.+Principe', 'Sao Tome and Principe', uidata[,col_num]) # Sao Tome and Principe
+  head(uidata)
   
+  ## join uidata with regionkey, check that all rgn_ids are accounted for ----
   
-  ## read in more offical (by BB) and redundant (by JS) lists with 2-letter OHI
-  ## region codes, combine into one data.frame
-  rk = read.csv(file.path(dpath, 'eez_rgn_2013master.csv'))
-  rk2 = read.csv(file.path(dpath, 'rgn_eez_v2013a_synonyms.csv'))
+  ## join uidata with regionkey
+  uidata_regionkey = regionkey %.%
+    select(rgn_id = rgn_id_2013,
+           rgn_nam = rgn_nam_2013, 
+           rgn_typ) %.%
+    inner_join(uidata, by = 'rgn_nam'); head(uidata_regionkey) 
   
-  # manage official region_id data
-  rk = rk[rk$rgn_id_2013 < 255,]# remove high seas and non-regions
-  rk$rgn_typ = rep(NA, length(rk[,1]))
-  rk$rgn_typ[!is.na(rk$rgn_id_2013)] = 'ohi_region'
-  
-  # manage synonym region_id data
-  rkb  = data.frame(rk$rgn_id_2013,  rk$rgn_key_2013,  rk$rgn_nam_2013,  rk$region_id_2012,  rk$rgn_typ) 
-  rk2b = data.frame(rk2$rgn_id_2013, rk2$rgn_key_2013, rk2$rgn_nam_2013, rk2$region_id_2012, rk2$rgn_typ)
-  
-  # combine official and synonym region_id data
-  names(rkb)  = c('rgn_id_2013', 'rgn_key_2013', 'rgn_nam_2013', 'region_id_2012', 'rgn_typ')
-  names(rk2b) = c('rgn_id_2013', 'rgn_key_2013', 'rgn_nam_2013', 'region_id_2012', 'rgn_typ')
-  regionkey = rbind(rkb, rk2b)
-  
-  
-  
-  
-  ## sqlite: it isn't case sensitive so this should be fine if uidata is labeled Country or country. 
-  uidata2 = sqldf("SELECT b.rgn_id_2013, a.*, b.rgn_typ
-                 FROM uidata AS a
-                 LEFT OUTER JOIN (
-                     SELECT DISTINCT rgn_nam_2013, rgn_key_2013, rgn_id_2013, rgn_typ  
-                     FROM regionkey 
-                     ) AS b ON b.rgn_nam_2013 = a.country_id") 
-  
-  ## remove landlocked rows from datafiles, leaving only ohi regions and NA regions: need to assign those later.  
-  unique(uidata2$rgn_typ)
-  uidata3 = subset(uidata2, (rgn_typ == 'ohi_region' | is.na(rgn_typ))) # keep NAs because they need to be assigned later on
-  #uidata3 = uidata3[uidata3$rgn_id < 255,] # Also removed disputed. for high-seas stuff, would want this to just say !=255 to exclude disputed areas
+  # only keep ohi_regions
+  uidata_rgn = uidata_regionkey %.%
+    filter(rgn_typ == 'ohi_region' | is.na(rgn_typ)); head(uidata_rgn) 
   
   # indicate which were removed
-  print('These landlocked/largescale countries were removed:')
-  RemovedMatrix = subset(uidata2, (rgn_typ == 'landlocked' | rgn_typ == 'largescale' | rgn_typ == 'disputed')) 
-  RemovedCountry = data.frame(RemovedMatrix$country_id)
-  print(unique(RemovedCountry))
-  print('')
+  RemovedRegions = uidata_regionkey %.%
+    filter(rgn_typ == 'landlocked' | rgn_typ == 'largescale' | rgn_typ == 'disputed') %.%
+    select(rgn_nam)
+  print('These landlocked/largescale/disputed regions were removed:')
+  print(unique(data.frame(RemovedRegions)))
   
   # indicate which still need to be assigned:
-  print('These non-landlocked countries were not matched with OHI rgn_id codes:')
-  uidata3.na = subset(uidata3,  is.na(rgn_typ)) 
-  print(unique(data.frame(uidata3.na$country_id)))
+  uidata_rgn.na = uidata_rgn %.%
+    filter(is.na(rgn_typ))
+  print('These non-landlocked countries do not have assigned rgn_ids:')
+  print(unique(data.frame(uidata_rgn.na$country_id)))
   
   print('TRUE if everything is working properly: ')
-  print(dim(uidata3)[1] + dim(RemovedMatrix)[1] == dim(uidata2)[1]) # make sure this is TRUE
+  print(dim(uidata_rgn)[1] + dim(RemovedRegions)[1] == dim(uidata_regionkey)[1]) # make sure this is TRUE
   
-  uidata4 = uidata3
-  
-  ## save
-  uidata4$rgn_typ <- NULL
-  # uidata4$country_id <- NULL # we need this in there to ID which countries aren't matched. remove in add_gapfill.r
-  names(uidata4)[c(1,2)] = c('rgn_id', 'rgn_nam')
-  uidata4 = uidata4[order(uidata4$rgn_id),]
+  ## save, but keep rgn_nam for gapfilling purposes. remove in add_gapfill.r ----
+  uidata_rgn$rgn_typ <- NULL
+  uidata_rgn = uidata_rgn %.%
+    arrange(rgn_id); head(uidata_rgn)
   
   
   print('Be sure to inspect saved .csv file for additional or missing rgn_ids.')
-  write.csv(uidata4, uifilesave, na = '', row.names=FALSE)
+  write.csv(uidata_rgn, uifilesave, na = '', row.names=FALSE)
   
-  #  write.table(regionkey, '/Users/jstewart/Desktop/regionkeytest.txt', sep='\t', row.names=FALSE)
+}
+
+# identify duplicate regions and sum them (currently supports rgn_id = 13, 116, 140, 209) 
+sum_duplicates = function(cleandata, dup_ids, fld.nam = 'value') {
+  
+  d = cleandata
+  
+  n = names(d)
+  fld_ids_join = names(d)[!names(d) %in% c('rgn_nam', fld.nam)]
+  names(d)[names(d) %in% fld.nam] = 'value'; head(d) # call this value for processing; revert back below 
+  
+  # to rbind all
+  d.all =  matrix(nrow=0, ncol=0) 
+  
+  ## fix Northern Mariana Islands and Guam (rgn_id=13) ----
+  if (13 %in% dup_ids) { 
+    dn = filter(d, rgn_nam == 'Northern Mariana Islands'); head(dn)
+    dg = filter(d, rgn_nam == 'Guam'); head(dg)
+    
+    nmi = dn %.%
+      left_join(dg, by=fld_ids_join); head(nmi) 
+    
+    # calculate sum--causing weirdness otherwise: sum giving different values with rm.na=T (??!)
+    nmi_sum = nmi %.%
+      select(value.x, value.y)
+    nmi_sum$value_tot = rowSums(nmi_sum, na.rm = T); tail(nmi_sum)
+    nmi_sum$value_tot[is.na(nmi_sum$value.x) & is.na(nmi_sum$value.y)] = NA; tail(nmi_sum) # fix because NA+NA=0
+    
+    # cbind sum in place of individual values
+    nmi_tot = cbind(nmi, nmi_sum) %.%
+      mutate(rgn_nam_tot = 'Northern Mariana Islands and Guam'); head(nmi_tot)
+    nmi_tot$rgn_nam.x = NULL; nmi_tot$rgn_nam.y = NULL; nmi_tot$value.x = NULL; nmi_tot$value.y = NULL; 
+    nmi_tot = plyr::rename(nmi_tot, 
+                           c('value_tot' = 'value', 'rgn_nam_tot' = 'rgn_nam')); head(nmi_tot)
+    
+    d.all = rbind(d.all, nmi_tot)
+  }
+  
+  
+  ## fix Puerto Rico and Virgin Islands of the United States (rgn_id=116) ----
+  if (116 %in% dup_ids) { 
+    dp = filter(d, rgn_nam == 'Puerto Rico'); head(dp)
+    dv = filter(d, rgn_nam == 'Virgin Islands (U.S.)' | rgn_nam == 'US Virgin Islands'); head(dv)
+    
+    prvi = dp %.%
+      left_join(dv, by=fld_ids_join); head(prvi)
+    
+    # calculate sum--causing weirdness otherwise: sum giving different values with rm.na=T (??!)
+    prvi_sum = prvi %.%
+      select(value.x, value.y)
+    prvi_sum$value_tot = rowSums(prvi_sum, na.rm = T); head(prvi_sum)
+    prvi_sum$value_tot[is.na(prvi_sum$value.x) & is.na(prvi_sum$value.y)] = NA; head(prvi_sum) # fix because NA+NA=0
+    
+    # cbind sum in place of individual values. Easier this way rather than 'select' since you don't know all the columns involved in fld_ids_join
+    prvi_tot = cbind(prvi, prvi_sum) %.%
+      mutate(rgn_nam_tot = 'Puerto Rico and Virgin Islands of the United States'); head(prvi_tot)
+    prvi_tot$rgn_nam.x = NULL; prvi_tot$rgn_nam.y = NULL; prvi_tot$value.x = NULL; prvi_tot$value.y = NULL; 
+    prvi_tot = plyr::rename(prvi_tot, 
+                            c('value_tot' = 'value', 'rgn_nam_tot' = 'rgn_nam')); head(prvi_tot)
+    
+    d.all = rbind(d.all, prvi_tot)
+  }
+  
+  ## fix Guadeloupe and Martinique (rgn_id=140) ----
+  if (140 %in% dup_ids) { 
+    du = filter(d, rgn_nam == 'Guadeloupe'); head(du)
+    da = filter(d, rgn_nam == 'Martinique'); head(da)
+    
+    gma = du %.%
+      left_join(da, by=fld_ids_join); head(gma) 
+    
+    # calculate sum--causing weirdness otherwise: sum giving different values with rm.na=T (??!)
+    gma_sum = gma %.%
+      select(value.x, value.y)
+    gma_sum$value_tot = rowSums(gma_sum, na.rm = T); tail(gma_sum)
+    gma_sum$value_tot[is.na(gma_sum$value.x) & is.na(gma_sum$value.y)] = NA; tail(gma_sum) # fix because NA+NA=0
+    
+    # cbind sum in place of individual values
+    gma_tot = cbind(gma, gma_sum) %.%
+      mutate(rgn_nam_tot = 'Guadeloupe and Martinique'); head(gma_tot)
+    gma_tot$rgn_nam.x = NULL; gma_tot$rgn_nam.y = NULL; gma_tot$value.x = NULL; gma_tot$value.y = NULL; 
+    gma_tot = plyr::rename(gma_tot, 
+                           c('value_tot' = 'value', 'rgn_nam_tot' = 'rgn_nam')); head(gma_tot)
+    
+    d.all = rbind(d.all, gma_tot)
+  }
+  
+  ## fix China (rgn_id=209) ----
+  if (209 %in% dup_ids) { 
+    dh = filter(d, rgn_nam == 'Hong Kong SAR, China' | rgn_nam == 'China, Hong Kong SAR'); head(dh)
+    dm = filter(d, rgn_nam == 'Macao SAR, China'); head(dm)
+    dc = filter(d, rgn_nam == 'China'); head(dc)
+    
+    chn = dc %.%
+      left_join(dm, by=fld_ids_join) %.%
+      left_join(dh, by=fld_ids_join); head(chn)
+    
+    # calculate sum--causing weirdness otherwise: sum giving different values with rm.na=T (??!)
+    chn_sum = chn %.%
+      select(value.x, value.y, value)
+    chn_sum$value_tot = rowSums(chn_sum, na.rm = T); head(chn_sum)
+    chn_sum$value_tot[is.na(chn_sum$value.x) & is.na(chn_sum$value.y) & is.na(chn_sum$value)] = NA; tail(chn_sum) # fix because NA+NA=0
+    
+    # cbind sum in place of individual values
+    chn_tot = cbind(chn, chn_sum) %.%
+      mutate(rgn_nam_tot = 'China'); head(chn_tot)
+    chn_tot$rgn_nam = NULL; chn_tot$rgn_nam.x = NULL; chn_tot$rgn_nam.y = NULL; 
+    chn_tot$value = NULL; chn_tot$value.x = NULL; chn_tot$value.y = NULL; 
+    chn_tot = plyr::rename(chn_tot, 
+                           c('value_tot' = 'value', 'rgn_nam_tot' = 'rgn_nam')); head(chn_tot)
+    
+    d.all = rbind(d.all, chn_tot)
+  }
+  
+  ## rbind all total values for all duplicates ----
+  d_fix = data.frame(rbind(d %.%
+                             filter(rgn_id != 13, rgn_id !=116, rgn_id !=140, rgn_id != 209), 
+                           d.all)) %.%
+    arrange(rgn_id); head(d_fix)
+  
+  names(d_fix) = n
+  return(d_fix)
+  
 }
 
 
@@ -543,7 +650,7 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
                        value_whence = value), 
               by=c('r2', 'year')) %.%
     select(rgn_id, rgn_nam, r2, r1, whence_choice, year, value, rgn_id_whence, rgn_nam_whence, value_whence)
-   head(rgn_gapfilled_whence_r2,10)
+  head(rgn_gapfilled_whence_r2,10)
   
   # whence then with r1
   rgn_gapfilled_whence_r1 = rgn_gapfilled_whence_r2 %.%
@@ -556,7 +663,7 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
                        value_whence = value), by=c('r1', 'year')) %.%
     select(rgn_id, rgn_nam, r2, r1, whence_choice, year, value, rgn_id_whence, rgn_nam_whence, value_whence)
   head(rgn_gapfilled_whence_r1)
-    
+  
   # combine r2 and r1
   rgn_gapfilled_whence = rgn_gapfilled_whence_r2 %.%
     filter(!is.na(rgn_id_whence)) %.%

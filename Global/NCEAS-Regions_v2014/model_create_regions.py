@@ -30,7 +30,7 @@
 #  * associate these land parts with the neighboring EEZs
 #  * create Antarctica land by erasing rest from earth box and dissolving every polygon with a centroid less than 60 degrees latitude
 #  * go through slivers of FAO and holes from earth box erased by the rest and manually associate with legit region
-#  * convert EEZ of Caspian and Black Seas to land
+#  * convert EEZ of Black Sea to eez-inland
 #  * merge all products and peform checks for overlap and geometry repair
 #
 # Built using:
@@ -42,7 +42,7 @@
 #   - 140 Guadeloupe and Martinique
 #   - 116 Puerto Rico and Virgin Islands of the United States
 
-import arcpy, os, re, numpy as np, socket, pandas as pd
+import arcpy, os, re, numpy as np, socket, pandas as pd, time
 from collections import Counter
 from numpy.lib import recfunctions
 arcpy.SetLogHistory(True) # %USERPROFILE%\AppData\Roaming\ESRI\Desktop10.2\ArcToolbox\History
@@ -71,8 +71,8 @@ eezland    = '{0}/stable/GL-VLIZ-EEZs_v7/data/EEZ_land_v1.shp'.format(conf['dir_
 fao        = '{0}/model/GL-FAO-CCAMLR_v2014/data/fao_ccamlr_gcs.shp'.format(conf['dir_neptune'])
 # master lookup table to go from EEZ to OHI regions
 z_2013_csv = '{0}/model/GL-NCEAS-OceanRegions_v2013a/manual_output/eez_rgn_2013master.csv'.format(conf['dir_neptune'])
-# manual overrides: slivers and polygon surrounding Caspian and Black Seas to convert from EEZ to land for OHI purposes
-eez_inland_area  = '{0}/manual_output/CaspianBlackSeas_EEZexclusionpoly.shp'.format(ad)
+# manual overrides: slivers and polygon surrounding Black Sea to convert from eez to eez-inland for OHI purposes
+eez_inland_area  = '{0}/manual_output/BlackSea_eez-inland_idpoly.shp'.format(ad)
 
 # data outputs
 # Antarctica CCAMLR
@@ -88,9 +88,10 @@ sp_shp   = '{0}/data/sp_gcs.shp'.format(ad)
 rgn_csv  = '{0}/data/rgn_data.csv'.format(gd)
 sp_csv   = '{0}/data/sp_data.csv'.format(gd)
 
-# projections
+# projections (see http://resources.arcgis.com/en/help/main/10.2/018z/pdf/projected_coordinate_systems.pdf|geographic_coordinate_systems.pdf)
 sr_mol = arcpy.SpatialReference('Mollweide (world)') # projected Mollweide (54009)
 sr_gcs = arcpy.SpatialReference('WGS 1984')          # geographic coordinate system WGS84 (4326)
+sr_ant = arcpy.SpatialReference(3031)                # WGS_1984_Antarctic_Polar_Stereographic (3031)
 
 # environment
 if not os.path.exists(td): os.makedirs(td)
@@ -98,6 +99,7 @@ if not arcpy.Exists(gdb): arcpy.CreateFileGDB_management(os.path.dirname(gdb), o
 arcpy.env.workspace       = gdb
 arcpy.env.overwriteOutput = True
 arcpy.env.outputCoordinateSystem = sr_gcs
+#arcpy.env.outputCoordinateSystem = sr_ant
 
 # copy data inputs into gdb
 for v in ['eez', 'eezland', 'fao', 'eez_inland_area']:
@@ -146,7 +148,7 @@ r = np.rec.fromrecords(
     names   = 'OBJECTID, raw_type, raw_id, raw_name, raw_key')
 arcpy.da.ExtendTable('ant_land', 'OBJECTID', r, 'OBJECTID') # , append_only=False
 
-# eez-inland: Caspian and Black Seas
+# eez-inland: Black Sea
 r = arcpy.da.TableToNumPyArray('eez_noant', ['OBJECTID','EEZ_ID','Country','ISO_3digit'])
 r.dtype.names = [{'EEZ_ID'    :'raw_id',
                   'Country'   :'raw_name',
@@ -328,6 +330,7 @@ for col in ['sp_id','sp_type','sp_name','sp_key']:
 #m.to_csv(sp_rgn_csv, index=False, encoding='utf-8')
 
 # import and merge git/manual_output/sp_rgn_manual.csv for editing
+#arcpy.Dissolve_management('sp_m', 'sp_m_d', ['sp_type','sp_id','sp_name','sp_key']) # redo sp_id ...
 d = pd.DataFrame(arcpy.da.TableToNumPyArray('sp_m_d', ['OBJECTID','sp_type','sp_id','sp_name','sp_key'])) # print(set(d['sp_type'])) # set([u'ccamlr', u'land', u'eez', u'land-noeez', u'fao', u'eez-inland'])
 # convert from Unicode to ASCII for matching lookup
 for u,a in {u'Curaçao':'Curacao', u'République du Congo':'Republique du Congo', u'Réunion':'Reunion'}.iteritems(): # u=u'Réunion'; a='Reunion'
@@ -374,6 +377,89 @@ d.to_csv(sp_csv, index=False)
 d = pd.DataFrame(arcpy.da.TableToNumPyArray('rgn_gcs', ['rgn_type','rgn_id','rgn_name','rgn_key','area_km2']))
 d.to_csv(rgn_csv, index=False)
 print('done (%s)' % time.strftime('%H:%M:%S'))
+
+# Black sea ad-hoc re-add (https://github.com/OHI-Science/ohicore/issues/63)
+arcpy.Erase_analysis('CaspianBlackSeas_EEZexclusionpoly', 'BlackSea_eez-inland_idpoly', 'BlackSea_poly')
+arcpy.MakeFeatureLayer_management('sp_gcs','lyr_sp_eezinland',"rgn_type = 'eez-inland'")
+arcpy.Intersect_analysis(['lyr_sp_eezinland', 'BlackSea_poly'], 'sp_Black')
+arcpy.CalculateField_management('sp_Black', 'sp_type', "'eez'", 'PYTHON_9.3')
+arcpy.CalculateField_management('sp_Black', 'rgn_type', "'eez'", 'PYTHON_9.3')
+flds_del = list(set([x.name for x in arcpy.ListFields('sp_Black')]).difference(set([x.name for x in arcpy.ListFields('sp_gcs')])))
+arcpy.DeleteField_management('sp_Black', flds_del)
+arcpy.CopyFeatures_management('sp_gcs', 'sp_inlandeezBlack')
+arcpy.Erase_analysis('sp_inlandeezBlack', 'sp_Black', 'sp_noBlack')
+arcpy.Merge_management(['sp_noBlack_gcs', 'sp_Black'], 'sp_okBlack')
+names_Black = ['Bulgaria','Georgia','Romania','Russia','Turkey','Ukraine']
+arcpy.MakeFeatureLayer_management('sp_okBlack', 'lyr', "sp_type = 'land-noeez' AND sp_name IN ('%s')" % "','".join(names_Black))
+arcpy.CalculateField_management('lyr', 'sp_type', "'land'", 'PYTHON_9.3')
+arcpy.CalculateField_management('lyr', 'rgn_type', "'land'", 'PYTHON_9.3')
+# still need to dissolve
+
+# add-hoc Antarctica
+arcpy.env.outputCoordinateSystem = sr_ant
+arcpy.MakeFeatureLayer_management('sp_okBlack', 'lyr', "sp_type = 'land' AND sp_name ='Antarctica'")
+arcpy.Dissolve_management('lyr', 'aq_land')
+arcpy.DeleteFeatures_management('lyr')
+arcpy.MakeFeatureLayer_management('sp_okBlack', 'lyr', "sp_type = 'ccamlr'")
+arcpy.CalculateField_management('lyr','sp_type',"'eez-ccamlr'",'PYTHON_9.3')
+arcpy.Select_analysis('sp_okBlack', 'aq_ccamlr', "sp_type = 'ccamlr'")
+
+# create theissen polygons used to split slivers
+arcpy.Densify_edit('aq_ccamlr', 'DISTANCE', '10 Kilometers')
+arcpy.FeatureVerticesToPoints_management('aq_ccamlr', 'aq_ccamlr_pts', 'ALL')
+ 
+# delete interior points
+arcpy.Dissolve_management('aq_ccamlr', 'aq_ccamlr_d')
+arcpy.MakeFeatureLayer_management('aq_ccamlr_pts', 'lyr_aq_ccamlr_pts')
+arcpy.SelectLayerByLocation_management('lyr_aq_ccamlr_pts', 'WITHIN_CLEMENTINI', 'aq_ccamlr_d')
+arcpy.DeleteFeatures_management('lyr_aq_ccamlr_pts')
+ 
+# generate thiessen polygons of gadm for intersecting with land slivers
+arcpy.env.extent = 'aq_land'
+arcpy.CreateThiessenPolygons_analysis('aq_ccamlr_pts', 'aq_thiessen', 'ALL')
+arcpy.Dissolve_management('aq_thiessen', 'aq_thiessen_d', ['sp_type','sp_id','sp_name','sp_key','rgn_type','rgn_id','rgn_name','rgn_key','cntry_id12','rgn_id12','rgn_name12'])
+arcpy.RepairGeometry_management('aq_thiessen_d')
+    
+# get slivers, which are land but not identified by gadm, intersect with thiessen so break at junctions
+arcpy.Intersect_analysis(['aq_thiessen_d', 'aq_land'], 'aq_thiessen_d_land')
+arcpy.CalculateField_management('aq_thiessen_d_land','sp_type',"'land-ccamlr'",'PYTHON_9.3')
+arcpy.CalculateField_management('aq_thiessen_d_land','rgn_type',"'land'",'PYTHON_9.3')
+
+# return to geographic coordinate system
+arcpy.env.outputCoordinateSystem = sr_gcs
+arcpy.CopyFeatures_management('aq_thiessen_d_land','aq_landccamlr_gcs')
+arcpy.RepairGeometry_management('aq_landccamlr_gcs')
+flds_del = list(set([x.name for x in arcpy.ListFields('aq_landccamlr_gcs')]).difference(set([x.name for x in arcpy.ListFields('sp_okBlack')])))
+arcpy.DeleteField_management('aq_landccamlr_gcs', flds_del)
+arcpy.Merge_management(['sp_okBlack', 'aq_landccamlr_gcs'], 'sp_okAQ')
+
+arcpy.Clip_analysis('sp_okAQ', 'box', 'sp_okAQ_c')
+arcpy.Dissolve_management('sp_okAQ_c', 'sp_gcs' ,['sp_type' ,'sp_id' ,'sp_name' ,'sp_key',
+                                                  'rgn_type','rgn_id','rgn_name','rgn_key',
+                                                  'cntry_id12','rgn_id12','rgn_name12'])
+arcpy.Dissolve_management('sp_okAQ_c', 'rgn_gcs',['rgn_type','rgn_id','rgn_name','rgn_key'])
+arcpy.RepairGeometry_management('sp_gcs')
+arcpy.RepairGeometry_management('rgn_gcs')
+
+# add areas
+print('add areas (%s)' % time.strftime('%H:%M:%S'))
+arcpy.AddMessage('calculate areas')
+arcpy.AddField_management(      'sp_gcs' , 'area_km2', 'DOUBLE')
+arcpy.CalculateField_management('sp_gcs' , 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
+arcpy.AddField_management(      'rgn_gcs', 'area_km2', 'DOUBLE')
+arcpy.CalculateField_management('rgn_gcs', 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
+
+# export shp and csv
+print('export shp and csv (%s)' % time.strftime('%H:%M:%S'))
+arcpy.CopyFeatures_management('sp_gcs' , sp_shp)
+arcpy.CopyFeatures_management('rgn_gcs', rgn_shp)
+d = pd.DataFrame(arcpy.da.TableToNumPyArray('sp_gcs', ['sp_type','sp_id','sp_name','sp_key','area_km2','rgn_type','rgn_id','rgn_name','rgn_key','cntry_id12','rgn_id12','rgn_name12']))
+d.to_csv(sp_csv, index=False)
+d = pd.DataFrame(arcpy.da.TableToNumPyArray('rgn_gcs', ['rgn_type','rgn_id','rgn_name','rgn_key','area_km2']))
+d.to_csv(rgn_csv, index=False)
+print('done (%s)' % time.strftime('%H:%M:%S'))
+
+# TODO: clip to earth
 
 ### TODO: simplify and TopoJSON
 ### Simplify lake polygons.

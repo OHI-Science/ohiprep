@@ -25,7 +25,44 @@ The two formats (and locations) for the outputs are in:
 * **\*.shp** in `\\neptune\git_annex\Global\NCEAS-Regions_v2014\data\`
 * **\*_data.csv** in [`data/`](https://github.com/OHI-Science/ohiprep/tree/master/Global/NCEAS-Regions_v2014/data).
 
-![map of outputs](https://raw.githubusercontent.com/OHI-Science/ohiprep/master/Global/NCEAS-Regions_v2014/fig/NCEAS-Regions_v2014_sp_rgn_map.png)
+![map of outputs](https://raw.githubusercontent.com/OHI-Science/ohiprep/master/Global/NCEAS-Regions_v2014/fig/NCEAS-Regions_v2014.png)
+
+## Identifiers
+
+The **_sp_rgns_.sp_id** is an integer translated from the original source ID like so:
+
+  source | sp_id scheme | applicable sp_types
+  ------:|:-------------|:-------------------
+  **EEZ** | id | eez, eez-disputed, eez-inland, land, land-disputed
+  **FAO** | 1,000 + FAO id (18, ..., 87) | fao
+  **CCAMLR** | 200,000 + CCAMLR id (48.1, ...,  58.4.4.b, ..., 88.3) | eez-ccamlr, land-ccamlr
+
+resulting in sample rows like:
+
+  sp_id|sp_type|sp_name_orig|sp_name
+  ----:|:------|:-----------|:------
+  0|eez|Australia|Australia
+  0|land|Australia|Australia
+  74|eez-inland|Georgia|Georgia
+  74|land-noeez|Georgia|Georgia
+  165|eez-disputed|Colombia - Jamaica|Colombia - Jamaica
+  165|land-disputed|Colombia - Jamaica|Colombia - Jamaica
+  210|land|Japan|Japan
+  211|eez-disputed|Japan - Korea|Japan - Korea
+  260|eez-disputed|Trinidad and Tobago/Venezuela/Guyana|Trinidad and Tobago/Venezuela/Guyana
+  301|land-noeez|Afghanistan|Afghanistan
+  337|land-noeez|Zimbabwe|Zimbabwe
+  1018|fao|18|Arctic Sea
+  1021|fao|21|Atlantic, Northwest
+  1047|fao|47|Atlantic, Southeast
+  1087|fao|87|Pacific, Southeast
+  248100|eez-ccamlr|48.1|CCAMLR 48.1
+  258420|eez-ccamlr|58.4.2|CCAMLR 58.4.2
+  258431|eez-ccamlr|58.4.3.a|CCAMLR 58.4.3.a
+  258432|eez-ccamlr|58.4.3.b|CCAMLR 58.4.3.b
+  288300|eez-ccamlr|88.3|CCAMLR 88.3
+
+# TODO: check Ukraine (any EEZ? 57), Tuvalu (19)
 
 ## Inputs
 * EEZ, EEZ_land (http://marineregions.org)
