@@ -16,6 +16,7 @@ library(plyr)
 setwd('/var/data/ohi/model/GL-HS-AQ-PressuresSummary_v2013')
 
 # Region mollwide file: 
+# (from /var/data/ohi/git-annex/Global/NCEAS-Regions_v2014/data - but converted to Mol)
 regions <- readOGR(dsn=".", layer="sp_mol")
 regions@data[regions@data$sp_type=="ccamlr",]
 table(regions@data$sp_type)
@@ -36,6 +37,13 @@ regions_gcs@data$sp_id <- as.numeric(1:dim(regions_gcs@data)[1])
 
 # take a look at SST raster that I need to extract data from:
 SST <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/sst_05_10-82_86i_mol.tif")
+
+v <- extract(SST, regions, weights=TRUE, progress="text")
+ldply(v, fun=)
+
+sapply(v, function(x) if (!is.null(x)) {sum(apply(x, 1, prod)) / sum(x[,2])} else NA  )
+
+
 SST_oldData <- read.dbf("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/rgn_fao_mol_sst_05_10-82_86i_mol.dbf")
 
 plot(SST)
@@ -193,7 +201,114 @@ test <- extract(slr, regions_gcs[25, ], fun=mean, na.rm=TRUE, weights=TRUE)
 
 
 
-2+2
+############################
+## HD subtidal Hard Bottom:poison data
+############################
+subtidal_hb_1 <- raster("/var/data/ohi/stable/GL-WRI-ReefsAtRisk/data/gl_thr_poison.tif")
+hist(subtidal_hb_1) #looks like 1 values should be 0
+#subtidal_hb_2 <- raster("/var/data/ohi/stable/GL-WRI-ReefsAtRisk/data/gl_thr_blast.tif")
+
+plot(subtidal_hb_1)
+plot(regions, add=TRUE)
+
+#convert to raster
+rasterize(regions, subtidal_hb_1, 
+          field="sp_id", 
+          filename="sp_mol_raster_subtidal_hb_1", overwrite=TRUE, 
+          progress="text")
+
+
+regions_raster <- raster("sp_mol_raster_subtidal_hb_1")
+
+#CommercialHBC <- stack(hb_dem, hb_dem_nd, hb_pel)
+#regions_stats <- zonal(CommercialHBC,  regions_raster, progress="text")
+regions_stats <- zonal(subtidal_hb_1,  regions_raster, progress="text")
+data <- merge(regions@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
+
+write.csv(data,"subtidal_hb_1.csv", 
+          row.names=FALSE)  
+
+
+############################
+## HD subtidal Hard Bottom:blast data
+############################
+subtidal_hb_2 <- raster("/var/data/ohi/stable/GL-WRI-ReefsAtRisk/data/gl_thr_blast.tif")
+
+plot(subtidal_hb_2)
+plot(regions, add=TRUE)
+
+regions_raster <- raster("sp_mol_raster_subtidal_hb_1") # can use the same region raster
+
+regions_stats <- zonal(subtidal_hb_2,  regions_raster, progress="text")
+data <- merge(regions@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
+
+data$mean <- data$mean-1
+
+write.csv(data,"subtidal_hb_2.csv", 
+          row.names=FALSE)  
+
+
+
+############################
+## Shipping
+############################
+shipping <- raster("/var/data/ohi/model/GL-NCEAS-Halpern2008/data/masked_impacts_shipping.tif")
+shipping
+
+plot(shipping)
+plot(regions, add=TRUE)
+
+
+#convert to raster
+rasterize(regions, shipping, 
+          field="sp_id", 
+          filename="sp_mol_raster_shipping", overwrite=TRUE, 
+          progress="text")
+
+regions_raster <- raster("sp_mol_raster_shipping")                                                                                                                                                                                                                                                                                                                                                                            
+
+regions_stats <- zonal(shipping,  regions_raster, progress="text")
+data <- merge(regions@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
+
+data$mean <- data$mean-1
+
+write.csv(data,"shipping.csv", 
+          row.names=FALSE)  
+
+
+
+
+#################################
+## Checking against old regions
+#################################
+
+regions_mol_old <- readOGR(dsn="/var/data/ohi/model/GL-NCEAS-OceanRegions_v2013a/data", layer="rgn_ocean_cntry_mol")
+regions_mol_old <- regions_mol_old[regions_mol_old$rgn_typ %in% "eez", ]
+
+# take a look at SST raster that I need to extract data from:
+SST <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/sst_05_10-82_86i_mol.tif")
+SST_oldData <- read.dbf("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/rgn_fao_mol_sst_05_10-82_86i_mol.dbf")
+
+plot(SST)
+plot(regions, add=TRUE)
+
+#convert to raster
+rasterize(regions_mol_old, SST, 
+          field="rgn_id", 
+          filename="sp_mol_raster_SST_old", overwrite=TRUE, 
+          progress="text")
+
+
+regions_raster <- raster("sp_mol_raster_SST_old")
+
+data <- zonal(SST,  regions_raster, progress="text")
+
+write.csv(data,"SST_ZonalMean_old.csv", 
+          row.names=FALSE)  
+
+#test <- extract(SST, regions_mol_old, fun=mean, na.rm=TRUE, weights=TRUE, progress="text")
+# results: na.rm did not seem to generally work.  However, the results did not 
+# seem overall better for the few regions that worked. 
 
 
 
@@ -203,102 +318,5 @@ test <- extract(slr, regions_gcs[25, ], fun=mean, na.rm=TRUE, weights=TRUE)
 
 
 
-
-
-
-
-
-################################################
-## 2013 data
-################################################
-
-#-----------------------------------------------
-# Create stack of all pressure layers
-#-----------------------------------------------
-
-#setwd("\\\\neptune\\halpern2008\\mnt\\storage\\marine_threats\\impact_layers_2013_redo\\global_impact_model_2013\\averaged_by_num_ecosystems\\by_threat")
-setwd("H:\\mnt\\storage\\marine_threats\\impact_layers_2013_redo\\global_impact_model_2013\\averaged_by_num_ecosystems\\by_threat")
-artisanal_fishing_combo <- raster("artisanal_fishing_combo.tif")
-demersal_destructive_fishing_combo <- raster("demersal_destructive_fishing_combo.tif")
-demersal_nondest_high_bycatch_combo <- raster("demersal_nondest_high_bycatch_combo.tif")
-demersal_nondest_low_bycatch_combo <- raster("demersal_nondest_low_bycatch_combo.tif")
-inorganic_combo <- raster("inorganic_combo.tif")
-invasives_combo <- raster("invasives_combo.tif")
-
-night_lights_combo <- raster("night_lights_combo.tif")
-night_lights_combo <- extend(night_lights_combo, FAO_CCAMLR_raster@extent)
-extent(night_lights_combo) = extent(FAO_CCAMLR_raster) 
-
-ocean_acidification_combo <- raster("ocean_acidification_combo.tif")
-
-ocean_pollution_combo <- raster("ocean_pollution_combo.tif")
-ocean_pollution_combo <- extend(ocean_pollution_combo, FAO_CCAMLR_raster@extent)
-
-oil_rigs_combo <- raster("oil_rigs_combo.tif")
-oil_rigs_combo <- extend(oil_rigs_combo, FAO_CCAMLR_raster@extent)
-extent(oil_rigs_combo) = extent(FAO_CCAMLR_raster) 
-
-pelagic_high_bycatch_combo <- raster("pelagic_high_bycatch_combo.tif")
-pelagic_low_bycatch_combo <-  raster("pelagic_low_bycatch_combo.tif")
-
-plumes_fert_combo <- raster("plumes_fert_combo.tif")
-plumes_fert_combo <- extend(plumes_fert_combo, FAO_CCAMLR_raster@extent)
-
-plumes_pest_combo <- raster("plumes_pest_combo.tif")
-plumes_pest_combo <- extend(plumes_pest_combo, FAO_CCAMLR_raster@extent)
-
-population_combo <- raster("population_combo.tif")
-population_combo <- extend(population_combo, FAO_CCAMLR_raster@extent)
-shipping_combo <- raster("shipping_combo.tif")
-slr_combo <- raster("slr_combo.tif")
-sst_combo <- raster("sst_combo.tif")
-uv_combo <- raster("uv_combo.tif")
-
-#global_cumulative_impact_2013_all_layers <- raster("\\\\neptune\\halpern2008\\mnt\\storage\\marine_threats\\impact_layers_2013_redo\\global_impact_model_2013\\averaged_by_num_ecosystems\\all_layers\\cumulative\\global_cumulative_impact_2013_all_layers.tif")
-
-stack2013 <- stack(artisanal_fishing_combo,
-                   demersal_destructive_fishing_combo,
-                   demersal_nondest_high_bycatch_combo,
-                   demersal_nondest_low_bycatch_combo,
-                   inorganic_combo,
-                   invasives_combo,
-                   night_lights_combo,
-                   ocean_acidification_combo,
-                   ocean_pollution_combo,
-                   oil_rigs_combo,
-                   pelagic_high_bycatch_combo,
-                   pelagic_low_bycatch_combo,
-                   plumes_fert_combo,
-                   plumes_pest_combo,
-                   population_combo,
-                   shipping_combo,
-                   slr_combo,
-                   sst_combo,
-                   uv_combo)
-#global_cumulative_impact_2013_all_layers)
-
-#-----------------------------------------------
-# Zonal Statistics: 2013 data
-#-----------------------------------------------
-
-
-
-####
-wd = '/var/data/ohi/model/GL-NCEAS-SpeciesDiversity_v2013a'
-setwd(file.path(wd, 'raw/AquaMaps_OHI_082013'))
-spp.hdr       = read.csv('hdr_speciesoccursum.csv'    , stringsAsFactors=F, header=F)[,1]
-loginfo('read in aquamaps data (tbl_*.csv)\n  cells')
-cells = read.csv('tbl_hcaf.csv', header=F, na.strings='\\N')
-
-setwd("/var/data/ohi/model/GL-NCEAS-SpeciesDiversity_v2013a/tmp")
-test <- readOGR(dsn="/var/data/ohi/model/GL-NCEAS-SpeciesDiversity_v2013a/tmp", layer="land_gcs")
-
-data <- read.csv("")
-/var/data/ohi
-git-annex
-ingest
-model
-raw
-stable
 
 
