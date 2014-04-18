@@ -31,7 +31,8 @@ dir_d = 'Global/FAO-CW-Trends_v2011'
 source('src/R/ohi_clean_fxns.R')
 
 
-# read in and process files ----
+## read in and process files ----
+
 for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*csv'), full.names=T)) {  # f = "Global/FAO-CW-Trends_v2011/raw/FAO_fertilizers_thru2011.csv"
   
   d.fao = read.csv(f, header=F); head(d.fao)
@@ -51,13 +52,44 @@ for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*csv'), fu
   
 }
 
-for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*cleaned.csv'), full.names=T)) {  # f = "Global/FAO-CW-Trends_v2011/raw/FAO-fertilizers-trends_v2011-cleaned.csv"
+## Further processing ----
+## Treat Pesticides and Fertilizer differently because Fertilizers have weird 0's and Pesticides don't 
 
-c = read.csv(f); head(c,30)
+## Pesticides ----
+g = "Global/FAO-CW-Trends_v2011/raw/FAO-pesticides-trends_v2011-cleaned.csv"
+pest = read.csv(f); head(pest,30)
 
-explore = c %.%
-  filter(Tonnes == 0)
-}
+# clean up data: described in Global SOM 2013: section 5.19
+# see if there are a lot of 0's
+explore = pest %.%
+  filter(tonnes == 0); head(explore,30) # yes there are
+pest$tonnes[pest$tonnes == 0] = NA; head(pest,30) # replace missing data with NAs
+
+# see if there are countries with only 1 year of data 
+exlpore2 = pest %.%
+  group_by(rgn_id, rgn_nam) %.%
+  summarise(count = n()) # no there aren't
+
+# gapfilling, KLo style. See readme.md and Global SOM 2013 section 5.19
+# The data gaps were then filled using coastal population trends for the corresponding reporting region. Uninhabited countries were assumed to have no fertilizer use and thus excluded. Nine regions were inhabited but had no fertilizer or population data. Of these, two were considered close enough to large countries to receive influence of their pollution and were gapfilled using regional trends (i.e., Juan da Nova and Glorioso Islands), and the remaining 7 were considered too remote, hence their trend was assumed to be 0. For the 2013 assessment, the 2010 values were used as the most recent year. When data for 2010 was missing, the trend for 2013 is identical to the trend for the 2012 assessment.
+
+
+
+## Fertilizers ----
+g = "Global/FAO-CW-Trends_v2011/raw/FAO-fertilizers-trends_v2011-cleaned.csv"
+fert = read.csv(f); head(fert,30)
+
+# clean up data: described in Global SOM 2013: section 5.19
+# see if there are a lot of 0's
+explore = fert %.%
+  filter(tonnes == 0); head(explore,30) # yes there are
+fert$tonnes[fert$tonnes == 0] = NA; head(fert,30) # replace missing data with NAs
+
+# see if there are countries with only 1 year of data 
+exlpore2 = fert %.%
+  group_by(rgn_id, rgn_nam) %.%
+  summarise(count = n()) # no there aren't
+
 
 
 # GAP FILLING 
