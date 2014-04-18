@@ -106,6 +106,38 @@ Made an Antarctic specific set of shapefiles here:
   
 This limitation of 10 characters for shapefiles is uber lame. I'm looking into using the R and Python packages for this simple data package format.
 
+## Buffers
+
+Buffers were applied to all sp_gcs with valid regions (excluding sp_types: eez-inland, land-disputed and eez-disputed) that have both inland and offshore components. The following offshore spatial regions do not have any buffers since they are without any land:
+
+* 1018: Arctic Sea
+* 1021: Atlantic, Northwest
+* 1027: Atlantic, Northeast
+* 1031: Atlantic, Western-Central
+* 1034: Atlantic, Eastern Central
+* 1041: Atlantic, Southwest
+* 1047: Atlantic, Southeast
+* 1051: Indian Ocean, Western
+* 1057: Indian Ocean, Eastern
+* 1061: Pacific, Northwest
+* 1067: Pacific, Northeast
+* 1071: Pacific, Western Central
+* 1077: Pacific, Eastern Central
+* 1081: Pacific, Southwest
+* 1087: Pacific, Southeast
+* 248300: CCAMLR 48.3
+* 248400: CCAMLR 48.4
+* 258431: CCAMLR 58.4.3.a
+* 258432: CCAMLR 58.4.3.b
+* 258441: CCAMLR 58.4.4.a
+* 258442: CCAMLR 58.4.4.b
+* 258510: CCAMLR 58.5.1
+* 258520: CCAMLR 58.5.2
+* 258600: CCAMLR 58.6
+* 258700: CCAMLR 58.7
+
+
+
 NCEAS-Regions_v2012
 ===================
 
