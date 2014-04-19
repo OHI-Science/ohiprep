@@ -23,7 +23,7 @@
 # C:\Users\best\Downloads\get-pip.py
 
 # modules
-import arcpy, os, re, socket, pandas, time
+import arcpy, os, sys, re, socket, pandas, time
 from numpy.lib import recfunctions
 arcpy.SetLogHistory(True) # C:\Users\bbest\AppData\Roaming\ESRI\Desktop10.2\ArcToolbox\History
 
@@ -156,7 +156,8 @@ for buf in buffers:  # buf = 'inland1km'
     sp_buf  = 'sp_%s_gcs'  % buf
     rgn_buf = 'rgn_%s_gcs' % buf
     print('buffering: %s (%s)' % (sp_buf, time.strftime('%H:%M:%S')))    
-    buf_zone, buf_dist, buf_units = re.search('(\\D+)(\\d+)(\\D+)', buf).groups()    
+    buf_zone, buf_dist, buf_units = re.search('(\\D+)(\\d+)(\\D+)', buf).groups()
+    sp_ids =  sorted(sp_dict.iterkeys())
 
     for i, sp_id in enumerate(sorted(sp_dict.iterkeys())): # i, sp_id = (9999, 248500)
         sp_name = sp_dict[sp_id]
@@ -175,47 +176,47 @@ for buf in buffers:  # buf = 'inland1km'
             arcpy.Dissolve_management('%s_s_b' % buf_i, '%s_s_b_d' % buf_i)
             arcpy.RepairGeometry_management('%s_s_b_d' % buf_i)
 
-    ##print('  buf_%s_%s_merge (%s)' % (buf, sp_class, time.strftime('%H:%M:%S')))
-    ##sp_id_bufs = ['buf_%s_%06d_s_d_b_d' % (buf, sp_id) for sp_id in sorted(sp_dict.keys())]
-    print('  buf_%s_m (%s)' % (buf, time.strftime('%H:%M:%S')))
-    buf_ids = ['buf_%s_%06d_s_b_d' % (buf, sp_id) for sp_id in sorted(sp_dict.keys())]
-    #for fc in sp_id_bufs:
-    #    print fc, ':', str(arcpy.Exists(fc))   
-    ##arcpy.Merge_management(sp_id_bufs, 'buf_%s_%s_merge' % (buf, sp_class))
-    arcpy.Merge_management(buf_ids, 'buf_%s_m' % buf)
-    arcpy.RepairGeometry_management('buf_%s_m' % buf)
-    
-    print('  buf_%s_m_d (%s)' % (buf, time.strftime('%H:%M:%S')))
-    arcpy.Dissolve_management('buf_%s_m' % buf, 'buf_%s_m_d' % buf)
-    arcpy.RepairGeometry_management('buf_%s_m_d' % buf)
+        if not arcpy.Exists('%s_s_b_d_i' % buf_i):
+            try:
+                print('    (%03d of %d, %s) %06d %s INTERSECT' % (i+1, len(sp_dict), time.strftime('%H:%M:%S'), sp_id, sp_name))
+                arcpy.Intersect_analysis(['buf_%s_m_d' % buf, dict_zone[buf_zone]['intersect']], 'buf_%s_m_d_i' % buf, 'NO_FID')
+                arcpy.RepairGeometry_management('buf_%s_m_d_i' % buf)
+            else:
+                print '      ERROR', sys.exc_info()[0]
+                print '      FAILED: %06d %s' % (sp_id, sp_name)
+                sp_ids.remove(sp_id)
 
-    print('  buf_%s_m_d_i (%s)' % (buf, time.strftime('%H:%M:%S')))
-    arcpy.Intersect_analysis(['buf_%s_m_d' % buf, dict_zone[buf_zone]['intersect']], 'buf_%s_m_d_i' % buf, 'NO_FID')
-    arcpy.RepairGeometry_management('buf_%s_m_d_i' % buf)
-    
-    print('  dissolving to %s, %s (%s)' % (sp_buf, rgn_buf, time.strftime('%H:%M:%S')))
-    arcpy.Dissolve_management('buf_%s_m_d_i' % buf, sp_flds)
-    arcpy.Dissolve_management(sp_buf, rgn_buf, rgn_flds)
+    try:
+        print('  buf_%s_m (%s)' % (buf, time.strftime('%H:%M:%S')))
+        buf_ids = ['buf_%s_%06d_s_b_d_i' % (buf, sp_id) for sp_id in sp_ids]
+        arcpy.Merge_management(buf_ids, 'buf_%s_m' % buf)
+        arcpy.RepairGeometry_management('buf_%s_m' % buf)
+            
+        print('  dissolving to %s, %s (%s)' % (sp_buf, rgn_buf, time.strftime('%H:%M:%S')))
+        arcpy.Dissolve_management('buf_%s_m' % buf, sp_flds)
+        arcpy.Dissolve_management(sp_buf, rgn_buf, rgn_flds)
 
-    print('  repairing %s, %s (%s)' % (sp_buf, rgn_buf, time.strftime('%H:%M:%S')))
-    arcpy.RepairGeometry_management(sp_buf)
-    arcpy.RepairGeometry_management(rgn_buf)
+        print('  repairing %s, %s (%s)' % (sp_buf, rgn_buf, time.strftime('%H:%M:%S')))
+        arcpy.RepairGeometry_management(sp_buf)
+        arcpy.RepairGeometry_management(rgn_buf)
 
-    # add areas
-    print('  calculating areas (%s)' % time.strftime('%H:%M:%S'))
-    add_area( sp_buf)
-    add_area(rgn_buf)
+        # add areas
+        print('  calculating areas (%s)' % time.strftime('%H:%M:%S'))
+        add_area( sp_buf)
+        add_area(rgn_buf)
 
-    # export shp and csv
-    print('  exporting shp and csv (%s)' % time.strftime('%H:%M:%S'))
-    export_shpcsv(
-        fc   = sp_buf,
-        flds = sp_area_flds,
-        shp  = '{0}/data/{1}.shp'.format(     ad, sp_buf),
-        csv  = '{0}/data/{1}_data.csv'.format(ad, sp_buf))
-    export_shpcsv(
-        fc   = rgn_buf,
-        flds = rgn_area_flds,
-        shp  = '{0}/data/{1}.shp'.format(     ad, rgn_buf),
-        csv  = '{0}/data/{1}_data.csv'.format(ad, rgn_buf))    
-    print('  done (%s)' % time.strftime('%H:%M:%S'))
+        # export shp and csv
+        print('  exporting shp and csv (%s)' % time.strftime('%H:%M:%S'))
+        export_shpcsv(
+            fc   = sp_buf,
+            flds = sp_area_flds,
+            shp  = '{0}/data/{1}.shp'.format(     ad, sp_buf),
+            csv  = '{0}/data/{1}_data.csv'.format(ad, sp_buf))
+        export_shpcsv(
+            fc   = rgn_buf,
+            flds = rgn_area_flds,
+            shp  = '{0}/data/{1}.shp'.format(     ad, rgn_buf),
+            csv  = '{0}/data/{1}_data.csv'.format(ad, rgn_buf))    
+        print('  finished (%s)' % time.strftime('%H:%M:%S'))
+    else:
+        print '      ERROR', sys.exc_info()[0]
