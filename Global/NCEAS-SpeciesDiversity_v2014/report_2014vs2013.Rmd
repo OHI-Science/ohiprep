@@ -1,0 +1,39 @@
+SPP: Species 2014 vs 2013 Report
+========================================================
+
+Duplicates detected for 2014. Checking if existed in outputs from 2013.
+
+Versions:
+* **2013**: _**2013.1**_ (as of Jul 1,  2013)
+* **2014**: _**2013.2**_ (as of Apr 20, 2014)
+
+
+```{r setup}
+print (getwd())
+
+# directories
+source('src/R/common.R')
+# working dir in local github repo
+wd = file.path(getwd(), 'Global/NCEAS-SpeciesDiversity_v2014')
+# data dir
+dd = file.path(dir_neptune_data, 'git-annex/Global/NCEAS-SpeciesDiversity_v2014')
+# cache dir
+cd = file.path(dd, 'cache')
+wd13 = file.path(dir_neptune_data, 'model/GL-NCEAS-SpeciesDiversity_v2013a')
+
+# files
+spp_iucn_all_csv      = file.path(cd, 'spp_iucn_all.csv')
+spp_iucn_habitats_csv = file.path(cd, 'spp_iucn_habitats.csv')
+
+# data
+spp_iucn_all13 = read.csv(file.path(wd13, 'tmp', 'spp_iucn_all.csv'))
+```
+
+## Check for Duplicates
+
+```{r sid dupes}
+head(spp_iucn_all13)
+table(duplicated(spp_iucn_all13$Red.List.Species.ID))
+```
+
+Ok, confirmed that use of `Primary` is new to IUCN 2014 data.
