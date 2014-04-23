@@ -189,15 +189,15 @@ print(addmargins(table(as.character(d$class))), row.names=F)
 # remove infraranks: 30 subspecies records ('ssp.')
 d = subset(d, infrarank.type!='ssp.', !names(d) %in% c('infrarank','infrarank.type','infrarank.authority'))
 table(d$category)
-# 2013:
-#    CR    DD    EN    EW    EX    LC LR/cd LR/lc LR/nt    NT    VU 
-#   147  2175   228     0    24  4557     6     5    12   518   678
 # 2014 (before duplicate removal):
 #    CR    DD    EN    EW    EX    LC LR/cd LR/lc LR/nt    NT    VU 
 #   371  8450   598     0    38 63906    30    13   167  2121  2613
 # 2014 (after duplicate removal):
 #    CR    DD    EN    EW    EX    LC LR/cd LR/lc LR/nt    NT    VU 
 #    78  1983   140     0     6  3443     5     3     8   411   543 
+# 2013:
+#    CR    DD    EN    EX    LC LR/cd LR/lc LR/nt    NT    VU 
+#   147  2175   228    24  4557     6     5    12   518   678
 # 2014 (after duplicate removal 2):
 #    CR    DD    EN    EX    LC LR/cd LR/lc LR/nt    NT    VU 
 #   148  2178   231    24  4564     6     5    12   521   676 
@@ -215,13 +215,15 @@ for (i in 1:length(x.cat)){ # g = c('LR/cd'='NT','LR/nt'='NT','LR/lc'='LC')[1]
 }
 d$category = factor(x=as.character(d$category), 
                                   levels=c('DD','LC','NT','VU','EN','CR','EX'), ordered=T)
-table(d$category)
+
+print(addmargins(table(d$category)), row.names=F)
 # 2013:
 #    DD    LC    NT    VU    EN    CR    EX 
 #  2175  4580   518   678   228   147    24
 # 2014:
 #    DD    LC    NT    VU    EN    CR    EX 
 #  8450 63906  2331  2613   598   371    38
+#
 # 2014 (after duplicate removal 2):
 #   DD   LC   NT   VU   EN   CR   EX 
 # 2178 4564  544  676  231  148   24 
@@ -341,7 +343,6 @@ print(Sys.time())
 rd = rbind_all(r)
 print(Sys.time())
 
-
 spp_subpop = rd %.%
   filter(!is.na(subpopulations)) %.%
   select(sid, subpopulations)
@@ -352,15 +353,18 @@ spp_countries = rd %.%
 
 spp_popn_trend = rd %.%
   filter(!is.na(popn_trend)) %.%
+  mutate(popn_trend = factor(popn_trend, c('Unknown','Decreasing','Stable','Increasing'), ordered=T)) %.%
   select(sid, popn_trend)
 
 # assign popn_trend to d, before subsetting into subpopulations and global species and 
-d$popn_trend = NA
-d[match(spp_popn_trend$sid, d$sid),'popn_trend'] = as.character(spp_popn_trend$popn_trend)
 d$popn_trend = factor(d$popn_trend, c('Unknown','Decreasing','Stable','Increasing'), ordered=T)
-summary(d$popn_trend)
-#    Unknown Decreasing     Stable Increasing       NA's 
+print(addmargins(table(spp_popn_trend$popn_trend, useNA='ifany')), row.names=F)
+# 2013:
+# Unknown Decreasing     Stable Increasing       NA's 
 #       5559       1338       1002        193        258 
+# 2014:
+#    Unknown Decreasing     Stable Increasing        Sum 
+#       5565       1341       1006        195       8107 
 
 # manual subpopulations discovered later, somehow not listed in the IUCN details page of parent 
 # (again difference b/n API and WWW versions), after defining spp_global with the following:

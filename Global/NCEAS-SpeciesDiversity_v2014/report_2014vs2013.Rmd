@@ -9,31 +9,51 @@ Versions:
 
 
 ```{r setup}
-print (getwd())
+library(dplyr)
+library(knitr)
+options(knitr.table.format='markdown')
+
+setwd('~/ohiprep') # specific to host, eg neptune
 
 # directories
 source('src/R/common.R')
 # working dir in local github repo
-wd = file.path(getwd(), 'Global/NCEAS-SpeciesDiversity_v2014')
+nm = 'Global/NCEAS-SpeciesDiversity_v2014'
+wd = file.path(getwd(), nm)
 # data dir
-dd = file.path(dir_neptune_data, 'git-annex/Global/NCEAS-SpeciesDiversity_v2014')
-# cache dir
-cd = file.path(dd, 'cache')
-wd13 = file.path(dir_neptune_data, 'model/GL-NCEAS-SpeciesDiversity_v2013a')
-
-# files
-spp_iucn_all_csv      = file.path(cd, 'spp_iucn_all.csv')
-spp_iucn_habitats_csv = file.path(cd, 'spp_iucn_habitats.csv')
+dd    = file.path(dir_neptune_data, 'git-annex', nm)
+dd.13 = file.path(dir_neptune_data, 'model/GL-NCEAS-SpeciesDiversity_v2013a')
 
 # data
-spp_iucn_all13 = read.csv(file.path(wd13, 'tmp', 'spp_iucn_all.csv'))
+spp_iucn_all       = read.csv(file.path(dd   , 'cache', 'spp_iucn_all.csv'   ), na.strings='')
+spp_iucn_marine    = read.csv(file.path(dd   , 'cache', 'spp_iucn_marine.csv'), na.strings='')
+spp_iucn_all.13    = read.csv(file.path(dd.13, 'tmp'  , 'spp_iucn_all.csv'   ), na.strings='')
+spp_iucn_marine.13 = read.csv(file.path(dd.13, 'tmp'  , 'spp_iucn_marine.csv'), na.strings='')
 ```
 
 ## Check for Duplicates
 
 ```{r sid dupes}
-head(spp_iucn_all13)
-table(duplicated(spp_iucn_all13$Red.List.Species.ID))
+names(spp_iucn_all)
+table(duplicated(spp_iucn_all$Red.List.Species.ID))
+
+names(spp_iucn_all.13)
+table(duplicated(spp_iucn_all.13$Red.List.Species.ID))
+
+dim(spp_iucn_marine)
+dim(spp_iucn_marine.13)
 ```
 
 Ok, confirmed that use of `Primary` is new to IUCN 2014 data.
+
+```{r ex_cat, results='asis', echo=FALSE}
+d = spp_iucn_marine.13 %.%
+          group_by(category) %.%
+          summarize(freq_2013=n()) %.%
+  merge(spp_iucn_marine %.%
+          group_by(category) %.%
+          summarise(freq_2014 = n()),
+        by='category') %.%
+  mutate(freq_dif = freq_2014 - freq_2013)
+kable(d, row.names=F)
+```
