@@ -54,6 +54,7 @@ d = spp_iucn_marine.13 %.%
           group_by(category) %.%
           summarise(freq_2014 = n()),
         by='category') %.%
-  mutate(freq_dif = freq_2014 - freq_2013)
+  mutate(freq_dif = freq_2014 - freq_2013) %.%
+  rbind(cbind(category='Total',as.data.frame(t(colSums(d[,-1])))))  
 kable(d, row.names=F)
 ```
