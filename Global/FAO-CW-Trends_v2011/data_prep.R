@@ -59,19 +59,31 @@ for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*csv'), fu
 g = "Global/FAO-CW-Trends_v2011/raw/FAO-pesticides-trends_v2011-cleaned.csv"
 pest = read.csv(g); head(pest,30)
 
-# clean up data: described in Global SOM 2013: section 5.19
+## clean up data: described in Global SOM 2013: section 5.19 ----
+
 # see if there are a lot of 0's
 explore = pest %.%
   filter(tonnes == 0); head(explore,30) # no there aren't
 
 # see if there are countries with only 1 year of data 
-exlpore2 = pest %.%
-  group_by(rgn_id, rgn_nam) %.%
-  summarise(count = n()) # yes there are
+explore2 = pest %.%
+  group_by(rgn_id, rgn_nam) %.% 
+  summarise(count = n()) %.%
+  filter(count == 1); explore2 # yes there are
 
-# gapfilling, KLo style. See readme.md and Global SOM 2013 section 5.19
-# The data gaps were then filled using coastal population trends for the corresponding reporting region. Uninhabited countries were assumed to have no fertilizer use and thus excluded. Nine regions were inhabited but had no fertilizer or population data. Of these, two were considered close enough to large countries to receive influence of their pollution and were gapfilled using regional trends (i.e., Juan da Nova and Glorioso Islands), and the remaining 7 were considered too remote, hence their trend was assumed to be 0. For the 2013 assessment, the 2010 values were used as the most recent year. When data for 2010 was missing, the trend for 2013 is identical to the trend for the 2012 assessment.
+pest2 = pest %.% # remove countries with only 1 year of data 
+  filter(!rgn_id %in% explore2$rgn_id)
+  
+# see if there are countries no data after 2005 
+explore3 = pest2 %.%
+  group_by(rgn_id, rgn_nam) %.% 
+  summarise(max_year = max(year)) %.%
+  filter(max_year < 2005); explore3 # yes there are
 
+pest3 = pest2 %.% # remove countries with no data after 2005 
+  filter(!rgn_id %in% explore3$rgn_id)
+
+# gapfilling follows, both for pesticides and fertilizers together. 
 
 
 ## Fertilizers ----
@@ -80,113 +92,62 @@ fert = read.csv(g); head(fert,30)
 
 # clean up data: described in Global SOM 2013: section 5.19
 # see if there are a lot of 0's
-explore = fert %.%
-  filter(tonnes == 0); head(explore,30) # yes there are
-fert$tonnes[fert$tonnes == 0] = NA; head(fert,30) # replace missing data with NAs
+fert2 = fert %.% 
+  filter(tonnes !=0); head(fert2,30) # remove 0's; don't replace with NA because lm() below will need NAs removed 
 
 # see if there are countries with only 1 year of data 
-exlpore2 = fert %.%
+explore2 = fert2 %.%
   group_by(rgn_id, rgn_nam) %.%
-  summarise(count = n()) # no there aren't
+  summarise(count = n()) %.%
+  filter(count == 1); explore2 # no there aren't
+
+# see if there are countries no data after 2005 
+explore3 = fert %.%
+  group_by(rgn_id, rgn_nam) %.% 
+  summarise(max_year = max(year)) %.%
+  filter(max_year < 2005); explore3 # no there aren't
 
 
 
-# GAP FILLING 
-## georegional gapsaving with add_gapfill.r
+## calculate trend and gapfill for both fertilizers and pesticides:: KLo style. ----
+# See readme.md and Global SOM 2013 section 5.19. Approach by Katie Longo, September 2013: github/ohiprep/Global/FAO-CW-Trends_v2011/raw/Fertilizer_Pesticide_trend_KLongo2013.R
+# trend years: 2012a (2005:2009) and 2013a (2006:2010). Note:: error in KLo 2013 approach: trend was created through multiplying slope by 4 instead of 5
 
-cleaned_data1 = read.csv(uifilesave)
-cleaned_data1$layer = gsub('Pesticides', 'pest', cleaned_data1$layer) 
-cleaned_data1$layer = gsub('Fertilizers', 'fert', cleaned_data1$layer) 
-layer_uni = unique(cleaned_data1$layer)
-layernames = sprintf('rgn_fao_%s.csv', tolower(layer_uni))
-s_island_val = 0 # assign what southern islands will get. this could be something fancier, depending on the dataset. 
-source('/Volumes/local_edit/src/R/jstewart/add_gapfill.r') 
+# 1) calculate fert and pest trend, excluding NAs, for 2014a. fert = 2006:2010 (data not actually updated); pest = 2007:2011
+## this is the logic for the calc_trend function below using ddply and summarize. JSL April 2014: couldn't get dplyr to work with lm(). 
+# slope = lm(fert$tonnes ~ fert$year)$coefficients[[2]]
+# intercept = lm(fert$tonnes ~ fert$year)$coefficients[[1]]
+# x1 = 2005
+# y1 = x1*slope+intercept
+# trend = max(min(slope/(y1) * 5, 1), -1) # normalize slope by y in a given year (we use x1, but could be any year), multiple by 5 for the trend and bound it between -1 and 1. 
 
-for(i in 1:length(layer_uni)) {
-  cleaned_layer = cleaned_data1[cleaned_data1$layer == layer_uni[i],]
-  cleaned_layer$layer = NULL
-  
-  layersave = paste(dir1, 'data/', layernames[i], sep='') 
-  add_gapfill(cleaned_layer, layersave, s_island_val)
-}
+# ---------
+# function that calculates trend
+  calc_trend = function(data, x1) {
+    library('plyr')
+    trend2014 = plyr::ddply(
+      fert_narm, .(rgn_id), summarize,
+      trend = max(min(lm(tonnes ~ year)$coefficients[[2]] /
+                        (lm(tonnes ~ year)$coefficients[[2]]*x1 +
+                           lm(tonnes ~ year)$coefficients[[1]]) * 5, 1), -1))
+    return(trend2014)
+  }
+# --------
+
+## calculate fertilizer trends: 
+data = na.omit(fert)
+x1 = 2006
+trend_pest = calc_trend(data, x1) 
+
+## calculate pesticide trends: 
+data = na.omit(pest3)
+x1 = 2007
+trend_fert = calc_trend(data, x1) 
 
 
 
 
-
-
-## by Katie Longo, September 2013. ----
-
-# upload libraries needed for Julie's gap-filling scripts
-library(reshape2)
-library(gdata)
-library(plyr)
-options(gsubfn.engine = "R") # otherwise, get X11 launching for sqldf package
-require(sqldf)
-
-fert_pest<-read.csv("Data/GL-FAO-Trends_v2010-cleaned.csv")
-
-#######################################################################
-# clean and check the fertilizer and pesticides data
-
- head(fert_pest)
-fert_pest[fert_pest$tonnes==0,]<-NA # 0s are actually NAs
-fert_pest2<-na.omit(fert_pest) # remove NAs
-names(fert_pest2)[1]<-"rgn_id"
-
-# count at least 2 datapoint per country time-series for fertilizers
-yearcheck<-aggregate(fert_pest2[fert_pest2$layer=="Fertilizers",4],by=list(fert_pest2[fert_pest2$layer=="Fertilizers",1]),FUN=length)
-yearcheck[yearcheck$x<2,] # Qatar only has a value in 2010, rgn_id=190
-# count there are at least 2 datapoints per country time-series for fertilizers when removing year 2010
-yearcheck<-aggregate(fert_pest2[fert_pest2$year<2010 & fert_pest2$layer=="Fertilizers",4],by=list(fert_pest2[fert_pest2$year<2010 & fert_pest2$layer=="Fertilizers",1]),FUN=length)
-yearcheck[yearcheck$x<2,]
-fert_pest2[fert_pest2$rgn_id==179 & fert_pest2$layer=="Fertilizers",] # France doesn't have 2 datapoints if I limit the trend calculation for 2012 to values up to 2009
-# same for pesticides
-yearcheck<-aggregate(fert_pest2[fert_pest2$layer=="Pesticides",4],by=list(fert_pest2[fert_pest2$layer=="Pesticides",1]),FUN=length)
-yearcheck[yearcheck$x<2,] # rgn_id 120 only has one datapoint in 2010
-yearcheck<-aggregate(fert_pest2[fert_pest2$year<2010 & fert_pest2$layer=="Pesticides",4],by=list(fert_pest2[fert_pest2$year<2010 & fert_pest2$layer=="Pesticides",1]),FUN=length)
-yearcheck[yearcheck$x<2,]
-fert_pest2[fert_pest2$rgn_id%in%yearcheck[yearcheck$x<2,1] & fert_pest2$layer=="Pesticides",] # Mauritius, Tunisia, Bulgaria, and Israel only have one data point and all in the 90s
-# check all countries have a time-series ending no earlier than 2005
-Fert_max = ddply(
-  fert_pest2[fert_pest2$layer=="Fertilizers",], .(rgn_id), summarize,
-  max = max(year)) # all years have a data point later than 2004 for Fertilizer data
-Pest_max = ddply(
-  fert_pest2[fert_pest2$layer=="Pesticides",], .(rgn_id), summarize,
-  max = max(year)) 
-summary(Pest_max$max) # some years have the most recent datapoint in 1990 for Pesticide data
-# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-# 1990    2000    2008    2005    2010    2010 
-## Remove countries where the most recent value is prior to 2005 (i.e. the first year in our trend)
-Pest_old<-Pest_max[Pest_max$max<2005,1] # these are the rgn_ids to exclude
-fert_pest2<-fert_pest2[!(fert_pest2$layer=="Pesticides" & fert_pest2$rgn_id%in%Pest_old),] # exclude those timeseries for pesticides
-fert_pest2<-fert_pest2[!(fert_pest2$layer=="Fertilizers" & fert_pest2$rgn_id==190),] # exclude Qatar from fertilizers timeseries bc it only has 1 datapoint
-fert_pest2<-fert_pest2[!(fert_pest2$layer=="Pesticides" & fert_pest2$rgn_id==120),] # exclude Antigua and Barbuda from Pesticides because it only has 1 datapoint, rgn_id=120
-# now check if there are still places with Pesticides time-series of only 1 datapoint
-yearcheck<-aggregate(fert_pest2[fert_pest2$year<2010 & fert_pest2$layer=="Pesticides",4],by=list(fert_pest2[fert_pest2$year<2010 & fert_pest2$layer=="Pesticides",1]),FUN=length)
-yearcheck[yearcheck$x<2,] # none
-
-# Pest_max = ddply(
-#   fert_pest2[fert_pest2$layer=="Pesticides",], .(rgn_id), summarize,
-#   max = max(year)) 
-# summary(Pest_max$max) 
-
-#########################################################################
-
-# 1) calculate fert and pest trend, excluding NAs, for 2012a and 2013a (years 2005:2009, 2006:2010, respectively)
-# normalize trend by dividing by the fitted value for the first year of the series
-##################### testing the function works
-# fert.11<-fert_pest2[fert_pest2$rgn_id==11 & fert_pest2$layer=="Fertilizers",]
-# lm(fert.11$tonnes ~ fert.11$year)$coefficients[[2]]*4 #   1.6
-# summary(lm(fert.11$tonnes ~ fert.11$year))
-# fert09.11<- 0.4000*2009 -796.9000
-# fert05.11<- 0.4000*2005 -796.9000
-# deltafert.11<- fert09.11-fert05.11 # 1.6
-# deltafert.11/fert05.11 #   0.3137255
-
-Fert_Delta12 = ddply(
-  fert_pest2[fert_pest2$year<2010 & fert_pest2$layer=="Fertilizers",], .(rgn_id), summarize,
-  trend = min(lm(tonnes ~ year)$coefficients[[2]]/(2005*lm(tonnes ~ year)$coefficients[[2]]+lm(tonnes ~ year)$coefficients[['(Intercept)']]) * 4,1)) # normalize trend by dividing by fitted value of first year
+fitted value of first year
 # fix missing value for France
 Fert.Fr<-fert_pest2[fert_pest2$rgn_id==179 & fert_pest2$layer=="Fertilizers",] 
 Fert_Delta12$trend[Fert_Delta12$rgn_id==179] <-min(lm(Fert.Fr$tonnes ~ Fert.Fr$year)$coefficients[[2]]/(2005*lm(Fert.Fr$tonnes ~ Fert.Fr$year)$coefficients[[2]]+lm(Fert.Fr$tonnes ~ Fert.Fr$year)$coefficients[['(Intercept)']]) * 4,1) # fitted value for France when both 2010 and 2009 points are used
