@@ -12,22 +12,22 @@ library(sp)
 library(maptools)
 library(rgeos)
 library(plotKML)
-library(plyr)
+library(dplyr)
 
 setwd('/var/data/ohi/model/GL-HS-AQ-PressuresSummary_v2013')
 
 # Region mollwide file: 
 # (from /var/data/ohi/git-annex/Global/NCEAS-Regions_v2014/data - but converted to Mol)
-regions <- readOGR(dsn=".", layer="sp_mol")
+regions_mol <- readOGR(dsn="/var/data/ohi/git-annex/Global/NCEAS-Regions_v2014/data", layer="sp_mol")
 regions@data[regions@data$sp_type=="ccamlr",]
 table(regions@data$sp_type)
 table(regions@data$rgn_type)
-regions <- regions[regions@data$sp_type %in% c("ccamlr", "fao", "eez"), ]
-regions@data$sp_id <- as.numeric(1:dim(regions@data)[1])  
+regions_mol <- regions_mol[regions_mol@data$sp_type %in% c("eez-ccamlr", "fao", "eez"), ]
+regions_mol@data$sp_id <- as.numeric(1:dim(regions_mol@data)[1])  
 
 # Region GCS file:
 regions_gcs <- readOGR(dsn="/var/data/ohi/git-annex/Global/NCEAS-Regions_v2014/data", layer="sp_gcs")
-regions_gcs <- regions_gcs[regions_gcs@data$sp_type %in% c("ccamlr", "fao", "eez"), ]
+regions_gcs <- regions_gcs[regions_gcs@data$sp_type %in% c("eez-ccamlr", "fao", "eez"), ]
 regions_gcs@data$sp_id <- as.numeric(1:dim(regions_gcs@data)[1])  
 
 
@@ -39,7 +39,7 @@ regions_gcs@data$sp_id <- as.numeric(1:dim(regions_gcs@data)[1])
 # take a look at SST raster that I need to extract data from:
 SST <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/sst_05_10-82_86i_mol.tif")
 
-v <- extract(SST, regions, weights=TRUE, progress="text")
+v <- extract(SST, regions_mol, weights=TRUE, progress="text")
 ldply(v, fun=)
 
 sapply(v, function(x) if (!is.null(x)) {sum(apply(x, 1, prod)) / sum(x[,2])} else NA  )
@@ -48,10 +48,10 @@ sapply(v, function(x) if (!is.null(x)) {sum(apply(x, 1, prod)) / sum(x[,2])} els
 SST_oldData <- read.dbf("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/rgn_fao_mol_sst_05_10-82_86i_mol.dbf")
 
 plot(SST)
-plot(regions, add=TRUE)
+plot(regions_mol, add=TRUE)
 
 #convert to raster
-rasterize(regions, SST, 
+rasterize(regions_mol, SST, 
           field="sp_id", 
           filename="sp_mol_raster_SST", overwrite=TRUE, 
           progress="text")
@@ -61,7 +61,7 @@ regions_raster <- raster("sp_mol_raster_SST")
 
 regions_stats <- zonal(SST,  regions_raster, progress="text")
 
-data <- merge(regions@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
+data <- merge(regions_mol@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
 
 write.csv(data,"SST_ZonalMean.csv", 
           row.names=FALSE)  
@@ -77,20 +77,20 @@ acid <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/masked_impacts
 #acid_oldData <- read.dbf("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/rgn_fao_mol_sst_05_10-82_86i_mol.dbf")
 
 plot(acid)
-plot(regions, add=TRUE)
+plot(regions_mol, add=TRUE)
 
 #convert to raster
-rasterize(regions, acid, 
+rasterize(regions_mol, acid, 
           field="sp_id", 
           filename="sp_mol_raster_acid", overwrite=TRUE, 
           progress="text")
 
 
-regions_ras hter <- raster("sp_mol_raster_acid")
+regions_raster <- raster("sp_mol_raster_acid")
 
 regions_stats <- zonal(acid,  regions_raster, progress="text")
 
-data <- merge(regions@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
+data <- merge(regions_mol@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
 
 write.csv(data,"acid_ZonalMean.csv", 
           row.names=FALSE)  
@@ -121,18 +121,29 @@ data <- merge(regions_gcs@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="z
 write.csv(data,"uv_ZonalMean.csv", 
           row.names=FALSE)  
 
+## extracting with polygons might be better due to low resolution of data.
+v <- extract(uv, regions_gcs, weights=TRUE, progress="text", df=TRUE)
+v2 <- v %.%
+  group_by(ID) %.%
+  summarize(uv = sum(omi_aura_uv_anomaly_2008m01.2012m12_trans*weight))
+v2 <- merge(regions_gcs@data, v2, all.y=TRUE, by.x="sp_id", by.y="ID") 
+write.csv(v2,"tmp//uv_ZonalMean.csv", 
+          row.names=FALSE)  
+
+
 ############################
 ## Commercial High Bycatch
 ############################
-hb_dem <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/fp_com_hb_dem_2013_rescaled.tif")
+source('src/R/common.R') # defines dir_neptune_data
+hb_dem <- raster(file.path(dir_neptune_data, "model/GL-NCEAS-Pressures_CommercialFisheries_v2013a/data/fp_com_hb_dem_2013_rescaled.tif"))
 hb_dem_nd <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/fp_com_hb_dem_nd_2013_rescaled.tif")
 hb_pel <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/fp_com_hb_pel_2013_rescaled.tif")
 
 plot(hb_dem)
-plot(regions, add=TRUE)
+plot(regions_mol, add=TRUE)
 
 #convert to raster
-rasterize(regions, hb_dem, 
+rasterize(regions_mol, hb_dem, 
           field="sp_id", 
           filename="sp_mol_raster_ComHBC", overwrite=TRUE, 
           progress="text")
@@ -144,7 +155,7 @@ CommercialHBC <- stack(hb_dem, hb_dem_nd, hb_pel)
 
 regions_stats <- zonal(CommercialHBC,  regions_raster, progress="text")
 
-data <- merge(regions@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
+data <- merge(regions_mol@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
 
 write.csv(data,"CommHBC_ZonalMean.csv", 
           row.names=FALSE)  
@@ -157,7 +168,7 @@ lb_dem <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/fp_com_lb_de
 lb_pel <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/fp_com_lb_pel_2013_rescaled.tif")
 
 plot(lb_dem)
-plot(regions, add=TRUE)
+plot(regions_mol, add=TRUE)
 
 #can use the same region raster as the high by-catch
 regions_raster <- raster("sp_mol_raster_ComHBC")
@@ -166,7 +177,7 @@ CommercialHBC <- stack(lb_dem, lb_pel)
 
 regions_stats <- zonal(CommercialHBC,  regions_raster, progress="text")
 
-data <- merge(regions@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
+data <- merge(regions_mol@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
 
 write.csv(data,"CommLBC_ZonalMean.csv", 
           row.names=FALSE)  
@@ -203,75 +214,26 @@ test <- extract(slr, regions_gcs[25, ], fun=mean, na.rm=TRUE, weights=TRUE)
 
 
 ############################
-## HD subtidal Hard Bottom:poison data
-############################
-subtidal_hb_1 <- raster("/var/data/ohi/stable/GL-WRI-ReefsAtRisk/data/gl_thr_poison.tif")
-hist(subtidal_hb_1) #looks like 1 values should be 0
-#subtidal_hb_2 <- raster("/var/data/ohi/stable/GL-WRI-ReefsAtRisk/data/gl_thr_blast.tif")
-
-plot(subtidal_hb_1)
-plot(regions, add=TRUE)
-
-#convert to raster
-rasterize(regions, subtidal_hb_1, 
-          field="sp_id", 
-          filename="sp_mol_raster_subtidal_hb_1", overwrite=TRUE, 
-          progress="text")
-
-
-regions_raster <- raster("sp_mol_raster_subtidal_hb_1")
-
-#CommercialHBC <- stack(hb_dem, hb_dem_nd, hb_pel)
-#regions_stats <- zonal(CommercialHBC,  regions_raster, progress="text")
-regions_stats <- zonal(subtidal_hb_1,  regions_raster, progress="text")
-data <- merge(regions@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
-
-write.csv(data,"subtidal_hb_1.csv", 
-          row.names=FALSE)  
-
-
-############################
-## HD subtidal Hard Bottom:blast data
-############################
-subtidal_hb_2 <- raster("/var/data/ohi/stable/GL-WRI-ReefsAtRisk/data/gl_thr_blast.tif")
-
-plot(subtidal_hb_2)
-plot(regions, add=TRUE)
-
-regions_raster <- raster("sp_mol_raster_subtidal_hb_1") # can use the same region raster
-
-regions_stats <- zonal(subtidal_hb_2,  regions_raster, progress="text")
-data <- merge(regions@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
-
-data$mean <- data$mean-1
-
-write.csv(data,"subtidal_hb_2.csv", 
-          row.names=FALSE)  
-
-
-
-############################
 ## Shipping
 ############################
-shipping <- raster("/var/data/ohi/model/GL-NCEAS-Halpern2008/data/masked_impacts_shipping.tif")
+shipping <- raster("/var/cache/halpern-et-al/mnt/storage/marine_threats/impact_layers_2013_redo/impact_layers/final_impact_layers/threats_2013_interim/new_layers/shipping/moll_nontrans_unclipped_1km_transoneperiod_clipped/shipping.tif")
 shipping
 
 plot(shipping)
-plot(regions, add=TRUE)
+plot(regions_mol, add=TRUE)
 
 
 #convert to raster
-rasterize(regions, shipping, 
+rasterize(regions_mol, shipping, 
           field="sp_id", 
           filename="sp_mol_raster_shipping", overwrite=TRUE, 
           progress="text")
 
-regions_raster <- raster("sp_mol_raster_shipping")                                                                                                                                                                                                                                                                                                                                                                            
+ regions_raster <- raster("sp_mol_raster_shipping")                                                                                                                                                                                                                                                                                                                                                                            
 
 regions_stats <- zonal(shipping,  regions_raster, progress="text")
-data <- merge(regions@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
+data <- merge(regions_mol@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
 
-data$mean <- data$mean-1
 
 write.csv(data,"shipping.csv", 
           row.names=FALSE)  
