@@ -119,7 +119,7 @@ explore3 = fert3 %.%
 # See readme.md and Global SOM 2013 section 5.19. Approach by Katie Longo, September 2013: github/ohiprep/Global/FAO-CW-Trends_v2011/raw/Fertilizer_Pesticide_trend_KLongo2013.R
 # trend years: 2012a (2005:2009) and 2013a (2006:2010). Note:: error in KLo 2013 approach: trend was created through multiplying slope by 4 instead of 5
 
-# 1) calculate fert and pest trend, excluding NAs, for 2014a. fert = 2006:2010 (data not actually updated); pest = 2007:2011
+# 1) calculate fert and pest trend, excluding NAs (done above), for 2014a. fert = 2006:2010 (data not actually updated); pest = 2007:2011
 ## this is the logic for the calc_trend function below using ddply and summarize. JSL April 2014: couldn't get dplyr to work with lm(). 
 # slope = lm(fert$tonnes ~ fert$year)$coefficients[[2]]
 # intercept = lm(fert$tonnes ~ fert$year)$coefficients[[1]]
