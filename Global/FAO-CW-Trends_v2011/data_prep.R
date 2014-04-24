@@ -115,9 +115,11 @@ explore3 = fert3 %.%
 
 
 
+
 ## calculate trend and gapfill for both fertilizers and pesticides:: KLo style. ----
 # See readme.md and Global SOM 2013 section 5.19. Approach by Katie Longo, September 2013: github/ohiprep/Global/FAO-CW-Trends_v2011/raw/Fertilizer_Pesticide_trend_KLongo2013.R
 # trend years: 2012a (2005:2009) and 2013a (2006:2010). Note:: error in KLo 2013 approach: trend was created through multiplying slope by 4 instead of 5
+
 
 # 1) calculate fert and pest trend, excluding NAs (done above), for 2014a. fert = 2006:2010 (data not actually updated); pest = 2007:2011
 ## this is the logic for the calc_trend function below using ddply and summarize. JSL April 2014: couldn't get dplyr to work with lm(). 
@@ -133,245 +135,124 @@ explore3 = fert3 %.%
     library('plyr')
     trend2014 = plyr::ddply(
       data, .(rgn_id), summarize,
-      trend = max(min(lm(tonnes ~ year)$coefficients[[2]] /
-                        (lm(tonnes ~ year)$coefficients[[2]]*x1 +
-                           lm(tonnes ~ year)$coefficients[[1]]) * 5, 1), -1))
+      trend = max(min(lm(value ~ year)$coefficients[[2]] /
+                        (lm(value ~ year)$coefficients[[2]]*x1 +
+                           lm(value ~ year)$coefficients[[1]]) * 5, 1), -1))
     return(trend2014)
   }
 # --------
 
-## calculate fertilizer trends: 
-data = na.omit(fert3)
-x1 = 2006
-trend_pest = calc_trend(data, x1) 
-
 ## calculate pesticide trends: 
 data = na.omit(pest3)
-x1 = 2007
-trend_fert = calc_trend(data, x1) 
+x1_pest = 2007
+x1 = x1_pest
+names(data) = c('rgn_id', 'rgn_nam', 'value', 'year')
+trend_pest = calc_trend(data, x1); head(trend_pest)
+
+## calculate fertilizer trends: 
+data = na.omit(fert3)
+names(data) = c('rgn_id', 'rgn_nam', 'value', 'year')
+x1_fert = 2006
+x1 = x1_fert
+trend_fert = calc_trend(data, x1); head(trend_fert) 
 
 
-# 2) calculate pop trend for 2012a and 2013a (years 2005:2009, 2006:2011, respectively)
 
-## JSL come back::: read in most recent pop data (so can work with it and reinsert more later). 
-# model/GL-NCEAS-CoastalPopulation_v2013/data -- maybe even rgn_popn5yrtrend_inland25mi_2008to2013.csv
+## 2) calculate pop trend for 2014a for fert (2006:2010) and pest (2007:2011) ----
+# no gapfilling of pop required as was done in 2013; the pop file is complete (missing rgn_ids are unpopulated).
 
+pop_file = file.path(dir_neptune_data, 'model/GL-NCEAS-CoastalPopulation_v2013/data/', 'rgn_popsum2005to2015_inland25mi.csv') # dir_neptune_data defined in common.R                  
+pop = read.csv(pop_file) %.%
+  filter(rgn_id < 255); head(pop)
 
+## calculate pop trends for pest years:
+data = pop[pop$year %in% c(x1_pest:(x1_pest+4)),] # 4 here will actually give the 5-year trend
+names(data) = c('rgn_id', 'year', 'value')
+trend_pop_forpest = calc_trend(data, x1_pest); head(trend_pop_forpest)
 
-#load pop data
-pop05<-read.csv("Data/MARdata/rgn_popsum2005_inland25mi.csv")
-pop06<-read.csv("Data/MARdata/rgn_popsum2006_inland25mi.csv")
-pop07<-read.csv("Data/MARdata/rgn_popsum2007_inland25mi.csv")
-pop08<-read.csv("Data/MARdata/rgn_popsum2008_inland25mi.csv")
-pop09<-read.csv("Data/MARdata/rgn_popsum2009_inland25mi.csv")
-pop10<-read.csv("Data/MARdata/rgn_popsum2010_inland25mi.csv")
-
-#names(pop11)<-c("rgn_id","coast_11")
-names(pop10)<-c("rgn_id","coast_10")
-names(pop09)<-c("rgn_id","coast_09")
-names(pop08)<-c("rgn_id","coast_08")
-names(pop07)<-c("rgn_id","coast_07")
-names(pop06)<-c("rgn_id","coast_06")
-names(pop05)<-c("rgn_id","coast_05")
-
-# merge into single dataframe
-POPdata<-merge(pop05[,1:2],pop06[,1:2],by="rgn_id")
-POPdata<-merge(POPdata,pop07[,1:2],by="rgn_id")
-POPdata<-merge(POPdata,pop08[,1:2],by="rgn_id")
-POPdata<-merge(POPdata,pop09[,1:2],by="rgn_id")
-POPdata<-merge(POPdata,pop10[,1:2],by="rgn_id")
-# POPdata<-merge(POPdata,pop11[,1:2],by="rgn_id") # not using this year
-names(POPdata)<-c("rgn_id",2005:2010) # rename to transform to long format 
-
-POPdata2<-melt(POPdata,id="rgn_id") # long format
-names(POPdata2)[2:3]<-c("year","Coast_POP")
-POPdata2$year<-as.numeric(as.character(POPdata2$year)) 
-
-# calculate trend
-Pop_Delta12 = ddply(
-  POPdata2[POPdata2$year%in%c(2005:2009),], .(rgn_id), summarize,
-  trend = min(lm(Coast_POP ~ year)$coefficients[[2]]/(2005*lm(Coast_POP ~ year)$coefficients[[2]]+lm(Coast_POP ~ year)$coefficients[['(Intercept)']]) * 4,1)) # normalize trend by dividing by fitted value of first year
-
-Pop_Delta13 = ddply(
-    POPdata2[POPdata2$year%in%c(2006:2010),], .(rgn_id), summarize,
-    trend = min(lm(Coast_POP ~ year)$coefficients[[2]]/(2006*lm(Coast_POP ~ year)$coefficients[[2]]+lm(Coast_POP ~ year)$coefficients[['(Intercept)']]) * 4,1)) # normalize trend by dividing by fitted value of first year
-    
-# # test formula for region 1 and for region 216
-# POPdata2.1<-POPdata2[POPdata2$rgn_id==1,]
-# POPdata2.216<-POPdata2[POPdata2$rgn_id==216,]
-# get the delta and the value for 2005
-# lm(POPdata2.1$Coast_POP ~ POPdata2.1$year)$coefficients[[2]]*4 #  -120.7378
-# summary(lm(POPdata2.1$Coast_POP ~ POPdata2.1$year))
-# POP09.1<- -3.018e+01*2009 + 6.133e+04
-# POP05.1<- -3.018e+01*2005 + 6.133e+04 
-# deltaPOP.1<- POP09.1-POP05.1 # -120.72
-# deltaPOP.1/POP05.1 #  -0.1473813
-# #
-# summary(lm(POPdata2.216$Coast_POP ~ POPdata2.216$year))POP09.216<- -3.052e+09 + 1.601e+06*2009 
-# POP05.216<- -3.052e+09 + 1.601e+06*2005
-# deltaPOP.216<- POP09.216-POP05.216 #
-# deltaPOP.216/POP05.216 #  0.04053036
-# # compare to:
-# lm(POPdata2.1$Coast_POP ~ POPdata2.1$year)$coefficients[[2]]*4/(2005*lm(POPdata2.1$Coast_POP ~ POPdata2.1$year)$coefficients[[2]]+lm(POPdata2.1$Coast_POP ~ POPdata2.1$year)$coefficients[['(Intercept)']])
-# # -0.1492134
-# lm(POPdata2.216$Coast_POP ~ POPdata2.216$year)$coefficients[[2]]/(2005*lm(POPdata2.216$Coast_POP ~ POPdata2.216$year)$coefficients[[2]]+lm(POPdata2.216$Coast_POP ~ POPdata2.216$year)$coefficients[['(Intercept)']]) * 4
-# # 0.04073981
-
-# 3) merge fert and pesticide trend with complete list of 2013 region ids to append NAs
-Pest_r2_12 = sqldf("SELECT a.*, b.*
-                   FROM gf AS a
-                   LEFT OUTER JOIN 
-                 Pest_Delta12
-                 AS b ON b.rgn_id = a.rgn_id") 
-
-Fert_r2_12 = sqldf("SELECT a.*, b.*
-                FROM gf AS a
-                LEFT OUTER JOIN 
-                Fert_Delta12
-                AS b ON b.rgn_id = a.rgn_id") 
-
-Pest_r2_13 = sqldf("SELECT a.*, b.*
-                   FROM gf AS a
-                   LEFT OUTER JOIN 
-                   Pest_Delta13
-                   AS b ON b.rgn_id = a.rgn_id") 
-
-Fert_r2_13 = sqldf("SELECT a.*, b.*
-                   FROM gf AS a
-                   LEFT OUTER JOIN 
-                   Fert_Delta13
-                   AS b ON b.rgn_id = a.rgn_id") 
-# clean up duplicate fields
-Pest_r2_12<-Pest_r2_12[,-6]
-Pest_r2_13<-Pest_r2_13[,-6]
-Fert_r2_12<-Fert_r2_12[,-6]
-Fert_r2_13<-Fert_r2_13[,-6]
-# 4) merge pop trend with list of region ids and region groups (new file with b suffix)
-# read in region v2013a list with corresponding georegional grouping factors (from fine to coarse, respectively: r2, r1, r0)
-gf = read.csv("Data/rgn_georegions_2013b.csv")
-gf<-gf[,c(1,2,4,6,8)] # check: tail(gf[order(gf$rgn_id_2013),])
-gf<-gf[gf[,1]!=213,] # dim(gf)
-
-POP_r2_12 = sqldf("SELECT a.*, b.*
-                FROM gf AS a
-                LEFT OUTER JOIN 
-                   Pop_Delta12
-                   AS b ON b.rgn_id = a.rgn_id") 
-
-POP_r2_13 = sqldf("SELECT a.*, b.*
-                   FROM gf AS a
-                   LEFT OUTER JOIN 
-                   Pop_Delta13
-                   AS b ON b.rgn_id = a.rgn_id") 
-
-names(POP_r2_12)[6]<-"POPtrend"
-names(POP_r2_13)[6]<-"POPtrend"
-# 5) calculate mean pop trend per r2 group
-POP_r2_12<-POP_r2_12[,-6] # rm the extra rgn_id filed containing NAs
-r2meanPOP12=aggregate(POP_r2_12$POPtrend,by=list(POP_r2_12$r2),FUN="mean",na.rm=T) # sub-regional level georegional aggregation
-names(r2meanPOP12)<-c("r2","POP_r2_12")
-
-POP_r2_13<-POP_r2_13[,-6] # rm the extra rgn_id filed containing NAs
-r2meanPOP13=aggregate(POP_r2_13$POPtrend,by=list(POP_r2_13$r2),FUN="mean",na.rm=T) # sub-regional level georegional aggregation
-names(r2meanPOP13)<-c("r2","POP_r2_13")
-
-# 7) replace remaining NAs in fert and pesticide trends with pop trends 
-Fert_gap12$Fert_gapfill<-ifelse(is.na(Fert_gap12$trend),Fert_gap12$POPtrend,Fert_gap12$trend)
-Fert_gap12$Fert_gapfill<-ifelse(Fert_gap12$Fert_gapfill< -1,-1,Fert_gap12$Fert_gapfill) # cap to -1
-
-Fert_gap13$Fert_gapfill<-ifelse(is.na(Fert_gap13$trend),Fert_gap13$POPtrend,Fert_gap13$trend)
-Fert_gap13$Fert_gapfill<-ifelse(Fert_gap13$Fert_gapfill< -1,-1,Fert_gap13$Fert_gapfill) # cap to -1
-
-Pest_gap12$Pest_gapfill<-ifelse(is.na(Pest_gap12$trend),Pest_gap12$POPtrend,Pest_gap12$trend)
-Pest_gap12$Pest_gapfill<-ifelse(Pest_gap12$Pest_gapfill< -1,-1,Pest_gap12$Pest_gapfill) # cap to -1
-
-Pest_gap13$Pest_gapfill<-ifelse(is.na(Pest_gap13$trend),Pest_gap13$POPtrend,Pest_gap13$trend)
-Pest_gap13$Pest_gapfill<-ifelse(Pest_gap13$Pest_gapfill< -1,-1,Pest_gap13$Pest_gapfill) # cap to -1
-
-names(Fert_gap13)[5]<-"trend.score"
-names(Fert_gap12)[5]<-"trend.score"
-names(Pest_gap13)[5]<-"trend.score"
-names(Pest_gap12)[5]<-"trend.score"
-# 8) clean waters scores are the inverse of pressures, so the delta in score is the inverse of the pressure trend
-Fert_gap13[,5]<-Fert_gap13[,5]*-1 
-Fert_gap12[,5]<-Fert_gap12[,5]*-1
-Pest_gap13[,5]<-Pest_gap13[,5]*-1
-Pest_gap12[,5]<-Pest_gap12[,5]*-1
-
-# 9) remove uninhabited islands
-uninhabited<-read.csv("Data/uninhabited_ohi2013.csv")
-Fert_gap13<-Fert_gap13[!(Fert_gap13$rgn_id%in%uninhabited[,1]),]
-Fert_gap12<-Fert_gap12[!(Fert_gap12$rgn_id%in%uninhabited[,1]),]
-Pest_gap13<-Pest_gap13[!(Pest_gap13$rgn_id%in%uninhabited[,1]),]
-Pest_gap12<-Pest_gap12[!(Pest_gap12$rgn_id%in%uninhabited[,1]),]
-
-missing_Fert13<-Fert_gap13[is.na(Fert_gap13$trend.score),] # a few inhabited regions had no population data for Fert2013a
-missing_Fert12<-Fert_gap12[is.na(Fert_gap12$trend.score),] # Fert 2012a same as missing_Fert13
-missing_Pest13<-Pest_gap13[is.na(Pest_gap13$trend.score),] # Pest 2013a same as missing_Fert13
-missing_Pest12<-Pest_gap12[is.na(Pest_gap12$trend.score),] # Pest 2012a same as missing_Fert13
-
-# exported for inspection and decision-making on how to gap-fill (is it sensible to use regional fertilizer/pesticide means if no or very small pop?)
-write.csv(missing_Fert[!(missing_Fert$rgn_id%in%uninhabited[,1]),c(1,4,5)],"Outputs/inhabited_missing_Fert.csv")
-
-# decision made: only gapfill with regional mean for regions 33 and 30 (Glorioso Islands and Juan de Nova island)
-# find what r2 gapfilling region they're from 
-Fert_r2_12[Fert_r2_12$rgn_id==33,] # r2 for region 33 is group 14
-Fert_r2_12[Fert_r2_12$rgn_id==30,] # r2 for region 30 is group 14 as well
-# get the mean values for region r2 "14":
-Fert12_r2mean14<-mean(Fert_r2_12$trend[Fert_r2_12$r2==14],na.rm=T) # gap-fill value for Fert 2012a: 0.5239608
-Fert13_r2mean14<-mean(Fert_r2_13$trend[Fert_r2_13$r2==14],na.rm=T) # gap-fill value for Fert 2013a: 0.3158611
-Pest12_r2mean14<-mean(Pest_r2_12$trend[Pest_r2_12$r2==14],na.rm=T) # gap-fill value for Pest 2012a: -1.32918
-Pest13_r2mean14<-mean(Pest_r2_13$trend[Pest_r2_13$r2==14],na.rm=T) # gap-fill value for Pest 2013a: -1.524768
-# use their inverse to gapfill (i.e. the steeper the pesticide or fertilizer increase, the steeper the clean waters status decline)
-Fert_gap13$trend.score[Fert_gap13$rgn_id%in%c(30,33)]<-Fert13_r2mean14*-1
-Fert_gap13$trend.score[is.na(Fert_gap13$trend.score)]<-0
-Fert_gap12$trend.score[Fert_gap12$rgn_id%in%c(30,33)]<-Fert12_r2mean14*-1
-Fert_gap12$trend.score[is.na(Fert_gap12$trend.score)]<-0
-Pest_gap13$trend.score[Pest_gap13$rgn_id%in%c(30,33)]<-Pest13_r2mean14*-1
-Pest_gap13$trend.score[is.na(Pest_gap13$trend.score)]<-0
-Pest_gap12$trend.score[Pest_gap12$rgn_id%in%c(30,33)]<-Pest12_r2mean14*-1
-Pest_gap12$trend.score[is.na(Pest_gap12$trend.score)]<-0
+## calculate pop trends for fert years:
+data = pop[pop$year %in% c(x1_fert:(x1_fert+4)),] 
+names(data) = c('rgn_id', 'year', 'value')
+trend_pop_forfert = calc_trend(data, x1_fert); head(trend_pop_forfert)
 
 
-write.csv(Fert_gap13[,c(1,5)],"Outputs/GL-NCEAS_CW_Fertilizers_trend_v2013a.csv",row.names = F)
-write.csv(Fert_gap12[,c(1,5)],"Outputs/GL-NCEAS_CW_Fertilizers_trend_v2012a.csv",row.names = F)
-write.csv(Pest_gap13[,c(1,5)],"Outputs/GL-NCEAS_CW_Pesticides_trend_v2013a.csv",row.names = F)
-write.csv(Pest_gap12[,c(1,5)],"Outputs/GL-NCEAS_CW_Pesticides_trend_v2012a.csv",row.names = F)
 
-###########################
-###### option B for gapfilling is to use regional population trends
-# 10) re-join mean pop trend to the corresponding unique region 2013 ids per r2 group
+## 3) join fert and pest trends with appropriate pop trends ----
+# identify which rgn_ids aren't represented in pest and fert files (using anti_join)
 
-Fert_r2POP_13 <-   sqldf("SELECT a.*, b.*
-                         FROM Fert_r2_13 AS a
-                         LEFT OUTER JOIN 
-                         r2meanPOP13
-                         AS b ON b.r2 = a.r2") 
+# pesticides
+trend_pest_toadd = trend_pop_forpest %.%
+  anti_join(trend_pest, by='rgn_id') 
 
-Fert_r2POP_12 <-  sqldf("SELECT a.*, b.*
-                        FROM Fert_r2_12 AS a
-                        LEFT OUTER JOIN 
-                        r2meanPOP12
-                        AS b ON b.r2 = a.r2") 
+trend_pest2 = rbind(trend_pest, trend_pest_toadd) %.%
+  arrange(rgn_id)
 
-Pest_r2POP_13 <-   sqldf("SELECT a.*, b.*
-                         FROM Pest_r2_13 AS a
-                         LEFT OUTER JOIN 
-                         r2meanPOP13
-                         AS b ON b.r2 = a.r2") 
+# fertilizers
+trend_fert_toadd = trend_pop_forfert %.%
+  anti_join(trend_fert, by='rgn_id') 
 
-Pest_r2POP_12 <-  sqldf("SELECT a.*, b.*
-                        FROM Pest_r2_12 AS a
-                        LEFT OUTER JOIN 
-                        r2meanPOP12
-                        AS b ON b.r2 = a.r2") 
+trend_fert2 = rbind(trend_fert, trend_fert_toadd) %.%
+  arrange(rgn_id)
 
-write.csv(Fert_r2POP_13[,c(1,6,7,8)],"Outputs/Fertilizers_r2POPtrend_v2013a.csv",row.names = F)
-write.csv(Fert_r2POP_13[,c(1,6,7,8)],"Outputs/Fertilizers_r2POPtrend_v2012a.csv",row.names = F)
-write.csv(Pest_r2POP_13[,c(1,6,7,8)],"Outputs/Pesticides_r2POPtrend_v2013a.csv",row.names = F)
-write.csv(Pest_r2POP_13[,c(1,6,7,8)],"Outputs/Pesticides_r2POPtrend_v2012a.csv",row.names = F)
 
-###########################
-###########################
 
+## 4) make sure southern islands are trend = 0 and uninhabited islands are trend = NA. 
+
+# prep island data
+islands = read.csv(file.path('src/LookupTables', 'rgn_southern_uninhabited_islands_2013SOM_tableS6.csv')); islands
+trend_island = islands 
+trend_island$trend = NA
+trend_island$trend[trend_islands$Inhabited == 1] = 0
+trend_island = trend_island %.%
+  select(rgn_id, trend)
+
+
+## pesticides
+
+# identify which islands are already present -- remove them
+islands_present = trend_pest2 %.%
+  inner_join(islands, by = 'rgn_id')
+
+trend_pest3 = trend_pest2 %.% 
+  filter(!rgn_id %in% islands_present$rgn_id)
+
+trend_pest4 = rbind(trend_pest3, trend_island)
+
+
+## fertilizers
+
+# identify which islands are already present -- remove them
+islands_present = trend_fert2 %.%
+  inner_join(islands, by = 'rgn_id')
+
+trend_fert3 = trend_fert2 %.% 
+  filter(!rgn_id %in% islands_present$rgn_id)
+
+trend_fert4 = rbind(trend_fert3, trend_island)
+
+
+## 5) save as poth pressure trend and CW scores
+
+write.csv(trend_pest4, file.path(dir_d, 'data', 'p_pesticides_trends_2014a.csv'), row.names = F)
+write.csv(trend_fert4, file.path(dir_d, 'data', 'p_fertilizers_trends_2014a.csv'), row.names = F)
+
+# calc CW scores and save
+# clean waters scores are the 'inverse' of pressures, so the delta in score is the 'inverse' of the pressure trend
+
+# pest
+trend_pest_final = trend_pest4 %.%
+  mutate(trend = trend*-1) %.%
+  arrange(rgn_id)
+names(trend_pest_final)[2] = 'trend.score'; head(trend_pest_final)
+
+# fert
+trend_fert_final = trend_fert4 %.%
+  mutate(trend = trend*-1) %.%
+  arrange(rgn_id)
+names(trend_fert_final)[2] = 'trend.score'; head(trend_fert_final)
+
+write.csv(trend_pest_final, file.path(dir_d, 'data', 'rgn_cw_pesticides_trends_2014a.csv'), row.names = F)
+write.csv(trend_fert_final, file.path(dir_d, 'data', 'rgn_cw_fertilizers_trends_2014a.csv'), row.names = F)
+
+# --- fin
 
