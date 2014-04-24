@@ -92,6 +92,9 @@ fert = read.csv(g); head(fert,30)
 
 # clean up data: described in Global SOM 2013: section 5.19
 # see if there are a lot of 0's
+explore = fert %.%
+  filter(tonnes == 0); head(explore,30) # yes they are
+
 fert2 = fert %.% 
   filter(tonnes !=0); head(fert2,30) # remove 0's; don't replace with NA because lm() below will need NAs removed 
 
@@ -99,10 +102,13 @@ fert2 = fert %.%
 explore2 = fert2 %.%
   group_by(rgn_id, rgn_nam) %.%
   summarise(count = n()) %.%
-  filter(count == 1); explore2 # no there aren't
+  filter(count == 1); explore2 # yes there are 
+
+fert3 = fert2 %.% # remove countries with only 1 year of data 
+  filter(!rgn_id %in% explore2$rgn_id)
 
 # see if there are countries no data after 2005 
-explore3 = fert %.%
+explore3 = fert3 %.%
   group_by(rgn_id, rgn_nam) %.% 
   summarise(max_year = max(year)) %.%
   filter(max_year < 2005); explore3 # no there aren't
@@ -126,7 +132,7 @@ explore3 = fert %.%
   calc_trend = function(data, x1) {
     library('plyr')
     trend2014 = plyr::ddply(
-      fert_narm, .(rgn_id), summarize,
+      data, .(rgn_id), summarize,
       trend = max(min(lm(tonnes ~ year)$coefficients[[2]] /
                         (lm(tonnes ~ year)$coefficients[[2]]*x1 +
                            lm(tonnes ~ year)$coefficients[[1]]) * 5, 1), -1))
@@ -135,7 +141,7 @@ explore3 = fert %.%
 # --------
 
 ## calculate fertilizer trends: 
-data = na.omit(fert)
+data = na.omit(fert3)
 x1 = 2006
 trend_pest = calc_trend(data, x1) 
 
@@ -145,26 +151,13 @@ x1 = 2007
 trend_fert = calc_trend(data, x1) 
 
 
-
-
-fitted value of first year
-# fix missing value for France
-Fert.Fr<-fert_pest2[fert_pest2$rgn_id==179 & fert_pest2$layer=="Fertilizers",] 
-Fert_Delta12$trend[Fert_Delta12$rgn_id==179] <-min(lm(Fert.Fr$tonnes ~ Fert.Fr$year)$coefficients[[2]]/(2005*lm(Fert.Fr$tonnes ~ Fert.Fr$year)$coefficients[[2]]+lm(Fert.Fr$tonnes ~ Fert.Fr$year)$coefficients[['(Intercept)']]) * 4,1) # fitted value for France when both 2010 and 2009 points are used
-
-Fert_Delta13 = ddply(
-  fert_pest2[fert_pest2$layer=="Fertilizers",], .(rgn_id), summarize,
-  trend = min(lm(tonnes ~ year)$coefficients[[2]]/(2006*lm(tonnes ~ year)$coefficients[[2]]+lm(tonnes ~ year)$coefficients[['(Intercept)']]) * 4,1)) # normalize trend by dividing by fitted value of first year
-
-Pest_Delta12 = ddply(
-  fert_pest2[fert_pest2$year<2010 & fert_pest2$layer=="Pesticides",], .(rgn_id), summarize,
-  trend = min(lm(tonnes ~ year)$coefficients[[2]]/(2005*lm(tonnes ~ year)$coefficients[[2]]+lm(tonnes ~ year)$coefficients[['(Intercept)']]) * 4,1)) # normalize trend by dividing by fitted value of first year
-
-Pest_Delta13 = ddply(
-  fert_pest2[fert_pest2$layer=="Pesticides",], .(rgn_id), summarize,
-  trend = min(lm(tonnes ~ year)$coefficients[[2]]/(2006*lm(tonnes ~ year)$coefficients[[2]]+lm(tonnes ~ year)$coefficients[['(Intercept)']]) * 4,1)) # normalize trend by dividing by fitted value of first year
-
 # 2) calculate pop trend for 2012a and 2013a (years 2005:2009, 2006:2011, respectively)
+
+## JSL come back::: read in most recent pop data (so can work with it and reinsert more later). 
+# model/GL-NCEAS-CoastalPopulation_v2013/data -- maybe even rgn_popn5yrtrend_inland25mi_2008to2013.csv
+
+
+
 #load pop data
 pop05<-read.csv("Data/MARdata/rgn_popsum2005_inland25mi.csv")
 pop06<-read.csv("Data/MARdata/rgn_popsum2006_inland25mi.csv")
