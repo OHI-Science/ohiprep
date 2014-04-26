@@ -1,5 +1,5 @@
 for (p in poles){ 
-  #p='n'  #testing
+  #p='s'  #testing
   
   ######################################################
   ## Create an empty raster stack with appropriate dimensions 
@@ -26,7 +26,7 @@ for (p in poles){
   for (yr in years){
     for (mo in months){ 
       
-          #yr=1980; mo=1  #testing
+          #yr=1979; mo=1  #testing
       
       ### Getting the proper ftp site based on the time of data collection    
       i.pym = i.pym+1 
@@ -80,7 +80,7 @@ for (p in poles){
       ### 
       #######################################################################################################
       
-      pts.shp = sprintf('tmp//%s_type_rgns_pts.shp',p)
+      pts.shp = sprintf('tmp/%s_type_rgns_pts.shp',p)
       
       if (!file.exists(pts.shp)){ #if this file exists in the working directory this is not run.
         ## This takes the raster cells that are identified as something other than ice (i.e., land, water, etc.)
@@ -98,17 +98,17 @@ for (p in poles){
         r_type[r_water==1]=3
         r_type[r_shore==1]=2        
         r_type[r_hole==1]=4    
-        writeRaster(r_type, sprintf('tmp\\%s_type.tif',p), overwrite=T)
-        r.typ <- raster(sprintf('tmp\\%s_type.tif',p))
+        writeRaster(r_type, sprintf('tmp/%s_type.tif',p), overwrite=T)
+        r.typ <- raster(sprintf('tmp/%s_type.tif',p))
         
-        OHIregion <- readOGR(dsn="C:\\Users\\Melanie\\Desktop\\NCEAS\\Projects\\HS_Ant_SeaIce Mar112014\\raw", layer=sprintf("eez_ccmlar_fao_%s", p))
-        OHIregion <- OHIregion[OHIregion$rgn_type %in% c("CCAMLR", "fao"),]
-        OHIregion@data$rgn_id <- as.numeric(as.character(OHIregion@data$rgn_id))
-        OHIregion_raster <- rasterize(OHIregion, r.typ, field="rgn_id") # convert shapefile to a raster
+        OHIregion <- readOGR(dsn="raw", layer=sprintf("sp_%s", p))
+        OHIregion <- OHIregion[OHIregion$sp_type %in% c("eez-ccamlr"),]
+        OHIregion@data$sp_id <- as.numeric(as.character(OHIregion@data$sp_id))
+        OHIregion_raster <- rasterize(OHIregion, r.typ, field="sp_id") # convert shapefile to a raster
         OHIregion_raster[is.na(OHIregion_raster)] <- 0   #replace missing values with zero
         OHIregion_points <- rasterToPoints(OHIregion_raster, spatial=TRUE) #convert raster to points shapefile
-        names(OHIregion_points@data) <- "rgn_id"
-        OHIregion_points@data <- join(OHIregion_points@data, OHIregion@data, by="rgn_id") #add some data to raster
+        names(OHIregion_points@data) <- "sp_id"
+        OHIregion_points@data <- join(OHIregion_points@data, OHIregion@data, by="sp_id") #add some data to raster
         OHIregion_points@data$type_nsidc <- extract(r.typ, OHIregion_points) #extract data from the ice data created above
         writeOGR(OHIregion_points, dsn="tmp", driver='ESRI Shapefile', layer=sprintf('%s_type_rgns_pts',p)) #save file
       }
@@ -143,7 +143,7 @@ for (p in poles){
   } # end yr
   
   # save stack of rasters and pts of shore as rdata file
-  save(s, pts, file=sprintf('tmp\\%s_rasters_points.rdata',p))
+  save(s, pts, file=sprintf('tmp/%s_rasters_points.rdata',p))
   
 } # end polar
 

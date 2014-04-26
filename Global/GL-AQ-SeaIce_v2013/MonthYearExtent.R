@@ -9,8 +9,8 @@ library(dplyr)
 ## folder: n_type_rgns_pts and s_type_rgns_pts  (used these as the basemaps to ensure that
 ## the transformation was correct.). For some annoying reason R messes up this conversion
 
-#for (p in poles){ 
-  p='s' 
+for (p in poles){ 
+#  p='s' 
   
   
   # identify the reference rasters for the north and south pole to ID regions:
@@ -23,14 +23,14 @@ library(dplyr)
   # load the .rdata file created in the above function.
   # s = raster stack of the ice data for all years/months
   # pts = points data of OHI regions, NSIDC type of land cover, and data extracted from each NSIDC ice layer
-  load(file=sprintf('tmp\\%s_rasters_points.rdata',p))
+  load(file=sprintf('tmp/%s_rasters_points.rdata',p))
   
   # using the reference rasters ("l") for the north and south pole 
   r = raster(s,l) #select the "l" (i.e., reference) raster layer from the stack
   #create a NSIDC land cover types raster (used later on):
   r.typ = setValues(r, pts@data[['type_nsidc']]) 
   #create a region raster that excludes land and coast areas (used later on):
-  r.rgn = setValues(r, pts@data[['rgn_id']]) #create a new raster with the regions 
+  r.rgn = setValues(r, pts@data[['sp_id']]) #create a new raster with the regions 
   r.rgn[r.typ < 2] = NA # exclude: land(0), coast(1) from the regions
   r.rgn[r.rgn == 0] = NA #exclude: eezs
   
@@ -62,12 +62,7 @@ z.coverage$month <- revalue(z.coverage$month, c("01"="Jan", "02"="Feb", "03"="Ma
 z.coverage$monthCode <- as.numeric(as.character(z.coverage$monthCode))
 
 # convert value to km2
-pixel = 25000
 z.coverage$km2 <-  z.coverage$value*(pixel/1000)^2
-
-# select only CCAMLR regions:
-ccamlr <- c("481", "482", "483", "484", "485", "486", "881", "882", "883", "5841", "5842", "58431", "58432", "58441", "58442")
-z.coverage <- z.coverage[z.coverage$zone %in% ccamlr, ]
 
 # select relevant variables
 z.coverage <- subset(z.coverage, select=c("zone", "year", "monthCode", "month", "km2"))
@@ -79,13 +74,13 @@ monthlyAvg <- z.coverage %.%
   summarise(all_years_avg = mean(km2))
 
 # join with z.coverage
-z.coverage <- z.coverage %.%
+z.coverage2 <- z.coverage %.%
   left_join(monthlyAvg) %.%
   mutate(anomoly=km2-all_years_avg)
 
-write.csv(z.coverage, sprintf("tmp//%s_AQ_YearlyMonthlyIceCover.csv", p), row.names=FALSE)
+write.csv(z.coverage2, sprintf("tmp/%s_AQ_YearlyMonthlyIceCover.csv", p), row.names=FALSE)
   
-#}
+}
 
 
 # p <- ggplot(subset(z.coverage, year==1979), aes(x=as.factor(monthCode), y=km2, group=zone, col=as.factor(zone))) 

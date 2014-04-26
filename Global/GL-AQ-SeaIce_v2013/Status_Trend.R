@@ -1,5 +1,5 @@
 for (p in poles){ 
-  #p='n'#testing
+  #p='s'#testing
   
   ########################################################### 
   ### This section is mostly for visualization, but the 
@@ -18,7 +18,7 @@ for (p in poles){
   # load the .rdata file created in the above function.
   # s = raster stack of the ice data for all years/months
   # pts = points data of OHI regions, NSIDC type of land cover, and data extracted from each NSIDC ice layer
-  load(file=sprintf('tmp\\%s_rasters_points.rdata',p))
+  load(file=sprintf('tmp/%s_rasters_points.rdata',p))
   
   # using the reference rasters ("l") for the north and south pole 
   r = raster(s,l) #select the "l" (i.e., reference) raster layer from the stack
@@ -32,7 +32,7 @@ for (p in poles){
   r.ice.edge = r.ice
   r.ice.edge[r.ice.edge<0.1 | r.ice.edge>0.5] = NA
   #create a region raster that excludes land and coast areas (used later on):
-  r.rgn = setValues(r, pts@data[['rgn_id']]) #create a new raster with the regions 
+  r.rgn = setValues(r, pts@data[['sp_id']]) #create a new raster with the regions 
   r.rgn[r.typ < 2] = NA # exclude: land(0), coast(1) from the regions
   #plot data
   png(sprintf('%s_IceEdgeHabitat_overview.png',p), width=w, height=h)
@@ -170,26 +170,26 @@ for (p in poles){
   ################################################################ 
   ### Calculate status and add to z.h.T data and z.p.T data
   ################################################################
-  z.h.T[['Status_2011_pctdevR']] = z.h.T[['pctdevR_2011']] #change to 2011
-  z.p.T[['Status_2011_pctdevR']] = z.p.T[['pctdevR_2011']]  #change to 2011  
+  z.h.T[['Status_2011_pctdevR']] = z.h.T[['pctdevR_2011']] 
+  z.p.T[['Status_2011_pctdevR']] = z.p.T[['pctdevR_2011']]  
   names(z.h.T)[names(z.h.T)=='value'] = 'Reference_avg1979to2012monthlypixels'
   names(z.p.T)[names(z.p.T)=='value'] = 'Reference_avg1979to2012monthlypixels'
   z.h.T[['pole']] = p
   z.p.T[['pole']] = p
   
-  labels  <- unique(subset(pts@data, select=c("rgn_id", "rgn_type", "rgn_name")))
-  z.h.T <- merge(z.h.T, labels, by.x="zone", by.y="rgn_id")
-  z.p.T <- merge(z.p.T, labels, by.x="zone", by.y="rgn_id")
+  labels  <- unique(subset(pts@data, select=c("sp_id", "rgn_type", "rgn_name")))
+  z.h.T <- merge(z.h.T, labels, by.x="zone", by.y="sp_id")
+  z.p.T <- merge(z.p.T, labels, by.x="zone", by.y="sp_id")
   
-  names(z.h.T)[names(z.h.T)=='zone'] = 'OHIregion_2013'    
-  names(z.p.T)[names(z.p.T)=='zone'] = 'OHIregion_2013' 
+  names(z.h.T)[names(z.h.T)=='zone'] = 'sp_id'    
+  names(z.p.T)[names(z.p.T)=='zone'] = 'sp_id' 
   
   z.h.T <- z.h.T[!is.na(z.h.T$Status_2011_pctdevR), ]
   z.p.T <- z.p.T[!is.na(z.p.T$Status_2011_pctdevR), ]
   
   
-  #  save.image(file=sprintf('tmp\\%s_image.rdata',p))    
-  write.csv(z.h.T, sprintf('tmp\\%s_IceEdgeHabitat.csv',p), row.names=FALSE)
-  write.csv(z.p.T, sprintf('tmp\\%s_IceShoreProtection.csv',p), row.names=FALSE) 
+  #  save.image(file=sprintf('tmp/%s_image.rdata',p))    
+  #write.csv(z.h.T, sprintf('tmp/%s_IceEdgeHabitat.csv',p), row.names=FALSE)
+  write.csv(z.p.T, sprintf('tmp/%s_IceShoreProtection.csv',p), row.names=FALSE) 
   
 }
