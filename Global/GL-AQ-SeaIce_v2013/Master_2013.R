@@ -24,7 +24,9 @@ rm(list = ls())
 ## n_type_rgns_pts and s_type_rgns_pts. 
 ## For some annoying reason R messes up this conversion
 
+#setwd('/var/data/ohi/model/GL-AQ-SeaIce_v2013')
 setwd('/var/data/ohi/model/GL-AQ-SeaIce_v2013')
+
 # final year of data:
 final.year <- 2012
 
@@ -89,9 +91,6 @@ shore_condition <- subset(shore_condition, select=c(sp_id, habitat, health))
 
 # extent health
 
-
-
-
 # remove a few anomolous regions 
 # (reference has less than 10 cells on average of ice and 3 or fewer ice measurements in past 5 years):
 health <- health[!(health$rgn_id %in% c(270, 277, 5852) ), ]
@@ -138,18 +137,26 @@ names(full_cast) <- gsub("seaice_", "", names(full_cast))
 #### extent health
 
 extent <- read.csv("tmp/s_AQ_YearlyMonthlyIceCover.csv")
+
 #cut due to minimal ice
 extent <- subset(extent, !(zone %in% c("258700", "258600", "258510", "248300", "258520")))
 
-extent$rel_anomoly <- extent$anomoly/extent$all_years_avg
+# get monthly average of cover across years:
+month_avg <- extent %.%
+  group_by(zone, monthCode, month) %.%
+  summarise(all_years_monthly_avg = mean(km2, na.rm=TRUE))
 
-tmp <- extent %.%
-  group_by(zone) %.%
-  summarise(mean(abs(rel_anomoly)))
+# merge the month averages with the data,
+# calculate anomoly
+# calculate relative anomoly for the "adjustment"
+extent  <- extent %.%
+  left_join(month_avg, by=c("zone", "monthCode", "month")) %.%
+  mutate(anomoly = km2-all_years_avg) %.% 
+  mutate(rel_anomoly = anomoly/all_years_avg)  ## This calculates the "anomaly_i/cover_i" portion of the adjustment. 
 
-tmp <- extent %.%
+adjustment  <-  extent %.%
   group_by(zone) %.%
-  summarise(mean(rel_anomoly))
+  summarise(adj=mean(abs(rel_anomoly), na.rm=TRUE))
 
 
 regions <- unique(extent$zone)
@@ -159,83 +166,30 @@ refMonth <- 6
 Sea_ice <- data.frame(regions=regions, status=NA, trend=NA)
 for(i in 1:length(regions)){
  # i <- 1 #testing
+
   region <- regions[i]
-  region <- "248100" #testing....
+#region <- "248100" #testing
   tmp  <- extent %.%
   filter(zone==region) %.%
-  arrange(year, monthCode)
+  arrange(year, monthCode) %.%
+  mutate(timeSeries = 1:dim(data)[1])
 
-tmp$timeSeries <- 1:dim(tmp)[1]
-mod <- lm(km2 ~ timeSeries, data=tmp)
-mod
+mod <- lm(anomoly ~ timeSeries, data=tmp)
+#mod
 
-p <- ggplot(tmp, aes(x=timeSeries, y=km2))
-p + geom_point() + geom_line() + geom_abline(intercept=mod$coefficients[1], slope=mod$coefficients[2], col="red") +
-  labs(title="Region 481: Proportional anomoly for each month from 1979-2012")
+#p <- ggplot(tmp, aes(x=timeSeries, y=anomoly))
+#p + geom_point() + geom_line() + geom_abline(intercept=mod$coefficients[1], slope=mod$coefficients[2], col="red") +
+#  labs(title="Region 481: Proportional anomoly for each month from 1979-2012")
 
 refTS <- (refYear-startYear)*12 + refMonth
 curTS <- (final.year - startYear)*12 + refMonth
 
 predictAnom <- predict(mod, data.frame(timeSeries=1:408))[which(tmp$timeSeries %in% c(refTS, curTS))]
-# predict all June values:
-#mean(predict(mod, data.frame(timeSeries=1:408))[which(tmp$month %in% "Jun")])
 
 delta <-(predictAnom[[2]] - predictAnom[[1]])/predictAnom[[1]]   
-#sea_ice$status[i] <- 1 - abs(predictAnom[[2]]-predictAnom[[1]])
+sea_ice$status[i] <- 1 - abs(delta) * 
 #sea_ice$trend[i] <- mod$coefficients[[2]]*12*5
 }
-
-extent_sum <- extent %.%
-  group_by(zone, monthCode) %.%
-  summarise(adjustment=mean(abs(anomoly/km2)))
-
-p <- ggplot(extent481, aes(x=timeSeries, y=km2))
-p + geom_point() + geom_line() + geom_abline(intercept=151628.1, slope=-105.2, col="red") +
-  labs(title="ice cover decreases over time")
-
-mod <- lm(km2 ~ timeSeries, data=extent481)
-
-# predict 1979 and 2012:
-predict(mod, data.frame(timeSeries=1:408))[which(extent481$timeSeries %in% c(6, 402))]
-# predict all June values:
-mean(predict(mod, data.frame(timeSeries=1:408))[which(extent481$month %in% "Jun")])
-1-abs((109339-150997)/130168)
-1-abs((109339-150997)/109339)
-
-extent_year <- extent %.%
-  group_by(zone, year) %.%
-  summarize(yearly_avg_anomoly=mean(abs(anomoly)))
-
-extent_year_lm <- dlply(extent_year, .(zone), function(x) lm(yearly_avg_anomoly ~ year, data=x))
-extent_year_predict <- ldply(extent_year_lm, function(x) predict(x, data.frame(year=c(1979, 2012))))
-extent_year_predict$ratio <-extent_year_predict[,2]/extent_year_predict[,3] 
-
-
-mod <- lm(yearly_avg_anomoly~year, data=subset(extent_year, zone==481))
-
-
-##test###
-extent_year <- extent %.%
-  group_by(zone, year) %.%
-  summarize(yearly_avg_anomoly=mean(abs(rel_anomoly)))
-
-extent_year_lm <- dlply(extent_year, .(zone), function(x) lm(yearly_avg_anomoly ~ year, data=x))
-extent_year_predict <- ldply(extent_year_lm, function(x) predict(x, data.frame(year=c(1979, 2012))))
-extent_year_predict$ratio <-extent_year_predict[,2]/extent_year_predict[,3] 
-
-
-mod <- lm(yearly_avg_anomoly~year, data=subset(extent_year, zone==481))
-
-
-
-p <- ggplot(subset(extent, zone==481), aes(x=year, y=anomoly, group=as.numeric(monthCode), col=as.numeric(monthCode))) 
-p+geom_line() + 
-  labs(title="Zone=481", colour="Month")
-
-p <- ggplot(subset(extent_year, zone==481), aes(x=year, y=total_anomoly)) 
-p+geom_line() + 
-  geom_abline(intercept=730623.6, slope=-346.4) +  
-  labs(title="Zone=481")
 
 
 
