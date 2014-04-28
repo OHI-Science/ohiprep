@@ -67,7 +67,7 @@ z.coverage$km2 <-  z.coverage$value*(pixel/1000)^2
 # select relevant variables
 z.coverage <- subset(z.coverage, select=c("zone", "year", "monthCode", "month", "km2"))
 
-write.csv(z.coverage2, sprintf("tmp/%s_AQ_YearlyMonthlyIceCover.csv", p), row.names=FALSE)
+write.csv(z.coverage, sprintf("tmp/%s_AQ_YearlyMonthlyIceCover.csv", p), row.names=FALSE)
   
 }
 
