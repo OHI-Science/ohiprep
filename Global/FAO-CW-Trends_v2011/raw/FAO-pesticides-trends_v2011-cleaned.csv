@@ -1,0 +1,1077 @@
+"rgn_id","rgn_nam","tonnes","year"
+5,"New Caledonia",39.72,2009
+5,"New Caledonia",45.24,2010
+5,"New Caledonia",39.46,2011
+6,"Vanuatu",147,1990
+6,"Vanuatu",222,1991
+6,"Vanuatu",198,1992
+6,"Vanuatu",131,1993
+14,"China, Taiwan Province of",10210,1996
+14,"China, Taiwan Province of",9593,1997
+14,"China, Taiwan Province of",9116,1998
+14,"China, Taiwan Province of",9239,2006
+14,"China, Taiwan Province of",9744,2007
+14,"China, Taiwan Province of",9061,2008
+14,"China, Taiwan Province of",8816,2009
+14,"China, Taiwan Province of",8105,2010
+14,"China, Taiwan Province of",8506,2011
+16,"Australia",18116,1990
+16,"Australia",18116,1991
+16,"Australia",22545,1992
+16,"Australia",24234,1993
+16,"Australia",21352,1994
+16,"Australia",25957,1995
+16,"Australia",31652,1996
+16,"Australia",34572,1997
+16,"Australia",37673,1998
+16,"Australia",36403,2006
+17,"Papua New Guinea",242,1992
+17,"Papua New Guinea",344,1993
+17,"Papua New Guinea",352,1994
+17,"Papua New Guinea",210,1995
+18,"Fiji",453,1990
+18,"Fiji",1413,1991
+18,"Fiji",420,1992
+20,"Republic of Korea",50164,1990
+20,"Republic of Korea",54952,1991
+20,"Republic of Korea",53436,1992
+20,"Republic of Korea",51998,1993
+20,"Republic of Korea",29246,1994
+20,"Republic of Korea",29071,1995
+20,"Republic of Korea",27715,1996
+20,"Republic of Korea",27097,1997
+20,"Republic of Korea",23782,1998
+20,"Republic of Korea",28452,1999
+20,"Republic of Korea",26829,2006
+20,"Republic of Korea",27252,2007
+20,"Republic of Korea",27838,2008
+20,"Republic of Korea",24719,2009
+20,"Republic of Korea",22210,2010
+25,"Thailand",37698,1993
+25,"Thailand",40896,1994
+25,"Thailand",48124,1995
+25,"Thailand",43800,1996
+25,"Thailand",47920,1997
+25,"Thailand",38424,1998
+25,"Thailand",45522,1999
+25,"Thailand",94597,2006
+25,"Thailand",133716,2007
+25,"Thailand",130846,2008
+25,"Thailand",150552,2009
+25,"Thailand",137972,2010
+25,"Thailand",174382,2011
+31,"Seychelles",20,1990
+31,"Seychelles",18,1991
+31,"Seychelles",0,1992
+31,"Seychelles",63,1993
+31,"Seychelles",66,1994
+31,"Seychelles",70,1995
+31,"Seychelles",68,1996
+31,"Seychelles",50,1997
+31,"Seychelles",37,1998
+37,"Mauritius",1778,1990
+37,"Mauritius",0,1991
+37,"Mauritius",1284,1994
+37,"Mauritius",1480,1995
+37,"Mauritius",1339,1996
+37,"Mauritius",1605,1997
+37,"Mauritius",1552,1998
+37,"Mauritius",1522,1999
+37,"Mauritius",2387,2006
+37,"Mauritius",1965,2007
+37,"Mauritius",2249,2008
+37,"Mauritius",2324,2009
+37,"Mauritius",2383,2010
+37,"Mauritius",2107,2011
+40,"Sri Lanka",3142.662,1990
+40,"Sri Lanka",2818.306,1991
+40,"Sri Lanka",4288.6,1992
+40,"Sri Lanka",3506.4,1993
+40,"Sri Lanka",3721.4,1994
+40,"Sri Lanka",3471.302,1995
+40,"Sri Lanka",3309.32,1996
+40,"Sri Lanka",3245.302,1997
+40,"Sri Lanka",3064.82,1998
+40,"Sri Lanka",3533.82,1999
+40,"Sri Lanka",3508.5,2006
+40,"Sri Lanka",3339.6,2007
+40,"Sri Lanka",2304.78,2008
+40,"Sri Lanka",2340.72,2009
+40,"Sri Lanka",2901.08,2010
+40,"Sri Lanka",2580.62,2011
+41,"Mozambique",204.52,1994
+41,"Mozambique",144.38,1995
+41,"Mozambique",131.7,1996
+41,"Mozambique",121.26,1997
+41,"Mozambique",891.54,2006
+41,"Mozambique",547.311,2007
+41,"Mozambique",892.431,2008
+41,"Mozambique",916.971,2009
+41,"Mozambique",1187.37,2010
+41,"Mozambique",769.17,2011
+42,"Madagascar",256.82,1990
+42,"Madagascar",262,1991
+42,"Madagascar",202.12,1992
+42,"Madagascar",218.82,1993
+42,"Madagascar",152.3,1994
+42,"Madagascar",146.16,1995
+42,"Madagascar",304.02,1996
+42,"Madagascar",279.78,1997
+42,"Madagascar",176.52,1998
+42,"Madagascar",99.04,1999
+42,"Madagascar",218.78,2006
+42,"Madagascar",187.76,2007
+42,"Madagascar",224.22,2008
+42,"Madagascar",287.8,2009
+42,"Madagascar",483.78,2010
+42,"Madagascar",620.72,2011
+43,"Kenya",3469,1994
+43,"Kenya",4607,1995
+43,"Kenya",6344,1996
+43,"Kenya",5172,1997
+45,"Eritrea",10,1996
+45,"Eritrea",60,1997
+45,"Eritrea",40,1998
+47,"Yemen",1426.56,1997
+47,"Yemen",2352.2,1998
+47,"Yemen",2451.3,1999
+47,"Yemen",115.88,2006
+47,"Yemen",387.38,2007
+47,"Yemen",159.14,2008
+47,"Yemen",184.72,2009
+47,"Yemen",267.7,2010
+47,"Yemen",219.18,2011
+48,"Oman",129.302,1990
+48,"Oman",88.327,1991
+48,"Oman",507.847,1992
+48,"Oman",338.36,1994
+48,"Oman",372.46,1996
+48,"Oman",1492.538,1997
+48,"Oman",1281.16,1998
+48,"Oman",38.4,2008
+48,"Oman",50.3,2009
+48,"Oman",104.246,2010
+48,"Oman",154.866,2011
+49,"Sudan (former)",3286,1992
+49,"Sudan (former)",968,1993
+49,"Sudan (former)",2030,1994
+49,"Sudan (former)",2594,1995
+49,"Sudan (former)",2746,1996
+49,"Sudan (former)",2446,1997
+50,"Saudi Arabia",1988,1996
+50,"Saudi Arabia",5026,1997
+50,"Saudi Arabia",8543.87,2007
+51,"Kuwait",28,1995
+51,"Kuwait",36,1996
+51,"Kuwait",40,1997
+51,"Kuwait",64,1998
+52,"Bahrain",28.1,1993
+52,"Bahrain",61.72,1994
+52,"Bahrain",24.92,1995
+52,"Bahrain",24.32,1996
+52,"Bahrain",9.42,1997
+52,"Bahrain",21.3,1998
+52,"Bahrain",24.23,2006
+52,"Bahrain",32.5,2007
+52,"Bahrain",10.45,2008
+52,"Bahrain",12.59,2009
+52,"Bahrain",9.84,2010
+52,"Bahrain",9.14,2011
+53,"Pakistan",9630,1990
+53,"Pakistan",11015,1991
+53,"Pakistan",10220,1992
+53,"Pakistan",9890,1993
+53,"Pakistan",12365,1994
+53,"Pakistan",15362,1995
+53,"Pakistan",21390,1996
+53,"Pakistan",33415,1997
+53,"Pakistan",36025,1998
+53,"Pakistan",39920,1999
+61,"Tunisia",1818,1997
+61,"Tunisia",2135.93,2009
+62,"Morocco",9364,1990
+62,"Morocco",25437,2006
+64,"Mauritania",3.4,2006
+64,"Mauritania",19.6,2007
+64,"Mauritania",34.44,2008
+64,"Mauritania",8.58,2009
+64,"Mauritania",135.182,2010
+64,"Mauritania",26.7,2011
+65,"Gambia",68,1992
+65,"Gambia",40.09,1993
+65,"Gambia",4.04,1994
+65,"Gambia",16.04,1995
+65,"Gambia",16.61,1996
+65,"Gambia",2356,2006
+65,"Gambia",597,2007
+66,"Senegal",768,1992
+66,"Senegal",715.1,1993
+66,"Senegal",1094.6,1994
+66,"Senegal",870.62,1995
+66,"Senegal",822.66,1996
+66,"Senegal",874.46,1997
+66,"Senegal",901.42,1998
+68,"Malta",653,1993
+68,"Malta",894,1994
+68,"Malta",419,1995
+68,"Malta",306,1996
+68,"Malta",515,1997
+68,"Malta",527,1998
+68,"Malta",277,1999
+68,"Malta",262.81,2007
+69,"Latvia",2010,1992
+69,"Latvia",952,1993
+69,"Latvia",588,1994
+69,"Latvia",716,1995
+69,"Latvia",722,1996
+69,"Latvia",668,1997
+69,"Latvia",739,1998
+69,"Latvia",1488.55,2006
+69,"Latvia",2232.45,2007
+69,"Latvia",2066.003,2008
+69,"Latvia",1762.203,2009
+69,"Latvia",2055.002,2010
+69,"Latvia",2141.005,2011
+70,"Estonia",938,1992
+70,"Estonia",340,1993
+70,"Estonia",341,1994
+70,"Estonia",298,1995
+70,"Estonia",252,1996
+70,"Estonia",208,1997
+70,"Estonia",204,1998
+70,"Estonia",193,1999
+70,"Estonia",904,2006
+70,"Estonia",920,2007
+70,"Estonia",1102,2008
+70,"Estonia",804,2009
+70,"Estonia",1028,2010
+70,"Estonia",492,2011
+71,"Bulgaria",7813,1992
+72,"Romania",25255,1990
+72,"Romania",19898,1991
+72,"Romania",15134,1992
+72,"Romania",24252,1993
+72,"Romania",21811,1994
+72,"Romania",20113,1995
+72,"Romania",17425,1996
+72,"Romania",15349,1997
+72,"Romania",13979,1998
+72,"Romania",11280,1999
+72,"Romania",6733.2,2006
+72,"Romania",6314,2007
+72,"Romania",7193.7,2008
+72,"Romania",6548.7,2009
+72,"Romania",7249.2,2010
+72,"Romania",6582.9,2011
+73,"Russian Federation",51922,1997
+75,"Ukraine",66772,1992
+75,"Ukraine",56328.2,2006
+75,"Ukraine",70307,2007
+75,"Ukraine",105427,2008
+75,"Ukraine",70608.7,2009
+75,"Ukraine",122018.8,2010
+75,"Ukraine",147601,2011
+76,"Turkey",59836,1990
+76,"Turkey",48686,1991
+76,"Turkey",54220,1992
+76,"Turkey",56084,1993
+76,"Turkey",48434,1994
+76,"Turkey",49719,1995
+76,"Turkey",60572,1996
+76,"Turkey",68803,1997
+76,"Turkey",60324,1998
+76,"Turkey",66175,1999
+76,"Turkey",33838,2006
+76,"Turkey",51992.94,2007
+76,"Turkey",43253.39,2008
+76,"Turkey",39487.03,2009
+76,"Turkey",44047.54,2010
+77,"Syrian Arab Republic",4306,1997
+77,"Syrian Arab Republic",9230,1998
+77,"Syrian Arab Republic",8370,1999
+78,"Lebanon",1221,1996
+78,"Lebanon",1816,1997
+79,"Israel",2838,1998
+79,"Israel",14662.36,2008
+79,"Israel",13333.2,2009
+79,"Israel",13678.18,2010
+80,"Greece",8070,1991
+80,"Greece",8637,1992
+80,"Greece",9501,1993
+80,"Greece",12682,1994
+80,"Greece",13326,1995
+80,"Greece",14592,1996
+80,"Greece",18446,1997
+80,"Greece",11848,1998
+80,"Greece",10475,1999
+80,"Greece",11250,2006
+81,"Cyprus",4371,1990
+81,"Cyprus",3942,1991
+81,"Cyprus",3391,1992
+81,"Cyprus",4088,1993
+81,"Cyprus",5036,1994
+81,"Cyprus",4062,1995
+81,"Cyprus",4834,1996
+81,"Cyprus",4448,1997
+81,"Cyprus",2339,2006
+81,"Cyprus",2314,2007
+81,"Cyprus",2064,2008
+81,"Cyprus",2264,2009
+82,"Albania",244,1993
+82,"Albania",402,1994
+82,"Albania",502,1995
+84,"Algeria",10253,1990
+84,"Algeria",14097,1991
+84,"Algeria",6428,1992
+84,"Algeria",5618,1993
+84,"Algeria",6582,1994
+84,"Algeria",12510,1995
+84,"Algeria",2786,1996
+84,"Algeria",2319,1997
+84,"Algeria",1217,1998
+84,"Algeria",11927.455,2006
+84,"Algeria",16522.967,2007
+84,"Algeria",32271.416,2008
+84,"Algeria",12331.83,2009
+98,"Togo",648,1990
+98,"Togo",426,1991
+98,"Togo",384,1992
+98,"Togo",412,1993
+98,"Togo",406,1994
+98,"Togo",396,1995
+98,"Togo",394,1996
+98,"Togo",537.56,2006
+98,"Togo",524.9,2007
+98,"Togo",459.88,2008
+98,"Togo",344.38,2009
+98,"Togo",484.02,2010
+98,"Togo",117.8,2011
+100,"Congo",27,1990
+100,"Congo",29,1991
+100,"Congo",81,1993
+100,"Congo",22,1994
+100,"Congo",24,1995
+100,"Congo",28,1996
+101,"Namibia",84,1990
+101,"Namibia",78,1991
+101,"Namibia",96,1992
+101,"Namibia",112,1993
+102,"South Africa",33164,1994
+102,"South Africa",36051,1995
+102,"South Africa",39016,1996
+102,"South Africa",43192,1997
+102,"South Africa",48608,1998
+102,"South Africa",52197,1999
+106,"Ghana",131.6,1995
+106,"Ghana",3150.5,1996
+106,"Ghana",1004,1997
+106,"Ghana",595.56,1998
+106,"Ghana",227.7,1999
+106,"Ghana",24195,2006
+106,"Ghana",9252.46,2007
+106,"Ghana",12913,2008
+106,"Ghana",14701.55,2009
+110,"Bahamas",824.37,2006
+114,"Haiti",34.28,1990
+114,"Haiti",37.72,1991
+114,"Haiti",23.04,1992
+114,"Haiti",14.17,1993
+114,"Haiti",17.09,1994
+114,"Haiti",24.64,1995
+114,"Haiti",28.88,1996
+114,"Haiti",32.7,1997
+114,"Haiti",47.56,1998
+114,"Haiti",52.64,1999
+115,"Dominican Republic",9942,1994
+115,"Dominican Republic",6898,1995
+115,"Dominican Republic",6986,1996
+115,"Dominican Republic",7690,1997
+115,"Dominican Republic",8750,1998
+115,"Dominican Republic",5631,1999
+115,"Dominican Republic",8232.9,2006
+115,"Dominican Republic",11382,2007
+115,"Dominican Republic",10824.88,2008
+115,"Dominican Republic",11956.52,2009
+115,"Dominican Republic",12636.25,2010
+119,"Saint Kitts and Nevis",25.14,2006
+119,"Saint Kitts and Nevis",25.14,2007
+119,"Saint Kitts and Nevis",29.92,2008
+119,"Saint Kitts and Nevis",30.16,2009
+119,"Saint Kitts and Nevis",29.22,2010
+119,"Saint Kitts and Nevis",29.56,2011
+120,"Antigua and Barbuda",323.4,2010
+120,"Antigua and Barbuda",4110.686,2011
+122,"Saint Lucia",194,1997
+122,"Saint Lucia",98,1998
+122,"Saint Lucia",382,1999
+124,"Barbados",565,1993
+124,"Barbados",535,1994
+124,"Barbados",709,1995
+124,"Barbados",516,1996
+124,"Barbados",310.13,1997
+126,"Trinidad and Tobago",846,1990
+126,"Trinidad and Tobago",1118,1991
+126,"Trinidad and Tobago",1100,1992
+126,"Trinidad and Tobago",903,1993
+129,"Panama",7278,1997
+129,"Panama",6352,1998
+129,"Panama",5812.58,2006
+129,"Panama",4596.55,2007
+129,"Panama",3704.641,2011
+130,"Costa Rica",13248,1993
+130,"Costa Rica",10682.03,1995
+130,"Costa Rica",21698,1996
+130,"Costa Rica",32552,1997
+130,"Costa Rica",15796,1998
+130,"Costa Rica",33772,1999
+130,"Costa Rica",12118,2006
+130,"Costa Rica",25493.12,2007
+130,"Costa Rica",26629.6,2008
+130,"Costa Rica",24610.94,2009
+130,"Costa Rica",28483.68,2010
+130,"Costa Rica",25622.5,2011
+131,"Nicaragua",1150,1992
+131,"Nicaragua",1954,1993
+131,"Nicaragua",1598,1994
+131,"Nicaragua",1752,1995
+131,"Nicaragua",9186.2,1998
+131,"Nicaragua",8741.32,1999
+131,"Nicaragua",13778.52,2006
+131,"Nicaragua",19700.5,2007
+131,"Nicaragua",20347.82,2008
+131,"Nicaragua",18774.9,2009
+131,"Nicaragua",24484.38,2010
+132,"Colombia",18826,1990
+132,"Colombia",17527,1991
+132,"Colombia",15836,1992
+132,"Colombia",15311,1993
+132,"Colombia",17534,1994
+132,"Colombia",20674,1995
+132,"Colombia",18364,1996
+132,"Colombia",32010,1997
+132,"Colombia",121374,1998
+132,"Colombia",98328.63,2006
+132,"Colombia",82439.06,2007
+132,"Colombia",48538.97,2008
+132,"Colombia",51435.13,2009
+132,"Colombia",48618.46,2010
+132,"Colombia",53797,2011
+133,"Honduras",19196,1990
+133,"Honduras",14030,1991
+133,"Honduras",21414,1992
+133,"Honduras",6794,1993
+133,"Honduras",5974,1994
+133,"Honduras",13583,1995
+133,"Honduras",10489,1996
+133,"Honduras",9266,1997
+133,"Honduras",3495,1998
+133,"Honduras",2387,1999
+133,"Honduras",8595.02,2006
+133,"Honduras",10567.86,2007
+133,"Honduras",10260.84,2008
+133,"Honduras",8688.72,2009
+133,"Honduras",11473.264,2010
+133,"Honduras",12648.839,2011
+134,"El Salvador",2524,1990
+134,"El Salvador",4096,1991
+134,"El Salvador",5678.63,2006
+134,"El Salvador",2160.23,2007
+134,"El Salvador",12523.4,2008
+134,"El Salvador",10055.72,2009
+134,"El Salvador",11944.731,2010
+135,"Mexico",133312.69,2006
+135,"Mexico",142141.01,2007
+135,"Mexico",141452.77,2008
+135,"Mexico",126625.22,2009
+136,"Guatemala",1164,1992
+136,"Guatemala",3164,1996
+136,"Guatemala",31902.541,2006
+136,"Guatemala",45766.346,2007
+136,"Guatemala",36183.314,2008
+136,"Guatemala",26553.403,2009
+136,"Guatemala",29796.488,2010
+137,"Ecuador",2541,1990
+137,"Ecuador",2388,1991
+137,"Ecuador",2040,1992
+137,"Ecuador",1868,1993
+137,"Ecuador",2687,1994
+137,"Ecuador",5316,1995
+137,"Ecuador",4814,1996
+137,"Ecuador",15224,1997
+137,"Ecuador",43000,1998
+137,"Ecuador",28432,1999
+137,"Ecuador",15906.84,2006
+137,"Ecuador",28312.32,2007
+137,"Ecuador",30792.28,2008
+137,"Ecuador",19333.74,2009
+137,"Ecuador",63274.24,2010
+137,"Ecuador",35058.88,2011
+138,"Peru",6268,1995
+138,"Peru",7510,1996
+138,"Peru",8614,1997
+138,"Peru",4493,1998
+138,"Peru",4131,1999
+138,"Peru",12567.26,2006
+138,"Peru",9636.18,2007
+138,"Peru",13356.56,2008
+138,"Peru",12387.78,2009
+138,"Peru",16623.24,2010
+138,"Peru",16860.94,2011
+139,"Venezuela (Bolivarian Republic of)",1822,1990
+139,"Venezuela (Bolivarian Republic of)",2409,1991
+139,"Venezuela (Bolivarian Republic of)",3928,1992
+143,"Iceland",6.432,1999
+143,"Iceland",5249.47,2006
+143,"Iceland",10.688,2007
+143,"Iceland",11.478,2008
+143,"Iceland",8.74,2009
+143,"Iceland",5.46,2010
+147,"French Polynesia",90.6,2006
+147,"French Polynesia",97.28,2007
+147,"French Polynesia",107.64,2008
+147,"French Polynesia",90.86,2009
+147,"French Polynesia",55.46,2010
+147,"French Polynesia",86.42,2011
+152,"Samoa",96,1991
+152,"Samoa",76,1992
+152,"Samoa",47.06,1993
+152,"Samoa",96.54,1994
+152,"Samoa",88.36,1995
+152,"Samoa",47.32,1996
+152,"Samoa",65.562,1997
+152,"Samoa",23.604,1998
+152,"Samoa",345.06,1999
+153,"Cook Islands",1,1990
+153,"Cook Islands",1,1991
+153,"Cook Islands",1,1992
+153,"Cook Islands",1,1993
+153,"Cook Islands",0,1994
+153,"Cook Islands",1.42,1995
+153,"Cook Islands",1.8,1996
+153,"Cook Islands",3.26,1997
+153,"Cook Islands",3.16,1998
+153,"Cook Islands",0.03,1999
+153,"Cook Islands",12.02,2006
+153,"Cook Islands",58.46,2007
+153,"Cook Islands",5296.69,2008
+153,"Cook Islands",360.62,2009
+162,"New Zealand",3582,1990
+162,"New Zealand",3600,1991
+162,"New Zealand",3616,1992
+162,"New Zealand",3595,1993
+162,"New Zealand",7030,1994
+162,"New Zealand",7808,1995
+162,"New Zealand",6998,1996
+162,"New Zealand",3348,1997
+162,"New Zealand",6080.16,1998
+162,"New Zealand",5052.3,1999
+162,"New Zealand",4547,2006
+162,"New Zealand",5143,2007
+162,"New Zealand",6377,2008
+162,"New Zealand",5659,2009
+163,"United States of America",475365.02,1990
+163,"United States of America",448149.27,1991
+163,"United States of America",474004.22,1992
+163,"United States of America",467200.13,1993
+163,"United States of America",499858.18,1994
+163,"United States of America",499404.99,1995
+163,"United States of America",502126.35,1996
+163,"United States of America",519816.06,1997
+163,"United States of America",520723.61,1998
+163,"United States of America",547031.96,1999
+163,"United States of America",493961.69,2006
+163,"United States of America",485343.434,2007
+164,"Belize",771,1990
+164,"Belize",696,1991
+164,"Belize",1001,1992
+164,"Belize",1362,1998
+164,"Belize",1540.7,2006
+164,"Belize",1731.92,2007
+164,"Belize",1975.33,2008
+164,"Belize",1577.22,2009
+166,"Jamaica",2645,1994
+166,"Jamaica",2717,1995
+166,"Jamaica",3061,1996
+166,"Jamaica",1660,1997
+167,"Guyana",686.25,2006
+167,"Guyana",492.99,2007
+167,"Guyana",468.54,2008
+167,"Guyana",528.946,2009
+167,"Guyana",423.682,2010
+167,"Guyana",801.524,2011
+168,"Suriname",434,1990
+168,"Suriname",414,1991
+168,"Suriname",338,1995
+168,"Suriname",283,1996
+168,"Suriname",278,1997
+168,"Suriname",1373.28,2006
+168,"Suriname",1645.62,2007
+168,"Suriname",1779.54,2008
+168,"Suriname",1948,2009
+168,"Suriname",1556.821,2010
+168,"Suriname",1899.1,2011
+171,"Brazil",40908,1991
+171,"Brazil",52548,1992
+171,"Brazil",41319,1993
+171,"Brazil",75836,1994
+171,"Brazil",89402,1995
+171,"Brazil",95078,1996
+171,"Brazil",115284,1997
+171,"Brazil",126287,1998
+172,"Argentina",52312,1993
+172,"Argentina",60390,1994
+172,"Argentina",75684,1995
+172,"Argentina",109190,1996
+172,"Argentina",155382,1997
+172,"Argentina",124794,1998
+172,"Argentina",183608,2006
+172,"Argentina",226453,2007
+172,"Argentina",242110,2008
+172,"Argentina",170623,2009
+172,"Argentina",292307,2010
+172,"Argentina",276456,2011
+173,"Uruguay",1778.01,1991
+173,"Uruguay",2087.03,1992
+173,"Uruguay",1643.02,1993
+173,"Uruguay",4544.16,1994
+173,"Uruguay",4826.04,1995
+173,"Uruguay",6888.02,1996
+173,"Uruguay",6724.1,1997
+173,"Uruguay",8478.06,1998
+173,"Uruguay",7850.06,1999
+173,"Uruguay",18239.99,2006
+173,"Uruguay",27981.554,2007
+173,"Uruguay",13997.67,2008
+173,"Uruguay",26950.82,2009
+173,"Uruguay",29962.362,2010
+173,"Uruguay",35035.52,2011
+174,"Finland",4002,1990
+174,"Finland",3476,1991
+174,"Finland",2744,1992
+174,"Finland",2400,1993
+174,"Finland",2494,1994
+174,"Finland",2082,1995
+174,"Finland",1818,1996
+174,"Finland",1998,1997
+174,"Finland",2328,1998
+174,"Finland",2278,1999
+174,"Finland",3290.6,2006
+174,"Finland",2958.9,2007
+174,"Finland",3243.72,2008
+174,"Finland",3387.6,2009
+174,"Finland",3504.04,2010
+174,"Finland",3415.08,2011
+175,"Denmark",6517,1990
+175,"Denmark",4817,1991
+175,"Denmark",4847,1992
+175,"Denmark",4434,1993
+175,"Denmark",4169,1994
+175,"Denmark",10083,1995
+175,"Denmark",3759,1996
+175,"Denmark",3783,1997
+175,"Denmark",3798,1998
+175,"Denmark",3088,1999
+175,"Denmark",3352,2006
+175,"Denmark",3464,2007
+175,"Denmark",4403,2008
+175,"Denmark",3060,2009
+175,"Denmark",4086,2010
+175,"Denmark",4401.86,2011
+176,"Germany",62578,1990
+176,"Germany",64012,1991
+176,"Germany",59084,1992
+176,"Germany",50340,1993
+176,"Germany",52660,1994
+176,"Germany",60180,1995
+176,"Germany",63366,1996
+176,"Germany",60828,1997
+176,"Germany",66754,1998
+176,"Germany",60038,1999
+176,"Germany",77080.3,2006
+176,"Germany",81481.26,2007
+176,"Germany",86826.02,2008
+176,"Germany",78578.86,2009
+176,"Germany",81664.84,2010
+176,"Germany",87508.7,2011
+177,"Netherlands",19457,1990
+177,"Netherlands",18675,1991
+177,"Netherlands",18059,1992
+177,"Netherlands",21009,1993
+177,"Netherlands",10280,1994
+177,"Netherlands",13789,1995
+177,"Netherlands",10413,1996
+177,"Netherlands",10805,1997
+177,"Netherlands",12026,1998
+177,"Netherlands",11356,1999
+177,"Netherlands",20922.12,2006
+177,"Netherlands",24145.84,2007
+177,"Netherlands",21554.16,2008
+177,"Netherlands",19714.4,2009
+177,"Netherlands",19172.06,2010
+178,"Poland",5996,1991
+178,"Poland",7626,1992
+178,"Poland",9000,1993
+178,"Poland",9480,1994
+178,"Poland",7291,1995
+178,"Poland",10299,1996
+178,"Poland",10196,1997
+178,"Poland",9440,1998
+178,"Poland",9397,1999
+178,"Poland",34186,2006
+178,"Poland",37442,2007
+178,"Poland",41222.04,2008
+178,"Poland",36988.06,2009
+178,"Poland",38898.04,2010
+178,"Poland",43558.54,2011
+179,"France",105420,1990
+179,"France",106917,1991
+179,"France",91781,1992
+179,"France",98262,1993
+179,"France",95150,1994
+179,"France",168021,1995
+179,"France",195779,1996
+179,"France",115884,1997
+179,"France",115588,1998
+179,"France",124365,1999
+179,"France",143224,2006
+179,"France",154948,2007
+179,"France",89500,2008
+179,"France",71200,2009
+179,"France",70314,2010
+180,"United Kingdom",31902,1990
+180,"United Kingdom",31410,1991
+180,"United Kingdom",62154,1992
+180,"United Kingdom",64773,1993
+180,"United Kingdom",67857,1994
+180,"United Kingdom",67485,1995
+180,"United Kingdom",71157,1996
+180,"United Kingdom",70979,1997
+180,"United Kingdom",70843,1998
+180,"United Kingdom",71073,1999
+180,"United Kingdom",42022.43,2006
+180,"United Kingdom",44663.4,2007
+180,"United Kingdom",43193.36,2008
+180,"United Kingdom",42648.44,2009
+180,"United Kingdom",33541.74,2010
+180,"United Kingdom",32803.32,2011
+181,"Ireland",4028,1994
+181,"Ireland",4304,1995
+181,"Ireland",3154,1996
+181,"Ireland",4402,1997
+181,"Ireland",4514,1998
+181,"Ireland",3860,1999
+181,"Ireland",5529.56,2006
+181,"Ireland",6173.04,2007
+181,"Ireland",5599.96,2008
+181,"Ireland",7176.17,2009
+181,"Ireland",5241.9,2010
+181,"Ireland",7351.06,2011
+182,"Spain",44223,1990
+182,"Spain",43787,1991
+182,"Spain",34685,1992
+182,"Spain",33036,1993
+182,"Spain",34189,1994
+182,"Spain",30819,1995
+182,"Spain",37897,1996
+182,"Spain",37650,1997
+182,"Spain",38570,1998
+182,"Spain",37199,1999
+182,"Spain",42562,2006
+182,"Spain",42231,2007
+182,"Spain",43688,2008
+182,"Spain",37856,2009
+182,"Spain",41813,2010
+183,"Portugal",18714,1991
+183,"Portugal",12234,1992
+183,"Portugal",17970,1993
+183,"Portugal",19160,1994
+183,"Portugal",23630,1995
+183,"Portugal",24914,1996
+183,"Portugal",13890,1997
+183,"Portugal",28627,1998
+183,"Portugal",30655,1999
+183,"Portugal",17498,2006
+183,"Portugal",33364.68,2007
+183,"Portugal",34160.48,2008
+183,"Portugal",27933.39,2009
+183,"Portugal",27547.83,2010
+183,"Portugal",27973.29,2011
+184,"Italy",112604.4,1990
+184,"Italy",99749.6,1991
+184,"Italy",98405.6,1992
+184,"Italy",97636.2,1993
+184,"Italy",89199.6,1994
+184,"Italy",93270,1995
+184,"Italy",83441.2,1996
+184,"Italy",92911,1997
+184,"Italy",168234,1998
+184,"Italy",163166,1999
+184,"Italy",148698,2006
+184,"Italy",160908,2007
+184,"Italy",159286,2008
+184,"Italy",141702,2009
+184,"Italy",141394,2010
+184,"Italy",139254,2011
+186,"Montenegro",0.55,2008
+186,"Montenegro",0.55,2009
+186,"Montenegro",66,2010
+186,"Montenegro",75,2011
+186,"Serbia and Montenegro",6578,1992
+186,"Serbia and Montenegro",4950,1993
+186,"Serbia and Montenegro",4517,1994
+186,"Serbia and Montenegro",3973,1995
+186,"Serbia and Montenegro",3749,1996
+186,"Serbia and Montenegro",3563,1997
+186,"Serbia and Montenegro",3665,1998
+186,"Serbia and Montenegro",3850,1999
+187,"Croatia",2383,1992
+187,"Croatia",3453,1995
+187,"Croatia",6296,1996
+188,"Slovenia",1309,1992
+188,"Slovenia",1112,1993
+188,"Slovenia",944,1994
+188,"Slovenia",987,1995
+188,"Slovenia",953,1996
+188,"Slovenia",2490,1997
+188,"Slovenia",2182,1998
+188,"Slovenia",1133,1999
+188,"Slovenia",1312.8,2006
+188,"Slovenia",1181.3,2007
+188,"Slovenia",1250.39,2008
+188,"Slovenia",1186,2009
+188,"Slovenia",1163.8,2010
+188,"Slovenia",1143.76,2011
+189,"Lithuania",2760,1992
+189,"Lithuania",1872,1993
+189,"Lithuania",1426,1994
+189,"Lithuania",1474,1995
+189,"Lithuania",1958,1996
+189,"Lithuania",1856,1997
+189,"Lithuania",1558,1998
+189,"Lithuania",1350,1999
+189,"Lithuania",1326.7,2006
+189,"Lithuania",5445.64,2007
+189,"Lithuania",5445.1,2008
+189,"Lithuania",5497.6,2009
+189,"Lithuania",3607.58,2010
+189,"Lithuania",4124.88,2011
+190,"Qatar",6,1993
+190,"Qatar",6,1994
+190,"Qatar",8,1995
+190,"Qatar",12,1996
+191,"Iran (Islamic Republic of)",21289,1990
+191,"Iran (Islamic Republic of)",32698,1991
+191,"Iran (Islamic Republic of)",23366,1992
+191,"Iran (Islamic Republic of)",19144,1993
+191,"Iran (Islamic Republic of)",20648,1994
+191,"Iran (Islamic Republic of)",17492,1995
+191,"Iran (Islamic Republic of)",10664,1996
+191,"Iran (Islamic Republic of)",25580,2006
+191,"Iran (Islamic Republic of)",19401,2007
+191,"Iran (Islamic Republic of)",11462,2008
+191,"Iran (Islamic Republic of)",7043,2009
+191,"Iran (Islamic Republic of)",17295.4,2011
+192,"Iraq",1384,1994
+192,"Iraq",1632,1995
+192,"Iraq",1232,1996
+192,"Iraq",1693,1997
+192,"Iraq",1501,1998
+192,"Iraq",1003,1999
+192,"Iraq",824.14,2006
+192,"Iraq",1062.61,2007
+193,"Guinea-Bissau",64,1990
+193,"Guinea-Bissau",76,1991
+193,"Guinea-Bissau",8,1992
+193,"Guinea-Bissau",50,1993
+193,"Guinea-Bissau",1,1999
+194,"Guinea",160,1992
+194,"Guinea",42,1993
+194,"Guinea",78,1994
+194,"Guinea",304,1995
+194,"Guinea",314,1996
+194,"Guinea",314,1997
+194,"Guinea",898.52,2009
+195,"Ivory Coast",32,1993
+195,"Ivory Coast",286,1994
+195,"Ivory Coast",268,1995
+195,"Ivory Coast",186,1996
+197,"Cameroon",4312.8,1990
+197,"Cameroon",962,1991
+197,"Cameroon",6080,1992
+197,"Cameroon",96.7,1995
+197,"Cameroon",360.16,1996
+197,"Cameroon",1260.24,1997
+197,"Cameroon",516.04,1998
+197,"Cameroon",7648.06,2006
+197,"Cameroon",7833,2007
+197,"Cameroon",7207.8,2008
+197,"Cameroon",6442.24,2009
+197,"Cameroon",9394.94,2010
+197,"Cameroon",11011.7,2011
+200,"Angola",128,1990
+200,"Angola",158,1991
+200,"Angola",46,1992
+200,"Angola",338,1993
+200,"Angola",50,1994
+200,"Angola",671,1995
+200,"Angola",79,1996
+202,"United Republic of Tanzania",40,1993
+202,"United Republic of Tanzania",1430,1994
+202,"United Republic of Tanzania",1114,1995
+202,"United Republic of Tanzania",14,1996
+202,"United Republic of Tanzania",98,1997
+202,"United Republic of Tanzania",2,1998
+203,"India",150000,1990
+203,"India",144266,1991
+203,"India",141582,1992
+203,"India",132775,1993
+203,"India",122714,1994
+203,"India",122514,1995
+203,"India",112228,1996
+203,"India",104558,1997
+203,"India",98314,1998
+203,"India",92390,1999
+203,"India",74846,2006
+203,"India",62352.91,2007
+203,"India",29209.66,2008
+203,"India",57751.02,2009
+203,"India",80557.38,2010
+204,"Bangladesh",2532,1990
+204,"Bangladesh",2574,1991
+204,"Bangladesh",2906,1992
+204,"Bangladesh",2974,1993
+204,"Bangladesh",3404,1995
+204,"Bangladesh",3838,1996
+204,"Bangladesh",4070,1997
+204,"Bangladesh",4136,1998
+204,"Bangladesh",46548.66,2006
+204,"Bangladesh",57723.69,2007
+204,"Bangladesh",68136.56,2008
+204,"Bangladesh",27580.171,2009
+204,"Bangladesh",26607.436,2010
+205,"Myanmar",418.16,1990
+205,"Myanmar",228,1991
+205,"Myanmar",302.36,1992
+205,"Myanmar",320.66,1993
+205,"Myanmar",380,1994
+205,"Myanmar",529.52,1995
+205,"Myanmar",274.48,1996
+205,"Myanmar",291.08,1997
+205,"Myanmar",7744.318,2006
+205,"Myanmar",6659.317,2007
+205,"Myanmar",2838.314,2008
+205,"Myanmar",2182.186,2009
+205,"Myanmar",6680.171,2010
+205,"Myanmar",9284.822,2011
+206,"Malaysia",78812.96,2006
+206,"Malaysia",93736.7,2007
+206,"Malaysia",109643.82,2008
+206,"Malaysia",104928.38,2009
+206,"Malaysia",120389.66,2010
+207,"Viet Nam",20912,1994
+207,"Viet Nam",24896,1995
+207,"Viet Nam",32745,1996
+207,"Viet Nam",33686,1997
+207,"Viet Nam",21165,1998
+207,"Viet Nam",16884,1999
+209,"China, Hong Kong SAR",230,1990
+209,"China, Hong Kong SAR",190,1991
+209,"China, Hong Kong SAR",168,1992
+209,"China, Hong Kong SAR",115,1993
+209,"China, Hong Kong SAR",107,1994
+209,"China, Hong Kong SAR",75,1995
+209,"China, Hong Kong SAR",238,2006
+209,"China, Hong Kong SAR",252.56,2007
+209,"China, Hong Kong SAR",110,2008
+209,"China, Hong Kong SAR",92,2009
+209,"China, Hong Kong SAR",82,2010
+209,"China, Hong Kong SAR",126,2011
+209,"China, Macao SAR",147,2006
+209,"China, Macao SAR",299.75,2007
+209,"China, Macao SAR",163.63,2008
+209,"China, Macao SAR",151,2009
+209,"China, Macao SAR",146,2010
+209,"China, Macao SAR",139,2011
+210,"Japan",130496.52,2006
+210,"Japan",122328.14,2007
+210,"Japan",117500,2008
+210,"Japan",121918.6,2009
+210,"Japan",111134.8,2010
+210,"Japan",103570.1,2011
+214,"Egypt",25177,1990
+214,"Egypt",15764,1991
+214,"Egypt",11562,1992
+214,"Egypt",7140,1993
+215,"Jordan",1468,1990
+215,"Jordan",1852,1991
+215,"Jordan",2730,1992
+215,"Jordan",1572,1993
+215,"Jordan",1522,1995
+215,"Jordan",1820,1996
+215,"Jordan",1750,1997
+215,"Jordan",1690,1998
+215,"Jordan",1050,1999
+215,"Jordan",2249,2006
+215,"Jordan",2592,2007
+215,"Jordan",1462.7,2008
+215,"Jordan",1285.5,2009
+215,"Jordan",1416.8,2010
+215,"Jordan",1342.5,2011
+216,"Indonesia",2877,1990
+216,"Indonesia",3757,1991
+216,"Indonesia",827,1992
+216,"Indonesia",1634,1993
+218,"Canada",59136,1990
+218,"Canada",58412,1994
+218,"Canada",39423.59,2006
+218,"Canada",55872.5,2008
+222,"Sweden",4620,1990
+222,"Sweden",3682,1991
+222,"Sweden",2994,1992
+222,"Sweden",2905,1993
+222,"Sweden",3924,1994
+222,"Sweden",2450,1995
+222,"Sweden",3058,1996
+222,"Sweden",1534,1997
+222,"Sweden",1555,1998
+222,"Sweden",1602,1999
+222,"Sweden",2238,2006
+222,"Sweden",2185,2007
+222,"Sweden",2390,2008
+222,"Sweden",1967,2009
+222,"Sweden",2002,2010
+222,"Sweden",1803,2011
+223,"Norway",2366,1990
+223,"Norway",1520,1991
+223,"Norway",1534,1992
+223,"Norway",807,1993
+223,"Norway",906,1994
+223,"Norway",1826,1995
+223,"Norway",1396.02,1996
+223,"Norway",1490.02,1997
+223,"Norway",1868.04,1998
+223,"Norway",1589.04,1999
+223,"Norway",1392.77,2006
+223,"Norway",1444.15,2007
+223,"Norway",1601.8,2008
+223,"Norway",1069.29,2009
+223,"Norway",1397.96,2010
+223,"Norway",1647.92,2011
+224,"Chile",7385,1990
+224,"Chile",8158,1991
+224,"Chile",10093,1992
+224,"Chile",9947,1993
+224,"Chile",9838,1994
+224,"Chile",11664,1995
+224,"Chile",13549,1996
+224,"Chile",15313,1997
+224,"Chile",15900,1998
+224,"Chile",27835.93,2006
+224,"Chile",29774.89,2007
+224,"Chile",35235.76,2008
+224,"Chile",34503.21,2009
+224,"Chile",31606.06,2010
+224,"Chile",24856,2011
+231,"Timor-Leste",4.94,2007
+231,"Timor-Leste",2.78,2008
+231,"Timor-Leste",3.56,2009
