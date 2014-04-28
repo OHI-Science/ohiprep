@@ -112,11 +112,11 @@ Buffers were applied to all sp_gcs with valid regions (excluding sp_types: eez-i
 
 So far the following buffer zones are expected (see [ohicore#40](https://github.com/OHI-Science/ohicore/issues/40 for latest):
 
-* offshore3nm
-* offshore1km
-* inland1km
-* inland25km
-* inland50km 
+* **offshore3nm**
+* **offshore1km**
+* **inland1km**
+* **inland25km**
+* **inland50km**
 
 Each of the above buffers has the following outputs:
 ```
