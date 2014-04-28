@@ -49,7 +49,8 @@ gd      = '{0}/Global/{1}'.format(conf['dir_git'], nm)               # git direc
 
 # inputs
 sp_gcs = '{0}/sp_gcs'.format(gdb)
-buffers = ['inland1km','offshore3nm','inland25km','offshore1km','inland50km'] # 'offshore100nm',
+##buffers = ['inland1km','offshore3nm','inland25km','offshore1km','inland50km'] # 'offshore100nm',
+buffers = ['inland50km'] # 'offshore100nm',
 
 # buffer units dictionary
 buf_units_d = {'nm':'NauticalMiles',
@@ -159,7 +160,7 @@ for buf in buffers:  # buf = 'inland1km'
     buf_zone, buf_dist, buf_units = re.search('(\\D+)(\\d+)(\\D+)', buf).groups()
     sp_ids =  sorted(sp_dict.iterkeys())
 
-    if buf == 'inland1km':
+    if buf in ['inland1km','offshore3nm']:
         pass
     else:
         for i, sp_id in enumerate(sorted(sp_dict.iterkeys())): # i, sp_id = (9999, 218)
@@ -174,33 +175,62 @@ for buf in buffers:  # buf = 'inland1km'
                 print('    (%03d of %d, %s) %06d %s %s_s_b_d DELETE' % (i+1, len(sp_dict), time.strftime('%H:%M:%S'), sp_id, sp_dict[sp_id], buf_i))
                 arcpy.Delete_management('%s_s_b_d' % buf_i)
 
-            if not arcpy.Exists('%s_s_b_i' % buf_i):
+            if not arcpy.Exists('%s_s_b' % buf_i):
+                print('    (%03d of %d, %s) %06d %s %s_s SELECT' % (i+1, len(sp_dict), time.strftime('%H:%M:%S'), sp_id, sp_name, buf_i))
+                arcpy.Select_analysis(dict_zone[buf_zone]['buffer'], '%s_s' % buf_i, '"sp_id"=%d' % sp_id)        
                 try:
-                    print('    (%03d of %d, %s) %06d %s %s_s_b' % (i+1, len(sp_dict), time.strftime('%H:%M:%S'), sp_id, sp_name, buf_i))
-                    arcpy.Select_analysis(dict_zone[buf_zone]['buffer'], '%s_s' % buf_i, '"sp_id"=%d' % sp_id)        
                     arcpy.Buffer_analysis('%s_s' % buf_i, '%s_s_b' % buf_i, '%s %s' % (buf_dist, buf_units_d[buf_units]), 'FULL', 'ROUND', 'ALL')
                     arcpy.RepairGeometry_management('%s_s_b' % buf_i)
                 except Exception as e:
-                    print('      ERROR: %s (%s)' % (e.message, time.strftime('%H:%M:%S'))) #arcpy.AddError(e.message)
-                    print '      FAILED: %06d %s' % (sp_id, sp_name)
+                    # dice buffering. for United States buf_inland50km_000163_s_b, Finland buf_inland50km_000174_s_b, Sweden buf_inland50km_000222_s_b
+                    try:
+                        print('    (%03d of %d, %s) %06d %s %s_s_b DICING' % (i+1, len(sp_dict), time.strftime('%H:%M:%S'), sp_id, sp_name, buf_i))
+                        arcpy.Dice_management('%s_s' % buf_i, '%s_s_d100k' % buf_i, 100000)
+                        objectids = list(arcpy.da.TableToNumPyArray('%s_s_d100k' % buf_i, ['OBJECTID']).astype(int))
+                        for oid in objectids:
+                            print('    (%03d of %d, %s) %06d %s BUFFER %s_s_b_%04d' % (i+1, len(sp_dict), time.strftime('%H:%M:%S'), sp_id, sp_name, buf_i, oid))
+                            arcpy.MakeFeatureLayer_management('%s_s_d100k' % buf_i, 'lyr', '"OBJECTID"=%d' % oid)
+                            arcpy.Buffer_analysis('lyr', '%s_s_b_%04d' % (buf_i, oid), '%s %s' % (buf_dist, buf_units_d[buf_units]), 'FULL', 'ROUND', 'ALL')
+                        buf_i_oids = ['%s_s_b_%04d' % (buf_i, oid) for oid in objectids]
+                        print('    (%03d of %d, %s) %06d %s MERGE %d buffers to %s_s_b_m' % (i+1, len(sp_dict), time.strftime('%H:%M:%S'), sp_id, sp_name, len(objectids)+1, buf_i))
+                        arcpy.Merge_management(buf_i_oids, '%s_s_b_m' % buf_i)
+                        print('    (%03d of %d, %s) %06d %s DISSOLVE to %s_s_b' % (i+1, len(sp_dict), time.strftime('%H:%M:%S'), sp_id, sp_name, buf_i))
+                        arcpy.Dissolve_management('%s_s_b_m' % buf_i, '%s_s_b' % buf_i)
+                        arcpy.RepairGeometry_management('%s_s_b' % buf_i)
+                    except:
+                        sp_ids.remove(sp_id)
+                        print '      FAILED DICE BUFFER: %06d %s' % (sp_id, sp_name)
+                        print('      ERROR DICE BUFFER: %s (%s)' % (e.message, time.strftime('%H:%M:%S'))) #arcpy.AddError(e.message)                        
+                        continue
+                    
+                    print '      FAILED BUFFER: %06d %s' % (sp_id, sp_name)
+                    print('      ERROR BUFFER: %s (%s)' % (e.message, time.strftime('%H:%M:%S'))) #arcpy.AddError(e.message)
                     sp_ids.remove(sp_id)
                     continue
+                
+            if arcpy.Exists('%s_s_b' % buf_i) and not arcpy.Exists('%s_s_b_i' % buf_i):
                 try:
-                    print('    (%03d of %d, %s) %06d %s %s_s_b_i' % (i+1, len(sp_dict), time.strftime('%H:%M:%S'), sp_id, sp_name, buf_i))
+                    print('    (%03d of %d, %s) %06d INTERSECT %s %s_s_b_i' % (i+1, len(sp_dict), time.strftime('%H:%M:%S'), sp_id, sp_name, buf_i))
                     arcpy.Intersect_analysis(['%s_s_b' % buf_i, dict_zone[buf_zone]['intersect']], '%s_s_b_i' % buf_i, 'NO_FID')
                     arcpy.RepairGeometry_management('%s_s_b_i' % buf_i)
                 except  Exception as e:
-                    # try dicing first. worked for Canada buf_inland1km_000218_s_b_i                
-                    print('    (%03d of %d, %s) %06d %s %s_s_b_i DICING' % (i+1, len(sp_dict), time.strftime('%H:%M:%S'), sp_id, sp_name, buf_i))
-                    arcpy.Dice_management('%s_s_b' % buf_i, '%s_s_b_d100k' % buf_i, 100000)
-                    objectids = list(arcpy.da.TableToNumPyArray('%s_s_b_d100k' % buf_i, ['OBJECTID']).astype(int))
-                    for oid in objectids:
-                        arcpy.MakeFeatureLayer_management('%s_s_b_d100k' % buf_i, 'lyr', '"OBJECTID"=%d' % oid)
-                        arcpy.Intersect_analysis(['lyr', dict_zone[buf_zone]['intersect']], '%s_s_b_i_%04d' % (buf_i, oid), 'NO_FID')
-                    buf_i_oids = ['buf_%s_%06d_s_b_i_%04d' % (buf, sp_id, oid) for oid in objectids]
-                    arcpy.Merge_management(buf_i_oids, 'buf_%s_%06d_s_b_i_m' % (buf, sp_id))
-                    arcpy.Dissolve_management('buf_%s_%06d_s_b_i_m' % (buf, sp_id), 'buf_%s_%06d_s_b_i' % (buf, sp_id))
-                    arcpy.RepairGeometry_management('%s_s_b_i' % buf_i)
+                    # dice intersection. worked for Canada buf_inland1km_000218_s_b_i
+                    try:
+                        print('    (%03d of %d, %s) %06d %s %s_s_b_i DICING' % (i+1, len(sp_dict), time.strftime('%H:%M:%S'), sp_id, sp_name, buf_i))
+                        arcpy.Dice_management('%s_s_b' % buf_i, '%s_s_b_d100k' % buf_i, 100000)
+                        objectids = list(arcpy.da.TableToNumPyArray('%s_s_b_d100k' % buf_i, ['OBJECTID']).astype(int))
+                        for oid in objectids:
+                            arcpy.MakeFeatureLayer_management('%s_s_b_d100k' % buf_i, 'lyr', '"OBJECTID"=%d' % oid)
+                            arcpy.Intersect_analysis(['lyr', dict_zone[buf_zone]['intersect']], '%s_s_b_i_%04d' % (buf_i, oid), 'NO_FID')
+                        buf_i_oids = ['%s_s_b_i_%04d' % (buf_i, sp_id, oid) for oid in objectids]
+                        arcpy.Merge_management(buf_i_oids, '%s_s_b_i_m' % buf_i)
+                        arcpy.Dissolve_management('%s_s_b_i_m' % buf_i, '%s_s_b_i' % buf_i)
+                        arcpy.RepairGeometry_management('%s_s_b_i' % buf_i)
+                    except:
+                        sp_ids.remove(sp_id)
+                        print '      FAILED DICE INTERSECT: %06d %s' % (sp_id, sp_name)
+                        print('      ERROR DICE INTERSECT: %s (%s)' % (e.message, time.strftime('%H:%M:%S'))) #arcpy.AddError(e.message)                        
+                        continue
 
 ##    # merge buffers
 ##    try:
@@ -248,14 +278,16 @@ for buf in buffers:  # buf = 'inland1km'
             add_area(rgn_buf)
 
         # export shp and csv
-        print('  exporting shp and csv (%s)' % time.strftime('%H:%M:%S'))
-        if not arcpy.Exists('{0}/data/{1}.shp'.format(     ad, sp_buf)) or not os.path.isfile('{0}/data/{1}_data.csv'.format(ad, sp_buf))):
+        
+        if not arcpy.Exists('{0}/data/{1}.shp'.format(ad, sp_buf)) or not os.path.isfile('{0}/data/{1}_data.csv'.format(ad, sp_buf)):
+            print('  exporting shp and csv %s (%s)' % (sp_buf, time.strftime('%H:%M:%S')))
             export_shpcsv(
                 fc   = sp_buf,
                 flds = sp_area_flds,
                 shp  = '{0}/data/{1}.shp'.format(     ad, sp_buf),
                 csv  = '{0}/data/{1}_data.csv'.format(ad, sp_buf))
-        if not arcpy.Exists('{0}/data/{1}.shp'.format(     ad, rgn_buf)) or not os.path.isfile('{0}/data/{1}_data.csv'.format(ad, rgn_buf))):
+        if not arcpy.Exists('{0}/data/{1}.shp'.format(     ad, rgn_buf)) or not os.path.isfile('{0}/data/{1}_data.csv'.format(ad, rgn_buf)):
+            print('  exporting shp and csv %s (%s)' % (rgn_buf, time.strftime('%H:%M:%S')))
             export_shpcsv(
                 fc   = rgn_buf,
                 flds = rgn_area_flds,
