@@ -108,7 +108,26 @@ This limitation of 10 characters for shapefiles is uber lame. I'm looking into u
 
 ## Buffers
 
-Buffers were applied to all sp_gcs with valid regions (excluding sp_types: eez-inland, land-disputed and eez-disputed) that have both inland and offshore components. The following offshore spatial regions do not have any buffers since they are without any land:
+Buffers were applied to all sp_gcs with valid regions (excluding sp_types: eez-inland, land-disputed and eez-disputed) that have both inland and offshore components. 
+
+So far the following buffer zones are expected (see [ohicore#40](https://github.com/OHI-Science/ohicore/issues/40 for latest):
+
+* **offshore3nm**
+* **offshore1km**
+* **inland1km**
+* **inland25km**
+* **inland50km**
+
+Each of the above buffers has the following outputs:
+```
+git-annex/Global/NCEAS-Regions_v2014/data/
+    sp_[buffer]_gcs.shp
+    sp_[buffer]_gcs_data.csv
+    rgn_[buffer]_gcs.shp
+    rgn_[buffer]_gcs_data.csv
+```
+
+The following offshore spatial regions do not have any buffers since they are without any land:
 
 * 1018: Arctic Sea
 * 1021: Atlantic, Northwest
