@@ -32,7 +32,7 @@ for (p in poles){
   r.rgn = setValues(r, pts@data[['sp_id']]) #create a new raster with the regions 
   r.rgn[r.typ < 2] = NA # exclude: land(0), coast(1) from the regions
   #plot data
-  png(sprintf('%s_IceEdgeHabitat_overview.png',p), width=w, height=h)
+  png(sprintf('%s_IceHabitat_overview.png',p), width=w, height=h)
   par(mfcol=c(2,2))
   plot(r.typ, col=rev(topo.colors(length(unique(r.typ)))), main='Pixel Type\n(0=land,1=coast,2=shore,3=water,4=hole)')
   plot(r.ice, col=tim.colors(64), main=sprintf('Ice Concentration (%s)',l))
@@ -97,7 +97,7 @@ for (p in poles){
   # for each of the summed years worth of data
   # (output is a raster with the average of 3 years of data)
   ################################################################
-  
+   
   range.years <- (final.year-6):(final.year-1) #because a sliding 3-year average is used, the final data is one year less than final year
   
   for (yr in range.years){ 

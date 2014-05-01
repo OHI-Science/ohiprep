@@ -11,7 +11,6 @@ library(maptools)
 library(fields)
 library(maps)
 library(gpclib)
-library(animation)
 library(plyr)
 library(reshape2)
 library(dplyr)
@@ -77,15 +76,15 @@ source("~/ohiprep/Global/GL-AQ-SeaIce_v2013/Status_Trend.R")
 ## This is currently configured only to calculate data for CCAMLR regions.  This can be easily modified, however.
 ## This was ultimately not included, but may be picked back up to explore anomolies.
 ## See (SampleSeaIce folder for example of example exploration of these data)
-source("~/ohiprep/Global/GL-AQ-SeaIce_v2013/MonthYearExtent.R")
+#source("~/ohiprep/Global/GL-AQ-SeaIce_v2013/MonthYearExtent.R")
 
 
 ############### Final calculations----
 
 ### shore protection ---- 
+shore <- read.csv("tmp/s_IceShoreProtection.csv")
 
 # health
-shore <- read.csv("tmp/s_IceShoreProtection.csv")
 shore_condition <- subset(shore, select=c(sp_id, pctdevR_2011))
 shore_condition$habitat  <- "seaice_shoreline"
 shore_condition$health  <- ifelse(shore_condition$pctdevR_2011 >1, 1, shore_condition$pctdevR_2011)
@@ -96,7 +95,6 @@ shore_extent <- subset(shore, select=c(sp_id, Reference_avg1979to2012monthlypixe
 shore_extent$km2 <-  shore_extent$Reference_avg1979to2012monthlypixels/12*(pixel/1000)^2
 shore_extent$habitat <- "seaice_shoreline"
 shore_extent <- subset(shore_extent, select=c(sp_id, habitat, km2))
-extent <- rbind(extent_anomoly_extent, shore_extent)
 
 ## trend 
 shore_trend <- subset(shore, select=c(sp_id, Trend_2006to2011_pctdevRperyr))
@@ -105,81 +103,53 @@ shore_trend <- rename(shore_trend, c(Trend_2006to2011_pctdevRperyr="trend"))
 shore_trend <- subset(shore_trend, select=c(sp_id, habitat, trend))
 
 
-<<<<<<< HEAD
-full <- merge(extent, health, by=c("rgn_id", "habitat"))
-full <- merge(full, trend, by=c("rgn_id", "habitat"))
-full_melt <- melt(full, id.vars=c("rgn_id", "habitat"))
-full_melt$value <- round(full_melt$value, 2)
-full_cast <- dcast(full_melt, rgn_id ~ habitat + variable, mean)
-names(full_cast) <- gsub("seaice_", "", names(full_cast))
+### habitat health ---- 
 
-#write.csv(full_cast, "data\\seaice_summary.csv", row.names=FALSE)
-
-
-
-=======
-#### anomoly ----
-
-extent <- read.csv("tmp/s_AQ_YearlyMonthlyIceCover.csv")
-
+habitat <- read.csv("tmp/s_IceHabitat.csv")
 # some regions don't really have enough ice to make a clear assessment:
 # cut some regions due to minimal ice (<200 km2 per year - average of months)
 # get monthly average of cover across years:
-year_avg <- extent %.%
-  group_by(zone) %.%
-  summarise(yearly_avg = mean(km2, na.rm=TRUE))
-extent <- subset(extent, !(zone %in% c("248300", "258510", "258520", "258600", "258700")))
+habitat_condition <- subset(habitat_condition, !(habitat_condition$sp_id %in% c("248300", "258510", "258520", "258600", "258700")))
 
-# get monthly average of cover across years:
-month_avg <- extent %.%
-  group_by(zone, monthCode, month) %.%
-  summarise(all_years_monthly_avg = mean(km2, na.rm=TRUE))
 
-# merge the month averages with data,
-# calculate anomoly, 
-# calculate relative anomoly for the "adjustment"
-extent  <- extent %.%
-  left_join(month_avg, by=c("zone", "monthCode", "month")) %.%
-  mutate(anomoly = km2-all_years_monthly_avg) %.% 
-  mutate(rel_anomoly = anomoly/all_years_monthly_avg)  ## This calculates the "anomaly_i/cover_i" portion of the adjustment. 
+# health
+habitat_condition <- subset(habitat, select=c(sp_id, pctdevR_2011))
+habitat_condition$habitat  <- "seaice_extent"
+habitat_condition$health  <- ifelse(habitat_condition$pctdevR_2011 >1, 1, habitat_condition$pctdevR_2011)
+habitat_condition <- subset(habitat_condition, select=c(sp_id, habitat, health))
 
-adjustment  <-  extent %.%
-  group_by(zone) %.%
-  summarise(adj=mean(abs(rel_anomoly), na.rm=TRUE))
+## extent
+habitat_extent <- subset(habitat, select=c(sp_id, Reference_avg1979to2012monthlypixels))
+habitat_extent$km2 <-  habitat_extent$Reference_avg1979to2012monthlypixels/12*(pixel/1000)^2
+habitat_extent$habitat <- "seaice_extent"
+habitat_extent <- subset(habitat_extent, select=c(sp_id, habitat, km2))
 
-startYear <- 1979
-refYear <- 1979
-refMonth <- 6
-sea_ice <- expand.grid(regions=unique(extent$zone), year=c((final.year-5):final.year), status=NA)
+## trend 
+habitat_trend <- subset(habitat, select=c(sp_id, Trend_2006to2011_pctdevRperyr))
+habitat_trend$habitat <- "seaice_extent"
+habitat_trend <- rename(habitat_trend, c(Trend_2006to2011_pctdevRperyr="trend"))
+habitat_trend <- subset(habitat_trend, select=c(sp_id, habitat, trend))
 
-for(i in 1:length(sea_ice$regions)){
-#  i <- 8 #testing
 
-  region <- sea_ice[i,1]
-  year <- sea_ice[i,2]  
-  tmp  <- extent %.%
-  filter(zone==region) %.%
-  arrange(year, monthCode) %.%
-  mutate(timeSeries = 1:length(year))
+###Merging and saving data ----
+write.csv(rbind(shore_condition, habitat_condition), "data//hab_habitat_health_2013.csv", row.names=FALSE)
+write.csv(rbind(shore_extent, habitat_extent), "data//hab_habitat_extent_2013.csv", row.names=FALSE)
+write.csv(rbind(shore_trend, habitat_trend), "data//hab_habitat_trend_2013.csv", row.names=FALSE)
 
-mod <- lm(anomoly ~ timeSeries, data=tmp)
-mod
+### complete data for viewing ----
+full <- merge(rbind(shore_condition, habitat_condition), rbind(shore_trend, habitat_trend),
+              by=c("sp_id", "habitat"))
+full <- merge(full, rbind(shore_extent, habitat_extent), by=c("sp_id", "habitat"))
+full_melt <- melt(full, id.vars=c("sp_id", "habitat"))
+full_melt$value <- round(full_melt$value, 2)
+full_cast <- dcast(full_melt, sp_id ~ habitat + variable, mean)
+names(full_cast) <- gsub("seaice_", "", names(full_cast))
 
-p <- ggplot(tmp, aes(x=timeSeries, y=anomoly))
-p + geom_point() + geom_line() + geom_abline(intercept=mod$coefficients[1], slope=mod$coefficients[2], col="red") +
-  labs(title=sprintf("Region %s: Proportional anomoly for each month from 1979-2012", region))
+##write.csv(full_cast, "data//seaice_summary.csv", row.names=FALSE)
 
-refTS <- (refYear - startYear)*12 + refMonth
-curTS <- (year - refYear)*12 + refMonth
 
-predictAnom <- predict(mod, data.frame(timeSeries=1:length(tmp$year)))[which(tmp$timeSeries %in% c(refTS, curTS))]
 
-delta <-(predictAnom[[2]] - predictAnom[[1]])/predictAnom[[1]]   
-sea_ice$status[i] <- 1 - abs(delta) * adjustment$adj[adjustment$zone == region]
-}
 
-write.csv(sea_ice, "sea_ice_test_4_27_2014.csv", row.names=FALSE)
->>>>>>> 15734447be0f199e2bfa584edcb3bfe6107f32ba
 ############ Visualization #################################
 library(RColorBrewer)
 library(colorspace)
