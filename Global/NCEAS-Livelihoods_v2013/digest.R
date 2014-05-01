@@ -1,4 +1,5 @@
 # split livelihoods interpolated prep data product model outputs into layer files digestable by toolbox
+# TODO: reconsolidate in upgraded toolbox
 
 library(reshape2)
 library(plyr)
@@ -8,22 +9,47 @@ library(dplyr)
 source('src/R/common.R') # dir_neptune_data
 dir_prod = 'Global/NCEAS-Livelihoods_v2013'
 dir.create(file.path(dir_prod, 'data'), showWarnings=F, recursive=T)
-
+if (exists('meta')) rm(meta)
+  
 # generate layers for toolbox
 for (yr in 2012:2013){ # yr=2013
-  status_model_curref = read.csv(file.path(dir_neptune_data,  sprintf('model/GL-NCEAS-Livelihoods_2012/data_%d/global_li_status_model_curref.csv', yr)), na.strings='') # head(status_model_curref)
-  #paste(names(status_model_curref), collapse="','") # metric,sector,iso3166,cur_year,ref_year,cur_base_value,ref_base_value,cur_adj_value,ref_adj_value
+  status_model_curref = read.csv(file.path(dir_neptune_data,  sprintf('model/GL-NCEAS-Livelihoods_2012/data_%d/global_li_status_model_curref.csv', yr)), na.strings='')
   
   d = status_model_curref %.%
-    #melt(id.vars=c('metric','iso3166','sector')) %.%
     rename(c('iso3166'='cntry_key')) %.%
     arrange(metric, cntry_key, sector)
   
   for (m in c('jobs','rev','wage')){
-    for (f in c('cur_year','ref_year','cur_base_value','ref_base_value','cur_adj_value','ref_adj_value')){
+    for (f in c('cur_base_value','ref_base_value','cur_adj_value','ref_adj_value')){  # note: skipping 'cur_year','ref_year'  
+
+      # write out data file
       x =  filter(d, metric==m)
-      write.csv(x[,c('cntry_key','sector',f)], sprintf('%s/data/le_status_model_curref_%s_%s.csv',dir_prod,m,f))
+      csv = sprintf('%s/data/le_%d_status_model_curref_%s_%s.csv',dir_prod,yr,m,f)
+      write.csv(x[,c('cntry_key','sector',f)], csv)
+      
+      # gather metadata
+      meta_i = data.frame(
+        target         = 'LE',
+        layer          = tools::file_path_sans_ext(basename(csv)),
+        name           = 'Modeled Livelihoods & Economies data',
+        description    = 'One of current or reference and base or adjusted value',
+        citation_2012n = '6F',
+        citation_2013a = NA,
+        fld_value      = 'value',
+        units          = 'value',
+        dir_2012a      = ifelse(yr==2012,  dirname(csv), NA),
+        fn_2012a       = ifelse(yr==2012, basename(csv), NA),
+        dir_2013a      = ifelse(yr==2013,  dirname(csv), NA),
+        fn_2013a       = ifelse(yr==2013, basename(csv), NA))
+      if (exists('meta')){
+        meta = rbind(meta, meta_i)
+      } else {
+        meta = meta_i
+      }      
     }
-  }    
+  }
 }
-  
+
+# write metadata
+write.csv(meta, sprintf('%s/data/le_layers_metadata.csv', dir_prod), row.names=F, na='')
+
