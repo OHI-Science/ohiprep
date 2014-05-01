@@ -28,9 +28,6 @@ for (p in poles){
   r.ice = r
   r.ice[r.typ < 2] = NA # include: shore(2), water(3), hole(4); exclude: land(0), coast(1)
   r.ice = r.ice/250 # covert ice score to proportion
-  #create an ice edge habitat raster (ice between 10-50%) (used only to visualize):
-  r.ice.edge = r.ice
-  r.ice.edge[r.ice.edge<0.1 | r.ice.edge>0.5] = NA
   #create a region raster that excludes land and coast areas (used later on):
   r.rgn = setValues(r, pts@data[['sp_id']]) #create a new raster with the regions 
   r.rgn[r.typ < 2] = NA # exclude: land(0), coast(1) from the regions
@@ -40,7 +37,6 @@ for (p in poles){
   plot(r.typ, col=rev(topo.colors(length(unique(r.typ)))), main='Pixel Type\n(0=land,1=coast,2=shore,3=water,4=hole)')
   plot(r.ice, col=tim.colors(64), main=sprintf('Ice Concentration (%s)',l))
   plot(r.rgn, col=tim.colors(length(unique(r.rgn))), main='OHI Region')
-  plot(r.ice.edge, col=tim.colors(64), main='Ice Edge Habitat\n 10% to 50% Concentration')
   dev.off()
   
   ########################################################### 
@@ -58,11 +54,11 @@ for (p in poles){
   
   ########################################################### 
   # Subset ice concentration stacks so that:
-  # (s)tack of (i)ce edge (h)abitat based on concentrations within 0.1 and 0.5
+  # (s)tack of (i)ce (h)abitat based on concentrations 
   # (s)tack of (i)ce (p)rotection based on shore pixels with concentrations > 0.15 
   #    and located on shoreline 
   ###########################################################
-  sih = si >=0.1 & si <=0.5
+  sih = si 
   sip = si >=0.15 & r.typ==2
   sip[is.na(r.rgn) | r.rgn==0] = NA
   names(sih) = names(s)
@@ -189,7 +185,7 @@ for (p in poles){
   
   
   #  save.image(file=sprintf('tmp/%s_image.rdata',p))    
-  #write.csv(z.h.T, sprintf('tmp/%s_IceEdgeHabitat.csv',p), row.names=FALSE)
+  write.csv(z.h.T, sprintf('tmp/%s_IceHabitat.csv',p), row.names=FALSE)
   write.csv(z.p.T, sprintf('tmp/%s_IceShoreProtection.csv',p), row.names=FALSE) 
   
 }
