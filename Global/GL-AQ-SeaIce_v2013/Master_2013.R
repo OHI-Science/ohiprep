@@ -76,7 +76,8 @@ source("~/ohiprep/Global/GL-AQ-SeaIce_v2013/Status_Trend.R")
 #Function 3: ----
 ## Calculating the km of ice per month/year/region (output is a csv file in tmp: s_AQ_YearlyMonthlyIceCover.csv).
 ## This is currently configured only to calculate data for CCAMLR regions.  This can be easily modified, however.
-
+## This was ultimately not included, but may be picked back up to explore anomolies.
+## See (SampleSeaIce folder for example of example exploration of these data)
 source("~/ohiprep/Global/GL-AQ-SeaIce_v2013/MonthYearExtent.R")
 
 
@@ -134,64 +135,6 @@ names(full_cast) <- gsub("seaice_", "", names(full_cast))
 #write.csv(full_cast, "data\\seaice_summary.csv", row.names=FALSE)
 
 
-#### extent health
-
-extent <- read.csv("tmp/s_AQ_YearlyMonthlyIceCover.csv")
-
-#cut due to minimal ice
-extent <- subset(extent, !(zone %in% c("258700", "258600", "258510", "248300", "258520")))
-
-# get monthly average of cover across years:
-month_avg <- extent %.%
-  group_by(zone, monthCode, month) %.%
-  summarise(all_years_monthly_avg = mean(km2, na.rm=TRUE))
-
-# merge the month averages with the data,
-# calculate anomoly
-# calculate relative anomoly for the "adjustment"
-extent  <- extent %.%
-  left_join(month_avg, by=c("zone", "monthCode", "month")) %.%
-  mutate(anomoly = km2-all_years_avg) %.% 
-  mutate(rel_anomoly = anomoly/all_years_avg)  ## This calculates the "anomaly_i/cover_i" portion of the adjustment. 
-
-adjustment  <-  extent %.%
-  group_by(zone) %.%
-  summarise(adj=mean(abs(rel_anomoly), na.rm=TRUE))
-
-
-regions <- unique(extent$zone)
-startYear <- 1979
-refYear <- 1979
-refMonth <- 6
-Sea_ice <- data.frame(regions=regions, status=NA, trend=NA)
-for(i in 1:length(regions)){
- # i <- 1 #testing
-
-  region <- regions[i]
-#region <- "248100" #testing
-  tmp  <- extent %.%
-  filter(zone==region) %.%
-  arrange(year, monthCode) %.%
-  mutate(timeSeries = 1:dim(data)[1])
-
-mod <- lm(anomoly ~ timeSeries, data=tmp)
-#mod
-
-#p <- ggplot(tmp, aes(x=timeSeries, y=anomoly))
-#p + geom_point() + geom_line() + geom_abline(intercept=mod$coefficients[1], slope=mod$coefficients[2], col="red") +
-#  labs(title="Region 481: Proportional anomoly for each month from 1979-2012")
-
-refTS <- (refYear-startYear)*12 + refMonth
-curTS <- (final.year - startYear)*12 + refMonth
-
-predictAnom <- predict(mod, data.frame(timeSeries=1:408))[which(tmp$timeSeries %in% c(refTS, curTS))]
-
-delta <-(predictAnom[[2]] - predictAnom[[1]])/predictAnom[[1]]   
-sea_ice$status[i] <- 1 - abs(delta) * 
-#sea_ice$trend[i] <- mod$coefficients[[2]]*12*5
-}
-
-
 
 ############ Visualization #################################
 library(RColorBrewer)
@@ -203,15 +146,3 @@ map@data <- join(map@data, data, by="rgn_id")
 spplot(map, c("edge_health", "shoreline_health"), col.regions=rev(diverge_hcl(100)))
 
 
-
-#### reading a .sav file ################
-# save SPSS dataset in trasport format
-get file='C:\Users\Melanie\Desktop\GL-HS-AQ-SeaIce_v2013\so_latlonarea.sav'.
-
-export outfile='C:\\Users\\Melanie\\Desktop\\GL-HS-AQ-SeaIce_v2013\\so_latlonarea.por' 
-
-# in R 
-library(foreign)
-mydata <- read.spss("C:\\Users\\Melanie\\Desktop\\GL-HS-AQ-SeaIce_v2013\\so_latlonarea.sav")
-# last option converts value labels to R factors
-tmp <- read.
