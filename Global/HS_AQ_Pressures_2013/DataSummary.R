@@ -161,6 +161,8 @@ write.csv(data,"CommLBC_ZonalMean.csv",
 ############################
 ## SLR
 ############################
+
+# might be one worth extracting using polygons...
 slr <- raster("/var/data/ohi/model/GL-NCEAS-Pressures_v2013a/tmp/impact_layers_2013_redo/impact_layers/work/sea_level_rise/final_products/slr_oct1992_dec2012_gcs_wgs84_normalized.tif")
 slr <- rotate(slr) # scales the data to start at -180 rather than 0
 
