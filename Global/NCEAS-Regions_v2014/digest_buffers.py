@@ -194,6 +194,7 @@ for buf in buffers:  # buf = 'inland1km'
                         buf_i_oids = ['%s_s_b_%04d' % (buf_i, oid) for oid in objectids]
                         print('    (%03d of %d, %s) %06d %s MERGE %d buffers to %s_s_b_m' % (i+1, len(sp_dict), time.strftime('%H:%M:%S'), sp_id, sp_name, len(objectids)+1, buf_i))
                         arcpy.Merge_management(buf_i_oids, '%s_s_b_m' % buf_i)
+                        arcpy.RepairGeometry_management('%s_s_b_m' % buf_i)
                         print('    (%03d of %d, %s) %06d %s DISSOLVE to %s_s_b' % (i+1, len(sp_dict), time.strftime('%H:%M:%S'), sp_id, sp_name, buf_i))
                         arcpy.Dissolve_management('%s_s_b_m' % buf_i, '%s_s_b' % buf_i)
                         arcpy.RepairGeometry_management('%s_s_b' % buf_i)
@@ -201,12 +202,7 @@ for buf in buffers:  # buf = 'inland1km'
                         sp_ids.remove(sp_id)
                         print '      FAILED DICE BUFFER: %06d %s' % (sp_id, sp_name)
                         print('      ERROR DICE BUFFER: %s (%s)' % (e.message, time.strftime('%H:%M:%S'))) #arcpy.AddError(e.message)                        
-                        continue
-                    
-                    print '      FAILED BUFFER: %06d %s' % (sp_id, sp_name)
-                    print('      ERROR BUFFER: %s (%s)' % (e.message, time.strftime('%H:%M:%S'))) #arcpy.AddError(e.message)
-                    sp_ids.remove(sp_id)
-                    continue
+                        continue                    
                 
             if arcpy.Exists('%s_s_b' % buf_i) and not arcpy.Exists('%s_s_b_i' % buf_i):
                 try:
