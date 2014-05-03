@@ -21,35 +21,39 @@ for (yr in 2012:2013){ # yr=2013
   
   for (m in c('jobs','rev','wage')){
     for (f in c('cur_base_value','ref_base_value','cur_adj_value','ref_adj_value')){  # note: skipping 'cur_year','ref_year'  
-
-      # write out data file
-      x =  filter(d, metric==m)
-      csv = sprintf('%s/data/le_%d_status_model_curref_%s_%s.csv',dir_prod,yr,m,f)
-      write.csv(x[,c('cntry_key','sector',f)], csv)
+      lyr = sprintf('le_%s_%s', m, f)
       
-      # gather metadata
+      # write out data file
+      x = filter(d, metric==m) %.%
+        rename(setNames('value', f)) %.%
+        select(cntry_key, sector, value)
+      csv = sprintf('%s/data/le_%d_status_model_curref_%s_%s.csv',dir_prod,yr,m,f)
+      write.csv(x, csv, row.names=F)
+      
+      # write metadata
       meta_i = data.frame(
         target         = 'LE',
-        layer          = tools::file_path_sans_ext(basename(csv)),
+        layer          = lyr,
         name           = 'Modeled Livelihoods & Economies data',
         description    = 'One of current or reference and base or adjusted value',
         citation_2012n = '6F',
         citation_2013a = NA,
         fld_value      = 'value',
-        units          = 'value',
-        dir_2012a      = ifelse(yr==2012,  dirname(csv), NA),
-        fn_2012a       = ifelse(yr==2012, basename(csv), NA),
-        dir_2013a      = ifelse(yr==2013,  dirname(csv), NA),
-        fn_2013a       = ifelse(yr==2013, basename(csv), NA))
-      if (exists('meta')){
-        meta = rbind(meta, meta_i)
-      } else {
+        units          = 'value', 
+        ingest         = 'T',
+        row.names=lyr)      
+      if (!exists('meta')){
         meta = meta_i
-      }      
+      }  
+      if (!lyr %in% meta$layer){
+        meta = rbind.fill(meta, meta_i)        
+      }
+      rownames(meta) = meta$layer      
+      meta[lyr, sprintf('dir_%da',yr)] = sprintf('ohiprep:%s', dirname(csv))
+      meta[lyr, sprintf('fn_%da',yr)]  = basename(csv)        
     }
   }
 }
 
 # write metadata
 write.csv(meta, sprintf('%s/data/le_layers_metadata.csv', dir_prod), row.names=F, na='')
-
