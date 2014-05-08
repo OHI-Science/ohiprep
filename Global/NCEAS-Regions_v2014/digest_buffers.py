@@ -49,8 +49,9 @@ gd      = '{0}/Global/{1}'.format(conf['dir_git'], nm)               # git direc
 
 # inputs
 sp_gcs = '{0}/sp_gcs'.format(gdb)
-##buffers = ['inland1km','offshore3nm','inland25km','offshore1km','inland50km'] # 'offshore100nm',
-buffers = ['inland50km'] # 'offshore100nm',
+#buffers = ['inland1km','offshore3nm','inland25km','offshore1km','inland50km'] # 'offshore100nm',
+buffers = ['inland1km','offshore3nm','inland25km','offshore1km']
+redo = True
 
 # buffer units dictionary
 buf_units_d = {'nm':'NauticalMiles',
@@ -160,7 +161,7 @@ for buf in buffers:  # buf = 'inland1km'
     buf_zone, buf_dist, buf_units = re.search('(\\D+)(\\d+)(\\D+)', buf).groups()
     sp_ids =  sorted(sp_dict.iterkeys())
 
-    if buf in ['inland1km','offshore3nm']:
+    if buf in ['redoing all buffers']:
         pass
     else:
         for i, sp_id in enumerate(sorted(sp_dict.iterkeys())): # i, sp_id = (9999, 218)
@@ -248,7 +249,7 @@ for buf in buffers:  # buf = 'inland1km'
 ##        arcpy.Dissolve_management('lyr' % buf, sp_flds)
 
     try:
-        if not arcpy.Exists('buf_%s_m' % buf):
+        if not arcpy.Exists('buf_%s_m' % buf) or redo:
             print('  buf_%s_m (%s)' % (buf, time.strftime('%H:%M:%S')))
             buf_ids_notexist = ['%06d %s' % (sp_id, sp_dict[sp_id]) for sp_id in sp_ids if not arcpy.Exists('buf_%s_%06d_s_b_i' % (buf, sp_id))]
             if len(buf_ids_notexist):
@@ -256,7 +257,7 @@ for buf in buffers:  # buf = 'inland1km'
             buf_ids = ['buf_%s_%06d_s_b_i' % (buf, x) for x in sp_ids]
             arcpy.Merge_management(buf_ids, 'buf_%s_m' % buf)
             
-        if not arcpy.Exists(rgn_buf):
+        if not arcpy.Exists(rgn_buf) or redo:
             print('  dissolving to %s, %s (%s)' % (sp_buf, rgn_buf, time.strftime('%H:%M:%S')))
             arcpy.Dissolve_management('buf_%s_m' % buf, sp_buf, sp_flds)
             arcpy.Dissolve_management(sp_buf, rgn_buf, rgn_flds)
@@ -266,23 +267,23 @@ for buf in buffers:  # buf = 'inland1km'
         #arcpy.RepairGeometry_management(rgn_buf)
 
         # add areas        
-        if not 'area_km2' in [x.name for x in arcpy.ListFields(sp_buf)]:
+        if not 'area_km2' in [x.name for x in arcpy.ListFields(sp_buf)] or redo:
             print('  calculating areas %s (%s)' % (sp_buf, time.strftime('%H:%M:%S')))
             add_area(sp_buf)
-        if not 'area_km2' in [x.name for x in arcpy.ListFields(rgn_buf)]:
+        if not 'area_km2' in [x.name for x in arcpy.ListFields(rgn_buf)] or redo:
             print('  calculating areas %s (%s)' % (rgn_buf, time.strftime('%H:%M:%S')))
             add_area(rgn_buf)
 
         # export shp and csv
         
-        if not arcpy.Exists('{0}/data/{1}.shp'.format(ad, sp_buf)) or not os.path.isfile('{0}/data/{1}_data.csv'.format(ad, sp_buf)):
+        if not arcpy.Exists('{0}/data/{1}.shp'.format(ad, sp_buf)) or not os.path.isfile('{0}/data/{1}_data.csv'.format(ad, sp_buf)) or redo:
             print('  exporting shp and csv %s (%s)' % (sp_buf, time.strftime('%H:%M:%S')))
             export_shpcsv(
                 fc   = sp_buf,
                 flds = sp_area_flds,
                 shp  = '{0}/data/{1}.shp'.format(     ad, sp_buf),
                 csv  = '{0}/data/{1}_data.csv'.format(ad, sp_buf))
-        if not arcpy.Exists('{0}/data/{1}.shp'.format(     ad, rgn_buf)) or not os.path.isfile('{0}/data/{1}_data.csv'.format(ad, rgn_buf)):
+        if not arcpy.Exists('{0}/data/{1}.shp'.format(     ad, rgn_buf)) or not os.path.isfile('{0}/data/{1}_data.csv'.format(ad, rgn_buf)) or redo:
             print('  exporting shp and csv %s (%s)' % (rgn_buf, time.strftime('%H:%M:%S')))
             export_shpcsv(
                 fc   = rgn_buf,
