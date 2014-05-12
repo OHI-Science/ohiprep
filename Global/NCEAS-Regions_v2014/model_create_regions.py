@@ -44,7 +44,6 @@
 
 import arcpy, os, re, numpy as np, socket, pandas as pd, time
 from collections import Counter
-from numpy.lib import recfunctions
 arcpy.SetLogHistory(True) # %USERPROFILE%\AppData\Roaming\ESRI\Desktop10.2\ArcToolbox\History
 
 # configuration based on machine name
@@ -57,7 +56,7 @@ conf = {
 
 # paths
 nm      = 'NCEAS-Regions_v2014'                                      # name of data product
-td      = '{0}/{1}'.format(conf['dir_tmp'], nm)                      # temp directory on local filesystem
+td      = '{0}/Global/{1}'.format(conf['dir_tmp'], nm)               # temp directory on local filesystem
 gdb     = '{0}/geodb.gdb'.format(td)                                 # file geodatabase
 ad      = '{0}/git-annex/Global/{1}'.format(conf['dir_neptune'], nm) # git annex directory on neptune
 gd      = '{0}/Global/{1}'.format(conf['dir_git'], nm)               # git directory on local filesystem
@@ -449,15 +448,54 @@ arcpy.CalculateField_management('sp_gcs' , 'area_km2', '!shape.area@SQUAREKILOME
 arcpy.AddField_management(      'rgn_gcs', 'area_km2', 'DOUBLE')
 arcpy.CalculateField_management('rgn_gcs', 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
 
+# post-hoc fix of Norway, Svalbard, Russia
+#  ohicore#74 regions: fix Svalbard sp_id 223 to 253, land Norway Russia actually fao 27
+# evaluate all sp_gcs land after erasing eezland
+# b/c eezland included this area
+arcpy.MakeFeatureLayer_management('sp_gcs', 'lyr', '"sp_type"=\'land\' AND "sp_name" IN (\'Svalbard\',\'Russia\')')
+arcpy.MultipartToSinglepart_management('lyr','sp_landRUSfix')
+# NOTE: manually selected Svalbard and Russa erroneous land from sp_landRUSfix.
+#       Then: arcpy.Dissolve_management('sp_landRUSfix', 'sp_landRUSfix_manual')
+flds = [f.name for f in arcpy.ListFields('sp_gcs') if f.name not in ('Shape','Shape_Length','Shape_Area')]
+r = arcpy.da.TableToNumPyArray('sp_gcs', flds,'"sp_id"=1027')
+r['OBJECTID'] = 1
+arcpy.da.ExtendTable('sp_landRUSfix_manual', 'OBJECTID', r, 'OBJECTID', append_only=False)
+arcpy.Erase_analysis('sp_gcs', 'sp_landRUSfix_manual', 'sp_landRUSfix_e')
+arcpy.Merge_management(['sp_landRUSfix_e','sp_landRUSfix_manual'], 'sp_landRUSfix_e_m')
+arcpy.Dissolve_management('sp_landRUSfix_e_m', 'sp_gcs', flds)
+# TODO: check before replacing sp_gcs
+
+# post-hoc fix Svalbard ID (see ohiprep:check_sp_id.R: Colombia also seperated but skipping that for now)
+arcpy.MakeFeatureLayer_management('sp_gcs', 'lyr', '"sp_name"=\'Svalbard\'')
+arcpy.CalculateField_management('lyr', 'sp_id', '253')
+arcpy.CalculateField_management('lyr', 'sp_key', '"SVA"')
+
+# post-hoc update affected areas
+arcpy.MakeFeatureLayer_management('sp_gcs', 'lyr', '"sp_name" IN (\'Svalbard\',\'Russia\',\'Norway\',\'Atlantic, Northeast\')')
+arcpy.CalculateField_management('lyr', 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
+arcpy.Dissolve_management('sp_gcs', 'rgn_gcs',['rgn_type','rgn_id','rgn_name','rgn_key'])
+arcpy.AddField_management(      'rgn_gcs', 'area_km2', 'DOUBLE')
+arcpy.CalculateField_management('rgn_gcs', 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
+
 # export shp and csv
 print('export shp and csv (%s)' % time.strftime('%H:%M:%S'))
-arcpy.CopyFeatures_management('sp_gcs' , sp_shp)
-arcpy.CopyFeatures_management('rgn_gcs', rgn_shp)
+arcpy.CopyFeatures_management(gdb+'/sp_gcs' , sp_shp)
+arcpy.CopyFeatures_management(gdb+'/rgn_gcs', rgn_shp)
 d = pd.DataFrame(arcpy.da.TableToNumPyArray('sp_gcs', ['sp_type','sp_id','sp_name','sp_key','area_km2','rgn_type','rgn_id','rgn_name','rgn_key','cntry_id12','rgn_id12','rgn_name12']))
 d.to_csv(sp_csv, index=False)
 d = pd.DataFrame(arcpy.da.TableToNumPyArray('rgn_gcs', ['rgn_type','rgn_id','rgn_name','rgn_key','area_km2']))
 d.to_csv(rgn_csv, index=False)
 print('done (%s)' % time.strftime('%H:%M:%S'))
+
+# TODO: clean up old sp_data.csv and rgn_data.csv and shapefiles on neptune/git-annex
+
+# TODO: redo buffers for...
+#  sp_id, sp_key: Svalbard
+#  inland/offshore: Norway, Russia
+arcpy.MakeFeatureLayer_management('sp_gcs', 'lyr', '"sp_name" IN (\'Svalbard\',\'Russia\',\'Norway\')')
+
+
+
 
 # TODO: clip to earth
 

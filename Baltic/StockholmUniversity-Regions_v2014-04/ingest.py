@@ -1,4 +1,4 @@
-import arcpy, os, socket
+import arcpy, os, socket, numpy
 
 # configuration based on machine name
 conf = {
@@ -45,7 +45,41 @@ for v in ['basins', 'eez']:
     if not arcpy.Exists('%s/%s' % (gdb,v)):
         arcpy.FeatureClassToFeatureClass_conversion(eval(v), gdb, v) 
 
-# intersect
-arcpy.Intersect_analysis(['eez','basins'], 'eez_basins')
-arcpy.AddField_management('eez_basins', 'rgn_name', 'TEXT')
-arcpy.CalculateField_management('eez_basins', 'rgn_name', "'%s_%s' % (!Name!, !Name_1!)", 'PYTHON_9.3')
+# add name field specific to shapefile
+arcpy.AddField_management('eez', 'eez_name', 'TEXT')
+arcpy.CalculateField_management('eez', 'eez_name', "!Name!", 'PYTHON_9.3')
+arcpy.AddField_management('basins', 'basin_name', 'TEXT')
+arcpy.CalculateField_management('basins', 'basin_name', "!Name!", 'PYTHON_9.3')
+
+# get other basin and merge with basins
+arcpy.Erase_analysis('eez','basins','eez_e') # NOTE: slivers of eez beyond basins to exclude
+arcpy.MultipartToSinglepart_management('eez_e', 'eez_e_m')
+arcpy.Select_analysis('eez_e_m', 'eez_e_m_s', '"Shape_Area" > 1')
+arcpy.Dissolve_management('eez_e_m_s', 'basin_other')
+arcpy.AddField_management('basin_other', 'basin_name', 'TEXT')
+arcpy.CalculateField_management('basin_other', 'basin_name', "'OT'", 'PYTHON_9.3')
+arcpy.Merge_management(['basins','basin_other'], 'basins_m')
+
+# TODO: voronoi basins to extent of joint eez, intersect with basins
+
+### intersect
+##arcpy.Intersect_analysis(['eez','basins_m'], 'eez_basins_m')
+##arcpy.AddField_management('eez_basins_m', 'rgn_name', 'TEXT')
+##arcpy.CalculateField_management('eez_basins_m', 'rgn_name', "'%s_%s' % (!eez_name!, !basin_name!)", 'PYTHON_9.3')
+##arcpy.Dissolve_management('eez_basins_m', 'eez_basins', ['eez_name','basin_name','rgn_name'])
+##arcpy.AddField_management('eez_basins', 'rgn_id', 'SHORT')
+##arcpy.CalculateField_management('eez_basins', 'rgn_id', "!OBJECTID!", 'PYTHON_9.3')
+
+
+##r = arcpy.da.TableToNumPyArray('eez_basins', ['rgn_name','eez_name','basin_name','OBJECTID'])
+##rgn_id = numpy.zeros((len(r),), dtype=[('rgn_id', '<i4')])
+##rgn_id[:] = numpy.array(range(1, len(r)+1))
+##rf = numpy.lib.recfunctions.merge_arrays([r, rgn_id], flatten=True)
+##arcpy.da.ExtendTable('eez_basins', 'OBJECTID', rf, 'OBJECTID', append_only=False)
+
+
+# TODO: calculate area
+
+# TODO: buffers
+
+# TODO: simplify and geojson
