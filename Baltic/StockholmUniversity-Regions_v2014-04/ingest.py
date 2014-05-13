@@ -95,35 +95,35 @@ arcpy.env.outputCoordinateSystem = sr_gcs
 ##arcpy.env.outputCoordinateSystem = sr_gcs
 ##arcpy.CopyFeatures_management('eez_basins_thiessen_mol', 'eez_basins_thiessen_gcs')
 
-# copy global and buffers
-countries = ['Denmark','Estonia','Finland','Germany','Latvia','Lithuania','Poland','Russia','Sweden']
-gl_gdb = r'C:\tmp\Global\NCEAS-Regions_v2014\geodb.gdb'
-bufs = ('','_inland1km','_offshore3nm','_inland25km','_offshore1km','_inland50km')
-for buf in bufs:
-    fc_in = 'sp%s_gcs' % buf
-    print('%s (%s)' % (fc_in, time.strftime('%H:%M:%S')))
-    
-    # copy fc
-    arcpy.Select_analysis('%s/%s' % (gl_gdb, fc_in), fc_in, '"sp_name" IN (\'%s\')' % "','".join(countries))
-    if 'rgn_type' not in [fld.name for fld in arcpy.ListFields(fc_in)]:
-        arcpy.AddField_management(fc_in, 'rgn_type', 'TEXT')
-        arcpy.CalculateField_management(fc_in, 'rgn_type', "'sp_type'", 'PYTHON_9.3')
-
-    # intersect and dissolve
-    arcpy.Intersect_analysis([fc_in, 'eez_basins_thiessen_gcs', 'eez_basins_buf200km'], 'thie%s_gcs' % buf)
-    arcpy.Dissolve_management('thie%s_gcs' % buf, 'rgn%s_gcs' % buf, ['rgn_type','rgn_id', 'rgn_name'])
-
-    # add area
-    arcpy.AddField_management('%s/rgn%s_gcs' % (gdb, buf), 'area_km2', 'DOUBLE')
-    arcpy.CalculateField_management('%s/rgn%s_gcs' % (gdb, buf), 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
-
-    # export shp and csv
-    arcpy.CopyFeatures_management('%s/rgn%s_gcs' % (gdb, buf), '%s/data/rgn%s_gcs.shp' % (ad, buf))
-    d = pandas.DataFrame(arcpy.da.TableToNumPyArray('rgn%s_gcs' % buf, ['rgn_type','rgn_id','rgn_name','area_km2']))
-    d.to_csv('%s/data/rgn%s_data.csv' % (gd, buf), index=False, encoding='utf-8')
+### copy global and buffers
+##countries = ['Denmark','Estonia','Finland','Germany','Latvia','Lithuania','Poland','Russia','Sweden']
+##gl_gdb = r'C:\tmp\Global\NCEAS-Regions_v2014\geodb.gdb'
+##bufs = ('','_inland1km','_offshore3nm','_inland25km','_offshore1km','_inland50km')
+##for buf in bufs:
+##    fc_in = 'sp%s_gcs' % buf
+##    print('%s (%s)' % (fc_in, time.strftime('%H:%M:%S')))
+##    
+##    # copy fc
+##    arcpy.Select_analysis('%s/%s' % (gl_gdb, fc_in), fc_in, '"sp_name" IN (\'%s\')' % "','".join(countries))
+##    arcpy.DeleteField_management(fc_in, ['rgn_id', 'rgn_name', 'rgn_type']) 
+##    arcpy.AddField_management(fc_in, 'rgn_type', 'TEXT')
+##    arcpy.CalculateField_management(fc_in, 'rgn_type', '!sp_type!', 'PYTHON_9.3')
+##
+##    # intersect and dissolve
+##    arcpy.Intersect_analysis([fc_in, 'eez_basins_thiessen_gcs', 'eez_basins_buf200km'], 'thie%s_gcs' % buf)
+##    arcpy.Dissolve_management('thie%s_gcs' % buf, 'rgn%s_gcs' % buf, ['rgn_type','rgn_id', 'rgn_name'])
+##
+##    # add area
+##    arcpy.AddField_management('%s/rgn%s_gcs' % (gdb, buf), 'area_km2', 'DOUBLE')
+##    arcpy.CalculateField_management('%s/rgn%s_gcs' % (gdb, buf), 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
+##
+##    # export shp and csv
+##    arcpy.CopyFeatures_management('%s/rgn%s_gcs' % (gdb, buf), '%s/data/rgn%s_gcs.shp' % (ad, buf))
+##    d = pandas.DataFrame(arcpy.da.TableToNumPyArray('rgn%s_gcs' % buf, ['rgn_type','rgn_id','rgn_name','area_km2']))
+##    d.to_csv('%s/data/rgn%s_data.csv' % (gd, buf), index=False, encoding='utf-8')
 
 # simplify for geojson
 print('simplify (%s)' % (time.strftime('%H:%M:%S')))
-arcpy.cartography.SmoothPolygon('%s/rgn_gcs' % gdb, 'rgn_smooth_gcs', 'PAEK', 1, 'FIXED_ENDPOINT', 'FLAG_ERRORS') # , 100, "FLAG_ERRORS")
+arcpy.cartography.SmoothPolygon('%s/rgn_gcs' % gdb, 'rgn_smooth_gcs', 'PAEK', 100, 'FIXED_ENDPOINT', 'FLAG_ERRORS') # , 100, "FLAG_ERRORS")
 arcpy.CopyFeatures_management('%s/rgn_smooth_gcs' % gdb, '%s/data/rgn_smooth_gcs.shp' % ad)
 print('done (%s)' % (time.strftime('%H:%M:%S')))

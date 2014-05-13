@@ -35,7 +35,8 @@ arcpy.env.overwriteOutput = True
 # expand area to cover slivers and offshore
 ##arcpy.Buffer_analysis('sp_landRUSfix_manual', 'sp_landRUSfix_buf100km', '100 kilometers')
 
-arcpy.RepairGeometry_management('sp_inland1km_gcs')
+#print('repairing sp_inland1km_gcs (%s)' % (time.strftime('%H:%M:%S')))
+##arcpy.RepairGeometry_management('sp_inland1km_gcs')
 
 # loop buffers
 for buf in buffers: # buf='inland50km'
