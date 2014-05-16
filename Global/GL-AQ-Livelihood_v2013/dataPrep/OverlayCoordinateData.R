@@ -3,9 +3,6 @@
 ## STEP 2: Overlaying the data and obtaining global reference points
 #################################################
 
-# these got cut for not being in the CCAMLR region:
-# South Bay, Trinity Island-Mikkelsen Hrbr, Campbell Island
-
 library(sp)
 library(rgdal)
 library(RColorBrewer)
@@ -13,11 +10,11 @@ library(colorspace)
 
 rm(list = ls())
 
-setwd("/var/data/ohi/model/GL-AQ-Tourism_v2013")
+setwd("/var/data/ohi/model/GL-AQ-Livelihoods_v2013")
 
 
 # Load in data ----
-sites <- read.csv("tmp/sites_dd.csv")
+sites <- read.csv("tmp/sites_dd_v2.csv")
 map <- readOGR(dsn="/var/data/ohi/git-annex/Global/NCEAS-Regions_v2014/data", layer="sp_gcs")
 map <- map[map@data$sp_type %in% c("eez-ccamlr", "land-ccamlr"), ]
 plot(map)
@@ -52,16 +49,13 @@ sites_CCAMLR <- sites_CCAMLR[!is.na(sites_CCAMLR$sp_id), ]
 
 sites_CCAMLR <- subset(sites_CCAMLR, select=c(Site_name, sp_id, latitude_dd, longitude_dd, rgn_type))
 
-write.csv(sites_CCAMLR, "tmp/Sites_CCAMLR.csv", row.names=FALSE)
+# merge with previous sites:
+sites_CCAMLR_v1 <- read.csv("raw/Sites_CCAMLR_v1.csv")
+intersect(sites_CCAMLR$Site_name, sites_CCAMLR_v1$Site_name)
+# one shared location...cut data:
+sites_CCAMLR <- subset(sites_CCAMLR, Site_name != "Pl_neau Island")
 
-########################################
-## Obtaining global reference points
-########################################
-gl_tr<-read.csv('raw/global_arrivals.csv') # load file with n tourists/country area from international arrivals 2009
+sites_CCAMLR <- rbind(sites_CCAMLR, sites_CCAMLR_v1)
 
-# calculate summary statistics from global density data: median, 90%ile
-gl_median<-quantile(gl_tr$tourist_days_area[gl_tr$tourist_days_area>0],probs=0.5,names = F)
-gl_90ile<-quantile(gl_tr$tourist_days_area[gl_tr$tourist_days_area>0],probs=0.90,names = F)
+#write.csv(sites_CCAMLR, "tmp/Sites_CCAMLR.csv", row.names=FALSE)
 
-gl_median
-gl_90ile
