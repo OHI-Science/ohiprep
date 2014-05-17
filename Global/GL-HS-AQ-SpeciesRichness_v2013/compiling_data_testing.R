@@ -17,82 +17,93 @@ library(plyr)
 library(dplyr)
 rm(list = ls())
 
-# Extracted and saved the following data from the spp.dbf file (2013 data)
+# Extracted and saved the following data from the spp.db file (2013 data)
 # This will be the baseline data used in the analyses:
-### data prepped for new analysis: 
+### data prepped for new analysis:
+# library(foreign)
+# library(DBI)
+# library(RSQLite)
 #write.csv(dbReadTable(db, "cells"), "C:\\Users\\Melanie\\Desktop\\Species and Iconics\\TestingAgainstOldData\\raw\\cells.csv", row.names=FALSE)
 #write.csv(dbReadTable(db, "cells_spp"), "C:\\Users\\Melanie\\Desktop\\Species and Iconics\\TestingAgainstOldData\\raw\\cells_spp.csv", row.names=FALSE)
 #write.csv(dbReadTable(db, "spp"), "C:\\Users\\Melanie\\Desktop\\Species and Iconics\\TestingAgainstOldData\\raw\\spp.csv", row.names=FALSE)
-setwd("N:\\model\\GL-HS-AQ-SpeciesRichness_v2013")
-cells_2013 <- read.csv("raw\\cells.csv")
-cells_spp <- read.csv("raw\\cells_spp.csv")
-spp <- read.csv("raw\\spp.csv")
+setwd("/var/data/ohi/model/GL-HS-AQ-SpeciesRichness_v2013")
+cells_2013 <- read.csv("raw/cells.csv")
+cells_spp <- read.csv("raw/cells_spp.csv")
+spp <- read.csv("raw/spp.csv")
 
-
+###################################
 # new grid data ----
+###################################
 # Preparing the new cells and cells_spp data with new IDs to match the .tif file I want to use for extracting the new regions
 
 #original cell data from aqua maps:  Based on this it is the most complete data.  I need to work from this.
-am_cells <- read.csv("N:\\model\\GL-NCEAS-SpeciesDiversity_v2013a\\tmp\\am_cells_data.csv")
+am_cells <- read.csv("/var/data/ohi/model/GL-NCEAS-SpeciesDiversity_v2013a/tmp/am_cells_data.csv")
 sum(duplicated(am_cells$LOICZID)) #key numeric ID for raster generation....
 
 ### Generate raster ----
-#spCells <- raster("raw\\cells_template.tif") #old raster file for template, from the GL-NCEAS-SpeciesDiversityData data file
+#spCells <- raster("raw/cells_template.tif") #old raster file for template, from the GL-NCEAS-SpeciesDiversityData data file
 #coordinates(am_cells) <- ~CenterLong+CenterLat
 #proj4string(am_cells) <- CRS(projection(spCells))
-#rasterize(am_cells, spCells, field="LOICZID", progress="text", filename="tmp\\am_cells_data_raster")
+#rasterize(am_cells, spCells, field="LOICZID", progress="text", filename="tmp/am_cells_data_raster")
 
 ### Get percent of each raster cell in the region polygons ----
-#am_cells_raster <- raster("tmp\\am_cells_data_raster")
-#regions <- readOGR(dsn="C:\\Users\\Melanie\\Desktop\\GL-NCEAS-Regions_v2014\\data", layer="eez_ccmlar_fao_gcs")
-#regions <- regions[regions@data$rgn_type %in% c("CCAMLR", "disputed-eez", "eez", "fao"), ]
+am_cells_raster <- raster("tmp/am_cells_data_raster")
+regions <- readOGR(dsn="/var/data/ohi/git-annex/Global/NCEAS-Regions_v2014/data", layer="sp_gcs")
+regions <- regions[regions@data$rgn_type %in% c("eez", "fao", "eez_ccamlr", "eez-disputed", "eez-inland"), ]
 #plot(regions, add=TRUE)
-#regionProp <- extract(am_cells_raster, regions, weights=TRUE, progress="text")
-# names(regionProp) <- regions@data$rgn_id
-#regionProp_df <- ldply(regionProp, rbind) 
-#length(unique(regionProp_df$.id)) #less than 254 due to repeats of Canada and one small region (232) with no rasters identified
-#tmp <- ldply(regionProp, length)
-#setdiff(regionProp_df$.id, tmp$.id)
-#setdiff(tmp$.id, regionProp_df$.id)
-#regionProp_df <- rename(regionProp_df, c(.id="rgn_id", value="LOICZID", weight="proportionArea"))
+regionProp <- extract(am_cells_raster,  regions, weights=TRUE, progress="text")
+names(regionProp) <- regions@data$sp_id
+regionProp_df <- ldply(regionProp, rbind) 
+length(unique(regionProp_df$.id)) #less than 254 due to repeats of Canada and one small region (232) with no rasters identified
+tmp <- ldply(regionProp, length)
+setdiff(regionProp_df$.id, tmp$.id)
+setdiff(tmp$.id, regionProp_df$.id)
+regionProp_df <- rename(regionProp_df, c(.id="sp_id", value="LOICZID", weight="proportionArea"))
 #### add in this region - which appears to be too small to catch using this method (<1% of area)
-#cells_2013[cells_2013$rgn_id==232, ]
-#cells_2013[cells_2013$csq=="1401:227:4", ]
-#am_cells[am_cells$CsquareCode == "1401:227:4", ]
-#6.034664/2269.83
-#BosniaHerzegovina <- data.frame(rgn_id=232, LOICZID=68076, proportionArea=0.002658641)
-#rgnProp_df <- rbind(rgnProp_df, BosniaHerzegovina)  
-## should be 190799 rows
+cells_2013[cells_2013$rgn_id==232, ]
+cells_2013[cells_2013$csq=="1401:227:4", ]
+am_cells[am_cells$CsquareCode == "1401:227:4", ]
+6.034664/2269.83
+BosniaHerzegovina <- data.frame(sp_id=232, LOICZID=68076, proportionArea=0.002658641)
+regionProp_df <- rbind(regionProp_df, BosniaHerzegovina)  
 ## Add in cell areas:
-#write.csv(regionProp_df, "tmp\\am_cells_rgn_proportions.csv", row.names=FALSE)
-rgn_proportions <- read.csv("tmp\\am_cells_rgn_proportions.csv")
+#write.csv(regionProp_df, "", row.names=FALSE)
+rgn_proportions <- read.csv("tmp\\am_cells_rgn_proportions_May162014.csv")
 
- ### Generating master file with raster ID's ----
+##################################################
+### Generating master file with raster ID's ----
+##################################################
+am_cells <- read.csv("/var/data/ohi/model/GL-NCEAS-SpeciesDiversity_v2013a/tmp/am_cells_data.csv")
 am_cells <- am_cells %.%
   select("csq"=CsquareCode, LOICZID, CellArea)
+sum(duplicated(am_cells$csq))
 
-### Add column in cells data with the LOICZID ---
 ###First figure out differences between LOICZID/csq and cid
-#setdiff(am_cells$csq, cells_2013$csq) #I don't think the cells file contains land ID values
-#setdiff(cells_2013$csq, am_cells$csq)
-#cells_2013 <- inner_join(cells_2013, am_cells)
+setdiff(am_cells$csq, cells_2013$csq) #I don't think the cells file contains land ID values
+setdiff(cells_2013$csq, am_cells$csq)
+cells_2013 <- inner_join(cells_2013, am_cells)
 
-#setdiff(cells_2013$cid, cells_spp$cid)
-#setdiff(cells_spp$cid, cells_2013$cid)
-#summary(cells_spp)
+setdiff(cells_2013$cid, cells_spp$cid)
+setdiff(cells_spp$cid, cells_2013$cid)
+summary(cells_spp)
 
+##### Exploring the difference between cid and other IDs (csq and LOICZID)
 #these have the same csq id: 5207:364:1
-#tmp1 <- cells_spp[cells_spp$cid==4121,]
-#tmp2 <- cells_spp[cells_spp$cid==80020,]
-#setdiff(tmp1$sid, tmp2$sid)
-#setdiff(tmp2$sid, tmp1$sid)
-#these have the same csq id: 1401:227:4:
-#tmp1 <- cells_spp[cells_spp$cid==43639,]
-#tmp2 <- cells_spp[cells_spp$cid==43640,]
-#setdiff(tmp1$sid, tmp2$sid)
-#setdiff(tmp2$sid, tmp1$sid)
+tmp1 <- cells_spp[cells_spp$cid==4121,]
+tmp2 <- cells_spp[cells_spp$cid==80020,]
+setdiff(tmp1$sid, tmp2$sid)
+setdiff(tmp2$sid, tmp1$sid)
+cells_2013[cells_2013$cid==4121,]
+cells_2013[cells_2013$cid==80020,]
+ #these have the same csq id: 1401:227:4:
+tmp1 <- cells_spp[cells_spp$cid==43639,]
+tmp2 <- cells_spp[cells_spp$cid==43640,]
+setdiff(tmp1$sid, tmp2$sid)
+setdiff(tmp2$sid, tmp1$sid)
+cells_2013[cells_2013$cid==43639,]
+cells_2013[cells_2013$cid==43640,]
 
-#summary: when a polygon runs through a cell, the cell ends up with two CID values.
+#summary: when a regional  polygon runs through a cell, the cell ends up with two CID values.
 # it appears that IUCN species were extracted according to polygons (or smaller raster size) rather than assigning
 # IUCN data to the aqua maps rasters. Then, CID's are assigned by the aqua map Cell ID and region ID. 
 # Consequently, a species may be in one CID and not another
@@ -104,8 +115,8 @@ am_cells <- am_cells %.%
 # 
 cells_spp <- cells_spp %.%
   left_join(cells_2013, by="cid") %.%
-  left_join(am_cells, by="csq") %.%
-  select(LOICZID, sid)
+#  left_join(am_cells, by="csq") 
+   select(LOICZID, sid)
 cells_spp <- unique(cells_spp)
 summary(cells_spp)  
 #write.csv(cells_spp, "tmp\\am_cells_spp.csv", row.names=FALSE)
@@ -133,7 +144,7 @@ scoreData <- cells_spp %.%
             popn_trend_linear_avg2 = mean(trendScore, na.rm=TRUE))
 
 cells_2013 <- cells_2013 %.%
-  left_join(am_cells, by="csq") %.%
+  #left_join(am_cells, by="csq") %.%
   left_join(scoreData, by="LOICZID")
 
 # rescale lower end of the biodiversity goal to be 0 when 75% species are extinct, a level comparable to the five documented mass extinctions
@@ -156,7 +167,7 @@ regionScores <- cells_2013 %.%
 
 
 ## checking against old data:
-oldScore <- read.csv("N:\\model\\GL-NCEAS-SpeciesDiversity_v2013a\\data\\rgn_spp_score_2013.csv")
+oldScore <- read.csv("/var/data/ohi/model/GL-NCEAS-SpeciesDiversity_v2013a/data/rgn_spp_score_2013.csv")
 oldTrend <- read.csv("N:\\model\\GL-NCEAS-SpeciesDiversity_v2013a\\data\\rgn_spp_trend_2013.csv")
 regionScores <- left_join(regionScores, oldScore)
 plot(regionScores$rgn_spp_score_2013, regionScores$score*100)
