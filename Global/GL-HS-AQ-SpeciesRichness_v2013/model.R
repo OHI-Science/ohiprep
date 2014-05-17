@@ -12,10 +12,10 @@ library(dplyr)
 rm(list = ls())
 
 setwd("/var/data/ohi/model/GL-HS-AQ-SpeciesRichness_v2013")
-cells <- read.csv("tmp\\am_cells_rgn_proportions.csv")
-cells_spp <- read.csv("tmp\\am_cells_spp.csv")
-spp <- read.csv("raw\\spp.csv")
-am_cells <- read.csv("N:\\model\\GL-NCEAS-SpeciesDiversity_v2013a\\tmp\\am_cells_data.csv")
+cells <- read.csv("tmp/am_cells_rgn_proportions.csv")
+cells_spp <- read.csv("tmp/am_cells_spp.csv")
+spp <- read.csv("raw/spp.csv")
+am_cells <-  read.csv("/var/data/ohi/model/GL-NCEAS-SpeciesDiversity_v2013a/tmp/am_cells_data.csv")
 
 ### Master file of cells structured: 
 am_cells <- am_cells %.%
@@ -58,54 +58,44 @@ cells <- cells %.%
 
 # calculate area-weighted regional scores ----
 regionScores <- cells %.%
-  group_by(rgn_id) %.%
+  group_by(sp_id) %.%
   summarise(rgn_spp_score_2013=sum(category_linear_score*rgn_area, na.rm=TRUE)/sum(rgn_area, na.rm=TRUE),
             rgn_spp_trend_2013=sum(popn_trend_linear_avg*rgn_area, na.rm=TRUE)/sum(rgn_area, na.rm=TRUE))
-regionScores$rgn_id <- as.numeric(regionScores$rgn_id)
+regionScores$sp_id <- as.integer(regionScores$sp_id)
 
+###########################################
+# Organize and save data ----
+##########################################
 
-# merge with region data ----
-#tmp <- readOGR(dsn="C:\\Users\\Melanie\\Desktop\\GL-NCEAS-Regions_v2014\\data", layer="eez_ccmlar_fao_gcs")
-regions <- tmp@data[tmp@data$rgn_type %in% c("CCAMLR", "fao"), ]
-regions <- select(regions, c(rgn_type, rgn_id, rgn_name, F_CODE))
-regions$rgn_id <- as.numeric(as.character(regions$rgn_id))
+AQ_regions <- read.csv("/var/data/ohi/git-annex/Global/NCEAS-Antarctica-Other_v2014/rgn_labels_ccamlr.csv")
+AQ_scores  <- AQ_regions %.%
+   select(sp_id) %.%
+   left_join(regionScores) %.%
+   select(sp_id, score=rgn_spp_score_2013)
+ write.csv(AQ_scores, "data/rgn_spp_score_2013_AQ.csv", row.names=FALSE)
+ 
+ AQ_trend  <- AQ_regions %.%
+   select(sp_id) %.%
+   left_join(regionScores) %.%
+   select(sp_id, score=rgn_spp_trend_2013)
+ write.csv(AQ_trend, "data/rgn_spp_trend_2013_AQ.csv", row.names=FALSE)
+ 
 
-
-# organize and write to csv:
-rgn_spp_score_2013_HS_AQ <- regionScores %.%
-  mutate(score=rgn_spp_score_2013/100) %.%
-  select(rgn_id, score) %.%
-  inner_join(regions) %.%
-  arrange(rgn_type, rgn_id)
-
-write.csv(rgn_spp_score_2013_HS_AQ, 
-          "data\\rgn_spp_score_2013_HS_AQ.csv", 
-          row.names=FALSE)
-write.csv(subset(rgn_spp_score_2013_HS_AQ, rgn_type=="CCAMLR", select=c(rgn_id, score)), 
-          "data\\rgn_spp_score_2013_AQ.csv", 
-          row.names=FALSE)
-write.csv(subset(rgn_spp_score_2013_HS_AQ, rgn_type=="fao", select=c(rgn_id, score)), 
-          "data\\rgn_spp_score_2013_HS.csv", 
-          row.names=FALSE)
-
-
-
-rgn_spp_trend_2013_HS_AQ <- regionScores %.%
-  mutate(score=rgn_spp_trend_2013) %.%
-  select(rgn_id, score) %.%
-  inner_join(regions, by="rgn_id") %.%
-  arrange(rgn_type, rgn_id)
-write.csv(rgn_spp_trend_2013_HS_AQ, 
-          "data\\rgn_spp_trend_2013_HS_AQ.csv", 
-          row.names=FALSE)
-write.csv(subset(rgn_spp_trend_2013_HS_AQ, rgn_type=="CCAMLR", select=c(rgn_id, score)), 
-          "data\\rgn_spp_trend_2013_AQ.csv", 
-          row.names=FALSE)
-write.csv(subset(rgn_spp_trend_2013_HS_AQ, rgn_type=="fao", select=c(rgn_id, score)), 
-          "data\\rgn_spp_trend_2013_HS.csv", 
-          row.names=FALSE)
-
-
+ HS_regions <- read.csv("/var/data/ohi/git-annex/Global/NCEAS-HighSeas-Other_v2014/data/rgn_labels_fao.csv")
+ HS_scores  <- HS_regions %.%
+   select(sp_id, rgn_id) %.%
+   left_join(regionScores) %.%
+   select(rgn_id, score=rgn_spp_score_2013)
+ write.csv(HS_scores, "data/rgn_spp_score_2013_HS.csv", row.names=FALSE)
+ 
+ HS_trend  <- HS_regions %.%
+   select(sp_id, rgn_id) %.%
+   left_join(regionScores) %.%
+   select(rgn_id, score=rgn_spp_trend_2013)
+ write.csv(HS_trend, "data/rgn_spp_trend_2013_HS.csv", row.names=FALSE)
+ 
+ 
+ 
 ## checking against old data:
 oldScore <- read.csv("N:\\model\\GL-NCEAS-SpeciesDiversity_v2013a\\data\\rgn_spp_score_2013.csv")
 oldScore$rgn_id <- as.numeric(oldScore$rgn_id)
