@@ -67,8 +67,8 @@ am_cells[am_cells$CsquareCode == "1401:227:4", ]
 BosniaHerzegovina <- data.frame(sp_id=232, LOICZID=68076, proportionArea=0.002658641)
 regionProp_df <- rbind(regionProp_df, BosniaHerzegovina)  
 ## Add in cell areas:
-#write.csv(regionProp_df, "", row.names=FALSE)
-rgn_proportions <- read.csv("tmp\\am_cells_rgn_proportions_May162014.csv")
+#write.csv(regionProp_df, "tmp/am_cells_rgn_proportions_May162014.csv", row.names=FALSE)
+rgn_proportions <- read.csv("tmp/am_cells_rgn_proportions_May162014.csv")
 
 ##################################################
 ### Generating master file with raster ID's ----
@@ -121,7 +121,14 @@ cells_spp <- unique(cells_spp)
 summary(cells_spp)  
 #write.csv(cells_spp, "tmp\\am_cells_spp.csv", row.names=FALSE)
 
-# testing new function formulation against old data (produces same results) ----
+
+####################################################################################
+# The following explores the extent of differences when the IUCN species are
+# assigned to one aquamap cell...
+# (result: basically produces same results) ----
+####################################################################################
+
+
 # create lookup table of weights for extinction risk categories and population trends
 category <- data.frame(category=c("LC", "NT", "VU", "EN", "CR", "EX"), 
                        catScore =c(0, 0.2, 0.4, 0.6, 0.8, 1))
