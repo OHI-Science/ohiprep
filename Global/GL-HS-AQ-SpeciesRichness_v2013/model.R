@@ -11,7 +11,7 @@ library(plyr)
 library(dplyr)
 rm(list = ls())
 
-setwd("N:\\model\\GL-HS-AQ-SpeciesRichness_v2013")
+setwd("/var/data/ohi/model/GL-HS-AQ-SpeciesRichness_v2013")
 cells <- read.csv("tmp\\am_cells_rgn_proportions.csv")
 cells_spp <- read.csv("tmp\\am_cells_spp.csv")
 spp <- read.csv("raw\\spp.csv")
