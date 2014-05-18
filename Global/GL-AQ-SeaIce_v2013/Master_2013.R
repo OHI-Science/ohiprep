@@ -16,7 +16,7 @@ library(reshape2)
 library(dplyr)
 rm(list = ls())
 
-# Description ----
+ # Description ----
 ## arcGIS processes:
 ## transformed this shape file: /var/data/ohi/git-annex/Global/NCEAS-Regions_v2014/data/sp_gcs
 ## to the poloar coordinate systems used in the these files: 
@@ -83,21 +83,25 @@ source("~/ohiprep/Global/GL-AQ-SeaIce_v2013/Status_Trend.R")
 
 ### shore protection ---- 
 shore <- read.csv("tmp/s_IceShoreProtection.csv")
+regions <- read.csv("/var/data/ohi/git-annex/Global/NCEAS-Antarctica-Other_v2014/rgn_labels_ccamlr.csv") %.%
+  select(sp_id) %.%
+  left_join(shore, by="sp_id")
+
 
 # health
-shore_condition <- subset(shore, select=c(sp_id, pctdevR_2011))
+shore_condition <- subset(regions, select=c(sp_id, pctdevR_2011))
 shore_condition$habitat  <- "seaice_shoreline"
 shore_condition$health  <- ifelse(shore_condition$pctdevR_2011 >1, 1, shore_condition$pctdevR_2011)
 shore_condition <- subset(shore_condition, select=c(sp_id, habitat, health))
 
 ## extent
-shore_extent <- subset(shore, select=c(sp_id, Reference_avg1979to2012monthlypixels))
+shore_extent <- subset(regions, select=c(sp_id, Reference_avg1979to2012monthlypixels))
 shore_extent$km2 <-  shore_extent$Reference_avg1979to2012monthlypixels/12*(pixel/1000)^2
 shore_extent$habitat <- "seaice_shoreline"
 shore_extent <- subset(shore_extent, select=c(sp_id, habitat, km2))
 
 ## trend 
-shore_trend <- subset(shore, select=c(sp_id, Trend_2006to2011_pctdevRperyr))
+shore_trend <- subset(regions, select=c(sp_id, Trend_2006to2011_pctdevRperyr))
 shore_trend$habitat <- "seaice_shoreline"
 shore_trend <- rename(shore_trend, c(Trend_2006to2011_pctdevRperyr="trend"))
 shore_trend <- subset(shore_trend, select=c(sp_id, habitat, trend))
@@ -109,23 +113,27 @@ habitat <- read.csv("tmp/s_IceHabitat.csv")
 # some regions don't really have enough ice to make a clear assessment:
 # cut some regions due to minimal ice (<200 km2 per year - average of months)
 # get monthly average of cover across years:
-habitat_condition <- subset(habitat_condition, !(habitat_condition$sp_id %in% c("248300", "258510", "258520", "258600", "258700")))
+habitat_condition <- subset(habitat, !(habitat$sp_id %in% c("248300", "258510", "258520", "258600", "258700")))
+
+regions <- read.csv("/var/data/ohi/git-annex/Global/NCEAS-Antarctica-Other_v2014/rgn_labels_ccamlr.csv") %.%
+  select(sp_id) %.%
+  left_join(habitat_condition, by="sp_id")
 
 
 # health
-habitat_condition <- subset(habitat, select=c(sp_id, pctdevR_2011))
+habitat_condition <- subset(regions, select=c(sp_id, pctdevR_2011))
 habitat_condition$habitat  <- "seaice_extent"
 habitat_condition$health  <- ifelse(habitat_condition$pctdevR_2011 >1, 1, habitat_condition$pctdevR_2011)
 habitat_condition <- subset(habitat_condition, select=c(sp_id, habitat, health))
 
 ## extent
-habitat_extent <- subset(habitat, select=c(sp_id, Reference_avg1979to2012monthlypixels))
+habitat_extent <- subset(regions, select=c(sp_id, Reference_avg1979to2012monthlypixels))
 habitat_extent$km2 <-  habitat_extent$Reference_avg1979to2012monthlypixels/12*(pixel/1000)^2
 habitat_extent$habitat <- "seaice_extent"
 habitat_extent <- subset(habitat_extent, select=c(sp_id, habitat, km2))
 
 ## trend 
-habitat_trend <- subset(habitat, select=c(sp_id, Trend_2006to2011_pctdevRperyr))
+habitat_trend <- subset(regions, select=c(sp_id, Trend_2006to2011_pctdevRperyr))
 habitat_trend$habitat <- "seaice_extent"
 habitat_trend <- rename(habitat_trend, c(Trend_2006to2011_pctdevRperyr="trend"))
 habitat_trend <- subset(habitat_trend, select=c(sp_id, habitat, trend))
