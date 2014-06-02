@@ -22,6 +22,7 @@
 # load libraries
 library(reshape2)
 library(gdata)
+#detach("package:plyr")
 library(dplyr)
 
 # from get paths configuration based on host machine name
@@ -124,7 +125,7 @@ explore3 = fert3 %.%
 
 # set up: be able to specify the scenario. fert's timeseries is one year shorter than
 
-scenario = 2014 # change to 2014, 2013, or 2012
+scenario = 2013 # change to 2014, 2013, or 2012
 
 if      (scenario == 2014){
   x1_pest = 2007
@@ -178,10 +179,12 @@ trend_fert = calc_trend(data, x1) %.%
   mutate(whencev01 = 'OD',
          whence_choice = 'OD'); head(trend_fert) 
 
+detach('package:plyr', unload=T)
+library(dplyr)
 
 ## 2) calculate pop trend. Example: 2014a for fert (2006:2010) and pest (2007:2011) ----
 # no gapfilling of pop required as was done in 2013; the pop file called is complete (missing rgn_ids are unpopulated).
-
+  
 pop_file = file.path(dir_neptune_data, 'model/GL-NCEAS-CoastalPopulation_v2013/data/', 'rgn_popsum2005to2015_inland25mi.csv') # dir_neptune_data defined in common.R                  
 pop = read.csv(pop_file) %.%
   filter(rgn_id < 255); head(pop)
@@ -219,6 +222,15 @@ trend_fert2 = rbind(trend_fert, trend_fert_toadd) %.%
 
 
 ## 4) make sure southern islands are trend = 0 and uninhabited islands are trend = NA. 
+# any additional missing regions set to NA. 
+
+rgns = read.csv('src/LookupTables/eez_rgn_2013master.csv') %.%
+  select(rgn_id = rgn_id_2013) %.%
+  mutate(trend = NA,
+         whencev01 = NA,         #set up these columns for use later on
+         whence_choice = NA) %.%
+  filter(rgn_id < 255) %.%
+  arrange(rgn_id); head(rgns)
 
 # prep island data
 islands = read.csv(file.path('src/LookupTables', 'rgn_southern_uninhabited_islands_2013SOM_tableS6.csv')); islands
@@ -230,7 +242,6 @@ trend_island = trend_island %.%
          whence_choice = 'southern') %.%
   select(rgn_id, trend, whencev01, whence_choice); head(trend_island)
 
-
 ## pesticides
 
 # identify which islands are already present -- remove them
@@ -240,7 +251,13 @@ islands_present = trend_pest2 %.%
 trend_pest3 = trend_pest2 %.% 
   filter(!rgn_id %in% islands_present$rgn_id)
 
-trend_pest4 = rbind(trend_pest3, trend_island); head(trend_pest4)
+# rgns2 = rgns %.%
+#   anti_join(trend_pest3, by='rgn_id') %.%
+#   arrange(rgn_id)
+
+trend_pest4 = rbind(trend_pest3, trend_island) %.% # would have to add rgns2
+  arrange(rgn_id); head(trend_pest4)
+
 
 
 ## fertilizers
@@ -252,7 +269,13 @@ islands_present = trend_fert2 %.%
 trend_fert3 = trend_fert2 %.% 
   filter(!rgn_id %in% islands_present$rgn_id)
 
-trend_fert4 = rbind(trend_fert3, trend_island)
+# rgns2 = rgns %.%
+#   anti_join(trend_fert3, by='rgn_id') %.%
+#   arrange(rgn_id)
+
+
+trend_fert4 = rbind(trend_fert3, trend_island) %.% # would have to add rgns2
+  arrange(rgn_id); head(trend_fert4)
 
 
 ## 5) save as poth pressure trend and CW scores
