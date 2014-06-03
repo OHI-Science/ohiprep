@@ -3,6 +3,8 @@
 # Prepare FAO fertilizer/pesticides data for CW trends. 
 # By JSLowndes Apr2014; File was originally clean_FAOtrends.r:(by JStewart Jul2013)
 
+# search for 'scenario =' and you are able to change it to the year of the global assessment desired.
+
 # for trends in pesticides and fertilizers. Note that for 2014a, only pesticides are updated (fertilizer 2011 data are all 0's)
 # Data are in a new format since 2013a. Available from http://faostat3.fao.org/faostat-gateway/go/to/download/R/*/E
 
@@ -20,6 +22,7 @@
 # load libraries
 library(reshape2)
 library(gdata)
+#detach("package:plyr")
 library(dplyr)
 
 # from get paths configuration based on host machine name
@@ -120,6 +123,24 @@ explore3 = fert3 %.%
 # See readme.md and Global SOM 2013 section 5.19. Approach by Katie Longo, September 2013: github/ohiprep/Global/FAO-CW-Trends_v2011/raw/Fertilizer_Pesticide_trend_KLongo2013.R
 # trend years: 2012a (2005:2009) and 2013a (2006:2010). Note:: error in KLo 2013 approach: trend was created through multiplying slope by 4 instead of 5
 
+# set up: be able to specify the scenario. fert's timeseries is one year shorter than
+
+scenario = 2013 # change to 2014, 2013, or 2012
+
+if      (scenario == 2014){
+  x1_pest = 2007
+  x1_fert = 2006
+  scenlab = '2014a'
+}else if(scenario == 2013){
+  x1_pest = 2006
+  x1_fert = 2005
+  scenlab = '2013a'
+}else if(scenario == 2012){
+  x1_pest = 2005
+  x1_fert = 2004
+  scenlab = '2012a'
+}
+
 
 # 1) calculate fert and pest trend, excluding NAs (done above), for 2014a. fert = 2006:2010 (data not actually updated); pest = 2007:2011
 ## this is the logic for the calc_trend function below using ddply and summarize. JSL April 2014: couldn't get dplyr to work with lm(). 
@@ -133,34 +154,37 @@ explore3 = fert3 %.%
 # function that calculates trend
   calc_trend = function(data, x1) {
     library('plyr')
-    trend2014 = plyr::ddply(
+    trend = plyr::ddply(
       data, .(rgn_id), summarize,
       trend = max(min(lm(value ~ year)$coefficients[[2]] /
                         (lm(value ~ year)$coefficients[[2]]*x1 +
                            lm(value ~ year)$coefficients[[1]]) * 5, 1), -1))
-    return(trend2014)
+    return(trend)
   }
 # --------
 
-## calculate pesticide trends: 
+## calculate pesticide trends, start whence bookkeeping: 
 data = na.omit(pest3)
-x1_pest = 2007
 x1 = x1_pest
 names(data) = c('rgn_id', 'rgn_nam', 'value', 'year')
-trend_pest = calc_trend(data, x1); head(trend_pest)
+trend_pest = calc_trend(data, x1) %.%
+  mutate(whencev01 = 'OD',
+         whence_choice = 'OD'); head(trend_pest)
 
 ## calculate fertilizer trends: 
 data = na.omit(fert3)
 names(data) = c('rgn_id', 'rgn_nam', 'value', 'year')
-x1_fert = 2006
 x1 = x1_fert
-trend_fert = calc_trend(data, x1); head(trend_fert) 
+trend_fert = calc_trend(data, x1) %.%
+  mutate(whencev01 = 'OD',
+         whence_choice = 'OD'); head(trend_fert) 
 
+detach('package:plyr', unload=T)
+library(dplyr)
 
-
-## 2) calculate pop trend for 2014a for fert (2006:2010) and pest (2007:2011) ----
-# no gapfilling of pop required as was done in 2013; the pop file is complete (missing rgn_ids are unpopulated).
-
+## 2) calculate pop trend. Example: 2014a for fert (2006:2010) and pest (2007:2011) ----
+# no gapfilling of pop required as was done in 2013; the pop file called is complete (missing rgn_ids are unpopulated).
+  
 pop_file = file.path(dir_neptune_data, 'model/GL-NCEAS-CoastalPopulation_v2013/data/', 'rgn_popsum2005to2015_inland25mi.csv') # dir_neptune_data defined in common.R                  
 pop = read.csv(pop_file) %.%
   filter(rgn_id < 255); head(pop)
@@ -168,16 +192,18 @@ pop = read.csv(pop_file) %.%
 ## calculate pop trends for pest years:
 data = pop[pop$year %in% c(x1_pest:(x1_pest+4)),] # 4 here will actually give the 5-year trend
 names(data) = c('rgn_id', 'year', 'value')
-trend_pop_forpest = calc_trend(data, x1_pest); head(trend_pop_forpest)
+trend_pop_forpest = calc_trend(data, x1_pest) %.%
+  mutate(whencev01 = 'XP',
+         whence_choice = 'coastalpop'); head(trend_pop_forpest)
 
 ## calculate pop trends for fert years:
 data = pop[pop$year %in% c(x1_fert:(x1_fert+4)),] 
 names(data) = c('rgn_id', 'year', 'value')
-trend_pop_forfert = calc_trend(data, x1_fert); head(trend_pop_forfert)
+trend_pop_forfert = calc_trend(data, x1_fert)%.%
+  mutate(whencev01 = 'XP',
+         whence_choice = 'coastalpop'); head(trend_pop_forfert)
 
-
-
-## 3) join fert and pest trends with appropriate pop trends ----
+## 3) join fert and pest trends with appropriate pop trends, add whence bookkeeping ----
 # identify which rgn_ids aren't represented in pest and fert files (using anti_join)
 
 # pesticides
@@ -185,27 +211,36 @@ trend_pest_toadd = trend_pop_forpest %.%
   anti_join(trend_pest, by='rgn_id') 
 
 trend_pest2 = rbind(trend_pest, trend_pest_toadd) %.%
-  arrange(rgn_id)
+  arrange(rgn_id); head(trend_pest2)
 
 # fertilizers
 trend_fert_toadd = trend_pop_forfert %.%
   anti_join(trend_fert, by='rgn_id') 
 
 trend_fert2 = rbind(trend_fert, trend_fert_toadd) %.%
-  arrange(rgn_id)
-
+  arrange(rgn_id); head(trend_fert2)
 
 
 ## 4) make sure southern islands are trend = 0 and uninhabited islands are trend = NA. 
+# any additional missing regions set to NA. 
+
+rgns = read.csv('src/LookupTables/eez_rgn_2013master.csv') %.%
+  select(rgn_id = rgn_id_2013) %.%
+  mutate(trend = NA,
+         whencev01 = NA,         #set up these columns for use later on
+         whence_choice = NA) %.%
+  filter(rgn_id < 255) %.%
+  arrange(rgn_id); head(rgns)
 
 # prep island data
 islands = read.csv(file.path('src/LookupTables', 'rgn_southern_uninhabited_islands_2013SOM_tableS6.csv')); islands
 trend_island = islands 
 trend_island$trend = NA
-trend_island$trend[trend_islands$Inhabited == 1] = 0
+trend_island$trend[trend_island$Inhabited == 1] = 0
 trend_island = trend_island %.%
-  select(rgn_id, trend)
-
+  mutate(whencev01 = 'XSI', 
+         whence_choice = 'southern') %.%
+  select(rgn_id, trend, whencev01, whence_choice); head(trend_island)
 
 ## pesticides
 
@@ -216,7 +251,13 @@ islands_present = trend_pest2 %.%
 trend_pest3 = trend_pest2 %.% 
   filter(!rgn_id %in% islands_present$rgn_id)
 
-trend_pest4 = rbind(trend_pest3, trend_island)
+# rgns2 = rgns %.%
+#   anti_join(trend_pest3, by='rgn_id') %.%
+#   arrange(rgn_id)
+
+trend_pest4 = rbind(trend_pest3, trend_island) %.% # would have to add rgns2
+  arrange(rgn_id); head(trend_pest4)
+
 
 
 ## fertilizers
@@ -228,13 +269,21 @@ islands_present = trend_fert2 %.%
 trend_fert3 = trend_fert2 %.% 
   filter(!rgn_id %in% islands_present$rgn_id)
 
-trend_fert4 = rbind(trend_fert3, trend_island)
+# rgns2 = rgns %.%
+#   anti_join(trend_fert3, by='rgn_id') %.%
+#   arrange(rgn_id)
+
+
+trend_fert4 = rbind(trend_fert3, trend_island) %.% # would have to add rgns2
+  arrange(rgn_id); head(trend_fert4)
 
 
 ## 5) save as poth pressure trend and CW scores
 
-write.csv(trend_pest4, file.path(dir_d, 'data', 'p_pesticides_trends_2014a.csv'), row.names = F)
-write.csv(trend_fert4, file.path(dir_d, 'data', 'p_fertilizers_trends_2014a.csv'), row.names = F)
+write.csv(trend_pest4, file.path(dir_d, 'data', 
+                                 paste('p_pesticides_trends_', scenlab, '.csv', sep='')), row.names = F)
+write.csv(trend_fert4, file.path(dir_d, 'data', 
+                                 paste('p_fertilizers_trends_', scenlab, '.csv', sep='')), row.names = F)
 
 # calc CW scores and save
 # clean waters scores are the 'inverse' of pressures, so the delta in score is the 'inverse' of the pressure trend
@@ -251,8 +300,10 @@ trend_fert_final = trend_fert4 %.%
   arrange(rgn_id)
 names(trend_fert_final)[2] = 'trend.score'; head(trend_fert_final)
 
-write.csv(trend_pest_final, file.path(dir_d, 'data', 'rgn_cw_pesticides_trends_2014a.csv'), row.names = F)
-write.csv(trend_fert_final, file.path(dir_d, 'data', 'rgn_cw_fertilizers_trends_2014a.csv'), row.names = F)
+write.csv(trend_pest_final, file.path(dir_d, 'data', 
+                                      paste('rgn_cw_pesticides_trends_', scenlab, '.csv', sep='')), row.names = F)
+write.csv(trend_fert_final, file.path(dir_d, 'data', 
+                                      paste('rgn_cw_fertilizers_trends_', scenlab, '.csv', sep='')), row.names = F)
 
 # --- fin
 
