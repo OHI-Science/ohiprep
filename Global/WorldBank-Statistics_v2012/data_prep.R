@@ -19,6 +19,8 @@
 library(reshape2)
 library(gdata)
 library(dplyr)
+# devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
+library(ohicore)  
 
 
 # from get paths configuration based on host machine name
