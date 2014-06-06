@@ -573,16 +573,28 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val,
   
   # create rows in rgn_to_gapfill_tmp for each unique year
   ind = c((rgn_to_gapfill_tmp$rgn_id %in% 213) | (!rgn_to_gapfill_tmp$r2 %in% NA)) # removes open ocean and disputed 
-  year_uni = as.data.frame(unique(cleandata$year))
+  year_uni = as.data.frame(unique(cleandata$year)) 
   names(year_uni) = 'year'
-  year_uni$year = as.numeric(year_uni$year)
+  year_uni$year = as.integer(year_uni$year) 
+  year_uni = year_uni %.%
+    arrange(year)
   
-  rgn_to_gapfill = data.frame(rgn_id  = rep(rgn_to_gapfill_tmp$rgn_id[ind], dim(year_uni)[1]), 
+ # must create this in two steps otherwise, otherwise years do not align with regions and duplicates are introduced
+   rgn_to_gapfill_tmp2 = data.frame(rgn_id  = rep(rgn_to_gapfill_tmp$rgn_id[ind], dim(year_uni)[1]), 
                               rgn_nam = rep(rgn_to_gapfill_tmp$rgn_nam[ind], dim(year_uni)[1]), 
                               r2      = rep(rgn_to_gapfill_tmp$r2[ind], dim(year_uni)[1]),
-                              r1      = rep(rgn_to_gapfill_tmp$r1[ind], dim(year_uni)[1]),
-                              year    = unique(cleandata$year))
-  rgn_to_gapfill = arrange(rgn_to_gapfill, rgn_id, year); head(rgn_to_gapfill)
+                              r1      = rep(rgn_to_gapfill_tmp$r1[ind], dim(year_uni)[1])) %.%
+    arrange(rgn_id);
+  rgn_to_gapfill = data.frame(rgn_to_gapfill_tmp2,  
+                              year_uni)  
+  ####
+  
+#   rgn_to_gapfill = data.frame(rgn_id  = rep(rgn_to_gapfill_tmp$rgn_id[ind], dim(year_uni)[1]), 
+#                               rgn_nam = rep(rgn_to_gapfill_tmp$rgn_nam[ind], dim(year_uni)[1]), 
+#                               r2      = rep(rgn_to_gapfill_tmp$r2[ind], dim(year_uni)[1]),
+#                               r1      = rep(rgn_to_gapfill_tmp$r1[ind], dim(year_uni)[1]),
+#                               year    = year_uni)
+#   rgn_to_gapfill = arrange(rgn_to_gapfill, rgn_id, year); head(rgn_to_gapfill)
   
   
   ## gapfill data
