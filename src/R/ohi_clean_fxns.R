@@ -512,7 +512,7 @@ temporal.gapfill = function(data, fld.id = 'rgn_id', fld.value = 'value', fld.ye
 }
 
 #JS
-add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL, 
+add_gapfill = function(cleandata, dirsave, layersave, s_island_val, 
                        dpath = 'src/LookupTables',   
                        rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'),
                        rgns.csv           = file.path(dpath, 'rgn_details.csv')) {
@@ -547,7 +547,7 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
     group_by(r2, year); head(d_r2a)
   
   d_r2 = d_r2a %.%  # Have to split this chain so can save whence information below...
-    summarize(r2mean = mean(value, na.rm=T)) %.%  # if this gives errors check to make sure this is dplyr::summarize not plyr::summarize
+    dplyr::summarize(r2mean = mean(value, na.rm=T)) %.%  # if this gives errors check to make sure this is dplyr::summarize not plyr::summarize. See detach() above
     mutate(whence_choice = rep('r2')); head(d_r2)
   
   d_r1a = cleandata %.%
@@ -555,7 +555,7 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
     group_by(r1, year); head(d_r1a)
   
   d_r1 = d_r1a %.%
-    summarize(r1mean = mean(value, na.rm=T)) %.%
+    dplyr::summarize(r1mean = mean(value, na.rm=T)) %.%
     mutate(whence_choice = rep('r1')); head(d_r1)
   
   
@@ -573,16 +573,28 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
   
   # create rows in rgn_to_gapfill_tmp for each unique year
   ind = c((rgn_to_gapfill_tmp$rgn_id %in% 213) | (!rgn_to_gapfill_tmp$r2 %in% NA)) # removes open ocean and disputed 
-  year_uni = as.data.frame(unique(cleandata$year))
+  year_uni = as.data.frame(unique(cleandata$year)) 
   names(year_uni) = 'year'
-  year_uni$year = as.numeric(year_uni$year)
+  year_uni$year = as.integer(year_uni$year) 
+  year_uni = year_uni %.%
+    arrange(year)
   
-  rgn_to_gapfill = data.frame(rgn_id=rep(rgn_to_gapfill_tmp$rgn_id[ind], dim(year_uni)[1]), 
-                              rgn_nam=rep(rgn_to_gapfill_tmp$rgn_nam[ind], dim(year_uni)[1]), 
-                              r2=rep(rgn_to_gapfill_tmp$r2[ind], dim(year_uni)[1]),
-                              r1=rep(rgn_to_gapfill_tmp$r1[ind], dim(year_uni)[1]),
-                              year=unique(cleandata$year))
-  rgn_to_gapfill = arrange(rgn_to_gapfill, rgn_id, year); head(rgn_to_gapfill)
+ # must create this in two steps otherwise, otherwise years do not align with regions and duplicates are introduced
+   rgn_to_gapfill_tmp2 = data.frame(rgn_id  = rep(rgn_to_gapfill_tmp$rgn_id[ind], dim(year_uni)[1]), 
+                              rgn_nam = rep(rgn_to_gapfill_tmp$rgn_nam[ind], dim(year_uni)[1]), 
+                              r2      = rep(rgn_to_gapfill_tmp$r2[ind], dim(year_uni)[1]),
+                              r1      = rep(rgn_to_gapfill_tmp$r1[ind], dim(year_uni)[1])) %.%
+    arrange(rgn_id);
+  rgn_to_gapfill = data.frame(rgn_to_gapfill_tmp2,  
+                              year_uni)  
+  ####
+  
+#   rgn_to_gapfill = data.frame(rgn_id  = rep(rgn_to_gapfill_tmp$rgn_id[ind], dim(year_uni)[1]), 
+#                               rgn_nam = rep(rgn_to_gapfill_tmp$rgn_nam[ind], dim(year_uni)[1]), 
+#                               r2      = rep(rgn_to_gapfill_tmp$r2[ind], dim(year_uni)[1]),
+#                               r1      = rep(rgn_to_gapfill_tmp$r1[ind], dim(year_uni)[1]),
+#                               year    = year_uni)
+#   rgn_to_gapfill = arrange(rgn_to_gapfill, rgn_id, year); head(rgn_to_gapfill)
   
   
   ## gapfill data
