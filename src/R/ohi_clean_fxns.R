@@ -110,8 +110,10 @@ cbind_rgn = function(d, fld_name = 'country', dir_lookup = 'src/LookupTables',
     read.csv(rgn_master.csv, na=''),
     read.csv(rgn_synonyms.csv, na='')) %.%
     select(rgn_id=rgn_id_2013, rgn_name=rgn_nam_2013, rgn_type=rgn_typ) %.%
-    group_by(rgn_name, rgn_type) %.%
-    summarize(rgn_id=last(rgn_id)) # remove duplicates  
+    group_by(rgn_name) %.%
+    summarize(
+      rgn_id   = last(rgn_id),
+      rgn_type = last(rgn_type))
   
   # remove accents from data
   d['rgn_name'] = d[fld_name]
