@@ -119,13 +119,16 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
     inner_join(com2cat, by='commodity') %.%
     group_by(country, category, year) %.%
     summarize(value = sum(value, na.rm=T))
-    
+
   # units: rename value field to units based on filename
   units = c('tons','usd')[str_detect(f, c('quant','value'))] # using American English, lowercase
   m_c_u = rename(m_c, setNames(units, 'value'))
-
-  # rgn_id: add
+  
+  # rgn_id: add  # source('src/R/ohi_clean_fxns.R') # cbind_rgn
   m_c_u_r = cbind_rgn(m_c_u, fld_name='country') # @jules32: new function to replace add_rgn_id in src/R/ohi_clean_fxns.R!
+  
+  # check for duplicates
+  stopifnot( sum(duplicated(m_c_u_r[,c('country', 'category', 'year')])) == 0 )
   
   # output
   f_out = sprintf('%s/data/%s_%s.csv', dir_d, basename(dir_d), units)
