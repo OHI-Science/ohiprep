@@ -1,334 +1,133 @@
 # data_prep.R
 
 # Prepare FAO commodities data for Natural Products goal. 
-# By JSLowndes Jun2014; File was originally clean_FAOcommodities.r:(by JStewart Apr2013)
+# By JSLowndes/bbest Jun2014; File was originally clean_FAOcommodities.r:(by JStewart Apr2013)
 
-#   read in individual files
-#   remove Totals row
-#   remove/translate FAO data codes (F, ..., -, 0 0)
-#   add identifier column
-#   concatenate data from each file into a single file
-#   run add_rgn_id.r (function by J. Stewart, B. Best)
-#   gafilling: rules like for Mariculture: gapfilling category = TP.
+#   read in quant/value files
+#   remove Totals, Yugoslavia rows
+#   translate FAO data codes (F, ..., -, 0 0)
+#   carry previous year's value forward if value for max(year) is NA
+#   merge with commodities and collapse to categories
+#   add rgn_id using new cbind_rgn function (@bbest updated add_rgn_id())
 #   save single files for each commodity 
-
 
 # setup ----
 
-
-# load libraries
+# load libraries (dplyr last)
 library(reshape2)
-library(dplyr)
-# devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
-library(ohicore)  
+library(stringr)
+library(plyr)
+library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
+library(dplyr)   # NOTE: I think dplyr needs to be loaded AFTER plyr to override functions, which prob was reason behind wierdness with group_by() and summarize() giving 1 value.
 
-# from get paths configuration based on host machine name
-dir_root = file.path('/Users', Sys.info()[['user']], 'github/ohiprep')
-source(file.path(dir_root, 'src/R/common.R')) # set dir_neptune_data
-# Otherwise, presume that scripts are always working from your default ohiprep folder
-
-dir_d = 'Global/FAO-Commodities_v2011'
-setwd(file.path(dir_root, dir_d, 'raw'))
+# get paths
+# NOTE: The default path should already be your ohiprep root directory for the rest to work.
+#       Otherwise, presume that scripts are always working from your default ohiprep folder
+source('src/R/common.R') # set dir_neptune_data
+dir_d = 'Global/FAO-Commodities_v2011' 
+# NOTE: Set output paths to here, but do not use setwd().
+#       This way, any scripts and code in ohiprep will still work, b/c always in root ohiprep dir.
 
 # get functions
-source(file.path(dir_root, 'src/R/ohi_clean_fxns.R'))
+source('src/R/ohi_clean_fxns.R') # cbind_rgn
+
+# lookup for converting commodities to categories
+com2cat = read.csv(file.path(dir_d, 'commodities2categories.csv'), na.strings='')
 
 # read in and process files ----
-for (f in list.files(pattern=glob2rx('*.csv'))){ # f="FAO_raw_commodities_quant_1950_2011.csv"
+for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.names=T)){ # f=list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.names=T)[1]
   
-  d = read.csv(f, check.names=F,strip.white=TRUE); head(d)
+  # data read in
+  d = read.csv(f, check.names=F,strip.white=TRUE)
   
-  # clean up and melt
-  d.1 = d
-  d.1 <- d.1[d.1[,1] != "Totals",] # remove Totals line
-  d.1 <- d.1[d.1[,1] != "Yugoslavia SFR",] 
-  
-  d.m = melt(data=d.1, id.vars=names(d)[1:3], variable.name='year')
-  names(d.m) = c('country','commodity','trade','year','value'); head(d.m)
-  
-  # remove FAO indicators
-  # d.m$value = trim(d.m$value) # not necessary with strip.white=T in read.csv() above
-  d.m$value = sub(' F', '', d.m$value, fixed=T) # FAO denotes with F when they have estimated the value using best available data
-  d.m$value = sub('0 0', '0.1', d.m$value, fixed=T)# FAO denotes something as '0 0' when it is > 0 but < 1/2 of a unit. 
-  d.m$value = sub('-', '0', d.m$value, fixed=T) # FAO's 0.
-  d.m$value = sub('...', 'NA', d.m$value, fixed=T)
-  d.m$value = as.numeric(d.m$value); head(d.m)
-  
-  # OR...
-  #     d.m %.%
-  #       mutate(
-  #         value = sub(' F', '', value, fixed=T), # FAO denotes with F when they have estimated the value using best available data
-  #         value = sub('0 0', '0.1', value, fixed=T),# FAO denotes something as '0 0' when it is > 0 but < 1/2 of a unit. 
-  #         value = sub('-', '0', value, fixed=T), # FAO's 0.
-  #         value = sub('...', 'NA', value, fixed=T),
-  #         value = as.numeric(value)); head(d.m)
-  
-  
-  ## filter data; add category column 
-  d.m = d.m %.%
+  # melt and clean up
+  m = d %.%    
+    rename(c(
+      'Country (Country)'       = 'country',
+      'Commodity (Commodity)'   = 'commodity',
+      'Trade flow (Trade flow)' = 'trade')) %.%
+    melt(id=c('country','commodity','trade'), variable='year') %.%
+    filter(!country %in% c('Totals', 'Yugoslavia SFR')) %.%
+    mutate(  
+      value = str_replace(value, fixed( ' F'),    ''), # FAO denotes with F when they have estimated the value using best available data
+      value = str_replace(value, fixed('0 0'), '0.1'), # FAO denotes something as '0 0' when it is > 0 but < 1/2 of a unit. 
+      value = str_replace(value, fixed(  '-'),   '0'), # FAO's 0
+      value = str_replace(value, fixed('...'),    NA), # FAO's NA
+      value = as.numeric(value),
+      year  = as.numeric(as.character(year))) %.%       # search in R_inferno.pdf for "shame on you." hah!
     filter(trade == 'Export') %.%
     select(-trade) %.%
-    mutate(category = commodity, 
-           year = as.numeric(as.character(factor(year)))); head(d.m) # search in R_inferno.pdf for "shame on you."
+    arrange(country, commodity, year)
   
-  ## select all NP subcategories by category
-  cat_com = list(
-    spg=c(
-      'Natural sponges nei',
-      'Natural sponges other than raw',
-      'Natural sponges raw' 
-    ),
-    oil=c(
-      'Alaska pollack oil, nei',  # none
-      'Anchoveta oil',            # none
-      'Capelin oil',
-      'Clupeoid oils, nei',
-      'Cod liver oil', 
-      'Fish body oils, nei', 
-      'Fish liver oils, nei',
-      'Gadoid liver oils, nei',   # none
-      'Hake liver oil',
-      'Halibuts, liver oils', 
-      'Herring oil', 
-      'Jack mackerel oil',        # none
-      'Menhaden oil',
-      'Pilchard oil',             # none
-      'Redfish oil', 
-      'Sardine oil',
-      'Shark liver oil',
-      'Shark oil',
-      'Squid oil' 
-    ),
-    swd=c(
-      'Agar agar in powder',  
-      'Agar agar in strips', 
-      'Agar agar nei',
-      'Carrageen (Chondrus crispus)',
-      'Green laver', 
-      'Hizikia fusiforme (brown algae)', 
-      'Kelp',
-      'Kelp meal',
-      'Laver, dry',
-      'Laver, nei', 
-      'Other brown algae (laminaria, eisenia/ecklonia)', 
-      'Other edible seaweeds', 
-      'Other inedible seaweeds',
-      'Other red algae', 
-      'Other seaweeds and aquatic plants and products thereof', 
-      'Undaria pinnafitida (brown algae)'
-    ),
-    orn=c(
-      'Ornamental saltwater fish',
-      'Ornamental fish nei'
-    ), 
-    crl=c(
-      'Coral and the like' 
-      ## note: 'Miscellaneous corals and shells' not included here; see shells below
-    ),
-    shl=c(
-      'Abalone shells',  
-      'Miscellaneous corals and shells', 
-      'Mother of pearl shells',
-      'Oyster shells',
-      'Sea snail shells', 
-      'Shells nei', 
-      'Trochus shells'
-    ))
+  # check for commodities in data not found in lookup, per category by keyword
+  commodities = sort(as.character(unique(m$commodity)))
+  keywords = c(
+    'sponges'     = 'sponge', 
+    'fish_oil'    = 'oil', 
+    'seaweeds'    = 'seaweed', 
+    'ornamentals' = 'ornamental', 
+    'corals'      = 'coral', 
+    'shells'      = 'shell')
+  for (i in 1:length(keywords)){ # i=1
+    cat = names(keywords)[i]
+    keyword = keywords[i]
+    d_missing_l = setdiff(
+      commodities[str_detect(commodities, ignore.case(keyword))], 
+      subset(com2cat, category==cat, commodity, drop=T))
+    if (length(d_missing_l)>0){
+      cat(sprintf("\nMISSING in the lookup the following commodites in category='%s' having keyword='%s' in data file %s:\n    %s\n", 
+                  cat, keyword, basename(f), paste(d_missing_l, collapse='\n    ')))
+    }
+  }
+
+  # check for commodities in lookup not found in data
+  l_missing_d = anti_join(com2cat, m, by='commodity')
+  if (length(l_missing_d)>0){
+    cat(sprintf('\nMISSING: These commodities in the lookup are not found in the data %s:\n    ', basename(f)))
+    print(l_missing_d)
+  }
   
-  ## create categories from subcategories
-  
-  # sponges
-  d.spg = d.m %.%  
-    filter( commodity %in% cat_com[['spg']] ) %.%
-    mutate(category = 'spg');  head(d.spg)
-  unique(d.spg$commodity)
-  summary(d.spg)
-  
-  # fish oil
-  d.oil = d.m %.%  
-    filter( commodity %in% cat_com[['oil']] ) %.%
-    mutate(category = 'oil');  head(d.oil)
-  unique(d.oil$commodity)
-  summary(d.oil, maxsum = 30) # TODO: figure out how to report that there are categories not represented
-  
-  # seaweed and plants
-  d.swd = d.m %.%  
-    filter( commodity %in% cat_com[['swd']] ) %.%
-    mutate(category = 'swd');  head(d.swd)
-  unique(d.swd$commodity)
-  summary(d.swd, maxsum = 20)
-  
-  # ornamental fish
-  d.orn = d.m %.%  
-    filter( commodity %in% cat_com[['orn']] ) %.%
-    mutate(category = 'orn');  head(d.orn)
-  unique(d.orn$commodity)
-  summary(d.orn)
-  
-  # corals
-  d.crl = d.m %.%  
-    filter( commodity %in% cat_com[['crl']] ) %.%# 
-    mutate(category = 'crl');  head(d.crl)
-  unique(d.crl$commodity)
-  summary(d.crl)
-  
-  # shells
-  d.shl = d.m %.%  
-    filter(  commodity %in% cat_com[['shl']] ) %.%# 
-    mutate(category = 'shl');  head(d.shl)
-  unique(d.shl$commodity)
-  summary(d.shl, maxsum = 10)
-  
-  
-  ## combine all categories back together
-  m = rbind_list(d.spg, d.oil, d.swd, d.orn, d.crl, d.shl); head(m) # %.%
-  #     write.csv('../tmp/m.csv', row.names=F, na='')
-  #   # FUNK restart
-  #   library(dplyr)
-  #   library(reshape2)
-  #   
-  #   wd = 'Global/FAO-Commodities_v2011'
-  #   m = read.csv(file.path(wd, '/tmp/m.csv'), na.strings='')
-  
-  m = m %.%
-    group_by(country, category, year) %.%
-    summarize(value = sum(value, na.rm=T)) #ERROR:::: JSL, June 6 2014 at 5:55pm: run as is, this sums as that single value again...
-  
-  ## clean up Netherlands Antilles: break into its 6 regions
-  sort(unique(m$country)) # Netherlands Antilles
-  ant_cntry = c('Aruba', 'Bonaire', 'Curacao', 'Saba', 'Sint-Maarten', 'Sint-Eustasius') # correct 6
-  m_ant = filter(m, country=='Netherlands Antilles')
-  m_ant_exp = m_ant %.%
-    as.data.frame() %.%
+  # antilles: clean up Netherlands Antilles by breaking into its 6 regions
+  m_ant = m %.%
+    filter(country == 'Netherlands Antilles') %.%
     mutate(
-      value = value/6,
-      'Aruba' = value,
-      'Bonaire' = value,
-      'Curacao' = value,
-      'Saba' = value,
-      'Sint-Maarten' = value,
-      'Sint-Eustasius' = value) %.%
+      value            = value/6,
+      'Aruba'          = value,
+      'Bonaire'        = value,
+      'Curacao'        = value,
+      'Saba'           = value,
+      'Sint Maarten'   = value,
+      'Sint Eustatius' = value) %.%
     select(-value, -country) %.%
-    melt(id=c('category','year'), variable.name='country')
+    melt(id=c('commodity','year'), variable.name='country')
+  m_a = m %.%
+    filter(country != 'Netherlands Antilles') %.%
+    rbind_list(m_ant)    
   
-  #   list.files('../ohicore/inst/extdata/layers.Global2013.www2013')
-  #   read.csv('../ohicore/inst/extdata/layers.Global2013.www2013/rgn_labels.csv') %.%
-  #   arrange(label)
-  #   head()
-  # check for duplicates: m[ duplicated(m[,c('country','category','year')]), ]
+  # gapfill: Carry previous year's value forward if value for max(year) is NA.
+  #   This gives wiggle room for regions still in production but not able to report by the FAO deadline.
+  m_a_g = m_a %.%
+    group_by(country, commodity) %.%
+    mutate(
+      year_max   = max(year),
+      year_prev  = lag(year, order_by=year),
+      value_prev = lag(value, order_by=year),
+      value      = ifelse(is.na(value) & year==year_max & year_prev==year-1, value_prev, value))  
   
-  # rbind Netherlands Antilles regions with original data, arrange
-  m2 = m %.%
-    filter(country !='Netherlands Antilles') %.%
-    rbind(m_ant_exp) %.%
-    arrange(country, value, year, category); head(m2) # prepare for the order add_rgn_id.r expects
-  m2$year = as.numeric(as.character(factor(d.m2$year))) 
-  summary(d.m2)
+  # collapse: join with commodities and summarize to category
+  m_c = m_a_g %.%
+    inner_join(com2cat, by='commodity') %.%
+    group_by(country, category, year) %.%
+    summarize(value = sum(value, na.rm=T))
+    
+  # units: rename value field to units based on filename
+  units = c('tons','usd')[str_detect(f, c('quant','value'))] # using American English, lowercase
+  m_c_u = rename(m_c, setNames(units, 'value'))
+
+  # rgn_id: add
+  m_c_u_r = cbind_rgn(m_c_u, fld_name='country') # @jules32: new function to replace add_rgn_id in src/R/ohi_clean_fxns.R!
   
-  # layer-specific further processing for quantity and value
-  a = strsplit(f, '_', fixed=FALSE)
-  layer = unlist(a)[4]
-  b = strsplit(dir_d, '/', fixed=FALSE)
-  
-  if(layer == 'quant'){
-    d.final = d.m2 %.%
-      select(country, year, 
-             tonnes = value, 
-             category); head(d.final)
-  } else if (layer == 'value'){
-    d.m2$value = d.m2$value * 1000 # FAO reports in 'thousands of US dollars'
-    d.final = d.m2 %.%
-      select(country, year, 
-             USD = value, 
-             category); head(d.final)
-  }
-  
-  # save file
-  filesave = file.path(dir_root, dir_d, 'data', paste(unlist(b)[2], '_', layer, '-cleaned.csv', sep=''))
-  add_rgn_id(d.final, filesave, dpath = file.path(dir_root,'src/LookupTables'))
+  # output
+  f_out = sprintf('%s/data/%s_%s.csv', dir_d, basename(dir_d), units)
+  write.csv(m_c_u_r, f_out)
 }
-
-
-## -----
-## ATTENTION 2014a::
-## JSL has not updated this gapfilling code for 2014a; this approach needs to be tidied (below was a hack). The only gapfilling that occurs is: if value (tonnes/USD) !=NA for the max(year)-1 but value == NA for the max(year), copy the value from max(year)-1 forward to max(year); this gives wiggle room for regions still in production but not able to report by the FAO deadline...
-
-
-
-## gapfilling 2013a::, category TP ----
-# as was done in Mariculture. read it in, melt, recast and aggregate by sum, and then remelt and save as individual commodities.
-setwd(file.path(dir_root, dir_d, 'data'))
-for (f in list.files(pattern=glob2rx('*cleaned.csv'))){ # f="FAO-Commodities_v2011_quant-cleaned.csv"
-  
-  o = read.csv(f); head(o) 
-  
-  create rows in rgn_to_gapfill_tmp for each unique year
-  ind = !rgn_to_gapfill_tmp$r2 %in% NA
-  year_uni = as.data.frame(unique(cleandata$year))
-  names(year_uni) = 'year'
-  year_uni$year = as.numeric(year_uni$year)
-  
-  rgn_to_gapfill = data.frame(rgn_id=rep(rgn_to_gapfill_tmp$rgn_id[ind], dim(year_uni)[1]), 
-                              rgn_nam=rep(rgn_to_gapfill_tmp$rgn_nam[ind], dim(year_uni)[1]), 
-                              r2=rep(rgn_to_gapfill_tmp$r2[ind], dim(year_uni)[1]),
-                              r1=rep(rgn_to_gapfill_tmp$r1[ind], dim(year_uni)[1]),
-                              year=unique(cleandata$year))
-  rgn_to_gapfill = arrange(rgn_to_gapfill, rgn_id, year); head(rgn_to_gapfill)
-  
-  
-  
-  # process by hand: assign all Netherlands Antilles children 1/6 of total and save as GL-FAO-AllCombined_v2009-rgn-processed.csv
-  
-  
-  ## gapfilling, category TP, as was done in Mariculture. read it in, melt, recast and aggregate by sum, and then remelt and save as individual commodities. 
-  
-  # read in file that had a few modifications by hand (see the README.md)
-  p = read.csv(paste(dir1, 'data/', 'GL-FAO-AllCombined_v2009-rgn-processed.csv', sep=''))
-  p.1 = p
-  
-  yrt_nadex = which(is.na(p.1$X2009)) # ID where most recent year t are NAs
-  yrtminus1_nadex = which(is.na(p.1$X2008)) # ID where year t-1 are NAs
-  p.1$X2008[yrtminus1_nadex] = 0 # first fill most recent year NAs with 0 temporarily
-  p.1$X2009[yrt_nadex] = p.1$X2008[yrt_nadex] # then replace t NAs with the t-1 values
-  p.1$X2008[yrtminus1_nadex] = NA # then change the 2010 value back to NA (probably won't matter for status, but just in case. 
-  p.1$gapfilled = rep(0, dim(p.1)[1])
-  p.1$gapfilled[yrt_nadex] = 1
-  
-  p.1end = dim(p.1)[2]
-  p.m = melt(data=p.1, id.vars=names(p.1)[c(1:4,p.1end)], variable.name='year')
-  p.m$year = sub('X', '', p.m$year, fixed=F) # fix years: remove R's X
-  p.m$year = as.numeric(as.character(p.m$year))
-  
-  # get ready to cast, melt and save as data layer for each layer
-  # p.m$layer = gsub('OrnamentalFish', 'orn', p.m$layer) 
-  # p.m$layer = gsub('Seaweeds', 'swd', p.m$layer) 
-  # p.m$layer = gsub('Shells', 'shl', p.m$layer) 
-  # p.m$layer = gsub('Sponges', 'spg', p.m$layer) 
-  # p.m$layer = gsub('Coral', 'crl', p.m$layer) 
-  # p.m$layer = gsub('FishOil', 'oil', p.m$layer) 
-  
-  layer_uni = unique(p.m$layer)
-  layernames = sprintf('rgn_fao_%s.csv', tolower(layer_uni))
-  
-  for(i in 1:length(layer_uni)) {
-    p.mi = p.m[p.m$layer == layer_uni[i],]
-    
-    # transpose with sum aggregate function to sum over the commodity subcategory
-    p.ti = dcast(p.mi, rgn_id + rgn_nam + layer + gapfilled ~ year, fun.aggregate = sum) 
-    
-    # remelt
-    p.mi2 = melt(data=p.ti, id.vars=names(p.ti)[1:4], variable.name='year')
-    
-    # prep and save
-    p.mi3 = p.mi2[c(1,6,5,4)]
-    p.mi3 = p.mi3[order(p.mi3$rgn_id, p.mi3$year),]
-    
-    layersave = paste(dir1, 'data/', layernames[i], sep='') 
-    write.csv(p.mi3, layersave, na = '', row.names=FALSE)
-  }
-  
-  
-  
-  
-  
-  

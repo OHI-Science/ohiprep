@@ -91,6 +91,77 @@ add_rgn_id = function(uidata, uifilesave,
   
 }
 
+cbind_rgn = function(d, fld_name = 'country', dir_lookup = 'src/LookupTables',
+                     rgn_master.csv   = file.path(dir_lookup, 'eez_rgn_2013master.csv'),
+                     rgn_synonyms.csv = file.path(dir_lookup, 'rgn_eez_v2013a_synonyms.csv'),
+                     add_rgn_name=F, add_rgn_type=F) {
+  # debug: dpath = 'src/LookupTables'; rgn_master.csv   = file.path(dpath, 'eez_rgn_2013master.csv'); rgn_synonyms.csv = file.path(dpath, 'rgn_eez_v2013a_synonyms.csv')
+
+  # return data.frame (vs add_rgn_id which writes to a csv and doesn't return anything)
+  
+  # load libraries
+  library(dplyr)
+  
+  # check for valid arguments
+  stopifnot(fld_name %in% names(d))
+  
+  # read in region name to id lookup files
+  r = rbind_list(
+    read.csv(rgn_master.csv, na=''),
+    read.csv(rgn_synonyms.csv, na='')) %.%
+    select(rgn_id=rgn_id_2013, rgn_name=rgn_nam_2013, rgn_type=rgn_typ) %.%
+    group_by(rgn_name, rgn_type) %.%
+    summarize(rgn_id=last(rgn_id)) # remove duplicates  
+  
+  # remove accents from data
+  d['rgn_name'] = d[fld_name]
+  d = d %.%
+    mutate(
+      rgn_name = str_replace_all(rgn_name, '^\''      , ''),                      # get rid of any errant quotes
+      rgn_name = str_replace(rgn_name, '.+voire'      , 'Ivory Coast'),           # Ivory Coast
+      rgn_name = str_replace(rgn_name, '.+union'      , 'Reunion'),               # Reunion
+      rgn_name = str_replace(rgn_name, '.+publique du', 'Republic of'),           # Congo
+      rgn_name = str_replace(rgn_name, 'Cura.+'       , 'Curacao'),               # Curacao 
+      rgn_name = str_replace(rgn_name, 'Saint Barth.+', 'Saint Barthelemy'),      # Saint Barthelemy 
+      rgn_name = str_replace(rgn_name, '.+Principe'   , 'Sao Tome and Principe')) # Sao Tome and Principe
+  
+  # merge data and regions
+  m = left_join(d, r, by='rgn_name') %.%
+    filter(rgn_type %in% c('eez','ohi_region')) # exclude: disputed, fao, landlocked, largescale
+    
+  # get regions removed
+  m_r = left_join(d, r, by='rgn_name') %.%
+    filter(!rgn_type %in% c('eez','ohi_region'))
+  
+  # if any rgn_type is NA, then presume not matched in lookups and error out
+  if (sum(is.na(m_r$rgn_type)) > 0){
+    cat('\nThese data were removed for not having any match in the lookup tables:\n')  
+    print(table(subset(m_r, is.na(rgn_type), fld_name)))
+    stop('FIX region lookups.')
+  }
+  
+  # show table of others filtered out
+  if (nrow(m_r) > 0){
+    cat('\nThese data were removed for not being of the proper rgn_type (eez,ohi_region) or mismatching region names in the lookup tables:\n')  
+    print(table(m_r[,c(fld_name, 'rgn_type')], useNA='ifany'))
+  }  
+    
+  # stop if any still need to be assigned rgn_id
+  m_na = filter(m, is.na(rgn_id))
+  if (nrow(m_na) > 0){
+    cat('\nThese data have a valid rgn_type but no rgn_id:\n')  
+    print(table(m_na[,c(fld_name, 'rgn_type')], useNA='ifany'))
+    stop('FIX region lookups.')
+  } 
+  
+  # remove fields if not explicitly requested as an argument
+  if (!add_rgn_type) m = select(m, -rgn_type)
+  if (!add_rgn_name) m = select(m, -rgn_name)
+  
+  # return data.fram    
+  return(as.data.frame(m))
+}
+
 # identify duplicate regions and sum them (currently supports rgn_id = 13, 116, 140, 209) 
 sum_duplicates = function(cleandata, dup_ids, fld.nam = 'value') {
   
