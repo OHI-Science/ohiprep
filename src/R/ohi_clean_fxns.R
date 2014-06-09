@@ -91,7 +91,13 @@ add_rgn_id = function(uidata, uifilesave,
   
 }
 
-name_to_rgn_id = function(d, fld_name='country', flds_unique=fld_name, fld_value='value', collapse_fxn=function(x) sum(x, na.rm=T),
+sum_na = function(x){
+  # sum with na.rm=T, but if all NAs return NA and not 0
+  if (sum(is.na(x)) == length(x)) return(NA)
+  return(sum(x, na.rm=T))    
+}
+
+name_to_rgn_id = function(d, fld_name='country', flds_unique=fld_name, fld_value='value', collapse_fxn = sum_na,
                      dir_lookup = 'src/LookupTables',
                      rgn_master.csv   = file.path(dir_lookup, 'eez_rgn_2013master.csv'),
                      rgn_synonyms.csv = file.path(dir_lookup, 'rgn_eez_v2013a_synonyms.csv'),
@@ -183,12 +189,12 @@ name_to_rgn_id = function(d, fld_name='country', flds_unique=fld_name, fld_value
     m_d = m %.%
       regroup(as.list(flds_unique_rgn_id)) %.%
       summarize(tmp_value = collapse_fxn(tmp_value)) %.%
-      rename(setNames(fld_value, 'tmp_value')) %.%
-      ungroup()
+      rename(setNames(fld_value, 'tmp_value'))
   } else {
-    # limit to same subset of fields for consistent behavior regardless of duplicates presents
-    m_d = m[, c(flds_unique_rgn_id, fld_value)]
+    m_d = m
   }
+  # limit to same subset of fields for consistent behavior regardless of duplicates presents
+  m_d = m_d[, c(flds_unique_rgn_id, fld_value)]
   
   # add fields if explicitly requested
   if (add_rgn_type) m_d = left_join(m_d, rgns %.% select(rgn_id, rgn_type), by='rgn_id')
