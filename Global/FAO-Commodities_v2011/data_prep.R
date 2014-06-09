@@ -13,6 +13,8 @@
 
 # setup ----
 
+# debug> options(warn=2); options(error=recover) # options(warn=0); options(error=NULL)
+
 # load libraries (dplyr last)
 library(reshape2)
 library(stringr)
@@ -29,7 +31,7 @@ dir_d = 'Global/FAO-Commodities_v2011'
 #       This way, any scripts and code in ohiprep will still work, b/c always in root ohiprep dir.
 
 # get functions
-source('src/R/ohi_clean_fxns.R') # cbind_rgn
+source('src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na()
 
 # lookup for converting commodities to products
 com2prod = read.csv(file.path(dir_d, 'commodities2products.csv'), na.strings='')
@@ -38,27 +40,53 @@ com2prod = read.csv(file.path(dir_d, 'commodities2products.csv'), na.strings='')
 for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.names=T)){ # f=list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.names=T)[1]
   
   # data read in
-  d = read.csv(f, check.names=F,strip.white=TRUE)
+  cat(sprintf('\n\n\n====\nfile: %s\n', basename(f)))
+  d = read.csv(f, check.names=F, strip.white=TRUE) # , stringsAsFactors=T
+  units = c('tonnes','usd')[str_detect(f, c('quant','value'))] # using American English, lowercase
   
   # melt and clean up
-  m = d %.%    
-    rename(c(
+  suppressWarnings({ # warning: attributes are not identical across measure variables; they will be dropped
+    m = d %.%    
+      rename(c(
       'Country (Country)'       = 'country',
       'Commodity (Commodity)'   = 'commodity',
       'Trade flow (Trade flow)' = 'trade')) %.%
-    melt(id=c('country','commodity','trade'), variable='year') %.%
+      melt(id=c('country','commodity','trade'), variable='year')})
+  m = m %.%
     filter(!country %in% c('Totals', 'Yugoslavia SFR')) %.%
     mutate(  
       value = str_replace(value, fixed( ' F'),    ''), # FAO denotes with F when they have estimated the value using best available data
       value = str_replace(value, fixed('0 0'), '0.1'), # FAO denotes something as '0 0' when it is > 0 but < 1/2 of a unit. 
       value = str_replace(value, fixed(  '-'),   '0'), # FAO's 0
       value = str_replace(value, fixed('...'),    NA), # FAO's NA
+      value = str_replace(value, fixed('.'),      NA),
+      value = ifelse(value =='', NA, value),  
       value = as.numeric(value),
-      year  = as.numeric(as.character(year))) %.%       # search in R_inferno.pdf for "shame on you." hah!
-    filter(trade == 'Export') %.%
-    select(-trade) %.%
-    arrange(country, commodity, year)
+      year  = as.numeric(as.character(year))) %.%       # search in R_inferno.pdf for "shame on you"
+    select(country, commodity, year, value) %.%
+    arrange(country, commodity, year) %.%
+    group_by(country, commodity) %.%
+    mutate(
+      # gapfill: Carry previous year's value forward if value for max(year) is NA.
+      #   This gives wiggle room for regions still in production but not able to report by the FAO deadline.      
+      year_max   = max(year),
+      year_prev  = lag(year, order_by=year),
+      value_prev = lag(value, order_by=year),
+      value_ext  =        is.na(value) & year==year_max & year_prev==year-1,
+      value      = ifelse(is.na(value) & year==year_max & year_prev==year-1, value_prev, value)) %.%
+    filter(!is.na(value)) %.%
+    # get year_min to later forward fill NAs as 0s
+    mutate(      
+      year_min   = min(year)) %.%  
+    ungroup()
   
+  # warning: NAs introduced by coercion
+  
+  # show extended values
+  cat('\nExtended values:\n')
+  m_x = filter(m, value_ext==T)
+  print(m_x)  
+        
   # check for commodities in data not found in lookup, per product by keyword
   commodities = sort(as.character(unique(m$commodity)))
   keywords = c(
@@ -91,6 +119,7 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   stopifnot( sum(c('Bonaire','Saba','Sint Maarten','Sint Eustatius') %in% m$country) == 0 )
   m_ant = m %.%
     filter(country == 'Netherlands Antilles') %.%
+    select(country, commodity, year, year_min, value) %.%
     mutate(
       value            = value/4,
       'Bonaire'        = value,
@@ -98,39 +127,69 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
       'Sint Maarten'   = value,
       'Sint Eustatius' = value) %.%
     select(-value, -country) %.%
-    melt(id=c('commodity','year'), variable.name='country')
-  m_a = m %.%
-    filter(country != 'Netherlands Antilles') %.%
-    rbind_list(m_ant)    
+    melt(id=c('commodity','year','year_min'), variable.name='country')
+  suppressWarnings({ # warning: Unequal factor levels: coercing to character
+    m_a = m %.%
+      filter(country != 'Netherlands Antilles') %.%
+      rbind_list(m_ant)    
+  })
   
-  # gapfill: Carry previous year's value forward if value for max(year) is NA.
-  #   This gives wiggle room for regions still in production but not able to report by the FAO deadline.
-  m_a_g = m_a %.%
+  # cast wide to expand years
+  m_w = m_a %.%
+    select(country, commodity, year, year_min, value) %.%
+    dcast(country + commodity + year_min ~ year)
+
+  # melt long and apply 0's where NA since first available year
+  m_l = m_w %.%
+    melt(id=c('country','commodity','year_min'), variable='year') %.%
+    arrange(country, commodity, year) %.%
     group_by(country, commodity) %.%
     mutate(
-      year_max   = max(year),
-      year_prev  = lag(year, order_by=year),
-      value_prev = lag(value, order_by=year),
-      value      = ifelse(is.na(value) & year==year_max & year_prev==year-1, value_prev, value))  
+      year  = as.integer(as.character(year)),
+      value = ifelse(year >= year_min & is.na(value), 0, value)) %.%
+    filter(!is.na(value))
   
-  # collapse: join with commodities and summarize to product
-  m_c = m_a_g %.%
+  # debug: output cast for comparison with original data
+  #write.csv(m_w, sprintf('%s/tmp/np_harvest_%s_wide.csv', dir_d, units), row.names=F, na='')  
+  
+  # rgn_id: country to rgn_id  # source('src/R/ohi_clean_fxns.R')
+  m_r = name_to_rgn_id(m_l, fld_name='country', flds_unique=c('country','commodity','year'), fld_value='value', add_rgn_name=T) %.%
+    select(rgn_name, rgn_id, commodity, year, value) %.%
+    arrange(rgn_name, commodity, year)
+      
+  # products join
+  m_p = m_r %.%
     inner_join(com2prod, by='commodity') %.%
-    group_by(country, product, year) %.%
-    summarize(value = sum(value, na.rm=T)) %.%
-    ungroup()
-
-  # rgn_id: country to rgn_id  # source('src/R/ohi_clean_fxns.R') # cbind_rgn
-  m_c_r = name_to_rgn_id(d=m_c, fld_name='country', flds_unique=c('country','product','year'), fld_value='value')
+    arrange(rgn_name, product, commodity, year) %.%
+    select(rgn_name, rgn_id, product, commodity, year, value)
   
-  # units: rename value field to units based on filename
-  units = c('tons','usd')[str_detect(f, c('quant','value'))] # using American English, lowercase
-  m_c_r_u = rename(m_c_r, setNames(units, 'value'))  
+  # show max year per product, commodity
+  cat('\n\nShowing max(year) per product, commodity:\n')
+  print(m_p %.%
+    group_by(product, commodity) %.%
+    summarize(
+      year_max = max(year)))
 
+  # product summarize
+  m_s = m_p %.%
+    group_by(rgn_name, rgn_id, product, year) %.%
+    summarize(value  = sum_na(value))
+    
   # check for duplicates
-  stopifnot( sum(duplicated(m_c_r[,c('rgn_id', 'product', 'year')])) == 0 )
+  stopifnot( sum(duplicated(m_s[,c('rgn_id', 'product', 'year')])) == 0 )
+  
+  # debug: wide with all commmodities and product subtotal for comparison with input data
+  m_d = rbind_list(
+    m_p,
+    mutate(m_s, commodity='Z_TOTAL')) %.%
+    arrange(rgn_name, product, commodity, year) %.%
+    dcast(rgn_name + rgn_id + product + commodity ~ year)
+  write.csv(m_d, sprintf('%s/tmp/np_harvest_%s_wide.csv', dir_d, units), row.names=F, na='')
+
+  # units: rename value field to units based on filename
+  m_u = rename(m_s, setNames(units, 'value'))  
   
   # output
   f_out = sprintf('%s/data/%s_%s.csv', dir_d, basename(dir_d), units)
-  write.csv(m_c_r_u, f_out, row.names=F, na='')
+  write.csv(m_u, f_out, row.names=F, na='')
 }
