@@ -13,7 +13,8 @@
 
 # setup ----
 
-# debug> options(warn=2); options(error=recover) # options(warn=0); options(error=NULL)
+# debug> 
+options(warn=2); options(error=recover) # options(warn=0); options(error=NULL)
 
 # load libraries (dplyr last)
 library(reshape2)
@@ -61,8 +62,8 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
       value = str_replace(value, fixed('...'),    NA), # FAO's NA
       value = str_replace(value, fixed('.'),      NA),
       value = ifelse(value =='', NA, value),  
-      value = as.numeric(value),
-      year  = as.numeric(as.character(year))) %.%       # search in R_inferno.pdf for "shame on you"
+      value = as.numeric(as.character(value)),
+      year  = as.integer(as.character(year))) %.%       # search in R_inferno.pdf for "shame on you"
     select(country, commodity, year, value) %.%
     arrange(country, commodity, year) %.%
     group_by(country, commodity) %.%
@@ -79,9 +80,7 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
     mutate(      
       year_min   = min(year)) %.%  
     ungroup()
-  
-  # warning: NAs introduced by coercion
-  
+    
   # show extended values
   cat('\nExtended values:\n')
   m_x = filter(m, value_ext==T)
@@ -142,16 +141,10 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   # melt long and apply 0's where NA since first available year
   m_l = m_w %.%
     melt(id=c('country','commodity','year_min'), variable='year') %.%
+    mutate(year = as.integer(as.character(year))) %.%
     arrange(country, commodity, year) %.%
-    group_by(country, commodity) %.%
-    mutate(
-      year  = as.integer(as.character(year)),
-      value = ifelse(year >= year_min & is.na(value), 0, value)) %.%
     filter(!is.na(value))
-  
-  # debug: output cast for comparison with original data
-  #write.csv(m_w, sprintf('%s/tmp/np_harvest_%s_wide.csv', dir_d, units), row.names=F, na='')  
-  
+
   # rgn_id: country to rgn_id  # source('src/R/ohi_clean_fxns.R')
   m_r = name_to_rgn_id(m_l, fld_name='country', flds_unique=c('country','commodity','year'), fld_value='value', add_rgn_name=T) %.%
     select(rgn_name, rgn_id, commodity, year, value) %.%
