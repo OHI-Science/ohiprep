@@ -87,14 +87,13 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
     print(l_missing_d)
   }
   
-  # antilles: clean up Netherlands Antilles by breaking into its 6 regions
+  # antilles: break up Netherlands Antilles into the 4 of 6 regions not already included ('Aruba','Curaçao')
+  stopifnot( sum(c('Bonaire','Saba','Sint Maarten','Sint Eustatius') %in% m$country) == 0 )
   m_ant = m %.%
     filter(country == 'Netherlands Antilles') %.%
     mutate(
-      value            = value/6,
-      'Aruba'          = value,
+      value            = value/4,
       'Bonaire'        = value,
-      'Curacao'        = value,
       'Saba'           = value,
       'Sint Maarten'   = value,
       'Sint Eustatius' = value) %.%
@@ -118,19 +117,20 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   m_c = m_a_g %.%
     inner_join(com2cat, by='commodity') %.%
     group_by(country, category, year) %.%
-    summarize(value = sum(value, na.rm=T))
+    summarize(value = sum(value, na.rm=T)) %.%
+    ungroup()
 
+  # rgn_id: country to rgn_id  # source('src/R/ohi_clean_fxns.R') # cbind_rgn
+  m_c_r = name_to_rgn_id(d=m_c, fld_name='country', flds_unique=c('country','category','year'), fld_value='value')
+  
   # units: rename value field to units based on filename
   units = c('tons','usd')[str_detect(f, c('quant','value'))] # using American English, lowercase
-  m_c_u = rename(m_c, setNames(units, 'value'))
-  
-  # rgn_id: add  # source('src/R/ohi_clean_fxns.R') # cbind_rgn
-  m_c_u_r = cbind_rgn(m_c_u, fld_name='country') # @jules32: new function to replace add_rgn_id in src/R/ohi_clean_fxns.R!
-  
+  m_c_r_u = rename(m_c_r, setNames(units, 'value'))  
+
   # check for duplicates
-  stopifnot( sum(duplicated(m_c_u_r[,c('country', 'category', 'year')])) == 0 )
+  stopifnot( sum(duplicated(m_c_r[,c('rgn_id', 'category', 'year')])) == 0 )
   
   # output
   f_out = sprintf('%s/data/%s_%s.csv', dir_d, basename(dir_d), units)
-  write.csv(m_c_u_r, f_out)
+  write.csv(m_c_r_u, f_out, row.names=F, na='')
 }
