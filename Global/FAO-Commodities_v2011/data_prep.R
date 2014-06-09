@@ -103,6 +103,14 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
     filter(country != 'Netherlands Antilles') %.%
     rbind_list(m_ant)    
   
+  # show max year per product
+  cat('\n\nShowing max(year) per product, commodity:\n')
+  print(m_a %.%
+    inner_join(com2prod, by='commodity') %.%
+    group_by(product, commodity) %.%
+    summarize(
+      year_max = max(year)))
+  
   # gapfill: Carry previous year's value forward if value for max(year) is NA.
   #   This gives wiggle room for regions still in production but not able to report by the FAO deadline.
   m_a_g = m_a %.%
@@ -124,7 +132,7 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   m_c_r = name_to_rgn_id(d=m_c, fld_name='country', flds_unique=c('country','product','year'), fld_value='value')
   
   # units: rename value field to units based on filename
-  units = c('tons','usd')[str_detect(f, c('quant','value'))] # using American English, lowercase
+  units = c('tonnes','usd')[str_detect(f, c('quant','value'))] # using American English, lowercase
   m_c_r_u = rename(m_c_r, setNames(units, 'value'))  
 
   # check for duplicates
