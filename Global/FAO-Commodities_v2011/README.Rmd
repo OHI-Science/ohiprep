@@ -1,10 +1,10 @@
 GL-FAO-Commodities_v2011
 ========================
-The value (USD) and harvest (tons) data for natural products was extracted from FAO Commodities, as applicable to the Natural Products goal. (See neptune_data:model/GL-NCEAS-NaturalProducts_v2013a/README.md for further handling.)
+The value (constant 2000 US dollars) and harvest (meric tonnes) data for natural products was extracted from the **FAO Fishery Commodities and Trade dataset** (http://www.fao.org/fishery/statistics/global-commodities-production/en), as applicable to the Natural Products goal. (See neptune_data:model/GL-NCEAS-NaturalProducts_v2013a/README.md for further handling.)
 
 The following commodities were collapsed into these categories.
 ```{r, results='asis'}
-kable(read.csv('commodities2categories.csv'))
+kable(read.csv('commodities2products.csv'))
 ```
 
 Files produced
