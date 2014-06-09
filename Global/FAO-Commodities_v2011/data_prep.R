@@ -7,7 +7,7 @@
 #   remove Totals, Yugoslavia rows
 #   translate FAO data codes (F, ..., -, 0 0)
 #   carry previous year's value forward if value for max(year) is NA
-#   merge with commodities and collapse to categories
+#   merge with commodities and collapse to product
 #   add rgn_id using new cbind_rgn function (@bbest updated add_rgn_id())
 #   save single files for each commodity 
 
@@ -31,8 +31,8 @@ dir_d = 'Global/FAO-Commodities_v2011'
 # get functions
 source('src/R/ohi_clean_fxns.R') # cbind_rgn
 
-# lookup for converting commodities to categories
-com2cat = read.csv(file.path(dir_d, 'commodities2categories.csv'), na.strings='')
+# lookup for converting commodities to products
+com2prod = read.csv(file.path(dir_d, 'commodities2products.csv'), na.strings='')
 
 # read in and process files ----
 for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.names=T)){ # f=list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.names=T)[1]
@@ -59,7 +59,7 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
     select(-trade) %.%
     arrange(country, commodity, year)
   
-  # check for commodities in data not found in lookup, per category by keyword
+  # check for commodities in data not found in lookup, per product by keyword
   commodities = sort(as.character(unique(m$commodity)))
   keywords = c(
     'sponges'     = 'sponge', 
@@ -69,19 +69,19 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
     'corals'      = 'coral', 
     'shells'      = 'shell')
   for (i in 1:length(keywords)){ # i=1
-    cat = names(keywords)[i]
+    prod = names(keywords)[i]
     keyword = keywords[i]
     d_missing_l = setdiff(
       commodities[str_detect(commodities, ignore.case(keyword))], 
-      subset(com2cat, category==cat, commodity, drop=T))
+      subset(com2prod, product==prod, commodity, drop=T))
     if (length(d_missing_l)>0){
-      cat(sprintf("\nMISSING in the lookup the following commodites in category='%s' having keyword='%s' in data file %s:\n    %s\n", 
-                  cat, keyword, basename(f), paste(d_missing_l, collapse='\n    ')))
+      cat(sprintf("\nMISSING in the lookup the following commodites in product='%s' having keyword='%s' in data file %s:\n    %s\n", 
+                  prod, keyword, basename(f), paste(d_missing_l, collapse='\n    ')))
     }
   }
 
   # check for commodities in lookup not found in data
-  l_missing_d = anti_join(com2cat, m, by='commodity')
+  l_missing_d = anti_join(com2prod, m, by='commodity')
   if (length(l_missing_d)>0){
     cat(sprintf('\nMISSING: These commodities in the lookup are not found in the data %s:\n    ', basename(f)))
     print(l_missing_d)
@@ -103,6 +103,14 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
     filter(country != 'Netherlands Antilles') %.%
     rbind_list(m_ant)    
   
+  # show max year per product
+  cat('\n\nShowing max(year) per product, commodity:\n')
+  print(m_a %.%
+    inner_join(com2prod, by='commodity') %.%
+    group_by(product, commodity) %.%
+    summarize(
+      year_max = max(year)))
+  
   # gapfill: Carry previous year's value forward if value for max(year) is NA.
   #   This gives wiggle room for regions still in production but not able to report by the FAO deadline.
   m_a_g = m_a %.%
@@ -113,22 +121,22 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
       value_prev = lag(value, order_by=year),
       value      = ifelse(is.na(value) & year==year_max & year_prev==year-1, value_prev, value))  
   
-  # collapse: join with commodities and summarize to category
+  # collapse: join with commodities and summarize to product
   m_c = m_a_g %.%
-    inner_join(com2cat, by='commodity') %.%
-    group_by(country, category, year) %.%
+    inner_join(com2prod, by='commodity') %.%
+    group_by(country, product, year) %.%
     summarize(value = sum(value, na.rm=T)) %.%
     ungroup()
 
   # rgn_id: country to rgn_id  # source('src/R/ohi_clean_fxns.R') # cbind_rgn
-  m_c_r = name_to_rgn_id(d=m_c, fld_name='country', flds_unique=c('country','category','year'), fld_value='value')
+  m_c_r = name_to_rgn_id(d=m_c, fld_name='country', flds_unique=c('country','product','year'), fld_value='value')
   
   # units: rename value field to units based on filename
-  units = c('tons','usd')[str_detect(f, c('quant','value'))] # using American English, lowercase
+  units = c('tonnes','usd')[str_detect(f, c('quant','value'))] # using American English, lowercase
   m_c_r_u = rename(m_c_r, setNames(units, 'value'))  
 
   # check for duplicates
-  stopifnot( sum(duplicated(m_c_r[,c('rgn_id', 'category', 'year')])) == 0 )
+  stopifnot( sum(duplicated(m_c_r[,c('rgn_id', 'product', 'year')])) == 0 )
   
   # output
   f_out = sprintf('%s/data/%s_%s.csv', dir_d, basename(dir_d), units)
