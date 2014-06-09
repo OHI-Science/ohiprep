@@ -91,77 +91,111 @@ add_rgn_id = function(uidata, uifilesave,
   
 }
 
-cbind_rgn = function(d, fld_name = 'country', dir_lookup = 'src/LookupTables',
+name_to_rgn_id = function(d, fld_name='country', flds_unique=fld_name, fld_value='value', collapse_fxn=function(x) sum(x, na.rm=T),
+                     dir_lookup = 'src/LookupTables',
                      rgn_master.csv   = file.path(dir_lookup, 'eez_rgn_2013master.csv'),
                      rgn_synonyms.csv = file.path(dir_lookup, 'rgn_eez_v2013a_synonyms.csv'),
                      add_rgn_name=F, add_rgn_type=F) {
-  # debug: dpath = 'src/LookupTables'; rgn_master.csv   = file.path(dpath, 'eez_rgn_2013master.csv'); rgn_synonyms.csv = file.path(dpath, 'rgn_eez_v2013a_synonyms.csv')
-
-  # return data.frame (vs add_rgn_id which writes to a csv and doesn't return anything)
+  # DETAIL. Return a data.frame (vs add_rgn_id which writes to a csv) and perform extra checks, including collapsing on duplicates.
+  #  Note: The original fld_name lost because possible to collapse multiple countries into a single region.
+  #
+  # debug: fld_name='country'; flds_unique=c('country','commodity','year'); fld_value='value'; collapse_fxn=function(x) sum(x, na.rm=T); dpath = 'src/LookupTables'; rgn_master.csv   = file.path(dpath, 'eez_rgn_2013master.csv'); rgn_synonyms.csv = file.path(dpath, 'rgn_eez_v2013a_synonyms.csv')
   
   # load libraries
   library(dplyr)
   
   # check for valid arguments
   stopifnot(fld_name %in% names(d))
+  stopifnot(fld_value %in% names(d))
+  stopifnot(all(flds_unique %in% names(d)))  
+  stopifnot( sum( duplicated(d[,flds_unique]) ) == 0 )
   
-  # read in region name to id lookup files
-  r = rbind_list(
-    read.csv(rgn_master.csv, na=''),
-    read.csv(rgn_synonyms.csv, na='')) %.%
+  # get authoritative rgn_id and rgn_name
+  rgns = read.csv(rgn_master.csv, na='', stringsAsFactors=F) %.%
     select(rgn_id=rgn_id_2013, rgn_name=rgn_nam_2013, rgn_type=rgn_typ) %.%
-    group_by(rgn_name) %.%
+    arrange(rgn_type, rgn_id, rgn_name) %.%
+    group_by(rgn_id) %.%
     summarize(
-      rgn_id   = last(rgn_id),
-      rgn_type = last(rgn_type))
+      rgn_name = first(rgn_name),
+      rgn_type = first(rgn_type)) %.%
+    ungroup()
+  
+  # combine to have a unique tmp_name to rgn_id lookup
+  r = rbind_list(
+    rgns %.%
+      select(rgn_id, tmp_name = rgn_name, tmp_type = rgn_type),
+    read.csv(rgn_synonyms.csv, na='') %.%
+      select(rgn_id=rgn_id_2013, tmp_name=rgn_nam_2013, tmp_type=rgn_typ)) %.%
+    group_by(tmp_name) %.%
+    summarize(
+      rgn_id   = first(rgn_id),
+      tmp_type = first(tmp_type))
   
   # remove accents from data
-  d['rgn_name'] = d[fld_name]
+  d['tmp_name'] = d[fld_name]
   d = d %.%
     mutate(
-      rgn_name = str_replace_all(rgn_name, '^\''      , ''),                      # get rid of any errant quotes
-      rgn_name = str_replace(rgn_name, '.+voire'      , 'Ivory Coast'),           # Ivory Coast
-      rgn_name = str_replace(rgn_name, '.+union'      , 'Reunion'),               # Reunion
-      rgn_name = str_replace(rgn_name, '.+publique du', 'Republic of'),           # Congo
-      rgn_name = str_replace(rgn_name, 'Cura.+'       , 'Curacao'),               # Curacao 
-      rgn_name = str_replace(rgn_name, 'Saint Barth.+', 'Saint Barthelemy'),      # Saint Barthelemy 
-      rgn_name = str_replace(rgn_name, '.+Principe'   , 'Sao Tome and Principe')) # Sao Tome and Principe
+      tmp_name = str_replace(tmp_name, "^'"           , ''),                      # get rid of beginning quote
+      tmp_name = str_replace(tmp_name, '.+voire'      , 'Ivory Coast'),           # Ivory Coast
+      tmp_name = str_replace(tmp_name, '.+union'      , 'Reunion'),               # Reunion
+      tmp_name = str_replace(tmp_name, '.+publique du', 'Republic of'),           # Congo
+      tmp_name = str_replace(tmp_name, 'Cura.+'       , 'Curacao'),               # Curacao 
+      tmp_name = str_replace(tmp_name, 'Saint Barth.+', 'Saint Barthelemy'),      # Saint Barthelemy 
+      tmp_name = str_replace(tmp_name, '.+Principe'   , 'Sao Tome and Principe')) # Sao Tome and Principe
   
   # merge data and regions
-  m = left_join(d, r, by='rgn_name') %.%
-    filter(rgn_type %in% c('eez','ohi_region')) # exclude: disputed, fao, landlocked, largescale
-    
-  # get regions removed
-  m_r = left_join(d, r, by='rgn_name') %.%
-    filter(!rgn_type %in% c('eez','ohi_region'))
+  m = merge(d, r, by='tmp_name') %.%
+    filter(tmp_type %in% c('eez','ohi_region')) # exclude: disputed, fao, landlocked, largescale
+  
+  # check the regions removed
+  m_r = left_join(d, r, by='tmp_name') %.%
+    filter(!tmp_type %in% c('eez','ohi_region'))
   
   # if any rgn_type is NA, then presume not matched in lookups and error out
-  if (sum(is.na(m_r$rgn_type)) > 0){
+  if (sum(is.na(m_r$tmp_type)) > 0){
     cat('\nThese data were removed for not having any match in the lookup tables:\n')  
-    print(table(subset(m_r, is.na(rgn_type), fld_name)))
+    print(table(subset(m_r, is.na(tmp_type), fld_name)))
     stop('FIX region lookups.')
   }
   
   # show table of others filtered out
   if (nrow(m_r) > 0){
     cat('\nThese data were removed for not being of the proper rgn_type (eez,ohi_region) or mismatching region names in the lookup tables:\n')  
-    print(table(m_r[,c(fld_name, 'rgn_type')], useNA='ifany'))
+    print(table(m_r[,c(fld_name, 'tmp_type')], useNA='ifany'))
   }  
     
   # stop if any still need to be assigned rgn_id
   m_na = filter(m, is.na(rgn_id))
   if (nrow(m_na) > 0){
-    cat('\nThese data have a valid rgn_type but no rgn_id:\n')  
-    print(table(m_na[,c(fld_name, 'rgn_type')], useNA='ifany'))
+    cat('\nThese data have a valid tmp_type but no rgn_id:\n')  
+    print(table(m_na[,c(fld_name, 'tmp_type')], useNA='ifany'))
     stop('FIX region lookups.')
   } 
+
+  # collapse duplicates
+  flds_unique_rgn_id = c('rgn_id', setdiff(c(flds_unique), fld_name))
+  i_dup = which(duplicated(m[,flds_unique_rgn_id]))  
+  if (length(i_dup) > 0){
+    cat('\nDUPLICATES found. Resolving by collapsing rgn_id with collapse_fxn...\n')
+    print(collapse_fxn)
+    print(table(m[i_dup, c(fld_name,'rgn_id')]))
+    m['tmp_value'] = m[,fld_value]
+    m_d = m %.%
+      regroup(as.list(flds_unique_rgn_id)) %.%
+      summarize(tmp_value = collapse_fxn(tmp_value)) %.%
+      rename(setNames(fld_value, 'tmp_value')) %.%
+      ungroup()
+  } else {
+    # limit to same subset of fields for consistent behavior regardless of duplicates presents
+    m_d = m[, c(flds_unique_rgn_id, fld_value)]
+  }
   
-  # remove fields if not explicitly requested as an argument
-  if (!add_rgn_type) m = select(m, -rgn_type)
-  if (!add_rgn_name) m = select(m, -rgn_name)
+  # add fields if explicitly requested
+  if (add_rgn_type) m_d = left_join(m_d, rgns %.% select(rgn_id, rgn_type), by='rgn_id')
+  if (add_rgn_name) m_d = left_join(m_d, rgns %.% select(rgn_id, rgn_name), by='rgn_id')
   
   # return data.fram    
-  return(as.data.frame(m))
+  return(as.data.frame(m_d))
 }
 
 # identify duplicate regions and sum them (currently supports rgn_id = 13, 116, 140, 209) 
