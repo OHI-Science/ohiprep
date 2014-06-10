@@ -16,9 +16,13 @@
 "Albania",82,"corals",2010,0
 "Albania",82,"corals",2011,160
 "Albania",82,"ornamentals",2000,1
+"Albania",82,"ornamentals",2001,0
+"Albania",82,"ornamentals",2002,0
+"Albania",82,"ornamentals",2003,0
 "Albania",82,"ornamentals",2004,4
 "Albania",82,"ornamentals",2005,1
 "Albania",82,"ornamentals",2006,6
+"Albania",82,"ornamentals",2007,0
 "Albania",82,"ornamentals",2008,16
 "Albania",82,"ornamentals",2009,5
 "Albania",82,"ornamentals",2010,0
@@ -36,6 +40,7 @@
 "Algeria",84,"ornamentals",2003,12
 "Algeria",84,"ornamentals",2004,8
 "Algeria",84,"ornamentals",2005,5
+"Algeria",84,"ornamentals",2006,0
 "Algeria",84,"ornamentals",2007,4
 "Algeria",84,"ornamentals",2008,0
 "Algeria",84,"ornamentals",2009,0
@@ -61,10 +66,13 @@
 "Angola",200,"fish_oil",1998,665
 "Angola",200,"fish_oil",1999,439
 "Angola",200,"fish_oil",2000,228
+"Angola",200,"fish_oil",2001,0
+"Angola",200,"fish_oil",2002,0
 "Angola",200,"fish_oil",2003,417
 "Angola",200,"fish_oil",2004,204
 "Angola",200,"fish_oil",2005,446
 "Angola",200,"fish_oil",2006,100
+"Angola",200,"fish_oil",2007,0
 "Angola",200,"fish_oil",2008,445
 "Angola",200,"fish_oil",2009,76
 "Angola",200,"fish_oil",2010,80
@@ -80,6 +88,13 @@
 "Angola",200,"ornamentals",2011,0
 "Antigua and Barbuda",120,"ornamentals",2002,2
 "Antigua and Barbuda",120,"ornamentals",2003,2
+"Antigua and Barbuda",120,"ornamentals",2004,0
+"Antigua and Barbuda",120,"ornamentals",2005,0
+"Antigua and Barbuda",120,"ornamentals",2006,0
+"Antigua and Barbuda",120,"ornamentals",2007,0
+"Antigua and Barbuda",120,"ornamentals",2008,0
+"Antigua and Barbuda",120,"ornamentals",2009,0
+"Antigua and Barbuda",120,"ornamentals",2010,0
 "Antigua and Barbuda",120,"ornamentals",2011,0
 "Argentina",172,"fish_oil",1987,4
 "Argentina",172,"fish_oil",1988,29
@@ -114,6 +129,8 @@
 "Argentina",172,"ornamentals",1981,8
 "Argentina",172,"ornamentals",1982,5
 "Argentina",172,"ornamentals",1983,3
+"Argentina",172,"ornamentals",1984,0
+"Argentina",172,"ornamentals",1985,0
 "Argentina",172,"ornamentals",1986,5
 "Argentina",172,"ornamentals",1987,9
 "Argentina",172,"ornamentals",1988,2
@@ -127,6 +144,7 @@
 "Argentina",172,"ornamentals",1996,30
 "Argentina",172,"ornamentals",1997,8
 "Argentina",172,"ornamentals",1998,10
+"Argentina",172,"ornamentals",1999,0
 "Argentina",172,"ornamentals",2000,17
 "Argentina",172,"ornamentals",2001,25
 "Argentina",172,"ornamentals",2002,23
@@ -161,6 +179,7 @@
 "Argentina",172,"seaweeds",2010,537
 "Argentina",172,"seaweeds",2011,277
 "Argentina",172,"shells",2001,0
+"Argentina",172,"shells",2002,0
 "Argentina",172,"shells",2003,2
 "Argentina",172,"shells",2004,0
 "Argentina",172,"shells",2005,0
@@ -180,6 +199,41 @@
 "Argentina",172,"sponges",2009,0
 "Argentina",172,"sponges",2010,0
 "Argentina",172,"sponges",2011,0
+"Aruba",250,"seaweeds",1977,0
+"Aruba",250,"seaweeds",1978,0
+"Aruba",250,"seaweeds",1979,0
+"Aruba",250,"seaweeds",1980,0
+"Aruba",250,"seaweeds",1981,0
+"Aruba",250,"seaweeds",1982,0
+"Aruba",250,"seaweeds",1983,0
+"Aruba",250,"seaweeds",1984,0
+"Aruba",250,"seaweeds",1985,0
+"Aruba",250,"seaweeds",1986,0
+"Aruba",250,"seaweeds",1987,0
+"Aruba",250,"seaweeds",1988,0
+"Aruba",250,"seaweeds",1989,0
+"Aruba",250,"seaweeds",1990,0
+"Aruba",250,"seaweeds",1991,0
+"Aruba",250,"seaweeds",1992,0
+"Aruba",250,"seaweeds",1993,0
+"Aruba",250,"seaweeds",1994,0
+"Aruba",250,"seaweeds",1995,0
+"Aruba",250,"seaweeds",1996,0
+"Aruba",250,"seaweeds",1997,0
+"Aruba",250,"seaweeds",1998,0
+"Aruba",250,"seaweeds",1999,0
+"Aruba",250,"seaweeds",2000,0
+"Aruba",250,"seaweeds",2001,0
+"Aruba",250,"seaweeds",2002,0
+"Aruba",250,"seaweeds",2003,0
+"Aruba",250,"seaweeds",2004,0
+"Aruba",250,"seaweeds",2005,0
+"Aruba",250,"seaweeds",2006,0
+"Aruba",250,"seaweeds",2007,0
+"Aruba",250,"seaweeds",2008,0
+"Aruba",250,"seaweeds",2009,0
+"Aruba",250,"seaweeds",2010,0
+"Aruba",250,"seaweeds",2011,0
 "Australia",16,"corals",1976,328
 "Australia",16,"corals",1977,363
 "Australia",16,"corals",1978,522
@@ -190,6 +244,10 @@
 "Australia",16,"corals",1983,1127
 "Australia",16,"corals",1984,1183
 "Australia",16,"corals",1985,1029
+"Australia",16,"corals",1986,0
+"Australia",16,"corals",1987,0
+"Australia",16,"corals",1988,0
+"Australia",16,"corals",1989,0
 "Australia",16,"corals",1990,7301
 "Australia",16,"corals",1991,4307
 "Australia",16,"corals",1992,4339
@@ -334,6 +392,8 @@
 "Australia",16,"sponges",1997,155
 "Australia",16,"sponges",1998,60
 "Australia",16,"sponges",1999,113
+"Australia",16,"sponges",2000,0
+"Australia",16,"sponges",2001,0
 "Australia",16,"sponges",2002,16
 "Australia",16,"sponges",2003,37
 "Australia",16,"sponges",2004,73
@@ -349,6 +409,7 @@
 "Azerbaijan",255,"fish_oil",2001,7
 "Azerbaijan",255,"fish_oil",2002,5
 "Azerbaijan",255,"fish_oil",2003,0
+"Azerbaijan",255,"fish_oil",2004,0
 "Azerbaijan",255,"fish_oil",2005,0
 "Azerbaijan",255,"fish_oil",2006,0
 "Azerbaijan",255,"fish_oil",2007,0
@@ -382,7 +443,28 @@
 "Bahamas",110,"sponges",2006,1053
 "Bahamas",110,"sponges",2007,717
 "Bahamas",110,"sponges",2008,368
+"Bahamas",110,"sponges",2009,0
+"Bahamas",110,"sponges",2010,0
+"Bahamas",110,"sponges",2011,0
 "Bahrain",52,"fish_oil",1978,3
+"Bahrain",52,"fish_oil",1979,0
+"Bahrain",52,"fish_oil",1980,0
+"Bahrain",52,"fish_oil",1981,0
+"Bahrain",52,"fish_oil",1982,0
+"Bahrain",52,"fish_oil",1983,0
+"Bahrain",52,"fish_oil",1984,0
+"Bahrain",52,"fish_oil",1985,0
+"Bahrain",52,"fish_oil",1986,0
+"Bahrain",52,"fish_oil",1987,0
+"Bahrain",52,"fish_oil",1988,0
+"Bahrain",52,"fish_oil",1989,0
+"Bahrain",52,"fish_oil",1990,0
+"Bahrain",52,"fish_oil",1991,0
+"Bahrain",52,"fish_oil",1992,0
+"Bahrain",52,"fish_oil",1993,0
+"Bahrain",52,"fish_oil",1994,0
+"Bahrain",52,"fish_oil",1995,0
+"Bahrain",52,"fish_oil",1996,0
 "Bahrain",52,"fish_oil",1997,77
 "Bahrain",52,"fish_oil",1998,0
 "Bahrain",52,"fish_oil",1999,0
@@ -417,11 +499,29 @@
 "Bahrain",52,"ornamentals",2010,0
 "Bahrain",52,"ornamentals",2011,0
 "Bangladesh",204,"fish_oil",2005,5
+"Bangladesh",204,"fish_oil",2006,0
+"Bangladesh",204,"fish_oil",2007,0
+"Bangladesh",204,"fish_oil",2008,0
+"Bangladesh",204,"fish_oil",2009,0
 "Bangladesh",204,"fish_oil",2010,7
 "Bangladesh",204,"fish_oil",2011,7
 "Bangladesh",204,"ornamentals",1984,43
 "Bangladesh",204,"ornamentals",1985,18
+"Bangladesh",204,"ornamentals",1986,0
 "Bangladesh",204,"ornamentals",1987,46
+"Bangladesh",204,"ornamentals",1988,0
+"Bangladesh",204,"ornamentals",1989,0
+"Bangladesh",204,"ornamentals",1990,0
+"Bangladesh",204,"ornamentals",1991,0
+"Bangladesh",204,"ornamentals",1992,0
+"Bangladesh",204,"ornamentals",1993,0
+"Bangladesh",204,"ornamentals",1994,0
+"Bangladesh",204,"ornamentals",1995,0
+"Bangladesh",204,"ornamentals",1996,0
+"Bangladesh",204,"ornamentals",1997,0
+"Bangladesh",204,"ornamentals",1998,0
+"Bangladesh",204,"ornamentals",1999,0
+"Bangladesh",204,"ornamentals",2000,0
 "Bangladesh",204,"ornamentals",2001,4
 "Bangladesh",204,"ornamentals",2002,6
 "Bangladesh",204,"ornamentals",2003,3
@@ -429,11 +529,15 @@
 "Bangladesh",204,"ornamentals",2005,86
 "Bangladesh",204,"ornamentals",2006,45
 "Bangladesh",204,"ornamentals",2007,7
+"Bangladesh",204,"ornamentals",2008,0
+"Bangladesh",204,"ornamentals",2009,0
 "Bangladesh",204,"ornamentals",2010,4
 "Bangladesh",204,"ornamentals",2011,0
 "Bangladesh",204,"seaweeds",2004,0
 "Bangladesh",204,"seaweeds",2005,0
+"Bangladesh",204,"seaweeds",2006,0
 "Bangladesh",204,"seaweeds",2007,24
+"Bangladesh",204,"seaweeds",2008,0
 "Bangladesh",204,"seaweeds",2009,0
 "Bangladesh",204,"seaweeds",2010,3
 "Bangladesh",204,"seaweeds",2011,0
@@ -451,11 +555,27 @@
 "Barbados",124,"fish_oil",2004,0
 "Barbados",124,"fish_oil",2005,1
 "Barbados",124,"fish_oil",2006,1
+"Barbados",124,"fish_oil",2007,0
 "Barbados",124,"fish_oil",2008,5
 "Barbados",124,"fish_oil",2009,0
 "Barbados",124,"fish_oil",2010,2
 "Barbados",124,"fish_oil",2011,4
 "Barbados",124,"ornamentals",1976,7
+"Barbados",124,"ornamentals",1977,0
+"Barbados",124,"ornamentals",1978,0
+"Barbados",124,"ornamentals",1979,0
+"Barbados",124,"ornamentals",1980,0
+"Barbados",124,"ornamentals",1981,0
+"Barbados",124,"ornamentals",1982,0
+"Barbados",124,"ornamentals",1983,0
+"Barbados",124,"ornamentals",1984,0
+"Barbados",124,"ornamentals",1985,0
+"Barbados",124,"ornamentals",1986,0
+"Barbados",124,"ornamentals",1987,0
+"Barbados",124,"ornamentals",1988,0
+"Barbados",124,"ornamentals",1989,0
+"Barbados",124,"ornamentals",1990,0
+"Barbados",124,"ornamentals",1991,0
 "Barbados",124,"ornamentals",1992,1
 "Barbados",124,"ornamentals",1993,0
 "Barbados",124,"ornamentals",1994,0
@@ -663,9 +783,46 @@
 "Belgium",59,"sponges",2009,99
 "Belgium",59,"sponges",2010,70
 "Belgium",59,"sponges",2011,41
+"Belize",164,"fish_oil",1977,0
+"Belize",164,"fish_oil",1978,0
+"Belize",164,"fish_oil",1979,0
+"Belize",164,"fish_oil",1980,0
+"Belize",164,"fish_oil",1981,0
+"Belize",164,"fish_oil",1982,0
+"Belize",164,"fish_oil",1983,0
+"Belize",164,"fish_oil",1984,0
+"Belize",164,"fish_oil",1985,0
+"Belize",164,"fish_oil",1986,0
+"Belize",164,"fish_oil",1987,0
+"Belize",164,"fish_oil",1988,0
+"Belize",164,"fish_oil",1989,0
+"Belize",164,"fish_oil",1990,0
+"Belize",164,"fish_oil",1991,0
+"Belize",164,"fish_oil",1992,0
+"Belize",164,"fish_oil",1993,0
+"Belize",164,"fish_oil",1994,0
+"Belize",164,"fish_oil",1995,0
+"Belize",164,"fish_oil",1996,0
+"Belize",164,"fish_oil",1997,0
+"Belize",164,"fish_oil",1998,0
+"Belize",164,"fish_oil",1999,0
+"Belize",164,"fish_oil",2000,0
+"Belize",164,"fish_oil",2001,0
+"Belize",164,"fish_oil",2002,0
+"Belize",164,"fish_oil",2003,0
+"Belize",164,"fish_oil",2004,0
+"Belize",164,"fish_oil",2005,0
+"Belize",164,"fish_oil",2006,0
+"Belize",164,"fish_oil",2007,0
+"Belize",164,"fish_oil",2008,0
+"Belize",164,"fish_oil",2009,0
+"Belize",164,"fish_oil",2010,0
+"Belize",164,"fish_oil",2011,0
 "Belize",164,"ornamentals",1977,6
+"Belize",164,"ornamentals",1978,0
 "Belize",164,"ornamentals",1979,39
 "Belize",164,"ornamentals",1980,65
+"Belize",164,"ornamentals",1981,0
 "Belize",164,"ornamentals",1982,9
 "Belize",164,"ornamentals",1983,7
 "Belize",164,"ornamentals",1984,8
@@ -682,6 +839,8 @@
 "Belize",164,"ornamentals",1995,32
 "Belize",164,"ornamentals",1996,36
 "Belize",164,"ornamentals",1997,47
+"Belize",164,"ornamentals",1998,0
+"Belize",164,"ornamentals",1999,0
 "Belize",164,"ornamentals",2000,43
 "Belize",164,"ornamentals",2001,20
 "Belize",164,"ornamentals",2002,23
@@ -696,6 +855,7 @@
 "Belize",164,"ornamentals",2011,120
 "Belize",164,"seaweeds",1994,2
 "Belize",164,"seaweeds",1995,4
+"Belize",164,"seaweeds",1996,0
 "Belize",164,"seaweeds",1997,2
 "Belize",164,"seaweeds",1998,2
 "Belize",164,"seaweeds",1999,0
@@ -713,8 +873,10 @@
 "Belize",164,"seaweeds",2011,0
 "Belize",164,"shells",2004,61
 "Belize",164,"shells",2005,119
+"Belize",164,"shells",2006,0
 "Belize",164,"shells",2007,0
 "Belize",164,"shells",2008,0
+"Belize",164,"shells",2009,0
 "Belize",164,"shells",2010,0
 "Belize",164,"shells",2011,0
 "Benin",99,"ornamentals",1995,35
@@ -735,6 +897,14 @@
 "Benin",99,"ornamentals",2010,0
 "Benin",99,"ornamentals",2011,0
 "Bermuda",108,"fish_oil",2003,59
+"Bermuda",108,"fish_oil",2004,0
+"Bermuda",108,"fish_oil",2005,0
+"Bermuda",108,"fish_oil",2006,0
+"Bermuda",108,"fish_oil",2007,0
+"Bermuda",108,"fish_oil",2008,0
+"Bermuda",108,"fish_oil",2009,0
+"Bermuda",108,"fish_oil",2010,0
+"Bermuda",108,"fish_oil",2011,0
 "Bermuda",108,"ornamentals",2007,1
 "Bermuda",108,"ornamentals",2008,0
 "Bermuda",108,"ornamentals",2009,0
@@ -752,9 +922,13 @@
 "Bonaire",245,"corals",2001,1
 "Bonaire",245,"corals",2002,1.75
 "Bonaire",245,"corals",2003,1.25
+"Bonaire",245,"corals",2004,0
 "Bonaire",245,"corals",2005,0
 "Bonaire",245,"corals",2006,0
 "Bonaire",245,"corals",2007,0
+"Bonaire",245,"corals",2008,0
+"Bonaire",245,"corals",2009,0
+"Bonaire",245,"corals",2010,0
 "Bonaire",245,"corals",2011,0
 "Bonaire",245,"fish_oil",2002,7.75
 "Bonaire",245,"fish_oil",2003,85.5
@@ -855,8 +1029,19 @@
 "Brazil",171,"fish_oil",1976,33
 "Brazil",171,"fish_oil",1977,10
 "Brazil",171,"fish_oil",1978,4
+"Brazil",171,"fish_oil",1979,0
+"Brazil",171,"fish_oil",1980,0
+"Brazil",171,"fish_oil",1981,0
+"Brazil",171,"fish_oil",1982,0
+"Brazil",171,"fish_oil",1983,0
+"Brazil",171,"fish_oil",1984,0
+"Brazil",171,"fish_oil",1985,0
+"Brazil",171,"fish_oil",1986,0
+"Brazil",171,"fish_oil",1987,0
 "Brazil",171,"fish_oil",1988,17
 "Brazil",171,"fish_oil",1989,15
+"Brazil",171,"fish_oil",1990,0
+"Brazil",171,"fish_oil",1991,0
 "Brazil",171,"fish_oil",1992,5
 "Brazil",171,"fish_oil",1993,20
 "Brazil",171,"fish_oil",1994,18
@@ -941,6 +1126,7 @@
 "Brazil",171,"sponges",1997,0
 "Brazil",171,"sponges",1998,0
 "Brazil",171,"sponges",1999,8
+"Brazil",171,"sponges",2000,0
 "Brazil",171,"sponges",2001,6
 "Brazil",171,"sponges",2002,4
 "Brazil",171,"sponges",2003,2
@@ -954,7 +1140,10 @@
 "Brazil",171,"sponges",2011,0
 "Brunei",247,"ornamentals",1995,4
 "Brunei",247,"ornamentals",1996,14
+"Brunei",247,"ornamentals",1997,0
+"Brunei",247,"ornamentals",1998,0
 "Brunei",247,"ornamentals",1999,3
+"Brunei",247,"ornamentals",2000,0
 "Brunei",247,"ornamentals",2001,19
 "Brunei",247,"ornamentals",2002,8
 "Brunei",247,"ornamentals",2003,35
@@ -976,6 +1165,8 @@
 "Brunei",247,"seaweeds",2010,0
 "Brunei",247,"seaweeds",2011,0
 "Brunei",247,"shells",2004,0
+"Brunei",247,"shells",2005,0
+"Brunei",247,"shells",2006,0
 "Brunei",247,"shells",2007,6
 "Brunei",247,"shells",2008,0
 "Brunei",247,"shells",2009,0
@@ -1025,7 +1216,10 @@
 "Bulgaria",71,"ornamentals",2010,0
 "Bulgaria",71,"ornamentals",2011,0
 "Bulgaria",71,"seaweeds",1997,86
+"Bulgaria",71,"seaweeds",1998,0
 "Bulgaria",71,"seaweeds",1999,30
+"Bulgaria",71,"seaweeds",2000,0
+"Bulgaria",71,"seaweeds",2001,0
 "Bulgaria",71,"seaweeds",2002,0
 "Bulgaria",71,"seaweeds",2003,1
 "Bulgaria",71,"seaweeds",2004,6
@@ -1048,6 +1242,8 @@
 "Bulgaria",71,"shells",2010,220
 "Bulgaria",71,"shells",2011,824
 "Bulgaria",71,"sponges",1999,6
+"Bulgaria",71,"sponges",2000,0
+"Bulgaria",71,"sponges",2001,0
 "Bulgaria",71,"sponges",2002,0
 "Bulgaria",71,"sponges",2003,2
 "Bulgaria",71,"sponges",2004,3
@@ -1250,10 +1446,61 @@
 "Canada",218,"sponges",2010,15
 "Canada",218,"sponges",2011,30
 "Cayman Islands",113,"corals",2004,11
+"Cayman Islands",113,"corals",2005,0
+"Cayman Islands",113,"corals",2006,0
 "Cayman Islands",113,"corals",2007,1
+"Cayman Islands",113,"corals",2008,0
+"Cayman Islands",113,"corals",2009,0
+"Cayman Islands",113,"corals",2010,0
+"Cayman Islands",113,"corals",2011,0
+"Cayman Islands",113,"ornamentals",1977,0
+"Cayman Islands",113,"ornamentals",1978,0
+"Cayman Islands",113,"ornamentals",1979,0
+"Cayman Islands",113,"ornamentals",1980,0
+"Cayman Islands",113,"ornamentals",1981,0
+"Cayman Islands",113,"ornamentals",1982,0
+"Cayman Islands",113,"ornamentals",1983,0
+"Cayman Islands",113,"ornamentals",1984,0
+"Cayman Islands",113,"ornamentals",1985,0
+"Cayman Islands",113,"ornamentals",1986,0
+"Cayman Islands",113,"ornamentals",1987,0
+"Cayman Islands",113,"ornamentals",1988,0
+"Cayman Islands",113,"ornamentals",1989,0
+"Cayman Islands",113,"ornamentals",1990,0
+"Cayman Islands",113,"ornamentals",1991,0
+"Cayman Islands",113,"ornamentals",1992,0
+"Cayman Islands",113,"ornamentals",1993,0
+"Cayman Islands",113,"ornamentals",1994,0
+"Cayman Islands",113,"ornamentals",1995,0
+"Cayman Islands",113,"ornamentals",1996,0
+"Cayman Islands",113,"ornamentals",1997,0
+"Cayman Islands",113,"ornamentals",1998,0
+"Cayman Islands",113,"ornamentals",1999,0
+"Cayman Islands",113,"ornamentals",2000,0
+"Cayman Islands",113,"ornamentals",2001,0
+"Cayman Islands",113,"ornamentals",2002,0
+"Cayman Islands",113,"ornamentals",2003,0
+"Cayman Islands",113,"ornamentals",2004,0
+"Cayman Islands",113,"ornamentals",2005,0
+"Cayman Islands",113,"ornamentals",2006,0
+"Cayman Islands",113,"ornamentals",2007,0
+"Cayman Islands",113,"ornamentals",2008,0
+"Cayman Islands",113,"ornamentals",2009,0
 "Cayman Islands",113,"ornamentals",2010,2
 "Cayman Islands",113,"ornamentals",2011,2
 "Cayman Islands",113,"seaweeds",1998,34
+"Cayman Islands",113,"seaweeds",1999,0
+"Cayman Islands",113,"seaweeds",2000,0
+"Cayman Islands",113,"seaweeds",2001,0
+"Cayman Islands",113,"seaweeds",2002,0
+"Cayman Islands",113,"seaweeds",2003,0
+"Cayman Islands",113,"seaweeds",2004,0
+"Cayman Islands",113,"seaweeds",2005,0
+"Cayman Islands",113,"seaweeds",2006,0
+"Cayman Islands",113,"seaweeds",2007,0
+"Cayman Islands",113,"seaweeds",2008,0
+"Cayman Islands",113,"seaweeds",2009,0
+"Cayman Islands",113,"seaweeds",2010,0
 "Cayman Islands",113,"seaweeds",2011,0
 "Chile",224,"corals",1994,699
 "Chile",224,"corals",1995,645
@@ -1319,6 +1566,7 @@
 "Chile",224,"ornamentals",2000,2
 "Chile",224,"ornamentals",2001,2
 "Chile",224,"ornamentals",2002,2
+"Chile",224,"ornamentals",2003,0
 "Chile",224,"ornamentals",2004,1
 "Chile",224,"ornamentals",2005,2
 "Chile",224,"ornamentals",2006,2
@@ -1369,6 +1617,7 @@
 "Chile",224,"sponges",2002,0
 "Chile",224,"sponges",2003,0
 "Chile",224,"sponges",2004,0
+"Chile",224,"sponges",2005,0
 "Chile",224,"sponges",2006,0
 "Chile",224,"sponges",2007,0
 "Chile",224,"sponges",2008,0
@@ -1398,6 +1647,7 @@
 "China",209,"corals",2010,4249
 "China",209,"corals",2011,3779
 "China",209,"fish_oil",1983,0
+"China",209,"fish_oil",1984,0
 "China",209,"fish_oil",1985,0
 "China",209,"fish_oil",1986,1
 "China",209,"fish_oil",1987,14
@@ -1426,6 +1676,7 @@
 "China",209,"fish_oil",2010,52337
 "China",209,"fish_oil",2011,90841
 "China",209,"ornamentals",1978,25
+"China",209,"ornamentals",1979,0
 "China",209,"ornamentals",1980,8
 "China",209,"ornamentals",1981,2
 "China",209,"ornamentals",1982,3
@@ -1516,10 +1767,22 @@
 "Colombia",132,"corals",2004,20
 "Colombia",132,"corals",2005,41
 "Colombia",132,"corals",2006,1
+"Colombia",132,"corals",2007,0
 "Colombia",132,"corals",2008,0
+"Colombia",132,"corals",2009,0
 "Colombia",132,"corals",2010,0
 "Colombia",132,"corals",2011,0
 "Colombia",132,"fish_oil",1981,2
+"Colombia",132,"fish_oil",1982,0
+"Colombia",132,"fish_oil",1983,0
+"Colombia",132,"fish_oil",1984,0
+"Colombia",132,"fish_oil",1985,0
+"Colombia",132,"fish_oil",1986,0
+"Colombia",132,"fish_oil",1987,0
+"Colombia",132,"fish_oil",1988,0
+"Colombia",132,"fish_oil",1989,0
+"Colombia",132,"fish_oil",1990,0
+"Colombia",132,"fish_oil",1991,0
 "Colombia",132,"fish_oil",1992,7
 "Colombia",132,"fish_oil",1993,46
 "Colombia",132,"fish_oil",1994,5
@@ -1616,6 +1879,7 @@
 "Comoro Islands",28,"shells",1997,0
 "Comoro Islands",28,"shells",1998,0
 "Comoro Islands",28,"shells",1999,0
+"Comoro Islands",28,"shells",2000,0
 "Comoro Islands",28,"shells",2001,0
 "Comoro Islands",28,"shells",2002,0
 "Comoro Islands",28,"shells",2003,0
@@ -1673,6 +1937,12 @@
 "Cook Islands",153,"shells",2010,0
 "Cook Islands",153,"shells",2011,0
 "Costa Rica",130,"fish_oil",1988,8
+"Costa Rica",130,"fish_oil",1989,0
+"Costa Rica",130,"fish_oil",1990,0
+"Costa Rica",130,"fish_oil",1991,0
+"Costa Rica",130,"fish_oil",1992,0
+"Costa Rica",130,"fish_oil",1993,0
+"Costa Rica",130,"fish_oil",1994,0
 "Costa Rica",130,"fish_oil",1995,3
 "Costa Rica",130,"fish_oil",1996,17
 "Costa Rica",130,"fish_oil",1997,0
@@ -1683,6 +1953,7 @@
 "Costa Rica",130,"fish_oil",2002,6
 "Costa Rica",130,"fish_oil",2003,1
 "Costa Rica",130,"fish_oil",2004,2
+"Costa Rica",130,"fish_oil",2005,0
 "Costa Rica",130,"fish_oil",2006,0
 "Costa Rica",130,"fish_oil",2007,0
 "Costa Rica",130,"fish_oil",2008,0
@@ -1690,6 +1961,7 @@
 "Costa Rica",130,"fish_oil",2010,1
 "Costa Rica",130,"fish_oil",2011,196
 "Costa Rica",130,"ornamentals",1984,36
+"Costa Rica",130,"ornamentals",1985,0
 "Costa Rica",130,"ornamentals",1986,25
 "Costa Rica",130,"ornamentals",1987,164
 "Costa Rica",130,"ornamentals",1988,311
@@ -1718,7 +1990,12 @@
 "Costa Rica",130,"ornamentals",2011,78
 "Costa Rica",130,"seaweeds",1990,51
 "Costa Rica",130,"seaweeds",1991,290
+"Costa Rica",130,"seaweeds",1992,0
+"Costa Rica",130,"seaweeds",1993,0
 "Costa Rica",130,"seaweeds",1994,11
+"Costa Rica",130,"seaweeds",1995,0
+"Costa Rica",130,"seaweeds",1996,0
+"Costa Rica",130,"seaweeds",1997,0
 "Costa Rica",130,"seaweeds",1998,12
 "Costa Rica",130,"seaweeds",1999,18
 "Costa Rica",130,"seaweeds",2000,11
@@ -1758,6 +2035,7 @@
 "Croatia",187,"fish_oil",1996,9
 "Croatia",187,"fish_oil",1997,7
 "Croatia",187,"fish_oil",1998,12
+"Croatia",187,"fish_oil",1999,0
 "Croatia",187,"fish_oil",2000,14
 "Croatia",187,"fish_oil",2001,15
 "Croatia",187,"fish_oil",2002,3
@@ -1779,6 +2057,7 @@
 "Croatia",187,"ornamentals",2011,0
 "Croatia",187,"seaweeds",1996,17
 "Croatia",187,"seaweeds",1997,12
+"Croatia",187,"seaweeds",1998,0
 "Croatia",187,"seaweeds",1999,19
 "Croatia",187,"seaweeds",2000,10
 "Croatia",187,"seaweeds",2001,6
@@ -1870,8 +2149,46 @@
 "Cuba",112,"sponges",2005,457
 "Cuba",112,"sponges",2006,748
 "Cuba",112,"sponges",2007,608
+"Cuba",112,"sponges",2008,0
+"Cuba",112,"sponges",2009,0
+"Cuba",112,"sponges",2010,0
 "Cuba",112,"sponges",2011,502
 "Curacao",244,"fish_oil",2011,62
+"Curacao",244,"shells",1977,0
+"Curacao",244,"shells",1978,0
+"Curacao",244,"shells",1979,0
+"Curacao",244,"shells",1980,0
+"Curacao",244,"shells",1981,0
+"Curacao",244,"shells",1982,0
+"Curacao",244,"shells",1983,0
+"Curacao",244,"shells",1984,0
+"Curacao",244,"shells",1985,0
+"Curacao",244,"shells",1986,0
+"Curacao",244,"shells",1987,0
+"Curacao",244,"shells",1988,0
+"Curacao",244,"shells",1989,0
+"Curacao",244,"shells",1990,0
+"Curacao",244,"shells",1991,0
+"Curacao",244,"shells",1992,0
+"Curacao",244,"shells",1993,0
+"Curacao",244,"shells",1994,0
+"Curacao",244,"shells",1995,0
+"Curacao",244,"shells",1996,0
+"Curacao",244,"shells",1997,0
+"Curacao",244,"shells",1998,0
+"Curacao",244,"shells",1999,0
+"Curacao",244,"shells",2000,0
+"Curacao",244,"shells",2001,0
+"Curacao",244,"shells",2002,0
+"Curacao",244,"shells",2003,0
+"Curacao",244,"shells",2004,0
+"Curacao",244,"shells",2005,0
+"Curacao",244,"shells",2006,0
+"Curacao",244,"shells",2007,0
+"Curacao",244,"shells",2008,0
+"Curacao",244,"shells",2009,0
+"Curacao",244,"shells",2010,0
+"Curacao",244,"shells",2011,0
 "Cyprus",81,"corals",1998,0
 "Cyprus",81,"corals",1999,0
 "Cyprus",81,"corals",2000,0
@@ -1914,6 +2231,7 @@
 "Cyprus",81,"ornamentals",1996,0
 "Cyprus",81,"ornamentals",1997,0
 "Cyprus",81,"ornamentals",1998,0
+"Cyprus",81,"ornamentals",1999,0
 "Cyprus",81,"ornamentals",2000,0
 "Cyprus",81,"ornamentals",2001,0
 "Cyprus",81,"ornamentals",2002,0
@@ -1936,6 +2254,16 @@
 "Cyprus",81,"seaweeds",2010,0
 "Cyprus",81,"seaweeds",2011,0
 "Cyprus",81,"shells",1988,34
+"Cyprus",81,"shells",1989,0
+"Cyprus",81,"shells",1990,0
+"Cyprus",81,"shells",1991,0
+"Cyprus",81,"shells",1992,0
+"Cyprus",81,"shells",1993,0
+"Cyprus",81,"shells",1994,0
+"Cyprus",81,"shells",1995,0
+"Cyprus",81,"shells",1996,0
+"Cyprus",81,"shells",1997,0
+"Cyprus",81,"shells",1998,0
 "Cyprus",81,"shells",1999,0
 "Cyprus",81,"shells",2000,0
 "Cyprus",81,"shells",2001,0
@@ -1960,6 +2288,10 @@
 "Cyprus",81,"sponges",1987,10
 "Cyprus",81,"sponges",1988,4
 "Cyprus",81,"sponges",1989,6
+"Cyprus",81,"sponges",1990,0
+"Cyprus",81,"sponges",1991,0
+"Cyprus",81,"sponges",1992,0
+"Cyprus",81,"sponges",1993,0
 "Cyprus",81,"sponges",1994,130
 "Cyprus",81,"sponges",1995,51
 "Cyprus",81,"sponges",1996,17
@@ -2149,6 +2481,11 @@
 "Denmark",175,"sponges",1986,6
 "Denmark",175,"sponges",1987,10
 "Denmark",175,"sponges",1988,4
+"Denmark",175,"sponges",1989,0
+"Denmark",175,"sponges",1990,0
+"Denmark",175,"sponges",1991,0
+"Denmark",175,"sponges",1992,0
+"Denmark",175,"sponges",1993,0
 "Denmark",175,"sponges",1994,56
 "Denmark",175,"sponges",1995,286
 "Denmark",175,"sponges",1996,9
@@ -2190,12 +2527,51 @@
 "Djibouti",46,"seaweeds",2010,0
 "Djibouti",46,"seaweeds",2011,0
 "Djibouti",46,"shells",2006,8
+"Djibouti",46,"shells",2007,0
 "Djibouti",46,"shells",2008,1
 "Djibouti",46,"shells",2009,0
+"Djibouti",46,"shells",2010,0
 "Djibouti",46,"shells",2011,1
+"Dominica",123,"ornamentals",1977,0
+"Dominica",123,"ornamentals",1978,0
+"Dominica",123,"ornamentals",1979,0
+"Dominica",123,"ornamentals",1980,0
+"Dominica",123,"ornamentals",1981,0
+"Dominica",123,"ornamentals",1982,0
+"Dominica",123,"ornamentals",1983,0
+"Dominica",123,"ornamentals",1984,0
+"Dominica",123,"ornamentals",1985,0
+"Dominica",123,"ornamentals",1986,0
+"Dominica",123,"ornamentals",1987,0
+"Dominica",123,"ornamentals",1988,0
+"Dominica",123,"ornamentals",1989,0
+"Dominica",123,"ornamentals",1990,0
+"Dominica",123,"ornamentals",1991,0
+"Dominica",123,"ornamentals",1992,0
+"Dominica",123,"ornamentals",1993,0
+"Dominica",123,"ornamentals",1994,0
+"Dominica",123,"ornamentals",1995,0
+"Dominica",123,"ornamentals",1996,0
+"Dominica",123,"ornamentals",1997,0
+"Dominica",123,"ornamentals",1998,0
+"Dominica",123,"ornamentals",1999,0
+"Dominica",123,"ornamentals",2000,0
+"Dominica",123,"ornamentals",2001,0
+"Dominica",123,"ornamentals",2002,0
+"Dominica",123,"ornamentals",2003,0
+"Dominica",123,"ornamentals",2004,0
+"Dominica",123,"ornamentals",2005,0
+"Dominica",123,"ornamentals",2006,0
+"Dominica",123,"ornamentals",2007,0
+"Dominica",123,"ornamentals",2008,0
+"Dominica",123,"ornamentals",2009,0
+"Dominica",123,"ornamentals",2010,0
+"Dominica",123,"ornamentals",2011,0
 "Dominica",123,"seaweeds",2000,1
 "Dominica",123,"seaweeds",2001,0
 "Dominica",123,"seaweeds",2002,3
+"Dominica",123,"seaweeds",2003,0
+"Dominica",123,"seaweeds",2004,0
 "Dominica",123,"seaweeds",2005,1
 "Dominica",123,"seaweeds",2006,0
 "Dominica",123,"seaweeds",2007,0
@@ -2207,6 +2583,7 @@
 "Dominica",123,"shells",2003,17
 "Dominica",123,"shells",2004,7
 "Dominica",123,"shells",2005,4
+"Dominica",123,"shells",2006,0
 "Dominica",123,"shells",2007,0
 "Dominica",123,"shells",2008,0
 "Dominica",123,"shells",2009,0
@@ -2217,22 +2594,37 @@
 "Dominican Republic",115,"corals",1999,15
 "Dominican Republic",115,"corals",2000,4
 "Dominican Republic",115,"corals",2001,0
+"Dominican Republic",115,"corals",2002,0
 "Dominican Republic",115,"corals",2003,2
 "Dominican Republic",115,"corals",2004,5
 "Dominican Republic",115,"corals",2005,4
 "Dominican Republic",115,"corals",2006,123
+"Dominican Republic",115,"corals",2007,0
 "Dominican Republic",115,"corals",2008,20
 "Dominican Republic",115,"corals",2009,0
 "Dominican Republic",115,"corals",2010,151
 "Dominican Republic",115,"corals",2011,8
 "Dominican Republic",115,"fish_oil",1983,1
 "Dominican Republic",115,"fish_oil",1984,1
+"Dominican Republic",115,"fish_oil",1985,0
+"Dominican Republic",115,"fish_oil",1986,0
+"Dominican Republic",115,"fish_oil",1987,0
+"Dominican Republic",115,"fish_oil",1988,0
+"Dominican Republic",115,"fish_oil",1989,0
+"Dominican Republic",115,"fish_oil",1990,0
+"Dominican Republic",115,"fish_oil",1991,0
+"Dominican Republic",115,"fish_oil",1992,0
+"Dominican Republic",115,"fish_oil",1993,0
+"Dominican Republic",115,"fish_oil",1994,0
+"Dominican Republic",115,"fish_oil",1995,0
+"Dominican Republic",115,"fish_oil",1996,0
 "Dominican Republic",115,"fish_oil",1997,1
 "Dominican Republic",115,"fish_oil",1998,4
 "Dominican Republic",115,"fish_oil",1999,2
 "Dominican Republic",115,"fish_oil",2000,2
 "Dominican Republic",115,"fish_oil",2001,2
 "Dominican Republic",115,"fish_oil",2002,2
+"Dominican Republic",115,"fish_oil",2003,0
 "Dominican Republic",115,"fish_oil",2004,0
 "Dominican Republic",115,"fish_oil",2005,0
 "Dominican Republic",115,"fish_oil",2006,0
@@ -2242,6 +2634,17 @@
 "Dominican Republic",115,"fish_oil",2010,0
 "Dominican Republic",115,"fish_oil",2011,0
 "Dominican Republic",115,"ornamentals",1979,1
+"Dominican Republic",115,"ornamentals",1980,0
+"Dominican Republic",115,"ornamentals",1981,0
+"Dominican Republic",115,"ornamentals",1982,0
+"Dominican Republic",115,"ornamentals",1983,0
+"Dominican Republic",115,"ornamentals",1984,0
+"Dominican Republic",115,"ornamentals",1985,0
+"Dominican Republic",115,"ornamentals",1986,0
+"Dominican Republic",115,"ornamentals",1987,0
+"Dominican Republic",115,"ornamentals",1988,0
+"Dominican Republic",115,"ornamentals",1989,0
+"Dominican Republic",115,"ornamentals",1990,0
 "Dominican Republic",115,"ornamentals",1991,2
 "Dominican Republic",115,"ornamentals",1992,48
 "Dominican Republic",115,"ornamentals",1993,13
@@ -2266,6 +2669,7 @@
 "Dominican Republic",115,"seaweeds",2004,0
 "Dominican Republic",115,"seaweeds",2005,0
 "Dominican Republic",115,"seaweeds",2006,0
+"Dominican Republic",115,"seaweeds",2007,0
 "Dominican Republic",115,"seaweeds",2008,0
 "Dominican Republic",115,"seaweeds",2009,0
 "Dominican Republic",115,"seaweeds",2010,0
@@ -2282,6 +2686,8 @@
 "East Timor",231,"ornamentals",2010,0
 "East Timor",231,"ornamentals",2011,0
 "East Timor",231,"seaweeds",2009,18
+"East Timor",231,"seaweeds",2010,0
+"East Timor",231,"seaweeds",2011,0
 "East Timor",231,"shells",2006,0
 "East Timor",231,"shells",2007,0
 "East Timor",231,"shells",2008,0
@@ -2299,6 +2705,7 @@
 "Ecuador",137,"corals",2002,3
 "Ecuador",137,"corals",2003,1
 "Ecuador",137,"corals",2004,19
+"Ecuador",137,"corals",2005,0
 "Ecuador",137,"corals",2006,2
 "Ecuador",137,"corals",2007,259
 "Ecuador",137,"corals",2008,10
@@ -2309,12 +2716,25 @@
 "Ecuador",137,"fish_oil",1977,1870
 "Ecuador",137,"fish_oil",1978,3211
 "Ecuador",137,"fish_oil",1979,1365
+"Ecuador",137,"fish_oil",1980,0
+"Ecuador",137,"fish_oil",1981,0
+"Ecuador",137,"fish_oil",1982,0
+"Ecuador",137,"fish_oil",1983,0
+"Ecuador",137,"fish_oil",1984,0
 "Ecuador",137,"fish_oil",1985,1383
 "Ecuador",137,"fish_oil",1986,1847
+"Ecuador",137,"fish_oil",1987,0
+"Ecuador",137,"fish_oil",1988,0
+"Ecuador",137,"fish_oil",1989,0
+"Ecuador",137,"fish_oil",1990,0
+"Ecuador",137,"fish_oil",1991,0
+"Ecuador",137,"fish_oil",1992,0
+"Ecuador",137,"fish_oil",1993,0
 "Ecuador",137,"fish_oil",1994,14
 "Ecuador",137,"fish_oil",1995,50
 "Ecuador",137,"fish_oil",1996,183
 "Ecuador",137,"fish_oil",1997,1661
+"Ecuador",137,"fish_oil",1998,0
 "Ecuador",137,"fish_oil",1999,164
 "Ecuador",137,"fish_oil",2000,109
 "Ecuador",137,"fish_oil",2001,1698
@@ -2335,8 +2755,11 @@
 "Ecuador",137,"ornamentals",1980,4
 "Ecuador",137,"ornamentals",1981,2
 "Ecuador",137,"ornamentals",1982,2
+"Ecuador",137,"ornamentals",1983,0
 "Ecuador",137,"ornamentals",1984,1
 "Ecuador",137,"ornamentals",1985,17
+"Ecuador",137,"ornamentals",1986,0
+"Ecuador",137,"ornamentals",1987,0
 "Ecuador",137,"ornamentals",1988,16
 "Ecuador",137,"ornamentals",1989,22
 "Ecuador",137,"ornamentals",1990,29
@@ -2384,6 +2807,7 @@
 "Ecuador",137,"sponges",2011,0
 "Egypt",214,"corals",1994,6
 "Egypt",214,"corals",1995,3
+"Egypt",214,"corals",1996,0
 "Egypt",214,"corals",1997,24
 "Egypt",214,"corals",1998,28
 "Egypt",214,"corals",1999,15
@@ -2392,7 +2816,9 @@
 "Egypt",214,"corals",2002,6
 "Egypt",214,"corals",2003,0
 "Egypt",214,"corals",2004,0
+"Egypt",214,"corals",2005,0
 "Egypt",214,"corals",2006,7
+"Egypt",214,"corals",2007,0
 "Egypt",214,"corals",2008,0
 "Egypt",214,"corals",2009,6
 "Egypt",214,"corals",2010,0
@@ -2412,6 +2838,7 @@
 "Egypt",214,"ornamentals",2002,56
 "Egypt",214,"ornamentals",2003,41
 "Egypt",214,"ornamentals",2004,28
+"Egypt",214,"ornamentals",2005,0
 "Egypt",214,"ornamentals",2006,1
 "Egypt",214,"ornamentals",2007,2
 "Egypt",214,"ornamentals",2008,4
@@ -2420,6 +2847,7 @@
 "Egypt",214,"ornamentals",2011,10
 "Egypt",214,"seaweeds",1994,70
 "Egypt",214,"seaweeds",1995,1
+"Egypt",214,"seaweeds",1996,0
 "Egypt",214,"seaweeds",1997,80
 "Egypt",214,"seaweeds",1998,90
 "Egypt",214,"seaweeds",1999,72
@@ -2428,6 +2856,8 @@
 "Egypt",214,"seaweeds",2002,12
 "Egypt",214,"seaweeds",2003,26
 "Egypt",214,"seaweeds",2004,13
+"Egypt",214,"seaweeds",2005,0
+"Egypt",214,"seaweeds",2006,0
 "Egypt",214,"seaweeds",2007,22
 "Egypt",214,"seaweeds",2008,28
 "Egypt",214,"seaweeds",2009,77
@@ -2454,6 +2884,7 @@
 "Egypt",214,"sponges",2010,4
 "Egypt",214,"sponges",2011,1
 "El Salvador",134,"corals",1995,4
+"El Salvador",134,"corals",1996,0
 "El Salvador",134,"corals",1997,0
 "El Salvador",134,"corals",1998,0
 "El Salvador",134,"corals",1999,6
@@ -2461,6 +2892,7 @@
 "El Salvador",134,"corals",2001,2
 "El Salvador",134,"corals",2002,1
 "El Salvador",134,"corals",2003,1
+"El Salvador",134,"corals",2004,0
 "El Salvador",134,"corals",2005,1
 "El Salvador",134,"corals",2006,0
 "El Salvador",134,"corals",2007,368
@@ -2486,6 +2918,7 @@
 "El Salvador",134,"fish_oil",2011,95
 "El Salvador",134,"ornamentals",1977,0
 "El Salvador",134,"ornamentals",1978,0
+"El Salvador",134,"ornamentals",1979,0
 "El Salvador",134,"ornamentals",1980,0
 "El Salvador",134,"ornamentals",1981,0
 "El Salvador",134,"ornamentals",1982,0
@@ -2500,6 +2933,8 @@
 "El Salvador",134,"ornamentals",1991,0
 "El Salvador",134,"ornamentals",1992,0
 "El Salvador",134,"ornamentals",1993,0
+"El Salvador",134,"ornamentals",1994,0
+"El Salvador",134,"ornamentals",1995,0
 "El Salvador",134,"ornamentals",1996,1
 "El Salvador",134,"ornamentals",1997,1
 "El Salvador",134,"ornamentals",1998,0
@@ -2508,6 +2943,7 @@
 "El Salvador",134,"ornamentals",2001,0
 "El Salvador",134,"ornamentals",2002,0
 "El Salvador",134,"ornamentals",2003,0
+"El Salvador",134,"ornamentals",2004,0
 "El Salvador",134,"ornamentals",2005,0
 "El Salvador",134,"ornamentals",2006,0
 "El Salvador",134,"ornamentals",2007,0
@@ -2519,8 +2955,16 @@
 "El Salvador",134,"sponges",2010,31
 "El Salvador",134,"sponges",2011,0
 "Equatorial Guinea",104,"ornamentals",1995,9
+"Equatorial Guinea",104,"ornamentals",1996,0
 "Equatorial Guinea",104,"ornamentals",1997,3
+"Equatorial Guinea",104,"ornamentals",1998,0
+"Equatorial Guinea",104,"ornamentals",1999,0
+"Equatorial Guinea",104,"ornamentals",2000,0
+"Equatorial Guinea",104,"ornamentals",2001,0
+"Equatorial Guinea",104,"ornamentals",2002,0
 "Equatorial Guinea",104,"ornamentals",2003,3
+"Equatorial Guinea",104,"ornamentals",2004,0
+"Equatorial Guinea",104,"ornamentals",2005,0
 "Equatorial Guinea",104,"ornamentals",2006,2
 "Equatorial Guinea",104,"ornamentals",2007,0
 "Equatorial Guinea",104,"ornamentals",2008,8
@@ -2528,6 +2972,10 @@
 "Equatorial Guinea",104,"ornamentals",2010,0
 "Equatorial Guinea",104,"ornamentals",2011,0
 "Eritrea",45,"corals",2000,14
+"Eritrea",45,"corals",2001,0
+"Eritrea",45,"corals",2002,0
+"Eritrea",45,"corals",2003,0
+"Eritrea",45,"corals",2004,0
 "Eritrea",45,"corals",2005,51
 "Eritrea",45,"corals",2006,0
 "Eritrea",45,"corals",2007,22
@@ -2540,6 +2988,14 @@
 "Eritrea",45,"ornamentals",1997,98
 "Eritrea",45,"ornamentals",1998,14
 "Eritrea",45,"ornamentals",1999,5
+"Eritrea",45,"ornamentals",2000,0
+"Eritrea",45,"ornamentals",2001,0
+"Eritrea",45,"ornamentals",2002,0
+"Eritrea",45,"ornamentals",2003,0
+"Eritrea",45,"ornamentals",2004,0
+"Eritrea",45,"ornamentals",2005,0
+"Eritrea",45,"ornamentals",2006,0
+"Eritrea",45,"ornamentals",2007,0
 "Eritrea",45,"ornamentals",2008,183
 "Eritrea",45,"ornamentals",2009,127
 "Eritrea",45,"ornamentals",2010,8
@@ -2612,6 +3068,7 @@
 "Estonia",70,"seaweeds",2011,167
 "Estonia",70,"shells",2007,8
 "Estonia",70,"shells",2008,1
+"Estonia",70,"shells",2009,0
 "Estonia",70,"shells",2010,1
 "Estonia",70,"shells",2011,1
 "Estonia",70,"sponges",2002,0
@@ -2661,12 +3118,17 @@
 "Faeroe Islands",141,"fish_oil",2010,2236
 "Faeroe Islands",141,"fish_oil",2011,565
 "Faeroe Islands",141,"shells",1996,11
+"Faeroe Islands",141,"shells",1997,0
 "Faeroe Islands",141,"shells",1998,20
+"Faeroe Islands",141,"shells",1999,0
 "Faeroe Islands",141,"shells",2000,3
+"Faeroe Islands",141,"shells",2001,0
 "Faeroe Islands",141,"shells",2002,81
 "Faeroe Islands",141,"shells",2003,194
+"Faeroe Islands",141,"shells",2004,0
 "Faeroe Islands",141,"shells",2005,37
 "Faeroe Islands",141,"shells",2006,1
+"Faeroe Islands",141,"shells",2007,0
 "Faeroe Islands",141,"shells",2008,80
 "Faeroe Islands",141,"shells",2009,93
 "Faeroe Islands",141,"shells",2010,0
@@ -2676,6 +3138,7 @@
 "Fiji",18,"corals",1992,749
 "Fiji",18,"corals",1993,340
 "Fiji",18,"corals",1994,833
+"Fiji",18,"corals",1995,0
 "Fiji",18,"corals",1996,1142
 "Fiji",18,"corals",1997,1809
 "Fiji",18,"corals",1998,1122
@@ -2693,6 +3156,7 @@
 "Fiji",18,"corals",2010,1817
 "Fiji",18,"corals",2011,2137
 "Fiji",18,"fish_oil",1978,4
+"Fiji",18,"fish_oil",1979,0
 "Fiji",18,"fish_oil",1980,5
 "Fiji",18,"fish_oil",1981,0
 "Fiji",18,"fish_oil",1982,0
@@ -2700,6 +3164,7 @@
 "Fiji",18,"fish_oil",1984,0
 "Fiji",18,"fish_oil",1985,0
 "Fiji",18,"fish_oil",1986,0
+"Fiji",18,"fish_oil",1987,0
 "Fiji",18,"fish_oil",1988,0
 "Fiji",18,"fish_oil",1989,0
 "Fiji",18,"fish_oil",1990,0
@@ -2727,6 +3192,12 @@
 "Fiji",18,"ornamentals",1989,63
 "Fiji",18,"ornamentals",1990,164
 "Fiji",18,"ornamentals",1991,218
+"Fiji",18,"ornamentals",1992,0
+"Fiji",18,"ornamentals",1993,0
+"Fiji",18,"ornamentals",1994,0
+"Fiji",18,"ornamentals",1995,0
+"Fiji",18,"ornamentals",1996,0
+"Fiji",18,"ornamentals",1997,0
 "Fiji",18,"ornamentals",1998,176
 "Fiji",18,"ornamentals",1999,178
 "Fiji",18,"ornamentals",2000,736
@@ -2782,6 +3253,8 @@
 "Fiji",18,"sponges",2010,0
 "Fiji",18,"sponges",2011,0
 "Finland",174,"fish_oil",1983,16
+"Finland",174,"fish_oil",1984,0
+"Finland",174,"fish_oil",1985,0
 "Finland",174,"fish_oil",1986,12
 "Finland",174,"fish_oil",1987,1
 "Finland",174,"fish_oil",1988,99
@@ -2844,16 +3317,27 @@
 "Finland",174,"seaweeds",2010,16
 "Finland",174,"seaweeds",2011,3
 "Finland",174,"shells",2000,3
+"Finland",174,"shells",2001,0
 "Finland",174,"shells",2002,1
 "Finland",174,"shells",2003,1
+"Finland",174,"shells",2004,0
+"Finland",174,"shells",2005,0
+"Finland",174,"shells",2006,0
 "Finland",174,"shells",2007,0
 "Finland",174,"shells",2008,0
+"Finland",174,"shells",2009,0
+"Finland",174,"shells",2010,0
 "Finland",174,"shells",2011,0
 "Finland",174,"sponges",1997,7
 "Finland",174,"sponges",1998,37
 "Finland",174,"sponges",1999,1
 "Finland",174,"sponges",2000,1
+"Finland",174,"sponges",2001,0
 "Finland",174,"sponges",2002,1
+"Finland",174,"sponges",2003,0
+"Finland",174,"sponges",2004,0
+"Finland",174,"sponges",2005,0
+"Finland",174,"sponges",2006,0
 "Finland",174,"sponges",2007,0
 "Finland",174,"sponges",2008,0
 "Finland",174,"sponges",2009,0
@@ -3067,6 +3551,21 @@
 "France",179,"sponges",2011,1401
 "French Guiana",169,"ornamentals",1995,6
 "French Guiana",169,"ornamentals",1996,0
+"French Guiana",169,"ornamentals",1997,0
+"French Guiana",169,"ornamentals",1998,0
+"French Guiana",169,"ornamentals",1999,0
+"French Guiana",169,"ornamentals",2000,0
+"French Guiana",169,"ornamentals",2001,0
+"French Guiana",169,"ornamentals",2002,0
+"French Guiana",169,"ornamentals",2003,0
+"French Guiana",169,"ornamentals",2004,0
+"French Guiana",169,"ornamentals",2005,0
+"French Guiana",169,"ornamentals",2006,0
+"French Guiana",169,"ornamentals",2007,0
+"French Guiana",169,"ornamentals",2008,0
+"French Guiana",169,"ornamentals",2009,0
+"French Guiana",169,"ornamentals",2010,0
+"French Guiana",169,"ornamentals",2011,0
 "French Polynesia",147,"corals",2000,7
 "French Polynesia",147,"corals",2001,0
 "French Polynesia",147,"corals",2002,0
@@ -3179,8 +3678,10 @@
 "Gambia",65,"sponges",2011,0
 "Georgia",74,"fish_oil",2004,11
 "Georgia",74,"fish_oil",2005,153
+"Georgia",74,"fish_oil",2006,0
 "Georgia",74,"fish_oil",2007,300
 "Georgia",74,"fish_oil",2008,470
+"Georgia",74,"fish_oil",2009,0
 "Georgia",74,"fish_oil",2010,1125
 "Georgia",74,"fish_oil",2011,1070
 "Georgia",74,"ornamentals",2009,13
@@ -3379,8 +3880,18 @@
 "Ghana",106,"ornamentals",1991,1
 "Ghana",106,"ornamentals",1992,1
 "Ghana",106,"ornamentals",1993,26
+"Ghana",106,"ornamentals",1994,0
 "Ghana",106,"ornamentals",1995,2
 "Ghana",106,"ornamentals",1996,2
+"Ghana",106,"ornamentals",1997,0
+"Ghana",106,"ornamentals",1998,0
+"Ghana",106,"ornamentals",1999,0
+"Ghana",106,"ornamentals",2000,0
+"Ghana",106,"ornamentals",2001,0
+"Ghana",106,"ornamentals",2002,0
+"Ghana",106,"ornamentals",2003,0
+"Ghana",106,"ornamentals",2004,0
+"Ghana",106,"ornamentals",2005,0
 "Ghana",106,"ornamentals",2006,0
 "Ghana",106,"ornamentals",2007,0
 "Ghana",106,"ornamentals",2008,8
@@ -3403,6 +3914,7 @@
 "Ghana",106,"seaweeds",2011,0
 "Ghana",106,"shells",1996,2
 "Ghana",106,"shells",1997,3
+"Ghana",106,"shells",1998,0
 "Ghana",106,"shells",1999,1
 "Ghana",106,"shells",2000,1
 "Ghana",106,"shells",2001,0
@@ -3418,7 +3930,12 @@
 "Ghana",106,"shells",2011,0
 "Ghana",106,"sponges",2001,36
 "Ghana",106,"sponges",2002,0
+"Ghana",106,"sponges",2003,0
+"Ghana",106,"sponges",2004,0
+"Ghana",106,"sponges",2005,0
+"Ghana",106,"sponges",2006,0
 "Ghana",106,"sponges",2007,1
+"Ghana",106,"sponges",2008,0
 "Ghana",106,"sponges",2009,0
 "Ghana",106,"sponges",2010,0
 "Ghana",106,"sponges",2011,0
@@ -3442,6 +3959,7 @@
 "Greece",80,"fish_oil",2010,146
 "Greece",80,"fish_oil",2011,81
 "Greece",80,"ornamentals",1991,1
+"Greece",80,"ornamentals",1992,0
 "Greece",80,"ornamentals",1993,177
 "Greece",80,"ornamentals",1994,24
 "Greece",80,"ornamentals",1995,0
@@ -3464,8 +3982,13 @@
 "Greece",80,"seaweeds",1987,4
 "Greece",80,"seaweeds",1988,20
 "Greece",80,"seaweeds",1989,25
+"Greece",80,"seaweeds",1990,0
+"Greece",80,"seaweeds",1991,0
+"Greece",80,"seaweeds",1992,0
+"Greece",80,"seaweeds",1993,0
 "Greece",80,"seaweeds",1994,132
 "Greece",80,"seaweeds",1995,1
+"Greece",80,"seaweeds",1996,0
 "Greece",80,"seaweeds",1997,0
 "Greece",80,"seaweeds",1998,0
 "Greece",80,"seaweeds",1999,6
@@ -3567,9 +4090,12 @@
 "Greenland",145,"corals",2006,38
 "Greenland",145,"corals",2007,0
 "Greenland",145,"corals",2008,0
+"Greenland",145,"corals",2009,0
 "Greenland",145,"corals",2010,0
 "Greenland",145,"corals",2011,0
 "Greenland",145,"fish_oil",1976,2
+"Greenland",145,"fish_oil",1977,0
+"Greenland",145,"fish_oil",1978,0
 "Greenland",145,"fish_oil",1979,27
 "Greenland",145,"fish_oil",1980,0
 "Greenland",145,"fish_oil",1981,36
@@ -3628,6 +4154,8 @@
 "Greenland",145,"ornamentals",2010,0
 "Greenland",145,"ornamentals",2011,0
 "Greenland",145,"seaweeds",2008,3
+"Greenland",145,"seaweeds",2009,0
+"Greenland",145,"seaweeds",2010,0
 "Greenland",145,"seaweeds",2011,0
 "Grenada",125,"seaweeds",1998,4
 "Grenada",125,"seaweeds",1999,1
@@ -3652,8 +4180,38 @@
 "Guadeloupe and Martinique",140,"ornamentals",1994,63
 "Guadeloupe and Martinique",140,"ornamentals",1995,71
 "Guadeloupe and Martinique",140,"ornamentals",1996,0
+"Guadeloupe and Martinique",140,"ornamentals",1997,0
+"Guadeloupe and Martinique",140,"ornamentals",1998,0
+"Guadeloupe and Martinique",140,"ornamentals",1999,0
+"Guadeloupe and Martinique",140,"ornamentals",2000,0
+"Guadeloupe and Martinique",140,"ornamentals",2001,0
+"Guadeloupe and Martinique",140,"ornamentals",2002,0
+"Guadeloupe and Martinique",140,"ornamentals",2003,0
+"Guadeloupe and Martinique",140,"ornamentals",2004,0
+"Guadeloupe and Martinique",140,"ornamentals",2005,0
+"Guadeloupe and Martinique",140,"ornamentals",2006,0
+"Guadeloupe and Martinique",140,"ornamentals",2007,0
+"Guadeloupe and Martinique",140,"ornamentals",2008,0
+"Guadeloupe and Martinique",140,"ornamentals",2009,0
+"Guadeloupe and Martinique",140,"ornamentals",2010,0
+"Guadeloupe and Martinique",140,"ornamentals",2011,0
 "Guadeloupe and Martinique",140,"sponges",1995,1
 "Guadeloupe and Martinique",140,"sponges",1996,0
+"Guadeloupe and Martinique",140,"sponges",1997,0
+"Guadeloupe and Martinique",140,"sponges",1998,0
+"Guadeloupe and Martinique",140,"sponges",1999,0
+"Guadeloupe and Martinique",140,"sponges",2000,0
+"Guadeloupe and Martinique",140,"sponges",2001,0
+"Guadeloupe and Martinique",140,"sponges",2002,0
+"Guadeloupe and Martinique",140,"sponges",2003,0
+"Guadeloupe and Martinique",140,"sponges",2004,0
+"Guadeloupe and Martinique",140,"sponges",2005,0
+"Guadeloupe and Martinique",140,"sponges",2006,0
+"Guadeloupe and Martinique",140,"sponges",2007,0
+"Guadeloupe and Martinique",140,"sponges",2008,0
+"Guadeloupe and Martinique",140,"sponges",2009,0
+"Guadeloupe and Martinique",140,"sponges",2010,0
+"Guadeloupe and Martinique",140,"sponges",2011,0
 "Guatemala",136,"fish_oil",1995,13
 "Guatemala",136,"fish_oil",1996,0
 "Guatemala",136,"fish_oil",1997,0
@@ -3689,6 +4247,7 @@
 "Guatemala",136,"ornamentals",1992,0
 "Guatemala",136,"ornamentals",1993,0
 "Guatemala",136,"ornamentals",1994,0
+"Guatemala",136,"ornamentals",1995,0
 "Guatemala",136,"ornamentals",1996,0
 "Guatemala",136,"ornamentals",1997,0
 "Guatemala",136,"ornamentals",1998,12
@@ -3731,10 +4290,12 @@
 "Guatemala",136,"sponges",1998,0
 "Guatemala",136,"sponges",1999,7
 "Guatemala",136,"sponges",2000,1
+"Guatemala",136,"sponges",2001,0
 "Guatemala",136,"sponges",2002,3
 "Guatemala",136,"sponges",2003,5
 "Guatemala",136,"sponges",2004,11
 "Guatemala",136,"sponges",2005,0
+"Guatemala",136,"sponges",2006,0
 "Guatemala",136,"sponges",2007,0
 "Guatemala",136,"sponges",2008,0
 "Guatemala",136,"sponges",2009,0
@@ -3742,7 +4303,12 @@
 "Guatemala",136,"sponges",2011,0
 "Guinea",194,"ornamentals",1996,2
 "Guinea",194,"ornamentals",1997,1
+"Guinea",194,"ornamentals",1998,0
+"Guinea",194,"ornamentals",1999,0
+"Guinea",194,"ornamentals",2000,0
+"Guinea",194,"ornamentals",2001,0
 "Guinea",194,"ornamentals",2002,2
+"Guinea",194,"ornamentals",2003,0
 "Guinea",194,"ornamentals",2004,0
 "Guinea",194,"ornamentals",2005,0
 "Guinea",194,"ornamentals",2006,0
@@ -3755,10 +4321,18 @@
 "Guinea",194,"shells",2005,0
 "Guinea",194,"shells",2006,0
 "Guinea",194,"shells",2007,0
+"Guinea",194,"shells",2008,0
 "Guinea",194,"shells",2009,99
+"Guinea",194,"shells",2010,0
 "Guinea",194,"shells",2011,9
 "Guinea Bissau",193,"ornamentals",1995,1
+"Guinea Bissau",193,"ornamentals",1996,0
+"Guinea Bissau",193,"ornamentals",1997,0
+"Guinea Bissau",193,"ornamentals",1998,0
+"Guinea Bissau",193,"ornamentals",1999,0
+"Guinea Bissau",193,"ornamentals",2000,0
 "Guinea Bissau",193,"ornamentals",2001,3
+"Guinea Bissau",193,"ornamentals",2002,0
 "Guinea Bissau",193,"ornamentals",2003,0
 "Guinea Bissau",193,"ornamentals",2004,0
 "Guinea Bissau",193,"ornamentals",2005,0
@@ -3775,6 +4349,10 @@
 "Guyana",167,"ornamentals",1988,270
 "Guyana",167,"ornamentals",1989,220
 "Guyana",167,"ornamentals",1990,285
+"Guyana",167,"ornamentals",1991,0
+"Guyana",167,"ornamentals",1992,0
+"Guyana",167,"ornamentals",1993,0
+"Guyana",167,"ornamentals",1994,0
 "Guyana",167,"ornamentals",1995,553
 "Guyana",167,"ornamentals",1996,400
 "Guyana",167,"ornamentals",1997,273
@@ -3806,7 +4384,9 @@
 "Guyana",167,"shells",2001,0
 "Guyana",167,"shells",2002,0
 "Guyana",167,"shells",2003,28
+"Guyana",167,"shells",2004,0
 "Guyana",167,"shells",2005,0
+"Guyana",167,"shells",2006,0
 "Guyana",167,"shells",2007,0
 "Guyana",167,"shells",2008,0
 "Guyana",167,"shells",2009,0
@@ -3852,6 +4432,7 @@
 "Haiti",114,"seaweeds",2011,6
 "Haiti",114,"shells",2000,1
 "Haiti",114,"shells",2001,2
+"Haiti",114,"shells",2002,0
 "Haiti",114,"shells",2003,1
 "Haiti",114,"shells",2004,22
 "Haiti",114,"shells",2005,0
@@ -3884,6 +4465,7 @@
 "Honduras",133,"corals",2010,0
 "Honduras",133,"corals",2011,0
 "Honduras",133,"fish_oil",1992,19
+"Honduras",133,"fish_oil",1993,0
 "Honduras",133,"fish_oil",1994,1
 "Honduras",133,"fish_oil",1995,1
 "Honduras",133,"fish_oil",1996,0
@@ -3907,6 +4489,7 @@
 "Honduras",133,"ornamentals",1999,0
 "Honduras",133,"ornamentals",2000,34
 "Honduras",133,"ornamentals",2001,72
+"Honduras",133,"ornamentals",2002,0
 "Honduras",133,"ornamentals",2003,0
 "Honduras",133,"ornamentals",2004,0
 "Honduras",133,"ornamentals",2005,27
@@ -4003,6 +4586,8 @@
 "Iceland",143,"fish_oil",2010,73217
 "Iceland",143,"fish_oil",2011,104190
 "Iceland",143,"seaweeds",1994,2
+"Iceland",143,"seaweeds",1995,0
+"Iceland",143,"seaweeds",1996,0
 "Iceland",143,"seaweeds",1997,1
 "Iceland",143,"seaweeds",1998,1
 "Iceland",143,"seaweeds",1999,1
@@ -4080,6 +4665,7 @@
 "India",203,"ornamentals",1976,5
 "India",203,"ornamentals",1977,3
 "India",203,"ornamentals",1978,1
+"India",203,"ornamentals",1979,0
 "India",203,"ornamentals",1980,1
 "India",203,"ornamentals",1981,2
 "India",203,"ornamentals",1982,0
@@ -4153,9 +4739,15 @@
 "India",203,"shells",2010,1101
 "India",203,"shells",2011,1293
 "India",203,"sponges",1997,22
+"India",203,"sponges",1998,0
+"India",203,"sponges",1999,0
+"India",203,"sponges",2000,0
+"India",203,"sponges",2001,0
+"India",203,"sponges",2002,0
 "India",203,"sponges",2003,2
 "India",203,"sponges",2004,1
 "India",203,"sponges",2005,4
+"India",203,"sponges",2006,0
 "India",203,"sponges",2007,24
 "India",203,"sponges",2008,0
 "India",203,"sponges",2009,0
@@ -4286,7 +4878,22 @@
 "Indonesia",216,"sponges",2004,11
 "Indonesia",216,"sponges",2005,12
 "Indonesia",216,"sponges",2006,11
+"Indonesia",216,"sponges",2007,0
+"Indonesia",216,"sponges",2008,0
+"Indonesia",216,"sponges",2009,0
+"Indonesia",216,"sponges",2010,0
+"Indonesia",216,"sponges",2011,0
 "Iran",191,"fish_oil",1984,20
+"Iran",191,"fish_oil",1985,0
+"Iran",191,"fish_oil",1986,0
+"Iran",191,"fish_oil",1987,0
+"Iran",191,"fish_oil",1988,0
+"Iran",191,"fish_oil",1989,0
+"Iran",191,"fish_oil",1990,0
+"Iran",191,"fish_oil",1991,0
+"Iran",191,"fish_oil",1992,0
+"Iran",191,"fish_oil",1993,0
+"Iran",191,"fish_oil",1994,0
 "Iran",191,"fish_oil",1995,107
 "Iran",191,"fish_oil",1996,0
 "Iran",191,"fish_oil",1997,0
@@ -4311,7 +4918,11 @@
 "Iran",191,"ornamentals",2000,21
 "Iran",191,"ornamentals",2001,19
 "Iran",191,"ornamentals",2002,13
+"Iran",191,"ornamentals",2003,0
+"Iran",191,"ornamentals",2004,0
+"Iran",191,"ornamentals",2005,0
 "Iran",191,"ornamentals",2006,16
+"Iran",191,"ornamentals",2007,0
 "Iran",191,"ornamentals",2008,132
 "Iran",191,"ornamentals",2009,358
 "Iran",191,"ornamentals",2010,562
@@ -4332,6 +4943,41 @@
 "Iran",191,"sponges",2009,0
 "Iran",191,"sponges",2010,0
 "Iran",191,"sponges",2011,0
+"Iraq",192,"sponges",1977,0
+"Iraq",192,"sponges",1978,0
+"Iraq",192,"sponges",1979,0
+"Iraq",192,"sponges",1980,0
+"Iraq",192,"sponges",1981,0
+"Iraq",192,"sponges",1982,0
+"Iraq",192,"sponges",1983,0
+"Iraq",192,"sponges",1984,0
+"Iraq",192,"sponges",1985,0
+"Iraq",192,"sponges",1986,0
+"Iraq",192,"sponges",1987,0
+"Iraq",192,"sponges",1988,0
+"Iraq",192,"sponges",1989,0
+"Iraq",192,"sponges",1990,0
+"Iraq",192,"sponges",1991,0
+"Iraq",192,"sponges",1992,0
+"Iraq",192,"sponges",1993,0
+"Iraq",192,"sponges",1994,0
+"Iraq",192,"sponges",1995,0
+"Iraq",192,"sponges",1996,0
+"Iraq",192,"sponges",1997,0
+"Iraq",192,"sponges",1998,0
+"Iraq",192,"sponges",1999,0
+"Iraq",192,"sponges",2000,0
+"Iraq",192,"sponges",2001,0
+"Iraq",192,"sponges",2002,0
+"Iraq",192,"sponges",2003,0
+"Iraq",192,"sponges",2004,0
+"Iraq",192,"sponges",2005,0
+"Iraq",192,"sponges",2006,0
+"Iraq",192,"sponges",2007,0
+"Iraq",192,"sponges",2008,0
+"Iraq",192,"sponges",2009,0
+"Iraq",192,"sponges",2010,0
+"Iraq",192,"sponges",2011,0
 "Ireland",181,"fish_oil",1976,735
 "Ireland",181,"fish_oil",1977,683
 "Ireland",181,"fish_oil",1978,1211
@@ -4425,9 +5071,15 @@
 "Ireland",181,"seaweeds",2010,11906
 "Ireland",181,"seaweeds",2011,14542
 "Ireland",181,"shells",1976,3
+"Ireland",181,"shells",1977,0
+"Ireland",181,"shells",1978,0
+"Ireland",181,"shells",1979,0
 "Ireland",181,"shells",1980,6
 "Ireland",181,"shells",1981,4
 "Ireland",181,"shells",1982,1
+"Ireland",181,"shells",1983,0
+"Ireland",181,"shells",1984,0
+"Ireland",181,"shells",1985,0
 "Ireland",181,"shells",1986,1
 "Ireland",181,"shells",1987,15
 "Ireland",181,"shells",1988,332
@@ -4455,11 +5107,25 @@
 "Ireland",181,"shells",2010,165
 "Ireland",181,"shells",2011,168
 "Ireland",181,"sponges",1976,3
+"Ireland",181,"sponges",1977,0
+"Ireland",181,"sponges",1978,0
+"Ireland",181,"sponges",1979,0
+"Ireland",181,"sponges",1980,0
+"Ireland",181,"sponges",1981,0
+"Ireland",181,"sponges",1982,0
 "Ireland",181,"sponges",1983,12
+"Ireland",181,"sponges",1984,0
+"Ireland",181,"sponges",1985,0
 "Ireland",181,"sponges",1986,5
 "Ireland",181,"sponges",1987,1
+"Ireland",181,"sponges",1988,0
 "Ireland",181,"sponges",1989,1
+"Ireland",181,"sponges",1990,0
+"Ireland",181,"sponges",1991,0
+"Ireland",181,"sponges",1992,0
+"Ireland",181,"sponges",1993,0
 "Ireland",181,"sponges",1994,39
+"Ireland",181,"sponges",1995,0
 "Ireland",181,"sponges",1996,36
 "Ireland",181,"sponges",1997,3
 "Ireland",181,"sponges",1998,15
@@ -4470,6 +5136,7 @@
 "Ireland",181,"sponges",2003,84
 "Ireland",181,"sponges",2004,159
 "Ireland",181,"sponges",2005,61
+"Ireland",181,"sponges",2006,0
 "Ireland",181,"sponges",2007,1
 "Ireland",181,"sponges",2008,122
 "Ireland",181,"sponges",2009,0
@@ -4490,7 +5157,16 @@
 "Israel",79,"fish_oil",2011,738
 "Israel",79,"ornamentals",1976,20
 "Israel",79,"ornamentals",1977,29
+"Israel",79,"ornamentals",1978,0
 "Israel",79,"ornamentals",1979,30
+"Israel",79,"ornamentals",1980,0
+"Israel",79,"ornamentals",1981,0
+"Israel",79,"ornamentals",1982,0
+"Israel",79,"ornamentals",1983,0
+"Israel",79,"ornamentals",1984,0
+"Israel",79,"ornamentals",1985,0
+"Israel",79,"ornamentals",1986,0
+"Israel",79,"ornamentals",1987,0
 "Israel",79,"ornamentals",1988,3503
 "Israel",79,"ornamentals",1989,3554
 "Israel",79,"ornamentals",1990,4569
@@ -4519,6 +5195,9 @@
 "Israel",79,"seaweeds",1991,2510
 "Israel",79,"seaweeds",1992,1637
 "Israel",79,"seaweeds",1993,2850
+"Israel",79,"seaweeds",1994,0
+"Israel",79,"seaweeds",1995,0
+"Israel",79,"seaweeds",1996,0
 "Israel",79,"seaweeds",1997,5
 "Israel",79,"seaweeds",1998,3
 "Israel",79,"seaweeds",1999,1436
@@ -4717,6 +5396,7 @@
 "Ivory Coast",195,"corals",2011,0
 "Ivory Coast",195,"fish_oil",1996,66
 "Ivory Coast",195,"fish_oil",1997,65
+"Ivory Coast",195,"fish_oil",1998,0
 "Ivory Coast",195,"fish_oil",1999,35
 "Ivory Coast",195,"fish_oil",2000,25
 "Ivory Coast",195,"fish_oil",2001,30
@@ -4758,6 +5438,7 @@
 "Jamaica",166,"corals",1995,0
 "Jamaica",166,"corals",1996,42
 "Jamaica",166,"corals",1997,4
+"Jamaica",166,"corals",1998,0
 "Jamaica",166,"corals",1999,0
 "Jamaica",166,"corals",2000,0
 "Jamaica",166,"corals",2001,0
@@ -4776,6 +5457,7 @@
 "Jamaica",166,"ornamentals",1978,57
 "Jamaica",166,"ornamentals",1979,42
 "Jamaica",166,"ornamentals",1980,6
+"Jamaica",166,"ornamentals",1981,0
 "Jamaica",166,"ornamentals",1982,28
 "Jamaica",166,"ornamentals",1983,59
 "Jamaica",166,"ornamentals",1984,31
@@ -4784,6 +5466,7 @@
 "Jamaica",166,"ornamentals",1987,110
 "Jamaica",166,"ornamentals",1988,138
 "Jamaica",166,"ornamentals",1989,114
+"Jamaica",166,"ornamentals",1990,0
 "Jamaica",166,"ornamentals",1991,58
 "Jamaica",166,"ornamentals",1992,164
 "Jamaica",166,"ornamentals",1993,198
@@ -4802,6 +5485,7 @@
 "Jamaica",166,"ornamentals",2006,9
 "Jamaica",166,"ornamentals",2007,1
 "Jamaica",166,"ornamentals",2008,1
+"Jamaica",166,"ornamentals",2009,0
 "Jamaica",166,"ornamentals",2010,1
 "Jamaica",166,"ornamentals",2011,0
 "Jamaica",166,"seaweeds",1991,26
@@ -4811,8 +5495,11 @@
 "Jamaica",166,"seaweeds",1995,0
 "Jamaica",166,"seaweeds",1996,53
 "Jamaica",166,"seaweeds",1997,31
+"Jamaica",166,"seaweeds",1998,0
 "Jamaica",166,"seaweeds",1999,0
 "Jamaica",166,"seaweeds",2000,0
+"Jamaica",166,"seaweeds",2001,0
+"Jamaica",166,"seaweeds",2002,0
 "Jamaica",166,"seaweeds",2003,0
 "Jamaica",166,"seaweeds",2004,0
 "Jamaica",166,"seaweeds",2005,0
@@ -4853,6 +5540,9 @@
 "Japan",210,"corals",1984,2171
 "Japan",210,"corals",1985,1549
 "Japan",210,"corals",1986,2718
+"Japan",210,"corals",1987,0
+"Japan",210,"corals",1988,0
+"Japan",210,"corals",1989,0
 "Japan",210,"corals",1990,10384
 "Japan",210,"corals",1991,8323
 "Japan",210,"corals",1992,8437
@@ -5038,6 +5728,7 @@
 "Japan",210,"sponges",2004,237
 "Japan",210,"sponges",2005,131
 "Japan",210,"sponges",2006,96
+"Japan",210,"sponges",2007,0
 "Japan",210,"sponges",2008,0
 "Japan",210,"sponges",2009,0
 "Japan",210,"sponges",2010,0
@@ -5066,8 +5757,23 @@
 "Kenya",43,"corals",2010,0
 "Kenya",43,"corals",2011,0
 "Kenya",43,"fish_oil",1985,7
+"Kenya",43,"fish_oil",1986,0
+"Kenya",43,"fish_oil",1987,0
+"Kenya",43,"fish_oil",1988,0
+"Kenya",43,"fish_oil",1989,0
+"Kenya",43,"fish_oil",1990,0
+"Kenya",43,"fish_oil",1991,0
+"Kenya",43,"fish_oil",1992,0
+"Kenya",43,"fish_oil",1993,0
+"Kenya",43,"fish_oil",1994,0
+"Kenya",43,"fish_oil",1995,0
+"Kenya",43,"fish_oil",1996,0
 "Kenya",43,"fish_oil",1997,8
+"Kenya",43,"fish_oil",1998,0
+"Kenya",43,"fish_oil",1999,0
 "Kenya",43,"fish_oil",2000,25
+"Kenya",43,"fish_oil",2001,0
+"Kenya",43,"fish_oil",2002,0
 "Kenya",43,"fish_oil",2003,24
 "Kenya",43,"fish_oil",2004,0
 "Kenya",43,"fish_oil",2005,0
@@ -5104,6 +5810,8 @@
 "Kenya",43,"shells",2010,188
 "Kenya",43,"shells",2011,135
 "Kenya",43,"sponges",2005,8
+"Kenya",43,"sponges",2006,0
+"Kenya",43,"sponges",2007,0
 "Kenya",43,"sponges",2008,0
 "Kenya",43,"sponges",2009,0
 "Kenya",43,"sponges",2010,0
@@ -5140,8 +5848,15 @@
 "Kiribati",212,"seaweeds",1995,130
 "Kiribati",212,"seaweeds",1996,586
 "Kiribati",212,"seaweeds",1997,278
+"Kiribati",212,"seaweeds",1998,0
+"Kiribati",212,"seaweeds",1999,0
+"Kiribati",212,"seaweeds",2000,0
+"Kiribati",212,"seaweeds",2001,0
+"Kiribati",212,"seaweeds",2002,0
+"Kiribati",212,"seaweeds",2003,0
 "Kiribati",212,"seaweeds",2004,53
 "Kiribati",212,"seaweeds",2005,55
+"Kiribati",212,"seaweeds",2006,0
 "Kiribati",212,"seaweeds",2007,30
 "Kiribati",212,"seaweeds",2008,137
 "Kiribati",212,"seaweeds",2009,281
@@ -5171,9 +5886,12 @@
 "Kuwait",51,"fish_oil",2002,0
 "Kuwait",51,"fish_oil",2003,0
 "Kuwait",51,"fish_oil",2004,0
+"Kuwait",51,"fish_oil",2005,0
 "Kuwait",51,"fish_oil",2006,0
 "Kuwait",51,"fish_oil",2007,0
 "Kuwait",51,"fish_oil",2008,0
+"Kuwait",51,"fish_oil",2009,0
+"Kuwait",51,"fish_oil",2010,0
 "Kuwait",51,"fish_oil",2011,1
 "Kuwait",51,"seaweeds",2007,4
 "Kuwait",51,"seaweeds",2008,0
@@ -5222,10 +5940,13 @@
 "Latvia",69,"fish_oil",2010,279
 "Latvia",69,"fish_oil",2011,861
 "Latvia",69,"ornamentals",1994,25
+"Latvia",69,"ornamentals",1995,0
 "Latvia",69,"ornamentals",1996,0
 "Latvia",69,"ornamentals",1997,0
 "Latvia",69,"ornamentals",1998,0
 "Latvia",69,"ornamentals",1999,0
+"Latvia",69,"ornamentals",2000,0
+"Latvia",69,"ornamentals",2001,0
 "Latvia",69,"ornamentals",2002,0
 "Latvia",69,"ornamentals",2003,0
 "Latvia",69,"ornamentals",2004,0
@@ -5255,6 +5976,7 @@
 "Latvia",69,"seaweeds",2010,234
 "Latvia",69,"seaweeds",2011,398
 "Latvia",69,"shells",2006,0
+"Latvia",69,"shells",2007,0
 "Latvia",69,"shells",2008,1
 "Latvia",69,"shells",2009,38
 "Latvia",69,"shells",2010,46
@@ -5263,6 +5985,7 @@
 "Latvia",69,"sponges",2000,0
 "Latvia",69,"sponges",2001,0
 "Latvia",69,"sponges",2002,0
+"Latvia",69,"sponges",2003,0
 "Latvia",69,"sponges",2004,5
 "Latvia",69,"sponges",2005,7
 "Latvia",69,"sponges",2006,39
@@ -5295,7 +6018,35 @@
 "Lebanon",78,"ornamentals",2007,0
 "Lebanon",78,"ornamentals",2008,0
 "Lebanon",78,"ornamentals",2009,0
+"Lebanon",78,"ornamentals",2010,0
 "Lebanon",78,"ornamentals",2011,0
+"Lebanon",78,"seaweeds",1977,0
+"Lebanon",78,"seaweeds",1978,0
+"Lebanon",78,"seaweeds",1979,0
+"Lebanon",78,"seaweeds",1980,0
+"Lebanon",78,"seaweeds",1981,0
+"Lebanon",78,"seaweeds",1982,0
+"Lebanon",78,"seaweeds",1983,0
+"Lebanon",78,"seaweeds",1984,0
+"Lebanon",78,"seaweeds",1985,0
+"Lebanon",78,"seaweeds",1986,0
+"Lebanon",78,"seaweeds",1987,0
+"Lebanon",78,"seaweeds",1988,0
+"Lebanon",78,"seaweeds",1989,0
+"Lebanon",78,"seaweeds",1990,0
+"Lebanon",78,"seaweeds",1991,0
+"Lebanon",78,"seaweeds",1992,0
+"Lebanon",78,"seaweeds",1993,0
+"Lebanon",78,"seaweeds",1994,0
+"Lebanon",78,"seaweeds",1995,0
+"Lebanon",78,"seaweeds",1996,0
+"Lebanon",78,"seaweeds",1997,0
+"Lebanon",78,"seaweeds",1998,0
+"Lebanon",78,"seaweeds",1999,0
+"Lebanon",78,"seaweeds",2000,0
+"Lebanon",78,"seaweeds",2001,0
+"Lebanon",78,"seaweeds",2002,0
+"Lebanon",78,"seaweeds",2003,0
 "Lebanon",78,"seaweeds",2004,21
 "Lebanon",78,"seaweeds",2005,3
 "Lebanon",78,"seaweeds",2006,6
@@ -5316,6 +6067,7 @@
 "Lebanon",78,"sponges",2000,19
 "Lebanon",78,"sponges",2001,7
 "Lebanon",78,"sponges",2002,0
+"Lebanon",78,"sponges",2003,0
 "Lebanon",78,"sponges",2004,0
 "Lebanon",78,"sponges",2005,0
 "Lebanon",78,"sponges",2006,0
@@ -5327,6 +6079,7 @@
 "Liberia",97,"fish_oil",2010,0
 "Liberia",97,"fish_oil",2011,0
 "Liberia",97,"ornamentals",2000,1
+"Liberia",97,"ornamentals",2001,0
 "Liberia",97,"ornamentals",2002,16
 "Liberia",97,"ornamentals",2003,1
 "Liberia",97,"ornamentals",2004,10
@@ -5376,6 +6129,7 @@
 "Lithuania",189,"fish_oil",1996,29
 "Lithuania",189,"fish_oil",1997,3
 "Lithuania",189,"fish_oil",1998,10
+"Lithuania",189,"fish_oil",1999,0
 "Lithuania",189,"fish_oil",2000,15
 "Lithuania",189,"fish_oil",2001,31
 "Lithuania",189,"fish_oil",2002,115
@@ -5492,6 +6246,8 @@
 "Madagascar",42,"ornamentals",2005,0
 "Madagascar",42,"ornamentals",2006,1
 "Madagascar",42,"ornamentals",2007,0
+"Madagascar",42,"ornamentals",2008,0
+"Madagascar",42,"ornamentals",2009,0
 "Madagascar",42,"ornamentals",2010,11
 "Madagascar",42,"ornamentals",2011,6
 "Madagascar",42,"seaweeds",1987,74
@@ -5564,6 +6320,10 @@
 "Malaysia",206,"corals",2010,131
 "Malaysia",206,"corals",2011,198
 "Malaysia",206,"fish_oil",1977,4
+"Malaysia",206,"fish_oil",1978,0
+"Malaysia",206,"fish_oil",1979,0
+"Malaysia",206,"fish_oil",1980,0
+"Malaysia",206,"fish_oil",1981,0
 "Malaysia",206,"fish_oil",1982,1
 "Malaysia",206,"fish_oil",1983,3
 "Malaysia",206,"fish_oil",1984,8
@@ -5653,6 +6413,12 @@
 "Malaysia",206,"seaweeds",2010,2736
 "Malaysia",206,"seaweeds",2011,3745
 "Malaysia",206,"shells",1997,21
+"Malaysia",206,"shells",1998,0
+"Malaysia",206,"shells",1999,0
+"Malaysia",206,"shells",2000,0
+"Malaysia",206,"shells",2001,0
+"Malaysia",206,"shells",2002,0
+"Malaysia",206,"shells",2003,0
 "Malaysia",206,"shells",2004,18
 "Malaysia",206,"shells",2005,2
 "Malaysia",206,"shells",2006,2
@@ -5665,6 +6431,12 @@
 "Malaysia",206,"sponges",1991,118
 "Malaysia",206,"sponges",1992,187
 "Malaysia",206,"sponges",1993,15
+"Malaysia",206,"sponges",1994,0
+"Malaysia",206,"sponges",1995,0
+"Malaysia",206,"sponges",1996,0
+"Malaysia",206,"sponges",1997,0
+"Malaysia",206,"sponges",1998,0
+"Malaysia",206,"sponges",1999,0
 "Malaysia",206,"sponges",2000,5
 "Malaysia",206,"sponges",2001,0
 "Malaysia",206,"sponges",2002,0
@@ -5761,6 +6533,7 @@
 "Maldives",39,"shells",1997,51
 "Maldives",39,"shells",1998,1
 "Maldives",39,"shells",1999,19
+"Maldives",39,"shells",2000,0
 "Maldives",39,"shells",2001,5
 "Maldives",39,"shells",2002,11
 "Maldives",39,"shells",2003,8
@@ -5780,6 +6553,8 @@
 "Malta",68,"fish_oil",2010,0
 "Malta",68,"fish_oil",2011,0
 "Marshall Islands",11,"corals",1998,151
+"Marshall Islands",11,"corals",1999,0
+"Marshall Islands",11,"corals",2000,0
 "Marshall Islands",11,"corals",2001,1
 "Marshall Islands",11,"corals",2002,82
 "Marshall Islands",11,"corals",2003,111
@@ -5802,9 +6577,19 @@
 "Marshall Islands",11,"fish_oil",2010,0
 "Marshall Islands",11,"fish_oil",2011,0
 "Marshall Islands",11,"ornamentals",1981,73
+"Marshall Islands",11,"ornamentals",1982,0
+"Marshall Islands",11,"ornamentals",1983,0
+"Marshall Islands",11,"ornamentals",1984,0
+"Marshall Islands",11,"ornamentals",1985,0
+"Marshall Islands",11,"ornamentals",1986,0
+"Marshall Islands",11,"ornamentals",1987,0
 "Marshall Islands",11,"ornamentals",1988,110
 "Marshall Islands",11,"ornamentals",1989,220
 "Marshall Islands",11,"ornamentals",1990,170
+"Marshall Islands",11,"ornamentals",1991,0
+"Marshall Islands",11,"ornamentals",1992,0
+"Marshall Islands",11,"ornamentals",1993,0
+"Marshall Islands",11,"ornamentals",1994,0
 "Marshall Islands",11,"ornamentals",1995,478
 "Marshall Islands",11,"ornamentals",1996,278
 "Marshall Islands",11,"ornamentals",1997,109
@@ -5823,6 +6608,7 @@
 "Marshall Islands",11,"ornamentals",2010,1069
 "Marshall Islands",11,"ornamentals",2011,689
 "Marshall Islands",11,"shells",2004,3
+"Marshall Islands",11,"shells",2005,0
 "Marshall Islands",11,"shells",2006,35
 "Marshall Islands",11,"shells",2007,67
 "Marshall Islands",11,"shells",2008,1
@@ -5873,6 +6659,8 @@
 "Mauritius",37,"corals",2007,0
 "Mauritius",37,"corals",2008,0
 "Mauritius",37,"corals",2009,0
+"Mauritius",37,"corals",2010,0
+"Mauritius",37,"corals",2011,0
 "Mauritius",37,"fish_oil",2001,0
 "Mauritius",37,"fish_oil",2002,0
 "Mauritius",37,"fish_oil",2003,0
@@ -5926,11 +6714,21 @@
 "Mauritius",37,"sponges",2010,0
 "Mauritius",37,"sponges",2011,0
 "Mayotte",29,"ornamentals",1996,3
+"Mayotte",29,"ornamentals",1997,0
+"Mayotte",29,"ornamentals",1998,0
+"Mayotte",29,"ornamentals",1999,0
+"Mayotte",29,"ornamentals",2000,0
 "Mayotte",29,"ornamentals",2001,4
 "Mayotte",29,"ornamentals",2002,4
+"Mayotte",29,"ornamentals",2003,0
+"Mayotte",29,"ornamentals",2004,0
+"Mayotte",29,"ornamentals",2005,0
 "Mayotte",29,"ornamentals",2006,250
 "Mayotte",29,"ornamentals",2007,108
 "Mayotte",29,"ornamentals",2008,77
+"Mayotte",29,"ornamentals",2009,0
+"Mayotte",29,"ornamentals",2010,0
+"Mayotte",29,"ornamentals",2011,0
 "Mayotte",29,"shells",2002,0
 "Mayotte",29,"shells",2003,0
 "Mayotte",29,"shells",2004,0
@@ -5957,6 +6755,7 @@
 "Mexico",135,"fish_oil",1985,13
 "Mexico",135,"fish_oil",1986,94
 "Mexico",135,"fish_oil",1987,141
+"Mexico",135,"fish_oil",1988,0
 "Mexico",135,"fish_oil",1989,104
 "Mexico",135,"fish_oil",1990,64
 "Mexico",135,"fish_oil",1991,17
@@ -5982,7 +6781,10 @@
 "Mexico",135,"fish_oil",2011,29223
 "Mexico",135,"ornamentals",1976,1
 "Mexico",135,"ornamentals",1977,1
+"Mexico",135,"ornamentals",1978,0
+"Mexico",135,"ornamentals",1979,0
 "Mexico",135,"ornamentals",1980,1
+"Mexico",135,"ornamentals",1981,0
 "Mexico",135,"ornamentals",1982,43
 "Mexico",135,"ornamentals",1983,5
 "Mexico",135,"ornamentals",1984,1
@@ -5991,6 +6793,7 @@
 "Mexico",135,"ornamentals",1987,7
 "Mexico",135,"ornamentals",1988,4
 "Mexico",135,"ornamentals",1989,16
+"Mexico",135,"ornamentals",1990,0
 "Mexico",135,"ornamentals",1991,13
 "Mexico",135,"ornamentals",1992,10
 "Mexico",135,"ornamentals",1993,22
@@ -6057,11 +6860,13 @@
 "Mexico",135,"shells",2010,652
 "Mexico",135,"shells",2011,515
 "Mexico",135,"sponges",1999,0
+"Mexico",135,"sponges",2000,0
 "Mexico",135,"sponges",2001,1
 "Mexico",135,"sponges",2002,0
 "Mexico",135,"sponges",2003,0
 "Mexico",135,"sponges",2004,0
 "Mexico",135,"sponges",2005,0
+"Mexico",135,"sponges",2006,0
 "Mexico",135,"sponges",2007,0
 "Mexico",135,"sponges",2008,0
 "Mexico",135,"sponges",2009,3
@@ -6070,6 +6875,7 @@
 "Micronesia",9,"corals",1998,129
 "Micronesia",9,"corals",1999,173
 "Micronesia",9,"corals",2000,44
+"Micronesia",9,"corals",2001,0
 "Micronesia",9,"corals",2002,137
 "Micronesia",9,"corals",2003,44
 "Micronesia",9,"corals",2004,8
@@ -6082,6 +6888,9 @@
 "Micronesia",9,"corals",2011,109
 "Micronesia",9,"ornamentals",1991,40
 "Micronesia",9,"ornamentals",1992,40
+"Micronesia",9,"ornamentals",1993,0
+"Micronesia",9,"ornamentals",1994,0
+"Micronesia",9,"ornamentals",1995,0
 "Micronesia",9,"ornamentals",1996,19
 "Micronesia",9,"ornamentals",1997,13
 "Micronesia",9,"ornamentals",1998,33
@@ -6092,6 +6901,8 @@
 "Micronesia",9,"ornamentals",2003,27
 "Micronesia",9,"ornamentals",2004,21
 "Micronesia",9,"ornamentals",2005,4
+"Micronesia",9,"ornamentals",2006,0
+"Micronesia",9,"ornamentals",2007,0
 "Micronesia",9,"ornamentals",2008,5
 "Micronesia",9,"ornamentals",2009,10
 "Micronesia",9,"ornamentals",2010,13
@@ -6111,6 +6922,7 @@
 "Montenegro",186,"corals",1997,174
 "Montenegro",186,"corals",1998,25
 "Montenegro",186,"corals",1999,147
+"Montenegro",186,"corals",2000,0
 "Montenegro",186,"corals",2001,74
 "Montenegro",186,"corals",2002,0
 "Montenegro",186,"corals",2003,25
@@ -6171,6 +6983,10 @@
 "Montenegro",186,"shells",2010,3
 "Montenegro",186,"shells",2011,0
 "Montenegro",186,"sponges",1996,30
+"Montenegro",186,"sponges",1997,0
+"Montenegro",186,"sponges",1998,0
+"Montenegro",186,"sponges",1999,0
+"Montenegro",186,"sponges",2000,0
 "Montenegro",186,"sponges",2001,4
 "Montenegro",186,"sponges",2002,0
 "Montenegro",186,"sponges",2003,1
@@ -6275,6 +7091,8 @@
 "Morocco",62,"shells",2010,599
 "Morocco",62,"shells",2011,677
 "Morocco",62,"sponges",1994,1
+"Morocco",62,"sponges",1995,0
+"Morocco",62,"sponges",1996,0
 "Morocco",62,"sponges",1997,29
 "Morocco",62,"sponges",1998,1
 "Morocco",62,"sponges",1999,1
@@ -6291,6 +7109,19 @@
 "Morocco",62,"sponges",2010,0
 "Morocco",62,"sponges",2011,0
 "Mozambique",41,"fish_oil",1994,133
+"Mozambique",41,"fish_oil",1995,0
+"Mozambique",41,"fish_oil",1996,0
+"Mozambique",41,"fish_oil",1997,0
+"Mozambique",41,"fish_oil",1998,0
+"Mozambique",41,"fish_oil",1999,0
+"Mozambique",41,"fish_oil",2000,0
+"Mozambique",41,"fish_oil",2001,0
+"Mozambique",41,"fish_oil",2002,0
+"Mozambique",41,"fish_oil",2003,0
+"Mozambique",41,"fish_oil",2004,0
+"Mozambique",41,"fish_oil",2005,0
+"Mozambique",41,"fish_oil",2006,0
+"Mozambique",41,"fish_oil",2007,0
 "Mozambique",41,"fish_oil",2008,1095
 "Mozambique",41,"fish_oil",2009,864
 "Mozambique",41,"fish_oil",2010,0
@@ -6298,6 +7129,7 @@
 "Mozambique",41,"ornamentals",2004,1
 "Mozambique",41,"ornamentals",2005,1
 "Mozambique",41,"ornamentals",2006,0
+"Mozambique",41,"ornamentals",2007,0
 "Mozambique",41,"ornamentals",2008,2
 "Mozambique",41,"ornamentals",2009,0
 "Mozambique",41,"ornamentals",2010,0
@@ -6313,6 +7145,7 @@
 "Mozambique",41,"seaweeds",2010,0
 "Mozambique",41,"seaweeds",2011,0
 "Mozambique",41,"shells",1994,52
+"Mozambique",41,"shells",1995,0
 "Mozambique",41,"shells",1996,134
 "Mozambique",41,"shells",1997,129
 "Mozambique",41,"shells",1998,145
@@ -6330,11 +7163,14 @@
 "Mozambique",41,"shells",2010,86
 "Mozambique",41,"shells",2011,56
 "Myanmar",205,"ornamentals",2005,144
+"Myanmar",205,"ornamentals",2006,0
+"Myanmar",205,"ornamentals",2007,0
 "Myanmar",205,"ornamentals",2008,242
 "Myanmar",205,"ornamentals",2009,222
 "Myanmar",205,"ornamentals",2010,211
 "Myanmar",205,"ornamentals",2011,193
 "Myanmar",205,"shells",2005,32
+"Myanmar",205,"shells",2006,0
 "Myanmar",205,"shells",2007,124
 "Myanmar",205,"shells",2008,0
 "Myanmar",205,"shells",2009,187
@@ -6342,6 +7178,7 @@
 "Myanmar",205,"shells",2011,132
 "Namibia",101,"fish_oil",1994,620
 "Namibia",101,"fish_oil",1995,994
+"Namibia",101,"fish_oil",1996,0
 "Namibia",101,"fish_oil",1997,4103
 "Namibia",101,"fish_oil",1998,5735
 "Namibia",101,"fish_oil",1999,781
@@ -6365,6 +7202,7 @@
 "Namibia",101,"ornamentals",2005,107
 "Namibia",101,"ornamentals",2006,0
 "Namibia",101,"ornamentals",2007,0
+"Namibia",101,"ornamentals",2008,0
 "Namibia",101,"ornamentals",2009,0
 "Namibia",101,"ornamentals",2010,0
 "Namibia",101,"ornamentals",2011,0
@@ -6388,7 +7226,14 @@
 "Namibia",101,"shells",1999,26
 "Namibia",101,"shells",2000,7
 "Namibia",101,"shells",2001,13
+"Namibia",101,"shells",2002,0
+"Namibia",101,"shells",2003,0
+"Namibia",101,"shells",2004,0
+"Namibia",101,"shells",2005,0
+"Namibia",101,"shells",2006,0
+"Namibia",101,"shells",2007,0
 "Namibia",101,"shells",2008,0
+"Namibia",101,"shells",2009,0
 "Namibia",101,"shells",2010,1
 "Namibia",101,"shells",2011,1
 "Namibia",101,"sponges",1997,1
@@ -6396,7 +7241,11 @@
 "Namibia",101,"sponges",1999,0
 "Namibia",101,"sponges",2000,0
 "Namibia",101,"sponges",2001,0
+"Namibia",101,"sponges",2002,0
 "Namibia",101,"sponges",2003,6
+"Namibia",101,"sponges",2004,0
+"Namibia",101,"sponges",2005,0
+"Namibia",101,"sponges",2006,0
 "Namibia",101,"sponges",2007,0
 "Namibia",101,"sponges",2008,0
 "Namibia",101,"sponges",2009,0
@@ -6583,8 +7432,18 @@
 "Netherlands",177,"sponges",2011,12
 "New Caledonia",5,"fish_oil",2011,1
 "New Caledonia",5,"ornamentals",1984,23
+"New Caledonia",5,"ornamentals",1985,0
 "New Caledonia",5,"ornamentals",1986,45
 "New Caledonia",5,"ornamentals",1987,62
+"New Caledonia",5,"ornamentals",1988,0
+"New Caledonia",5,"ornamentals",1989,0
+"New Caledonia",5,"ornamentals",1990,0
+"New Caledonia",5,"ornamentals",1991,0
+"New Caledonia",5,"ornamentals",1992,0
+"New Caledonia",5,"ornamentals",1993,0
+"New Caledonia",5,"ornamentals",1994,0
+"New Caledonia",5,"ornamentals",1995,0
+"New Caledonia",5,"ornamentals",1996,0
 "New Caledonia",5,"ornamentals",1997,131
 "New Caledonia",5,"ornamentals",1998,111
 "New Caledonia",5,"ornamentals",1999,20
@@ -6620,7 +7479,11 @@
 "New Caledonia",5,"shells",2010,1205
 "New Caledonia",5,"shells",2011,712
 "New Caledonia",5,"sponges",2002,0
+"New Caledonia",5,"sponges",2003,0
+"New Caledonia",5,"sponges",2004,0
 "New Caledonia",5,"sponges",2005,0
+"New Caledonia",5,"sponges",2006,0
+"New Caledonia",5,"sponges",2007,0
 "New Caledonia",5,"sponges",2008,0
 "New Caledonia",5,"sponges",2009,0
 "New Caledonia",5,"sponges",2010,0
@@ -6683,6 +7546,7 @@
 "New Zealand",162,"ornamentals",1994,3
 "New Zealand",162,"ornamentals",1995,3
 "New Zealand",162,"ornamentals",1996,1
+"New Zealand",162,"ornamentals",1997,0
 "New Zealand",162,"ornamentals",1998,12
 "New Zealand",162,"ornamentals",1999,1
 "New Zealand",162,"ornamentals",2000,0
@@ -6725,6 +7589,7 @@
 "New Zealand",162,"sponges",1997,5
 "New Zealand",162,"sponges",1998,0
 "New Zealand",162,"sponges",1999,2
+"New Zealand",162,"sponges",2000,0
 "New Zealand",162,"sponges",2001,0
 "New Zealand",162,"sponges",2002,0
 "New Zealand",162,"sponges",2003,7
@@ -6746,6 +7611,7 @@
 "Nicaragua",131,"corals",2005,32
 "Nicaragua",131,"corals",2006,28
 "Nicaragua",131,"corals",2007,95
+"Nicaragua",131,"corals",2008,0
 "Nicaragua",131,"corals",2009,4
 "Nicaragua",131,"corals",2010,33
 "Nicaragua",131,"corals",2011,34
@@ -6782,7 +7648,48 @@
 "Nicaragua",131,"ornamentals",2009,0
 "Nicaragua",131,"ornamentals",2010,10
 "Nicaragua",131,"ornamentals",2011,19
+"Nicaragua",131,"seaweeds",1977,0
+"Nicaragua",131,"seaweeds",1978,0
+"Nicaragua",131,"seaweeds",1979,0
+"Nicaragua",131,"seaweeds",1980,0
+"Nicaragua",131,"seaweeds",1981,0
+"Nicaragua",131,"seaweeds",1982,0
+"Nicaragua",131,"seaweeds",1983,0
+"Nicaragua",131,"seaweeds",1984,0
+"Nicaragua",131,"seaweeds",1985,0
+"Nicaragua",131,"seaweeds",1986,0
+"Nicaragua",131,"seaweeds",1987,0
+"Nicaragua",131,"seaweeds",1988,0
+"Nicaragua",131,"seaweeds",1989,0
+"Nicaragua",131,"seaweeds",1990,0
+"Nicaragua",131,"seaweeds",1991,0
+"Nicaragua",131,"seaweeds",1992,0
+"Nicaragua",131,"seaweeds",1993,0
+"Nicaragua",131,"seaweeds",1994,0
+"Nicaragua",131,"seaweeds",1995,0
+"Nicaragua",131,"seaweeds",1996,0
+"Nicaragua",131,"seaweeds",1997,0
+"Nicaragua",131,"seaweeds",1998,0
+"Nicaragua",131,"seaweeds",1999,0
+"Nicaragua",131,"seaweeds",2000,0
+"Nicaragua",131,"seaweeds",2001,0
+"Nicaragua",131,"seaweeds",2002,0
+"Nicaragua",131,"seaweeds",2003,0
+"Nicaragua",131,"seaweeds",2004,0
+"Nicaragua",131,"seaweeds",2005,0
+"Nicaragua",131,"seaweeds",2006,0
+"Nicaragua",131,"seaweeds",2007,0
+"Nicaragua",131,"seaweeds",2008,0
+"Nicaragua",131,"seaweeds",2009,0
+"Nicaragua",131,"seaweeds",2010,0
+"Nicaragua",131,"seaweeds",2011,0
 "Nigeria",196,"corals",1998,2
+"Nigeria",196,"corals",1999,0
+"Nigeria",196,"corals",2000,0
+"Nigeria",196,"corals",2001,0
+"Nigeria",196,"corals",2002,0
+"Nigeria",196,"corals",2003,0
+"Nigeria",196,"corals",2004,0
 "Nigeria",196,"corals",2005,0
 "Nigeria",196,"corals",2006,0
 "Nigeria",196,"corals",2007,0
@@ -6805,6 +7712,10 @@
 "Nigeria",196,"ornamentals",2003,1200
 "Nigeria",196,"ornamentals",2004,1866
 "Nigeria",196,"ornamentals",2005,1213
+"Nigeria",196,"ornamentals",2006,0
+"Nigeria",196,"ornamentals",2007,0
+"Nigeria",196,"ornamentals",2008,0
+"Nigeria",196,"ornamentals",2009,0
 "Nigeria",196,"ornamentals",2010,105
 "Nigeria",196,"ornamentals",2011,0
 "Nigeria",196,"seaweeds",2000,1
@@ -6821,6 +7732,7 @@
 "Nigeria",196,"seaweeds",2011,24
 "Nigeria",196,"shells",2004,4
 "Nigeria",196,"shells",2005,7
+"Nigeria",196,"shells",2006,0
 "Nigeria",196,"shells",2007,4
 "Nigeria",196,"shells",2008,0
 "Nigeria",196,"shells",2009,0
@@ -6838,6 +7750,13 @@
 "Nigeria",196,"sponges",2010,0
 "Nigeria",196,"sponges",2011,0
 "North Korea",21,"corals",1990,290
+"North Korea",21,"corals",1991,0
+"North Korea",21,"corals",1992,0
+"North Korea",21,"corals",1993,0
+"North Korea",21,"corals",1994,0
+"North Korea",21,"corals",1995,0
+"North Korea",21,"corals",1996,0
+"North Korea",21,"corals",1997,0
 "North Korea",21,"corals",1998,5
 "North Korea",21,"corals",1999,9
 "North Korea",21,"corals",2000,9
@@ -6986,6 +7905,7 @@
 "Norway",223,"ornamentals",1998,0
 "Norway",223,"ornamentals",1999,0
 "Norway",223,"ornamentals",2000,0
+"Norway",223,"ornamentals",2001,0
 "Norway",223,"ornamentals",2002,0
 "Norway",223,"ornamentals",2003,0
 "Norway",223,"ornamentals",2004,0
@@ -7025,7 +7945,9 @@
 "Norway",223,"sponges",1998,15
 "Norway",223,"sponges",1999,4
 "Norway",223,"sponges",2000,1
+"Norway",223,"sponges",2001,0
 "Norway",223,"sponges",2002,2
+"Norway",223,"sponges",2003,0
 "Norway",223,"sponges",2004,0
 "Norway",223,"sponges",2005,2
 "Norway",223,"sponges",2006,0
@@ -7042,6 +7964,7 @@
 "Oman",48,"corals",2000,10
 "Oman",48,"corals",2001,5
 "Oman",48,"corals",2002,0
+"Oman",48,"corals",2003,0
 "Oman",48,"corals",2004,0
 "Oman",48,"corals",2005,0
 "Oman",48,"corals",2006,8
@@ -7103,6 +8026,10 @@
 "Oman",48,"sponges",2010,0
 "Oman",48,"sponges",2011,0
 "Pakistan",53,"corals",2002,10
+"Pakistan",53,"corals",2003,0
+"Pakistan",53,"corals",2004,0
+"Pakistan",53,"corals",2005,0
+"Pakistan",53,"corals",2006,0
 "Pakistan",53,"corals",2007,43
 "Pakistan",53,"corals",2008,0
 "Pakistan",53,"corals",2009,8
@@ -7133,6 +8060,11 @@
 "Pakistan",53,"ornamentals",2010,18
 "Pakistan",53,"ornamentals",2011,107
 "Pakistan",53,"seaweeds",1997,4
+"Pakistan",53,"seaweeds",1998,0
+"Pakistan",53,"seaweeds",1999,0
+"Pakistan",53,"seaweeds",2000,0
+"Pakistan",53,"seaweeds",2001,0
+"Pakistan",53,"seaweeds",2002,0
 "Pakistan",53,"seaweeds",2003,17
 "Pakistan",53,"seaweeds",2004,1
 "Pakistan",53,"seaweeds",2005,0
@@ -7143,6 +8075,7 @@
 "Pakistan",53,"seaweeds",2010,1
 "Pakistan",53,"seaweeds",2011,10
 "Pakistan",53,"shells",2004,5
+"Pakistan",53,"shells",2005,0
 "Pakistan",53,"shells",2006,0
 "Pakistan",53,"shells",2007,8
 "Pakistan",53,"shells",2008,0
@@ -7160,16 +8093,24 @@
 "Palau",8,"corals",1998,195
 "Palau",8,"corals",1999,4
 "Palau",8,"corals",2000,3
+"Palau",8,"corals",2001,0
+"Palau",8,"corals",2002,0
 "Palau",8,"corals",2003,3
+"Palau",8,"corals",2004,0
 "Palau",8,"corals",2005,241
 "Palau",8,"corals",2006,8
 "Palau",8,"corals",2007,13
 "Palau",8,"corals",2008,54
+"Palau",8,"corals",2009,0
 "Palau",8,"corals",2010,4
 "Palau",8,"corals",2011,42
 "Palau",8,"ornamentals",1995,19
 "Palau",8,"ornamentals",1996,1
+"Palau",8,"ornamentals",1997,0
 "Palau",8,"ornamentals",1998,3
+"Palau",8,"ornamentals",1999,0
+"Palau",8,"ornamentals",2000,0
+"Palau",8,"ornamentals",2001,0
 "Palau",8,"ornamentals",2002,57
 "Palau",8,"ornamentals",2003,105
 "Palau",8,"ornamentals",2004,90
@@ -7191,6 +8132,8 @@
 "Palau",8,"seaweeds",2010,0
 "Palau",8,"seaweeds",2011,0
 "Palau",8,"shells",2003,4
+"Palau",8,"shells",2004,0
+"Palau",8,"shells",2005,0
 "Palau",8,"shells",2006,19
 "Palau",8,"shells",2007,0
 "Palau",8,"shells",2008,0
@@ -7271,23 +8214,32 @@
 "Panama",129,"shells",1997,96
 "Panama",129,"shells",1998,51
 "Panama",129,"shells",1999,4
+"Panama",129,"shells",2000,0
 "Panama",129,"shells",2001,5
 "Panama",129,"shells",2002,2
+"Panama",129,"shells",2003,0
+"Panama",129,"shells",2004,0
 "Panama",129,"shells",2005,29
+"Panama",129,"shells",2006,0
 "Panama",129,"shells",2007,7
 "Panama",129,"shells",2008,0
 "Panama",129,"shells",2009,0
 "Panama",129,"shells",2010,18
 "Panama",129,"shells",2011,0
 "Papua New Guinea",17,"corals",1996,58
+"Papua New Guinea",17,"corals",1997,0
 "Papua New Guinea",17,"corals",1998,1
+"Papua New Guinea",17,"corals",1999,0
 "Papua New Guinea",17,"corals",2000,1
 "Papua New Guinea",17,"corals",2001,268
 "Papua New Guinea",17,"corals",2002,2
+"Papua New Guinea",17,"corals",2003,0
 "Papua New Guinea",17,"corals",2004,12
 "Papua New Guinea",17,"corals",2005,12
 "Papua New Guinea",17,"corals",2006,5
+"Papua New Guinea",17,"corals",2007,0
 "Papua New Guinea",17,"corals",2008,11
+"Papua New Guinea",17,"corals",2009,0
 "Papua New Guinea",17,"corals",2010,119
 "Papua New Guinea",17,"corals",2011,0
 "Papua New Guinea",17,"fish_oil",1991,178
@@ -7313,7 +8265,13 @@
 "Papua New Guinea",17,"fish_oil",2011,0
 "Papua New Guinea",17,"ornamentals",1998,130
 "Papua New Guinea",17,"ornamentals",1999,1
+"Papua New Guinea",17,"ornamentals",2000,0
+"Papua New Guinea",17,"ornamentals",2001,0
 "Papua New Guinea",17,"ornamentals",2002,1
+"Papua New Guinea",17,"ornamentals",2003,0
+"Papua New Guinea",17,"ornamentals",2004,0
+"Papua New Guinea",17,"ornamentals",2005,0
+"Papua New Guinea",17,"ornamentals",2006,0
 "Papua New Guinea",17,"ornamentals",2007,36
 "Papua New Guinea",17,"ornamentals",2008,29
 "Papua New Guinea",17,"ornamentals",2009,36
@@ -7367,9 +8325,13 @@
 "Peru",138,"corals",2010,9
 "Peru",138,"corals",2011,127
 "Peru",138,"fish_oil",1976,8
+"Peru",138,"fish_oil",1977,0
 "Peru",138,"fish_oil",1978,123
 "Peru",138,"fish_oil",1979,20959
+"Peru",138,"fish_oil",1980,0
+"Peru",138,"fish_oil",1981,0
 "Peru",138,"fish_oil",1982,13598
+"Peru",138,"fish_oil",1983,0
 "Peru",138,"fish_oil",1984,14423
 "Peru",138,"fish_oil",1985,8304
 "Peru",138,"fish_oil",1986,9837
@@ -7439,6 +8401,7 @@
 "Peru",138,"seaweeds",1992,201
 "Peru",138,"seaweeds",1993,340
 "Peru",138,"seaweeds",1994,340
+"Peru",138,"seaweeds",1995,0
 "Peru",138,"seaweeds",1996,768
 "Peru",138,"seaweeds",1997,1206
 "Peru",138,"seaweeds",1998,1376
@@ -7465,6 +8428,7 @@
 "Peru",138,"sponges",2003,0
 "Peru",138,"sponges",2004,0
 "Peru",138,"sponges",2005,0
+"Peru",138,"sponges",2006,0
 "Peru",138,"sponges",2007,0
 "Peru",138,"sponges",2008,0
 "Peru",138,"sponges",2009,0
@@ -7595,10 +8559,18 @@
 "Philippines",15,"sponges",2010,147
 "Philippines",15,"sponges",2011,147
 "Poland",178,"fish_oil",1987,18
+"Poland",178,"fish_oil",1988,0
+"Poland",178,"fish_oil",1989,0
+"Poland",178,"fish_oil",1990,0
+"Poland",178,"fish_oil",1991,0
+"Poland",178,"fish_oil",1992,0
 "Poland",178,"fish_oil",1993,59
+"Poland",178,"fish_oil",1994,0
 "Poland",178,"fish_oil",1995,16
 "Poland",178,"fish_oil",1996,1
+"Poland",178,"fish_oil",1997,0
 "Poland",178,"fish_oil",1998,5
+"Poland",178,"fish_oil",1999,0
 "Poland",178,"fish_oil",2000,5
 "Poland",178,"fish_oil",2001,8
 "Poland",178,"fish_oil",2002,4
@@ -7708,13 +8680,16 @@
 "Portugal",183,"ornamentals",1992,0
 "Portugal",183,"ornamentals",1993,1
 "Portugal",183,"ornamentals",1994,0
+"Portugal",183,"ornamentals",1995,0
 "Portugal",183,"ornamentals",1996,0
 "Portugal",183,"ornamentals",1997,0
 "Portugal",183,"ornamentals",1998,0
+"Portugal",183,"ornamentals",1999,0
 "Portugal",183,"ornamentals",2000,0
 "Portugal",183,"ornamentals",2001,0
 "Portugal",183,"ornamentals",2002,0
 "Portugal",183,"ornamentals",2003,1
+"Portugal",183,"ornamentals",2004,0
 "Portugal",183,"ornamentals",2005,247
 "Portugal",183,"ornamentals",2006,342
 "Portugal",183,"ornamentals",2007,322
@@ -7764,6 +8739,7 @@
 "Portugal",183,"shells",1979,161
 "Portugal",183,"shells",1980,137
 "Portugal",183,"shells",1981,54
+"Portugal",183,"shells",1982,0
 "Portugal",183,"shells",1983,59
 "Portugal",183,"shells",1984,116
 "Portugal",183,"shells",1985,48
@@ -7794,9 +8770,28 @@
 "Portugal",183,"shells",2010,7
 "Portugal",183,"shells",2011,6
 "Portugal",183,"sponges",1985,1
+"Portugal",183,"sponges",1986,0
+"Portugal",183,"sponges",1987,0
 "Portugal",183,"sponges",1988,5
+"Portugal",183,"sponges",1989,0
+"Portugal",183,"sponges",1990,0
+"Portugal",183,"sponges",1991,0
+"Portugal",183,"sponges",1992,0
+"Portugal",183,"sponges",1993,0
 "Portugal",183,"sponges",1994,38
+"Portugal",183,"sponges",1995,0
+"Portugal",183,"sponges",1996,0
+"Portugal",183,"sponges",1997,0
+"Portugal",183,"sponges",1998,0
+"Portugal",183,"sponges",1999,0
+"Portugal",183,"sponges",2000,0
 "Portugal",183,"sponges",2001,1
+"Portugal",183,"sponges",2002,0
+"Portugal",183,"sponges",2003,0
+"Portugal",183,"sponges",2004,0
+"Portugal",183,"sponges",2005,0
+"Portugal",183,"sponges",2006,0
+"Portugal",183,"sponges",2007,0
 "Portugal",183,"sponges",2008,4
 "Portugal",183,"sponges",2009,40
 "Portugal",183,"sponges",2010,54
@@ -7864,6 +8859,7 @@
 "Republique du Congo",100,"ornamentals",2002,187
 "Republique du Congo",100,"ornamentals",2003,180
 "Republique du Congo",100,"ornamentals",2004,83
+"Republique du Congo",100,"ornamentals",2005,0
 "Republique du Congo",100,"ornamentals",2006,131
 "Republique du Congo",100,"ornamentals",2007,0
 "Republique du Congo",100,"ornamentals",2008,0
@@ -7881,6 +8877,20 @@
 "Reunion",32,"fish_oil",1995,0
 "Reunion",32,"fish_oil",1996,0
 "Reunion",32,"fish_oil",1997,0
+"Reunion",32,"fish_oil",1998,0
+"Reunion",32,"fish_oil",1999,0
+"Reunion",32,"fish_oil",2000,0
+"Reunion",32,"fish_oil",2001,0
+"Reunion",32,"fish_oil",2002,0
+"Reunion",32,"fish_oil",2003,0
+"Reunion",32,"fish_oil",2004,0
+"Reunion",32,"fish_oil",2005,0
+"Reunion",32,"fish_oil",2006,0
+"Reunion",32,"fish_oil",2007,0
+"Reunion",32,"fish_oil",2008,0
+"Reunion",32,"fish_oil",2009,0
+"Reunion",32,"fish_oil",2010,0
+"Reunion",32,"fish_oil",2011,0
 "Romania",72,"corals",1992,36
 "Romania",72,"corals",1993,133
 "Romania",72,"corals",1994,204
@@ -7945,7 +8955,11 @@
 "Romania",72,"seaweeds",2010,133
 "Romania",72,"seaweeds",2011,262
 "Romania",72,"sponges",1992,337
+"Romania",72,"sponges",1993,0
 "Romania",72,"sponges",1994,2
+"Romania",72,"sponges",1995,0
+"Romania",72,"sponges",1996,0
+"Romania",72,"sponges",1997,0
 "Romania",72,"sponges",1998,73
 "Romania",72,"sponges",1999,255
 "Romania",72,"sponges",2000,427
@@ -8029,6 +9043,7 @@
 "Russia",73,"sponges",2004,35
 "Russia",73,"sponges",2005,314
 "Russia",73,"sponges",2006,0
+"Russia",73,"sponges",2007,0
 "Russia",73,"sponges",2008,0
 "Russia",73,"sponges",2009,0
 "Russia",73,"sponges",2010,0
@@ -8037,9 +9052,13 @@
 "Saba",248,"corals",2001,1
 "Saba",248,"corals",2002,1.75
 "Saba",248,"corals",2003,1.25
+"Saba",248,"corals",2004,0
 "Saba",248,"corals",2005,0
 "Saba",248,"corals",2006,0
 "Saba",248,"corals",2007,0
+"Saba",248,"corals",2008,0
+"Saba",248,"corals",2009,0
+"Saba",248,"corals",2010,0
 "Saba",248,"corals",2011,0
 "Saba",248,"fish_oil",2002,7.75
 "Saba",248,"fish_oil",2003,85.5
@@ -8096,6 +9115,7 @@
 "Saint Helena",86,"fish_oil",2010,0
 "Saint Helena",86,"fish_oil",2011,0
 "Saint Helena",86,"ornamentals",2001,4
+"Saint Helena",86,"ornamentals",2002,0
 "Saint Helena",86,"ornamentals",2003,4
 "Saint Helena",86,"ornamentals",2004,1
 "Saint Helena",86,"ornamentals",2005,0
@@ -8106,8 +9126,11 @@
 "Saint Helena",86,"ornamentals",2010,0
 "Saint Helena",86,"ornamentals",2011,0
 "Saint Kitts and Nevis",119,"seaweeds",2009,0
+"Saint Kitts and Nevis",119,"seaweeds",2010,0
 "Saint Kitts and Nevis",119,"seaweeds",2011,0
 "Saint Lucia",122,"ornamentals",2000,0
+"Saint Lucia",122,"ornamentals",2001,0
+"Saint Lucia",122,"ornamentals",2002,0
 "Saint Lucia",122,"ornamentals",2003,0
 "Saint Lucia",122,"ornamentals",2004,0
 "Saint Lucia",122,"ornamentals",2005,0
@@ -8119,12 +9142,17 @@
 "Saint Lucia",122,"ornamentals",2011,0
 "Saint Lucia",122,"seaweeds",1997,1
 "Saint Lucia",122,"seaweeds",1998,1
+"Saint Lucia",122,"seaweeds",1999,0
 "Saint Lucia",122,"seaweeds",2000,28
 "Saint Lucia",122,"seaweeds",2001,10
 "Saint Lucia",122,"seaweeds",2002,13
 "Saint Lucia",122,"seaweeds",2003,10
 "Saint Lucia",122,"seaweeds",2004,10
 "Saint Lucia",122,"seaweeds",2005,1
+"Saint Lucia",122,"seaweeds",2006,0
+"Saint Lucia",122,"seaweeds",2007,0
+"Saint Lucia",122,"seaweeds",2008,0
+"Saint Lucia",122,"seaweeds",2009,0
 "Saint Lucia",122,"seaweeds",2010,1
 "Saint Lucia",122,"seaweeds",2011,1
 "Saint Pierre and Miquelon",219,"ornamentals",2001,8
@@ -8152,12 +9180,14 @@
 "Saint Pierre and Miquelon",219,"seaweeds",2011,0
 "Saint Vincent and the Grenadines",127,"corals",1999,4
 "Saint Vincent and the Grenadines",127,"corals",2000,0
+"Saint Vincent and the Grenadines",127,"corals",2001,0
 "Saint Vincent and the Grenadines",127,"corals",2002,0
 "Saint Vincent and the Grenadines",127,"corals",2003,0
 "Saint Vincent and the Grenadines",127,"corals",2004,1
 "Saint Vincent and the Grenadines",127,"corals",2005,0
 "Saint Vincent and the Grenadines",127,"corals",2006,0
 "Saint Vincent and the Grenadines",127,"corals",2007,0
+"Saint Vincent and the Grenadines",127,"corals",2008,0
 "Saint Vincent and the Grenadines",127,"corals",2009,0
 "Saint Vincent and the Grenadines",127,"corals",2010,0
 "Saint Vincent and the Grenadines",127,"corals",2011,0
@@ -8189,6 +9219,7 @@
 "Saint Vincent and the Grenadines",127,"fish_oil",2001,1
 "Saint Vincent and the Grenadines",127,"fish_oil",2002,1
 "Saint Vincent and the Grenadines",127,"fish_oil",2003,1
+"Saint Vincent and the Grenadines",127,"fish_oil",2004,0
 "Saint Vincent and the Grenadines",127,"fish_oil",2005,2
 "Saint Vincent and the Grenadines",127,"fish_oil",2006,0
 "Saint Vincent and the Grenadines",127,"fish_oil",2007,0
@@ -8223,19 +9254,30 @@
 "Samoa",152,"ornamentals",1997,6
 "Samoa",152,"ornamentals",1998,11
 "Samoa",152,"ornamentals",1999,26
+"Samoa",152,"ornamentals",2000,0
+"Samoa",152,"ornamentals",2001,0
 "Samoa",152,"ornamentals",2002,1
+"Samoa",152,"ornamentals",2003,0
+"Samoa",152,"ornamentals",2004,0
+"Samoa",152,"ornamentals",2005,0
 "Samoa",152,"ornamentals",2006,0
 "Samoa",152,"ornamentals",2007,1
+"Samoa",152,"ornamentals",2008,0
 "Samoa",152,"ornamentals",2009,0
 "Samoa",152,"ornamentals",2010,48
 "Samoa",152,"ornamentals",2011,0
 "Samoa",152,"shells",2005,60
 "Samoa",152,"shells",2006,0
+"Samoa",152,"shells",2007,0
 "Samoa",152,"shells",2008,1
 "Samoa",152,"shells",2009,0
 "Samoa",152,"shells",2010,0
 "Samoa",152,"shells",2011,0
 "Sao Tome and Principe",103,"fish_oil",1995,9
+"Sao Tome and Principe",103,"fish_oil",1996,0
+"Sao Tome and Principe",103,"fish_oil",1997,0
+"Sao Tome and Principe",103,"fish_oil",1998,0
+"Sao Tome and Principe",103,"fish_oil",1999,0
 "Sao Tome and Principe",103,"fish_oil",2000,39
 "Sao Tome and Principe",103,"fish_oil",2001,0
 "Sao Tome and Principe",103,"fish_oil",2002,0
@@ -8250,6 +9292,13 @@
 "Sao Tome and Principe",103,"fish_oil",2011,0
 "Sao Tome and Principe",103,"ornamentals",1997,2
 "Sao Tome and Principe",103,"ornamentals",1998,1
+"Sao Tome and Principe",103,"ornamentals",1999,0
+"Sao Tome and Principe",103,"ornamentals",2000,0
+"Sao Tome and Principe",103,"ornamentals",2001,0
+"Sao Tome and Principe",103,"ornamentals",2002,0
+"Sao Tome and Principe",103,"ornamentals",2003,0
+"Sao Tome and Principe",103,"ornamentals",2004,0
+"Sao Tome and Principe",103,"ornamentals",2005,0
 "Sao Tome and Principe",103,"ornamentals",2006,8
 "Sao Tome and Principe",103,"ornamentals",2007,1
 "Sao Tome and Principe",103,"ornamentals",2008,0
@@ -8262,8 +9311,13 @@
 "Saudi Arabia",50,"fish_oil",2007,60
 "Saudi Arabia",50,"fish_oil",2008,49
 "Saudi Arabia",50,"fish_oil",2009,28
+"Saudi Arabia",50,"fish_oil",2010,0
+"Saudi Arabia",50,"fish_oil",2011,0
 "Saudi Arabia",50,"ornamentals",1993,92
+"Saudi Arabia",50,"ornamentals",1994,0
 "Saudi Arabia",50,"ornamentals",1995,628
+"Saudi Arabia",50,"ornamentals",1996,0
+"Saudi Arabia",50,"ornamentals",1997,0
 "Saudi Arabia",50,"ornamentals",1998,428
 "Saudi Arabia",50,"ornamentals",1999,654
 "Saudi Arabia",50,"ornamentals",2000,25
@@ -8279,15 +9333,28 @@
 "Saudi Arabia",50,"ornamentals",2010,0
 "Saudi Arabia",50,"ornamentals",2011,0
 "Saudi Arabia",50,"seaweeds",1998,34
+"Saudi Arabia",50,"seaweeds",1999,0
+"Saudi Arabia",50,"seaweeds",2000,0
 "Saudi Arabia",50,"seaweeds",2001,17
+"Saudi Arabia",50,"seaweeds",2002,0
+"Saudi Arabia",50,"seaweeds",2003,0
+"Saudi Arabia",50,"seaweeds",2004,0
 "Saudi Arabia",50,"seaweeds",2005,17
+"Saudi Arabia",50,"seaweeds",2006,0
+"Saudi Arabia",50,"seaweeds",2007,0
+"Saudi Arabia",50,"seaweeds",2008,0
 "Saudi Arabia",50,"seaweeds",2009,10
+"Saudi Arabia",50,"seaweeds",2010,0
+"Saudi Arabia",50,"seaweeds",2011,0
 "Saudi Arabia",50,"shells",2003,66
 "Saudi Arabia",50,"shells",2004,4
+"Saudi Arabia",50,"shells",2005,0
 "Saudi Arabia",50,"shells",2006,80
 "Saudi Arabia",50,"shells",2007,27
 "Saudi Arabia",50,"shells",2008,26
 "Saudi Arabia",50,"shells",2009,18
+"Saudi Arabia",50,"shells",2010,0
+"Saudi Arabia",50,"shells",2011,0
 "Saudi Arabia",50,"sponges",1998,3
 "Saudi Arabia",50,"sponges",1999,1
 "Saudi Arabia",50,"sponges",2000,4
@@ -8297,7 +9364,11 @@
 "Saudi Arabia",50,"sponges",2004,113
 "Saudi Arabia",50,"sponges",2005,33
 "Saudi Arabia",50,"sponges",2006,276
+"Saudi Arabia",50,"sponges",2007,0
 "Saudi Arabia",50,"sponges",2008,3
+"Saudi Arabia",50,"sponges",2009,0
+"Saudi Arabia",50,"sponges",2010,0
+"Saudi Arabia",50,"sponges",2011,0
 "Senegal",66,"corals",1998,2106
 "Senegal",66,"corals",1999,22
 "Senegal",66,"corals",2000,0
@@ -8308,22 +9379,29 @@
 "Senegal",66,"corals",2005,0
 "Senegal",66,"corals",2006,0
 "Senegal",66,"corals",2007,0
+"Senegal",66,"corals",2008,0
 "Senegal",66,"corals",2009,1
 "Senegal",66,"corals",2010,2
 "Senegal",66,"corals",2011,32
 "Senegal",66,"fish_oil",1979,150
 "Senegal",66,"fish_oil",1980,16
 "Senegal",66,"fish_oil",1981,69
+"Senegal",66,"fish_oil",1982,0
+"Senegal",66,"fish_oil",1983,0
+"Senegal",66,"fish_oil",1984,0
 "Senegal",66,"fish_oil",1985,4
 "Senegal",66,"fish_oil",1986,1
 "Senegal",66,"fish_oil",1987,30
+"Senegal",66,"fish_oil",1988,0
 "Senegal",66,"fish_oil",1989,90
 "Senegal",66,"fish_oil",1990,42
 "Senegal",66,"fish_oil",1991,60
 "Senegal",66,"fish_oil",1992,33
 "Senegal",66,"fish_oil",1993,3
+"Senegal",66,"fish_oil",1994,0
 "Senegal",66,"fish_oil",1995,100
 "Senegal",66,"fish_oil",1996,109
+"Senegal",66,"fish_oil",1997,0
 "Senegal",66,"fish_oil",1998,24
 "Senegal",66,"fish_oil",1999,3
 "Senegal",66,"fish_oil",2000,2
@@ -8339,6 +9417,7 @@
 "Senegal",66,"fish_oil",2010,0
 "Senegal",66,"fish_oil",2011,80
 "Senegal",66,"seaweeds",1998,343
+"Senegal",66,"seaweeds",1999,0
 "Senegal",66,"seaweeds",2000,13
 "Senegal",66,"seaweeds",2001,35
 "Senegal",66,"seaweeds",2002,29
@@ -8353,6 +9432,9 @@
 "Senegal",66,"seaweeds",2011,20
 "Seychelles",31,"fish_oil",2001,26
 "Seychelles",31,"fish_oil",2002,75
+"Seychelles",31,"fish_oil",2003,0
+"Seychelles",31,"fish_oil",2004,0
+"Seychelles",31,"fish_oil",2005,0
 "Seychelles",31,"fish_oil",2006,226
 "Seychelles",31,"fish_oil",2007,1512
 "Seychelles",31,"fish_oil",2008,3081
@@ -8360,10 +9442,32 @@
 "Seychelles",31,"fish_oil",2010,3182
 "Seychelles",31,"fish_oil",2011,4506
 "Seychelles",31,"seaweeds",2002,0
+"Seychelles",31,"seaweeds",2003,0
+"Seychelles",31,"seaweeds",2004,0
+"Seychelles",31,"seaweeds",2005,0
+"Seychelles",31,"seaweeds",2006,0
+"Seychelles",31,"seaweeds",2007,0
+"Seychelles",31,"seaweeds",2008,0
+"Seychelles",31,"seaweeds",2009,0
+"Seychelles",31,"seaweeds",2010,0
+"Seychelles",31,"seaweeds",2011,0
 "Seychelles",31,"shells",2001,0
 "Seychelles",31,"shells",2002,0
+"Seychelles",31,"shells",2003,0
+"Seychelles",31,"shells",2004,0
+"Seychelles",31,"shells",2005,0
+"Seychelles",31,"shells",2006,0
+"Seychelles",31,"shells",2007,0
+"Seychelles",31,"shells",2008,0
+"Seychelles",31,"shells",2009,0
+"Seychelles",31,"shells",2010,0
 "Seychelles",31,"shells",2011,0
 "Sierra Leone",96,"corals",2002,10
+"Sierra Leone",96,"corals",2003,0
+"Sierra Leone",96,"corals",2004,0
+"Sierra Leone",96,"corals",2005,0
+"Sierra Leone",96,"corals",2006,0
+"Sierra Leone",96,"corals",2007,0
 "Sierra Leone",96,"corals",2008,0
 "Sierra Leone",96,"corals",2009,0
 "Sierra Leone",96,"corals",2010,0
@@ -8380,8 +9484,10 @@
 "Sierra Leone",96,"fish_oil",2011,0
 "Sierra Leone",96,"ornamentals",1995,50
 "Sierra Leone",96,"ornamentals",1996,42
+"Sierra Leone",96,"ornamentals",1997,0
 "Sierra Leone",96,"ornamentals",1998,7
 "Sierra Leone",96,"ornamentals",1999,5
+"Sierra Leone",96,"ornamentals",2000,0
 "Sierra Leone",96,"ornamentals",2001,2
 "Sierra Leone",96,"ornamentals",2002,19
 "Sierra Leone",96,"ornamentals",2003,14
@@ -8540,9 +9646,13 @@
 "Sint Eustatius",249,"corals",2001,1
 "Sint Eustatius",249,"corals",2002,1.75
 "Sint Eustatius",249,"corals",2003,1.25
+"Sint Eustatius",249,"corals",2004,0
 "Sint Eustatius",249,"corals",2005,0
 "Sint Eustatius",249,"corals",2006,0
 "Sint Eustatius",249,"corals",2007,0
+"Sint Eustatius",249,"corals",2008,0
+"Sint Eustatius",249,"corals",2009,0
+"Sint Eustatius",249,"corals",2010,0
 "Sint Eustatius",249,"corals",2011,0
 "Sint Eustatius",249,"fish_oil",2002,7.75
 "Sint Eustatius",249,"fish_oil",2003,85.5
@@ -8593,9 +9703,13 @@
 "Sint Maarten",220,"corals",2001,1
 "Sint Maarten",220,"corals",2002,1.75
 "Sint Maarten",220,"corals",2003,1.25
+"Sint Maarten",220,"corals",2004,0
 "Sint Maarten",220,"corals",2005,0
 "Sint Maarten",220,"corals",2006,0
 "Sint Maarten",220,"corals",2007,0
+"Sint Maarten",220,"corals",2008,0
+"Sint Maarten",220,"corals",2009,0
+"Sint Maarten",220,"corals",2010,0
 "Sint Maarten",220,"corals",2011,0
 "Sint Maarten",220,"fish_oil",2002,7.75
 "Sint Maarten",220,"fish_oil",2003,85.5
@@ -8643,6 +9757,10 @@
 "Sint Maarten",220,"sponges",2010,0
 "Sint Maarten",220,"sponges",2011,0
 "Slovenia",188,"fish_oil",1992,4
+"Slovenia",188,"fish_oil",1993,0
+"Slovenia",188,"fish_oil",1994,0
+"Slovenia",188,"fish_oil",1995,0
+"Slovenia",188,"fish_oil",1996,0
 "Slovenia",188,"fish_oil",1997,1
 "Slovenia",188,"fish_oil",1998,9
 "Slovenia",188,"fish_oil",1999,8
@@ -8699,6 +9817,7 @@
 "Slovenia",188,"shells",2001,1
 "Slovenia",188,"shells",2002,2
 "Slovenia",188,"shells",2003,1
+"Slovenia",188,"shells",2004,0
 "Slovenia",188,"shells",2005,9
 "Slovenia",188,"shells",2006,5
 "Slovenia",188,"shells",2007,4
@@ -8710,6 +9829,9 @@
 "Slovenia",188,"sponges",1997,2
 "Slovenia",188,"sponges",1998,1
 "Slovenia",188,"sponges",1999,1
+"Slovenia",188,"sponges",2000,0
+"Slovenia",188,"sponges",2001,0
+"Slovenia",188,"sponges",2002,0
 "Slovenia",188,"sponges",2003,0
 "Slovenia",188,"sponges",2004,0
 "Slovenia",188,"sponges",2005,0
@@ -8747,6 +9869,8 @@
 "Solomon Islands",7,"ornamentals",2007,106
 "Solomon Islands",7,"ornamentals",2008,68
 "Solomon Islands",7,"ornamentals",2009,126
+"Solomon Islands",7,"ornamentals",2010,0
+"Solomon Islands",7,"ornamentals",2011,0
 "Solomon Islands",7,"seaweeds",2004,148
 "Solomon Islands",7,"seaweeds",2005,282
 "Solomon Islands",7,"seaweeds",2006,106
@@ -8756,15 +9880,28 @@
 "Solomon Islands",7,"seaweeds",2010,560
 "Solomon Islands",7,"seaweeds",2011,116
 "Somalia",44,"corals",2001,1
+"Somalia",44,"corals",2002,0
+"Somalia",44,"corals",2003,0
+"Somalia",44,"corals",2004,0
 "Somalia",44,"corals",2005,2
+"Somalia",44,"corals",2006,0
 "Somalia",44,"corals",2007,93
 "Somalia",44,"corals",2008,43
+"Somalia",44,"corals",2009,0
 "Somalia",44,"corals",2010,13
 "Somalia",44,"corals",2011,0
 "Somalia",44,"ornamentals",2002,2
+"Somalia",44,"ornamentals",2003,0
+"Somalia",44,"ornamentals",2004,0
+"Somalia",44,"ornamentals",2005,0
+"Somalia",44,"ornamentals",2006,0
+"Somalia",44,"ornamentals",2007,0
+"Somalia",44,"ornamentals",2008,0
+"Somalia",44,"ornamentals",2009,0
 "Somalia",44,"ornamentals",2010,0
 "Somalia",44,"ornamentals",2011,0
 "Somalia",44,"shells",2003,1
+"Somalia",44,"shells",2004,0
 "Somalia",44,"shells",2005,5
 "Somalia",44,"shells",2006,62
 "Somalia",44,"shells",2007,61
@@ -8773,6 +9910,8 @@
 "Somalia",44,"shells",2010,4
 "Somalia",44,"shells",2011,0
 "South Africa",102,"corals",1994,28
+"South Africa",102,"corals",1995,0
+"South Africa",102,"corals",1996,0
 "South Africa",102,"corals",1997,115
 "South Africa",102,"corals",1998,125
 "South Africa",102,"corals",1999,70
@@ -8825,6 +9964,10 @@
 "South Africa",102,"fish_oil",2010,4134
 "South Africa",102,"fish_oil",2011,4565
 "South Africa",102,"ornamentals",1985,92
+"South Africa",102,"ornamentals",1986,0
+"South Africa",102,"ornamentals",1987,0
+"South Africa",102,"ornamentals",1988,0
+"South Africa",102,"ornamentals",1989,0
 "South Africa",102,"ornamentals",1990,227
 "South Africa",102,"ornamentals",1991,223
 "South Africa",102,"ornamentals",1992,309
@@ -8862,6 +10005,8 @@
 "South Africa",102,"seaweeds",2010,1399
 "South Africa",102,"seaweeds",2011,1482
 "South Africa",102,"shells",1994,158
+"South Africa",102,"shells",1995,0
+"South Africa",102,"shells",1996,0
 "South Africa",102,"shells",1997,79
 "South Africa",102,"shells",1998,50
 "South Africa",102,"shells",1999,36
@@ -9045,6 +10190,15 @@
 "Spain",182,"corals",1985,1152
 "Spain",182,"corals",1986,1299
 "Spain",182,"corals",1987,1258
+"Spain",182,"corals",1988,0
+"Spain",182,"corals",1989,0
+"Spain",182,"corals",1990,0
+"Spain",182,"corals",1991,0
+"Spain",182,"corals",1992,0
+"Spain",182,"corals",1993,0
+"Spain",182,"corals",1994,0
+"Spain",182,"corals",1995,0
+"Spain",182,"corals",1996,0
 "Spain",182,"corals",1997,0
 "Spain",182,"corals",1998,0
 "Spain",182,"corals",1999,0
@@ -9313,8 +10467,14 @@
 "Sri Lanka",40,"seaweeds",2010,48
 "Sri Lanka",40,"seaweeds",2011,33
 "Sri Lanka",40,"shells",2000,1171
+"Sri Lanka",40,"shells",2001,0
+"Sri Lanka",40,"shells",2002,0
+"Sri Lanka",40,"shells",2003,0
+"Sri Lanka",40,"shells",2004,0
+"Sri Lanka",40,"shells",2005,0
 "Sri Lanka",40,"shells",2006,0
 "Sri Lanka",40,"shells",2007,0
+"Sri Lanka",40,"shells",2008,0
 "Sri Lanka",40,"shells",2009,2247
 "Sri Lanka",40,"shells",2010,3640
 "Sri Lanka",40,"shells",2011,2049
@@ -9337,6 +10497,7 @@
 "Sudan",49,"corals",2011,194
 "Sudan",49,"ornamentals",1998,1
 "Sudan",49,"ornamentals",1999,0
+"Sudan",49,"ornamentals",2000,0
 "Sudan",49,"ornamentals",2001,0
 "Sudan",49,"ornamentals",2002,0
 "Sudan",49,"ornamentals",2003,1
@@ -9353,6 +10514,8 @@
 "Sudan",49,"seaweeds",2010,0
 "Sudan",49,"seaweeds",2011,0
 "Sudan",49,"shells",2007,450
+"Sudan",49,"shells",2008,0
+"Sudan",49,"shells",2009,0
 "Sudan",49,"shells",2010,0
 "Sudan",49,"shells",2011,0
 "Sudan",49,"sponges",2000,6
@@ -9523,6 +10686,7 @@
 "Sweden",222,"seaweeds",2011,610
 "Sweden",222,"shells",1994,10
 "Sweden",222,"shells",1995,1
+"Sweden",222,"shells",1996,0
 "Sweden",222,"shells",1997,10
 "Sweden",222,"shells",1998,1
 "Sweden",222,"shells",1999,20
@@ -9557,6 +10721,7 @@
 "Sweden",222,"sponges",2010,138
 "Sweden",222,"sponges",2011,86
 "Syria",77,"corals",1998,113
+"Syria",77,"corals",1999,0
 "Syria",77,"corals",2000,57
 "Syria",77,"corals",2001,76
 "Syria",77,"corals",2002,88
@@ -9587,6 +10752,8 @@
 "Syria",77,"fish_oil",2010,0
 "Syria",77,"fish_oil",2011,0
 "Syria",77,"ornamentals",2001,2
+"Syria",77,"ornamentals",2002,0
+"Syria",77,"ornamentals",2003,0
 "Syria",77,"ornamentals",2004,2
 "Syria",77,"ornamentals",2005,33
 "Syria",77,"ornamentals",2006,41
@@ -9596,6 +10763,7 @@
 "Syria",77,"ornamentals",2010,112
 "Syria",77,"ornamentals",2011,1
 "Syria",77,"seaweeds",2001,8
+"Syria",77,"seaweeds",2002,0
 "Syria",77,"seaweeds",2003,1
 "Syria",77,"seaweeds",2004,0
 "Syria",77,"seaweeds",2005,0
@@ -9606,11 +10774,22 @@
 "Syria",77,"seaweeds",2010,1
 "Syria",77,"seaweeds",2011,0
 "Syria",77,"shells",2003,9
+"Syria",77,"shells",2004,0
+"Syria",77,"shells",2005,0
+"Syria",77,"shells",2006,0
+"Syria",77,"shells",2007,0
 "Syria",77,"shells",2008,0
 "Syria",77,"shells",2009,0
+"Syria",77,"shells",2010,0
 "Syria",77,"shells",2011,0
 "Syria",77,"sponges",1999,23
+"Syria",77,"sponges",2000,0
 "Syria",77,"sponges",2001,167
+"Syria",77,"sponges",2002,0
+"Syria",77,"sponges",2003,0
+"Syria",77,"sponges",2004,0
+"Syria",77,"sponges",2005,0
+"Syria",77,"sponges",2006,0
 "Syria",77,"sponges",2007,0
 "Syria",77,"sponges",2008,0
 "Syria",77,"sponges",2009,0
@@ -9630,6 +10809,10 @@
 "Taiwan",14,"corals",1987,93969
 "Taiwan",14,"corals",1988,5236
 "Taiwan",14,"corals",1989,5800
+"Taiwan",14,"corals",1990,0
+"Taiwan",14,"corals",1991,0
+"Taiwan",14,"corals",1992,0
+"Taiwan",14,"corals",1993,0
 "Taiwan",14,"corals",1994,691
 "Taiwan",14,"corals",1995,793
 "Taiwan",14,"corals",1996,1539
@@ -9770,6 +10953,10 @@
 "Taiwan",14,"shells",1987,14942
 "Taiwan",14,"shells",1988,15397
 "Taiwan",14,"shells",1989,3264
+"Taiwan",14,"shells",1990,0
+"Taiwan",14,"shells",1991,0
+"Taiwan",14,"shells",1992,0
+"Taiwan",14,"shells",1993,0
 "Taiwan",14,"shells",1994,107
 "Taiwan",14,"shells",1995,199
 "Taiwan",14,"shells",1996,224
@@ -9789,16 +10976,26 @@
 "Taiwan",14,"shells",2010,0
 "Taiwan",14,"shells",2011,20
 "Taiwan",14,"sponges",1978,17
+"Taiwan",14,"sponges",1979,0
 "Taiwan",14,"sponges",1980,61
+"Taiwan",14,"sponges",1981,0
+"Taiwan",14,"sponges",1982,0
+"Taiwan",14,"sponges",1983,0
 "Taiwan",14,"sponges",1984,18
 "Taiwan",14,"sponges",1985,240
 "Taiwan",14,"sponges",1986,153
 "Taiwan",14,"sponges",1987,446
 "Taiwan",14,"sponges",1988,219
 "Taiwan",14,"sponges",1989,681
+"Taiwan",14,"sponges",1990,0
+"Taiwan",14,"sponges",1991,0
+"Taiwan",14,"sponges",1992,0
+"Taiwan",14,"sponges",1993,0
 "Taiwan",14,"sponges",1994,35
+"Taiwan",14,"sponges",1995,0
 "Taiwan",14,"sponges",1996,4
 "Taiwan",14,"sponges",1997,1
+"Taiwan",14,"sponges",1998,0
 "Taiwan",14,"sponges",1999,3
 "Taiwan",14,"sponges",2000,37
 "Taiwan",14,"sponges",2001,23
@@ -9828,7 +11025,17 @@
 "Tanzania",202,"corals",2011,0
 "Tanzania",202,"fish_oil",1997,5
 "Tanzania",202,"fish_oil",1998,6
+"Tanzania",202,"fish_oil",1999,0
+"Tanzania",202,"fish_oil",2000,0
+"Tanzania",202,"fish_oil",2001,0
+"Tanzania",202,"fish_oil",2002,0
+"Tanzania",202,"fish_oil",2003,0
+"Tanzania",202,"fish_oil",2004,0
+"Tanzania",202,"fish_oil",2005,0
+"Tanzania",202,"fish_oil",2006,0
+"Tanzania",202,"fish_oil",2007,0
 "Tanzania",202,"fish_oil",2008,17
+"Tanzania",202,"fish_oil",2009,0
 "Tanzania",202,"fish_oil",2010,1
 "Tanzania",202,"fish_oil",2011,2
 "Tanzania",202,"ornamentals",1991,30
@@ -9889,8 +11096,16 @@
 "Tanzania",202,"sponges",2010,0
 "Tanzania",202,"sponges",2011,0
 "Thailand",25,"corals",1994,6
+"Thailand",25,"corals",1995,0
+"Thailand",25,"corals",1996,0
 "Thailand",25,"corals",1997,2
 "Thailand",25,"corals",1998,2
+"Thailand",25,"corals",1999,0
+"Thailand",25,"corals",2000,0
+"Thailand",25,"corals",2001,0
+"Thailand",25,"corals",2002,0
+"Thailand",25,"corals",2003,0
+"Thailand",25,"corals",2004,0
 "Thailand",25,"corals",2005,21
 "Thailand",25,"corals",2006,113
 "Thailand",25,"corals",2007,104
@@ -10024,6 +11239,11 @@
 "Thailand",25,"sponges",2004,25
 "Thailand",25,"sponges",2005,14
 "Thailand",25,"sponges",2006,23
+"Thailand",25,"sponges",2007,0
+"Thailand",25,"sponges",2008,0
+"Thailand",25,"sponges",2009,0
+"Thailand",25,"sponges",2010,0
+"Thailand",25,"sponges",2011,0
 "Togo",98,"fish_oil",2001,121
 "Togo",98,"fish_oil",2002,95
 "Togo",98,"fish_oil",2003,233
@@ -10036,6 +11256,15 @@
 "Togo",98,"fish_oil",2010,0
 "Togo",98,"fish_oil",2011,0
 "Togo",98,"ornamentals",1996,4
+"Togo",98,"ornamentals",1997,0
+"Togo",98,"ornamentals",1998,0
+"Togo",98,"ornamentals",1999,0
+"Togo",98,"ornamentals",2000,0
+"Togo",98,"ornamentals",2001,0
+"Togo",98,"ornamentals",2002,0
+"Togo",98,"ornamentals",2003,0
+"Togo",98,"ornamentals",2004,0
+"Togo",98,"ornamentals",2005,0
 "Togo",98,"ornamentals",2006,4
 "Togo",98,"ornamentals",2007,0
 "Togo",98,"ornamentals",2008,0
@@ -10046,13 +11275,23 @@
 "Togo",98,"shells",2010,0
 "Togo",98,"shells",2011,0
 "Tonga",155,"ornamentals",1999,20
+"Tonga",155,"ornamentals",2000,0
+"Tonga",155,"ornamentals",2001,0
+"Tonga",155,"ornamentals",2002,0
+"Tonga",155,"ornamentals",2003,0
+"Tonga",155,"ornamentals",2004,0
+"Tonga",155,"ornamentals",2005,0
+"Tonga",155,"ornamentals",2006,0
+"Tonga",155,"ornamentals",2007,0
 "Tonga",155,"ornamentals",2008,185
 "Tonga",155,"ornamentals",2009,10
 "Tonga",155,"ornamentals",2010,0
 "Tonga",155,"ornamentals",2011,9
 "Tonga",155,"seaweeds",1997,102
+"Tonga",155,"seaweeds",1998,0
 "Tonga",155,"seaweeds",1999,161
 "Tonga",155,"seaweeds",2000,115
+"Tonga",155,"seaweeds",2001,0
 "Tonga",155,"seaweeds",2002,37
 "Tonga",155,"seaweeds",2003,385
 "Tonga",155,"seaweeds",2004,2490
@@ -10060,16 +11299,41 @@
 "Tonga",155,"seaweeds",2006,615
 "Tonga",155,"seaweeds",2007,84
 "Tonga",155,"seaweeds",2008,23
+"Tonga",155,"seaweeds",2009,0
 "Tonga",155,"seaweeds",2010,1
 "Tonga",155,"seaweeds",2011,191
 "Tonga",155,"shells",1999,20
 "Tonga",155,"shells",2000,1
+"Tonga",155,"shells",2001,0
 "Tonga",155,"shells",2002,51
+"Tonga",155,"shells",2003,0
+"Tonga",155,"shells",2004,0
+"Tonga",155,"shells",2005,0
+"Tonga",155,"shells",2006,0
+"Tonga",155,"shells",2007,0
 "Tonga",155,"shells",2008,350
 "Tonga",155,"shells",2009,115
 "Tonga",155,"shells",2010,213
 "Tonga",155,"shells",2011,56
 "Trinidad and Tobago",126,"fish_oil",1980,1
+"Trinidad and Tobago",126,"fish_oil",1981,0
+"Trinidad and Tobago",126,"fish_oil",1982,0
+"Trinidad and Tobago",126,"fish_oil",1983,0
+"Trinidad and Tobago",126,"fish_oil",1984,0
+"Trinidad and Tobago",126,"fish_oil",1985,0
+"Trinidad and Tobago",126,"fish_oil",1986,0
+"Trinidad and Tobago",126,"fish_oil",1987,0
+"Trinidad and Tobago",126,"fish_oil",1988,0
+"Trinidad and Tobago",126,"fish_oil",1989,0
+"Trinidad and Tobago",126,"fish_oil",1990,0
+"Trinidad and Tobago",126,"fish_oil",1991,0
+"Trinidad and Tobago",126,"fish_oil",1992,0
+"Trinidad and Tobago",126,"fish_oil",1993,0
+"Trinidad and Tobago",126,"fish_oil",1994,0
+"Trinidad and Tobago",126,"fish_oil",1995,0
+"Trinidad and Tobago",126,"fish_oil",1996,0
+"Trinidad and Tobago",126,"fish_oil",1997,0
+"Trinidad and Tobago",126,"fish_oil",1998,0
 "Trinidad and Tobago",126,"fish_oil",1999,3
 "Trinidad and Tobago",126,"fish_oil",2000,0
 "Trinidad and Tobago",126,"fish_oil",2001,0
@@ -10137,7 +11401,12 @@
 "Trinidad and Tobago",126,"seaweeds",2010,1
 "Trinidad and Tobago",126,"seaweeds",2011,0
 "Trinidad and Tobago",126,"shells",2003,0
+"Trinidad and Tobago",126,"shells",2004,0
+"Trinidad and Tobago",126,"shells",2005,0
+"Trinidad and Tobago",126,"shells",2006,0
+"Trinidad and Tobago",126,"shells",2007,0
 "Trinidad and Tobago",126,"shells",2008,1
+"Trinidad and Tobago",126,"shells",2009,0
 "Trinidad and Tobago",126,"shells",2010,3
 "Trinidad and Tobago",126,"shells",2011,0
 "Trinidad and Tobago",126,"sponges",2007,0
@@ -10169,11 +11438,32 @@
 "Tunisia",61,"corals",2011,0
 "Tunisia",61,"fish_oil",2011,9
 "Tunisia",61,"ornamentals",1990,215
+"Tunisia",61,"ornamentals",1991,0
+"Tunisia",61,"ornamentals",1992,0
+"Tunisia",61,"ornamentals",1993,0
+"Tunisia",61,"ornamentals",1994,0
+"Tunisia",61,"ornamentals",1995,0
+"Tunisia",61,"ornamentals",1996,0
+"Tunisia",61,"ornamentals",1997,0
+"Tunisia",61,"ornamentals",1998,0
+"Tunisia",61,"ornamentals",1999,0
+"Tunisia",61,"ornamentals",2000,0
+"Tunisia",61,"ornamentals",2001,0
+"Tunisia",61,"ornamentals",2002,0
+"Tunisia",61,"ornamentals",2003,0
+"Tunisia",61,"ornamentals",2004,0
+"Tunisia",61,"ornamentals",2005,0
+"Tunisia",61,"ornamentals",2006,0
+"Tunisia",61,"ornamentals",2007,0
 "Tunisia",61,"ornamentals",2008,6
 "Tunisia",61,"ornamentals",2009,50
 "Tunisia",61,"ornamentals",2010,13
 "Tunisia",61,"ornamentals",2011,0
 "Tunisia",61,"seaweeds",1995,3
+"Tunisia",61,"seaweeds",1996,0
+"Tunisia",61,"seaweeds",1997,0
+"Tunisia",61,"seaweeds",1998,0
+"Tunisia",61,"seaweeds",1999,0
 "Tunisia",61,"seaweeds",2000,88
 "Tunisia",61,"seaweeds",2001,13
 "Tunisia",61,"seaweeds",2002,15
@@ -10215,9 +11505,12 @@
 "Tunisia",61,"sponges",2003,2555
 "Tunisia",61,"sponges",2004,2920
 "Tunisia",61,"sponges",2005,2872
+"Tunisia",61,"sponges",2006,0
 "Tunisia",61,"sponges",2007,2679
 "Tunisia",61,"sponges",2008,2722
 "Tunisia",61,"sponges",2009,1008
+"Tunisia",61,"sponges",2010,0
+"Tunisia",61,"sponges",2011,0
 "Turkey",76,"corals",1990,3462
 "Turkey",76,"corals",1991,3010
 "Turkey",76,"corals",1992,4473
@@ -10243,6 +11536,9 @@
 "Turkey",76,"fish_oil",1976,21
 "Turkey",76,"fish_oil",1977,514
 "Turkey",76,"fish_oil",1978,12
+"Turkey",76,"fish_oil",1979,0
+"Turkey",76,"fish_oil",1980,0
+"Turkey",76,"fish_oil",1981,0
 "Turkey",76,"fish_oil",1982,238
 "Turkey",76,"fish_oil",1983,681
 "Turkey",76,"fish_oil",1984,1712
@@ -10320,6 +11616,7 @@
 "Turkey",76,"shells",1994,0
 "Turkey",76,"shells",1995,0
 "Turkey",76,"shells",1996,0
+"Turkey",76,"shells",1997,0
 "Turkey",76,"shells",1998,0
 "Turkey",76,"shells",1999,0
 "Turkey",76,"shells",2000,0
@@ -10340,11 +11637,14 @@
 "Turkey",76,"sponges",1979,827
 "Turkey",76,"sponges",1980,836
 "Turkey",76,"sponges",1981,1019
+"Turkey",76,"sponges",1982,0
+"Turkey",76,"sponges",1983,0
 "Turkey",76,"sponges",1984,464
 "Turkey",76,"sponges",1985,437
 "Turkey",76,"sponges",1986,487
 "Turkey",76,"sponges",1987,599
 "Turkey",76,"sponges",1988,344
+"Turkey",76,"sponges",1989,0
 "Turkey",76,"sponges",1990,318
 "Turkey",76,"sponges",1991,210
 "Turkey",76,"sponges",1992,155
@@ -10419,6 +11719,8 @@
 "Ukraine",75,"corals",2010,0
 "Ukraine",75,"corals",2011,0
 "Ukraine",75,"fish_oil",2002,6
+"Ukraine",75,"fish_oil",2003,0
+"Ukraine",75,"fish_oil",2004,0
 "Ukraine",75,"fish_oil",2005,3
 "Ukraine",75,"fish_oil",2006,2
 "Ukraine",75,"fish_oil",2007,0
@@ -10427,6 +11729,7 @@
 "Ukraine",75,"fish_oil",2010,0
 "Ukraine",75,"fish_oil",2011,3
 "Ukraine",75,"ornamentals",2009,1
+"Ukraine",75,"ornamentals",2010,0
 "Ukraine",75,"ornamentals",2011,0
 "Ukraine",75,"seaweeds",2002,37
 "Ukraine",75,"seaweeds",2003,23
@@ -10480,17 +11783,29 @@
 "United Arab Emirates",54,"ornamentals",1996,64
 "United Arab Emirates",54,"ornamentals",1997,4
 "United Arab Emirates",54,"ornamentals",1998,15
+"United Arab Emirates",54,"ornamentals",1999,0
+"United Arab Emirates",54,"ornamentals",2000,0
+"United Arab Emirates",54,"ornamentals",2001,0
+"United Arab Emirates",54,"ornamentals",2002,0
+"United Arab Emirates",54,"ornamentals",2003,0
 "United Arab Emirates",54,"ornamentals",2004,12
+"United Arab Emirates",54,"ornamentals",2005,0
 "United Arab Emirates",54,"ornamentals",2006,17
+"United Arab Emirates",54,"ornamentals",2007,0
+"United Arab Emirates",54,"ornamentals",2008,0
 "United Arab Emirates",54,"ornamentals",2009,10
 "United Arab Emirates",54,"ornamentals",2010,8
 "United Arab Emirates",54,"ornamentals",2011,34
 "United Arab Emirates",54,"seaweeds",2004,65
+"United Arab Emirates",54,"seaweeds",2005,0
 "United Arab Emirates",54,"seaweeds",2006,95
+"United Arab Emirates",54,"seaweeds",2007,0
+"United Arab Emirates",54,"seaweeds",2008,0
 "United Arab Emirates",54,"seaweeds",2009,171
 "United Arab Emirates",54,"seaweeds",2010,234
 "United Arab Emirates",54,"seaweeds",2011,147
 "United Arab Emirates",54,"shells",2002,4
+"United Arab Emirates",54,"shells",2003,0
 "United Arab Emirates",54,"shells",2004,2
 "United Arab Emirates",54,"shells",2005,0
 "United Arab Emirates",54,"shells",2006,18
@@ -10851,6 +12166,21 @@
 "Uruguay",173,"fish_oil",2010,4
 "Uruguay",173,"fish_oil",2011,0
 "Uruguay",173,"ornamentals",1989,1
+"Uruguay",173,"ornamentals",1990,0
+"Uruguay",173,"ornamentals",1991,0
+"Uruguay",173,"ornamentals",1992,0
+"Uruguay",173,"ornamentals",1993,0
+"Uruguay",173,"ornamentals",1994,0
+"Uruguay",173,"ornamentals",1995,0
+"Uruguay",173,"ornamentals",1996,0
+"Uruguay",173,"ornamentals",1997,0
+"Uruguay",173,"ornamentals",1998,0
+"Uruguay",173,"ornamentals",1999,0
+"Uruguay",173,"ornamentals",2000,0
+"Uruguay",173,"ornamentals",2001,0
+"Uruguay",173,"ornamentals",2002,0
+"Uruguay",173,"ornamentals",2003,0
+"Uruguay",173,"ornamentals",2004,0
 "Uruguay",173,"ornamentals",2005,10
 "Uruguay",173,"ornamentals",2006,0
 "Uruguay",173,"ornamentals",2007,0
@@ -10863,6 +12193,7 @@
 "Uruguay",173,"seaweeds",1997,0
 "Uruguay",173,"seaweeds",1998,0
 "Uruguay",173,"seaweeds",1999,0
+"Uruguay",173,"seaweeds",2000,0
 "Uruguay",173,"seaweeds",2001,0
 "Uruguay",173,"seaweeds",2002,0
 "Uruguay",173,"seaweeds",2003,0
@@ -10876,6 +12207,7 @@
 "Uruguay",173,"seaweeds",2011,0
 "Vanuatu",6,"corals",1998,34
 "Vanuatu",6,"corals",1999,54
+"Vanuatu",6,"corals",2000,0
 "Vanuatu",6,"corals",2001,99
 "Vanuatu",6,"corals",2002,57
 "Vanuatu",6,"corals",2003,219
@@ -10897,6 +12229,9 @@
 "Vanuatu",6,"ornamentals",2010,0
 "Vanuatu",6,"ornamentals",2011,0
 "Vanuatu",6,"shells",2001,15
+"Vanuatu",6,"shells",2002,0
+"Vanuatu",6,"shells",2003,0
+"Vanuatu",6,"shells",2004,0
 "Vanuatu",6,"shells",2005,13
 "Vanuatu",6,"shells",2006,55
 "Vanuatu",6,"shells",2007,7
@@ -10918,10 +12253,25 @@
 "Venezuela",139,"corals",2005,0
 "Venezuela",139,"corals",2006,0
 "Venezuela",139,"corals",2007,0
+"Venezuela",139,"corals",2008,0
 "Venezuela",139,"corals",2009,0
 "Venezuela",139,"corals",2010,0
 "Venezuela",139,"corals",2011,0
 "Venezuela",139,"fish_oil",1976,2
+"Venezuela",139,"fish_oil",1977,0
+"Venezuela",139,"fish_oil",1978,0
+"Venezuela",139,"fish_oil",1979,0
+"Venezuela",139,"fish_oil",1980,0
+"Venezuela",139,"fish_oil",1981,0
+"Venezuela",139,"fish_oil",1982,0
+"Venezuela",139,"fish_oil",1983,0
+"Venezuela",139,"fish_oil",1984,0
+"Venezuela",139,"fish_oil",1985,0
+"Venezuela",139,"fish_oil",1986,0
+"Venezuela",139,"fish_oil",1987,0
+"Venezuela",139,"fish_oil",1988,0
+"Venezuela",139,"fish_oil",1989,0
+"Venezuela",139,"fish_oil",1990,0
 "Venezuela",139,"fish_oil",1991,4
 "Venezuela",139,"fish_oil",1992,25
 "Venezuela",139,"fish_oil",1993,0
@@ -10945,10 +12295,12 @@
 "Venezuela",139,"fish_oil",2011,0
 "Venezuela",139,"ornamentals",1977,0
 "Venezuela",139,"ornamentals",1978,0
+"Venezuela",139,"ornamentals",1979,0
 "Venezuela",139,"ornamentals",1980,0
 "Venezuela",139,"ornamentals",1981,0
 "Venezuela",139,"ornamentals",1982,0
 "Venezuela",139,"ornamentals",1983,0
+"Venezuela",139,"ornamentals",1984,0
 "Venezuela",139,"ornamentals",1985,14
 "Venezuela",139,"ornamentals",1986,142
 "Venezuela",139,"ornamentals",1987,35
@@ -10971,6 +12323,7 @@
 "Venezuela",139,"ornamentals",2004,122
 "Venezuela",139,"ornamentals",2005,164
 "Venezuela",139,"ornamentals",2006,6
+"Venezuela",139,"ornamentals",2007,0
 "Venezuela",139,"ornamentals",2008,0
 "Venezuela",139,"ornamentals",2009,0
 "Venezuela",139,"ornamentals",2010,0
@@ -10995,6 +12348,7 @@
 "Venezuela",139,"sponges",2002,0
 "Venezuela",139,"sponges",2003,0
 "Venezuela",139,"sponges",2004,1
+"Venezuela",139,"sponges",2005,0
 "Venezuela",139,"sponges",2006,5
 "Venezuela",139,"sponges",2007,3
 "Venezuela",139,"sponges",2008,0
@@ -11028,6 +12382,10 @@
 "Vietnam",207,"fish_oil",2011,68820
 "Vietnam",207,"ornamentals",1995,29
 "Vietnam",207,"ornamentals",1996,62
+"Vietnam",207,"ornamentals",1997,0
+"Vietnam",207,"ornamentals",1998,0
+"Vietnam",207,"ornamentals",1999,0
+"Vietnam",207,"ornamentals",2000,0
 "Vietnam",207,"ornamentals",2001,452
 "Vietnam",207,"ornamentals",2002,1738
 "Vietnam",207,"ornamentals",2003,42287
@@ -11069,7 +12427,29 @@
 "Yemen",47,"fish_oil",1981,148
 "Yemen",47,"fish_oil",1982,55
 "Yemen",47,"fish_oil",1983,3
+"Yemen",47,"fish_oil",1984,0
+"Yemen",47,"fish_oil",1985,0
+"Yemen",47,"fish_oil",1986,0
+"Yemen",47,"fish_oil",1987,0
+"Yemen",47,"fish_oil",1988,0
+"Yemen",47,"fish_oil",1989,0
+"Yemen",47,"fish_oil",1990,0
+"Yemen",47,"fish_oil",1991,0
+"Yemen",47,"fish_oil",1992,0
+"Yemen",47,"fish_oil",1993,0
+"Yemen",47,"fish_oil",1994,0
+"Yemen",47,"fish_oil",1995,0
+"Yemen",47,"fish_oil",1996,0
+"Yemen",47,"fish_oil",1997,0
+"Yemen",47,"fish_oil",1998,0
+"Yemen",47,"fish_oil",1999,0
+"Yemen",47,"fish_oil",2000,0
+"Yemen",47,"fish_oil",2001,0
+"Yemen",47,"fish_oil",2002,0
+"Yemen",47,"fish_oil",2003,0
+"Yemen",47,"fish_oil",2004,0
 "Yemen",47,"fish_oil",2005,5
+"Yemen",47,"fish_oil",2006,0
 "Yemen",47,"fish_oil",2007,1
 "Yemen",47,"fish_oil",2008,23
 "Yemen",47,"fish_oil",2009,9
@@ -11097,4 +12477,5 @@
 "Yemen",47,"shells",2007,19
 "Yemen",47,"shells",2008,10
 "Yemen",47,"shells",2009,0
+"Yemen",47,"shells",2010,0
 "Yemen",47,"shells",2011,4
