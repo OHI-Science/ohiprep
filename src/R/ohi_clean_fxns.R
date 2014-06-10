@@ -97,7 +97,7 @@ sum_na = function(x){
   return(sum(x, na.rm=T))    
 }
 
-name_to_rgn_id = function(d, fld_name='country', flds_unique=fld_name, fld_value='value', collapse_fxn = sum_na,
+name_to_rgn = function(d, fld_name='country', flds_unique=fld_name, fld_value='value', collapse_fxn = sum_na,
                      dir_lookup = 'src/LookupTables',
                      rgn_master.csv   = file.path(dir_lookup, 'eez_rgn_2013master.csv'),
                      rgn_synonyms.csv = file.path(dir_lookup, 'rgn_eez_v2013a_synonyms.csv'),
@@ -107,8 +107,13 @@ name_to_rgn_id = function(d, fld_name='country', flds_unique=fld_name, fld_value
   #
   # debug: fld_name='country'; flds_unique=c('country','commodity','year'); fld_value='value'; collapse_fxn=function(x) sum(x, na.rm=T); dpath = 'src/LookupTables'; rgn_master.csv   = file.path(dpath, 'eez_rgn_2013master.csv'); rgn_synonyms.csv = file.path(dpath, 'rgn_eez_v2013a_synonyms.csv')
   
-  # load libraries
-  library(dplyr)
+  #   # ensure dplyr's summarize overrides plyr's summarize by loading in succession
+  #   if ('package:reshape2'  %in% search()) detach('package:reshape2')
+  #   if ('package:plyr'      %in% search()) detach('package:plyr')
+  #   if ('package:dplyr'     %in% search()) detach('package:dplyr')
+  #   library(reshape2)
+  #   library(plyr)
+  #   library(dplyr)
   
   # check for valid arguments
   stopifnot(fld_name %in% names(d))
@@ -117,14 +122,16 @@ name_to_rgn_id = function(d, fld_name='country', flds_unique=fld_name, fld_value
   stopifnot( sum( duplicated(d[,flds_unique]) ) == 0 )
   
   # get authoritative rgn_id and rgn_name
-  rgns = read.csv(rgn_master.csv, na='', stringsAsFactors=F) %.%
+  rgns = read.csv(rgn_master.csv, na='', stringsAsFactors=F) %.% 
     select(rgn_id=rgn_id_2013, rgn_name=rgn_nam_2013, rgn_type=rgn_typ) %.% 
     arrange(rgn_type, rgn_id, rgn_name) %.% 
     group_by(rgn_id) %.% 
     summarize(
-      rgn_name = rgn_name,
-      rgn_type = rgn_type) %.%
+      rgn_name = first(rgn_name),
+      rgn_type = first(rgn_type)) %.%
     ungroup()
+  cat('\nrgns...\n')
+  print(rgns)
   
   # combine to have a unique tmp_name to rgn_id lookup
   r = rbind_list(
@@ -134,8 +141,8 @@ name_to_rgn_id = function(d, fld_name='country', flds_unique=fld_name, fld_value
       select(rgn_id=rgn_id_2013, tmp_name=rgn_nam_2013, tmp_type=rgn_typ)) %.%
     group_by(tmp_name) %.%
     summarize(
-      rgn_id   = rgn_id,
-      tmp_type = tmp_type)
+      tmp_name = first(tmp_name),
+      tmp_type = first(tmp_type))
   
   # remove accents from data
   d['tmp_name'] = d[fld_name]
@@ -160,7 +167,7 @@ name_to_rgn_id = function(d, fld_name='country', flds_unique=fld_name, fld_value
   # if any rgn_type is NA, then presume not matched in lookups and error out
   if (sum(is.na(m_r$tmp_type)) > 0){
     cat('\nThese data were removed for not having any match in the lookup tables:\n')  
-    print(table(subset(m_r, is.na(tmp_type), fld_name)))
+    print(table(subset(m_r, is.na(tmp_type), tmp_name)))
     stop('FIX region lookups.')
   }
   
