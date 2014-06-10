@@ -16,8 +16,9 @@
 
 # load libraries
 library(reshape2)
-library(gdata)
+library(plyr)
 library(dplyr)
+library(gdata)
 # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 library(ohicore)  # for github/ohicore/R/gapfill_georegions.R
 
@@ -70,7 +71,7 @@ for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), fu
   d.all = rbind(d.all, d.m)
 }
 
-# remove Channel Islands and Isle of Man:
+# remove Channel Islands and Isle of Man
 d.all <- d.all[d.all[,1] != "Channel Islands",] # remove Channel Islands
 d.all <- d.all[d.all[,1] != "Isle of Man",] # remove Isle of Man
 
@@ -84,12 +85,12 @@ print('these are all the variables that are included in the cleaned file: ')
 print(data.frame(unique(d.all3$layer)))
 
 ## run add_rgn_id and save ----
-uifilesave = file.path(dir_d, 'raw', 'WorldBank-Statistics_v2012-cleaned.csv')
-name_to_rgn_id(d.all3, uifilesave)
+# uifilesave = file.path(dir_d, 'raw', 'WorldBank-Statistics_v2012-cleaned.csv')
+# name_to_rgn(d.all3, uifilesave)
 
 
 # rgn_id: country to rgn_id  # source('src/R/ohi_clean_fxns.R')
-m_r = name_to_rgn_id(d.all3, fld_name='country', flds_unique=c('country','year','layer', 'units'), fld_value='value', add_rgn_name=T) %.%
+m_r = name_to_rgn(d.all3, fld_name='country', flds_unique=c('country','year','layer', 'units'), fld_value='value', add_rgn_name=T) %.%
   select(rgn_name, rgn_id, layer, units, year, value) %.%
   arrange(rgn_name, layer, units, year)
 
