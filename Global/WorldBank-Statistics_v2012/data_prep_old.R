@@ -1,6 +1,6 @@
 # data_prep.R. 
 # Reformat and add rgn_ids for World Bank statistics data
-# Previously had been named clean_BWstats.r (by JStewart May2013). This script was created by JStewartLowndes Mar2014 with improved functions by BBest in Jun2014
+# Previously had been named clean_BWstats.r (by JStewart May2013). This script created by JStewartLowndes Mar2014.
 #   Data: 
 #         GDP = Gross Domestic Product (current $USD)
 #         LAB = Labor force, total (# people)
@@ -9,8 +9,9 @@
 #         PPPpcGDP = GDP adjusted per capita by PPP     
 #         POP = Total population count
 
-#   add OHI region_ids with name_to_rgn_id.r  ** differs from data_prep.old
-#   georegional gapfilling with gapfill_georegions.R ** differs from data_prep.old
+#   call add_rgn_id.r to add OHI region_ids
+#   georegional gapfilling with add_gapfill.r
+#   translation from rgn_id to cntry_id and country_id: scroll way down, there is a lot...
 
 # setup ----
 
@@ -19,7 +20,8 @@ library(reshape2)
 library(gdata)
 library(dplyr)
 # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
-library(ohicore)  # for github/ohicore/R/gapfill_georegions.R
+library(ohicore)  
+
 
 # from get paths configuration based on host machine name
 source('src/R/common.R') # set dir_neptune_data
@@ -28,7 +30,6 @@ dir_d = 'Global/WorldBank-Statistics_v2012'
 
 # get functions
 source('src/R/ohi_clean_fxns.R')
-
 
 # read in and process files ----
 d.all =  matrix(nrow=0, ncol=0)
@@ -74,10 +75,9 @@ for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), fu
 d.all <- d.all[d.all[,1] != "Channel Islands",] # remove Channel Islands
 d.all <- d.all[d.all[,1] != "Isle of Man",] # remove Isle of Man
 
-# # prep as add_rgn_id expects
-# d.all2 = d.all[c('country','value','year','layer','units')]
-# d.all3 = d.all2[order(d.all2$layer, d.all2$country,  d.all2$year),]
-d.all3 = d.all
+# prep as add_rgn_id expects
+d.all2 = d.all[c('country','value','year','layer','units')]
+d.all3 = d.all2[order(d.all2$layer, d.all2$country,  d.all2$year),]
 
 # Print out all the unique indicators
 print('these are all the variables that are included in the cleaned file: ')
@@ -85,13 +85,7 @@ print(data.frame(unique(d.all3$layer)))
 
 ## run add_rgn_id and save ----
 uifilesave = file.path(dir_d, 'raw', 'WorldBank-Statistics_v2012-cleaned.csv')
-name_to_rgn_id(d.all3, uifilesave)
-
-
-# rgn_id: country to rgn_id  # source('src/R/ohi_clean_fxns.R')
-m_r = name_to_rgn_id(d.all3, fld_name='country', flds_unique=c('country','year','layer', 'units'), fld_value='value', add_rgn_name=T) %.%
-  select(rgn_name, rgn_id, layer, units, year, value) %.%
-  arrange(rgn_name, layer, units, year)
+add_rgn_id(d.all3, uifilesave)
 
 
 ## check for duplicate regions, sum them ----
