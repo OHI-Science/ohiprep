@@ -19,4 +19,6 @@ if (!file.exists(sprintf('%s/',dir_neptune_data))){
 }
 
 # load commonly used libraries'
+library(reshape2)
+library(plyr)
 library(dplyr)

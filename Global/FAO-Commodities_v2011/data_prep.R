@@ -13,8 +13,7 @@
 
 # setup ----
 
-# debug> 
-options(warn=2); options(error=recover) # options(warn=0); options(error=NULL)
+# debug> options(warn=2); options(error=recover) # options(warn=0); options(error=NULL)
 
 # load libraries (dplyr last)
 library(reshape2)
@@ -65,21 +64,23 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
       value = as.numeric(as.character(value)),
       year  = as.integer(as.character(year))) %.%       # search in R_inferno.pdf for "shame on you"
     select(country, commodity, year, value) %.%
-    arrange(country, commodity, year) %.%
+    arrange(country, commodity, is.na(value), year) %.%
     group_by(country, commodity) %.%
     mutate(
       # gapfill: Carry previous year's value forward if value for max(year) is NA.
-      #   This gives wiggle room for regions still in production but not able to report by the FAO deadline.      
-      year_max   = max(year),
-      year_prev  = lag(year, order_by=year),
+      #   This gives wiggle room for regions still in production but not able to report by the FAO deadline.            
+      year_max   = max(year),    # note: currenly year_max is always max year of whole dataset b/c input is wide format
+      year_prev  = lag(year,  order_by=year),
       value_prev = lag(value, order_by=year),
       value_ext  =        is.na(value) & year==year_max & year_prev==year-1,
-      value      = ifelse(is.na(value) & year==year_max & year_prev==year-1, value_prev, value)) %.%
+      value      = ifelse(is.na(value) & year==year_max & year_prev==year-1, value_prev, value),
+      # extend all other NAs as zeros after year_beg
+      year_beg   = first(year),  # since ordered by is.na(value) before year, should pickup first non-NA year      
+      value      = ifelse(is.na(value) & year>year_beg, 0, value)) %.%
+    # drop NAs before year_beg
     filter(!is.na(value)) %.%
-    # get year_min to later forward fill NAs as 0s
-    mutate(      
-      year_min   = min(year)) %.%  
-    ungroup()
+    ungroup() %.%
+    arrange(country, commodity, year)
     
   # show extended values
   cat('\nExtended values:\n')
@@ -118,7 +119,7 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   stopifnot( sum(c('Bonaire','Saba','Sint Maarten','Sint Eustatius') %in% m$country) == 0 )
   m_ant = m %.%
     filter(country == 'Netherlands Antilles') %.%
-    select(country, commodity, year, year_min, value) %.%
+    select(country, commodity, year, year_beg, value) %.%
     mutate(
       value            = value/4,
       'Bonaire'        = value,
@@ -126,7 +127,7 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
       'Sint Maarten'   = value,
       'Sint Eustatius' = value) %.%
     select(-value, -country) %.%
-    melt(id=c('commodity','year','year_min'), variable.name='country')
+    melt(id=c('commodity','year','year_beg'), variable.name='country')
   suppressWarnings({ # warning: Unequal factor levels: coercing to character
     m_a = m %.%
       filter(country != 'Netherlands Antilles') %.%
@@ -135,12 +136,12 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   
   # cast wide to expand years
   m_w = m_a %.%
-    select(country, commodity, year, year_min, value) %.%
-    dcast(country + commodity + year_min ~ year)
+    select(country, commodity, year, year_beg, value) %.%
+    dcast(country + commodity + year_beg ~ year)
 
   # melt long and apply 0's where NA since first available year
   m_l = m_w %.%
-    melt(id=c('country','commodity','year_min'), variable='year') %.%
+    melt(id=c('country','commodity','year_beg'), variable='year') %.%
     mutate(year = as.integer(as.character(year))) %.%
     arrange(country, commodity, year) %.%
     filter(!is.na(value))
