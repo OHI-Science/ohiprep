@@ -1,0 +1,1486 @@
+"rgn_id","rgn_nam","r2","r1","whence_choice","year","popsum","rgn_id_whence","rgn_nam_whence","popsum_whence"
+4,"Macquarie Island",53,9,"r2",2005,4080961.5204,1,"Cocos Islands",809.162
+4,"Macquarie Island",53,9,"r2",2005,4080961.5204,2,"Christmas Island",1510.72
+4,"Macquarie Island",53,9,"r2",2005,4080961.5204,3,"Norfolk Island",1557.72
+4,"Macquarie Island",53,9,"r2",2005,4080961.5204,16,"Australia",16468600
+4,"Macquarie Island",53,9,"r2",2005,4080961.5204,162,"New Zealand",3932330
+4,"Macquarie Island",53,9,"r2",2006,4116512.1776,1,"Cocos Islands",778.978
+4,"Macquarie Island",53,9,"r2",2006,4116512.1776,2,"Christmas Island",1454.2
+4,"Macquarie Island",53,9,"r2",2006,4116512.1776,3,"Norfolk Island",1567.71
+4,"Macquarie Island",53,9,"r2",2006,4116512.1776,16,"Australia",16618100
+4,"Macquarie Island",53,9,"r2",2006,4116512.1776,162,"New Zealand",3960660
+4,"Macquarie Island",53,9,"r2",2007,4152062.8326,1,"Cocos Islands",748.793
+4,"Macquarie Island",53,9,"r2",2007,4152062.8326,2,"Christmas Island",1397.67
+4,"Macquarie Island",53,9,"r2",2007,4152062.8326,3,"Norfolk Island",1577.7
+4,"Macquarie Island",53,9,"r2",2007,4152062.8326,16,"Australia",16767600
+4,"Macquarie Island",53,9,"r2",2007,4152062.8326,162,"New Zealand",3988990
+4,"Macquarie Island",53,9,"r2",2008,4187611.4918,1,"Cocos Islands",718.609
+4,"Macquarie Island",53,9,"r2",2008,4187611.4918,2,"Christmas Island",1341.15
+4,"Macquarie Island",53,9,"r2",2008,4187611.4918,3,"Norfolk Island",1587.7
+4,"Macquarie Island",53,9,"r2",2008,4187611.4918,16,"Australia",16917100
+4,"Macquarie Island",53,9,"r2",2008,4187611.4918,162,"New Zealand",4017310
+4,"Macquarie Island",53,9,"r2",2009,4223162.1488,1,"Cocos Islands",688.424
+4,"Macquarie Island",53,9,"r2",2009,4223162.1488,2,"Christmas Island",1284.63
+4,"Macquarie Island",53,9,"r2",2009,4223162.1488,3,"Norfolk Island",1597.69
+4,"Macquarie Island",53,9,"r2",2009,4223162.1488,16,"Australia",17066600
+4,"Macquarie Island",53,9,"r2",2009,4223162.1488,162,"New Zealand",4045640
+4,"Macquarie Island",53,9,"r2",2010,4258712.806,1,"Cocos Islands",658.24
+4,"Macquarie Island",53,9,"r2",2010,4258712.806,2,"Christmas Island",1228.11
+4,"Macquarie Island",53,9,"r2",2010,4258712.806,3,"Norfolk Island",1607.68
+4,"Macquarie Island",53,9,"r2",2010,4258712.806,16,"Australia",17216100
+4,"Macquarie Island",53,9,"r2",2010,4258712.806,162,"New Zealand",4073970
+4,"Macquarie Island",53,9,"r2",2011,4292158.4494,1,"Cocos Islands",633.147
+4,"Macquarie Island",53,9,"r2",2011,4292158.4494,2,"Christmas Island",1181.13
+4,"Macquarie Island",53,9,"r2",2011,4292158.4494,3,"Norfolk Island",1617.97
+4,"Macquarie Island",53,9,"r2",2011,4292158.4494,16,"Australia",17359500
+4,"Macquarie Island",53,9,"r2",2011,4292158.4494,162,"New Zealand",4097860
+4,"Macquarie Island",53,9,"r2",2012,4325582.0906,1,"Cocos Islands",608.053
+4,"Macquarie Island",53,9,"r2",2012,4325582.0906,2,"Christmas Island",1134.14
+4,"Macquarie Island",53,9,"r2",2012,4325582.0906,3,"Norfolk Island",1628.26
+4,"Macquarie Island",53,9,"r2",2012,4325582.0906,16,"Australia",17502800
+4,"Macquarie Island",53,9,"r2",2012,4325582.0906,162,"New Zealand",4121740
+4,"Macquarie Island",53,9,"r2",2013,4359027.734,1,"Cocos Islands",582.96
+4,"Macquarie Island",53,9,"r2",2013,4359027.734,2,"Christmas Island",1087.16
+4,"Macquarie Island",53,9,"r2",2013,4359027.734,3,"Norfolk Island",1638.55
+4,"Macquarie Island",53,9,"r2",2013,4359027.734,16,"Australia",17646200
+4,"Macquarie Island",53,9,"r2",2013,4359027.734,162,"New Zealand",4145630
+4,"Macquarie Island",53,9,"r2",2014,4392471.3754,1,"Cocos Islands",557.867
+4,"Macquarie Island",53,9,"r2",2014,4392471.3754,2,"Christmas Island",1040.17
+4,"Macquarie Island",53,9,"r2",2014,4392471.3754,3,"Norfolk Island",1648.84
+4,"Macquarie Island",53,9,"r2",2014,4392471.3754,16,"Australia",17789600
+4,"Macquarie Island",53,9,"r2",2014,4392471.3754,162,"New Zealand",4169510
+4,"Macquarie Island",53,9,"r2",2015,4425917.0186,1,"Cocos Islands",532.774
+4,"Macquarie Island",53,9,"r2",2015,4425917.0186,2,"Christmas Island",993.189
+4,"Macquarie Island",53,9,"r2",2015,4425917.0186,3,"Norfolk Island",1659.13
+4,"Macquarie Island",53,9,"r2",2015,4425917.0186,16,"Australia",17933000
+4,"Macquarie Island",53,9,"r2",2015,4425917.0186,162,"New Zealand",4193400
+12,"Wake Island",57,9,"r2",2005,82105.6296,8,"Palau",36690.1
+12,"Wake Island",57,9,"r2",2005,82105.6296,9,"Micronesia (Federated States of)",167370
+12,"Wake Island",57,9,"r2",2005,82105.6296,10,"Nauru",10459
+12,"Wake Island",57,9,"r2",2005,82105.6296,11,"Marshall Islands",140435
+12,"Wake Island",57,9,"r2",2005,82105.6296,13,"Northern Mariana Islands and Guam",340088
+12,"Wake Island",57,9,"r2",2005,82105.6296,148,"Line Group",5703.09
+12,"Wake Island",57,9,"r2",2005,82105.6296,149,"Jarvis Island",0
+12,"Wake Island",57,9,"r2",2005,82105.6296,157,"Phoenix Group",180.106
+12,"Wake Island",57,9,"r2",2005,82105.6296,158,"Howland Island and Baker Island",0
+12,"Wake Island",57,9,"r2",2005,82105.6296,212,"Kiribati",120131
+12,"Wake Island",57,9,"r2",2006,83896.3694,8,"Palau",37409.4
+12,"Wake Island",57,9,"r2",2006,83896.3694,9,"Micronesia (Federated States of)",171289
+12,"Wake Island",57,9,"r2",2006,83896.3694,10,"Nauru",10696.7
+12,"Wake Island",57,9,"r2",2006,83896.3694,11,"Marshall Islands",142232
+12,"Wake Island",57,9,"r2",2006,83896.3694,13,"Northern Mariana Islands and Guam",349716
+12,"Wake Island",57,9,"r2",2006,83896.3694,148,"Line Group",5821.65
+12,"Wake Island",57,9,"r2",2006,83896.3694,149,"Jarvis Island",0
+12,"Wake Island",57,9,"r2",2006,83896.3694,157,"Phoenix Group",184.944
+12,"Wake Island",57,9,"r2",2006,83896.3694,158,"Howland Island and Baker Island",0
+12,"Wake Island",57,9,"r2",2006,83896.3694,212,"Kiribati",121614
+12,"Wake Island",57,9,"r2",2007,85687.1993,8,"Palau",38128.7
+12,"Wake Island",57,9,"r2",2007,85687.1993,9,"Micronesia (Federated States of)",175209
+12,"Wake Island",57,9,"r2",2007,85687.1993,10,"Nauru",10934.3
+12,"Wake Island",57,9,"r2",2007,85687.1993,11,"Marshall Islands",144028
+12,"Wake Island",57,9,"r2",2007,85687.1993,13,"Northern Mariana Islands and Guam",359345
+12,"Wake Island",57,9,"r2",2007,85687.1993,148,"Line Group",5940.21
+12,"Wake Island",57,9,"r2",2007,85687.1993,149,"Jarvis Island",0
+12,"Wake Island",57,9,"r2",2007,85687.1993,157,"Phoenix Group",189.783
+12,"Wake Island",57,9,"r2",2007,85687.1993,158,"Howland Island and Baker Island",0
+12,"Wake Island",57,9,"r2",2007,85687.1993,212,"Kiribati",123097
+12,"Wake Island",57,9,"r2",2008,87477.9292,8,"Palau",38847.9
+12,"Wake Island",57,9,"r2",2008,87477.9292,9,"Micronesia (Federated States of)",179129
+12,"Wake Island",57,9,"r2",2008,87477.9292,10,"Nauru",11172
+12,"Wake Island",57,9,"r2",2008,87477.9292,11,"Marshall Islands",145825
+12,"Wake Island",57,9,"r2",2008,87477.9292,13,"Northern Mariana Islands and Guam",368973
+12,"Wake Island",57,9,"r2",2008,87477.9292,148,"Line Group",6058.77
+12,"Wake Island",57,9,"r2",2008,87477.9292,149,"Jarvis Island",0
+12,"Wake Island",57,9,"r2",2008,87477.9292,157,"Phoenix Group",194.622
+12,"Wake Island",57,9,"r2",2008,87477.9292,158,"Howland Island and Baker Island",0
+12,"Wake Island",57,9,"r2",2008,87477.9292,212,"Kiribati",124579
+12,"Wake Island",57,9,"r2",2009,89268.669,8,"Palau",39567.2
+12,"Wake Island",57,9,"r2",2009,89268.669,9,"Micronesia (Federated States of)",183049
+12,"Wake Island",57,9,"r2",2009,89268.669,10,"Nauru",11409.7
+12,"Wake Island",57,9,"r2",2009,89268.669,11,"Marshall Islands",147621
+12,"Wake Island",57,9,"r2",2009,89268.669,13,"Northern Mariana Islands and Guam",378601
+12,"Wake Island",57,9,"r2",2009,89268.669,148,"Line Group",6177.33
+12,"Wake Island",57,9,"r2",2009,89268.669,149,"Jarvis Island",0
+12,"Wake Island",57,9,"r2",2009,89268.669,157,"Phoenix Group",199.46
+12,"Wake Island",57,9,"r2",2009,89268.669,158,"Howland Island and Baker Island",0
+12,"Wake Island",57,9,"r2",2009,89268.669,212,"Kiribati",126062
+12,"Wake Island",57,9,"r2",2010,91059.4989,8,"Palau",40286.5
+12,"Wake Island",57,9,"r2",2010,91059.4989,9,"Micronesia (Federated States of)",186969
+12,"Wake Island",57,9,"r2",2010,91059.4989,10,"Nauru",11647.3
+12,"Wake Island",57,9,"r2",2010,91059.4989,11,"Marshall Islands",149418
+12,"Wake Island",57,9,"r2",2010,91059.4989,13,"Northern Mariana Islands and Guam",388230
+12,"Wake Island",57,9,"r2",2010,91059.4989,148,"Line Group",6295.89
+12,"Wake Island",57,9,"r2",2010,91059.4989,149,"Jarvis Island",0
+12,"Wake Island",57,9,"r2",2010,91059.4989,157,"Phoenix Group",204.299
+12,"Wake Island",57,9,"r2",2010,91059.4989,158,"Howland Island and Baker Island",0
+12,"Wake Island",57,9,"r2",2010,91059.4989,212,"Kiribati",127544
+12,"Wake Island",57,9,"r2",2011,92868.49,8,"Palau",41007.6
+12,"Wake Island",57,9,"r2",2011,92868.49,9,"Micronesia (Federated States of)",190950
+12,"Wake Island",57,9,"r2",2011,92868.49,10,"Nauru",11888.7
+12,"Wake Island",57,9,"r2",2011,92868.49,11,"Marshall Islands",151226
+12,"Wake Island",57,9,"r2",2011,92868.49,13,"Northern Mariana Islands and Guam",397959
+12,"Wake Island",57,9,"r2",2011,92868.49,148,"Line Group",6411
+12,"Wake Island",57,9,"r2",2011,92868.49,149,"Jarvis Island",0
+12,"Wake Island",57,9,"r2",2011,92868.49,157,"Phoenix Group",208.6
+12,"Wake Island",57,9,"r2",2011,92868.49,158,"Howland Island and Baker Island",0
+12,"Wake Island",57,9,"r2",2011,92868.49,212,"Kiribati",129034
+12,"Wake Island",57,9,"r2",2012,94677.5601,8,"Palau",41728.6
+12,"Wake Island",57,9,"r2",2012,94677.5601,9,"Micronesia (Federated States of)",194932
+12,"Wake Island",57,9,"r2",2012,94677.5601,10,"Nauru",12130
+12,"Wake Island",57,9,"r2",2012,94677.5601,11,"Marshall Islands",153033
+12,"Wake Island",57,9,"r2",2012,94677.5601,13,"Northern Mariana Islands and Guam",407689
+12,"Wake Island",57,9,"r2",2012,94677.5601,148,"Line Group",6526.1
+12,"Wake Island",57,9,"r2",2012,94677.5601,149,"Jarvis Island",0
+12,"Wake Island",57,9,"r2",2012,94677.5601,157,"Phoenix Group",212.901
+12,"Wake Island",57,9,"r2",2012,94677.5601,158,"Howland Island and Baker Island",0
+12,"Wake Island",57,9,"r2",2012,94677.5601,212,"Kiribati",130524
+12,"Wake Island",57,9,"r2",2013,96486.6412,8,"Palau",42449.7
+12,"Wake Island",57,9,"r2",2013,96486.6412,9,"Micronesia (Federated States of)",198914
+12,"Wake Island",57,9,"r2",2013,96486.6412,10,"Nauru",12371.3
+12,"Wake Island",57,9,"r2",2013,96486.6412,11,"Marshall Islands",154841
+12,"Wake Island",57,9,"r2",2013,96486.6412,13,"Northern Mariana Islands and Guam",417418
+12,"Wake Island",57,9,"r2",2013,96486.6412,148,"Line Group",6641.21
+12,"Wake Island",57,9,"r2",2013,96486.6412,149,"Jarvis Island",0
+12,"Wake Island",57,9,"r2",2013,96486.6412,157,"Phoenix Group",217.202
+12,"Wake Island",57,9,"r2",2013,96486.6412,158,"Howland Island and Baker Island",0
+12,"Wake Island",57,9,"r2",2013,96486.6412,212,"Kiribati",132014
+12,"Wake Island",57,9,"r2",2014,98295.7213,8,"Palau",43170.8
+12,"Wake Island",57,9,"r2",2014,98295.7213,9,"Micronesia (Federated States of)",202895
+12,"Wake Island",57,9,"r2",2014,98295.7213,10,"Nauru",12612.6
+12,"Wake Island",57,9,"r2",2014,98295.7213,11,"Marshall Islands",156649
+12,"Wake Island",57,9,"r2",2014,98295.7213,13,"Northern Mariana Islands and Guam",427148
+12,"Wake Island",57,9,"r2",2014,98295.7213,148,"Line Group",6756.31
+12,"Wake Island",57,9,"r2",2014,98295.7213,149,"Jarvis Island",0
+12,"Wake Island",57,9,"r2",2014,98295.7213,157,"Phoenix Group",221.503
+12,"Wake Island",57,9,"r2",2014,98295.7213,158,"Howland Island and Baker Island",0
+12,"Wake Island",57,9,"r2",2014,98295.7213,212,"Kiribati",133504
+12,"Wake Island",57,9,"r2",2015,100104.9124,8,"Palau",43891.9
+12,"Wake Island",57,9,"r2",2015,100104.9124,9,"Micronesia (Federated States of)",206877
+12,"Wake Island",57,9,"r2",2015,100104.9124,10,"Nauru",12854
+12,"Wake Island",57,9,"r2",2015,100104.9124,11,"Marshall Islands",158457
+12,"Wake Island",57,9,"r2",2015,100104.9124,13,"Northern Mariana Islands and Guam",436877
+12,"Wake Island",57,9,"r2",2015,100104.9124,148,"Line Group",6871.42
+12,"Wake Island",57,9,"r2",2015,100104.9124,149,"Jarvis Island",0
+12,"Wake Island",57,9,"r2",2015,100104.9124,157,"Phoenix Group",225.804
+12,"Wake Island",57,9,"r2",2015,100104.9124,158,"Howland Island and Baker Island",0
+12,"Wake Island",57,9,"r2",2015,100104.9124,212,"Kiribati",134995
+30,"Glorioso Islands",14,2,"r2",2005,2553685.98333333,28,"Comoros",801786
+30,"Glorioso Islands",14,2,"r2",2005,2553685.98333333,29,"Mayotte",196420
+30,"Glorioso Islands",14,2,"r2",2005,2553685.98333333,31,"Seychelles",97332.8
+30,"Glorioso Islands",14,2,"r2",2005,2553685.98333333,32,"Reunion",765824
+30,"Glorioso Islands",14,2,"r2",2005,2553685.98333333,37,"Mauritius",1297880
+30,"Glorioso Islands",14,2,"r2",2005,2553685.98333333,41,"Mozambique",8078950
+30,"Glorioso Islands",14,2,"r2",2005,2553685.98333333,42,"Madagascar",5726490
+30,"Glorioso Islands",14,2,"r2",2005,2553685.98333333,43,"Kenya",2411160
+30,"Glorioso Islands",14,2,"r2",2005,2553685.98333333,44,"Somalia",4219520
+30,"Glorioso Islands",14,2,"r2",2005,2553685.98333333,45,"Eritrea",924400
+30,"Glorioso Islands",14,2,"r2",2005,2553685.98333333,46,"Djibouti",553459
+30,"Glorioso Islands",14,2,"r2",2005,2553685.98333333,202,"United Republic of Tanzania",5571010
+30,"Glorioso Islands",14,2,"r2",2006,2620285.38333333,28,"Comoros",825699
+30,"Glorioso Islands",14,2,"r2",2006,2620285.38333333,29,"Mayotte",207571
+30,"Glorioso Islands",14,2,"r2",2006,2620285.38333333,31,"Seychelles",98603.6
+30,"Glorioso Islands",14,2,"r2",2006,2620285.38333333,32,"Reunion",773505
+30,"Glorioso Islands",14,2,"r2",2006,2620285.38333333,37,"Mauritius",1308010
+30,"Glorioso Islands",14,2,"r2",2006,2620285.38333333,41,"Mozambique",8226110
+30,"Glorioso Islands",14,2,"r2",2006,2620285.38333333,42,"Madagascar",5881750
+30,"Glorioso Islands",14,2,"r2",2006,2620285.38333333,43,"Kenya",2460860
+30,"Glorioso Islands",14,2,"r2",2006,2620285.38333333,44,"Somalia",4433680
+30,"Glorioso Islands",14,2,"r2",2006,2620285.38333333,45,"Eritrea",948053
+30,"Glorioso Islands",14,2,"r2",2006,2620285.38333333,46,"Djibouti",555673
+30,"Glorioso Islands",14,2,"r2",2006,2620285.38333333,202,"United Republic of Tanzania",5723910
+30,"Glorioso Islands",14,2,"r2",2007,2686882.29166667,28,"Comoros",849611
+30,"Glorioso Islands",14,2,"r2",2007,2686882.29166667,29,"Mayotte",218722
+30,"Glorioso Islands",14,2,"r2",2007,2686882.29166667,31,"Seychelles",99874.5
+30,"Glorioso Islands",14,2,"r2",2007,2686882.29166667,32,"Reunion",781186
+30,"Glorioso Islands",14,2,"r2",2007,2686882.29166667,37,"Mauritius",1318140
+30,"Glorioso Islands",14,2,"r2",2007,2686882.29166667,41,"Mozambique",8373260
+30,"Glorioso Islands",14,2,"r2",2007,2686882.29166667,42,"Madagascar",6037000
+30,"Glorioso Islands",14,2,"r2",2007,2686882.29166667,43,"Kenya",2510560
+30,"Glorioso Islands",14,2,"r2",2007,2686882.29166667,44,"Somalia",4647840
+30,"Glorioso Islands",14,2,"r2",2007,2686882.29166667,45,"Eritrea",971707
+30,"Glorioso Islands",14,2,"r2",2007,2686882.29166667,46,"Djibouti",557887
+30,"Glorioso Islands",14,2,"r2",2007,2686882.29166667,202,"United Republic of Tanzania",5876800
+30,"Glorioso Islands",14,2,"r2",2008,2753482.41666667,28,"Comoros",873523
+30,"Glorioso Islands",14,2,"r2",2008,2753482.41666667,29,"Mayotte",229873
+30,"Glorioso Islands",14,2,"r2",2008,2753482.41666667,31,"Seychelles",101145
+30,"Glorioso Islands",14,2,"r2",2008,2753482.41666667,32,"Reunion",788866
+30,"Glorioso Islands",14,2,"r2",2008,2753482.41666667,37,"Mauritius",1328270
+30,"Glorioso Islands",14,2,"r2",2008,2753482.41666667,41,"Mozambique",8520420
+30,"Glorioso Islands",14,2,"r2",2008,2753482.41666667,42,"Madagascar",6192260
+30,"Glorioso Islands",14,2,"r2",2008,2753482.41666667,43,"Kenya",2560270
+30,"Glorioso Islands",14,2,"r2",2008,2753482.41666667,44,"Somalia",4862000
+30,"Glorioso Islands",14,2,"r2",2008,2753482.41666667,45,"Eritrea",995360
+30,"Glorioso Islands",14,2,"r2",2008,2753482.41666667,46,"Djibouti",560102
+30,"Glorioso Islands",14,2,"r2",2008,2753482.41666667,202,"United Republic of Tanzania",6029700
+30,"Glorioso Islands",14,2,"r2",2009,2820079,28,"Comoros",897435
+30,"Glorioso Islands",14,2,"r2",2009,2820079,29,"Mayotte",241024
+30,"Glorioso Islands",14,2,"r2",2009,2820079,31,"Seychelles",102416
+30,"Glorioso Islands",14,2,"r2",2009,2820079,32,"Reunion",796547
+30,"Glorioso Islands",14,2,"r2",2009,2820079,37,"Mauritius",1338390
+30,"Glorioso Islands",14,2,"r2",2009,2820079,41,"Mozambique",8667570
+30,"Glorioso Islands",14,2,"r2",2009,2820079,42,"Madagascar",6347510
+30,"Glorioso Islands",14,2,"r2",2009,2820079,43,"Kenya",2609970
+30,"Glorioso Islands",14,2,"r2",2009,2820079,44,"Somalia",5076160
+30,"Glorioso Islands",14,2,"r2",2009,2820079,45,"Eritrea",1019010
+30,"Glorioso Islands",14,2,"r2",2009,2820079,46,"Djibouti",562316
+30,"Glorioso Islands",14,2,"r2",2009,2820079,202,"United Republic of Tanzania",6182600
+30,"Glorioso Islands",14,2,"r2",2010,2886678.08333333,28,"Comoros",921347
+30,"Glorioso Islands",14,2,"r2",2010,2886678.08333333,29,"Mayotte",252176
+30,"Glorioso Islands",14,2,"r2",2010,2886678.08333333,31,"Seychelles",103687
+30,"Glorioso Islands",14,2,"r2",2010,2886678.08333333,32,"Reunion",804227
+30,"Glorioso Islands",14,2,"r2",2010,2886678.08333333,37,"Mauritius",1348520
+30,"Glorioso Islands",14,2,"r2",2010,2886678.08333333,41,"Mozambique",8814730
+30,"Glorioso Islands",14,2,"r2",2010,2886678.08333333,42,"Madagascar",6502760
+30,"Glorioso Islands",14,2,"r2",2010,2886678.08333333,43,"Kenya",2659670
+30,"Glorioso Islands",14,2,"r2",2010,2886678.08333333,44,"Somalia",5290320
+30,"Glorioso Islands",14,2,"r2",2010,2886678.08333333,45,"Eritrea",1042670
+30,"Glorioso Islands",14,2,"r2",2010,2886678.08333333,46,"Djibouti",564530
+30,"Glorioso Islands",14,2,"r2",2010,2886678.08333333,202,"United Republic of Tanzania",6335500
+30,"Glorioso Islands",14,2,"r2",2011,2959414.33333333,28,"Comoros",946461
+30,"Glorioso Islands",14,2,"r2",2011,2959414.33333333,29,"Mayotte",265488
+30,"Glorioso Islands",14,2,"r2",2011,2959414.33333333,31,"Seychelles",105015
+30,"Glorioso Islands",14,2,"r2",2011,2959414.33333333,32,"Reunion",811236
+30,"Glorioso Islands",14,2,"r2",2011,2959414.33333333,37,"Mauritius",1358110
+30,"Glorioso Islands",14,2,"r2",2011,2959414.33333333,41,"Mozambique",8979910
+30,"Glorioso Islands",14,2,"r2",2011,2959414.33333333,42,"Madagascar",6669090
+30,"Glorioso Islands",14,2,"r2",2011,2959414.33333333,43,"Kenya",2706650
+30,"Glorioso Islands",14,2,"r2",2011,2959414.33333333,44,"Somalia",5520080
+30,"Glorioso Islands",14,2,"r2",2011,2959414.33333333,45,"Eritrea",1068160
+30,"Glorioso Islands",14,2,"r2",2011,2959414.33333333,46,"Djibouti",568532
+30,"Glorioso Islands",14,2,"r2",2011,2959414.33333333,202,"United Republic of Tanzania",6514240
+30,"Glorioso Islands",14,2,"r2",2012,3032149.58333333,28,"Comoros",971574
+30,"Glorioso Islands",14,2,"r2",2012,3032149.58333333,29,"Mayotte",278800
+30,"Glorioso Islands",14,2,"r2",2012,3032149.58333333,31,"Seychelles",106342
+30,"Glorioso Islands",14,2,"r2",2012,3032149.58333333,32,"Reunion",818246
+30,"Glorioso Islands",14,2,"r2",2012,3032149.58333333,37,"Mauritius",1367700
+30,"Glorioso Islands",14,2,"r2",2012,3032149.58333333,41,"Mozambique",9145090
+30,"Glorioso Islands",14,2,"r2",2012,3032149.58333333,42,"Madagascar",6835420
+30,"Glorioso Islands",14,2,"r2",2012,3032149.58333333,43,"Kenya",2753630
+30,"Glorioso Islands",14,2,"r2",2012,3032149.58333333,44,"Somalia",5749840
+30,"Glorioso Islands",14,2,"r2",2012,3032149.58333333,45,"Eritrea",1093640
+30,"Glorioso Islands",14,2,"r2",2012,3032149.58333333,46,"Djibouti",572533
+30,"Glorioso Islands",14,2,"r2",2012,3032149.58333333,202,"United Republic of Tanzania",6692980
+30,"Glorioso Islands",14,2,"r2",2013,3104885,28,"Comoros",996688
+30,"Glorioso Islands",14,2,"r2",2013,3104885,29,"Mayotte",292112
+30,"Glorioso Islands",14,2,"r2",2013,3104885,31,"Seychelles",107670
+30,"Glorioso Islands",14,2,"r2",2013,3104885,32,"Reunion",825255
+30,"Glorioso Islands",14,2,"r2",2013,3104885,37,"Mauritius",1377290
+30,"Glorioso Islands",14,2,"r2",2013,3104885,41,"Mozambique",9310270
+30,"Glorioso Islands",14,2,"r2",2013,3104885,42,"Madagascar",7001750
+30,"Glorioso Islands",14,2,"r2",2013,3104885,43,"Kenya",2800610
+30,"Glorioso Islands",14,2,"r2",2013,3104885,44,"Somalia",5979590
+30,"Glorioso Islands",14,2,"r2",2013,3104885,45,"Eritrea",1119130
+30,"Glorioso Islands",14,2,"r2",2013,3104885,46,"Djibouti",576535
+30,"Glorioso Islands",14,2,"r2",2013,3104885,202,"United Republic of Tanzania",6871720
+30,"Glorioso Islands",14,2,"r2",2014,3177621,28,"Comoros",1021800
+30,"Glorioso Islands",14,2,"r2",2014,3177621,29,"Mayotte",305424
+30,"Glorioso Islands",14,2,"r2",2014,3177621,31,"Seychelles",108998
+30,"Glorioso Islands",14,2,"r2",2014,3177621,32,"Reunion",832264
+30,"Glorioso Islands",14,2,"r2",2014,3177621,37,"Mauritius",1386880
+30,"Glorioso Islands",14,2,"r2",2014,3177621,41,"Mozambique",9475450
+30,"Glorioso Islands",14,2,"r2",2014,3177621,42,"Madagascar",7168080
+30,"Glorioso Islands",14,2,"r2",2014,3177621,43,"Kenya",2847590
+30,"Glorioso Islands",14,2,"r2",2014,3177621,44,"Somalia",6209350
+30,"Glorioso Islands",14,2,"r2",2014,3177621,45,"Eritrea",1144620
+30,"Glorioso Islands",14,2,"r2",2014,3177621,46,"Djibouti",580536
+30,"Glorioso Islands",14,2,"r2",2014,3177621,202,"United Republic of Tanzania",7050460
+30,"Glorioso Islands",14,2,"r2",2015,3250356.75,28,"Comoros",1046920
+30,"Glorioso Islands",14,2,"r2",2015,3250356.75,29,"Mayotte",318735
+30,"Glorioso Islands",14,2,"r2",2015,3250356.75,31,"Seychelles",110325
+30,"Glorioso Islands",14,2,"r2",2015,3250356.75,32,"Reunion",839273
+30,"Glorioso Islands",14,2,"r2",2015,3250356.75,37,"Mauritius",1396460
+30,"Glorioso Islands",14,2,"r2",2015,3250356.75,41,"Mozambique",9640630
+30,"Glorioso Islands",14,2,"r2",2015,3250356.75,42,"Madagascar",7334410
+30,"Glorioso Islands",14,2,"r2",2015,3250356.75,43,"Kenya",2894570
+30,"Glorioso Islands",14,2,"r2",2015,3250356.75,44,"Somalia",6439110
+30,"Glorioso Islands",14,2,"r2",2015,3250356.75,45,"Eritrea",1170110
+30,"Glorioso Islands",14,2,"r2",2015,3250356.75,46,"Djibouti",584538
+30,"Glorioso Islands",14,2,"r2",2015,3250356.75,202,"United Republic of Tanzania",7229200
+33,"Juan de Nova Island",14,2,"r2",2005,2553685.98333333,28,"Comoros",801786
+33,"Juan de Nova Island",14,2,"r2",2005,2553685.98333333,29,"Mayotte",196420
+33,"Juan de Nova Island",14,2,"r2",2005,2553685.98333333,31,"Seychelles",97332.8
+33,"Juan de Nova Island",14,2,"r2",2005,2553685.98333333,32,"Reunion",765824
+33,"Juan de Nova Island",14,2,"r2",2005,2553685.98333333,37,"Mauritius",1297880
+33,"Juan de Nova Island",14,2,"r2",2005,2553685.98333333,41,"Mozambique",8078950
+33,"Juan de Nova Island",14,2,"r2",2005,2553685.98333333,42,"Madagascar",5726490
+33,"Juan de Nova Island",14,2,"r2",2005,2553685.98333333,43,"Kenya",2411160
+33,"Juan de Nova Island",14,2,"r2",2005,2553685.98333333,44,"Somalia",4219520
+33,"Juan de Nova Island",14,2,"r2",2005,2553685.98333333,45,"Eritrea",924400
+33,"Juan de Nova Island",14,2,"r2",2005,2553685.98333333,46,"Djibouti",553459
+33,"Juan de Nova Island",14,2,"r2",2005,2553685.98333333,202,"United Republic of Tanzania",5571010
+33,"Juan de Nova Island",14,2,"r2",2006,2620285.38333333,28,"Comoros",825699
+33,"Juan de Nova Island",14,2,"r2",2006,2620285.38333333,29,"Mayotte",207571
+33,"Juan de Nova Island",14,2,"r2",2006,2620285.38333333,31,"Seychelles",98603.6
+33,"Juan de Nova Island",14,2,"r2",2006,2620285.38333333,32,"Reunion",773505
+33,"Juan de Nova Island",14,2,"r2",2006,2620285.38333333,37,"Mauritius",1308010
+33,"Juan de Nova Island",14,2,"r2",2006,2620285.38333333,41,"Mozambique",8226110
+33,"Juan de Nova Island",14,2,"r2",2006,2620285.38333333,42,"Madagascar",5881750
+33,"Juan de Nova Island",14,2,"r2",2006,2620285.38333333,43,"Kenya",2460860
+33,"Juan de Nova Island",14,2,"r2",2006,2620285.38333333,44,"Somalia",4433680
+33,"Juan de Nova Island",14,2,"r2",2006,2620285.38333333,45,"Eritrea",948053
+33,"Juan de Nova Island",14,2,"r2",2006,2620285.38333333,46,"Djibouti",555673
+33,"Juan de Nova Island",14,2,"r2",2006,2620285.38333333,202,"United Republic of Tanzania",5723910
+33,"Juan de Nova Island",14,2,"r2",2007,2686882.29166667,28,"Comoros",849611
+33,"Juan de Nova Island",14,2,"r2",2007,2686882.29166667,29,"Mayotte",218722
+33,"Juan de Nova Island",14,2,"r2",2007,2686882.29166667,31,"Seychelles",99874.5
+33,"Juan de Nova Island",14,2,"r2",2007,2686882.29166667,32,"Reunion",781186
+33,"Juan de Nova Island",14,2,"r2",2007,2686882.29166667,37,"Mauritius",1318140
+33,"Juan de Nova Island",14,2,"r2",2007,2686882.29166667,41,"Mozambique",8373260
+33,"Juan de Nova Island",14,2,"r2",2007,2686882.29166667,42,"Madagascar",6037000
+33,"Juan de Nova Island",14,2,"r2",2007,2686882.29166667,43,"Kenya",2510560
+33,"Juan de Nova Island",14,2,"r2",2007,2686882.29166667,44,"Somalia",4647840
+33,"Juan de Nova Island",14,2,"r2",2007,2686882.29166667,45,"Eritrea",971707
+33,"Juan de Nova Island",14,2,"r2",2007,2686882.29166667,46,"Djibouti",557887
+33,"Juan de Nova Island",14,2,"r2",2007,2686882.29166667,202,"United Republic of Tanzania",5876800
+33,"Juan de Nova Island",14,2,"r2",2008,2753482.41666667,28,"Comoros",873523
+33,"Juan de Nova Island",14,2,"r2",2008,2753482.41666667,29,"Mayotte",229873
+33,"Juan de Nova Island",14,2,"r2",2008,2753482.41666667,31,"Seychelles",101145
+33,"Juan de Nova Island",14,2,"r2",2008,2753482.41666667,32,"Reunion",788866
+33,"Juan de Nova Island",14,2,"r2",2008,2753482.41666667,37,"Mauritius",1328270
+33,"Juan de Nova Island",14,2,"r2",2008,2753482.41666667,41,"Mozambique",8520420
+33,"Juan de Nova Island",14,2,"r2",2008,2753482.41666667,42,"Madagascar",6192260
+33,"Juan de Nova Island",14,2,"r2",2008,2753482.41666667,43,"Kenya",2560270
+33,"Juan de Nova Island",14,2,"r2",2008,2753482.41666667,44,"Somalia",4862000
+33,"Juan de Nova Island",14,2,"r2",2008,2753482.41666667,45,"Eritrea",995360
+33,"Juan de Nova Island",14,2,"r2",2008,2753482.41666667,46,"Djibouti",560102
+33,"Juan de Nova Island",14,2,"r2",2008,2753482.41666667,202,"United Republic of Tanzania",6029700
+33,"Juan de Nova Island",14,2,"r2",2009,2820079,28,"Comoros",897435
+33,"Juan de Nova Island",14,2,"r2",2009,2820079,29,"Mayotte",241024
+33,"Juan de Nova Island",14,2,"r2",2009,2820079,31,"Seychelles",102416
+33,"Juan de Nova Island",14,2,"r2",2009,2820079,32,"Reunion",796547
+33,"Juan de Nova Island",14,2,"r2",2009,2820079,37,"Mauritius",1338390
+33,"Juan de Nova Island",14,2,"r2",2009,2820079,41,"Mozambique",8667570
+33,"Juan de Nova Island",14,2,"r2",2009,2820079,42,"Madagascar",6347510
+33,"Juan de Nova Island",14,2,"r2",2009,2820079,43,"Kenya",2609970
+33,"Juan de Nova Island",14,2,"r2",2009,2820079,44,"Somalia",5076160
+33,"Juan de Nova Island",14,2,"r2",2009,2820079,45,"Eritrea",1019010
+33,"Juan de Nova Island",14,2,"r2",2009,2820079,46,"Djibouti",562316
+33,"Juan de Nova Island",14,2,"r2",2009,2820079,202,"United Republic of Tanzania",6182600
+33,"Juan de Nova Island",14,2,"r2",2010,2886678.08333333,28,"Comoros",921347
+33,"Juan de Nova Island",14,2,"r2",2010,2886678.08333333,29,"Mayotte",252176
+33,"Juan de Nova Island",14,2,"r2",2010,2886678.08333333,31,"Seychelles",103687
+33,"Juan de Nova Island",14,2,"r2",2010,2886678.08333333,32,"Reunion",804227
+33,"Juan de Nova Island",14,2,"r2",2010,2886678.08333333,37,"Mauritius",1348520
+33,"Juan de Nova Island",14,2,"r2",2010,2886678.08333333,41,"Mozambique",8814730
+33,"Juan de Nova Island",14,2,"r2",2010,2886678.08333333,42,"Madagascar",6502760
+33,"Juan de Nova Island",14,2,"r2",2010,2886678.08333333,43,"Kenya",2659670
+33,"Juan de Nova Island",14,2,"r2",2010,2886678.08333333,44,"Somalia",5290320
+33,"Juan de Nova Island",14,2,"r2",2010,2886678.08333333,45,"Eritrea",1042670
+33,"Juan de Nova Island",14,2,"r2",2010,2886678.08333333,46,"Djibouti",564530
+33,"Juan de Nova Island",14,2,"r2",2010,2886678.08333333,202,"United Republic of Tanzania",6335500
+33,"Juan de Nova Island",14,2,"r2",2011,2959414.33333333,28,"Comoros",946461
+33,"Juan de Nova Island",14,2,"r2",2011,2959414.33333333,29,"Mayotte",265488
+33,"Juan de Nova Island",14,2,"r2",2011,2959414.33333333,31,"Seychelles",105015
+33,"Juan de Nova Island",14,2,"r2",2011,2959414.33333333,32,"Reunion",811236
+33,"Juan de Nova Island",14,2,"r2",2011,2959414.33333333,37,"Mauritius",1358110
+33,"Juan de Nova Island",14,2,"r2",2011,2959414.33333333,41,"Mozambique",8979910
+33,"Juan de Nova Island",14,2,"r2",2011,2959414.33333333,42,"Madagascar",6669090
+33,"Juan de Nova Island",14,2,"r2",2011,2959414.33333333,43,"Kenya",2706650
+33,"Juan de Nova Island",14,2,"r2",2011,2959414.33333333,44,"Somalia",5520080
+33,"Juan de Nova Island",14,2,"r2",2011,2959414.33333333,45,"Eritrea",1068160
+33,"Juan de Nova Island",14,2,"r2",2011,2959414.33333333,46,"Djibouti",568532
+33,"Juan de Nova Island",14,2,"r2",2011,2959414.33333333,202,"United Republic of Tanzania",6514240
+33,"Juan de Nova Island",14,2,"r2",2012,3032149.58333333,28,"Comoros",971574
+33,"Juan de Nova Island",14,2,"r2",2012,3032149.58333333,29,"Mayotte",278800
+33,"Juan de Nova Island",14,2,"r2",2012,3032149.58333333,31,"Seychelles",106342
+33,"Juan de Nova Island",14,2,"r2",2012,3032149.58333333,32,"Reunion",818246
+33,"Juan de Nova Island",14,2,"r2",2012,3032149.58333333,37,"Mauritius",1367700
+33,"Juan de Nova Island",14,2,"r2",2012,3032149.58333333,41,"Mozambique",9145090
+33,"Juan de Nova Island",14,2,"r2",2012,3032149.58333333,42,"Madagascar",6835420
+33,"Juan de Nova Island",14,2,"r2",2012,3032149.58333333,43,"Kenya",2753630
+33,"Juan de Nova Island",14,2,"r2",2012,3032149.58333333,44,"Somalia",5749840
+33,"Juan de Nova Island",14,2,"r2",2012,3032149.58333333,45,"Eritrea",1093640
+33,"Juan de Nova Island",14,2,"r2",2012,3032149.58333333,46,"Djibouti",572533
+33,"Juan de Nova Island",14,2,"r2",2012,3032149.58333333,202,"United Republic of Tanzania",6692980
+33,"Juan de Nova Island",14,2,"r2",2013,3104885,28,"Comoros",996688
+33,"Juan de Nova Island",14,2,"r2",2013,3104885,29,"Mayotte",292112
+33,"Juan de Nova Island",14,2,"r2",2013,3104885,31,"Seychelles",107670
+33,"Juan de Nova Island",14,2,"r2",2013,3104885,32,"Reunion",825255
+33,"Juan de Nova Island",14,2,"r2",2013,3104885,37,"Mauritius",1377290
+33,"Juan de Nova Island",14,2,"r2",2013,3104885,41,"Mozambique",9310270
+33,"Juan de Nova Island",14,2,"r2",2013,3104885,42,"Madagascar",7001750
+33,"Juan de Nova Island",14,2,"r2",2013,3104885,43,"Kenya",2800610
+33,"Juan de Nova Island",14,2,"r2",2013,3104885,44,"Somalia",5979590
+33,"Juan de Nova Island",14,2,"r2",2013,3104885,45,"Eritrea",1119130
+33,"Juan de Nova Island",14,2,"r2",2013,3104885,46,"Djibouti",576535
+33,"Juan de Nova Island",14,2,"r2",2013,3104885,202,"United Republic of Tanzania",6871720
+33,"Juan de Nova Island",14,2,"r2",2014,3177621,28,"Comoros",1021800
+33,"Juan de Nova Island",14,2,"r2",2014,3177621,29,"Mayotte",305424
+33,"Juan de Nova Island",14,2,"r2",2014,3177621,31,"Seychelles",108998
+33,"Juan de Nova Island",14,2,"r2",2014,3177621,32,"Reunion",832264
+33,"Juan de Nova Island",14,2,"r2",2014,3177621,37,"Mauritius",1386880
+33,"Juan de Nova Island",14,2,"r2",2014,3177621,41,"Mozambique",9475450
+33,"Juan de Nova Island",14,2,"r2",2014,3177621,42,"Madagascar",7168080
+33,"Juan de Nova Island",14,2,"r2",2014,3177621,43,"Kenya",2847590
+33,"Juan de Nova Island",14,2,"r2",2014,3177621,44,"Somalia",6209350
+33,"Juan de Nova Island",14,2,"r2",2014,3177621,45,"Eritrea",1144620
+33,"Juan de Nova Island",14,2,"r2",2014,3177621,46,"Djibouti",580536
+33,"Juan de Nova Island",14,2,"r2",2014,3177621,202,"United Republic of Tanzania",7050460
+33,"Juan de Nova Island",14,2,"r2",2015,3250356.75,28,"Comoros",1046920
+33,"Juan de Nova Island",14,2,"r2",2015,3250356.75,29,"Mayotte",318735
+33,"Juan de Nova Island",14,2,"r2",2015,3250356.75,31,"Seychelles",110325
+33,"Juan de Nova Island",14,2,"r2",2015,3250356.75,32,"Reunion",839273
+33,"Juan de Nova Island",14,2,"r2",2015,3250356.75,37,"Mauritius",1396460
+33,"Juan de Nova Island",14,2,"r2",2015,3250356.75,41,"Mozambique",9640630
+33,"Juan de Nova Island",14,2,"r2",2015,3250356.75,42,"Madagascar",7334410
+33,"Juan de Nova Island",14,2,"r2",2015,3250356.75,43,"Kenya",2894570
+33,"Juan de Nova Island",14,2,"r2",2015,3250356.75,44,"Somalia",6439110
+33,"Juan de Nova Island",14,2,"r2",2015,3250356.75,45,"Eritrea",1170110
+33,"Juan de Nova Island",14,2,"r2",2015,3250356.75,46,"Djibouti",584538
+33,"Juan de Nova Island",14,2,"r2",2015,3250356.75,202,"United Republic of Tanzania",7229200
+34,"Bassas da India",14,2,"r2",2005,2553685.98333333,28,"Comoros",801786
+34,"Bassas da India",14,2,"r2",2005,2553685.98333333,29,"Mayotte",196420
+34,"Bassas da India",14,2,"r2",2005,2553685.98333333,31,"Seychelles",97332.8
+34,"Bassas da India",14,2,"r2",2005,2553685.98333333,32,"Reunion",765824
+34,"Bassas da India",14,2,"r2",2005,2553685.98333333,37,"Mauritius",1297880
+34,"Bassas da India",14,2,"r2",2005,2553685.98333333,41,"Mozambique",8078950
+34,"Bassas da India",14,2,"r2",2005,2553685.98333333,42,"Madagascar",5726490
+34,"Bassas da India",14,2,"r2",2005,2553685.98333333,43,"Kenya",2411160
+34,"Bassas da India",14,2,"r2",2005,2553685.98333333,44,"Somalia",4219520
+34,"Bassas da India",14,2,"r2",2005,2553685.98333333,45,"Eritrea",924400
+34,"Bassas da India",14,2,"r2",2005,2553685.98333333,46,"Djibouti",553459
+34,"Bassas da India",14,2,"r2",2005,2553685.98333333,202,"United Republic of Tanzania",5571010
+34,"Bassas da India",14,2,"r2",2006,2620285.38333333,28,"Comoros",825699
+34,"Bassas da India",14,2,"r2",2006,2620285.38333333,29,"Mayotte",207571
+34,"Bassas da India",14,2,"r2",2006,2620285.38333333,31,"Seychelles",98603.6
+34,"Bassas da India",14,2,"r2",2006,2620285.38333333,32,"Reunion",773505
+34,"Bassas da India",14,2,"r2",2006,2620285.38333333,37,"Mauritius",1308010
+34,"Bassas da India",14,2,"r2",2006,2620285.38333333,41,"Mozambique",8226110
+34,"Bassas da India",14,2,"r2",2006,2620285.38333333,42,"Madagascar",5881750
+34,"Bassas da India",14,2,"r2",2006,2620285.38333333,43,"Kenya",2460860
+34,"Bassas da India",14,2,"r2",2006,2620285.38333333,44,"Somalia",4433680
+34,"Bassas da India",14,2,"r2",2006,2620285.38333333,45,"Eritrea",948053
+34,"Bassas da India",14,2,"r2",2006,2620285.38333333,46,"Djibouti",555673
+34,"Bassas da India",14,2,"r2",2006,2620285.38333333,202,"United Republic of Tanzania",5723910
+34,"Bassas da India",14,2,"r2",2007,2686882.29166667,28,"Comoros",849611
+34,"Bassas da India",14,2,"r2",2007,2686882.29166667,29,"Mayotte",218722
+34,"Bassas da India",14,2,"r2",2007,2686882.29166667,31,"Seychelles",99874.5
+34,"Bassas da India",14,2,"r2",2007,2686882.29166667,32,"Reunion",781186
+34,"Bassas da India",14,2,"r2",2007,2686882.29166667,37,"Mauritius",1318140
+34,"Bassas da India",14,2,"r2",2007,2686882.29166667,41,"Mozambique",8373260
+34,"Bassas da India",14,2,"r2",2007,2686882.29166667,42,"Madagascar",6037000
+34,"Bassas da India",14,2,"r2",2007,2686882.29166667,43,"Kenya",2510560
+34,"Bassas da India",14,2,"r2",2007,2686882.29166667,44,"Somalia",4647840
+34,"Bassas da India",14,2,"r2",2007,2686882.29166667,45,"Eritrea",971707
+34,"Bassas da India",14,2,"r2",2007,2686882.29166667,46,"Djibouti",557887
+34,"Bassas da India",14,2,"r2",2007,2686882.29166667,202,"United Republic of Tanzania",5876800
+34,"Bassas da India",14,2,"r2",2008,2753482.41666667,28,"Comoros",873523
+34,"Bassas da India",14,2,"r2",2008,2753482.41666667,29,"Mayotte",229873
+34,"Bassas da India",14,2,"r2",2008,2753482.41666667,31,"Seychelles",101145
+34,"Bassas da India",14,2,"r2",2008,2753482.41666667,32,"Reunion",788866
+34,"Bassas da India",14,2,"r2",2008,2753482.41666667,37,"Mauritius",1328270
+34,"Bassas da India",14,2,"r2",2008,2753482.41666667,41,"Mozambique",8520420
+34,"Bassas da India",14,2,"r2",2008,2753482.41666667,42,"Madagascar",6192260
+34,"Bassas da India",14,2,"r2",2008,2753482.41666667,43,"Kenya",2560270
+34,"Bassas da India",14,2,"r2",2008,2753482.41666667,44,"Somalia",4862000
+34,"Bassas da India",14,2,"r2",2008,2753482.41666667,45,"Eritrea",995360
+34,"Bassas da India",14,2,"r2",2008,2753482.41666667,46,"Djibouti",560102
+34,"Bassas da India",14,2,"r2",2008,2753482.41666667,202,"United Republic of Tanzania",6029700
+34,"Bassas da India",14,2,"r2",2009,2820079,28,"Comoros",897435
+34,"Bassas da India",14,2,"r2",2009,2820079,29,"Mayotte",241024
+34,"Bassas da India",14,2,"r2",2009,2820079,31,"Seychelles",102416
+34,"Bassas da India",14,2,"r2",2009,2820079,32,"Reunion",796547
+34,"Bassas da India",14,2,"r2",2009,2820079,37,"Mauritius",1338390
+34,"Bassas da India",14,2,"r2",2009,2820079,41,"Mozambique",8667570
+34,"Bassas da India",14,2,"r2",2009,2820079,42,"Madagascar",6347510
+34,"Bassas da India",14,2,"r2",2009,2820079,43,"Kenya",2609970
+34,"Bassas da India",14,2,"r2",2009,2820079,44,"Somalia",5076160
+34,"Bassas da India",14,2,"r2",2009,2820079,45,"Eritrea",1019010
+34,"Bassas da India",14,2,"r2",2009,2820079,46,"Djibouti",562316
+34,"Bassas da India",14,2,"r2",2009,2820079,202,"United Republic of Tanzania",6182600
+34,"Bassas da India",14,2,"r2",2010,2886678.08333333,28,"Comoros",921347
+34,"Bassas da India",14,2,"r2",2010,2886678.08333333,29,"Mayotte",252176
+34,"Bassas da India",14,2,"r2",2010,2886678.08333333,31,"Seychelles",103687
+34,"Bassas da India",14,2,"r2",2010,2886678.08333333,32,"Reunion",804227
+34,"Bassas da India",14,2,"r2",2010,2886678.08333333,37,"Mauritius",1348520
+34,"Bassas da India",14,2,"r2",2010,2886678.08333333,41,"Mozambique",8814730
+34,"Bassas da India",14,2,"r2",2010,2886678.08333333,42,"Madagascar",6502760
+34,"Bassas da India",14,2,"r2",2010,2886678.08333333,43,"Kenya",2659670
+34,"Bassas da India",14,2,"r2",2010,2886678.08333333,44,"Somalia",5290320
+34,"Bassas da India",14,2,"r2",2010,2886678.08333333,45,"Eritrea",1042670
+34,"Bassas da India",14,2,"r2",2010,2886678.08333333,46,"Djibouti",564530
+34,"Bassas da India",14,2,"r2",2010,2886678.08333333,202,"United Republic of Tanzania",6335500
+34,"Bassas da India",14,2,"r2",2011,2959414.33333333,28,"Comoros",946461
+34,"Bassas da India",14,2,"r2",2011,2959414.33333333,29,"Mayotte",265488
+34,"Bassas da India",14,2,"r2",2011,2959414.33333333,31,"Seychelles",105015
+34,"Bassas da India",14,2,"r2",2011,2959414.33333333,32,"Reunion",811236
+34,"Bassas da India",14,2,"r2",2011,2959414.33333333,37,"Mauritius",1358110
+34,"Bassas da India",14,2,"r2",2011,2959414.33333333,41,"Mozambique",8979910
+34,"Bassas da India",14,2,"r2",2011,2959414.33333333,42,"Madagascar",6669090
+34,"Bassas da India",14,2,"r2",2011,2959414.33333333,43,"Kenya",2706650
+34,"Bassas da India",14,2,"r2",2011,2959414.33333333,44,"Somalia",5520080
+34,"Bassas da India",14,2,"r2",2011,2959414.33333333,45,"Eritrea",1068160
+34,"Bassas da India",14,2,"r2",2011,2959414.33333333,46,"Djibouti",568532
+34,"Bassas da India",14,2,"r2",2011,2959414.33333333,202,"United Republic of Tanzania",6514240
+34,"Bassas da India",14,2,"r2",2012,3032149.58333333,28,"Comoros",971574
+34,"Bassas da India",14,2,"r2",2012,3032149.58333333,29,"Mayotte",278800
+34,"Bassas da India",14,2,"r2",2012,3032149.58333333,31,"Seychelles",106342
+34,"Bassas da India",14,2,"r2",2012,3032149.58333333,32,"Reunion",818246
+34,"Bassas da India",14,2,"r2",2012,3032149.58333333,37,"Mauritius",1367700
+34,"Bassas da India",14,2,"r2",2012,3032149.58333333,41,"Mozambique",9145090
+34,"Bassas da India",14,2,"r2",2012,3032149.58333333,42,"Madagascar",6835420
+34,"Bassas da India",14,2,"r2",2012,3032149.58333333,43,"Kenya",2753630
+34,"Bassas da India",14,2,"r2",2012,3032149.58333333,44,"Somalia",5749840
+34,"Bassas da India",14,2,"r2",2012,3032149.58333333,45,"Eritrea",1093640
+34,"Bassas da India",14,2,"r2",2012,3032149.58333333,46,"Djibouti",572533
+34,"Bassas da India",14,2,"r2",2012,3032149.58333333,202,"United Republic of Tanzania",6692980
+34,"Bassas da India",14,2,"r2",2013,3104885,28,"Comoros",996688
+34,"Bassas da India",14,2,"r2",2013,3104885,29,"Mayotte",292112
+34,"Bassas da India",14,2,"r2",2013,3104885,31,"Seychelles",107670
+34,"Bassas da India",14,2,"r2",2013,3104885,32,"Reunion",825255
+34,"Bassas da India",14,2,"r2",2013,3104885,37,"Mauritius",1377290
+34,"Bassas da India",14,2,"r2",2013,3104885,41,"Mozambique",9310270
+34,"Bassas da India",14,2,"r2",2013,3104885,42,"Madagascar",7001750
+34,"Bassas da India",14,2,"r2",2013,3104885,43,"Kenya",2800610
+34,"Bassas da India",14,2,"r2",2013,3104885,44,"Somalia",5979590
+34,"Bassas da India",14,2,"r2",2013,3104885,45,"Eritrea",1119130
+34,"Bassas da India",14,2,"r2",2013,3104885,46,"Djibouti",576535
+34,"Bassas da India",14,2,"r2",2013,3104885,202,"United Republic of Tanzania",6871720
+34,"Bassas da India",14,2,"r2",2014,3177621,28,"Comoros",1021800
+34,"Bassas da India",14,2,"r2",2014,3177621,29,"Mayotte",305424
+34,"Bassas da India",14,2,"r2",2014,3177621,31,"Seychelles",108998
+34,"Bassas da India",14,2,"r2",2014,3177621,32,"Reunion",832264
+34,"Bassas da India",14,2,"r2",2014,3177621,37,"Mauritius",1386880
+34,"Bassas da India",14,2,"r2",2014,3177621,41,"Mozambique",9475450
+34,"Bassas da India",14,2,"r2",2014,3177621,42,"Madagascar",7168080
+34,"Bassas da India",14,2,"r2",2014,3177621,43,"Kenya",2847590
+34,"Bassas da India",14,2,"r2",2014,3177621,44,"Somalia",6209350
+34,"Bassas da India",14,2,"r2",2014,3177621,45,"Eritrea",1144620
+34,"Bassas da India",14,2,"r2",2014,3177621,46,"Djibouti",580536
+34,"Bassas da India",14,2,"r2",2014,3177621,202,"United Republic of Tanzania",7050460
+34,"Bassas da India",14,2,"r2",2015,3250356.75,28,"Comoros",1046920
+34,"Bassas da India",14,2,"r2",2015,3250356.75,29,"Mayotte",318735
+34,"Bassas da India",14,2,"r2",2015,3250356.75,31,"Seychelles",110325
+34,"Bassas da India",14,2,"r2",2015,3250356.75,32,"Reunion",839273
+34,"Bassas da India",14,2,"r2",2015,3250356.75,37,"Mauritius",1396460
+34,"Bassas da India",14,2,"r2",2015,3250356.75,41,"Mozambique",9640630
+34,"Bassas da India",14,2,"r2",2015,3250356.75,42,"Madagascar",7334410
+34,"Bassas da India",14,2,"r2",2015,3250356.75,43,"Kenya",2894570
+34,"Bassas da India",14,2,"r2",2015,3250356.75,44,"Somalia",6439110
+34,"Bassas da India",14,2,"r2",2015,3250356.75,45,"Eritrea",1170110
+34,"Bassas da India",14,2,"r2",2015,3250356.75,46,"Djibouti",584538
+34,"Bassas da India",14,2,"r2",2015,3250356.75,202,"United Republic of Tanzania",7229200
+35,"Ile Europa",14,2,"r2",2005,2553685.98333333,28,"Comoros",801786
+35,"Ile Europa",14,2,"r2",2005,2553685.98333333,29,"Mayotte",196420
+35,"Ile Europa",14,2,"r2",2005,2553685.98333333,31,"Seychelles",97332.8
+35,"Ile Europa",14,2,"r2",2005,2553685.98333333,32,"Reunion",765824
+35,"Ile Europa",14,2,"r2",2005,2553685.98333333,37,"Mauritius",1297880
+35,"Ile Europa",14,2,"r2",2005,2553685.98333333,41,"Mozambique",8078950
+35,"Ile Europa",14,2,"r2",2005,2553685.98333333,42,"Madagascar",5726490
+35,"Ile Europa",14,2,"r2",2005,2553685.98333333,43,"Kenya",2411160
+35,"Ile Europa",14,2,"r2",2005,2553685.98333333,44,"Somalia",4219520
+35,"Ile Europa",14,2,"r2",2005,2553685.98333333,45,"Eritrea",924400
+35,"Ile Europa",14,2,"r2",2005,2553685.98333333,46,"Djibouti",553459
+35,"Ile Europa",14,2,"r2",2005,2553685.98333333,202,"United Republic of Tanzania",5571010
+35,"Ile Europa",14,2,"r2",2006,2620285.38333333,28,"Comoros",825699
+35,"Ile Europa",14,2,"r2",2006,2620285.38333333,29,"Mayotte",207571
+35,"Ile Europa",14,2,"r2",2006,2620285.38333333,31,"Seychelles",98603.6
+35,"Ile Europa",14,2,"r2",2006,2620285.38333333,32,"Reunion",773505
+35,"Ile Europa",14,2,"r2",2006,2620285.38333333,37,"Mauritius",1308010
+35,"Ile Europa",14,2,"r2",2006,2620285.38333333,41,"Mozambique",8226110
+35,"Ile Europa",14,2,"r2",2006,2620285.38333333,42,"Madagascar",5881750
+35,"Ile Europa",14,2,"r2",2006,2620285.38333333,43,"Kenya",2460860
+35,"Ile Europa",14,2,"r2",2006,2620285.38333333,44,"Somalia",4433680
+35,"Ile Europa",14,2,"r2",2006,2620285.38333333,45,"Eritrea",948053
+35,"Ile Europa",14,2,"r2",2006,2620285.38333333,46,"Djibouti",555673
+35,"Ile Europa",14,2,"r2",2006,2620285.38333333,202,"United Republic of Tanzania",5723910
+35,"Ile Europa",14,2,"r2",2007,2686882.29166667,28,"Comoros",849611
+35,"Ile Europa",14,2,"r2",2007,2686882.29166667,29,"Mayotte",218722
+35,"Ile Europa",14,2,"r2",2007,2686882.29166667,31,"Seychelles",99874.5
+35,"Ile Europa",14,2,"r2",2007,2686882.29166667,32,"Reunion",781186
+35,"Ile Europa",14,2,"r2",2007,2686882.29166667,37,"Mauritius",1318140
+35,"Ile Europa",14,2,"r2",2007,2686882.29166667,41,"Mozambique",8373260
+35,"Ile Europa",14,2,"r2",2007,2686882.29166667,42,"Madagascar",6037000
+35,"Ile Europa",14,2,"r2",2007,2686882.29166667,43,"Kenya",2510560
+35,"Ile Europa",14,2,"r2",2007,2686882.29166667,44,"Somalia",4647840
+35,"Ile Europa",14,2,"r2",2007,2686882.29166667,45,"Eritrea",971707
+35,"Ile Europa",14,2,"r2",2007,2686882.29166667,46,"Djibouti",557887
+35,"Ile Europa",14,2,"r2",2007,2686882.29166667,202,"United Republic of Tanzania",5876800
+35,"Ile Europa",14,2,"r2",2008,2753482.41666667,28,"Comoros",873523
+35,"Ile Europa",14,2,"r2",2008,2753482.41666667,29,"Mayotte",229873
+35,"Ile Europa",14,2,"r2",2008,2753482.41666667,31,"Seychelles",101145
+35,"Ile Europa",14,2,"r2",2008,2753482.41666667,32,"Reunion",788866
+35,"Ile Europa",14,2,"r2",2008,2753482.41666667,37,"Mauritius",1328270
+35,"Ile Europa",14,2,"r2",2008,2753482.41666667,41,"Mozambique",8520420
+35,"Ile Europa",14,2,"r2",2008,2753482.41666667,42,"Madagascar",6192260
+35,"Ile Europa",14,2,"r2",2008,2753482.41666667,43,"Kenya",2560270
+35,"Ile Europa",14,2,"r2",2008,2753482.41666667,44,"Somalia",4862000
+35,"Ile Europa",14,2,"r2",2008,2753482.41666667,45,"Eritrea",995360
+35,"Ile Europa",14,2,"r2",2008,2753482.41666667,46,"Djibouti",560102
+35,"Ile Europa",14,2,"r2",2008,2753482.41666667,202,"United Republic of Tanzania",6029700
+35,"Ile Europa",14,2,"r2",2009,2820079,28,"Comoros",897435
+35,"Ile Europa",14,2,"r2",2009,2820079,29,"Mayotte",241024
+35,"Ile Europa",14,2,"r2",2009,2820079,31,"Seychelles",102416
+35,"Ile Europa",14,2,"r2",2009,2820079,32,"Reunion",796547
+35,"Ile Europa",14,2,"r2",2009,2820079,37,"Mauritius",1338390
+35,"Ile Europa",14,2,"r2",2009,2820079,41,"Mozambique",8667570
+35,"Ile Europa",14,2,"r2",2009,2820079,42,"Madagascar",6347510
+35,"Ile Europa",14,2,"r2",2009,2820079,43,"Kenya",2609970
+35,"Ile Europa",14,2,"r2",2009,2820079,44,"Somalia",5076160
+35,"Ile Europa",14,2,"r2",2009,2820079,45,"Eritrea",1019010
+35,"Ile Europa",14,2,"r2",2009,2820079,46,"Djibouti",562316
+35,"Ile Europa",14,2,"r2",2009,2820079,202,"United Republic of Tanzania",6182600
+35,"Ile Europa",14,2,"r2",2010,2886678.08333333,28,"Comoros",921347
+35,"Ile Europa",14,2,"r2",2010,2886678.08333333,29,"Mayotte",252176
+35,"Ile Europa",14,2,"r2",2010,2886678.08333333,31,"Seychelles",103687
+35,"Ile Europa",14,2,"r2",2010,2886678.08333333,32,"Reunion",804227
+35,"Ile Europa",14,2,"r2",2010,2886678.08333333,37,"Mauritius",1348520
+35,"Ile Europa",14,2,"r2",2010,2886678.08333333,41,"Mozambique",8814730
+35,"Ile Europa",14,2,"r2",2010,2886678.08333333,42,"Madagascar",6502760
+35,"Ile Europa",14,2,"r2",2010,2886678.08333333,43,"Kenya",2659670
+35,"Ile Europa",14,2,"r2",2010,2886678.08333333,44,"Somalia",5290320
+35,"Ile Europa",14,2,"r2",2010,2886678.08333333,45,"Eritrea",1042670
+35,"Ile Europa",14,2,"r2",2010,2886678.08333333,46,"Djibouti",564530
+35,"Ile Europa",14,2,"r2",2010,2886678.08333333,202,"United Republic of Tanzania",6335500
+35,"Ile Europa",14,2,"r2",2011,2959414.33333333,28,"Comoros",946461
+35,"Ile Europa",14,2,"r2",2011,2959414.33333333,29,"Mayotte",265488
+35,"Ile Europa",14,2,"r2",2011,2959414.33333333,31,"Seychelles",105015
+35,"Ile Europa",14,2,"r2",2011,2959414.33333333,32,"Reunion",811236
+35,"Ile Europa",14,2,"r2",2011,2959414.33333333,37,"Mauritius",1358110
+35,"Ile Europa",14,2,"r2",2011,2959414.33333333,41,"Mozambique",8979910
+35,"Ile Europa",14,2,"r2",2011,2959414.33333333,42,"Madagascar",6669090
+35,"Ile Europa",14,2,"r2",2011,2959414.33333333,43,"Kenya",2706650
+35,"Ile Europa",14,2,"r2",2011,2959414.33333333,44,"Somalia",5520080
+35,"Ile Europa",14,2,"r2",2011,2959414.33333333,45,"Eritrea",1068160
+35,"Ile Europa",14,2,"r2",2011,2959414.33333333,46,"Djibouti",568532
+35,"Ile Europa",14,2,"r2",2011,2959414.33333333,202,"United Republic of Tanzania",6514240
+35,"Ile Europa",14,2,"r2",2012,3032149.58333333,28,"Comoros",971574
+35,"Ile Europa",14,2,"r2",2012,3032149.58333333,29,"Mayotte",278800
+35,"Ile Europa",14,2,"r2",2012,3032149.58333333,31,"Seychelles",106342
+35,"Ile Europa",14,2,"r2",2012,3032149.58333333,32,"Reunion",818246
+35,"Ile Europa",14,2,"r2",2012,3032149.58333333,37,"Mauritius",1367700
+35,"Ile Europa",14,2,"r2",2012,3032149.58333333,41,"Mozambique",9145090
+35,"Ile Europa",14,2,"r2",2012,3032149.58333333,42,"Madagascar",6835420
+35,"Ile Europa",14,2,"r2",2012,3032149.58333333,43,"Kenya",2753630
+35,"Ile Europa",14,2,"r2",2012,3032149.58333333,44,"Somalia",5749840
+35,"Ile Europa",14,2,"r2",2012,3032149.58333333,45,"Eritrea",1093640
+35,"Ile Europa",14,2,"r2",2012,3032149.58333333,46,"Djibouti",572533
+35,"Ile Europa",14,2,"r2",2012,3032149.58333333,202,"United Republic of Tanzania",6692980
+35,"Ile Europa",14,2,"r2",2013,3104885,28,"Comoros",996688
+35,"Ile Europa",14,2,"r2",2013,3104885,29,"Mayotte",292112
+35,"Ile Europa",14,2,"r2",2013,3104885,31,"Seychelles",107670
+35,"Ile Europa",14,2,"r2",2013,3104885,32,"Reunion",825255
+35,"Ile Europa",14,2,"r2",2013,3104885,37,"Mauritius",1377290
+35,"Ile Europa",14,2,"r2",2013,3104885,41,"Mozambique",9310270
+35,"Ile Europa",14,2,"r2",2013,3104885,42,"Madagascar",7001750
+35,"Ile Europa",14,2,"r2",2013,3104885,43,"Kenya",2800610
+35,"Ile Europa",14,2,"r2",2013,3104885,44,"Somalia",5979590
+35,"Ile Europa",14,2,"r2",2013,3104885,45,"Eritrea",1119130
+35,"Ile Europa",14,2,"r2",2013,3104885,46,"Djibouti",576535
+35,"Ile Europa",14,2,"r2",2013,3104885,202,"United Republic of Tanzania",6871720
+35,"Ile Europa",14,2,"r2",2014,3177621,28,"Comoros",1021800
+35,"Ile Europa",14,2,"r2",2014,3177621,29,"Mayotte",305424
+35,"Ile Europa",14,2,"r2",2014,3177621,31,"Seychelles",108998
+35,"Ile Europa",14,2,"r2",2014,3177621,32,"Reunion",832264
+35,"Ile Europa",14,2,"r2",2014,3177621,37,"Mauritius",1386880
+35,"Ile Europa",14,2,"r2",2014,3177621,41,"Mozambique",9475450
+35,"Ile Europa",14,2,"r2",2014,3177621,42,"Madagascar",7168080
+35,"Ile Europa",14,2,"r2",2014,3177621,43,"Kenya",2847590
+35,"Ile Europa",14,2,"r2",2014,3177621,44,"Somalia",6209350
+35,"Ile Europa",14,2,"r2",2014,3177621,45,"Eritrea",1144620
+35,"Ile Europa",14,2,"r2",2014,3177621,46,"Djibouti",580536
+35,"Ile Europa",14,2,"r2",2014,3177621,202,"United Republic of Tanzania",7050460
+35,"Ile Europa",14,2,"r2",2015,3250356.75,28,"Comoros",1046920
+35,"Ile Europa",14,2,"r2",2015,3250356.75,29,"Mayotte",318735
+35,"Ile Europa",14,2,"r2",2015,3250356.75,31,"Seychelles",110325
+35,"Ile Europa",14,2,"r2",2015,3250356.75,32,"Reunion",839273
+35,"Ile Europa",14,2,"r2",2015,3250356.75,37,"Mauritius",1396460
+35,"Ile Europa",14,2,"r2",2015,3250356.75,41,"Mozambique",9640630
+35,"Ile Europa",14,2,"r2",2015,3250356.75,42,"Madagascar",7334410
+35,"Ile Europa",14,2,"r2",2015,3250356.75,43,"Kenya",2894570
+35,"Ile Europa",14,2,"r2",2015,3250356.75,44,"Somalia",6439110
+35,"Ile Europa",14,2,"r2",2015,3250356.75,45,"Eritrea",1170110
+35,"Ile Europa",14,2,"r2",2015,3250356.75,46,"Djibouti",584538
+35,"Ile Europa",14,2,"r2",2015,3250356.75,202,"United Republic of Tanzania",7229200
+36,"Ile Tromelin",14,2,"r2",2005,2553685.98333333,28,"Comoros",801786
+36,"Ile Tromelin",14,2,"r2",2005,2553685.98333333,29,"Mayotte",196420
+36,"Ile Tromelin",14,2,"r2",2005,2553685.98333333,31,"Seychelles",97332.8
+36,"Ile Tromelin",14,2,"r2",2005,2553685.98333333,32,"Reunion",765824
+36,"Ile Tromelin",14,2,"r2",2005,2553685.98333333,37,"Mauritius",1297880
+36,"Ile Tromelin",14,2,"r2",2005,2553685.98333333,41,"Mozambique",8078950
+36,"Ile Tromelin",14,2,"r2",2005,2553685.98333333,42,"Madagascar",5726490
+36,"Ile Tromelin",14,2,"r2",2005,2553685.98333333,43,"Kenya",2411160
+36,"Ile Tromelin",14,2,"r2",2005,2553685.98333333,44,"Somalia",4219520
+36,"Ile Tromelin",14,2,"r2",2005,2553685.98333333,45,"Eritrea",924400
+36,"Ile Tromelin",14,2,"r2",2005,2553685.98333333,46,"Djibouti",553459
+36,"Ile Tromelin",14,2,"r2",2005,2553685.98333333,202,"United Republic of Tanzania",5571010
+36,"Ile Tromelin",14,2,"r2",2006,2620285.38333333,28,"Comoros",825699
+36,"Ile Tromelin",14,2,"r2",2006,2620285.38333333,29,"Mayotte",207571
+36,"Ile Tromelin",14,2,"r2",2006,2620285.38333333,31,"Seychelles",98603.6
+36,"Ile Tromelin",14,2,"r2",2006,2620285.38333333,32,"Reunion",773505
+36,"Ile Tromelin",14,2,"r2",2006,2620285.38333333,37,"Mauritius",1308010
+36,"Ile Tromelin",14,2,"r2",2006,2620285.38333333,41,"Mozambique",8226110
+36,"Ile Tromelin",14,2,"r2",2006,2620285.38333333,42,"Madagascar",5881750
+36,"Ile Tromelin",14,2,"r2",2006,2620285.38333333,43,"Kenya",2460860
+36,"Ile Tromelin",14,2,"r2",2006,2620285.38333333,44,"Somalia",4433680
+36,"Ile Tromelin",14,2,"r2",2006,2620285.38333333,45,"Eritrea",948053
+36,"Ile Tromelin",14,2,"r2",2006,2620285.38333333,46,"Djibouti",555673
+36,"Ile Tromelin",14,2,"r2",2006,2620285.38333333,202,"United Republic of Tanzania",5723910
+36,"Ile Tromelin",14,2,"r2",2007,2686882.29166667,28,"Comoros",849611
+36,"Ile Tromelin",14,2,"r2",2007,2686882.29166667,29,"Mayotte",218722
+36,"Ile Tromelin",14,2,"r2",2007,2686882.29166667,31,"Seychelles",99874.5
+36,"Ile Tromelin",14,2,"r2",2007,2686882.29166667,32,"Reunion",781186
+36,"Ile Tromelin",14,2,"r2",2007,2686882.29166667,37,"Mauritius",1318140
+36,"Ile Tromelin",14,2,"r2",2007,2686882.29166667,41,"Mozambique",8373260
+36,"Ile Tromelin",14,2,"r2",2007,2686882.29166667,42,"Madagascar",6037000
+36,"Ile Tromelin",14,2,"r2",2007,2686882.29166667,43,"Kenya",2510560
+36,"Ile Tromelin",14,2,"r2",2007,2686882.29166667,44,"Somalia",4647840
+36,"Ile Tromelin",14,2,"r2",2007,2686882.29166667,45,"Eritrea",971707
+36,"Ile Tromelin",14,2,"r2",2007,2686882.29166667,46,"Djibouti",557887
+36,"Ile Tromelin",14,2,"r2",2007,2686882.29166667,202,"United Republic of Tanzania",5876800
+36,"Ile Tromelin",14,2,"r2",2008,2753482.41666667,28,"Comoros",873523
+36,"Ile Tromelin",14,2,"r2",2008,2753482.41666667,29,"Mayotte",229873
+36,"Ile Tromelin",14,2,"r2",2008,2753482.41666667,31,"Seychelles",101145
+36,"Ile Tromelin",14,2,"r2",2008,2753482.41666667,32,"Reunion",788866
+36,"Ile Tromelin",14,2,"r2",2008,2753482.41666667,37,"Mauritius",1328270
+36,"Ile Tromelin",14,2,"r2",2008,2753482.41666667,41,"Mozambique",8520420
+36,"Ile Tromelin",14,2,"r2",2008,2753482.41666667,42,"Madagascar",6192260
+36,"Ile Tromelin",14,2,"r2",2008,2753482.41666667,43,"Kenya",2560270
+36,"Ile Tromelin",14,2,"r2",2008,2753482.41666667,44,"Somalia",4862000
+36,"Ile Tromelin",14,2,"r2",2008,2753482.41666667,45,"Eritrea",995360
+36,"Ile Tromelin",14,2,"r2",2008,2753482.41666667,46,"Djibouti",560102
+36,"Ile Tromelin",14,2,"r2",2008,2753482.41666667,202,"United Republic of Tanzania",6029700
+36,"Ile Tromelin",14,2,"r2",2009,2820079,28,"Comoros",897435
+36,"Ile Tromelin",14,2,"r2",2009,2820079,29,"Mayotte",241024
+36,"Ile Tromelin",14,2,"r2",2009,2820079,31,"Seychelles",102416
+36,"Ile Tromelin",14,2,"r2",2009,2820079,32,"Reunion",796547
+36,"Ile Tromelin",14,2,"r2",2009,2820079,37,"Mauritius",1338390
+36,"Ile Tromelin",14,2,"r2",2009,2820079,41,"Mozambique",8667570
+36,"Ile Tromelin",14,2,"r2",2009,2820079,42,"Madagascar",6347510
+36,"Ile Tromelin",14,2,"r2",2009,2820079,43,"Kenya",2609970
+36,"Ile Tromelin",14,2,"r2",2009,2820079,44,"Somalia",5076160
+36,"Ile Tromelin",14,2,"r2",2009,2820079,45,"Eritrea",1019010
+36,"Ile Tromelin",14,2,"r2",2009,2820079,46,"Djibouti",562316
+36,"Ile Tromelin",14,2,"r2",2009,2820079,202,"United Republic of Tanzania",6182600
+36,"Ile Tromelin",14,2,"r2",2010,2886678.08333333,28,"Comoros",921347
+36,"Ile Tromelin",14,2,"r2",2010,2886678.08333333,29,"Mayotte",252176
+36,"Ile Tromelin",14,2,"r2",2010,2886678.08333333,31,"Seychelles",103687
+36,"Ile Tromelin",14,2,"r2",2010,2886678.08333333,32,"Reunion",804227
+36,"Ile Tromelin",14,2,"r2",2010,2886678.08333333,37,"Mauritius",1348520
+36,"Ile Tromelin",14,2,"r2",2010,2886678.08333333,41,"Mozambique",8814730
+36,"Ile Tromelin",14,2,"r2",2010,2886678.08333333,42,"Madagascar",6502760
+36,"Ile Tromelin",14,2,"r2",2010,2886678.08333333,43,"Kenya",2659670
+36,"Ile Tromelin",14,2,"r2",2010,2886678.08333333,44,"Somalia",5290320
+36,"Ile Tromelin",14,2,"r2",2010,2886678.08333333,45,"Eritrea",1042670
+36,"Ile Tromelin",14,2,"r2",2010,2886678.08333333,46,"Djibouti",564530
+36,"Ile Tromelin",14,2,"r2",2010,2886678.08333333,202,"United Republic of Tanzania",6335500
+36,"Ile Tromelin",14,2,"r2",2011,2959414.33333333,28,"Comoros",946461
+36,"Ile Tromelin",14,2,"r2",2011,2959414.33333333,29,"Mayotte",265488
+36,"Ile Tromelin",14,2,"r2",2011,2959414.33333333,31,"Seychelles",105015
+36,"Ile Tromelin",14,2,"r2",2011,2959414.33333333,32,"Reunion",811236
+36,"Ile Tromelin",14,2,"r2",2011,2959414.33333333,37,"Mauritius",1358110
+36,"Ile Tromelin",14,2,"r2",2011,2959414.33333333,41,"Mozambique",8979910
+36,"Ile Tromelin",14,2,"r2",2011,2959414.33333333,42,"Madagascar",6669090
+36,"Ile Tromelin",14,2,"r2",2011,2959414.33333333,43,"Kenya",2706650
+36,"Ile Tromelin",14,2,"r2",2011,2959414.33333333,44,"Somalia",5520080
+36,"Ile Tromelin",14,2,"r2",2011,2959414.33333333,45,"Eritrea",1068160
+36,"Ile Tromelin",14,2,"r2",2011,2959414.33333333,46,"Djibouti",568532
+36,"Ile Tromelin",14,2,"r2",2011,2959414.33333333,202,"United Republic of Tanzania",6514240
+36,"Ile Tromelin",14,2,"r2",2012,3032149.58333333,28,"Comoros",971574
+36,"Ile Tromelin",14,2,"r2",2012,3032149.58333333,29,"Mayotte",278800
+36,"Ile Tromelin",14,2,"r2",2012,3032149.58333333,31,"Seychelles",106342
+36,"Ile Tromelin",14,2,"r2",2012,3032149.58333333,32,"Reunion",818246
+36,"Ile Tromelin",14,2,"r2",2012,3032149.58333333,37,"Mauritius",1367700
+36,"Ile Tromelin",14,2,"r2",2012,3032149.58333333,41,"Mozambique",9145090
+36,"Ile Tromelin",14,2,"r2",2012,3032149.58333333,42,"Madagascar",6835420
+36,"Ile Tromelin",14,2,"r2",2012,3032149.58333333,43,"Kenya",2753630
+36,"Ile Tromelin",14,2,"r2",2012,3032149.58333333,44,"Somalia",5749840
+36,"Ile Tromelin",14,2,"r2",2012,3032149.58333333,45,"Eritrea",1093640
+36,"Ile Tromelin",14,2,"r2",2012,3032149.58333333,46,"Djibouti",572533
+36,"Ile Tromelin",14,2,"r2",2012,3032149.58333333,202,"United Republic of Tanzania",6692980
+36,"Ile Tromelin",14,2,"r2",2013,3104885,28,"Comoros",996688
+36,"Ile Tromelin",14,2,"r2",2013,3104885,29,"Mayotte",292112
+36,"Ile Tromelin",14,2,"r2",2013,3104885,31,"Seychelles",107670
+36,"Ile Tromelin",14,2,"r2",2013,3104885,32,"Reunion",825255
+36,"Ile Tromelin",14,2,"r2",2013,3104885,37,"Mauritius",1377290
+36,"Ile Tromelin",14,2,"r2",2013,3104885,41,"Mozambique",9310270
+36,"Ile Tromelin",14,2,"r2",2013,3104885,42,"Madagascar",7001750
+36,"Ile Tromelin",14,2,"r2",2013,3104885,43,"Kenya",2800610
+36,"Ile Tromelin",14,2,"r2",2013,3104885,44,"Somalia",5979590
+36,"Ile Tromelin",14,2,"r2",2013,3104885,45,"Eritrea",1119130
+36,"Ile Tromelin",14,2,"r2",2013,3104885,46,"Djibouti",576535
+36,"Ile Tromelin",14,2,"r2",2013,3104885,202,"United Republic of Tanzania",6871720
+36,"Ile Tromelin",14,2,"r2",2014,3177621,28,"Comoros",1021800
+36,"Ile Tromelin",14,2,"r2",2014,3177621,29,"Mayotte",305424
+36,"Ile Tromelin",14,2,"r2",2014,3177621,31,"Seychelles",108998
+36,"Ile Tromelin",14,2,"r2",2014,3177621,32,"Reunion",832264
+36,"Ile Tromelin",14,2,"r2",2014,3177621,37,"Mauritius",1386880
+36,"Ile Tromelin",14,2,"r2",2014,3177621,41,"Mozambique",9475450
+36,"Ile Tromelin",14,2,"r2",2014,3177621,42,"Madagascar",7168080
+36,"Ile Tromelin",14,2,"r2",2014,3177621,43,"Kenya",2847590
+36,"Ile Tromelin",14,2,"r2",2014,3177621,44,"Somalia",6209350
+36,"Ile Tromelin",14,2,"r2",2014,3177621,45,"Eritrea",1144620
+36,"Ile Tromelin",14,2,"r2",2014,3177621,46,"Djibouti",580536
+36,"Ile Tromelin",14,2,"r2",2014,3177621,202,"United Republic of Tanzania",7050460
+36,"Ile Tromelin",14,2,"r2",2015,3250356.75,28,"Comoros",1046920
+36,"Ile Tromelin",14,2,"r2",2015,3250356.75,29,"Mayotte",318735
+36,"Ile Tromelin",14,2,"r2",2015,3250356.75,31,"Seychelles",110325
+36,"Ile Tromelin",14,2,"r2",2015,3250356.75,32,"Reunion",839273
+36,"Ile Tromelin",14,2,"r2",2015,3250356.75,37,"Mauritius",1396460
+36,"Ile Tromelin",14,2,"r2",2015,3250356.75,41,"Mozambique",9640630
+36,"Ile Tromelin",14,2,"r2",2015,3250356.75,42,"Madagascar",7334410
+36,"Ile Tromelin",14,2,"r2",2015,3250356.75,43,"Kenya",2894570
+36,"Ile Tromelin",14,2,"r2",2015,3250356.75,44,"Somalia",6439110
+36,"Ile Tromelin",14,2,"r2",2015,3250356.75,45,"Eritrea",1170110
+36,"Ile Tromelin",14,2,"r2",2015,3250356.75,46,"Djibouti",584538
+36,"Ile Tromelin",14,2,"r2",2015,3250356.75,202,"United Republic of Tanzania",7229200
+38,"British Indian Ocean Territory",34,142,"r2",2005,32433866.6666667,39,"Maldives",440980
+38,"British Indian Ocean Territory",34,142,"r2",2005,32433866.6666667,40,"Sri Lanka",12977600
+38,"British Indian Ocean Territory",34,142,"r2",2005,32433866.6666667,53,"Pakistan",12317100
+38,"British Indian Ocean Territory",34,142,"r2",2005,32433866.6666667,191,"Iran (Islamic Republic of)",2442220
+38,"British Indian Ocean Territory",34,142,"r2",2005,32433866.6666667,203,"India",139329000
+38,"British Indian Ocean Territory",34,142,"r2",2005,32433866.6666667,204,"Bangladesh",27096300
+38,"British Indian Ocean Territory",34,142,"r2",2006,32830777,39,"Maldives",454922
+38,"British Indian Ocean Territory",34,142,"r2",2006,32830777,40,"Sri Lanka",13122200
+38,"British Indian Ocean Territory",34,142,"r2",2006,32830777,53,"Pakistan",12646800
+38,"British Indian Ocean Territory",34,142,"r2",2006,32830777,191,"Iran (Islamic Republic of)",2500740
+38,"British Indian Ocean Territory",34,142,"r2",2006,32830777,203,"India",140630000
+38,"British Indian Ocean Territory",34,142,"r2",2006,32830777,204,"Bangladesh",27630000
+38,"British Indian Ocean Territory",34,142,"r2",2007,33227718.8333333,39,"Maldives",468863
+38,"British Indian Ocean Territory",34,142,"r2",2007,33227718.8333333,40,"Sri Lanka",13266900
+38,"British Indian Ocean Territory",34,142,"r2",2007,33227718.8333333,53,"Pakistan",12976600
+38,"British Indian Ocean Territory",34,142,"r2",2007,33227718.8333333,191,"Iran (Islamic Republic of)",2559250
+38,"British Indian Ocean Territory",34,142,"r2",2007,33227718.8333333,203,"India",141931000
+38,"British Indian Ocean Territory",34,142,"r2",2007,33227718.8333333,204,"Bangladesh",28163700
+38,"British Indian Ocean Territory",34,142,"r2",2008,33624644,39,"Maldives",482804
+38,"British Indian Ocean Territory",34,142,"r2",2008,33624644,40,"Sri Lanka",13411600
+38,"British Indian Ocean Territory",34,142,"r2",2008,33624644,53,"Pakistan",13306300
+38,"British Indian Ocean Territory",34,142,"r2",2008,33624644,191,"Iran (Islamic Republic of)",2617760
+38,"British Indian Ocean Territory",34,142,"r2",2008,33624644,203,"India",143232000
+38,"British Indian Ocean Territory",34,142,"r2",2008,33624644,204,"Bangladesh",28697400
+38,"British Indian Ocean Territory",34,142,"r2",2009,34021569.3333333,39,"Maldives",496746
+38,"British Indian Ocean Territory",34,142,"r2",2009,34021569.3333333,40,"Sri Lanka",13556300
+38,"British Indian Ocean Territory",34,142,"r2",2009,34021569.3333333,53,"Pakistan",13636100
+38,"British Indian Ocean Territory",34,142,"r2",2009,34021569.3333333,191,"Iran (Islamic Republic of)",2676270
+38,"British Indian Ocean Territory",34,142,"r2",2009,34021569.3333333,203,"India",144533000
+38,"British Indian Ocean Territory",34,142,"r2",2009,34021569.3333333,204,"Bangladesh",29231000
+38,"British Indian Ocean Territory",34,142,"r2",2010,34418496.1666667,39,"Maldives",510687
+38,"British Indian Ocean Territory",34,142,"r2",2010,34418496.1666667,40,"Sri Lanka",13701000
+38,"British Indian Ocean Territory",34,142,"r2",2010,34418496.1666667,53,"Pakistan",13965800
+38,"British Indian Ocean Territory",34,142,"r2",2010,34418496.1666667,191,"Iran (Islamic Republic of)",2734790
+38,"British Indian Ocean Territory",34,142,"r2",2010,34418496.1666667,203,"India",145834000
+38,"British Indian Ocean Territory",34,142,"r2",2010,34418496.1666667,204,"Bangladesh",29764700
+38,"British Indian Ocean Territory",34,142,"r2",2011,34770223.5,39,"Maldives",526241
+38,"British Indian Ocean Territory",34,142,"r2",2011,34770223.5,40,"Sri Lanka",13837900
+38,"British Indian Ocean Territory",34,142,"r2",2011,34770223.5,53,"Pakistan",14325100
+38,"British Indian Ocean Territory",34,142,"r2",2011,34770223.5,191,"Iran (Islamic Republic of)",2803300
+38,"British Indian Ocean Territory",34,142,"r2",2011,34770223.5,203,"India",146844000
+38,"British Indian Ocean Territory",34,142,"r2",2011,34770223.5,204,"Bangladesh",30284800
+38,"British Indian Ocean Territory",34,142,"r2",2012,35121936,39,"Maldives",541796
+38,"British Indian Ocean Territory",34,142,"r2",2012,35121936,40,"Sri Lanka",13974800
+38,"British Indian Ocean Territory",34,142,"r2",2012,35121936,53,"Pakistan",14684400
+38,"British Indian Ocean Territory",34,142,"r2",2012,35121936,191,"Iran (Islamic Republic of)",2871820
+38,"British Indian Ocean Territory",34,142,"r2",2012,35121936,203,"India",147854000
+38,"British Indian Ocean Territory",34,142,"r2",2012,35121936,204,"Bangladesh",30804800
+38,"British Indian Ocean Territory",34,142,"r2",2013,35473830,39,"Maldives",557350
+38,"British Indian Ocean Territory",34,142,"r2",2013,35473830,40,"Sri Lanka",14111700
+38,"British Indian Ocean Territory",34,142,"r2",2013,35473830,53,"Pakistan",15043700
+38,"British Indian Ocean Territory",34,142,"r2",2013,35473830,191,"Iran (Islamic Republic of)",2940330
+38,"British Indian Ocean Territory",34,142,"r2",2013,35473830,203,"India",148865000
+38,"British Indian Ocean Territory",34,142,"r2",2013,35473830,204,"Bangladesh",31324900
+38,"British Indian Ocean Territory",34,142,"r2",2014,35825540.6666667,39,"Maldives",572904
+38,"British Indian Ocean Territory",34,142,"r2",2014,35825540.6666667,40,"Sri Lanka",14248600
+38,"British Indian Ocean Territory",34,142,"r2",2014,35825540.6666667,53,"Pakistan",15403000
+38,"British Indian Ocean Territory",34,142,"r2",2014,35825540.6666667,191,"Iran (Islamic Republic of)",3008840
+38,"British Indian Ocean Territory",34,142,"r2",2014,35825540.6666667,203,"India",149875000
+38,"British Indian Ocean Territory",34,142,"r2",2014,35825540.6666667,204,"Bangladesh",31844900
+38,"British Indian Ocean Territory",34,142,"r2",2015,36177269.6666667,39,"Maldives",588458
+38,"British Indian Ocean Territory",34,142,"r2",2015,36177269.6666667,40,"Sri Lanka",14385500
+38,"British Indian Ocean Territory",34,142,"r2",2015,36177269.6666667,53,"Pakistan",15762300
+38,"British Indian Ocean Territory",34,142,"r2",2015,36177269.6666667,191,"Iran (Islamic Republic of)",3077360
+38,"British Indian Ocean Territory",34,142,"r2",2015,36177269.6666667,203,"India",150885000
+38,"British Indian Ocean Territory",34,142,"r2",2015,36177269.6666667,204,"Bangladesh",32365000
+89,"South Georgia and the South Sandwich Islands",999,999,"XSI",2005,,,,
+89,"South Georgia and the South Sandwich Islands",999,999,"XSI",2006,,,,
+89,"South Georgia and the South Sandwich Islands",999,999,"XSI",2007,,,,
+89,"South Georgia and the South Sandwich Islands",999,999,"XSI",2008,,,,
+89,"South Georgia and the South Sandwich Islands",999,999,"XSI",2009,,,,
+89,"South Georgia and the South Sandwich Islands",999,999,"XSI",2010,,,,
+89,"South Georgia and the South Sandwich Islands",999,999,"XSI",2011,,,,
+89,"South Georgia and the South Sandwich Islands",999,999,"XSI",2012,,,,
+89,"South Georgia and the South Sandwich Islands",999,999,"XSI",2013,,,,
+89,"South Georgia and the South Sandwich Islands",999,999,"XSI",2014,,,,
+89,"South Georgia and the South Sandwich Islands",999,999,"XSI",2015,,,,
+90,"Prince Edward Islands",999,999,"XSI",2005,,,,
+90,"Prince Edward Islands",999,999,"XSI",2006,,,,
+90,"Prince Edward Islands",999,999,"XSI",2007,,,,
+90,"Prince Edward Islands",999,999,"XSI",2008,,,,
+90,"Prince Edward Islands",999,999,"XSI",2009,,,,
+90,"Prince Edward Islands",999,999,"XSI",2010,,,,
+90,"Prince Edward Islands",999,999,"XSI",2011,,,,
+90,"Prince Edward Islands",999,999,"XSI",2012,,,,
+90,"Prince Edward Islands",999,999,"XSI",2013,,,,
+90,"Prince Edward Islands",999,999,"XSI",2014,,,,
+90,"Prince Edward Islands",999,999,"XSI",2015,,,,
+91,"Crozet Islands",999,999,"XSI",2005,,,,
+91,"Crozet Islands",999,999,"XSI",2006,,,,
+91,"Crozet Islands",999,999,"XSI",2007,,,,
+91,"Crozet Islands",999,999,"XSI",2008,,,,
+91,"Crozet Islands",999,999,"XSI",2009,,,,
+91,"Crozet Islands",999,999,"XSI",2010,,,,
+91,"Crozet Islands",999,999,"XSI",2011,,,,
+91,"Crozet Islands",999,999,"XSI",2012,,,,
+91,"Crozet Islands",999,999,"XSI",2013,,,,
+91,"Crozet Islands",999,999,"XSI",2014,,,,
+91,"Crozet Islands",999,999,"XSI",2015,,,,
+92,"Amsterdam Island and Saint Paul Island",999,999,"XSI",2005,,,,
+92,"Amsterdam Island and Saint Paul Island",999,999,"XSI",2006,,,,
+92,"Amsterdam Island and Saint Paul Island",999,999,"XSI",2007,,,,
+92,"Amsterdam Island and Saint Paul Island",999,999,"XSI",2008,,,,
+92,"Amsterdam Island and Saint Paul Island",999,999,"XSI",2009,,,,
+92,"Amsterdam Island and Saint Paul Island",999,999,"XSI",2010,,,,
+92,"Amsterdam Island and Saint Paul Island",999,999,"XSI",2011,,,,
+92,"Amsterdam Island and Saint Paul Island",999,999,"XSI",2012,,,,
+92,"Amsterdam Island and Saint Paul Island",999,999,"XSI",2013,,,,
+92,"Amsterdam Island and Saint Paul Island",999,999,"XSI",2014,,,,
+92,"Amsterdam Island and Saint Paul Island",999,999,"XSI",2015,,,,
+93,"Kerguelen Islands",999,999,"XSI",2005,,,,
+93,"Kerguelen Islands",999,999,"XSI",2006,,,,
+93,"Kerguelen Islands",999,999,"XSI",2007,,,,
+93,"Kerguelen Islands",999,999,"XSI",2008,,,,
+93,"Kerguelen Islands",999,999,"XSI",2009,,,,
+93,"Kerguelen Islands",999,999,"XSI",2010,,,,
+93,"Kerguelen Islands",999,999,"XSI",2011,,,,
+93,"Kerguelen Islands",999,999,"XSI",2012,,,,
+93,"Kerguelen Islands",999,999,"XSI",2013,,,,
+93,"Kerguelen Islands",999,999,"XSI",2014,,,,
+93,"Kerguelen Islands",999,999,"XSI",2015,,,,
+94,"Heard and McDonald Islands",999,999,"XSI",2005,,,,
+94,"Heard and McDonald Islands",999,999,"XSI",2006,,,,
+94,"Heard and McDonald Islands",999,999,"XSI",2007,,,,
+94,"Heard and McDonald Islands",999,999,"XSI",2008,,,,
+94,"Heard and McDonald Islands",999,999,"XSI",2009,,,,
+94,"Heard and McDonald Islands",999,999,"XSI",2010,,,,
+94,"Heard and McDonald Islands",999,999,"XSI",2011,,,,
+94,"Heard and McDonald Islands",999,999,"XSI",2012,,,,
+94,"Heard and McDonald Islands",999,999,"XSI",2013,,,,
+94,"Heard and McDonald Islands",999,999,"XSI",2014,,,,
+94,"Heard and McDonald Islands",999,999,"XSI",2015,,,,
+105,"Bouvet Island",999,999,"XSI",2005,,,,
+105,"Bouvet Island",999,999,"XSI",2006,,,,
+105,"Bouvet Island",999,999,"XSI",2007,,,,
+105,"Bouvet Island",999,999,"XSI",2008,,,,
+105,"Bouvet Island",999,999,"XSI",2009,,,,
+105,"Bouvet Island",999,999,"XSI",2010,,,,
+105,"Bouvet Island",999,999,"XSI",2011,,,,
+105,"Bouvet Island",999,999,"XSI",2012,,,,
+105,"Bouvet Island",999,999,"XSI",2013,,,,
+105,"Bouvet Island",999,999,"XSI",2014,,,,
+105,"Bouvet Island",999,999,"XSI",2015,,,,
+107,"Clipperton Island",13,419,"r2",2005,4121823.75,129,"Panama",3078850
+107,"Clipperton Island",13,419,"r2",2005,4121823.75,130,"Costa Rica",1484920
+107,"Clipperton Island",13,419,"r2",2005,4121823.75,131,"Nicaragua",2335950
+107,"Clipperton Island",13,419,"r2",2005,4121823.75,133,"Honduras",2642450
+107,"Clipperton Island",13,419,"r2",2005,4121823.75,134,"El Salvador",4618630
+107,"Clipperton Island",13,419,"r2",2005,4121823.75,135,"Mexico",17317600
+107,"Clipperton Island",13,419,"r2",2005,4121823.75,136,"Guatemala",1319460
+107,"Clipperton Island",13,419,"r2",2005,4121823.75,164,"Belize",176730
+107,"Clipperton Island",13,419,"r2",2006,4193917.875,129,"Panama",3119240
+107,"Clipperton Island",13,419,"r2",2006,4193917.875,130,"Costa Rica",1508910
+107,"Clipperton Island",13,419,"r2",2006,4193917.875,131,"Nicaragua",2399240
+107,"Clipperton Island",13,419,"r2",2006,4193917.875,133,"Honduras",2705670
+107,"Clipperton Island",13,419,"r2",2006,4193917.875,134,"El Salvador",4702250
+107,"Clipperton Island",13,419,"r2",2006,4193917.875,135,"Mexico",17589500
+107,"Clipperton Island",13,419,"r2",2006,4193917.875,136,"Guatemala",1347420
+107,"Clipperton Island",13,419,"r2",2006,4193917.875,164,"Belize",179113
+107,"Clipperton Island",13,419,"r2",2007,4266024.375,129,"Panama",3159630
+107,"Clipperton Island",13,419,"r2",2007,4266024.375,130,"Costa Rica",1532910
+107,"Clipperton Island",13,419,"r2",2007,4266024.375,131,"Nicaragua",2462530
+107,"Clipperton Island",13,419,"r2",2007,4266024.375,133,"Honduras",2768890
+107,"Clipperton Island",13,419,"r2",2007,4266024.375,134,"El Salvador",4785870
+107,"Clipperton Island",13,419,"r2",2007,4266024.375,135,"Mexico",17861500
+107,"Clipperton Island",13,419,"r2",2007,4266024.375,136,"Guatemala",1375370
+107,"Clipperton Island",13,419,"r2",2007,4266024.375,164,"Belize",181495
+107,"Clipperton Island",13,419,"r2",2008,4338119.75,129,"Panama",3200030
+107,"Clipperton Island",13,419,"r2",2008,4338119.75,130,"Costa Rica",1556900
+107,"Clipperton Island",13,419,"r2",2008,4338119.75,131,"Nicaragua",2525820
+107,"Clipperton Island",13,419,"r2",2008,4338119.75,133,"Honduras",2832110
+107,"Clipperton Island",13,419,"r2",2008,4338119.75,134,"El Salvador",4869490
+107,"Clipperton Island",13,419,"r2",2008,4338119.75,135,"Mexico",18133400
+107,"Clipperton Island",13,419,"r2",2008,4338119.75,136,"Guatemala",1403330
+107,"Clipperton Island",13,419,"r2",2008,4338119.75,164,"Belize",183878
+107,"Clipperton Island",13,419,"r2",2009,4410215,129,"Panama",3240420
+107,"Clipperton Island",13,419,"r2",2009,4410215,130,"Costa Rica",1580900
+107,"Clipperton Island",13,419,"r2",2009,4410215,131,"Nicaragua",2589110
+107,"Clipperton Island",13,419,"r2",2009,4410215,133,"Honduras",2895330
+107,"Clipperton Island",13,419,"r2",2009,4410215,134,"El Salvador",4953110
+107,"Clipperton Island",13,419,"r2",2009,4410215,135,"Mexico",18405300
+107,"Clipperton Island",13,419,"r2",2009,4410215,136,"Guatemala",1431290
+107,"Clipperton Island",13,419,"r2",2009,4410215,164,"Belize",186260
+107,"Clipperton Island",13,419,"r2",2010,4482309.125,129,"Panama",3280810
+107,"Clipperton Island",13,419,"r2",2010,4482309.125,130,"Costa Rica",1604890
+107,"Clipperton Island",13,419,"r2",2010,4482309.125,131,"Nicaragua",2652400
+107,"Clipperton Island",13,419,"r2",2010,4482309.125,133,"Honduras",2958550
+107,"Clipperton Island",13,419,"r2",2010,4482309.125,134,"El Salvador",5036730
+107,"Clipperton Island",13,419,"r2",2010,4482309.125,135,"Mexico",18677200
+107,"Clipperton Island",13,419,"r2",2010,4482309.125,136,"Guatemala",1459250
+107,"Clipperton Island",13,419,"r2",2010,4482309.125,164,"Belize",188643
+107,"Clipperton Island",13,419,"r2",2011,4552643.875,129,"Panama",3318430
+107,"Clipperton Island",13,419,"r2",2011,4552643.875,130,"Costa Rica",1626920
+107,"Clipperton Island",13,419,"r2",2011,4552643.875,131,"Nicaragua",2717170
+107,"Clipperton Island",13,419,"r2",2011,4552643.875,133,"Honduras",3021770
+107,"Clipperton Island",13,419,"r2",2011,4552643.875,134,"El Salvador",5118100
+107,"Clipperton Island",13,419,"r2",2011,4552643.875,135,"Mexico",18942100
+107,"Clipperton Island",13,419,"r2",2011,4552643.875,136,"Guatemala",1485880
+107,"Clipperton Island",13,419,"r2",2011,4552643.875,164,"Belize",190781
+107,"Clipperton Island",13,419,"r2",2012,4622976.125,129,"Panama",3356040
+107,"Clipperton Island",13,419,"r2",2012,4622976.125,130,"Costa Rica",1648940
+107,"Clipperton Island",13,419,"r2",2012,4622976.125,131,"Nicaragua",2781940
+107,"Clipperton Island",13,419,"r2",2012,4622976.125,133,"Honduras",3084990
+107,"Clipperton Island",13,419,"r2",2012,4622976.125,134,"El Salvador",5199480
+107,"Clipperton Island",13,419,"r2",2012,4622976.125,135,"Mexico",19207000
+107,"Clipperton Island",13,419,"r2",2012,4622976.125,136,"Guatemala",1512500
+107,"Clipperton Island",13,419,"r2",2012,4622976.125,164,"Belize",192919
+107,"Clipperton Island",13,419,"r2",2013,4693311,129,"Panama",3393660
+107,"Clipperton Island",13,419,"r2",2013,4693311,130,"Costa Rica",1670960
+107,"Clipperton Island",13,419,"r2",2013,4693311,131,"Nicaragua",2846710
+107,"Clipperton Island",13,419,"r2",2013,4693311,133,"Honduras",3148220
+107,"Clipperton Island",13,419,"r2",2013,4693311,134,"El Salvador",5280850
+107,"Clipperton Island",13,419,"r2",2013,4693311,135,"Mexico",19471900
+107,"Clipperton Island",13,419,"r2",2013,4693311,136,"Guatemala",1539130
+107,"Clipperton Island",13,419,"r2",2013,4693311,164,"Belize",195058
+107,"Clipperton Island",13,419,"r2",2014,4763645.75,129,"Panama",3431280
+107,"Clipperton Island",13,419,"r2",2014,4763645.75,130,"Costa Rica",1692990
+107,"Clipperton Island",13,419,"r2",2014,4763645.75,131,"Nicaragua",2911480
+107,"Clipperton Island",13,419,"r2",2014,4763645.75,133,"Honduras",3211440
+107,"Clipperton Island",13,419,"r2",2014,4763645.75,134,"El Salvador",5362220
+107,"Clipperton Island",13,419,"r2",2014,4763645.75,135,"Mexico",19736800
+107,"Clipperton Island",13,419,"r2",2014,4763645.75,136,"Guatemala",1565760
+107,"Clipperton Island",13,419,"r2",2014,4763645.75,164,"Belize",197196
+107,"Clipperton Island",13,419,"r2",2015,4833966.875,129,"Panama",3468890
+107,"Clipperton Island",13,419,"r2",2015,4833966.875,130,"Costa Rica",1715010
+107,"Clipperton Island",13,419,"r2",2015,4833966.875,131,"Nicaragua",2976250
+107,"Clipperton Island",13,419,"r2",2015,4833966.875,133,"Honduras",3274660
+107,"Clipperton Island",13,419,"r2",2015,4833966.875,134,"El Salvador",5443600
+107,"Clipperton Island",13,419,"r2",2015,4833966.875,135,"Mexico",20001600
+107,"Clipperton Island",13,419,"r2",2015,4833966.875,136,"Guatemala",1592390
+107,"Clipperton Island",13,419,"r2",2015,4833966.875,164,"Belize",199335
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,69,"Latvia",1305400
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,70,"Estonia",829807
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,85,"Ascension",746.586
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,86,"Saint Helena",6176.49
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,88,"Tristan da Cunha",242.828
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,95,"Falkland Islands (Malvinas)",2601.53
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,141,"Faeroe Islands",51212.6
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,143,"Iceland",301782
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,145,"Greenland",59005.5
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,174,"Finland",2837450
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,175,"Denmark",5245140
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,180,"United Kingdom of Great Britain and Northern Ireland",37413500
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,181,"Ireland",3191370
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,189,"Lithuania",402147
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,222,"Sweden",5973940
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,223,"Norway",3912460
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,227,"Jersey",87292.9
+144,"Jan Mayen",154,150,"r2",2005,3426577.25188889,228,"Guernsey",58116.1
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,69,"Latvia",1295090
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,70,"Estonia",820596
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,85,"Ascension",752.823
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,86,"Saint Helena",6229.49
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,88,"Tristan da Cunha",244.818
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,95,"Falkland Islands (Malvinas)",2631.67
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,141,"Faeroe Islands",51644.7
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,143,"Iceland",303792
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,145,"Greenland",59149.4
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,174,"Finland",2827890
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,175,"Denmark",5247530
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,180,"United Kingdom of Great Britain and Northern Ireland",37464900
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,181,"Ireland",3225860
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,189,"Lithuania",401306
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,222,"Sweden",5981520
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,223,"Norway",3926210
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,227,"Jersey",87612.2
+144,"Jan Mayen",154,150,"r2",2006,3431171.26672222,228,"Guernsey",58123.7
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,69,"Latvia",1284780
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,70,"Estonia",811386
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,85,"Ascension",759.061
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,86,"Saint Helena",6282.5
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,88,"Tristan da Cunha",246.807
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,95,"Falkland Islands (Malvinas)",2661.81
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,141,"Faeroe Islands",52076.9
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,143,"Iceland",305802
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,145,"Greenland",59293.2
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,174,"Finland",2818320
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,175,"Denmark",5249930
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,180,"United Kingdom of Great Britain and Northern Ireland",37516200
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,181,"Ireland",3260350
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,189,"Lithuania",400465
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,222,"Sweden",5989100
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,223,"Norway",3939950
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,227,"Jersey",87931.6
+144,"Jan Mayen",154,150,"r2",2007,3435759.23766667,228,"Guernsey",58131.4
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,69,"Latvia",1274470
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,70,"Estonia",802175
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,85,"Ascension",765.299
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,86,"Saint Helena",6335.5
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,88,"Tristan da Cunha",248.796
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,95,"Falkland Islands (Malvinas)",2691.96
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,141,"Faeroe Islands",52509.1
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,143,"Iceland",307812
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,145,"Greenland",59437.1
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,174,"Finland",2808750
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,175,"Denmark",5252320
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,180,"United Kingdom of Great Britain and Northern Ireland",37567500
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,181,"Ireland",3294850
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,189,"Lithuania",399624
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,222,"Sweden",5996680
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,223,"Norway",3953690
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,227,"Jersey",88250.9
+144,"Jan Mayen",154,150,"r2",2008,3440347.1475,228,"Guernsey",58139
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,69,"Latvia",1264160
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,70,"Estonia",792965
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,85,"Ascension",771.537
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,86,"Saint Helena",6388.51
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,88,"Tristan da Cunha",250.785
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,95,"Falkland Islands (Malvinas)",2722.1
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,141,"Faeroe Islands",52941.3
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,143,"Iceland",309822
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,145,"Greenland",59581
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,174,"Finland",2799180
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,175,"Denmark",5254710
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,180,"United Kingdom of Great Britain and Northern Ireland",37618900
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,181,"Ireland",3329340
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,189,"Lithuania",398783
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,222,"Sweden",6004260
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,223,"Norway",3967430
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,227,"Jersey",88570.2
+144,"Jan Mayen",154,150,"r2",2009,3444940.11844444,228,"Guernsey",58146.7
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,69,"Latvia",1253850
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,70,"Estonia",783755
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,85,"Ascension",777.774
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,86,"Saint Helena",6441.51
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,88,"Tristan da Cunha",252.774
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,95,"Falkland Islands (Malvinas)",2752.25
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,141,"Faeroe Islands",53373.5
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,143,"Iceland",311831
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,145,"Greenland",59724.8
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,174,"Finland",2789610
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,175,"Denmark",5257110
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,180,"United Kingdom of Great Britain and Northern Ireland",37670200
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,181,"Ireland",3363830
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,189,"Lithuania",397943
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,222,"Sweden",6011840
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,223,"Norway",3981170
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,227,"Jersey",88889.6
+144,"Jan Mayen",154,150,"r2",2010,3449528.08377778,228,"Guernsey",58154.3
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,69,"Latvia",1243920
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,70,"Estonia",774797
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,85,"Ascension",784.597
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,86,"Saint Helena",6496.54
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,88,"Tristan da Cunha",254.929
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,95,"Falkland Islands (Malvinas)",2781.98
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,141,"Faeroe Islands",53747.2
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,143,"Iceland",314034
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,145,"Greenland",59874.7
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,174,"Finland",2751640
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,175,"Denmark",5256870
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,180,"United Kingdom of Great Britain and Northern Ireland",37724200
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,181,"Ireland",3401460
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,189,"Lithuania",397029
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,222,"Sweden",6019470
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,223,"Norway",3993960
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,227,"Jersey",89214.8
+144,"Jan Mayen",154,150,"r2",2011,3452705.36922222,228,"Guernsey",58161.9
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,69,"Latvia",1233980
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,70,"Estonia",765840
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,85,"Ascension",791.42
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,86,"Saint Helena",6551.57
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,88,"Tristan da Cunha",257.083
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,95,"Falkland Islands (Malvinas)",2811.72
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,141,"Faeroe Islands",54121
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,143,"Iceland",316236
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,145,"Greenland",60024.6
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,174,"Finland",2713670
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,175,"Denmark",5256640
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,180,"United Kingdom of Great Britain and Northern Ireland",37778200
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,181,"Ireland",3439090
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,189,"Lithuania",396116
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,222,"Sweden",6027100
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,223,"Norway",4006760
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,227,"Jersey",89540.1
+144,"Jan Mayen",154,150,"r2",2012,3455883.28294444,228,"Guernsey",58169.6
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,69,"Latvia",1224050
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,70,"Estonia",756882
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,85,"Ascension",798.242
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,86,"Saint Helena",6606.6
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,88,"Tristan da Cunha",259.238
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,95,"Falkland Islands (Malvinas)",2841.46
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,141,"Faeroe Islands",54494.8
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,143,"Iceland",318438
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,145,"Greenland",60174.5
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,174,"Finland",2675690
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,175,"Denmark",5256400
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,180,"United Kingdom of Great Britain and Northern Ireland",37832200
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,181,"Ireland",3476720
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,189,"Lithuania",395203
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,222,"Sweden",6034730
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,223,"Norway",4019550
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,227,"Jersey",89865.4
+144,"Jan Mayen",154,150,"r2",2013,3459060.02444444,228,"Guernsey",58177.2
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,69,"Latvia",1214120
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,70,"Estonia",747925
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,85,"Ascension",805.065
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,86,"Saint Helena",6661.62
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,88,"Tristan da Cunha",261.393
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,95,"Falkland Islands (Malvinas)",2871.19
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,141,"Faeroe Islands",54868.6
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,143,"Iceland",320640
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,145,"Greenland",60324.4
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,174,"Finland",2637720
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,175,"Denmark",5256170
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,180,"United Kingdom of Great Britain and Northern Ireland",37886200
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,181,"Ireland",3514350
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,189,"Lithuania",394289
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,222,"Sweden",6042360
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,223,"Norway",4032340
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,227,"Jersey",90190.6
+144,"Jan Mayen",154,150,"r2",2014,3462237.876,228,"Guernsey",58184.9
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,69,"Latvia",1204190
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,70,"Estonia",738967
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,85,"Ascension",811.887
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,86,"Saint Helena",6716.65
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,88,"Tristan da Cunha",263.548
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,95,"Falkland Islands (Malvinas)",2900.93
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,141,"Faeroe Islands",55242.4
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,143,"Iceland",322842
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,145,"Greenland",60474.3
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,174,"Finland",2599750
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,175,"Denmark",5255930
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,180,"United Kingdom of Great Britain and Northern Ireland",37940200
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,181,"Ireland",3551990
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,189,"Lithuania",393376
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,222,"Sweden",6049990
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,223,"Norway",4045130
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,227,"Jersey",90515.9
+144,"Jan Mayen",154,150,"r2",2015,3465415.72861111,228,"Guernsey",58192.5
+150,"Palmyra Atoll",57,9,"r2",2005,82105.6296,8,"Palau",36690.1
+150,"Palmyra Atoll",57,9,"r2",2005,82105.6296,9,"Micronesia (Federated States of)",167370
+150,"Palmyra Atoll",57,9,"r2",2005,82105.6296,10,"Nauru",10459
+150,"Palmyra Atoll",57,9,"r2",2005,82105.6296,11,"Marshall Islands",140435
+150,"Palmyra Atoll",57,9,"r2",2005,82105.6296,13,"Northern Mariana Islands and Guam",340088
+150,"Palmyra Atoll",57,9,"r2",2005,82105.6296,148,"Line Group",5703.09
+150,"Palmyra Atoll",57,9,"r2",2005,82105.6296,149,"Jarvis Island",0
+150,"Palmyra Atoll",57,9,"r2",2005,82105.6296,157,"Phoenix Group",180.106
+150,"Palmyra Atoll",57,9,"r2",2005,82105.6296,158,"Howland Island and Baker Island",0
+150,"Palmyra Atoll",57,9,"r2",2005,82105.6296,212,"Kiribati",120131
+150,"Palmyra Atoll",57,9,"r2",2006,83896.3694,8,"Palau",37409.4
+150,"Palmyra Atoll",57,9,"r2",2006,83896.3694,9,"Micronesia (Federated States of)",171289
+150,"Palmyra Atoll",57,9,"r2",2006,83896.3694,10,"Nauru",10696.7
+150,"Palmyra Atoll",57,9,"r2",2006,83896.3694,11,"Marshall Islands",142232
+150,"Palmyra Atoll",57,9,"r2",2006,83896.3694,13,"Northern Mariana Islands and Guam",349716
+150,"Palmyra Atoll",57,9,"r2",2006,83896.3694,148,"Line Group",5821.65
+150,"Palmyra Atoll",57,9,"r2",2006,83896.3694,149,"Jarvis Island",0
+150,"Palmyra Atoll",57,9,"r2",2006,83896.3694,157,"Phoenix Group",184.944
+150,"Palmyra Atoll",57,9,"r2",2006,83896.3694,158,"Howland Island and Baker Island",0
+150,"Palmyra Atoll",57,9,"r2",2006,83896.3694,212,"Kiribati",121614
+150,"Palmyra Atoll",57,9,"r2",2007,85687.1993,8,"Palau",38128.7
+150,"Palmyra Atoll",57,9,"r2",2007,85687.1993,9,"Micronesia (Federated States of)",175209
+150,"Palmyra Atoll",57,9,"r2",2007,85687.1993,10,"Nauru",10934.3
+150,"Palmyra Atoll",57,9,"r2",2007,85687.1993,11,"Marshall Islands",144028
+150,"Palmyra Atoll",57,9,"r2",2007,85687.1993,13,"Northern Mariana Islands and Guam",359345
+150,"Palmyra Atoll",57,9,"r2",2007,85687.1993,148,"Line Group",5940.21
+150,"Palmyra Atoll",57,9,"r2",2007,85687.1993,149,"Jarvis Island",0
+150,"Palmyra Atoll",57,9,"r2",2007,85687.1993,157,"Phoenix Group",189.783
+150,"Palmyra Atoll",57,9,"r2",2007,85687.1993,158,"Howland Island and Baker Island",0
+150,"Palmyra Atoll",57,9,"r2",2007,85687.1993,212,"Kiribati",123097
+150,"Palmyra Atoll",57,9,"r2",2008,87477.9292,8,"Palau",38847.9
+150,"Palmyra Atoll",57,9,"r2",2008,87477.9292,9,"Micronesia (Federated States of)",179129
+150,"Palmyra Atoll",57,9,"r2",2008,87477.9292,10,"Nauru",11172
+150,"Palmyra Atoll",57,9,"r2",2008,87477.9292,11,"Marshall Islands",145825
+150,"Palmyra Atoll",57,9,"r2",2008,87477.9292,13,"Northern Mariana Islands and Guam",368973
+150,"Palmyra Atoll",57,9,"r2",2008,87477.9292,148,"Line Group",6058.77
+150,"Palmyra Atoll",57,9,"r2",2008,87477.9292,149,"Jarvis Island",0
+150,"Palmyra Atoll",57,9,"r2",2008,87477.9292,157,"Phoenix Group",194.622
+150,"Palmyra Atoll",57,9,"r2",2008,87477.9292,158,"Howland Island and Baker Island",0
+150,"Palmyra Atoll",57,9,"r2",2008,87477.9292,212,"Kiribati",124579
+150,"Palmyra Atoll",57,9,"r2",2009,89268.669,8,"Palau",39567.2
+150,"Palmyra Atoll",57,9,"r2",2009,89268.669,9,"Micronesia (Federated States of)",183049
+150,"Palmyra Atoll",57,9,"r2",2009,89268.669,10,"Nauru",11409.7
+150,"Palmyra Atoll",57,9,"r2",2009,89268.669,11,"Marshall Islands",147621
+150,"Palmyra Atoll",57,9,"r2",2009,89268.669,13,"Northern Mariana Islands and Guam",378601
+150,"Palmyra Atoll",57,9,"r2",2009,89268.669,148,"Line Group",6177.33
+150,"Palmyra Atoll",57,9,"r2",2009,89268.669,149,"Jarvis Island",0
+150,"Palmyra Atoll",57,9,"r2",2009,89268.669,157,"Phoenix Group",199.46
+150,"Palmyra Atoll",57,9,"r2",2009,89268.669,158,"Howland Island and Baker Island",0
+150,"Palmyra Atoll",57,9,"r2",2009,89268.669,212,"Kiribati",126062
+150,"Palmyra Atoll",57,9,"r2",2010,91059.4989,8,"Palau",40286.5
+150,"Palmyra Atoll",57,9,"r2",2010,91059.4989,9,"Micronesia (Federated States of)",186969
+150,"Palmyra Atoll",57,9,"r2",2010,91059.4989,10,"Nauru",11647.3
+150,"Palmyra Atoll",57,9,"r2",2010,91059.4989,11,"Marshall Islands",149418
+150,"Palmyra Atoll",57,9,"r2",2010,91059.4989,13,"Northern Mariana Islands and Guam",388230
+150,"Palmyra Atoll",57,9,"r2",2010,91059.4989,148,"Line Group",6295.89
+150,"Palmyra Atoll",57,9,"r2",2010,91059.4989,149,"Jarvis Island",0
+150,"Palmyra Atoll",57,9,"r2",2010,91059.4989,157,"Phoenix Group",204.299
+150,"Palmyra Atoll",57,9,"r2",2010,91059.4989,158,"Howland Island and Baker Island",0
+150,"Palmyra Atoll",57,9,"r2",2010,91059.4989,212,"Kiribati",127544
+150,"Palmyra Atoll",57,9,"r2",2011,92868.49,8,"Palau",41007.6
+150,"Palmyra Atoll",57,9,"r2",2011,92868.49,9,"Micronesia (Federated States of)",190950
+150,"Palmyra Atoll",57,9,"r2",2011,92868.49,10,"Nauru",11888.7
+150,"Palmyra Atoll",57,9,"r2",2011,92868.49,11,"Marshall Islands",151226
+150,"Palmyra Atoll",57,9,"r2",2011,92868.49,13,"Northern Mariana Islands and Guam",397959
+150,"Palmyra Atoll",57,9,"r2",2011,92868.49,148,"Line Group",6411
+150,"Palmyra Atoll",57,9,"r2",2011,92868.49,149,"Jarvis Island",0
+150,"Palmyra Atoll",57,9,"r2",2011,92868.49,157,"Phoenix Group",208.6
+150,"Palmyra Atoll",57,9,"r2",2011,92868.49,158,"Howland Island and Baker Island",0
+150,"Palmyra Atoll",57,9,"r2",2011,92868.49,212,"Kiribati",129034
+150,"Palmyra Atoll",57,9,"r2",2012,94677.5601,8,"Palau",41728.6
+150,"Palmyra Atoll",57,9,"r2",2012,94677.5601,9,"Micronesia (Federated States of)",194932
+150,"Palmyra Atoll",57,9,"r2",2012,94677.5601,10,"Nauru",12130
+150,"Palmyra Atoll",57,9,"r2",2012,94677.5601,11,"Marshall Islands",153033
+150,"Palmyra Atoll",57,9,"r2",2012,94677.5601,13,"Northern Mariana Islands and Guam",407689
+150,"Palmyra Atoll",57,9,"r2",2012,94677.5601,148,"Line Group",6526.1
+150,"Palmyra Atoll",57,9,"r2",2012,94677.5601,149,"Jarvis Island",0
+150,"Palmyra Atoll",57,9,"r2",2012,94677.5601,157,"Phoenix Group",212.901
+150,"Palmyra Atoll",57,9,"r2",2012,94677.5601,158,"Howland Island and Baker Island",0
+150,"Palmyra Atoll",57,9,"r2",2012,94677.5601,212,"Kiribati",130524
+150,"Palmyra Atoll",57,9,"r2",2013,96486.6412,8,"Palau",42449.7
+150,"Palmyra Atoll",57,9,"r2",2013,96486.6412,9,"Micronesia (Federated States of)",198914
+150,"Palmyra Atoll",57,9,"r2",2013,96486.6412,10,"Nauru",12371.3
+150,"Palmyra Atoll",57,9,"r2",2013,96486.6412,11,"Marshall Islands",154841
+150,"Palmyra Atoll",57,9,"r2",2013,96486.6412,13,"Northern Mariana Islands and Guam",417418
+150,"Palmyra Atoll",57,9,"r2",2013,96486.6412,148,"Line Group",6641.21
+150,"Palmyra Atoll",57,9,"r2",2013,96486.6412,149,"Jarvis Island",0
+150,"Palmyra Atoll",57,9,"r2",2013,96486.6412,157,"Phoenix Group",217.202
+150,"Palmyra Atoll",57,9,"r2",2013,96486.6412,158,"Howland Island and Baker Island",0
+150,"Palmyra Atoll",57,9,"r2",2013,96486.6412,212,"Kiribati",132014
+150,"Palmyra Atoll",57,9,"r2",2014,98295.7213,8,"Palau",43170.8
+150,"Palmyra Atoll",57,9,"r2",2014,98295.7213,9,"Micronesia (Federated States of)",202895
+150,"Palmyra Atoll",57,9,"r2",2014,98295.7213,10,"Nauru",12612.6
+150,"Palmyra Atoll",57,9,"r2",2014,98295.7213,11,"Marshall Islands",156649
+150,"Palmyra Atoll",57,9,"r2",2014,98295.7213,13,"Northern Mariana Islands and Guam",427148
+150,"Palmyra Atoll",57,9,"r2",2014,98295.7213,148,"Line Group",6756.31
+150,"Palmyra Atoll",57,9,"r2",2014,98295.7213,149,"Jarvis Island",0
+150,"Palmyra Atoll",57,9,"r2",2014,98295.7213,157,"Phoenix Group",221.503
+150,"Palmyra Atoll",57,9,"r2",2014,98295.7213,158,"Howland Island and Baker Island",0
+150,"Palmyra Atoll",57,9,"r2",2014,98295.7213,212,"Kiribati",133504
+150,"Palmyra Atoll",57,9,"r2",2015,100104.9124,8,"Palau",43891.9
+150,"Palmyra Atoll",57,9,"r2",2015,100104.9124,9,"Micronesia (Federated States of)",206877
+150,"Palmyra Atoll",57,9,"r2",2015,100104.9124,10,"Nauru",12854
+150,"Palmyra Atoll",57,9,"r2",2015,100104.9124,11,"Marshall Islands",158457
+150,"Palmyra Atoll",57,9,"r2",2015,100104.9124,13,"Northern Mariana Islands and Guam",436877
+150,"Palmyra Atoll",57,9,"r2",2015,100104.9124,148,"Line Group",6871.42
+150,"Palmyra Atoll",57,9,"r2",2015,100104.9124,149,"Jarvis Island",0
+150,"Palmyra Atoll",57,9,"r2",2015,100104.9124,157,"Phoenix Group",225.804
+150,"Palmyra Atoll",57,9,"r2",2015,100104.9124,158,"Howland Island and Baker Island",0
+150,"Palmyra Atoll",57,9,"r2",2015,100104.9124,212,"Kiribati",134995
+159,"Johnston Atoll",57,9,"r2",2005,82105.6296,8,"Palau",36690.1
+159,"Johnston Atoll",57,9,"r2",2005,82105.6296,9,"Micronesia (Federated States of)",167370
+159,"Johnston Atoll",57,9,"r2",2005,82105.6296,10,"Nauru",10459
+159,"Johnston Atoll",57,9,"r2",2005,82105.6296,11,"Marshall Islands",140435
+159,"Johnston Atoll",57,9,"r2",2005,82105.6296,13,"Northern Mariana Islands and Guam",340088
+159,"Johnston Atoll",57,9,"r2",2005,82105.6296,148,"Line Group",5703.09
+159,"Johnston Atoll",57,9,"r2",2005,82105.6296,149,"Jarvis Island",0
+159,"Johnston Atoll",57,9,"r2",2005,82105.6296,157,"Phoenix Group",180.106
+159,"Johnston Atoll",57,9,"r2",2005,82105.6296,158,"Howland Island and Baker Island",0
+159,"Johnston Atoll",57,9,"r2",2005,82105.6296,212,"Kiribati",120131
+159,"Johnston Atoll",57,9,"r2",2006,83896.3694,8,"Palau",37409.4
+159,"Johnston Atoll",57,9,"r2",2006,83896.3694,9,"Micronesia (Federated States of)",171289
+159,"Johnston Atoll",57,9,"r2",2006,83896.3694,10,"Nauru",10696.7
+159,"Johnston Atoll",57,9,"r2",2006,83896.3694,11,"Marshall Islands",142232
+159,"Johnston Atoll",57,9,"r2",2006,83896.3694,13,"Northern Mariana Islands and Guam",349716
+159,"Johnston Atoll",57,9,"r2",2006,83896.3694,148,"Line Group",5821.65
+159,"Johnston Atoll",57,9,"r2",2006,83896.3694,149,"Jarvis Island",0
+159,"Johnston Atoll",57,9,"r2",2006,83896.3694,157,"Phoenix Group",184.944
+159,"Johnston Atoll",57,9,"r2",2006,83896.3694,158,"Howland Island and Baker Island",0
+159,"Johnston Atoll",57,9,"r2",2006,83896.3694,212,"Kiribati",121614
+159,"Johnston Atoll",57,9,"r2",2007,85687.1993,8,"Palau",38128.7
+159,"Johnston Atoll",57,9,"r2",2007,85687.1993,9,"Micronesia (Federated States of)",175209
+159,"Johnston Atoll",57,9,"r2",2007,85687.1993,10,"Nauru",10934.3
+159,"Johnston Atoll",57,9,"r2",2007,85687.1993,11,"Marshall Islands",144028
+159,"Johnston Atoll",57,9,"r2",2007,85687.1993,13,"Northern Mariana Islands and Guam",359345
+159,"Johnston Atoll",57,9,"r2",2007,85687.1993,148,"Line Group",5940.21
+159,"Johnston Atoll",57,9,"r2",2007,85687.1993,149,"Jarvis Island",0
+159,"Johnston Atoll",57,9,"r2",2007,85687.1993,157,"Phoenix Group",189.783
+159,"Johnston Atoll",57,9,"r2",2007,85687.1993,158,"Howland Island and Baker Island",0
+159,"Johnston Atoll",57,9,"r2",2007,85687.1993,212,"Kiribati",123097
+159,"Johnston Atoll",57,9,"r2",2008,87477.9292,8,"Palau",38847.9
+159,"Johnston Atoll",57,9,"r2",2008,87477.9292,9,"Micronesia (Federated States of)",179129
+159,"Johnston Atoll",57,9,"r2",2008,87477.9292,10,"Nauru",11172
+159,"Johnston Atoll",57,9,"r2",2008,87477.9292,11,"Marshall Islands",145825
+159,"Johnston Atoll",57,9,"r2",2008,87477.9292,13,"Northern Mariana Islands and Guam",368973
+159,"Johnston Atoll",57,9,"r2",2008,87477.9292,148,"Line Group",6058.77
+159,"Johnston Atoll",57,9,"r2",2008,87477.9292,149,"Jarvis Island",0
+159,"Johnston Atoll",57,9,"r2",2008,87477.9292,157,"Phoenix Group",194.622
+159,"Johnston Atoll",57,9,"r2",2008,87477.9292,158,"Howland Island and Baker Island",0
+159,"Johnston Atoll",57,9,"r2",2008,87477.9292,212,"Kiribati",124579
+159,"Johnston Atoll",57,9,"r2",2009,89268.669,8,"Palau",39567.2
+159,"Johnston Atoll",57,9,"r2",2009,89268.669,9,"Micronesia (Federated States of)",183049
+159,"Johnston Atoll",57,9,"r2",2009,89268.669,10,"Nauru",11409.7
+159,"Johnston Atoll",57,9,"r2",2009,89268.669,11,"Marshall Islands",147621
+159,"Johnston Atoll",57,9,"r2",2009,89268.669,13,"Northern Mariana Islands and Guam",378601
+159,"Johnston Atoll",57,9,"r2",2009,89268.669,148,"Line Group",6177.33
+159,"Johnston Atoll",57,9,"r2",2009,89268.669,149,"Jarvis Island",0
+159,"Johnston Atoll",57,9,"r2",2009,89268.669,157,"Phoenix Group",199.46
+159,"Johnston Atoll",57,9,"r2",2009,89268.669,158,"Howland Island and Baker Island",0
+159,"Johnston Atoll",57,9,"r2",2009,89268.669,212,"Kiribati",126062
+159,"Johnston Atoll",57,9,"r2",2010,91059.4989,8,"Palau",40286.5
+159,"Johnston Atoll",57,9,"r2",2010,91059.4989,9,"Micronesia (Federated States of)",186969
+159,"Johnston Atoll",57,9,"r2",2010,91059.4989,10,"Nauru",11647.3
+159,"Johnston Atoll",57,9,"r2",2010,91059.4989,11,"Marshall Islands",149418
+159,"Johnston Atoll",57,9,"r2",2010,91059.4989,13,"Northern Mariana Islands and Guam",388230
+159,"Johnston Atoll",57,9,"r2",2010,91059.4989,148,"Line Group",6295.89
+159,"Johnston Atoll",57,9,"r2",2010,91059.4989,149,"Jarvis Island",0
+159,"Johnston Atoll",57,9,"r2",2010,91059.4989,157,"Phoenix Group",204.299
+159,"Johnston Atoll",57,9,"r2",2010,91059.4989,158,"Howland Island and Baker Island",0
+159,"Johnston Atoll",57,9,"r2",2010,91059.4989,212,"Kiribati",127544
+159,"Johnston Atoll",57,9,"r2",2011,92868.49,8,"Palau",41007.6
+159,"Johnston Atoll",57,9,"r2",2011,92868.49,9,"Micronesia (Federated States of)",190950
+159,"Johnston Atoll",57,9,"r2",2011,92868.49,10,"Nauru",11888.7
+159,"Johnston Atoll",57,9,"r2",2011,92868.49,11,"Marshall Islands",151226
+159,"Johnston Atoll",57,9,"r2",2011,92868.49,13,"Northern Mariana Islands and Guam",397959
+159,"Johnston Atoll",57,9,"r2",2011,92868.49,148,"Line Group",6411
+159,"Johnston Atoll",57,9,"r2",2011,92868.49,149,"Jarvis Island",0
+159,"Johnston Atoll",57,9,"r2",2011,92868.49,157,"Phoenix Group",208.6
+159,"Johnston Atoll",57,9,"r2",2011,92868.49,158,"Howland Island and Baker Island",0
+159,"Johnston Atoll",57,9,"r2",2011,92868.49,212,"Kiribati",129034
+159,"Johnston Atoll",57,9,"r2",2012,94677.5601,8,"Palau",41728.6
+159,"Johnston Atoll",57,9,"r2",2012,94677.5601,9,"Micronesia (Federated States of)",194932
+159,"Johnston Atoll",57,9,"r2",2012,94677.5601,10,"Nauru",12130
+159,"Johnston Atoll",57,9,"r2",2012,94677.5601,11,"Marshall Islands",153033
+159,"Johnston Atoll",57,9,"r2",2012,94677.5601,13,"Northern Mariana Islands and Guam",407689
+159,"Johnston Atoll",57,9,"r2",2012,94677.5601,148,"Line Group",6526.1
+159,"Johnston Atoll",57,9,"r2",2012,94677.5601,149,"Jarvis Island",0
+159,"Johnston Atoll",57,9,"r2",2012,94677.5601,157,"Phoenix Group",212.901
+159,"Johnston Atoll",57,9,"r2",2012,94677.5601,158,"Howland Island and Baker Island",0
+159,"Johnston Atoll",57,9,"r2",2012,94677.5601,212,"Kiribati",130524
+159,"Johnston Atoll",57,9,"r2",2013,96486.6412,8,"Palau",42449.7
+159,"Johnston Atoll",57,9,"r2",2013,96486.6412,9,"Micronesia (Federated States of)",198914
+159,"Johnston Atoll",57,9,"r2",2013,96486.6412,10,"Nauru",12371.3
+159,"Johnston Atoll",57,9,"r2",2013,96486.6412,11,"Marshall Islands",154841
+159,"Johnston Atoll",57,9,"r2",2013,96486.6412,13,"Northern Mariana Islands and Guam",417418
+159,"Johnston Atoll",57,9,"r2",2013,96486.6412,148,"Line Group",6641.21
+159,"Johnston Atoll",57,9,"r2",2013,96486.6412,149,"Jarvis Island",0
+159,"Johnston Atoll",57,9,"r2",2013,96486.6412,157,"Phoenix Group",217.202
+159,"Johnston Atoll",57,9,"r2",2013,96486.6412,158,"Howland Island and Baker Island",0
+159,"Johnston Atoll",57,9,"r2",2013,96486.6412,212,"Kiribati",132014
+159,"Johnston Atoll",57,9,"r2",2014,98295.7213,8,"Palau",43170.8
+159,"Johnston Atoll",57,9,"r2",2014,98295.7213,9,"Micronesia (Federated States of)",202895
+159,"Johnston Atoll",57,9,"r2",2014,98295.7213,10,"Nauru",12612.6
+159,"Johnston Atoll",57,9,"r2",2014,98295.7213,11,"Marshall Islands",156649
+159,"Johnston Atoll",57,9,"r2",2014,98295.7213,13,"Northern Mariana Islands and Guam",427148
+159,"Johnston Atoll",57,9,"r2",2014,98295.7213,148,"Line Group",6756.31
+159,"Johnston Atoll",57,9,"r2",2014,98295.7213,149,"Jarvis Island",0
+159,"Johnston Atoll",57,9,"r2",2014,98295.7213,157,"Phoenix Group",221.503
+159,"Johnston Atoll",57,9,"r2",2014,98295.7213,158,"Howland Island and Baker Island",0
+159,"Johnston Atoll",57,9,"r2",2014,98295.7213,212,"Kiribati",133504
+159,"Johnston Atoll",57,9,"r2",2015,100104.9124,8,"Palau",43891.9
+159,"Johnston Atoll",57,9,"r2",2015,100104.9124,9,"Micronesia (Federated States of)",206877
+159,"Johnston Atoll",57,9,"r2",2015,100104.9124,10,"Nauru",12854
+159,"Johnston Atoll",57,9,"r2",2015,100104.9124,11,"Marshall Islands",158457
+159,"Johnston Atoll",57,9,"r2",2015,100104.9124,13,"Northern Mariana Islands and Guam",436877
+159,"Johnston Atoll",57,9,"r2",2015,100104.9124,148,"Line Group",6871.42
+159,"Johnston Atoll",57,9,"r2",2015,100104.9124,149,"Jarvis Island",0
+159,"Johnston Atoll",57,9,"r2",2015,100104.9124,157,"Phoenix Group",225.804
+159,"Johnston Atoll",57,9,"r2",2015,100104.9124,158,"Howland Island and Baker Island",0
+159,"Johnston Atoll",57,9,"r2",2015,100104.9124,212,"Kiribati",134995
+213,"Antarctica",,,"r2",2005,13918,255,,13918
+213,"Antarctica",,,"r2",2006,13424.5,255,,13424.5
+213,"Antarctica",,,"r2",2007,12931,255,,12931
+213,"Antarctica",,,"r2",2008,12437.5,255,,12437.5
+213,"Antarctica",,,"r2",2009,11944,255,,11944
+213,"Antarctica",,,"r2",2010,11450.5,255,,11450.5
+213,"Antarctica",,,"r2",2011,11057.9,255,,11057.9
+213,"Antarctica",,,"r2",2012,10665.2,255,,10665.2
+213,"Antarctica",,,"r2",2013,10272.5,255,,10272.5
+213,"Antarctica",,,"r2",2014,9879.84,255,,9879.84
+213,"Antarctica",,,"r2",2015,9487.16,255,,9487.16

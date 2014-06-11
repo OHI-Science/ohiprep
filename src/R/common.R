@@ -17,3 +17,8 @@ if (!file.exists(sprintf('%s/',dir_neptune_data))){
   stop(sprintf("The directory for variable dir_neptune_data set in src/R/common.R does not exist. Do you need to mount %s?", dir_neptune_data))
   
 }
+
+# load commonly used libraries'
+library(reshape2)
+library(plyr)
+library(dplyr)
