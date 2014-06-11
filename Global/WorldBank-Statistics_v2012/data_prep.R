@@ -14,22 +14,16 @@
 
 # setup ----
 
+
+# from get paths configuration based on host machine name
+source('src/R/common.R') # set dir_neptune_data; load reshape2, plyr, dplyr
+source('src/R/ohi_clean_fxns.R') # get functions
+dir_d = 'Global/WorldBank-Statistics_v2012'
+
 # load libraries
-library(reshape2)
-library(plyr)
-library(dplyr)
 library(gdata)
 # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 library(ohicore)  # for github/ohicore/R/gapfill_georegions.R
-
-# from get paths configuration based on host machine name
-source('src/R/common.R') # set dir_neptune_data
-# Otherwise, presume that scripts are always working from your default ohiprep folder
-dir_d = 'Global/WorldBank-Statistics_v2012'
-
-# get functions
-source('src/R/ohi_clean_fxns.R')
-
 
 # read in and process files ----
 d.all =  matrix(nrow=0, ncol=0)
@@ -75,46 +69,84 @@ for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), fu
 d.all <- d.all[d.all[,1] != "Channel Islands",] # remove Channel Islands
 d.all <- d.all[d.all[,1] != "Isle of Man",] # remove Isle of Man
 
-# # prep as add_rgn_id expects
-# d.all2 = d.all[c('country','value','year','layer','units')]
-# d.all3 = d.all2[order(d.all2$layer, d.all2$country,  d.all2$year),]
-d.all3 = d.all
-
 # Print out all the unique indicators
 print('these are all the variables that are included in the cleaned file: ')
-print(data.frame(unique(d.all3$layer)))
+print(data.frame(unique(d.all$layer)))
 
-## run add_rgn_id and save ----
-# uifilesave = file.path(dir_d, 'raw', 'WorldBank-Statistics_v2012-cleaned.csv')
-# name_to_rgn(d.all3, uifilesave)
-
-
-# rgn_id: country to rgn_id  # source('src/R/ohi_clean_fxns.R')
-m_r = name_to_rgn(d.all3, fld_name='country', flds_unique=c('country','year','layer', 'units'), fld_value='value', add_rgn_name=T) %.%
+# add rgn_id: country to rgn_id  # source('src/R/ohi_clean_fxns.R') ----
+m_d = name_to_rgn(d.all, fld_name='country', flds_unique=c('country','year','layer', 'units'), fld_value='value', add_rgn_name=T) %.%
   select(rgn_name, rgn_id, layer, units, year, value) %.%
   arrange(rgn_name, layer, units, year)
 
 
-## check for duplicate regions, sum them ----
+## georegional gapfilling with gapfill_georegions.r ----
 
-# explore; identify dups
-dclean = read.csv(uifilesave); head(dclean)
-d.dup = dclean[duplicated(dclean[,c('rgn_id', 'year', 'layer', 'units')]),]; head(d.dup)
-dup_ids = unique(d.dup$rgn_id) # 13, 116, 209, NA
-filter(dclean, rgn_id == 13, year == 1960)
-filter(dclean, rgn_id == 116, year == 1960)
-filter(dclean, rgn_id == 209, year == 1960)
+# read in lookups
+georegions = read.csv('../ohicore/inst/extdata/layers.Global2013.www2013/rgn_georegions_long_2013b.csv', na.strings='') %.%
+  dcast(rgn_id ~ level, value.var='georgn_id')
 
-# remove duplicates with sum_duplicates.r
-d_fix = sum_duplicates(dclean, dup_ids, fld.nam = 'value'); head(d_fix)
+# rgns =  %.%
+#   filter(rgn_typ=='eez') %.%
+#   select(rgn_id, rgn_label = rgn_nam)
+# 
+# # georegions = layers$data[['rnk_rgn_georegions']] %.%
+# #     dcast(rgn_id ~ level, value.var='georgn_id')
 
-# confirm
-filter(d_fix, rgn_id == 13, year == 1960)
-filter(d_fix, rgn_id == 116, year == 1960)
-filter(d_fix, rgn_id == 209, year == 1960)
+georegion_labels = read.csv('../ohicore/inst/extdata/layers.Global2013.www2013/rgn_georegions_labels_long_2013b.csv') %.%    
+  mutate(level_label = sprintf('%s_label', level)) %.%
+  dcast(rgn_id ~ level_label, value.var='label') %.%
+  left_join(
+    read.csv('../ohicore/inst/extdata/layers.Global2013.www2013/rgn_labels.csv') %.%
+      select(rgn_id, v_label=label),
+    by='rgn_id') %.%
+  arrange(r0_label, r1_label, r2_label, v_label); head(georegion_labels)
 
 
-## georegional gapfilling with add_gapfill.r ----
+# prepare for for loop below
+layer_uni = unique(m_d$layer)
+layername = sprintf('rgn_wb_%s_2014a.csv', layer_uni)
+
+for(k in 1:length(layer_uni)) { # k=1
+  m_l = m_d[m_d$layer == layer_uni[k],] %.%
+    select(rgn_name, rgn_id, year, value); head(m_l)
+  
+  d_g = gapfill_georegions(
+    data = m_l %.%
+      filter(!rgn_id %in% c(213,255)) %.%
+      select(rgn_id, year, value),
+    fld_id = 'rgn_id',
+    georegions = georegions,
+    georegion_labels = georegion_labels,
+    r0_to_NA = TRUE) %.%
+    select(rgn_id, year, value) %.%
+    arrange(rgn_id, year); head(d_g)
+  
+  # save
+  layersave = file.path(dir_d, 'data', layername[k])
+  write.csv(d_g, layersave, na = '', row.names=FALSE)
+  
+  # investigate attribute tables
+  head(attr(d_g, 'gapfill_georegions'))
+  
+  # TODO: save attribute tables--currently they are returning NULL... 
+  
+  #   z = attr(d_g, 'gapfill_georegions') %.%
+  #     filter(v_label=='Cocos Islands')
+  
+}
+
+
+
+# other trouble shooting-- this actually doesn't work because ohicore requires these packages. So this is not the problem. 
+#     # ensure dplyr's summarize overrides plyr's summarize by loading in succession
+#     if ('package:reshape2'  %in% search()) detach('package:reshape2')
+#     if ('package:plyr'      %in% search()) detach('package:plyr')
+#     if ('package:dplyr'     %in% search()) detach('package:dplyr')
+#     library(reshape2)
+#     library(plyr)
+#     library(dplyr)
+
+
 
 # remove anything without a rgn_id after confirming that the list printed does not contain any actual regions
 d.2 = d_fix; tail(d.2)

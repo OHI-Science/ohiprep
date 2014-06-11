@@ -130,8 +130,6 @@ name_to_rgn = function(d, fld_name='country', flds_unique=fld_name, fld_value='v
       rgn_name = first(rgn_name),
       rgn_type = first(rgn_type)) %.%
     ungroup()
-  cat('\nrgns...\n')
-  print(rgns)
   
   # combine to have a unique tmp_name to rgn_id lookup
   r = rbind_list(
@@ -141,7 +139,7 @@ name_to_rgn = function(d, fld_name='country', flds_unique=fld_name, fld_value='v
       select(rgn_id=rgn_id_2013, tmp_name=rgn_nam_2013, tmp_type=rgn_typ)) %.%
     group_by(tmp_name) %.%
     summarize(
-      tmp_name = first(tmp_name),
+      rgn_id = first(rgn_id),
       tmp_type = first(tmp_type))
   
   # remove accents from data
@@ -168,7 +166,7 @@ name_to_rgn = function(d, fld_name='country', flds_unique=fld_name, fld_value='v
   if (sum(is.na(m_r$tmp_type)) > 0){
     cat('\nThese data were removed for not having any match in the lookup tables:\n')  
     print(table(subset(m_r, is.na(tmp_type), tmp_name)))
-    stop('FIX region lookups.')
+#     stop('FIX region lookups.') # commented out because larger regions (eg Middle East) would cause this to stop with an error. Check printed table instead. 
   }
   
   # show table of others filtered out
