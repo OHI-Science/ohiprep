@@ -1,6 +1,7 @@
 # Run on cmd:
-#  amphitrite: C:\Python27\ArcGIS10.2\python.exe G:\ohiprep\Global\NCEAS-Regions_v2014\fix_land-mid-eez-RUS-SVA-UK_duplicate-spid-SVA_null-inland1km-offshore1km-CAN.py
-#  optimus:    C:\Python27\ArcGISx6410.1\python.exe D:\best\docs\GitHub\ohiprep\Global\NCEAS-Regions_v2014\fix_land-mid-eez-RUS-SVA-UK_duplicate-spid-SVA_null-inland1km-offshore1km-CAN.py
+#  amphitrite   : C:\Python27\ArcGIS10.2\python.exe    G:\ohiprep\Global\NCEAS-Regions_v2014\fix_land-mid-eez-RUS-SVA-UK_duplicate-spid-SVA_null-inland1km-offshore1km-CAN.py
+#  amphitrite 64: C:\Python27\ArcGISx6410.2\python.exe G:\ohiprep\Global\NCEAS-Regions_v2014\fix_land-mid-eez-RUS-SVA-UK_duplicate-spid-SVA_null-inland1km-offshore1km-CAN.py
+#  optimus      : C:\Python27\ArcGISx6410.1\python.exe D:\best\docs\GitHub\ohiprep\Global\NCEAS-Regions_v2014\fix_land-mid-eez-RUS-SVA-UK_duplicate-spid-SVA_null-inland1km-offshore1km-CAN.py
 
 # modules
 import arcpy, numpy, os, sys, re, socket, pandas, time, math, re
@@ -82,8 +83,8 @@ for buf in buffers: # buf = 'inland1km'
 
         print('  fixing Svalbard (%s)' % (time.strftime('%H:%M:%S')))
         arcpy.MakeFeatureLayer_management('%s/%s' % (gdb, sp_buf), 'lyr', '"sp_name"=\'Svalbard\'')
-        arcpy.CalculateField_management('lyr', 'sp_id', '253')
-        arcpy.CalculateField_management('lyr', 'sp_key', '"SVA"')
+        arcpy.CalculateField_management('lyr', 'sp_id', '253', 'PYTHON_9.3')
+        arcpy.CalculateField_management('lyr', 'sp_key', '"SVA"', 'PYTHON_9.3')
 
         print('  erasing erroneous mid-EEZ land buffer (%s)' % (time.strftime('%H:%M:%S')))
         arcpy.Erase_analysis('%s/%s' % (gdb, sp_buf), '%s/%s' % (gdb, 'sp_landfix_buf60km'), '%s/%s' % (gdb, 'sp_%s_e' % buf))
