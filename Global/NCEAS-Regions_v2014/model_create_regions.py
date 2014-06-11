@@ -42,7 +42,7 @@
 #   - 140 Guadeloupe and Martinique
 #   - 116 Puerto Rico and Virgin Islands of the United States
 
-import arcpy, os, re, numpy as np, socket, pandas as pd, time
+import arcpy, os, re, numpy as np, socket, pandas, time
 from collections import Counter
 arcpy.SetLogHistory(True) # %USERPROFILE%\AppData\Roaming\ESRI\Desktop10.2\ArcToolbox\History
 
@@ -84,8 +84,8 @@ sp_rgn_csv = '{0}/Global/{1}/manual_output/sp_rgn_manual.csv'.format(conf['dir_g
 # final products
 rgn_shp  = '{0}/data/rgn_gcs.shp'.format(ad)
 sp_shp   = '{0}/data/sp_gcs.shp'.format(ad)
-rgn_csv  = '{0}/data/rgn_data.csv'.format(gd)
-sp_csv   = '{0}/data/sp_data.csv'.format(gd)
+rgn_csv  = '{0}/data/rgn_gcs_data.csv'.format(gd)
+sp_csv   = '{0}/data/sp_gcs_data.csv'.format(gd)
 
 # projections (see http://resources.arcgis.com/en/help/main/10.2/018z/pdf/projected_coordinate_systems.pdf|geographic_coordinate_systems.pdf)
 sr_mol = arcpy.SpatialReference('Mollweide (world)') # projected Mollweide (54009)
@@ -217,11 +217,11 @@ arcpy.PolygonNeighbors_analysis('m_c_s', 'nbrs_m_c_s', ['OBJECTID','raw_type','r
 print('get merged data, add empty spatial sp_* fields and use PANDAS data frame (%s)' % time.strftime('%H:%M:%S'))
 m = arcpy.da.TableToNumPyArray('m_c_s', ['OBJECTID','raw_type','raw_id','raw_name','raw_key','Shape_Area'])
 f = np.zeros((len(m),), dtype=[('sp_type','<U20'),('sp_id','<i4'),('sp_name','<U255'),('sp_key','<U10')])
-m = pd.DataFrame(np.lib.recfunctions.merge_arrays([m, f], flatten=True), index=m['OBJECTID'])
+m = pandas.DataFrame(np.lib.recfunctions.merge_arrays([m, f], flatten=True), index=m['OBJECTID'])
 
 # fao bordering land: presume land gap filled by fao if small
 print('fao bordering land: presume land gap filled by fao (%s)' % time.strftime('%H:%M:%S'))
-n = pd.DataFrame(arcpy.da.TableToNumPyArray(
+n = pandas.DataFrame(arcpy.da.TableToNumPyArray(
     'nbrs_m_c_s',
     ['src_OBJECTID','src_raw_type','src_raw_id','src_raw_name','src_raw_key',
      'nbr_OBJECTID','nbr_raw_type','nbr_raw_id','nbr_raw_name','nbr_raw_key','LENGTH'],
@@ -236,7 +236,7 @@ m.loc[d.index, 'sp_key'] = d['nbr_raw_key']
 
 # land bordering fao: presume overextended land from landeez
 print('land bordering fao: presume overextended land from landeez (%s)' % time.strftime('%H:%M:%S'))
-n = pd.DataFrame(arcpy.da.TableToNumPyArray(
+n = pandas.DataFrame(arcpy.da.TableToNumPyArray(
     'nbrs_m_c_s',
     ['src_OBJECTID','src_raw_type','src_raw_id','src_raw_name','src_raw_key',
      'nbr_OBJECTID','nbr_raw_type','nbr_raw_id','nbr_raw_name','nbr_raw_key','LENGTH'],
@@ -252,7 +252,7 @@ m.loc[d.index, 'sp_key'] = d['nbr_raw_key']
 
 # land bordering eez: apply eez with greatest shared LENGTH
 print('land bordering eez: apply eez with greatest shared LENGTH (%s)' % time.strftime('%H:%M:%S'))
-n = pd.DataFrame(arcpy.da.TableToNumPyArray(
+n = pandas.DataFrame(arcpy.da.TableToNumPyArray(
     'nbrs_m_c_s',
     ['src_OBJECTID','nbr_raw_id','nbr_raw_name','nbr_raw_key','LENGTH'],
     "src_raw_type = 'land' AND nbr_raw_type = 'eez' AND LENGTH > 0"))
@@ -313,15 +313,15 @@ arcpy.CalculateField_management('sp_m','sp_name', 'strip(!sp_name!)', 'PYTHON_9.
 arcpy.Dissolve_management('sp_m', 'sp_m_d', ['sp_type','sp_id','sp_name','sp_key'])
 
 # merge and export to git/manual_output/sp_rgn_manual.csv for editing
-d = pd.DataFrame(arcpy.da.TableToNumPyArray('sp_m_d', ['OBJECTID','sp_type','sp_id','sp_name','sp_key','Shape_Area']))
-z = pd.io.parsers.read_csv(z_2013_csv, encoding='utf-8') #print(set(d['sp_type'])) # set([u'ccamlr', u'land', u'eez-inland', u'fao', u'eez',])
-m_eez  = pd.merge(d[d['sp_type']=='eez'] , z[z['rgn_typ']=='eez'], how='outer', left_on='sp_name', right_on='eez_nam')
-m_land = pd.merge(d[d['sp_type']=='land'], z[z['rgn_typ']=='eez'], how='outer', left_on='sp_name', right_on='eez_nam')
+d = pandas.DataFrame(arcpy.da.TableToNumPyArray('sp_m_d', ['OBJECTID','sp_type','sp_id','sp_name','sp_key','Shape_Area']))
+z = pandas.io.parsers.read_csv(z_2013_csv, encoding='utf-8') #print(set(d['sp_type'])) # set([u'ccamlr', u'land', u'eez-inland', u'fao', u'eez',])
+m_eez  = pandas.merge(d[d['sp_type']=='eez'] , z[z['rgn_typ']=='eez'], how='outer', left_on='sp_name', right_on='eez_nam')
+m_land = pandas.merge(d[d['sp_type']=='land'], z[z['rgn_typ']=='eez'], how='outer', left_on='sp_name', right_on='eez_nam')
 d.ix[d['sp_type']=='fao','sp_id'] = d[d['sp_type']=='fao']['sp_id'] + 1000
-m_fao  = pd.merge(d[d['sp_type']=='fao'], z[z['rgn_typ']=='fao'], how='outer', left_on='sp_id', right_on='eez_id')
-m_eezinland = pd.merge(d[d['sp_type']=='eez-inland'], z[z['rgn_typ']=='eez-inland'], how='outer', left_on='sp_name', right_on='eez_nam')
-m_ccamlr = pd.merge(d[d['sp_type']=='ccamlr'], z[z['rgn_typ']=='ccamlr'], how='outer', left_on='sp_name', right_on='eez_nam')
-m = pd.concat([m_eez, m_land, m_fao, m_eezinland, m_ccamlr])
+m_fao  = pandas.merge(d[d['sp_type']=='fao'], z[z['rgn_typ']=='fao'], how='outer', left_on='sp_id', right_on='eez_id')
+m_eezinland = pandas.merge(d[d['sp_type']=='eez-inland'], z[z['rgn_typ']=='eez-inland'], how='outer', left_on='sp_name', right_on='eez_nam')
+m_ccamlr = pandas.merge(d[d['sp_type']=='ccamlr'], z[z['rgn_typ']=='ccamlr'], how='outer', left_on='sp_name', right_on='eez_nam')
+m = pandas.concat([m_eez, m_land, m_fao, m_eezinland, m_ccamlr])
 for col in ['sp_id','sp_type','sp_name','sp_key']:
     m[col+'_orig'] = m[col]
     m[col] = None
@@ -330,13 +330,13 @@ for col in ['sp_id','sp_type','sp_name','sp_key']:
 
 # import and merge git/manual_output/sp_rgn_manual.csv for editing
 #arcpy.Dissolve_management('sp_m', 'sp_m_d', ['sp_type','sp_id','sp_name','sp_key']) # redo sp_id ...
-d = pd.DataFrame(arcpy.da.TableToNumPyArray('sp_m_d', ['OBJECTID','sp_type','sp_id','sp_name','sp_key'])) # print(set(d['sp_type'])) # set([u'ccamlr', u'land', u'eez', u'land-noeez', u'fao', u'eez-inland'])
+d = pandas.DataFrame(arcpy.da.TableToNumPyArray('sp_m_d', ['OBJECTID','sp_type','sp_id','sp_name','sp_key'])) # print(set(d['sp_type'])) # set([u'ccamlr', u'land', u'eez', u'land-noeez', u'fao', u'eez-inland'])
 # convert from Unicode to ASCII for matching lookup
 for u,a in {u'Curaçao':'Curacao', u'République du Congo':'Republique du Congo', u'Réunion':'Reunion'}.iteritems(): # u=u'Réunion'; a='Reunion'
     d.ix[d.sp_name==u,'sp_name'] = a
 d = d.rename(columns={'sp_type':'sp_type_orig','sp_name':'sp_name_orig', 'sp_id':'sp_id_orig','sp_key':'sp_key_orig'})
-z = pd.io.parsers.read_csv(sp_rgn_csv) # , encoding='utf-8') #z_cols = ['sp_type','sp_name_orig','sp_id','sp_name','sp_key','rgn_typ','rgn_id','rgn_name','rgn_key','country_id_2012','region_id_2012','region_name_2012']
-m = pd.merge(d, z, how='left', on=['sp_type_orig','sp_name_orig'])
+z = pandas.io.parsers.read_csv(sp_rgn_csv) # , encoding='utf-8') #z_cols = ['sp_type','sp_name_orig','sp_id','sp_name','sp_key','rgn_typ','rgn_id','rgn_name','rgn_key','country_id_2012','region_id_2012','region_name_2012']
+m = pandas.merge(d, z, how='left', on=['sp_type_orig','sp_name_orig'])
 # missing and duplicate checks should return 0 rows:
 #  m[m.sp_name.isnull()][['sp_type_orig','sp_name_orig']]
 #  m[m.duplicated('OBJECTID')].sort(['sp_type_orig','sp_name_orig'])[['sp_type_orig','sp_name_orig']]
@@ -359,7 +359,7 @@ arcpy.Dissolve_management('sp_m_d_i', 'rgn_gcs', ['rgn_type','rgn_id','rgn_name'
 arcpy.RepairGeometry_management('sp_gcs')
 arcpy.RepairGeometry_management('rgn_gcs')
 
-# add areas
+ add areas
 print('add areas (%s)' % time.strftime('%H:%M:%S'))
 arcpy.AddMessage('calculate areas')
 arcpy.AddField_management(      'sp_gcs' , 'area_km2', 'DOUBLE')
@@ -367,13 +367,13 @@ arcpy.CalculateField_management('sp_gcs' , 'area_km2', '!shape.area@SQUAREKILOME
 arcpy.AddField_management(      'rgn_gcs', 'area_km2', 'DOUBLE')
 arcpy.CalculateField_management('rgn_gcs', 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
 
-# export shp and csv
+ export shp and csv
 print('export shp and csv (%s)' % time.strftime('%H:%M:%S'))
 arcpy.CopyFeatures_management('sp_gcs' , sp_shp)
 arcpy.CopyFeatures_management('rgn_gcs', rgn_shp)
-d = pd.DataFrame(arcpy.da.TableToNumPyArray('sp_gcs', ['sp_type','sp_id','sp_name','sp_key','area_km2','rgn_type','rgn_id','rgn_name','rgn_key','cntry_id12','rgn_id12','rgn_name12']))
+d = pandas.DataFrame(arcpy.da.TableToNumPyArray('sp_gcs', ['sp_type','sp_id','sp_name','sp_key','area_km2','rgn_type','rgn_id','rgn_name','rgn_key','cntry_id12','rgn_id12','rgn_name12']))
 d.to_csv(sp_csv, index=False)
-d = pd.DataFrame(arcpy.da.TableToNumPyArray('rgn_gcs', ['rgn_type','rgn_id','rgn_name','rgn_key','area_km2']))
+d = pandas.DataFrame(arcpy.da.TableToNumPyArray('rgn_gcs', ['rgn_type','rgn_id','rgn_name','rgn_key','area_km2']))
 d.to_csv(rgn_csv, index=False)
 print('done (%s)' % time.strftime('%H:%M:%S'))
 
@@ -496,9 +496,9 @@ arcpy.CalculateField_management('rgn_gcs', 'area_km2', '!shape.area@SQUAREKILOME
 print('export shp and csv (%s)' % time.strftime('%H:%M:%S'))
 arcpy.CopyFeatures_management(gdb+'/sp_gcs' , sp_shp)
 arcpy.CopyFeatures_management(gdb+'/rgn_gcs', rgn_shp)
-d = pd.DataFrame(arcpy.da.TableToNumPyArray('sp_gcs', ['sp_type','sp_id','sp_name','sp_key','area_km2','rgn_type','rgn_id','rgn_name','rgn_key','cntry_id12','rgn_id12','rgn_name12']))
+d = pandas.DataFrame(arcpy.da.TableToNumPyArray('sp_gcs', ['sp_type','sp_id','sp_name','sp_key','area_km2','rgn_type','rgn_id','rgn_name','rgn_key','cntry_id12','rgn_id12','rgn_name12']))
 d.to_csv(sp_csv, index=False)
-d = pd.DataFrame(arcpy.da.TableToNumPyArray('rgn_gcs', ['rgn_type','rgn_id','rgn_name','rgn_key','area_km2']))
+d = pandas.DataFrame(arcpy.da.TableToNumPyArray('rgn_gcs', ['rgn_type','rgn_id','rgn_name','rgn_key','area_km2']))
 d.to_csv(rgn_csv, index=False)
 print('done (%s)' % time.strftime('%H:%M:%S'))
 

@@ -39,49 +39,47 @@ arcpy.env.overwriteOutput = True
 ##arcpy.RepairGeometry_management('sp_inland1km_gcs')
 
 # loop buffers
-for buf in buffers: # buf='inland50km'
+for buf in buffers: # buf='inland1km'
 
-    sp_buf  = 'sp_%s_gcs' % buf
-    rgn_buf = 'rgn_%s_gcs' % buf
-    print('%s... (%s)' % (sp_buf, time.strftime('%H:%M:%S')))
+sp_buf  = 'sp_%s_gcs' % buf
+rgn_buf = 'rgn_%s_gcs' % buf
+print('%s... (%s)' % (sp_buf, time.strftime('%H:%M:%S')))
 
-    print('  fixing Svalbard (%s)' % (time.strftime('%H:%M:%S')))
-    arcpy.MakeFeatureLayer_management(sp_buf, 'lyr', '"sp_name"=\'Svalbard\'')
-    arcpy.CalculateField_management('lyr', 'sp_id', '253')
-    arcpy.CalculateField_management('lyr', 'sp_key', '"SVA"')
+print('  fixing Svalbard (%s)' % (time.strftime('%H:%M:%S')))
+arcpy.MakeFeatureLayer_management(sp_buf, 'lyr', '"sp_name"=\'Svalbard\'')
+arcpy.CalculateField_management('lyr', 'sp_id', '253')
+arcpy.CalculateField_management('lyr', 'sp_key', '"SVA"')
 
-    print('  erasing erroneous offshore RUS land (%s)' % (time.strftime('%H:%M:%S')))
-    arcpy.Erase_analysis(sp_buf, 'sp_landRUSfix_buf100km', 'sp_%s_eRUSfix' % buf)
+print('  erasing erroneous offshore RUS land (%s)' % (time.strftime('%H:%M:%S')))
+arcpy.Erase_analysis(sp_buf, 'sp_landRUSfix_buf100km', 'sp_%s_eRUSfix' % buf)
 
-    print('  dissolving to %s (%s)' % (sp_buf, time.strftime('%H:%M:%S')))
-    arcpy.Dissolve_management(
-        'sp_%s_eRUSfix' % buf, sp_buf,
-        ['sp_type','sp_id','sp_name','sp_key',  # note: exclude area_km2
-         'rgn_type','rgn_id','rgn_name','rgn_key',
-         'cntry_id12','rgn_id12','rgn_name12'])
-    arcpy.AddField_management(sp_buf, 'area_km2', 'DOUBLE')
+print('  dissolving to %s (%s)' % (sp_buf, time.strftime('%H:%M:%S')))
+arcpy.Dissolve_management(
+    'sp_%s_eRUSfix' % buf, sp_buf,
+    ['sp_type','sp_id','sp_name','sp_key',  # note: exclude area_km2
+     'rgn_type','rgn_id','rgn_name','rgn_key',
+     'cntry_id12','rgn_id12','rgn_name12'])
+arcpy.AddField_management(sp_buf, 'area_km2', 'DOUBLE')
 
-    # post-hoc update areas
-    print('  dissolve to rgns and calculate areas (%s)' % time.strftime('%H:%M:%S'))
-    arcpy.CalculateField_management(sp_buf, 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
-    arcpy.Dissolve_management(sp_buf, rgn_buf, ['rgn_type','rgn_id','rgn_name','rgn_key'])
-    arcpy.AddField_management(      rgn_buf, 'area_km2', 'DOUBLE')
-    arcpy.CalculateField_management(rgn_buf, 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
+# post-hoc update areas
+print('  dissolve to rgns and calculate areas (%s)' % time.strftime('%H:%M:%S'))
+arcpy.CalculateField_management(sp_buf, 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
+arcpy.Dissolve_management(sp_buf, rgn_buf, ['rgn_type','rgn_id','rgn_name','rgn_key'])
+arcpy.AddField_management(      rgn_buf, 'area_km2', 'DOUBLE')
+arcpy.CalculateField_management(rgn_buf, 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
 
-    # export shp and csv
-    print('  export shp and csv (%s)' % time.strftime('%H:%M:%S'))
-    arcpy.CopyFeatures_management('%s/%s' % (gdb, sp_buf) , '{0}/data/{1}.shp'.format(ad, sp_buf))
-    arcpy.CopyFeatures_management('%s/%s' % (gdb, rgn_buf), '{0}/data/{1}.shp'.format(ad, sp_buf))
-    d = pd.DataFrame(arcpy.da.TableToNumPyArray(
-        sp_buf,
-        ['sp_type','sp_id','sp_name','sp_key','area_km2',
-         'rgn_type','rgn_id','rgn_name','rgn_key',
-         'cntry_id12','rgn_id12','rgn_name12']))
-    d.to_csv(sp_csv, index=False)
-    d = pd.DataFrame(arcpy.da.TableToNumPyArray(
-        rgn_buf,
-        ['rgn_type','rgn_id','rgn_name','rgn_key','area_km2']))
-    d.to_csv(rgn_csv, index=False)
-    print('done (%s)' % time.strftime('%H:%M:%S'))
-
-# TODO: check sp_inland1km_gcs b/c halted in middle of dissolve overwrite
+# export shp and csv
+print('  export shp and csv (%s)' % time.strftime('%H:%M:%S'))
+arcpy.CopyFeatures_management('%s/%s' % (gdb, sp_buf) , '{0}/data/{1}.shp'.format(ad, sp_buf))
+arcpy.CopyFeatures_management('%s/%s' % (gdb, rgn_buf), '{0}/data/{1}.shp'.format(ad, sp_buf))
+d = pd.DataFrame(arcpy.da.TableToNumPyArray(
+    sp_buf,
+    ['sp_type','sp_id','sp_name','sp_key','area_km2',
+     'rgn_type','rgn_id','rgn_name','rgn_key',
+     'cntry_id12','rgn_id12','rgn_name12']))
+d.to_csv('{0}/data/sp_gcs_data.csv'.format(gd), index=False)
+d = pd.DataFrame(arcpy.da.TableToNumPyArray(
+    rgn_buf,
+    ['rgn_type','rgn_id','rgn_name','rgn_key','area_km2']))
+d.to_csv('{0}/data/rgn_gcs_data.csv'.format(gd), index=False)
+print('done (%s)' % time.strftime('%H:%M:%S'))
