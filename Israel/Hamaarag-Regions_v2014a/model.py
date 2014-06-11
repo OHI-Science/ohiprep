@@ -48,7 +48,8 @@ arcpy.CopyFeatures_management('a', 'thie')
 arcpy.Densify_edit('thie', 'DISTANCE', '1 Kilometers')
 arcpy.FeatureVerticesToPoints_management('thie', 'thie_pts', 'ALL')
  
-# delete interior pointsarcpy.Dissolve_management('thie', 'thie_d')
+# delete interior points
+arcpy.Dissolve_management('thie', 'thie_d')
 arcpy.MakeFeatureLayer_management('thie_pts', 'lyr_pts')
 arcpy.SelectLayerByLocation_management('lyr_pts', 'WITHIN_CLEMENTINI', 'thie_d')
 arcpy.DeleteFeatures_management('lyr_pts')
