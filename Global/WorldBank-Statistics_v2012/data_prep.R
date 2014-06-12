@@ -149,11 +149,15 @@ vs = gg %.%
   left_join(ag %.%
               select(rgn_id, 
                      year, 
-                     value_ag = perc)
-            mutate(
-              val_dif    = value_gg - value_ag,
-              val_notna  = is.na(value_gg)!=is.na(value_ag)) %.%   
-              filter(abs(val_dif) > 0.01 | val_notna == T) %.%
+                     value_ag = perc), 
+            by = c('rgn_id', 'year')) %.%
+  mutate(
+    val_dif    = value_gg - value_ag,
+    val_notna  = is.na(value_gg)!=is.na(value_ag)) %.%   
+  filter(abs(val_dif) > 0.01 | val_notna == T) 
+  
+van = vs %.%
+  filter(rgn_id == 6)
 #               arrange(goal, desc(dimension), desc(score_notna), desc(abs(score_dif))) %.%
 #         select(goal, dimension, region_id, region_label, score_old, score, score_dif)
               
