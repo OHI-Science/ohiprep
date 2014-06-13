@@ -221,7 +221,7 @@ name_to_rgn = function(d, fld_name='country', flds_unique=fld_name, fld_value='v
   if (add_rgn_name) m_d = left_join(m_d, rgns %.% select(rgn_id, rgn_name), by='rgn_id')
   
   # check to ensure no duplicates
-  stopifnot(duplicated(m_d[, c('rgn_id', 'year', 'layer', 'units')]) == 0) 
+  stopifnot(duplicated(m_d[, c(flds_unique_rgn_id)]) == 0) 
   
   # return data.fram    
   return(as.data.frame(m_d))
