@@ -105,28 +105,35 @@ georegion_labels = read.csv('../ohicore/inst/extdata/layers.Global2013.www2013/r
 # prepare for for loop below
 layer_uni = unique(m_d$layer)
 layername = sprintf('rgn_wb_%s_2014a.csv', layer_uni)
+attrname  = sprintf('rgn_wb_%s_2014a_attr.csv', layer_uni)
 
 for(k in 1:length(layer_uni)) { # k=1
   m_l = m_d[m_d$layer == layer_uni[k],] %.%
     select(rgn_name, rgn_id, year, value); head(m_l)
   
-  d_g = gapfill_georegions(
+  layersave = file.path(dir_d, 'data', layername[k])
+  attrsave = file.path(dir_d, 'data', attrname[k])
+  
+  d_g_a = gapfill_georegions(
     data = m_l %.%
       filter(!rgn_id %in% c(213,255)) %.%
       select(rgn_id, year, value),
     fld_id = 'rgn_id',
     georegions = georegions,
     georegion_labels = georegion_labels,
-    r0_to_NA = TRUE) %.%
+    r0_to_NA = TRUE, 
+    attributes_csv = (attrsave)) 
+  # don't chain gapfill_georegions
+  d_g = d_g_a %.%
     select(rgn_id, year, value) %.%
     arrange(rgn_id, year); head(d_g)
   
   # save
-  layersave = file.path(dir_d, 'data', layername[k])
+ 
   write.csv(d_g, layersave, na = '', row.names=FALSE)
   
   # investigate attribute tables
-  head(attr(d_g, 'gapfill_georegions'))
+  head(attr(d_g_a, 'gapfill_georegions'))
   
   # TODO: save attribute tables--currently they are returning NULL... 
   
@@ -161,22 +168,6 @@ van = vs %.%
 #               arrange(goal, desc(dimension), desc(score_notna), desc(abs(score_dif))) %.%
 #         select(goal, dimension, region_id, region_label, score_old, score, score_dif)
               
-
-
-
-
- vs = scores %.%
-        merge(scores_old, by=c('goal','dimension','region_id'), all=T) %.%
-        merge(rgn_labels, by='region_id', all.x=T) %.%
-        mutate(
-          score_dif    = score - score_old,
-          score_notna  = is.na(score)!=is.na(score_old)) %.%  
-        filter(abs(score_dif) > 0.01 | score_notna == T) %.%
-        arrange(goal, desc(dimension), desc(score_notna), desc(abs(score_dif))) %.%
-        select(goal, dimension, region_id, region_label, score_old, score, score_dif)
-      csv = sprintf('%s/git-annex/Global/NCEAS-OHI-Scores-Archive/scores/scores.%s_%s_2013-10-09-dif.csv', dir_conf$neptune_data, scenario, format(Sys.Date(), '%Y-%m-%d'))
-      write.csv(vs, csv, row.names=F, na='')
-  
 
 
 # other trouble shooting-- this actually doesn't work because ohicore requires these packages. So this is not the problem. 
