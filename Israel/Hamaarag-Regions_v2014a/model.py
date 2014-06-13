@@ -26,46 +26,40 @@ arcpy.env.workspace              = gdb
 arcpy.env.overwriteOutput        = True
 arcpy.env.outputCoordinateSystem = sr_gcs
 
-### copy
-##if not arcpy.Exists('%s/s' % gdb):
-##    arcpy.FeatureClassToFeatureClass_conversion(shp_in, gdb, 'a')
-##
-### add rgn_id, rgn_name specific to input shapefile
-##arcpy.AddField_management(      'a', 'rgn_id'  , 'SHORT')
-##arcpy.CalculateField_management('a', 'rgn_id'  , '!Region!', 'PYTHON_9.3')
-##arcpy.AddField_management(      'a', 'rgn_name', 'TEXT')
-##arcpy.CalculateField_management('a', 'rgn_name', '!Name!'  , 'PYTHON_9.3')
-##
-### add area
-##arcpy.AddField_management(      'a', 'area_km2', 'DOUBLE')
-##arcpy.CalculateField_management('a', 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
-##
-### setup for theissen polygons
-##print('buffer (%s)' % (time.strftime('%H:%M:%S')))
-##arcpy.Buffer_analysis('a', 'a_buf200km', '200 kilometers', dissolve_option='ALL')
-##arcpy.env.extent = 'a_buf200km'
-##arcpy.env.outputCoordinateSystem = sr_mol
-##
-##print('copy, densify, pts (%s)' % (time.strftime('%H:%M:%S')))
-##arcpy.CopyFeatures_management('a', 'thie')
-##arcpy.Densify_edit('thie', 'DISTANCE', '1 Kilometers')
-##arcpy.FeatureVerticesToPoints_management('thie', 'thie_pts', 'ALL')
-## 
-### delete interior points
-##print('dissolve (%s)' % (time.strftime('%H:%M:%S')))
-##arcpy.Dissolve_management('thie', 'thie_d')
-##arcpy.MakeFeatureLayer_management('thie_pts', 'lyr_pts')
-##arcpy.SelectLayerByLocation_management('lyr_pts', 'WITHIN_CLEMENTINI', 'thie_d')
-##arcpy.DeleteFeatures_management('lyr_pts')
-## 
-### generate thiessen polygons
-##print('thiessen (%s)' % (time.strftime('%H:%M:%S')))
-##arcpy.CreateThiessenPolygons_analysis('thie_pts', 'thie_polys', 'ALL')
-##arcpy.Dissolve_management('thie_polys', 'a_thiessen_mol', ['rgn_id','rgn_name'])
-##print('repair (%s)' % (time.strftime('%H:%M:%S')))
-##arcpy.RepairGeometry_management('a_thiessen_mol')
-##arcpy.env.outputCoordinateSystem = sr_gcs
-##arcpy.CopyFeatures_management('a_thiessen_mol', 'a_thiessen_gcs')
+# copy
+if not arcpy.Exists('%s/s' % gdb):
+    arcpy.FeatureClassToFeatureClass_conversion(shp_in, gdb, 'a')
+
+# add rgn_id, rgn_name specific to input shapefile
+arcpy.AddField_management(      'a', 'rgn_id'  , 'SHORT')
+arcpy.CalculateField_management('a', 'rgn_id'  , '!Region!', 'PYTHON_9.3')
+arcpy.AddField_management(      'a', 'rgn_name', 'TEXT')
+arcpy.CalculateField_management('a', 'rgn_name', '!Name!'  , 'PYTHON_9.3')
+
+# add area
+arcpy.AddField_management(      'a', 'area_km2', 'DOUBLE')
+arcpy.CalculateField_management('a', 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
+
+# setup for theissen polygons
+arcpy.Buffer_analysis('a', 'a_buf200km', '200 kilometers', dissolve_option='ALL')
+arcpy.env.extent = 'a_buf200km'
+arcpy.env.outputCoordinateSystem = sr_mol
+arcpy.CopyFeatures_management('a', 'thie')
+arcpy.Densify_edit('thie', 'DISTANCE', '1 Kilometers')
+arcpy.FeatureVerticesToPoints_management('thie', 'thie_pts', 'ALL')
+ 
+# delete interior points
+arcpy.Dissolve_management('thie', 'thie_d')
+arcpy.MakeFeatureLayer_management('thie_pts', 'lyr_pts')
+arcpy.SelectLayerByLocation_management('lyr_pts', 'WITHIN_CLEMENTINI', 'thie_d')
+arcpy.DeleteFeatures_management('lyr_pts')
+ 
+# generate thiessen polygons
+arcpy.CreateThiessenPolygons_analysis('thie_pts', 'thie_polys', 'ALL')
+arcpy.Dissolve_management('thie_polys', 'a_thiessen_mol', ['rgn_id','rgn_name'])
+arcpy.RepairGeometry_management('a_thiessen_mol')
+arcpy.env.outputCoordinateSystem = sr_gcs
+arcpy.CopyFeatures_management('a_thiessen_mol', 'a_thiessen_gcs')
 
 # copy global and buffers
 countries = ['Israel']
@@ -94,7 +88,5 @@ for buf in bufs:
     d.to_csv('%s/data/rgn%s_data.csv' % (wd, buf), index=False, encoding='utf-8')
 
 # simplify for geojson
-print('simplify (%s)' % (time.strftime('%H:%M:%S')))
 arcpy.cartography.SmoothPolygon('%s/rgn_gcs' % gdb, 'rgn_smooth_gcs', 'PAEK', 100, 'FIXED_ENDPOINT', 'FLAG_ERRORS') # , 100, "FLAG_ERRORS")
 arcpy.CopyFeatures_management('%s/rgn_smooth_gcs' % gdb, '%s/data/rgn_smooth_gcs.shp' % wd)
-print('done (%s)' % (time.strftime('%H:%M:%S')))
