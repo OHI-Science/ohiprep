@@ -18,8 +18,8 @@ l = read.csv('tmp/layers_2014 - datalayers.csv', skip=1, na=''); head(l); names(
 
 l_whence = l %.%
   mutate(whence2013 = file.path(dir_neptune_data, dir_whence_2013a, whence_2013a)) %.%
-  filter(!is.na(whence_2013a)) %.%
-  select(tar = target, 
+  filter((!is.na(whence_2013a)) & (!target %in% c('TR', 'NP', 'LIV', 'ECO'))) %.%
+  select(tar = target,
          whence2013) %.%
   arrange(tar)
 
@@ -124,7 +124,7 @@ for(g in unique(data$r2_label)) { # g="Australia and New Zealand"
   ggplot(data_m, aes(x=variable, y=as.factor(v_label), fill=as.factor(value))) +
     geom_raster() +
     labs(y = g, x = "") + 
-    theme(axis.text.y = element_text(size=6),
+    theme(axis.text.y = element_text(size=10),
           axis.text.x = element_text(angle=90, vjust=1)) +
     scale_fill_discrete(name  = '', breaks=c(1,2), labels=c('original', 'gapfilled'))
   
@@ -151,27 +151,27 @@ ggsave("whence_example.png", width=5, height=15)
 
 
 ## check gapfilling techniques ----
-
-library(dplyr)
-georegions = read.csv('/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/manual_output/rgn_georegions_long_2013b.csv', na.strings='') %.%
-  dcast(rgn_id ~ level, value.var='georgn_id')
-
-gl = read.csv('/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/manual_output/rgn_georegions_labels_long_2013b.csv', na.strings='')
-georegion_labels = gl  %.%    
-  mutate(level_label = sprintf('%s_label', level)) %.%
-  dcast(rgn_id ~ level_label, value.var='label') %.%
-  left_join(
-    gl %.%
-      select(rgn_id, v_label=label),
-    by='rgn_id')
-
-  # setup data for georegional gapfilling (remove Antarctica rgn_id=213)
-  d_g = gapfill_georegions(
-    data = d %.%
-      filter(rgn_id!=213) %.%
-      select(rgn_id, year, Xtr),
-    georegions = georegions,
-    georegion_labels = georegion_labels)
-
-
-#----fin
+# 
+# library(dplyr)
+# georegions = read.csv('/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/manual_output/rgn_georegions_long_2013b.csv', na.strings='') %.%
+#   dcast(rgn_id ~ level, value.var='georgn_id')
+# 
+# gl = read.csv('/Volumes/data_edit/model/GL-NCEAS-OceanRegions_v2013a/manual_output/rgn_georegions_labels_long_2013b.csv', na.strings='')
+# georegion_labels = gl  %.%    
+#   mutate(level_label = sprintf('%s_label', level)) %.%
+#   dcast(rgn_id ~ level_label, value.var='label') %.%
+#   left_join(
+#     gl %.%
+#       select(rgn_id, v_label=label),
+#     by='rgn_id')
+# 
+#   # setup data for georegional gapfilling (remove Antarctica rgn_id=213)
+#   d_g = gapfill_georegions(
+#     data = d %.%
+#       filter(rgn_id!=213) %.%
+#       select(rgn_id, year, Xtr),
+#     georegions = georegions,
+#     georegion_labels = georegion_labels)
+# 
+# 
+# #----fin
