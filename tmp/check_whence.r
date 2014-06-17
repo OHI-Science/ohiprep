@@ -5,6 +5,22 @@
 # whether a layer was gapfilled or not for each country. see gapfilling code
 # categories rules: https://docs.google.com/a/nceas.ucsb.edu/spreadsheet/ccc?key=0AjLReAQzT2SVdGNZcDNYRjlfSEYteEFyQnotZ0ZjNmc&usp=drive_web#gid=9
 
+# create whence files TUES:::::
+- neptune_data:model/GL-WEF-Economics_v2013/data  rgn_wef_ttci_2013a_lyr.csv
+track AO access/ AO model for other inputs
+track alien invasives
+pathogens?
+ttci
+
+# create ones since not gapfilled:
+genetic escapees pressure
+targeted harvest
+msi
+
+# redo with gapfill_georegions
+wgi
+gci
+
 ## setup ---
 # load libraries
 source('src/R/common.R') # set dir_neptune_data; load reshape2, plyr, dplyr
