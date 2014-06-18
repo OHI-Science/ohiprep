@@ -5,6 +5,8 @@
 # whether a layer was gapfilled or not for each country. see gapfilling code
 # categories rules: https://docs.google.com/a/nceas.ucsb.edu/spreadsheet/ccc?key=0AjLReAQzT2SVdGNZcDNYRjlfSEYteEFyQnotZ0ZjNmc&usp=drive_web#gid=9
 
+# original data is represented with 0, gapfilled with 1. Individual layers are summed and divided by the amount of total layers. Example: if in a single region, 2 layers are original and 2 are gapfilled and there are 4 total, the score would be (0+0+1+1)/4 = .5
+
 # create whence files TUES:::::
 track alien invasives # in neptune_data:model/GL-NCEAS-Resilience_v2013a/data disaggreate
 pathogens?
@@ -31,7 +33,7 @@ l = read.csv(textConnection(RCurl::getURL(g.url, ssl.verifypeer = FALSE)), skip=
 # select only layers 
 l_whence_tmp = l %.%
   filter(  !is.na(whence_2013a) & 
-           !targets %in% c('NP', 'LIV', 'ECO')) %.% ## add 'TR' back in after testing)
+           !targets %in% c('NP', 'LIV', 'ECO')) %.% ##TODO add 'TR' back in after testing)
   mutate(root_whence = str_split_fixed(as.character(dir_whence_2013a), ':', 2)[,1],
          dir_whence = str_split_fixed(as.character(dir_whence_2013a), ':', 2)[,2]) %.%
   select(tar = targets,
@@ -52,7 +54,7 @@ l_whence = rbind(l_nep, l_git) %.%
   arrange(tar)
 
 l_whence$tar = gsub('_.*', '', l_whence$tar) # for name tracking purposes below
-
+l_whence$tar = gsub(' .*', '', l_whence$tar) # for name tracking purposes below
 
 ## read in all files, summarize and combine ----
 d_f =  matrix(nrow=0, ncol=0) # data from files
@@ -74,11 +76,11 @@ for (i in 1:length(l_whence$fp)){ # i = 1
       filter(rgn_id != 213) %.% # remove Antarctica
       group_by(rgn_id) %.% 
       summarise(count_rgn_id = n(), 
-                count_OD     = sum(whencev01 == 'OD'), # 'OD' means 'original data'
-                perc_OD      = count_OD / count_rgn_id) %.%
+                count_SG     = sum(whencev01 != 'OD'), # 'SG' means 'spatial gapfilling'; 'OD' means 'original data'
+                perc_SG      = count_SG / count_rgn_id) %.%
       arrange(rgn_id) %.%
       select(rgn_id, 
-             perc_OD); head(dstats)
+             perc_SG); head(dstats)
     
   }else if ('z_level' %in% names(d)) {
     
@@ -87,11 +89,11 @@ for (i in 1:length(l_whence$fp)){ # i = 1
       filter(id != 213) %.% # remove Antarctica
       group_by(id) %.% 
       summarise(count_rgn_id = n(), 
-                count_OD     = sum(z_level == 'v'), # 'v' means 'original value'
-                perc_OD      = count_OD / count_rgn_id) %.%
+                count_SG     = sum(z_level != 'v'), # 'v' means 'original value'
+                perc_SG      = count_SG / count_rgn_id) %.%
       arrange(id) %.%
       select(rgn_id = id, 
-             perc_OD); head(dstats)
+             perc_SG); head(dstats)
     
   }
   
@@ -113,20 +115,22 @@ head(d_f) # write.csv(d_f, 'whence_2013afiles.csv', row.names = F)
 ## add non-gapfilled elements ----
 ## add non-gapfilled layers                          # TODO: add a check from the whence_2013a column to track
 d_fl = d_f %.%           # data from files and layers
-  mutate(CW_ciesin_cpop  = 1,
-         P_sp_genetic    = 1,
-         P_targetharvest = 1, 
-         AO_sust         = 1); head(d_fl)
+  mutate(CW_ciesin_cpop  = 0,
+         P_sp_genetic    = 0,
+         P_targetharvest = 0, 
+         P_fishing       = 0,
+         AO_sust         = 0, 
+         TR_wttc_empd    = 0); head(d_fl)
   
 ## add non-gapfilled goals
 d_flg = d_fl %.% # data from files, layers, and goals
-  mutate(BD = 1,
-         CP = 1,
-         CS = 1,
-         FP = 1,
-         LE = 0,
-         NP = 1,
-         SP = 1); head(d_flg)
+  mutate(BD = 0,
+         CP = 0,
+         CS = 0,
+         FP = 0,
+         LE = 1,
+         NP = 0,
+         SP = 0); head(d_flg)
 
 # number of layers per goal
 n_lpg = list(
@@ -139,33 +143,41 @@ n_lpg = list(
   LE = 1,
   NP = 1, 
   SP = 1,
-  TR = 4) ## TODO: TR is a placeholder
+  TR = 4,    ## TODO: TR is a placeholder
+  pr = 7, ## TODO: placeholder--need to finalize
+  re = 7) ## TODO: placeholder--need to finalize
 
 ## collapse by goal ----
 nam = str_split_fixed(as.character(names(d_flg)), '_', 2)[,1] # identify goal prefixes
-names(d_flg)[nam == 'CW']
+
+# CW, TR, resil, press
+nam_cw = names(d_flg)[nam == 'CW']
+nam_tr = names(d_flg)[nam == 'TR']
+nam_ao = names(d_flg)[nam == 'AO']
+nam_pr = names(d_flg)[nam == 'pressures'  | nam == 'P']
+nam_re = names(d_flg)[nam == 'resilience' | nam == 'R']
+
+d_flg$cw_sum = rowSums(d_flg[,nam_cw], na.rm=T)
+d_flg$tr_sum = rowSums(d_flg[,nam_tr], na.rm=T)
+d_flg$ao_sum = rowSums(d_flg[,nam_ao], na.rm=T)
+d_flg$pr_sum = rowSums(d_flg[,nam_pr], na.rm=T)
+d_flg$re_sum = rowSums(d_flg[,nam_re], na.rm=T); head(d_flg) 
 
 d_g = d_flg %.% 
-  mutate(CW = ( sum(nam == 'CW') / as.numeric(n_lpg[['CW']]) ) ) %.% # TODO: check this math is correct (that as.numeric worked,etc)
-  
-d_g = d_flg %.% 
-  mutate(CW =  sum(d_flg %in% unlist(names(d_flg)[nam == 'CW']), na.rm=T) ) ),  ## COME BACK here: figure out the names call
-         n_lpg = as.numeric(n_lpg[['CW']]),
-         tot = CW/n_lpg); head(d_g, 30)
-  
-  select(-CW_jmp_san, -CW_cw_fertilizers, -CW_cw_pesticides, -CW_ciesin_cpop) %.%
-  mutate(TR = (sum(nam == 'TR')) / as.numeric(n_lpg[['TR']])) %.% # TODO: check this math is correct (that as.numeric worked,etc)
-  select(-TR_wb_tlf, -TR_wb_uem); head(d_g) 
-  # select(-(unlist(names(d_flg)[which(nam == 'CW')]))); head(d_g)   # == 'CW' TODO: make this work!!
+  mutate(CW = ( cw_sum / as.numeric(n_lpg[['CW']]) ), 
+         TR = ( tr_sum / as.numeric(n_lpg[['TR']]) ),
+         AO = ( ao_sum / as.numeric(n_lpg[['AO']]) ),
+         pr = ( pr_sum / as.numeric(n_lpg[['pr']]) ),
+         re = ( re_sum / as.numeric(n_lpg[['re']]) ))
+d_g = d_g[,(!names(d_g) %in% c(nam_cw, 'cw_sum',
+                               nam_tr, 'tr_sum',
+                               nam_ao, 'ao_sum',
+                               nam_pr, 'pr_sum',
+                               nam_re, 're_sum'))]; head(d_g) 
+
            
-# nam1 = str_split_fixed(as.character(names(d_g)), '_', 2); (nam1)
-#   target = nam1[,1]; head(target)
-#   d_g$variable = nam1[,2]; head(d_g)
-#   data_m$target = target; head(data_m)
-#   data_m = data_m %.% 
-#     arrange(target)
 
-## heatmap by georegion ----
+## prepare for heatmap by georegion ----
 
 # link to georegions for display purposes 
 georegions = read.csv('../ohicore/inst/extdata/layers.Global2013.www2013/rgn_georegions_long_2013b.csv', na.strings='') %.%
@@ -186,25 +198,6 @@ d_g_lab = d_g %.%
               select(rgn_id, r2_label, v_label),
             by = 'rgn_id'); head(d_g_lab)
 
-# prepare data for plotting 
-data <- d_g_lab %.%
-  filter(!is.na(r2_label)); head(data)
-
-data_melt <- melt(data, id.vars = c('rgn_id', 'r2_label', 'v_label'), id="rgn_id")
-data_melt$value[data_melt$value == 0] <- NA; head(data_melt) 
-
-
-## combine goals by data layer proportions ----
-
-# PLOTTING OPTIONS: 
-# 1. single figure with all rgn_ids together, ordered by georegion 
-# 2. separate figure for each georegion
-
-
-# 1. one big figure --actually has to be split into to
-
-# TODO: break into grps
-# logic for combining by layer proportion
 
 # georegions list--for splitting the figures into manageable portions
 georegions_list = list(
@@ -237,73 +230,70 @@ georegions_list = list(
       'Western Europe'
     ))
 
-# change value for 3 discrete colors
+
+## prepare data for heatmap plotting ----
+
+data <- d_g_lab %.%
+  filter(!is.na(r2_label)) %.%
+  select(rgn_id,
+         AO, BD, CP, CS, CW, FP, LE, NP, SP, TR, pr, re, # order goals alphabetically
+         r2_label, v_label); head(data)
+
+data_melt <- melt(data, id.vars = c('rgn_id', 'r2_label', 'v_label'), value.name = 'prop_gf', id="rgn_id") # melt
+data_melt$prop_gf[data_melt$prop_gf > 0 & data_melt$prop_gf < 1] = 0.5 # for heatmapping: change value for 3 discrete colors
+
+
+## heatmap plotting! ----
+
+# PLOTTING OPTIONS: 
+# 1. single figure with all rgn_ids together, ordered by georegion 
+# 2. separate figure for each georegion
 
 # prepare for the groupings
+grps = 3
+# data_melt1 = data_melt %.%
+#   filter(r2_label %in% georegions_list[['grp1']] ) ; head(data_melt1)
+# data_melt2 = data_melt %.%
+#   filter(r2_label %in% georegions_list[['grp2']] ) ; head(data_melt2)
+# data_melt3 = data_melt %.%
+#   filter(r2_label %in% georegions_list[['grp3']] ) ; head(data_melt3)
 
-data_melt1 = data_melt %.%
-  filter(r2_label %in% georegions_list[['grp1']] ) ; head(data_melt1)
-data_melt2 = data_melt %.%
-  filter(r2_label %in% georegions_list[['grp2']] ) ; head(data_melt2)
-data_melt3 = data_melt %.%
-  filter(r2_label %in% georegions_list[['grp3']] ) ; head(data_melt3)
-
-## 3 different heatmaps, by group ----
+## different heatmaps, by group ----
 # grp 1 
-data_m = data_melt1 %.%
-  arrange(variable, r2_label) %.%
-  select(r2_label,v_label, variable, value); head(data_m,20)
 
-ggplot(data_m, aes(x=variable, y=as.factor(v_label), fill=as.factor(value))) +
+for (j in 1:grps){ # j=1
+  if        (j==1){
+    data_meltj = data_melt %.%
+  filter(r2_label %in% georegions_list[['grp1']] ) 
+  } else if (j==2){
+     data_meltj = data_melt %.%
+  filter(r2_label %in% georegions_list[['grp2']] ) 
+  } else if (j==3){
+     data_meltj = data_melt %.%
+  filter(r2_label %in% georegions_list[['grp3']] ) 
+  }
+
+data_m = data_meltj %.%
+  arrange(variable, r2_label) %.%
+  select(r2_label,v_label, variable, prop_gf); head(data_m)
+
+ggplot(data_m, aes(x=variable, y=as.factor(v_label), fill=as.factor(prop_gf))) +
   geom_raster() +
   labs(y = '', x = "") + 
   theme(axis.text.y = element_text(size=10),
         axis.text.x = element_text(angle=90, vjust=1)) +
-  scale_fill_discrete(name  = '', breaks=c(1,2), labels=c('original', 'gapfilled'))
-
-## play with display
-data_m$value = data_m$value*100
-p = ggplot(data_m, 
-       aes(x=variable, 
-           y=as.factor(v_label)))
-
-p + geom_tile(aes(fill=value))
-
-p + geom_tile(aes(fill=value)) + theme(axis.text.y = element_text(size=10), 
-                                       axis.text.x = element_text(angle=90, 
-                                                                  vjust=1)) 
-
-p + geom_tile(aes(fill=value)) + theme(axis.text.y = element_text(size=10), 
-                                       axis.text.x = element_text(angle=90, 
-                                                                  vjust=1)) + 
-                                 scale_fill_continuous(name  = '', breaks=c(1,2), 
-                                  labels=c('original', 'gapfilled'))
-
-ggplot(data_m, 
-       aes(x=variable, 
-           y=as.factor(v_label), 
-           geom_tile(aes(fill = value)))) + 
-              geom_raster() + 
-              labs(y = '', x = "") + 
-              theme(axis.text.y = element_text(size=10), 
-                    axis.text.x = element_text(angle=90, 
-                                               vjust=1)) + 
-              scale_fill_discrete(name  = '', breaks=c(1,2), 
-                                  labels=c('original', 'gapfilled')
-                                  )
+  scale_fill_brewer(name  = '', type = "seq", palette = (1),labels=c('original', 'partially gapfilled', 'fully gapfilled'))
+ggsave(file.path('tmp/whence_figures', paste('OHI_2013_heatmap', j, '.png', sep='')), width=10, height=15)
+}
 
 
-##
-
-
-ggsave(file.path('tmp/whence_figures', paste('whence_1.png', sep='')), width=10, height=15)
 
 # grp 2
 data_m = data_melt2 %.%
   arrange(variable, r2_label) %.%
-  select(r2_label,v_label, variable, value); head(data_m,20)
+  select(r2_label,v_label, variable, prop_gf); head(data_m,20)
 
-ggplot(data_m, aes(x=variable, y=as.factor(v_label), fill=as.factor(value))) +
+ggplot(data_m, aes(x=variable, y=as.factor(v_label), fill=as.factor(prop_gf))) +
   geom_raster() +
   labs(y = '', x = "") + 
   theme(axis.text.y = element_text(size=10),
@@ -315,9 +305,9 @@ ggsave(file.path('tmp/whence_figures', paste('whence_2.png', sep='')), width=10,
 # grp 3
 data_m = data_melt3 %.%
   arrange(variable, r2_label) %.%
-  select(r2_label,v_label, variable, value); head(data_m,20)
+  select(r2_label,v_label, variable, prop_gf); head(data_m,20)
 
-ggplot(data_m, aes(x=variable, y=as.factor(v_label), fill=as.factor(value))) +
+ggplot(data_m, aes(x=variable, y=as.factor(v_label), fill=as.factor(prop_gf))) +
   geom_raster() +
   labs(y = '', x = "") + 
   theme(axis.text.y = element_text(size=10),
@@ -332,7 +322,7 @@ for(g in unique(data$r2_label)) { # g="Australia and New Zealand"
   
   data_m = data_melt %.%
     filter(r2_label == g) %.%
-    select(v_label, variable, value); head(data_m)
+    select(v_label, variable, prop_gf); head(data_m)
   
   # arrange by target
   #   nam1 = str_split_fixed(as.character(data_m$variable), '_', 2); head(nam1)
@@ -343,7 +333,7 @@ for(g in unique(data$r2_label)) { # g="Australia and New Zealand"
   #     arrange(target)
   
   
-  ggplot(data_m, aes(x=variable, y=as.factor(v_label), fill=as.factor(value))) +
+  ggplot(data_m, aes(x=variable, y=as.factor(v_label), fill=as.factor(prop_gf))) +
     geom_raster() +
     labs(y = g, x = "") + 
     theme(axis.text.y = element_text(size=10),
@@ -361,9 +351,9 @@ library(ggplot2)
 
 data <- d_f # read.csv("whence_2013afiles.csv")
 data_melt <- melt(data, id="rgn_id")
-data_melt$value[data_melt$value == 0] <- NA # head(data_melt)
+data_melt$prop_gf[data_melt$prop_gf == 0] <- NA # head(data_melt)
 
-ggplot(data_melt, aes(x=variable, y=as.factor(rgn_id), fill=as.factor(value))) +
+ggplot(data_melt, aes(x=variable, y=as.factor(rgn_id), fill=as.factor(prop_gf))) +
   geom_raster() +
   labs(y="region ID", x="") + 
   theme(axis.text.y = element_text(size=6),
