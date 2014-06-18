@@ -58,26 +58,27 @@ arcpy.env.snapRaster = arcpy.env.cellSize = arcpy.env.outputCoordinateSystem = a
 # select only designated
 arcpy.Select_analysis(poly_wdpa, ply, '"STATUS"=\'Designated\'')
 
-# create priority field, prioritizing DESIG_TYPE=National(1) over International and then the earliest STATUS_YR (inverse). highest number gets priority.
+# create priority field, prioritizing DESIG_TYPE: Regional(2) > National(1) > International (0) and then the earliest STATUS_YR (inverse). Highest number gets priority.
 arcpy.AddField_management(ply, 'poly_priority', 'FLOAT')
 code_block = """
 def get_priority(typ,yr):
-    return({'International':0.0,'National':2.0}[typ] + 1/(float(yr)+1))
+    return({'International':0.0,'National':1.0,'Regional':2.0}[typ] + 1/(float(yr)+1))
 """
 arcpy.CalculateField_management(ply, 'poly_priority', 'get_priority(typ=!DESIG_TYPE!, yr=!STATUS_YR!)', 'PYTHON_9.3', code_block)
 
 # polygon to raster
-arcpy.env.snapRaster = arcpy.env.cellSize = arcpy.env.outputCoordinateSystem = arcpy.env.extent = tmp+'/rgn_coastal_mol.tif'
-arcpy.PolygonToRaster_conversion(ply, 'STATUS_YR', tmp+'/wdpa_poly_designated_mol.tif', 'MAXIMUM_COMBINED_AREA', 'poly_priority', tmp+'/rgn_coastal_mol.tif')
+arcpy.env.snapRaster = arcpy.env.cellSize = arcpy.env.outputCoordinateSystem = arcpy.env.extent = msk
+arcpy.PolygonToRaster_conversion(ply, 'STATUS_YR', tif, 'MAXIMUM_COMBINED_AREA', 'poly_priority', msk)
 
 # tabulate 
 # note: zone raster must have an attribute table, automatically created for integer rasters
 TabulateArea('%s/rgn_offshore3nm_mol.tif' % dir_rgn, 'VALUE', tif, 'VALUE', '%s/rgn_offshore3nm_wdpa.dbf' % dir_tmp, msk)
 TabulateArea('%s/rgn_inland1km_mol.tif'   % dir_rgn, 'VALUE', tif, 'VALUE', '%s/rgn_inland1km_wdpa.dbf'   % dir_tmp, msk)
 
-### move all from tmp
-##arcpy.env.workspace = tmp
-##dat = ['geodb.gdb','wdpa_poly_designated_mol.tif','rgnoffshore3nm_vs_wdpapolydesignated.dbf','rgninland1kmmol_vs_wdpapolydesignated.dbf','rgnfao_vs_wdpapolydesignated.dbf']
-##for d in dat[1:]:
-##    arcpy.Copy_management(tmp+'/'+d, td+'/'+d)
-##    arcpy.Delete_management(tmp+'/'+d)
+# copy tmp to neptune
+paths = [gdb, tif, msk]
+if not os.path.exists('%s/tmp' % dir_anx):
+    os.makedirs('%s/tmp' % dir_anx)
+for fro in paths:
+    arcpy.Copy_management(fro, '%s/tmp/%s' % (dir_anx, os.path.basename(fro)))
+    #arcpy.Delete_management(tmp+'/'+d)
