@@ -1,36 +1,69 @@
-wd = 'N:/model/GL-WDPA-MPA_v2013'
-setwd(wd)
-
 library(foreign)
 library(reshape2)
 library(plyr)
+library(dplyr)
+
+source('src/R/common.R')
+dir_prod = 'Global/WDPA-MPA_v2014'
+dir_tmp  = sprintf('C:/tmp/%s', dir_prod)
+
+dir.create(file.path(dir_prod, 'data'), showWarnings=F)
 
 # read in tabulated areas and write out LSP layers ----
+lyrs = c('rgn_offshore3nm_wdpa.dbf' = 'lsp_protarea_inland1km.csv',
+         'rgn_inland1km_wdpa.dbf'   = 'lsp_protarea_offshore3nm.csv')
 
-lyrs = c('rgninland1kmmol_vs_wdpapolydesignated.dbf' = 'lsp_prot_area_inland1km.csv',
-         'rgnoffshore3nm_vs_wdpapolydesignated.dbf'  = 'lsp_prot_area_offshore3nm.csv',
-         'rgnfao_vs_wdpapolydesignated.dbf'          = 'lsp_prot_area_ocean.csv')
-
-for (i in 1:length(lyrs)){
+for (i in 1:length(lyrs)){ # i=1
   dbf = names(lyrs)[i]
   csv = lyrs[[i]]
-  d = read.dbf(file.path(wd,'tmp',dbf))
-  m = rename(melt(d, id.vars='VALUE', variable.name='value_year', value.name='area_m2'),
-             c('VALUE'='rgn_id'))
-  m = m[m$area_m2!=0,]
-  m$year = as.integer(sub('VALUE_','', m$value_year))
-  m$area_km2 = m$area_m2 / (1000 * 1000)
-  m = m[order(m$rgn_id, m$year), c('rgn_id','year','area_km2')]
-  write.csv(m, file.path(wd, 'data', csv), row.names=F, na='')
+  d = read.dbf(file.path(dir_tmp,dbf))
+  m = d %.%
+    melt(id.vars='VALUE', variable.name='value_year', value.name='area_m2') %>%
+    filter(area_m2 > 0) %>%
+    mutate(
+      year     = as.integer(sub('VALUE_','', value_year)),
+      area_km2 = area_m2 / (1000 * 1000)) %>%
+    select(rgn_id=VALUE, year, area_km2) %>%
+    arrange(rgn_id, year)
+  write.csv(m, file.path(dir_prod, 'data', csv), row.names=F, na='')
   
   # get top 10 for sanity check
-  s = ddply(m, .(rgn_id), summarize,
-            sum_area_km2 = sum(area_km2))
   cat(sprintf('%s\n',csv))
-  print(head(s[order(s$sum_area_km2, decreasing=T),], 10), row.names=F)
+  s = m %.%
+    group_by(rgn_id) %>%
+    summarize(
+      sum_area_km2 = sum(area_km2)) %>%
+    arrange(desc(sum_area_km2)) %>%
+    as.data.frame()
+  print(head(s, 10), row.names=F)  
 }
 
-# Top 10 sum of protected area by region id.
+# lsp_protarea_inland1km.csv
+#  rgn_id sum_area_km2
+#     163       107914
+#      16        98833
+#      73        98357
+#     216        78680
+#     145        61743
+#     218        38173
+#     224        34266
+#     223        32800
+#     135        25015
+#     171        24478
+# lsp_protarea_offshore3nm.csv
+#  rgn_id sum_area_km2
+#     163        51540
+#     224        35412
+#      73        30689
+#      16        23643
+#     218        19547
+#     145        16969
+#     171        15322
+#     216        13750
+#     180        10037
+#     223         8686
+
+# Previously 2013...Top 10 sum of protected area by region id.
 #
 # lsp_prot_area_inland1km.csv
 #  rgn_id sum_area_km2
