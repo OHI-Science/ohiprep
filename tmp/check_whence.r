@@ -6,20 +6,15 @@
 # categories rules: https://docs.google.com/a/nceas.ucsb.edu/spreadsheet/ccc?key=0AjLReAQzT2SVdGNZcDNYRjlfSEYteEFyQnotZ0ZjNmc&usp=drive_web#gid=9
 
 # create whence files TUES:::::
-- neptune_data:model/GL-WEF-Economics_v2013/data  rgn_wef_ttci_2013a_lyr.csv
-track AO access/ AO model for other inputs
-track alien invasives
+track alien invasives # in neptune_data:model/GL-NCEAS-Resilience_v2013a/data disaggreate
 pathogens?
-ttci
+msi #in neptune_data:model/GL-NCEAS-Resilience_v2013a/data disaggreate
 
-# create ones since not gapfilled:
-genetic escapees pressure
-targeted harvest
-msi
+check:
+make sure CW adds right
+split into georegions
+remove TR as a placeholder
 
-# redo with gapfill_georegions
-wgi
-gci
 
 ## setup ---
 # load libraries
@@ -116,9 +111,12 @@ head(d_f) # write.csv(d_f, 'whence_2013afiles.csv', row.names = F)
 
 
 ## add non-gapfilled elements ----
-## add non-gapfilled layers
+## add non-gapfilled layers                          # TODO: add a check from the whence_2013a column to track
 d_fl = d_f %.%           # data from files and layers
-  mutate(CW_ciesin_cpop = 0); head(d_fl)
+  mutate(CW_ciesin_cpop  = 1,
+         P_sp_genetic    = 1,
+         P_targetharvest = 1, 
+         AO_sust         = 1); head(d_fl)
   
 ## add non-gapfilled goals
 d_flg = d_fl %.% # data from files, layers, and goals
@@ -132,7 +130,7 @@ d_flg = d_fl %.% # data from files, layers, and goals
 
 # number of layers per goal
 n_lpg = list(
-  AO = 2,
+  AO = 3,
   BD = 1,
   CP = 1,
   CS = 1,
@@ -143,15 +141,22 @@ n_lpg = list(
   SP = 1,
   TR = 4) ## TODO: TR is a placeholder
 
-## collapse by goal ---- this 
-glog = str_split_fixed(as.character(names(d_flg)), '_', 2)[,1] # identify goal prefixes
+## collapse by goal ----
+nam = str_split_fixed(as.character(names(d_flg)), '_', 2)[,1] # identify goal prefixes
+names(d_flg)[nam == 'CW']
 
 d_g = d_flg %.% 
-  mutate(CW = (sum(glog == 'CW')) / as.numeric(n_lpg[['CW']])) %.% # TODO: check this math is correct (that as.numeric worked,etc)
+  mutate(CW = ( sum(nam == 'CW') / as.numeric(n_lpg[['CW']]) ) ) %.% # TODO: check this math is correct (that as.numeric worked,etc)
+  
+d_g = d_flg %.% 
+  mutate(CW =  sum(d_flg %in% unlist(names(d_flg)[nam == 'CW']), na.rm=T) ) ),  ## COME BACK here: figure out the names call
+         n_lpg = as.numeric(n_lpg[['CW']]),
+         tot = CW/n_lpg); head(d_g, 30)
+  
   select(-CW_jmp_san, -CW_cw_fertilizers, -CW_cw_pesticides, -CW_ciesin_cpop) %.%
-  mutate(TR = (sum(glog == 'TR')) / as.numeric(n_lpg[['TR']])) %.% # TODO: check this math is correct (that as.numeric worked,etc)
+  mutate(TR = (sum(nam == 'TR')) / as.numeric(n_lpg[['TR']])) %.% # TODO: check this math is correct (that as.numeric worked,etc)
   select(-TR_wb_tlf, -TR_wb_uem); head(d_g) 
-  # select(-(unlist(names(d_flg)[which(glog == 'CW')]))); head(d_g)   # == 'CW' TODO: make this work!!
+  # select(-(unlist(names(d_flg)[which(nam == 'CW')]))); head(d_g)   # == 'CW' TODO: make this work!!
            
 # nam1 = str_split_fixed(as.character(names(d_g)), '_', 2); (nam1)
 #   target = nam1[,1]; head(target)
@@ -232,6 +237,8 @@ georegions_list = list(
       'Western Europe'
     ))
 
+# change value for 3 discrete colors
+
 # prepare for the groupings
 
 data_melt1 = data_melt %.%
@@ -253,6 +260,41 @@ ggplot(data_m, aes(x=variable, y=as.factor(v_label), fill=as.factor(value))) +
   theme(axis.text.y = element_text(size=10),
         axis.text.x = element_text(angle=90, vjust=1)) +
   scale_fill_discrete(name  = '', breaks=c(1,2), labels=c('original', 'gapfilled'))
+
+## play with display
+data_m$value = data_m$value*100
+p = ggplot(data_m, 
+       aes(x=variable, 
+           y=as.factor(v_label)))
+
+p + geom_tile(aes(fill=value))
+
+p + geom_tile(aes(fill=value)) + theme(axis.text.y = element_text(size=10), 
+                                       axis.text.x = element_text(angle=90, 
+                                                                  vjust=1)) 
+
+p + geom_tile(aes(fill=value)) + theme(axis.text.y = element_text(size=10), 
+                                       axis.text.x = element_text(angle=90, 
+                                                                  vjust=1)) + 
+                                 scale_fill_continuous(name  = '', breaks=c(1,2), 
+                                  labels=c('original', 'gapfilled'))
+
+ggplot(data_m, 
+       aes(x=variable, 
+           y=as.factor(v_label), 
+           geom_tile(aes(fill = value)))) + 
+              geom_raster() + 
+              labs(y = '', x = "") + 
+              theme(axis.text.y = element_text(size=10), 
+                    axis.text.x = element_text(angle=90, 
+                                               vjust=1)) + 
+              scale_fill_discrete(name  = '', breaks=c(1,2), 
+                                  labels=c('original', 'gapfilled')
+                                  )
+
+
+##
+
 
 ggsave(file.path('tmp/whence_figures', paste('whence_1.png', sep='')), width=10, height=15)
 
