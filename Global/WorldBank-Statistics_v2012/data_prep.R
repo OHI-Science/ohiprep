@@ -102,15 +102,18 @@ layername = sprintf('rgn_wb_%s_2014a.csv', layer_uni)
 attrname  = sprintf('rgn_wb_%s_2014a_attr.csv', layer_uni)
 
 for(k in 1:length(layer_uni)) { # k=1
-  m_l = m_d[m_d$layer == layer_uni[k],] %.%
-    select(rgn_id, year, value); head(m_l)  # before troubleshooting, also selected rgn_name
-  
+  m_l = m_d[m_d$layer == layer_uni[k],] 
+  names_m_l = names(m_l)
+   
+  m_l2 = m_l %.%
+  select(-layer, -units); head(m_l2)  # before troubleshooting, also selected rgn_name
+
   layersave = file.path(dir_d, 'data', layername[k])
   attrsave = file.path(dir_d, 'data', attrname[k])
   
   # library(devtools); load_all('../ohicore')
   d_g_a = gapfill_georegions(
-    data = m_l %.%
+    data = m_l2 %.%
       filter(!rgn_id %in% c(213,255)) %.%
       select(rgn_id, year, value),
     fld_id = 'rgn_id',
@@ -126,6 +129,9 @@ for(k in 1:length(layer_uni)) { # k=1
   d_g = d_g_a %.%
     select(rgn_id, year, value) %.%
     arrange(rgn_id, year); head(d_g)
+  
+  names(d_g)[names(d_g) == 'value'] <- m_l$units[1]; head(d_g)
+  
   write.csv(d_g, layersave, na = '', row.names=FALSE)
   
 }
