@@ -1,6 +1,5 @@
 # Run on cmd:
-#  amphitrite   : C:\Python27\ArcGIS10.2\python.exe    G:\ohiprep\Global\NCEAS-Regions_v2014\fix_land-mid-eez-RUS-SVA-UK_duplicate-spid-SVA_null-inland1km-offshore1km-CAN.py
-#  amphitrite 64: C:\Python27\ArcGISx6410.2\python.exe G:\ohiprep\Global\NCEAS-Regions_v2014\fix_land-mid-eez-RUS-SVA-UK_duplicate-spid-SVA_null-inland1km-offshore1km-CAN.py
+#  amphitrite 64: C:\Python27\ArcGISx6410.2\python.exe G:\ohiprep\Global\NCEAS-Regions_v2014\fix_buffers.py
 #  optimus      : C:\Python27\ArcGISx6410.1\python.exe D:\best\docs\GitHub\ohiprep\Global\NCEAS-Regions_v2014\fix_land-mid-eez-RUS-SVA-UK_duplicate-spid-SVA_null-inland1km-offshore1km-CAN.py
 
 # modules
@@ -31,8 +30,8 @@ arcpy.env.workspace       = gdb
 arcpy.env.overwriteOutput = True
 
 # inputs
-##buffers = ['inland1km','offshore1km','offshore3nm','inland25km','inland50km']
-buffers = ['offshore1km','offshore3nm','inland25km','inland50km']
+buffers = ['inland1km','offshore1km','offshore3nm','inland25km','inland50km']
+##buffers = ['offshore1km','offshore3nm','inland25km','inland50km']
 dict_CAN = {
     'sp_id'     :218,
     'sp_name'   :'Canada',
@@ -44,7 +43,7 @@ dict_CAN = {
     'rgn_id12'  :166,
     'rgn_name12':'Canada'}
 
-sp_flds = [
+sp_flds      = [
     'sp_type','sp_id','sp_name','sp_key',     # note: exclude area_km2 for dissolving
     'rgn_type','rgn_id','rgn_name','rgn_key',
     'cntry_id12','rgn_id12','rgn_name12']
@@ -52,6 +51,10 @@ sp_area_flds = [
     'sp_type','sp_id','sp_name','sp_key','area_km2',
     'rgn_type','rgn_id','rgn_name','rgn_key',
     'cntry_id12','rgn_id12','rgn_name12']
+rgn_flds      = [
+    'rgn_type','rgn_id','rgn_name','rgn_key']
+rgn_area_flds = [
+    'rgn_type','rgn_id','rgn_name','rgn_key','area_km2']
 
 ### replace sp_landfix_manual in sp_gcs
 ##arcpy.Erase_analysis('sp_gcs', 'sp_landfix_manual', 'sp_gcs_e')
@@ -65,6 +68,24 @@ sp_area_flds = [
 ##arcpy.Buffer_analysis('sp_landfix_manual', 'sp_landfix_buf60km', '60 kilometers')
 ##print('repairing sp_landfix_buf60km (%s)' % (time.strftime('%H:%M:%S')))
 ##arcpy.RepairGeometry_management('sp_landfix_buf60km')
+
+# redo rgn, recalc area_km on sp_gcs and rgn_gcs
+arcpy.Dissolve_management('%s/sp_gcs' % gdb, '%s/rgn_gcs' % gdb, rgn_flds)
+for v in ['sp_gcs','rgn_gcs']:
+    v = 'rgn_gcs'
+    fc = '%s/%s' % (gdb, v)    
+    print(v)
+    
+    print('  calculate area (%s)' % time.strftime('%H:%M:%S'))        
+    arcpy.AddField_management(      fc, 'area_km2', 'DOUBLE')
+    arcpy.CalculateField_management(fc, 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
+
+    print('  export shp and csv (%s)' % time.strftime('%H:%M:%S'))
+    arcpy.CopyFeatures_management(fc , '%s/data/%s.shp' % (ad, v))
+    d = pandas.DataFrame(
+        arcpy.da.TableToNumPyArray(
+            fc, {'sp_gcs':sp_area_flds, 'rgn_gcs':rgn_area_flds}[v]))
+    d.to_csv('%s/data/%s_data.csv' % (gd, v), index=False)
 
 # loop buffers
 for buf in buffers: # buf = 'inland1km'
@@ -167,5 +188,5 @@ for buf in buffers: # buf = 'inland1km'
             
 print('done (%s)' % time.strftime('%H:%M:%S'))
 
-
+# TODO: copy tmp/*.shp to git-annex/...
 # TODO: erase sp_landRUSfix_manual','sp_landRUSfix_buf100km'

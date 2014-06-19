@@ -14,7 +14,7 @@ The OHI 2014 regions cover the entire earth with non-overlapping regions having 
 * **rgn_id**: unique identifier (within same rgn_type)
 * **rgn_name**: name for region
 
-## Sources
+## References
 
 - EEZ:
   + Claus, S.; De Hauwere, N.; Vanhoorne, B.; Deckers, P.; Souza Dias, F.; Hernandez, F.; Mees, J. (2014). **Marine Regions: Towards a global standard for georeferenced marine names and boundaries**. _Mar. Geod._
