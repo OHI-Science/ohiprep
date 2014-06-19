@@ -64,7 +64,7 @@ for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), fu
   d.m$layer = rep.int(unlist(a)[2], length(d.m$year)) 
   lkup = c('gdp' = 'usd', 
            'tlf' = 'count',
-           'uem' = 'perc') # names(lkup)[count]
+           'uem' = 'percent') # names(lkup)[count]
   d.m$units = rep.int(lkup[count], length(d.m$year)); head(d.m)
   
   # concatenate f files
