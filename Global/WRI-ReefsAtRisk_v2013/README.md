@@ -13,7 +13,7 @@ We extracted two impact assessments of destructive fishing as rasters at 1km2 re
 1. 100 -> 2
 1. 1000 -> 3
 
-The pressures score for each layer is $mean-1$ per region where $mean > 1$, otherwise the score is $NA$.
+The pressures score for each layer is $mean - 1$ per region where $mean > 1$, otherwise the score is $NA$.
 
 For the reef extent data, we aggregated using summation and a cell window of 9 to resize the 500m raster into 4500m cell sizes. We then projected
 the data into Mollweide, and exported the data as 8-bit GeoTIFF with cell values from 1 to 81 (9x9 neighborhood) in units of $(500m)^2 = 0.25 {km}^2$.
