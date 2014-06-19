@@ -130,11 +130,17 @@ for(k in 1:length(layer_uni)) { # k=1
     select(rgn_id, year, value) %.%
     arrange(rgn_id, year); head(d_g)
   
-  names(d_g)[names(d_g) == 'value'] <- m_l$units[1]; head(d_g)
+  if (layer_uni[k] == 'uem'){
+    names(d_g)[names(d_g) == 'value'] = 'percent'
+  } else {
+    names(d_g)[names(d_g) == 'value'] <- m_l$units[1]
+  }
   
   write.csv(d_g, layersave, na = '', row.names=FALSE)
   
 }
+
+
 
 # --- fin
 
