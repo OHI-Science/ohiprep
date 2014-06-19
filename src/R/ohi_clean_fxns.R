@@ -16,7 +16,7 @@ add_rgn_id = function(uidata, uifilesave,
   print('-->>> add_rgn_id.r expects that the first two columns of the matrix will be country_name, value_units ')
   
   # load libraries
-    library(dplyr)
+  library(dplyr)
   
   # read in lookup files, combine into one dataframe
   rk = read.csv(rgn_master.csv); head(rk) # master file by BB
@@ -97,18 +97,23 @@ sum_na = function(x){
   return(sum(x, na.rm=T))    
 }
 
-name_to_rgn_id = function(d, fld_name='country', flds_unique=fld_name, fld_value='value', collapse_fxn = sum_na,
-                     dir_lookup = 'src/LookupTables',
-                     rgn_master.csv   = file.path(dir_lookup, 'eez_rgn_2013master.csv'),
-                     rgn_synonyms.csv = file.path(dir_lookup, 'rgn_eez_v2013a_synonyms.csv'),
-                     add_rgn_name=F, add_rgn_type=F) {
+name_to_rgn = function(d, fld_name='country', flds_unique=fld_name, fld_value='value', collapse_fxn = sum_na,
+                       dir_lookup = 'src/LookupTables',
+                       rgn_master.csv   = file.path(dir_lookup, 'eez_rgn_2013master.csv'),
+                       rgn_synonyms.csv = file.path(dir_lookup, 'rgn_eez_v2013a_synonyms.csv'),
+                       add_rgn_name=F, add_rgn_type=F) {
   # DETAIL. Return a data.frame (vs add_rgn_id which writes to a csv) and perform extra checks, including collapsing on duplicates.
   #  Note: The original fld_name lost because possible to collapse multiple countries into a single region.
   #
   # debug: fld_name='country'; flds_unique=c('country','commodity','year'); fld_value='value'; collapse_fxn=function(x) sum(x, na.rm=T); dpath = 'src/LookupTables'; rgn_master.csv   = file.path(dpath, 'eez_rgn_2013master.csv'); rgn_synonyms.csv = file.path(dpath, 'rgn_eez_v2013a_synonyms.csv')
   
-  # load libraries
-  library(dplyr)
+  #   # ensure dplyr's summarize overrides plyr's summarize by loading in succession
+  #   if ('package:reshape2'  %in% search()) detach('package:reshape2')
+  #   if ('package:plyr'      %in% search()) detach('package:plyr')
+  #   if ('package:dplyr'     %in% search()) detach('package:dplyr')
+  #   library(reshape2)
+  #   library(plyr)
+  #   library(dplyr)
   
   # check for valid arguments
   stopifnot(fld_name %in% names(d))
@@ -117,10 +122,10 @@ name_to_rgn_id = function(d, fld_name='country', flds_unique=fld_name, fld_value
   stopifnot( sum( duplicated(d[,flds_unique]) ) == 0 )
   
   # get authoritative rgn_id and rgn_name
-  rgns = read.csv(rgn_master.csv, na='', stringsAsFactors=F) %.%
-    select(rgn_id=rgn_id_2013, rgn_name=rgn_nam_2013, rgn_type=rgn_typ) %.%
-    arrange(rgn_type, rgn_id, rgn_name) %.%
-    group_by(rgn_id) %.%
+  rgns = read.csv(rgn_master.csv, na='', stringsAsFactors=F) %.% 
+    select(rgn_id=rgn_id_2013, rgn_name=rgn_nam_2013, rgn_type=rgn_typ) %.% 
+    arrange(rgn_type, rgn_id, rgn_name) %.% 
+    group_by(rgn_id) %.% 
     summarize(
       rgn_name = first(rgn_name),
       rgn_type = first(rgn_type)) %.%
@@ -134,7 +139,7 @@ name_to_rgn_id = function(d, fld_name='country', flds_unique=fld_name, fld_value
       select(rgn_id=rgn_id_2013, tmp_name=rgn_nam_2013, tmp_type=rgn_typ)) %.%
     group_by(tmp_name) %.%
     summarize(
-      rgn_id   = first(rgn_id),
+      rgn_id = first(rgn_id),
       tmp_type = first(tmp_type))
   
   # remove accents from data
@@ -155,43 +160,58 @@ name_to_rgn_id = function(d, fld_name='country', flds_unique=fld_name, fld_value
   
   # check the regions removed
   m_r = left_join(d, r, by='tmp_name') %.%
-    filter(!tmp_type %in% c('eez','ohi_region'))
+    filter(!tmp_type %in% c('eez','ohi_region')) %.%
+    mutate(tmp_name = factor(as.character(tmp_name)))
   
   # if any rgn_type is NA, then presume not matched in lookups and error out
   if (sum(is.na(m_r$tmp_type)) > 0){
     cat('\nThese data were removed for not having any match in the lookup tables:\n')  
-    print(table(subset(m_r, is.na(tmp_type), fld_name)))
-    stop('FIX region lookups.')
+    print(table(subset(m_r, is.na(tmp_type), tmp_name)))
+    # stop('FIX region lookups.') # commented out because larger regions (eg Middle East) would cause this to stop with an error. Check printed table instead. 
   }
   
   # show table of others filtered out
   if (nrow(m_r) > 0){
     cat('\nThese data were removed for not being of the proper rgn_type (eez,ohi_region) or mismatching region names in the lookup tables:\n')  
-    print(table(m_r[,c(fld_name, 'tmp_type')], useNA='ifany'))
+    print(table(select(m_r, tmp_name, tmp_type), useNA='ifany'))
   }  
-    
+  
   # stop if any still need to be assigned rgn_id
   m_na = filter(m, is.na(rgn_id))
   if (nrow(m_na) > 0){
     cat('\nThese data have a valid tmp_type but no rgn_id:\n')  
     print(table(m_na[,c(fld_name, 'tmp_type')], useNA='ifany'))
     stop('FIX region lookups.')
-  } 
-
+  }
+  
   # collapse duplicates
   flds_unique_rgn_id = c('rgn_id', setdiff(c(flds_unique), fld_name))
-  i_dup = which(duplicated(m[,flds_unique_rgn_id]))  
-  if (length(i_dup) > 0){
-    cat('\nDUPLICATES found. Resolving by collapsing rgn_id with collapse_fxn...\n')
+  i_dup = duplicated(m[,flds_unique_rgn_id], fromLast=F) | duplicated(m[,flds_unique_rgn_id], fromLast=T)  
+  
+  if (sum(i_dup) > 0){
+    
+    cat('\nDUPLICATES found. Resolving by collapsing rgn_id with collapse_fxn after first removing all NAs from duplicates...\n')
     print(collapse_fxn)
-    print(table(m[i_dup, c(fld_name,'rgn_id')]))
-    m['tmp_value'] = m[,fld_value]
-    m_d = m %.%
-      regroup(as.list(flds_unique_rgn_id)) %.%
-      summarize(tmp_value = collapse_fxn(tmp_value)) %.%
-      rename(setNames(fld_value, 'tmp_value'))
+    m_dup = m[i_dup,]
+    
+    m_dup$tmp_value = m_dup[[fld_value]]                                    
+    m_dup$fld_name  = m_dup[[fld_name]]
+    m_dup =  mutate(m_dup, fld_name = factor(as.character(fld_name)) )
+    print(table(select(m_dup, fld_name, rgn_id)))
+    
+    m_dup = m_dup %.%
+      filter(!is.na(tmp_value)) %.%
+      regroup(as.list(flds_unique_rgn_id)) %.%                      
+      summarize(tmp_value = collapse_fxn(tmp_value)) %.%            
+      rename(setNames(fld_value, 'tmp_value')); head(m_dup)         
+    m_d = rbind_list(
+      m[ !i_dup, c(flds_unique_rgn_id, fld_value) ], 
+      m_dup)            
+    
   } else {
+    
     m_d = m
+    
   }
   # limit to same subset of fields for consistent behavior regardless of duplicates presents
   m_d = m_d[, c(flds_unique_rgn_id, fld_value)]
@@ -200,9 +220,15 @@ name_to_rgn_id = function(d, fld_name='country', flds_unique=fld_name, fld_value
   if (add_rgn_type) m_d = left_join(m_d, rgns %.% select(rgn_id, rgn_type), by='rgn_id')
   if (add_rgn_name) m_d = left_join(m_d, rgns %.% select(rgn_id, rgn_name), by='rgn_id')
   
+  # check to ensure no duplicates
+  stopifnot(duplicated(m_d[, c(flds_unique_rgn_id)]) == 0) 
+  
   # return data.fram    
   return(as.data.frame(m_d))
+  
 }
+
+
 
 # identify duplicate regions and sum them (currently supports rgn_id = 13, 116, 140, 209) 
 sum_duplicates = function(cleandata, dup_ids, fld.nam = 'value') {
@@ -692,22 +718,22 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val,
   year_uni = year_uni %.%
     arrange(year)
   
- # must create this in two steps otherwise, otherwise years do not align with regions and duplicates are introduced
-   rgn_to_gapfill_tmp2 = data.frame(rgn_id  = rep(rgn_to_gapfill_tmp$rgn_id[ind], dim(year_uni)[1]), 
-                              rgn_nam = rep(rgn_to_gapfill_tmp$rgn_nam[ind], dim(year_uni)[1]), 
-                              r2      = rep(rgn_to_gapfill_tmp$r2[ind], dim(year_uni)[1]),
-                              r1      = rep(rgn_to_gapfill_tmp$r1[ind], dim(year_uni)[1])) %.%
+  # must create this in two steps otherwise, otherwise years do not align with regions and duplicates are introduced
+  rgn_to_gapfill_tmp2 = data.frame(rgn_id  = rep(rgn_to_gapfill_tmp$rgn_id[ind], dim(year_uni)[1]), 
+                                   rgn_nam = rep(rgn_to_gapfill_tmp$rgn_nam[ind], dim(year_uni)[1]), 
+                                   r2      = rep(rgn_to_gapfill_tmp$r2[ind], dim(year_uni)[1]),
+                                   r1      = rep(rgn_to_gapfill_tmp$r1[ind], dim(year_uni)[1])) %.%
     arrange(rgn_id);
   rgn_to_gapfill = data.frame(rgn_to_gapfill_tmp2,  
                               year_uni)  
   ####
   
-#   rgn_to_gapfill = data.frame(rgn_id  = rep(rgn_to_gapfill_tmp$rgn_id[ind], dim(year_uni)[1]), 
-#                               rgn_nam = rep(rgn_to_gapfill_tmp$rgn_nam[ind], dim(year_uni)[1]), 
-#                               r2      = rep(rgn_to_gapfill_tmp$r2[ind], dim(year_uni)[1]),
-#                               r1      = rep(rgn_to_gapfill_tmp$r1[ind], dim(year_uni)[1]),
-#                               year    = year_uni)
-#   rgn_to_gapfill = arrange(rgn_to_gapfill, rgn_id, year); head(rgn_to_gapfill)
+  #   rgn_to_gapfill = data.frame(rgn_id  = rep(rgn_to_gapfill_tmp$rgn_id[ind], dim(year_uni)[1]), 
+  #                               rgn_nam = rep(rgn_to_gapfill_tmp$rgn_nam[ind], dim(year_uni)[1]), 
+  #                               r2      = rep(rgn_to_gapfill_tmp$r2[ind], dim(year_uni)[1]),
+  #                               r1      = rep(rgn_to_gapfill_tmp$r1[ind], dim(year_uni)[1]),
+  #                               year    = year_uni)
+  #   rgn_to_gapfill = arrange(rgn_to_gapfill, rgn_id, year); head(rgn_to_gapfill)
   
   
   ## gapfill data
