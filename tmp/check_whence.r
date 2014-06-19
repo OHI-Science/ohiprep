@@ -30,7 +30,32 @@ library(ohicore)  # for github/ohicore/R/gapfill_georegions.R
 g.url = 'https://docs.google.com/spreadsheet/pub?key=0At9FvPajGTwJdEJBeXlFU2ladkR6RHNvbldKQjhiRlE&single=true&gid=0&output=csv'
 l = read.csv(textConnection(RCurl::getURL(g.url, ssl.verifypeer = FALSE)), skip=1, na.strings=''); head(l); names(l)
 
-# select only layers 
+
+
+
+## track total layers per goal and pressures/resilience, with a few manual overrides ----
+l_prop = l %.%
+  group_by(targets) %.%
+  summarize(layers_tot_n = n()) %.%
+  filter(!is.na(targets), # these are simply blank rows in layers_global
+         !targets %in% c('spatial', 
+                         'ECO', 'LIV', 
+                         'LIV ECO',
+                         'LE pressures',
+                         'FIS', 'MAR', 
+                         'FIS NP',
+                         'HAB', 'SPP', 
+                         'ICO', 'LSP',
+                         'HAB CS CP',
+                         'NP pressures'))
+
+l_prop = rbind(l_prop, data.frame(targets = c('HAB', 'CS', 'CP'),
+                                  layers_tot_n = 3)
+l_prop$layers_tot_n[l_prop$targets == 'AO'] = 3 # see below in ## add non-gapfilled layers 
+ # how to remove some of these and add FP
+
+
+# select only layers with gapfilling
 l_whence_tmp = l %.%
   filter(  !is.na(whence_2013a) & 
            !targets %in% c('NP', 'LIV', 'ECO')) %.% ##TODO add 'TR' back in after testing)
@@ -53,8 +78,10 @@ l_whence = rbind(l_nep, l_git) %.%
   select(tar, root_whence, fp) %.%
   arrange(tar)
 
-l_whence$tar = gsub('_.*', '', l_whence$tar) # for name tracking purposes below
-l_whence$tar = gsub(' .*', '', l_whence$tar) # for name tracking purposes below
+# for name tracking purposes below
+l_whence$tar = gsub('_.*', '', l_whence$tar) 
+l_whence$tar = gsub(' .*', '', l_whence$tar) 
+
 
 ## read in all files, summarize and combine ----
 d_f =  matrix(nrow=0, ncol=0) # data from files
@@ -133,6 +160,9 @@ d_flg = d_fl %.% # data from files, layers, and goals
          SP = 0); head(d_flg)
 
 # number of layers per goal
+
+l_whence
+
 n_lpg = list(
   AO = 3,
   BD = 1,
@@ -144,7 +174,7 @@ n_lpg = list(
   NP = 1, 
   SP = 1,
   TR = 4,    ## TODO: TR is a placeholder
-  pr = 7, ## TODO: placeholder--need to finalize
+  pr = 7, ## TODO: placeholder--need to finalize # ALL LAYERS: MAKE THIS  the count from the pressures matrix
   re = 7) ## TODO: placeholder--need to finalize
 
 ## collapse by goal ----
