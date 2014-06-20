@@ -28,36 +28,49 @@ library(ohicore)  # for github/ohicore/R/gapfill_georegions.R
 
 # read google spreadsheep for layers
 g.url = 'https://docs.google.com/spreadsheet/pub?key=0At9FvPajGTwJdEJBeXlFU2ladkR6RHNvbldKQjhiRlE&single=true&gid=0&output=csv'
-l = read.csv(textConnection(RCurl::getURL(g.url, ssl.verifypeer = FALSE)), skip=1, na.strings=''); head(l); names(l)
+l = read.csv(textConnection(RCurl::getURL(g.url, ssl.verifypeer = FALSE)), skip=1, na.strings='NA'); head(l); names(l)
 
 
-
-
-## track total layers per goal and pressures/resilience, with a few manual overrides ----
-l_prop = l %.%
-  group_by(targets) %.%
-  summarize(layers_tot_n = n()) %.%
-  filter(!is.na(targets), # these are simply blank rows in layers_global
-         !targets %in% c('spatial', 
-                         'ECO', 'LIV', 
+## track total number of layers per goal and pressures/resilience, with a few manual overrides ----
+# see decisions in https://docs.google.com/a/nceas.ucsb.edu/spreadsheet/ccc?key=0At9FvPajGTwJdEJBeXlFU2ladkR6RHNvbldKQjhiRlE&usp=drive_web&pli=1#gid=7
+n_lpg_tmp = l %.%
+  select(targets, layer, dir_whence_2013a, whence_2013a) %.%
+  filter(dir_whence_2013a != 'exclude',    # should not be included in the total at all       
+         !targets %in% c('spatial',        # should not be included in the total at all       
+                         'ECO', 'LIV',     # following: should not be included since will be handled separately
+                         'LE',
                          'LIV ECO',
-                         'LE pressures',
                          'FIS', 'MAR', 
                          'FIS NP',
-                         'HAB', 'SPP', 
+                         'HAB',          # HAB is dealt with separately below 
                          'ICO', 'LSP',
-                         'HAB CS CP',
-                         'NP pressures'))
+                         'HAB CS CP'))
 
-l_prop = rbind(l_prop, data.frame(targets = c('HAB', 'CS', 'CP'),
-                                  layers_tot_n = 3)
-l_prop$layers_tot_n[l_prop$targets == 'AO'] = 3 # see below in ## add non-gapfilled layers 
- # how to remove some of these and add FP
+# save file so we can inspect pressures, resilience used
+n_lpg_tmp2 = n_lpg_tmp %.%
+  filter(targets %in% c('pressures', 'pressures CW', 'resilience'))
+write.csv(n_lpg_tmp2, file.path('tmp/included_press_resil_2013a_whence.csv'), na = '', row.names=FALSE)
+
+# continue with the count
+n_lpg_tmp = n_lpg_tmp %.%
+  group_by(targets) %.%
+  summarize(layers_tot_n = n())
+  
+n_lpg = rbind(l_prop, data.frame(targets = c('HAB', 'CS', 'CP'), 
+                                   layers_tot_n = 3 ))
+n_lpg$layers_tot_n[n_lpg$targets == 'AO']  = 2     # see below in ## add non-gapfilled layers 
+n_lpg$layers_tot_n[n_lpg$targets == 'TR']  = 4 
+n_lpg$layers_tot_n[n_lpg$targets == 'FP']  = 1 
+n_lpg$layers_tot_n[n_lpg$targets == 'NP']  = 1 
+n_lpg$layers_tot_n[n_lpg$targets == 'LE']  = 1 
+n_lpg$layers_tot_n[n_lpg$targets == 'SPP'] = 1 
+
+### CONTINUE RUNNING IT FROM HERE
 
 
 # select only layers with gapfilling
 l_whence_tmp = l %.%
-  filter(  !is.na(whence_2013a) & 
+  filter(  !is.na(dir_whence_2013a) & 
            !targets %in% c('NP', 'LIV', 'ECO')) %.% ##TODO add 'TR' back in after testing)
   mutate(root_whence = str_split_fixed(as.character(dir_whence_2013a), ':', 2)[,1],
          dir_whence = str_split_fixed(as.character(dir_whence_2013a), ':', 2)[,2]) %.%
@@ -66,7 +79,15 @@ l_whence_tmp = l %.%
          dir_whence,
          whence_2013a)
 
-# sort out different directories and combine
+# pull out habitat data to work with separately
+l_hab = l_whence_tmp %.%
+  filter(tar == 'HAB CS CP')
+
+l_whence_tmp = l_whence_tmp %.%
+  filter(tar != 'HAB CS CP')
+
+
+# point to the different directories and combine
 l_nep = l_whence_tmp %.%
   filter(root_whence == 'neptune_data') %.%
   mutate(fp = file.path(dir_neptune_data, dir_whence, whence_2013a))
@@ -138,36 +159,86 @@ for (i in 1:length(l_whence$fp)){ # i = 1
 
 head(d_f) # write.csv(d_f, 'whence_2013afiles.csv', row.names = F)
 
+## deal with habitats and then combine to d_f
+d_h =  matrix(nrow=0, ncol=0) 
+
+for (f in list.files(path = file.path(dir_neptune_data, l_hab$dir_whence[1]), pattern=glob2rx('*gapfill.csv'), full.names=T)) {  
+  # f = "/Volumes/data_edit/model/GL-NCEAS_Habitat_health-v2013a/tmp/Habitat_whence/HAB_gapfill.csv" 
+  # note: this assumes that all layers are in the same path as indicated in layers_global (l). 
+
+  # for labeling
+  fname = strsplit(f, '/')
+  lis = lapply(fname, lapply, length) # roundabout way of finding the last list element in the path
+  names(lis) = lapply(fname, length)
+  fname2 = strsplit(unlist(fname)[as.numeric(names(lis))], '_')
+  goal_id = unlist(fname2)[1]
+
+  
+  # now work with the files
+  d = read.csv(f); tail(d)
+  dnam = names(d)
+  names(d)[4] = 'whencev01'
+  d$whencev01[is.na(d$whencev01)] = 0 # even though there is no habitat there, for display purposes, there is no gapfilling that occurs there
+  
+  c = d %.%
+    filter(metric == 'condition') %.%
+    select(rgn_id = rgn_id_2013,
+           whencev01)
+  names(c)[names(c) == 'whencev01'] = paste(goal_id, '_hab_condit', sep='')
+  
+  t = d %.%
+    filter(metric == 'trend') %.%
+    select(rgn_id = rgn_id_2013,
+           whencev01)
+  names(t)[names(t) == 'whencev01'] = paste(goal_id, '_hab_trend', sep='')
+  
+  d_h_tmp = c %.%
+    left_join(t, by = 'rgn_id') %.%
+    mutate(extent = 0) %.%
+    arrange(rgn_id); head(d_h_tmp)
+  names(d_h_tmp)[names(d_h_tmp) == 'extent'] = paste(goal_id, '_hab_extent', sep='')
+  
+  if(dim(d_h)[1] == 0){
+    d_h = rbind(d_h, d_h_tmp)
+  } else {
+    d_h_tmp$rgn_id = NULL
+    d_h = cbind(d_h, d_h_tmp)
+  }
+  
+}
+
+# combine habitat layers with the rest of the layers
+d_f_h = d_f %.%
+  left_join(d_h, by='rgn_id')
+
 
 ## add non-gapfilled elements ----
-## add non-gapfilled layers                          # TODO: add a check from the whence_2013a column to track
-d_fl = d_f %.%           # data from files and layers
+## add non-gapfilled layers                         
+d_fl = d_f_h %.%           # data from files and layers ####TODO: can get rid of this: don't actually need these as placeholders as long as only remaining list is included from n_lpg
   mutate(CW_ciesin_cpop  = 0,
-         P_sp_genetic    = 0,
-         P_targetharvest = 0, 
-         P_fishing       = 0,
-         AO_sust         = 0, 
-         TR_wttc_empd    = 0); head(d_fl)
-  
+         TR_wttc_empd    = 0,
+         pressures_sp_genetic    = 0,
+         pressures_targetharvest = 0, 
+         pressures_fishing       = 0,
+         resilience_msi = 0); head(d_fl)
+
 ## add non-gapfilled goals
 d_flg = d_fl %.% # data from files, layers, and goals
-  mutate(BD = 0,
-         CP = 0,
-         CS = 0,
-         FP = 0,
-         LE = 1,
-         NP = 0,
-         SP = 0); head(d_flg)
+  mutate(BD  = 0,
+         CP  = 0,
+         CS  = 0,
+         FP  = 0,
+         LE  = 1,
+         NP  = 0,
+         SP  = 0,
+         SPP = 0); head(d_flg)
 
-# number of layers per goal
-
-l_whence
-
-n_lpg = list(
-  AO = 3,
+# num layers per goal; see https://docs.google.com/a/nceas.ucsb.edu/spreadsheet/ccc?key=0At9FvPajGTwJdEJBeXlFU2ladkR6RHNvbldKQjhiRlE&usp=drive_web&pli=1#gid=7
+n_lpg = list( # TODO: delete all of this and just use above with l_prop (rename to n_lpg)
+  AO = 2,
   BD = 1,
-  CP = 1,
-  CS = 1,
+  CP = 3,
+  CS = 3,
   CW = 4,
   FP = 1, 
   LE = 1,
@@ -182,10 +253,10 @@ nam = str_split_fixed(as.character(names(d_flg)), '_', 2)[,1] # identify goal pr
 
 # CW, TR, resil, press
 nam_cw = names(d_flg)[nam == 'CW']
-nam_tr = names(d_flg)[nam == 'TR']
+nam_tr = names(d_flg)[nam == 'TR'] # need to have a flag for not including the main TR
 nam_ao = names(d_flg)[nam == 'AO']
-nam_pr = names(d_flg)[nam == 'pressures'  | nam == 'P']
-nam_re = names(d_flg)[nam == 'resilience' | nam == 'R']
+nam_pr = names(d_flg)[nam == 'pressures']
+nam_re = names(d_flg)[nam == 'resilience']
 
 d_flg$cw_sum = rowSums(d_flg[,nam_cw], na.rm=T)
 d_flg$tr_sum = rowSums(d_flg[,nam_tr], na.rm=T)
@@ -205,7 +276,12 @@ d_g = d_g[,(!names(d_g) %in% c(nam_cw, 'cw_sum',
                                nam_pr, 'pr_sum',
                                nam_re, 're_sum'))]; head(d_g) 
 
-           
+# further collapses necessary for TR and BD TODO
+# TR
+# : sum TR with attr(TR)
+
+
+# TODO: report back how many layers total
 
 ## prepare for heatmap by georegion ----
 
@@ -229,7 +305,9 @@ d_g_lab = d_g %.%
             by = 'rgn_id'); head(d_g_lab)
 
 
-# georegions list--for splitting the figures into manageable portions
+# georegions lists for figures ----
+#for splitting the figures into manageable portions
+grps = 3
 georegions_list = list(
     grp1=c(
       'Australia and New Zealand',
@@ -275,22 +353,7 @@ data_melt$prop_gf[data_melt$prop_gf > 0 & data_melt$prop_gf < 1] = 0.5 # for hea
 
 ## heatmap plotting! ----
 
-# PLOTTING OPTIONS: 
-# 1. single figure with all rgn_ids together, ordered by georegion 
-# 2. separate figure for each georegion
-
-# prepare for the groupings
-grps = 3
-# data_melt1 = data_melt %.%
-#   filter(r2_label %in% georegions_list[['grp1']] ) ; head(data_melt1)
-# data_melt2 = data_melt %.%
-#   filter(r2_label %in% georegions_list[['grp2']] ) ; head(data_melt2)
-# data_melt3 = data_melt %.%
-#   filter(r2_label %in% georegions_list[['grp3']] ) ; head(data_melt3)
-
-## different heatmaps, by group ----
-# grp 1 
-
+## different heatmaps, by group
 for (j in 1:grps){ # j=1
   if        (j==1){
     data_meltj = data_melt %.%
@@ -304,75 +367,20 @@ for (j in 1:grps){ # j=1
   }
 
 data_m = data_meltj %.%
-  arrange(variable, r2_label) %.%
+  arrange(variable, desc(r2_label)) %.%
   select(r2_label,v_label, variable, prop_gf); head(data_m)
 
-ggplot(data_m, aes(x=variable, y=as.factor(v_label), fill=as.factor(prop_gf))) +
+ggplot(data_m, aes(x=variable, y=factor(v_label, levels=unique(v_label)), fill=as.factor(prop_gf))) +   # levels=unique(v_label) to override alphabetical order
   geom_raster() +
   labs(y = '', x = "") + 
   theme(axis.text.y = element_text(size=10),
         axis.text.x = element_text(angle=90, vjust=1)) +
   scale_fill_brewer(name  = '', type = "seq", palette = (1),labels=c('original', 'partially gapfilled', 'fully gapfilled'))
+
 ggsave(file.path('tmp/whence_figures', paste('OHI_2013_heatmap', j, '.png', sep='')), width=10, height=15)
 }
 
 
-
-# grp 2
-data_m = data_melt2 %.%
-  arrange(variable, r2_label) %.%
-  select(r2_label,v_label, variable, prop_gf); head(data_m,20)
-
-ggplot(data_m, aes(x=variable, y=as.factor(v_label), fill=as.factor(prop_gf))) +
-  geom_raster() +
-  labs(y = '', x = "") + 
-  theme(axis.text.y = element_text(size=10),
-        axis.text.x = element_text(angle=90, vjust=1)) +
-  scale_fill_discrete(name  = '', breaks=c(1,2), labels=c('original', 'gapfilled'))
-
-ggsave(file.path('tmp/whence_figures', paste('whence_2.png', sep='')), width=10, height=15)
-
-# grp 3
-data_m = data_melt3 %.%
-  arrange(variable, r2_label) %.%
-  select(r2_label,v_label, variable, prop_gf); head(data_m,20)
-
-ggplot(data_m, aes(x=variable, y=as.factor(v_label), fill=as.factor(prop_gf))) +
-  geom_raster() +
-  labs(y = '', x = "") + 
-  theme(axis.text.y = element_text(size=10),
-        axis.text.x = element_text(angle=90, vjust=1)) +
-  scale_fill_discrete(name  = '', breaks=c(1,2), labels=c('original', 'gapfilled'))
-
-ggsave(file.path('tmp/whence_figures', paste('whence_3.png', sep='')), width=5, height=15)
-
-
-# 2. for each georegion, create a heatmap with existing data 
-for(g in unique(data$r2_label)) { # g="Australia and New Zealand"
-  
-  data_m = data_melt %.%
-    filter(r2_label == g) %.%
-    select(v_label, variable, prop_gf); head(data_m)
-  
-  # arrange by target
-  #   nam1 = str_split_fixed(as.character(data_m$variable), '_', 2); head(nam1)
-  #   target = nam1[,1]; head(target)
-  #   data_m$variable = nam1[,2]; head(data_m)
-  #   data_m$target = target; head(data_m)
-  #   data_m = data_m %.% #--arrange by target!!!!!!!!!
-  #     arrange(target)
-  
-  
-  ggplot(data_m, aes(x=variable, y=as.factor(v_label), fill=as.factor(prop_gf))) +
-    geom_raster() +
-    labs(y = g, x = "") + 
-    theme(axis.text.y = element_text(size=10),
-          axis.text.x = element_text(angle=90, vjust=1)) +
-    scale_fill_discrete(name  = '', breaks=c(1,2), labels=c('original', 'gapfilled'))
-  
-  ggsave(file.path('tmp/whence_figures', paste('whence_', g, '.png', sep='')), width=5, height=15)
-  
-}
 
 
 ## Mel's original heat map of whence data ----
