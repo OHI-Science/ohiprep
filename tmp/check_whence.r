@@ -13,8 +13,6 @@ pathogens?
 msi #in neptune_data:model/GL-NCEAS-Resilience_v2013a/data disaggreate
 
 check:
-make sure CW adds right
-split into georegions
 remove TR as a placeholder
 
 
@@ -28,35 +26,31 @@ library(ohicore)  # for github/ohicore/R/gapfill_georegions.R
 
 # read google spreadsheep for layers
 g.url = 'https://docs.google.com/spreadsheet/pub?key=0At9FvPajGTwJdEJBeXlFU2ladkR6RHNvbldKQjhiRlE&single=true&gid=0&output=csv'
-l = read.csv(textConnection(RCurl::getURL(g.url, ssl.verifypeer = FALSE)), skip=1, na.strings='NA'); head(l); names(l)
+l = read.csv(textConnection(RCurl::getURL(g.url, ssl.verifypeer = FALSE)), skip=1, na.strings=''); head(l); names(l)
 
 
 ## track total number of layers per goal and pressures/resilience, with a few manual overrides ----
 # see decisions in https://docs.google.com/a/nceas.ucsb.edu/spreadsheet/ccc?key=0At9FvPajGTwJdEJBeXlFU2ladkR6RHNvbldKQjhiRlE&usp=drive_web&pli=1#gid=7
 n_lpg_tmp = l %.%
   select(targets, layer, dir_whence_2013a, whence_2013a) %.%
-  filter(dir_whence_2013a != 'exclude',    # should not be included in the total at all       
-         !targets %in% c('spatial',        # should not be included in the total at all       
-                         'ECO', 'LIV',     # following: should not be included since will be handled separately
-                         'LE',
-                         'LIV ECO',
-                         'FIS', 'MAR', 
-                         'FIS NP',
-                         'HAB',          # HAB is dealt with separately below 
-                         'ICO', 'LSP',
-                         'HAB CS CP'))
+  filter(dir_whence_2013a != 'exclude',                   # not included in the total at all       
+         !targets %in% c('spatial',                       # not included in the total at all       
+                         'LE', 'ECO', 'LIV', 'LIV ECO',   # all others: not included since handled separately
+                         'FIS', 'MAR', 'FIS NP',
+                         'HAB', 'HAB CS CP',              
+                         'ICO', 'LSP'))
 
 # save file so we can inspect pressures, resilience used
-n_lpg_tmp2 = n_lpg_tmp %.%
+n_lpg_tmpsave = n_lpg_tmp %.%
   filter(targets %in% c('pressures', 'pressures CW', 'resilience'))
-write.csv(n_lpg_tmp2, file.path('tmp/included_press_resil_2013a_whence.csv'), na = '', row.names=FALSE)
+write.csv(n_lpg_tmpsave, file.path('tmp/included_press_resil_2013a_whence.csv'), na = '', row.names=FALSE)
 
 # continue with the count
-n_lpg_tmp = n_lpg_tmp %.%
+n_lpg_tmp2 = n_lpg_tmp %.%
   group_by(targets) %.%
   summarize(layers_tot_n = n())
   
-n_lpg = rbind(l_prop, data.frame(targets = c('HAB', 'CS', 'CP'), 
+n_lpg = rbind(n_lpg_tmp2, data.frame(targets = c('HAB', 'CS', 'CP'), 
                                    layers_tot_n = 3 ))
 n_lpg$layers_tot_n[n_lpg$targets == 'AO']  = 2     # see below in ## add non-gapfilled layers 
 n_lpg$layers_tot_n[n_lpg$targets == 'TR']  = 4 
@@ -65,15 +59,13 @@ n_lpg$layers_tot_n[n_lpg$targets == 'NP']  = 1
 n_lpg$layers_tot_n[n_lpg$targets == 'LE']  = 1 
 n_lpg$layers_tot_n[n_lpg$targets == 'SPP'] = 1 
 
-### CONTINUE RUNNING IT FROM HERE
 
 
+### ERROR IN THIS SECTION---CONTINUE RUNNING IT FROM HERE
 # select only layers with gapfilling
-l_whence_tmp = l %.%
-  filter(  !is.na(dir_whence_2013a) & 
-           !targets %in% c('NP', 'LIV', 'ECO')) %.% ##TODO add 'TR' back in after testing)
+l_whence_tmp = n_lpg_tmp %.%
   mutate(root_whence = str_split_fixed(as.character(dir_whence_2013a), ':', 2)[,1],
-         dir_whence = str_split_fixed(as.character(dir_whence_2013a), ':', 2)[,2]) %.%
+         dir_whence  = str_split_fixed(as.character(dir_whence_2013a), ':', 2)[,2]) %.%
   select(tar = targets,
          root_whence,
          dir_whence,
