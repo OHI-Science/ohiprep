@@ -4,12 +4,15 @@
 import arcpy, os, socket, numpy, pandas, time
 
 # paths
-wd      = 'G:/ohiprep/Israel/Hamaarag-Regions_v2014a'
-gdb     = '%s/tmp/geodb.gdb'             % wd
-shp_in  = '%s/raw/Subregions_WGS.shp'    % wd
-shp_out = '%s/data/regions_gcs.shp'      % wd
-csv_out = '%s/data/regions_gcs_data.shp' % wd
-gl_gdb  = r'C:\tmp\Global\NCEAS-Regions_v2014\geodb.gdb'
+wd       = 'G:/ohiprep/Israel/Hamaarag-Regions_v2014a'
+gdb      = '%s/tmp/geodb.gdb'             % wd
+shp_in   = '%s/raw/Subregions_WGS.shp'    % wd
+shp_out  = '%s/data/regions_gcs.shp'      % wd
+csv_out  = '%s/data/regions_gcs_data.shp' % wd
+gl_gdb   = r'C:\tmp\Global\NCEAS-Regions_v2014\geodb.gdb'             # neptune_data:git-annex/Global/NCEAS-Regions_v2014/geodb.gdb
+
+gadm     = r'C:\tmp\Global\GL-GADM-AdminAreas_v2\data\gadm2.gdb\gadm' # neptune_data:stable/GL-GADM-AdminAreas_v2/data/gadm2.gdb
+country  = 'Israel'
 
 # projections
 sr_mol = arcpy.SpatialReference('Mollweide (world)') # projected Mollweide (54009)
@@ -27,8 +30,11 @@ arcpy.env.overwriteOutput        = True
 arcpy.env.outputCoordinateSystem = sr_gcs
 
 # copy
-if not arcpy.Exists('%s/s' % gdb):
+if not arcpy.Exists('%s/b' % gdb):
     arcpy.FeatureClassToFeatureClass_conversion(shp_in, gdb, 'a')
+if not arcpy.Exists('%s/p' % gdb):
+    arcpy.Select_analysis(shp_in, gdb, 'a')
+    arcpy.Select_analysis(gadm, 'p', '"NAME_0"  = \'%s\'' % country)
 
 # add rgn_id, rgn_name specific to input shapefile
 arcpy.AddField_management(      'a', 'rgn_id'  , 'SHORT')
