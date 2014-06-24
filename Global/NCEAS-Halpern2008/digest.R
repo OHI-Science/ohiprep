@@ -2,10 +2,12 @@
 
 # much faster on https://neptune.nceas.ucsb.edu/rstudio/, ~ 15 min ea
 
-# started ~ 3am
+# started ~ 3am -> , 24 of 38: masked_impacts_dem_nd_hb.tif (2014-06-23 09:22:03), ended 15:43:19
 
 # TODO: git mv NCEAS-Halpern2008 NCEAS-Halpern2008_v2014
-#       check whether zone really is rgn_id
+#       add prefix rgn_*
+#       filter out 0 data
+#       check whether zone really is rgn_id. seems OK. check missing rgn_id?
 
 library(raster)
 library(rgdal) # on Mac with R 3.1: http://cran.r-project.org/bin/macosx/contrib/3.1/rgdal_0.8-16.tgz
