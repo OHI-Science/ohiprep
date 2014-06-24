@@ -21,7 +21,7 @@ if (!file.exists(dir_out)) dir.create(dir_out, showWarnings=F)
 
 tifs = list.files(file.path(dir_neptune_data, 'model/GL-NCEAS-Halpern2008/data'), pattern=glob2rx('*.tif'))
 
-for (i in 3:length(tifs)){ # i=1
+for (i in 1:3){ #length(tifs)){ # i=2
   
   f = tifs[i]
   csv = sprintf('%s/%s.csv', dir_out, str_replace(tools::file_path_sans_ext(f), 'masked_', '') )
@@ -37,8 +37,7 @@ for (i in 3:length(tifs)){ # i=1
       select(rgn_id=zone, area_km2) %>%
       filter(area_km2 > 0) %>%
       arrange(rgn_id)
-    
-    
+        
   } else {
     
     z = zonal(p, r, fun='mean', progress='text') %>%
@@ -46,7 +45,7 @@ for (i in 3:length(tifs)){ # i=1
       select(rgn_id=zone, mean) %>%
       arrange(rgn_id)
     
-  }
+   }
 
   write.csv(z, csv, na='', row.names=F)
 
