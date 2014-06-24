@@ -187,3 +187,12 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   f_out = sprintf('%s/data/%s_%s.csv', dir_d, basename(dir_d), units)
   write.csv(m_u, f_out, row.names=F, na='')
 }
+
+# Make readable layers by removing rgn_name
+read.csv('Global/FAO-Commodities_v2011/data/FAO-Commodities_v2011_tonnes.csv', na.strings='') %>%
+  select(rgn_id, product, year, tonnes) %>%
+  write.csv('Global/FAO-Commodities_v2011/data/FAO-Commodities_v2011_tonnes_lyr.csv', na='', row.names=F)
+
+read.csv('Global/FAO-Commodities_v2011/data/FAO-Commodities_v2011_usd.csv', na.strings='') %>%
+  select(rgn_id, product, year, usd) %>%
+  write.csv('Global/FAO-Commodities_v2011/data/FAO-Commodities_v2011_usd_lyr.csv', na='', row.names=F)
