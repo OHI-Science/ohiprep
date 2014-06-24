@@ -331,7 +331,7 @@ d_g_lab = d_g2 %.%
 
 # georegions lists for figures ----
 #for splitting the figures into manageable portions
-grps = 3
+grps = 2
 georegions_list = list(
     grp1=c(
       'Australia and New Zealand',
@@ -341,16 +341,11 @@ georegions_list = list(
       'Polynesia',
       'South-Eastern Asia',
       'Southern Asia',
-      'Western Asia'
+      'Western Asia', 
+      'Caribbean',
+      'Central America'
     ),
     grp2=c(
-      'Caribbean',
-      'Central America',
-      'Northern America',
-      'South America',
-      'Southern Islands'
-    ),
-    grp3=c(
       'Eastern Africa',
       'Eastern Europe',
       'Middle Africa',
@@ -359,7 +354,10 @@ georegions_list = list(
       'Southern Africa',
       'Southern Europe',
       'Western Africa',
-      'Western Europe'
+      'Western Europe',
+      'Northern America',
+      'South America',
+      'Southern Islands'
     ))
 
 
@@ -377,32 +375,35 @@ data_melt$prop_gf[data_melt$prop_gf > 0 & data_melt$prop_gf < 1] = 0.5 # for hea
 
 ## heatmap plotting! ----
 
-## different heatmaps, by group
+# different heatmaps, by group
 for (j in 1:grps){ # j=1
+  
   if        (j==1){
     data_meltj = data_melt %.%
-  filter(r2_label %in% georegions_list[['grp1']] ) 
+      filter(r2_label %in% georegions_list[['grp1']] ) 
   } else if (j==2){
-     data_meltj = data_melt %.%
-  filter(r2_label %in% georegions_list[['grp2']] ) 
-  } else if (j==3){
-     data_meltj = data_melt %.%
-  filter(r2_label %in% georegions_list[['grp3']] ) 
-  }
-
-data_m = data_meltj %.%
-  arrange(variable, desc(r2_label)) %.%
-  select(r2_label,v_label, variable, prop_gf); head(data_m)
-
-ggplot(data_m, aes(x=variable, y=factor(v_label, levels=unique(v_label)), fill=as.factor(prop_gf))) +   # levels=unique(v_label) to override alphabetical order
-  geom_raster() +
-  labs(y = '', x = "") + 
-  theme(axis.text.y = element_text(size=10),
-        axis.text.x = element_text(angle=90, vjust=1)) +
-  scale_fill_brewer(name  = '', type = "seq", palette = (1),labels=c('original', 'partially gapfilled', 'fully gapfilled'))
-
-ggsave(file.path('tmp/whence_figures', paste('OHI_2013_heatmap', j, '.png', sep='')), width=10, height=15)
-
+    data_meltj = data_melt %.%
+      filter(r2_label %in% georegions_list[['grp2']] ) 
+    #   } else if (j==3){
+    #     data_meltj = data_melt %.%
+    #       filter(r2_label %in% georegions_list[['grp3']] ) 
+  } 
+  
+  data_m = data_meltj %.%  # if split apart and uncomm, have this be = data_meltj
+    arrange(variable, desc(r2_label)) %.%
+    select(r2_label,v_label, variable, prop_gf); head(data_m)
+  
+  print(length(unique(data_m$v_label))) # see how many rgn_ids are in each grp = 110!
+  
+  ggplot(data_m, aes(x=variable, y=factor(v_label, levels=unique(v_label)), fill=as.factor(prop_gf))) +   # levels=unique(v_label) to override alphabetical order
+    geom_raster() +
+    labs(y = '', x = "") + 
+    theme(axis.text.y = element_text(size=10),
+          axis.text.x = element_text(angle=90, vjust=1)) +
+    scale_fill_brewer(name  = '', type = "seq", palette = (1),labels=c('original', 'partially gapfilled', 'fully gapfilled'))
+  
+  ggsave(file.path('tmp/whence_figures', paste('OHI_2013_Heatmap', j, '.pdf', sep='')), width=10, height=15)
+  
 }
 
 

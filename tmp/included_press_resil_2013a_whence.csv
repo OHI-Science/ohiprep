@@ -20,7 +20,7 @@
 "pressures CW","po_nutrients",,
 "pressures CW","po_pathogens",,
 "pressures CW","po_trash","neptune_data:model/GL-OceanConserv-Trash_v2012/data","rgn_oc_trash_2013a_whence.csv"
-"resilience","alien_species",,
+"resilience","alien_species","neptune_data:model/GL-NCEAS-Resilience_v2013a/whence_2013a","CBDaliens_whence.csv"
 "resilience","cites","neptune_data:model/GL-CITES-Signatories_v2013/data","rgn_cites_2013_all_whence.csv"
 "resilience","fishing_v1",,
 "resilience","fishing_v1_eez",,
@@ -36,6 +36,6 @@
 "resilience","msi_gov",,
 "resilience","species_diversity",,
 "resilience","species_diversity_3nm",,
-"resilience","tourism",,
-"resilience","water",,
+"resilience","tourism","neptune_data:model/GL-NCEAS-Resilience_v2013a/whence_2013a","CBDtourism_whence.csv"
+"resilience","water","neptune_data:model/GL-NCEAS-Resilience_v2013a/whence_2013a","CBDwater_whence.csv"
 "resilience","wgi_all","neptune_data:model/GL-WorldBank-WGI_v2011/data","rgn_wb_wgi_2013a_whence.csv"
