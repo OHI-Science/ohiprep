@@ -46,54 +46,64 @@ arcpy.env.outputCoordinateSystem = sr_gcs
 ##for v in ['basins', 'eez']:
 ##    if not arcpy.Exists('%s/%s' % (gdb,v)):
 ##        arcpy.FeatureClassToFeatureClass_conversion(eval(v), gdb, v) 
-##
-### add name field specific to shapefile
-##arcpy.AddField_management('eez', 'eez_name', 'TEXT')
-##arcpy.CalculateField_management('eez', 'eez_name', "!Name!", 'PYTHON_9.3')
-##arcpy.AddField_management('basins', 'basin_name', 'TEXT')
-##arcpy.CalculateField_management('basins', 'basin_name', "!Name!", 'PYTHON_9.3')
-##
-### get other basin and merge with basins
-##arcpy.Erase_analysis('eez','basins','eez_e') # NOTE: slivers of eez beyond basins to exclude
-##arcpy.MultipartToSinglepart_management('eez_e', 'eez_e_m')
-##arcpy.Select_analysis('eez_e_m', 'eez_e_m_s', '"Shape_Area" > 1')
-##arcpy.Dissolve_management('eez_e_m_s', 'basin_other')
-##arcpy.AddField_management('basin_other', 'basin_name', 'TEXT')
-##arcpy.CalculateField_management('basin_other', 'basin_name', "'OT'", 'PYTHON_9.3')
-##arcpy.Merge_management(['basins','basin_other'], 'basins_m')
-##
-### intersect
-##arcpy.Intersect_analysis(['eez','basins_m'], 'eez_basins_m')
-##arcpy.AddField_management('eez_basins_m', 'rgn_name', 'TEXT')
-##arcpy.CalculateField_management('eez_basins_m', 'rgn_name', "'%s_%s' % (!eez_name!, !basin_name!)", 'PYTHON_9.3')
-##arcpy.Dissolve_management('eez_basins_m', 'eez_basins', ['eez_name','basin_name','rgn_name'])
-##arcpy.AddField_management('eez_basins', 'rgn_id', 'SHORT')
-##arcpy.CalculateField_management('eez_basins', 'rgn_id', "!OBJECTID!", 'PYTHON_9.3')
-##
-### add area
-##arcpy.AddField_management('eez_basins', 'area_km2', 'DOUBLE')
-##arcpy.CalculateField_management('eez_basins', 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
-##
-### setup for theissen polygons 
-##arcpy.Buffer_analysis('eez_basins', 'eez_basins_buf200km', '200 kilometers', dissolve_option='ALL')
-##arcpy.env.extent = 'eez_basins_buf200km'
-##arcpy.env.outputCoordinateSystem = sr_mol
-##arcpy.CopyFeatures_management('eez_basins', 'thie')
-##arcpy.Densify_edit('thie', 'DISTANCE', '1 Kilometers')
-##arcpy.FeatureVerticesToPoints_management('thie', 'thie_pts', 'ALL')
-## 
-### delete interior points
-##arcpy.Dissolve_management('thie', 'thie_d')
-##arcpy.MakeFeatureLayer_management('thie_pts', 'lyr_pts')
-##arcpy.SelectLayerByLocation_management('lyr_pts', 'WITHIN_CLEMENTINI', 'thie_d')
-##arcpy.DeleteFeatures_management('lyr_pts')
-## 
-### generate thiessen polygons
-##arcpy.CreateThiessenPolygons_analysis('thie_pts', 'thie_polys', 'ALL')
-##arcpy.Dissolve_management('thie_polys', 'eez_basins_thiessen_mol', ['rgn_id','rgn_name'])
-##arcpy.RepairGeometry_management('eez_basins_thiessen_mol')
-##arcpy.env.outputCoordinateSystem = sr_gcs
-##arcpy.CopyFeatures_management('eez_basins_thiessen_mol', 'eez_basins_thiessen_gcs')
+
+# add name field specific to shapefile
+arcpy.AddField_management('eez', 'eez_name', 'TEXT')
+arcpy.CalculateField_management('eez', 'eez_name', "!Name!", 'PYTHON_9.3')
+arcpy.AddField_management('basins', 'basin_name', 'TEXT')
+arcpy.CalculateField_management('basins', 'basin_name', "!Name!", 'PYTHON_9.3')
+
+# get other basin and merge with basins
+arcpy.Erase_analysis('eez','basins','eez_e') # NOTE: slivers of eez beyond basins to exclude
+arcpy.MultipartToSinglepart_management('eez_e', 'eez_e_m')
+arcpy.Select_analysis('eez_e_m', 'eez_e_m_s', '"Shape_Area" > 1')
+arcpy.Dissolve_management('eez_e_m_s', 'basin_other')
+arcpy.AddField_management('basin_other', 'basin_name', 'TEXT')
+arcpy.CalculateField_management('basin_other', 'basin_name', "'OT'", 'PYTHON_9.3')
+arcpy.Merge_management(['basins','basin_other'], 'basins_m')
+
+# setup for theissen polygons 
+arcpy.Buffer_analysis('eez_basins', 'eez_basins_buf200km', '200 kilometers', dissolve_option='ALL')
+arcpy.env.extent = 'eez_basins_buf200km'
+arcpy.env.outputCoordinateSystem = sr_mol
+arcpy.CopyFeatures_management('basins_m', 'thie')
+arcpy.Densify_edit('thie', 'DISTANCE', '1 Kilometers')
+arcpy.FeatureVerticesToPoints_management('thie', 'thie_pts', 'ALL')
+ 
+# delete interior points
+arcpy.Dissolve_management('thie', 'thie_d')
+arcpy.MakeFeatureLayer_management('thie_pts', 'lyr_pts')
+arcpy.SelectLayerByLocation_management('lyr_pts', 'WITHIN_CLEMENTINI', 'thie_d')
+arcpy.DeleteFeatures_management('lyr_pts')
+ 
+# generate thiessen polygons
+arcpy.CreateThiessenPolygons_analysis('thie_pts', 'thie_polys', 'ALL')
+arcpy.env.outputCoordinateSystem = sr_gcs
+arcpy.Dissolve_management('thie_polys', 'thie_polys_d', ['basin_name'])
+
+arcpy.Erase_analysis('thie_polys_d', 'basins_m', 'thie_polys_d_e')
+arcpy.Merge_management(['thie_polys_d_e','basins_m'], 'thie_polys_d_e_m')
+arcpy.Dissolve_management('thie_polys_d_e_m', 'thie_polys_d_e_m_d', ['rgn_id','rgn_name'])
+
+# intersect expanded basins with eez's
+arcpy.Intersect_analysis(['sp_gcs','thie_polys_d_e_m_d'], 'sp_thie_m')
+arcpy.AddField_management('eez_basins_m', 'rgn_name', 'TEXT')
+arcpy.CalculateField_management('eez_basins_m', 'rgn_name', "'%s_%s' % (!eez_name!, !basin_name!)", 'PYTHON_9.3')
+arcpy.Dissolve_management('eez_basins_m', 'eez_basins', ['eez_name','basin_name','rgn_name'])
+arcpy.AddField_management('eez_basins', 'rgn_id', 'SHORT')
+arcpy.CalculateField_management('eez_basins', 'rgn_id', "!OBJECTID!", 'PYTHON_9.3')
+
+# add area
+arcpy.AddField_management('eez_basins', 'area_km2', 'DOUBLE')
+arcpy.CalculateField_management('eez_basins', 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
+
+
+
+# ? rgn_type of land or ocean?
+
+
+arcpy.RepairGeometry_management('eez_basins_thiessen_mol')
+arcpy.CopyFeatures_management('eez_basins_thiessen_mol', 'eez_basins_thiessen_gcs')
 
 ### copy global and buffers
 ##countries = ['Denmark','Estonia','Finland','Germany','Latvia','Lithuania','Poland','Russia','Sweden']

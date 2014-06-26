@@ -1,31 +1,29 @@
-source('src/R/common.R')
-
+source('src/R/common.R') # dir_neptune_data
 library(raster)
+select = dplyr::select
 
-r.tif = file.path(dir_neptune_data, 'model/GL-NCEAS-OceanRegions_v2013a/data/rgn_mol.tif')
-b.tif = file.path(dir_neptune_data, 'model/GL-WRI-ReefsAtRisk_Distance/data/gl_thr_blast_3nm.tif')
-p.tif = file.path(dir_neptune_data, 'model/GL-WRI-ReefsAtRisk_Distance/data/gl_thr_poison_3nm.tif')
+# vars
+tifs = sprintf('%s/model/GL-WRI-ReefsAtRisk_Distance/data/%s', 
+               dir_neptune_data,  
+               c('gl_thr_blast_3nm.tif', 'gl_thr_poison_3nm.tif'))
+dir_out = 'Global/WRI-ReefsAtRisk_v2013'
 
-# raster functions: raster, rasterize, extract, rasterToPoints, zonal
-r = raster(r.tif)
-b = raster(b.tif)
-p = raster(b.tif)
+r13 = raster(file.path(dir_neptune_data, 'model/GL-NCEAS-OceanRegions_v2013a/data/rgn_mol.tif'))
+dir.create(file.path(dir_o, 'data'), showWarnings=F)
 
-#r_p = rasterToPoints(r) # SLOW!
-system.time({ b_z = zonal(b, r, 'mean') })
-system.time({ p_z = zonal(p, r, 'mean') })
+for (tif in tifs){ # tif = tifs[2]
+  
+  # zonal
+  r = raster(tif)
+  z = zonal(r, r13, 'mean') # SLOW: ~9 min ea 
 
-zonal_dt = function (x, z, stat = "mean", digits = 0, na.rm = TRUE, ...) {
-  # zonal function using 10x faster data.table package
-  #   source: http://r-sig-geo.2731867.n2.nabble.com/Alternative-to-zonal-for-large-images-tt7582580.html#a7582593
-  library(data.table)
-  fun   = match.fun(stat) 
-  vals  = getValues(x) 
-  zones = round(getValues(z), digits = digits) 
-  rDT   = data.table(vals, z=zones) 
-  setkey(rDT, z) 
-  rDT[, lapply(.SD, fun), by=z] 
-} 
-
-system.time({ b_z_dt = zonal_dt(b, r, 'mean') })
-system.time({ p_z_dt = zonal_dt(p, r, 'mean') })
+  # score
+  d = data.frame(z) %.%    
+    filter(mean > 1) %.%
+    mutate(score = mean - 1) %.%
+    select(rgn_id=zone, score)
+  
+  # write
+  csv = sprintf('%s/data/%s_rgn2013.csv', dir_out,  tools::file_path_sans_ext(basename(tif)))
+  write.csv(d, csv, row.names=F, na='')  
+}

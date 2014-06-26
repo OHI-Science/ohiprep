@@ -49,17 +49,9 @@ gd      = '{0}/Global/{1}'.format(conf['dir_git'], nm)               # git direc
 
 # inputs
 sp_gcs = '{0}/sp_gcs'.format(gdb)
-#buffers = ['inland1km','offshore3nm','inland25km','offshore1km','inland50km'] # 'offshore100nm',
-#buffers = ['inland1km','offshore3nm','inland25km','offshore1km']
-buffers = ['inland25km','offshore1km','inland50km']
+buffers = ['inland1km','offshore3nm','inland25km','offshore1km','inland50km'] # 'offshore100nm',
 redo = True
 redo_except = ['buf_inland25km_000073_s_b','buf_inland25km_000073_s_b_i','buf_inland25km_000253_s_b','buf_inland25km_000253_s_b_i']
-##buffering: sp_offshore3nm_gcs (16:02:17)
-##    (001 of 3, 16:02:18) 000073 Russia buf_offshore3nm_000073_s SELECT
-##    (001 of 3, 17:26:40) 000073 INTERSECT Russia buf_offshore3nm_000073_s_b_i
-##    (002 of 3, 17:42:37) 000223 Norway buf_offshore3nm_000223_s SELECT
-                
-
 
 # buffer units dictionary
 buf_units_d = {'nm':'NauticalMiles',
@@ -266,14 +258,14 @@ for buf in buffers:  # buf = 'inland1km'
                 fc   = sp_buf,
                 flds = sp_area_flds,
                 shp  = '{0}/data/{1}.shp'.format(     ad, sp_buf),
-                csv  = '{0}/data/{1}_data.csv'.format(ad, sp_buf))
+                csv  = '{0}/data/{1}_data.csv'.format(gd, sp_buf))
         if not arcpy.Exists('{0}/data/{1}.shp'.format(     ad, rgn_buf)) or not os.path.isfile('{0}/data/{1}_data.csv'.format(ad, rgn_buf)) or redo:
             print('  exporting shp and csv %s (%s)' % (rgn_buf, time.strftime('%H:%M:%S')))
             export_shpcsv(
                 fc   = rgn_buf,
                 flds = rgn_area_flds,
                 shp  = '{0}/data/{1}.shp'.format(     ad, rgn_buf),
-                csv  = '{0}/data/{1}_data.csv'.format(ad, rgn_buf))    
+                csv  = '{0}/data/{1}_data.csv'.format(gd, rgn_buf))    
         print('  finished (%s)' % time.strftime('%H:%M:%S'))
 
     except Exception as e:
