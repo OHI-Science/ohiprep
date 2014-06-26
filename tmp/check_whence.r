@@ -26,6 +26,13 @@ g.url = 'https://docs.google.com/spreadsheet/pub?key=0At9FvPajGTwJdEJBeXlFU2ladk
 l = read.csv(textConnection(RCurl::getURL(g.url, ssl.verifypeer = FALSE)), skip=1, na.strings=''); head(l); names(l)
 anx = read.csv('tmp/layers_global2013_annex.csv'); anx  # note TRstatus is operated on differently than TR
 
+# get rid of any rows in l that are complete blank
+nl = length(names(l))
+l = l %.%
+  mutate(rs = rowSums(is.na(l))) %.% 
+  filter(rs < nl) %.% 
+  select(-rs) 
+
 ## track total number of layers per goal and pressures/resilience, with a few manual overrides ----
 # see decisions in https://docs.google.com/a/nceas.ucsb.edu/spreadsheet/ccc?key=0At9FvPajGTwJdEJBeXlFU2ladkR6RHNvbldKQjhiRlE&usp=drive_web&pli=1#gid=7
 layers_tmp = l %.%
@@ -214,37 +221,13 @@ d_fh = d_f %.%
   left_join(d_h, by='rgn_id'); head(d_fh)
 
 
-## add non-gapfilled elements ----
-## add non-gapfilled layers                         
-# d_fl = d_fh %.%           # data from files and layers ####TODO: can get rid of this: don't actually need these as placeholders as long as only remaining list is included from n_lpg
-#   mutate(CW_ciesin_cpop  = 0,
-#          TR_wttc_empd    = 0,
-#          pressures_sp_genetic    = 0,
-#          pressures_targetharvest = 0, 
-#          pressures_fishing       = 0,
-#          resilience_msi = 0); head(d_fl)
-
-## add non-gapfilled goals
+## add non-gapfilled goals ----
 d_flg = d_fh %.% # data from files, layers, and goals
   mutate(FP  = 0,
          NP  = 0,
          SP  = 0,
          SPP = 0); head(d_flg)
 
-# num layers per goal; see https://docs.google.com/a/nceas.ucsb.edu/spreadsheet/ccc?key=0At9FvPajGTwJdEJBeXlFU2ladkR6RHNvbldKQjhiRlE&usp=drive_web&pli=1#gid=7
-# n_lpg = list( # TODO: delete all of this and just use above with l_prop (rename to n_lpg)
-#   AO = 2,
-#   BD = 1,
-#   CP = 3,
-#   CS = 3,
-#   CW = 4,
-#   FP = 1, 
-#   LE = 1,
-#   NP = 1, 
-#   SP = 1,
-#   TR = 4,    ## TODO: TR is a placeholder
-#   pr = 7, ## TODO: placeholder--need to finalize # ALL LAYERS: MAKE THIS  the count from the pressures matrix
-#   re = 7) ## TODO: placeholder--need to finalize
 
 ## collapse by goal ----
 nam = str_split_fixed(as.character(names(d_flg)), '_', 2)[,1] # identify goal prefixes
@@ -313,52 +296,74 @@ names(d_g2)[names(d_g2) == 'TR2'] = 'TR'
 georegions = read.csv('../ohicore/inst/extdata/layers.Global2013.www2013/rgn_georegions_long_2013b.csv', na.strings='') %.%
   dcast(rgn_id ~ level, value.var='georgn_id'); head(georegions)
 
-georegion_labels = read.csv('../ohicore/inst/extdata/layers.Global2013.www2013/rgn_georegions_labels_long_2013b.csv') %.%    
-  mutate(level_label = sprintf('%s_label', level)) %.%
+gl = read.csv('../ohicore/inst/extdata/layers.Global2013.www2013/rgn_georegions_labels_long_2013b.csv'); head(gl)
+
+grps = 2 # 2 figures
+
+gl_rename = gl %.%
+  filter(level == 'r2') %.%
+  mutate(        # grouping for 2 figures. heatmaps will display reverse-alphabetical/numeric order. 
+    r2_order = label,
+    r2_order = str_replace(r2_order, 'Australia and New Zealand' , 101), # fig 1
+    r2_order = str_replace(r2_order, 'Polynesia'                 , 102),
+    r2_order = str_replace(r2_order, 'Micronesia'                , 103),
+    r2_order = str_replace(r2_order, 'Melanesia'                 , 104),
+    r2_order = str_replace(r2_order, 'South-Eastern Asia'        , 105),
+    r2_order = str_replace(r2_order, 'Southern Asia'             , 106),
+    r2_order = str_replace(r2_order, 'Western Asia'              , 107),
+    r2_order = str_replace(r2_order, 'Eastern Asia'              , 108),
+    r2_order = str_replace(r2_order, 'Central America'           , 109),
+    r2_order = str_replace(r2_order, 'Caribbean'                 , 110), 
+    
+    r2_order = str_replace(r2_order, 'Southern Islands'          , 201), # fig 2
+    r2_order = str_replace(r2_order, 'Southern Africa'           , 202),
+    r2_order = str_replace(r2_order, 'Middle Africa'             , 203),
+    r2_order = str_replace(r2_order, 'Eastern Africa'            , 204),
+    r2_order = str_replace(r2_order, 'Western Africa'            , 205),
+    r2_order = str_replace(r2_order, 'Northern Africa'           , 206),
+    r2_order = str_replace(r2_order, 'Southern Europe'           , 207),    
+    r2_order = str_replace(r2_order, 'Eastern Europe'            , 208),
+    r2_order = str_replace(r2_order, 'Western Europe'            , 209), 
+    r2_order = str_replace(r2_order, 'Northern Europe'           , 210),
+    r2_order = str_replace(r2_order, 'South America'             , 211),
+    r2_order = str_replace(r2_order, 'Northern America'          , 212));  
+
+# labeling details
+georegion_labels = gl_rename %.%    
+  mutate(level_label = sprintf('%s_label', level)) %.% 
   dcast(rgn_id ~ level_label, value.var='label') %.%
   left_join(
     read.csv('../ohicore/inst/extdata/layers.Global2013.www2013/rgn_labels.csv') %.%
-      select(rgn_id, v_label=label),
-    by='rgn_id') %.%
-  arrange(r0_label, r1_label, r2_label, v_label); head(georegion_labels)
+      select(rgn_id, v_label=label) %.%
+      mutate(
+        v_label = str_replace(v_label, 'R_union',                                             'Réunion'), # fix and shorten a few names (labeling)
+        v_label = str_replace(v_label, 'Saint Pierre and Miquelon',                           'Saint Pierre + Miquelon'),
+        v_label = str_replace(v_label, 'Bosnia and Herzegovina',                              'Bosnia + Herzegovina'),
+        v_label = str_replace(v_label, 'Democratic Republic of the Congo',                    'Dem. Rep. of the Congo'),
+        v_label = str_replace(v_label, 'Sao Tome and Principe',                               'Sao Tome + Principe'),
+        v_label = str_replace(v_label, 'Heard and McDonald Islands',                          'Heard + McDonald Islands'),
+        v_label = str_replace(v_label, 'Amsterdam Island and Saint Paul Island',              'Amsterdam Island + St. Paul Island'),
+        v_label = str_replace(v_label, 'South Georgia and the South Sandwich Islands',        'S. Georgia + S. Sandwich Islands'),
+        v_label = str_replace(v_label, 'Guadeloupe and Martinique',                           'Guadeloupe + Martinique'),
+        v_label = str_replace(v_label, 'Saint Vincent and the Grenadines',                    'St. Vincent + the Grenadines'),
+        v_label = str_replace(v_label, 'Trinidad and Tobago',                                 'Trinidad + Tobago'),
+        v_label = str_replace(v_label, 'Antigua and Barbuda',                                 'Antigua + Barbuda'),
+        v_label = str_replace(v_label, 'Puerto Rico and Virgin Islands of the United States', 'Puerto Rico + U.S. Virgin Islands'),
+        v_label = str_replace(v_label, 'Turks and Caicos Islands',                            'Turks + Caicos Islands'),
+        v_label = str_replace(v_label, 'Howland Island and Baker Island',                     'Howland Island + Baker Island'),
+        v_label = str_replace(v_label, 'Andaman and Nicobar',                                 'Andaman + Nicobar'),
+        v_label = str_replace(v_label, 'Northern Mariana Islands and Guam',                   'Northern Mariana Islands + Guam')), 
+    by='rgn_id') %.% 
+  left_join(gl_rename %.%
+              select(rgn_id, r2_order),
+            by = 'rgn_id') %.%
+  arrange(r2_order, v_label); head(georegion_labels)
 
 # for labeling
 d_g_lab = d_g2 %.%
   left_join(georegion_labels %.%
-              select(rgn_id, r2_label, v_label),
+              select(rgn_id, r2_label, v_label, r2_order),
             by = 'rgn_id'); head(d_g_lab)
-
-
-# georegions lists for figures ----
-#for splitting the figures into manageable portions
-grps = 2
-georegions_list = list(
-    grp1=c(
-      'Australia and New Zealand',
-      'Eastern Asia',
-      'Melanesia',
-      'Micronesia',
-      'Polynesia',
-      'South-Eastern Asia',
-      'Southern Asia',
-      'Western Asia', 
-      'Caribbean',
-      'Central America'
-    ),
-    grp2=c(
-      'Eastern Africa',
-      'Eastern Europe',
-      'Middle Africa',
-      'Northern Africa',          
-      'Northern Europe',
-      'Southern Africa',
-      'Southern Europe',
-      'Western Africa',
-      'Western Europe',
-      'Northern America',
-      'South America',
-      'Southern Islands'
-    ))
 
 
 ## prepare data for heatmap plotting ----
@@ -367,9 +372,9 @@ data <- d_g_lab %.%
   filter(!is.na(r2_label)) %.%
   select(rgn_id,
          AO, BD, CP, CS, CW, FP, LE, NP, SP, TR, pr, re, # order goals alphabetically
-         r2_label, v_label); head(data)
+         r2_label, v_label, r2_order); head(data)
 
-data_melt <- melt(data, id.vars = c('rgn_id', 'r2_label', 'v_label'), value.name = 'prop_gf', id="rgn_id") # melt
+data_melt <- melt(data, id.vars = c('rgn_id', 'r2_label', 'v_label', 'r2_order'), value.name = 'prop_gf', id="rgn_id") # melt
 data_melt$prop_gf[data_melt$prop_gf > 0 & data_melt$prop_gf < 1] = 0.5 # for heatmapping: change value for 3 discrete colors
 
 
@@ -380,18 +385,15 @@ for (j in 1:grps){ # j=1
   
   if        (j==1){
     data_meltj = data_melt %.%
-      filter(r2_label %in% georegions_list[['grp1']] ) 
+      filter(r2_order %in% 100:199 ) # figure 1
   } else if (j==2){
     data_meltj = data_melt %.%
-      filter(r2_label %in% georegions_list[['grp2']] ) 
-    #   } else if (j==3){
-    #     data_meltj = data_melt %.%
-    #       filter(r2_label %in% georegions_list[['grp3']] ) 
+      filter(r2_order %in% 200:299 ) # figure 2
   } 
   
-  data_m = data_meltj %.%  # if split apart and uncomm, have this be = data_meltj
-    arrange(variable, desc(r2_label)) %.%
-    select(r2_label,v_label, variable, prop_gf); head(data_m)
+  data_m = data_meltj %.%  
+    arrange(variable, r2_order) %.%
+    select(r2_order,v_label, variable, prop_gf); head(data_m)
   
   print(length(unique(data_m$v_label))) # see how many rgn_ids are in each grp = 110!
   
@@ -402,7 +404,8 @@ for (j in 1:grps){ # j=1
           axis.text.x = element_text(angle=90, vjust=1)) +
     scale_fill_brewer(name  = '', type = "seq", palette = (1),labels=c('original', 'partially gapfilled', 'fully gapfilled'))
   
-  ggsave(file.path('tmp/whence_figures', paste('OHI_2013_Heatmap', j, '.pdf', sep='')), width=10, height=15)
+  ggsave(file.path('tmp/whence_figures', paste('OHI_2013_Heatmap_test', j, '.pdf', sep='')), width=10, height=15)
+  ggsave(file.path('tmp/whence_figures', paste('OHI_2013_Heatmap_test', j, '.png', sep='')), width=10, height=15)
   
 }
 
