@@ -1,0 +1,21 @@
+---
+title: "README"
+output: html_document
+---
+
+For OHI 2015, redo Mariculture reference point:::
+
+'A global assessment of offshore mariculture potential from a spatial perspective'
+http://www.fao.org/docrep/017/i3100e/i3100e.pdf
+
+```{r}
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
