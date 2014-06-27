@@ -6,103 +6,126 @@
 #       Travel and Tourist Competitiveness Index (TTCI)
 #   read in individual files
 #   call add_rgn_id.r to add OHI region_ids
-#   georegional gapfilling with add_gapfill.r 
+#   georegional gapfilling with gapfill_georegions.r 
 #   final processing by hand: see end of script
 
 
 # setup ----
 
 # load libraries
-library(reshape2)
 library(gdata)
-library(dplyr)
+library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 
-# from get paths configuration based on host machine name
+
+# get paths.  NOTE: Default path should be ohiprep root directory.
 source('src/R/common.R') # set dir_neptune_data
-# Otherwise, presume that scripts are always working from your default ohiprep folder
+source('src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na()
 dir_d = 'Global/WEF-Economics_v2014'
 
-# get functions
-source('src/R/ohi_clean_fxns.R')
 
 # read in files ----
 d.gci = read.csv(file.path(dir_d, 'raw', 'WEF_GCI_2013-2014_Table3_reformatted.csv')); head(d.gci)
 
-# clean up
+# clean up and rescale (this makes export_rescaled_layer.R from GL-WEF-Economics_v2013 obsolete)
 gci = d.gci %.%
   select(country = Country, 
-         score = Score_1_to_7); head(gci)
-gci[,'country'] = gsub('Korea', 'South Korea', gci[,'country']) 
+         score = Score_1_to_7) %.%
+  mutate(country = str_replace(country, 'Korea', 'South Korea')); head(gci)
 
-# rescale -- this makes export_rescaled_layer.R from GL-WEF-Economics_v2013 obsolete
 rng = c(1, 7)
 gci = within(gci,{
-    score = (score - rng[1]) / (rng[2] - rng[1])}); head(gci)
-
-## run add_rgn_id and save ----
-uifilesave = file.path(dir_d, 'raw', 'WEF_GCI_rescaled-cleaned.csv')
-add_rgn_id(gci, uifilesave)
+  score = (score - rng[1]) / (rng[2] - rng[1])}); head(gci)
 
 
-## check for duplicate regions, sum them ----
-
-# explore; identify dups
-dclean = read.csv(uifilesave); head(dclean)
-d.dup = dclean[duplicated(dclean[,c('rgn_id', 'rgn_nam', 'score')]),]; head(d.dup)
-
-# no duplicates
-
-## georegional gapfilling with add_gapfill.r ----
-cleaned_data1 =  read.csv(uifilesave)
-s_island_val = NA # assign what southern islands will get. 
-dirsave = file.path(dir_d, 'data')
-layersave = 'rgn_wef_gci_2014a' # don't name it rescaled--it just is. 
-cleaned_data1 = mutate(cleaned_data1, year=rep(2014)) # required for running add_gapfill (add_gapfill_oneyear.r is deleted)
-add_gapfill(cleaned_data1, dirsave, layersave, s_island_val)
+## add rgn_ids with name_to_rgn ----
+m_d = name_to_rgn(gci, fld_name='country', flds_unique=c('country'), fld_value='score', add_rgn_name=T) 
 
 
-## last step: give North Korea the minimum value ----
+## georegional gapfilling with gapfill_georegions.r ----
+georegions = read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %.%
+  dcast(rgn_id ~ level, value.var='georgn_id')
 
-gapfilled_data = read.csv(file.path(dirsave, paste(layersave, '.csv', sep=''))); head(gapfilled_data)
-whence_data = read.csv(file.path(dirsave, paste(layersave, '_whencev01.csv', sep=''))); head(whence_data)
+georegion_labels = read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv') %.%    
+  mutate(level_label = sprintf('%s_label', level)) %.%
+  dcast(rgn_id ~ level_label, value.var='label') %.%
+  left_join(
+    read.csv('../ohi-global/eez2013/layers/rgn_labels.csv') %.%
+      select(rgn_id, v_label=label),
+    by='rgn_id') %.%
+  arrange(r0_label, r1_label, r2_label, v_label); head(georegion_labels)
 
-# find minimum
-gapfilled_data_noNA = gapfilled_data %.%
-  filter(!is.na(score))
 
-s_min = min(gapfilled_data_noNA$score)
+layersave = file.path(dir_d, 'data', 'rgn_wef_gci_2014a.csv')
+attrsave  = file.path(dir_d, 'data', 'rgn_wef_gci_2014a_attr.csv')
+
+# library(devtools); load_all('../ohicore')
+d_g_a = gapfill_georegions(
+  data = m_d %.%
+    filter(!rgn_id %in% c(213,255)) %.%
+    select(rgn_id, score),
+  fld_id = 'rgn_id',
+  georegions = georegions,
+  georegion_labels = georegion_labels,
+  r0_to_NA = TRUE, 
+  attributes_csv = attrsave) # don't chain gapfill_georegions or will lose head(attr(d_g_a, 'gapfill_georegions')) ability
+
+# investigate attribute tables
+head(attr(d_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('open %s', attrsave))
+
+
+## last step: give North Korea the minimum value and save ----
+# find minimum  
+s_min = min(d_g %.%
+              filter(!is.na(score)))
 
 # replace North Korea (rgn_id == 21) in gapfilled_data
-gapfilled_data$score[gapfilled_data$rgn_id == 21] = s_min 
-
-gapfilled_data$whencev01 = as.character(gapfilled_data$whencev01)
-gapfilled_data$whencev01[gapfilled_data$rgn_id == 21] = 'XH'
-
-gapfilled_data$whence_choice = as.character(gapfilled_data$whence_choice)
-gapfilled_data$whence_choice[gapfilled_data$rgn_id == 21] = 'XH'
-
-
-# replace North Korea (rgn_id == 21) in whence_data
-whence_data$score[whence_data$rgn_id == 21] = s_min 
-
-whence_data$whence_choice = as.character(whence_data$whence_choice)
-whence_data$whence_choice[whence_data$rgn_id == 21] = 'XH' 
-
-whence_data$rgn_id_whence[whence_data$rgn_id == 21] = 'XH' 
-whence_data$rgn_nam_whence = as.character(whence_data$rgn_nam_whence)
-whence_data$rgn_nam_whence[whence_data$rgn_id == 21] = 'XH' 
-whence_data$score_whence[whence_data$rgn_id == 21] = 'XH' 
-
-# whence_data[whence_data$rgn_id == 21,]
+d_g = d_g_a %.%
+  select(rgn_id, score) %.%
+  arrange(rgn_id); head(d_g)
+d_g$score[d_g$rgn_id == 21] = s_min 
 
 # save
-write.csv(gapfilled_data, file.path(dirsave, paste(layersave, '.csv', sep='')), na = '', row.names=FALSE)   
-write.csv(whence_data, file.path(dirsave, paste(layersave, '_whencev01.csv', sep='')), na = '', row.names=FALSE)   
+write.csv(d_g, layersave, na = '', row.names=FALSE)
 
 
+
+## also change attributes table ---- 
+d_attr = read.csv(attrsave) %.%
+  filter(id != 21)
+
+d_nk = d_attr %.%
+  filter(id == 21) %.%
+  mutate(
+    z_level = 'XH',
+    
+    r2_v = s_min, 
+    r1_v = s_min, 
+    r0_v = s_min, 
+    z    = s_min, 
+    
+    r2         = NA,
+    r1         = NA,
+    r0         = NA,
+    r2_n_notna = NA,
+    r1_n_notna = NA,
+    r0_n_notna = NA,
+    z_ids      = NA,
+    r2_n       = NA,
+    r1_n       = NA,
+    r0_n       = NA,
+    z_n        = NA,
+    z_n_pct    = NA,
+    z_g_score  = NA); d_nk
+
+d_attr_fin = rbind(d_attr, d_nk) %.%
+  arrange(r0_label, r1_label, r2_label, v_label) 
+write.csv(d_attr_fin, attrsave, na = '', row.names=F)
 
 
 # --- fin
+
+
+
 
 
 # ## 2013 stuff to clean TTCI data. Not done in 2014 so would have to be updated a bit for nextime data are updated
