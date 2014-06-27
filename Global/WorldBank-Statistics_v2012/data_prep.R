@@ -109,7 +109,7 @@ for(k in 1:length(layer_uni)) { # k=1
   select(-layer, -units); head(m_l2)  # before troubleshooting, also selected rgn_name
 
   layersave = file.path(dir_d, 'data', layername[k])
-  attrsave = file.path(dir_d, 'data', attrname[k])
+  attrsave  = file.path(dir_d, 'data', attrname[k])
   
   # library(devtools); load_all('../ohicore')
   d_g_a = gapfill_georegions(
