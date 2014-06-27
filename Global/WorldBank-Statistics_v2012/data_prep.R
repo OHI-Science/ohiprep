@@ -73,7 +73,7 @@ d.all <- d.all[d.all[,1] != "Isle of Man",] # remove Isle of Man
 print('these are all the variables that are included in the cleaned file: ')
 print(data.frame(unique(d.all$layer)))
 
-# add rgn_id: country to rgn_id  # source('src/R/ohi_clean_fxns.R') ----
+# add rgn_id: country to rgn_id  # source('../ohiprep/src/R/ohi_clean_fxns.R') ----
 m_d = name_to_rgn(d.all, fld_name='country', flds_unique=c('country','year','layer', 'units'), fld_value='value', add_rgn_name=T) 
 
 m_d = m_d %.%
