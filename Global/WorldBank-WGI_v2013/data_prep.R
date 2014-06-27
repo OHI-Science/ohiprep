@@ -12,8 +12,7 @@ library(gdata)
 library(tools)
 library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 
-# get paths
-# NOTE: The default path should already be your ohiprep root directory for the rest to work. Otherwise, presume that scripts are always working from your default ohiprep folder
+# get paths.  NOTE: Default path should be ohiprep root directory.
 source('src/R/common.R') # set dir_neptune_data
 source('src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na()
 dir_d = 'Global/WorldBank-WGI_v2013'
