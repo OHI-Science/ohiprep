@@ -123,6 +123,11 @@ d.m3 = rbind(d.m2[!ind,],
 m_d = name_to_rgn(d.m3, fld_name='country', flds_unique=c('country','year'), fld_value='score', add_rgn_name=T); head(m_d)
 
 
+
+## TODO::
+# sovereign gapfilling
+# make sure it's capped from 0 to 1. 
+
 ## georegional gapfilling with gapfill_georegions.r ----
 
 # read in lookups

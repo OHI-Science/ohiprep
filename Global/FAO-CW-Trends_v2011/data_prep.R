@@ -13,30 +13,26 @@
 #   remove/translate FAO data codes (F, ..., -, 0 0)
 #   add identifier column
 #   concatenate data from each file into a single file
-#   run add_rgn_id.r (function by J. Stewart, B. Best)
+#   run name_to_rgn.r (function by J. Stewart, B. Best)
 #   save single file
   
 
 # setup ----
 
 # load libraries
-library(reshape2)
+# load libraries
 library(gdata)
-#detach("package:plyr")
-library(dplyr)
+library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 
-# from get paths configuration based on host machine name
+# get paths.  NOTE: Default path should be ohiprep root directory.
 source('src/R/common.R') # set dir_neptune_data
-# Otherwise, presume that scripts are always working from your default ohiprep folder
-dir_d = 'Global/FAO-CW-Trends_v2011'
-
-# get functions
-source('src/R/ohi_clean_fxns.R')
+source('src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na()
+dir_d = file.path('../../Global/FAO-CW-Trends_v2011')
 
 
 ## read in and process files ----
 
-for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*csv'), full.names=T)) {  # f = "Global/FAO-CW-Trends_v2011/raw/FAO_fertilizers_thru2011.csv"
+for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*csv'), full.names=T)) {  # f = "../../Global/FAO-CW-Trends_v2011/raw/FAO_fertilizers_thru2011.csv"
   
   d.fao = read.csv(f, header=F); head(d.fao)
   
@@ -49,7 +45,9 @@ for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*csv'), fu
     group_by(country, year) %.%
     summarise(tonnes = sum(tonnes)); head(d)
   
-  ## run add_rgn_id and save ----
+  ## add rgn_ids with name_to_rgn ----
+ m_d = name_to_rgn(gci, fld_name='country', flds_unique=c('country'), fld_value='score', add_rgn_name=T) 
+
   uifilesave = file.path(dir_d, 'raw', paste('FAO-', unlist(v)[3], '-trends_v2011-cleaned.csv', sep=''))
   add_rgn_id(d, uifilesave)
   
