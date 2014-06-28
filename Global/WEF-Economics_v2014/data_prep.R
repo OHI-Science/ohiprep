@@ -35,6 +35,11 @@ gci = d.gci %.%
 # and rescale (this makes export_rescaled_layer.R from GL-WEF-Economics_v2013 obsolete)
 gci$score = gci$score/7; head(gci)
 
+# (could also do this as):
+# rng = c(min(gci$score), 7)
+# d.m2 = within(d.m2,{
+#   score = (score - rng[1]) / (rng[2] - rng[1])}); head(d.m2); summary(d.m2)
+
 
 ## add rgn_ids with name_to_rgn ---- 
 # source('../ohiprep/src/R/ohi_clean_fxns.R')
