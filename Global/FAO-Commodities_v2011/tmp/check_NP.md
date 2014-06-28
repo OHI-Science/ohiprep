@@ -1,11 +1,84 @@
--   tonnes
-    -   tonnes diffs summary
-    -   tonnes diffs head
--   usd
-    -   usd diffs summary
-    -   usd diffs head
+-   check\_NP
+    -   load
+    -   tonnes
+        -   tonnes diffs summary
+        -   tonnes diffs head
+    -   usd
+        -   usd diffs summary
+        -   usd diffs head
+
+check\_NP
+=========
 
 investigate NP calculated scores; compare raw values as well. June 2014
+
+load
+----
+
+    # load libraries
+    suppressPackageStartupMessages({
+      library(gdata)
+      library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
+    })
+
+    # get paths. Rmd files get knitted from current directory.
+    # setwd('~/github/ohiprep/Global/FAO-Commodities_v2011/tmp')
+    source('../../../src/R/common.R')         # set dir_neptune_data
+    source('../../../src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na()
+
+    # read in original input layers from FAO
+    tonnes_fao = read.csv('../data/FAO-Commodities_v2011_tonnes.csv')
+    usd_fao    = read.csv('../data/FAO-Commodities_v2011_usd.csv')
+
+    # read in input layers from layers_global
+    tonnes_lyr = read.csv('../data/FAO-Commodities_v2011_tonnes_lyr.csv')
+    usd_lyr    = read.csv('../data/FAO-Commodities_v2011_usd_lyr.csv')
+
+    # read in np debug reports
+    np_1 = read.csv('../../../../ohi-global/eez2013/reports/debug/eez2013_np_1-harvest_lm-gapfilled_data.csv')
+    np_2 = read.csv('../../../../ohi-global/eez2013/reports/debug/eez2013_np_2-rgn-year-product_data.csv')
+
+    # scores
+    scores_np = read.csv('scores_eez2012-2013_2014-06-27_vs_2013-10-09.csv')
+
+    ## 1. compare tonnes, usd from layers_global with np1 debug report::: there are differences:: 7834/12011 rows ----
+    d_tonnes = 
+      join_all(
+        list(
+          tonnes_fao %>%
+            select(rgn_name, rgn_id, product, year, tonnes_fao=tonnes),
+          tonnes_lyr %>%
+            select(rgn_id, product, year, tonnes_lyr=tonnes),
+          np_1 %>%
+            select(rgn_id, product, year, tonnes_1=tonnes),
+          np_2 %>%
+            select(rgn_id, product, year, tonnes_2=tonnes)), 
+        by=c('rgn_id','product','year'), type='full') %>%
+      mutate(
+        tonnes_dif_lyr_fao = tonnes_lyr - tonnes_fao,
+        tonnes_dif_1_fao   = tonnes_1   - tonnes_fao,
+        tonnes_dif_2_fao   = tonnes_2   - tonnes_fao) %>%
+      filter(tonnes_dif_lyr_fao != 0 | tonnes_dif_1_fao != 0 | tonnes_dif_2_fao != 0) %>%
+      arrange(desc(abs(tonnes_dif_2_fao)), desc(abs(tonnes_dif_1_fao)), desc(abs(tonnes_dif_lyr_fao)))
+
+    d_usd = 
+      join_all(
+        list(
+          usd_fao %>%
+            select(rgn_name, rgn_id, product, year, usd_fao=usd),
+          usd_lyr %>%
+            select(rgn_id, product, year, usd_lyr=usd),
+          np_1 %>%
+            select(rgn_id, product, year, usd_1=usd),
+          np_2 %>%
+            select(rgn_id, product, year, usd_2=usd)), 
+        by=c('rgn_id','product','year'), type='full') %>%
+      mutate(
+        usd_dif_lyr_fao = usd_lyr - usd_fao,
+        usd_dif_1_fao   = usd_1   - usd_fao,
+        usd_dif_2_fao   = usd_2   - usd_fao) %>%
+      filter(usd_dif_lyr_fao != 0 | usd_dif_1_fao != 0 | usd_dif_2_fao != 0) %>%
+      arrange(desc(abs(usd_dif_2_fao)), desc(abs(usd_dif_1_fao)), desc(abs(usd_dif_lyr_fao)))
 
 tonnes
 ------
