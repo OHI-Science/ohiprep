@@ -18,38 +18,44 @@ library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require
 
 
 # get paths.  NOTE: Default path should be ohiprep root directory.
-source('src/R/common.R') # set dir_neptune_data
-source('src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na()
-dir_d = 'Global/WEF-Economics_v2014'
+source('../ohiprep/src/R/common.R') # set dir_neptune_data
+source('../ohiprep/src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na()
+dir_d = '../ohiprep/Global/WEF-Economics_v2014'
 
 
 # read in files ----
 d.gci = read.csv(file.path(dir_d, 'raw', 'WEF_GCI_2013-2014_Table3_reformatted.csv')); head(d.gci)
 
-# clean up and rescale (this makes export_rescaled_layer.R from GL-WEF-Economics_v2013 obsolete)
+# clean up 
 gci = d.gci %.%
   select(country = Country, 
          score = Score_1_to_7) %.%
   mutate(country = str_replace(country, 'Korea', 'South Korea')); head(gci)
 
-rng = c(1, 7)
-gci = within(gci,{
-  score = (score - rng[1]) / (rng[2] - rng[1])}); head(gci)
+# and rescale (this makes export_rescaled_layer.R from GL-WEF-Economics_v2013 obsolete)
+gci$score = gci$score/7; head(gci)
+
+# (could also do this as):
+# rng = c(min(gci$score), 7)
+# d.m2 = within(d.m2,{
+#   score = (score - rng[1]) / (rng[2] - rng[1])}); head(d.m2); summary(d.m2)
 
 
-## add rgn_ids with name_to_rgn ----
-m_d = name_to_rgn(gci, fld_name='country', flds_unique=c('country'), fld_value='score', add_rgn_name=T) 
+## add rgn_ids with name_to_rgn ---- 
+# source('../ohiprep/src/R/ohi_clean_fxns.R')
+m_d = name_to_rgn(gci, fld_name='country', flds_unique=c('country'), fld_value='score', collapse_fxn = mean, add_rgn_name=T) 
 
+stopifnot(max(m_d$score) < 1)
 
 ## georegional gapfilling with gapfill_georegions.r ----
-georegions = read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %.%
+georegions = read.csv('eez2013/layers/rgn_georegions.csv', na.strings='') %.%
   dcast(rgn_id ~ level, value.var='georgn_id')
 
-georegion_labels = read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv') %.%    
+georegion_labels = read.csv('eez2013/layers/rgn_georegion_labels.csv') %.%    
   mutate(level_label = sprintf('%s_label', level)) %.%
   dcast(rgn_id ~ level_label, value.var='label') %.%
   left_join(
-    read.csv('../ohi-global/eez2013/layers/rgn_labels.csv') %.%
+    read.csv('eez2013/layers/rgn_labels.csv') %.%
       select(rgn_id, v_label=label),
     by='rgn_id') %.%
   arrange(r0_label, r1_label, r2_label, v_label); head(georegion_labels)
@@ -74,19 +80,20 @@ head(attr(d_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('
 
 
 ## last step: give North Korea the minimum value and save ----
-# find minimum  
-s_min = min(d_g %.%
-              filter(!is.na(score)))
-
-# replace North Korea (rgn_id == 21) in gapfilled_data
 d_g = d_g_a %.%
   select(rgn_id, score) %.%
   arrange(rgn_id); head(d_g)
+
+# find minimum  
+s_min = min(d_g %.%
+              select(score) %.%
+              filter(!is.na(score)))
+
+# replace North Korea (rgn_id == 21) in gapfilled_data
 d_g$score[d_g$rgn_id == 21] = s_min 
 
 # save
 write.csv(d_g, layersave, na = '', row.names=FALSE)
-
 
 
 ## also change attributes table ---- 
