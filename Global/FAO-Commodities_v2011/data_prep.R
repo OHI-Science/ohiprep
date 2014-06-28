@@ -320,12 +320,12 @@ for (scenario in c('eez2012','eez2013','eez2014')){ # scenario  = 'eez2013'
   # write NP weights layer also used to calculate pressures and resilience
   write.csv(
     select(w, rgn_id, product, weight=usd_peak_product_weight),
-    sprintf('%s/data/np_harvest_%s_product-peak_%s-year-max-%d.csv', dir_d, 'usd', scenario, year_max), row.names=F, na='')
+    sprintf('%s/data/np_harvest_%s_product-peak_%s-year-max-%d_buffer-%g.csv', dir_d, 'usd', scenario, year_max, harvest_peak_buffer), row.names=F, na='')
   
   # write NP status layers
   for (lyr in c('tonnes','tonnes_rel','usd','usd_rel')){
     write.csv(
       h[,c('rgn_id', 'product', 'year', lyr)],
-      sprintf('%s/data/np_harvest_%s_%s-year-max-%d.csv', dir_d, str_replace(lyr, '_','-'), scenario, year_max), row.names=F, na='')
+      sprintf('%s/data/np_harvest_%s_%s-year-max-%d_buffer-%g.csv', dir_d, str_replace(lyr, '_','-'), scenario, year_max, harvest_peak_buffer), row.names=F, na='')
   }
 }
