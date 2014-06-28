@@ -13,9 +13,9 @@ library(tools)
 library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 
 # get paths.  NOTE: Default path should be ohiprep root directory.
-source('src/R/common.R') # set dir_neptune_data
-source('src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na()
-dir_d = 'Global/WorldBank-WGI_v2013'
+source('../ohiprep/src/R/common.R') # set dir_neptune_data
+source('../ohiprep/src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na()
+dir_d = '../ohiprep/Global/WorldBank-WGI_v2013'
 
 
 # **  it takes about 10 mins to make GL-WorldBank-WGI_v2011-cleaned.csv using add_rgn_id.r
@@ -55,58 +55,62 @@ for (s in wgisheets){ # s=2
   
   # Redo capitalization: capitalize just the first letter: function from R help page for sapply
   capwords <- function(s, strict = FALSE) {
-    cap <- function(s) paste(toupper(substring(s, 1, 1)),
-{s <- substring(s, 2); if(strict) tolower(s) else s},
-sep = "", collapse = " " )
-sapply(strsplit(s, split = " "), cap, USE.NAMES = !is.null(names(s)))
+    cap <- function(s) paste(toupper(substring(s, 1, 1)), 
+                             {s <- substring(s, 2); if(strict) tolower(s) else s},
+                             sep = "", collapse = " " )
+    sapply(strsplit(s, split = " "), cap, USE.NAMES = !is.null(names(s)))
   }
 
-d.m$country = tolower(d.m$country)
-d.m$country = sapply(d.m$country, function(x) capwords(x))
-d.m$country = as.character(lapply(as.character(d.m$country), function(x) capwords(x)))
-
-d.m$country = gsub('And ', 'and ', d.m$country, fixed=TRUE) # and a few to do by hand
-d.m$country = gsub('Sar', 'SAR', d.m$country, fixed=TRUE)
-d.m$country = gsub('Fyr', 'FYR', d.m$country, fixed=TRUE)
-d.m$country = gsub('Rb', 'RB', d.m$country, fixed=TRUE)
-d.m$country = gsub('Pdr', 'PDR', d.m$country, fixed=TRUE)
-d.m$country = gsub('u.s.', 'U.S.', d.m$country, fixed=TRUE)
-
-# cast
-d.c = dcast(d.m, country + WGI + year ~ metric) 
-# or by year: dcast(d.m, country + WGI + metric ~ year)
-names(d.c) = c("country","WGI","year","Estimate","Lower","NumSrc","P","StdErr","Upper")
-
-
-# concatenate f files
-d.all = rbind(d.all, d.c)
-
+  d.m$country = tolower(d.m$country)
+  d.m$country = sapply(d.m$country, function(x) capwords(x))
+  d.m$country = as.character(lapply(as.character(d.m$country), function(x) capwords(x)))
+  
+  d.m$country = gsub('And ', 'and ', d.m$country, fixed=TRUE) # and a few to do by hand
+  d.m$country = gsub('Sar', 'SAR', d.m$country, fixed=TRUE)
+  d.m$country = gsub('Fyr', 'FYR', d.m$country, fixed=TRUE)
+  d.m$country = gsub('Rb', 'RB', d.m$country, fixed=TRUE)
+  d.m$country = gsub('Pdr', 'PDR', d.m$country, fixed=TRUE)
+  d.m$country = gsub('u.s.', 'U.S.', d.m$country, fixed=TRUE)
+  
+  # cast
+  d.c = dcast(d.m, country + WGI + year ~ metric) 
+  # or by year: dcast(d.m, country + WGI + metric ~ year)
+  names(d.c) = c("country","WGI","year","Estimate","Lower","NumSrc","P","StdErr","Upper")
+  
+  
+  # concatenate f files
+  d.all = rbind(d.all, d.c)
+  
 }
+
+# save tmp file so can just load this instead of running the whole thing
+tmpsave = 'rgn_wb_wgi_2014a_tmp.csv'
+write.csv(d.all, file.path(dir_d, 'tmp', tmpsave), na = '', row.names=F)
 
 # prepare to add rgn_ids: d.all2 would be final, but must combine the 6 separate indicators 
 d.all2 = d.all %.%
   select(country,
          score = Estimate,
          year,
-         category = WGI)
+         category = WGI); head(d.all2)
 
 # calculate average score ----
 
 # transpose with mean aggregate function to average over 6 indicator subcategories
 d.all2$score = as.numeric(d.all2$score)
-d.t = dcast(d.all2, value.var="score", country ~ year, fun.aggregate = mean, na.rm = T) 
+d.t = dcast(d.all2, value.var="score", country ~ year, fun.aggregate = mean, na.rm = T); head(d.t) 
 
 # remelt for final
 d.m2 = melt(data=d.t, id.vars=names(d.all)[1], variable.name='year') %.%
   select(country, 
          score = value,
          year) %.%
-  arrange(country, year)
+  arrange(country, year); head(d.m2); summary(d.m2)
 
 # rescale
 rng = c(-2.5, 2.5)
 d.m2 = within(d.m2,{
-  score = (score - rng[1]) / (rng[2] - rng[1])})
+  score = (score - rng[1]) / (rng[2] - rng[1])}); head(d.m2); summary(d.m2)
 
 # d.m2 <- d.m2[d.m2[,1] != "Jersey, Channel Islands",] # only data for 2011; needs to be gapfilled # don't remove this, but keep an eye on it
 
