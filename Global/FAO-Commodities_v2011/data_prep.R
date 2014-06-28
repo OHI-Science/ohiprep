@@ -314,8 +314,8 @@ for (scenario in c('eez2012','eez2013','eez2014')){ # scenario  = 'eez2013'
     summarize(
       tonnes_gapfilled = ifelse(sum(tonnes_gapfilled) > 0, T, F),
       usd_gapfilled    = ifelse(sum(usd_gapfilled) > 0, T, F))
-  write.csv(h  , sprintf('%s/tmp/%s_np_1-harvest_lm-gapfilled_data.csv', dir_d, scenario), row.names=F, na='')
-  write.csv(h_g, sprintf('%s/tmp/%s_np_1-harvest_lm-gapfilled_summary.csv', dir_d, scenario), row.names=F, na='')
+  write.csv(h  , sprintf('%s/tmp/%s_np_harvest_smoothed_data.csv', dir_d, scenario), row.names=F, na='')
+  write.csv(h_g, sprintf('%s/tmp/%s_np_harvest_smoothed_summary.csv', dir_d, scenario), row.names=F, na='')
   
   # write NP weights layer also used to calculate pressures and resilience
   write.csv(
