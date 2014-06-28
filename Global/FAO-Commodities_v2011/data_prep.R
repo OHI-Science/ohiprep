@@ -226,7 +226,6 @@ for (scenario in c('eez2012','eez2013','eez2014')){ # scenario  = 'eez2013'
     group_by(rgn_id, product) %>%
     mutate(
       n_years = n())
- #filter(h, rgn_id==199) %>% as.data.frame()  
   
   # show where NAs usd vs tonnes
   cat(sprintf('  nrow(h): %d, range(h$year): %s\n', nrow(h), paste(range(h$year), collapse=' to ')))
