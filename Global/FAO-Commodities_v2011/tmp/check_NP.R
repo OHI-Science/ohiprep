@@ -19,8 +19,8 @@ layers_tonnes = read.csv(file.path(dir_d, 'data', 'FAO-Commodities_v2011_tonnes_
 layers_usd    = read.csv(file.path(dir_d, 'data', 'FAO-Commodities_v2011_usd_lyr.csv')); head(layers_usd)
 
 # read in np debug reports
-np1 = read.csv('eez2013/reports/debug/eez2013_np_1-harvest_lm-gapfilled_data.csv'); head(np1)
-np2 = read.csv('eez2013/reports/debug/eez2013_np_2-rgn-year-product_data.csv'); head(np2) # don't end up comparing this; the problem is earlier
+np1 = read.csv('../ohi-global/eez2013/reports/debug/eez2013_np_1-harvest_lm-gapfilled_data.csv'); head(np1)
+np2 = read.csv('../ohi-global/eez2013/reports/debug/eez2013_np_2-rgn-year-product_data.csv'); head(np2) # don't end up comparing this; the problem is earlier
 
 ## 1. compare tonnes, usd from layers_global with np1 debug report::: there are differences:: 7834/12011 rows ----
 np1_c = np1 %>%
