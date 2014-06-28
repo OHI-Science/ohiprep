@@ -3,13 +3,18 @@ title: "check_NP"
 author: "Julie Stewart, Ben Best"
 date: "June 28, 2014"
 output: 
-# debug with html_document, switch to md_document before github upload and right-click on Rmd file in Git pane and ignore it to create/append .gitignore
+# Debug with html_document output.
+# Right-click on *.html file in Git pane and ignore it to create/append .gitignore.
+# Switch to md_document output and knit before Git push.
   md_document: 
     toc: true
 ---
+# check_NP
+
 investigate NP calculated scores; compare raw values as well. June 2014
 
-```{r load, include=TRUE, echo=FALSE}
+## load
+```{r load, include=TRUE, echo=TRUE}
 # load libraries
 suppressPackageStartupMessages({
   library(gdata)
@@ -77,18 +82,17 @@ d_usd =
 ```
 
 
-```{r tables, results='asis', echo=FALSE}
-
-cat('\n## tonnes\n')
-
+## tonnes
+```{r tonnes, results='asis', echo=FALSE}
 cat('\n### tonnes diffs summary\n')
 kable(summary(select(d_tonnes, tonnes_dif_lyr_fao, tonnes_dif_1_fao, tonnes_dif_2_fao)))
 
 cat('\n### tonnes diffs head\n')
 kable(head(d_tonnes))
+```
 
-cat('\n## usd\n')
-
+## usd
+```{r usd, results='asis', echo=FALSE}
 cat('\n### usd diffs summary\n')
 kable(summary(select(d_usd, usd_dif_lyr_fao, usd_dif_1_fao, usd_dif_2_fao)))
 
