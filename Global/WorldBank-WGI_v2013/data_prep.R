@@ -2,7 +2,7 @@
 # Add rgn_ids for World Bank WGI (World Governance Indicators)
 # Previously had been named clean_WGI.r (by JStewart May2013). This script created by JStewartLowndes Mar2014.
 
-# gapfilling: sovereignty (parent-children) gapfilling with add_gapfill_sov.r
+# gapfilling: sovereignty (parent-children) gapfilling with gapfill_georegions, using weighting
 
 
 # setup ----
@@ -134,12 +134,11 @@ sovregions = read.csv('../ohiprep/src/LookupTables/eez_rgn_2013master.csv', na.s
          fld_wt = as.integer(rgn_id == r2)) %.%  # weight the 'parent' rgn_id with 1, others with 0 
   filter(rgn_id < 255, rgn_id != 213); head(sovregions)
 
-# make weighting such that sovereign region will be 100% of the weighted mean
+# join fld_wt weighting to m_d
 m_d = m_d %.% 
   left_join(sovregions %.%
               select(rgn_id, fld_wt),
             by = 'rgn_id'); head(fld_wt)
-
 
 # gapfill_georegions
 layersave = file.path(dir_d, 'data', 'rgn_wb_wgi_2014a.csv')
@@ -152,12 +151,11 @@ d_g_a = gapfill_georegions(
     filter(!rgn_id %in% c(213,255)) %.%
     select(rgn_id, year, score, fld_wt),
   fld_id = c('rgn_id'),
+  fld_weight = 'fld_wt',
   georegions = sovregions %.%
     select(-fld_wt),
-  fld_weight = 'fld_wt',
-#   georegion_labels = georegion_labels,
   r0_to_NA = TRUE, 
-  attributes_csv = (attrsave)) # don't chain gapfill_georegions or will lose head(attr(d_g_a, 'gapfill_georegions')) ability
+  attributes_csv = (attrsave)) 
 
 # investigate attribute tables
 head(attr(d_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('open %s', attrsave))
