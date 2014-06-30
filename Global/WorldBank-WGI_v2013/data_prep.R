@@ -115,13 +115,12 @@ d.m3 = rbind(d.m2[!ind,],
 
 ##  add rgn_id  ----
 m_d = name_to_rgn(d.m3, fld_name='country', flds_unique=c('country','year'), 
-                  fld_value='score', add_rgn_name=T, collapse_fxn = mean); head(m_d); summary(m_d)
-
-# m_d[duplicated(m_d[, c('rgn_id', 'year')]),] 
+                  fld_value='score', add_rgn_name=T, collapse_fxn = mean); head(m_d); summary(m_d) 
+                  # m_d[duplicated(m_d[, c('rgn_id', 'year')]),] 
 
 
 ## sovereign gapfilling with gapfill_georegions.r ----
-# use gapfill_georegions and weight the 'parent' country with 1, others with 0
+# use gapfill_georegions: lookup table that has sov_ids and weight the 'parent' country with 1, others with 0
 
 # read in lookups
 sovregions = read.csv('../ohiprep/src/LookupTables/eez_rgn_2013master.csv', na.strings='') %.% 
