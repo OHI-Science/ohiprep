@@ -85,7 +85,8 @@ for (s in wgisheets){ # s=2
 
 # save tmp file so can just load this instead of running the whole thing
 tmpsave = 'rgn_wb_wgi_2014a_tmp.csv'
-write.csv(d.all, file.path(dir_d, 'tmp', tmpsave), na = '', row.names=F)
+# write.csv(d.all, file.path(dir_d, 'tmp', tmpsave), na = '', row.names=F)
+d.all = read.csv(file.path(dir_d, 'tmp', tmpsave)); head(d.all)
 
 # prepare to add rgn_ids: d.all2 would be final, but must combine the 6 separate indicators 
 d.all2 = d.all %.%
@@ -94,25 +95,15 @@ d.all2 = d.all %.%
          year,
          category = WGI); head(d.all2)
 
-# calculate average score ----
+# calculate average score and rescale ----
 
-# transpose with mean aggregate function to average over 6 indicator subcategories
-d.all2$score = as.numeric(d.all2$score)
-d.t = dcast(d.all2, value.var="score", country ~ year, fun.aggregate = mean, na.rm = T); head(d.t) 
+d.m = d.all2 %.%
+  group_by(country, year) %.%
+  summarize(score = mean(score)); head(d.m); summary(d.m)
 
-# remelt for final
-d.m2 = melt(data=d.t, id.vars=names(d.all)[1], variable.name='year') %.%
-  select(country, 
-         score = value,
-         year) %.%
-  arrange(country, year); head(d.m2); summary(d.m2)
-
-# rescale
 rng = c(-2.5, 2.5)
-d.m2 = within(d.m2,{
+d.m2 = within(d.m,{
   score = (score - rng[1]) / (rng[2] - rng[1])}); head(d.m2); summary(d.m2)
-
-# d.m2 <- d.m2[d.m2[,1] != "Jersey, Channel Islands",] # only data for 2011; needs to be gapfilled # don't remove this, but keep an eye on it
 
 # partition Netherland Antilles
 ind = d.m2$country %in% c('Netherlands Antilles (former)')
@@ -122,43 +113,49 @@ d.m3 = rbind(d.m2[!ind,],
                         year=rep(d.m2$year[ind], 5)))
 
 
-
 ##  add rgn_id  ----
-m_d = name_to_rgn(d.m3, fld_name='country', flds_unique=c('country','year'), fld_value='score', add_rgn_name=T); head(m_d)
+m_d = name_to_rgn(d.m3, fld_name='country', flds_unique=c('country','year'), 
+                  fld_value='score', add_rgn_name=T, collapse_fxn = mean); head(m_d); summary(m_d)
+
+# m_d[duplicated(m_d[, c('rgn_id', 'year')]),] 
 
 
-
-## TODO::
-# sovereign gapfilling
-# make sure it's capped from 0 to 1. 
-
-## georegional gapfilling with gapfill_georegions.r ----
+## sovereign gapfilling with gapfill_georegions.r ----
+# use gapfill_georegions and weight the 'parent' country with 1, others with 0
 
 # read in lookups
-georegions = read.csv('../ohicore/inst/extdata/layers.Global2013.www2013/rgn_georegions_long_2013b.csv', na.strings='') %.%
-  dcast(rgn_id ~ level, value.var='georgn_id')
+sovregions = read.csv('../ohiprep/src/LookupTables/eez_rgn_2013master.csv', na.strings='') %.% 
+  select(rgn_id = rgn_id_2013,
+         r2 = sov_id) %.%     # r2 is actually rgn_ids of sovereign regions
+  group_by(rgn_id) %.%                       # remove duplicated countrys from this rgn_id list                    
+  summarize(r2 = mean(r2)) %.% # duplicates always have the same sov_id (r2 value)
+  mutate(r1 = r2, 
+         r0 = r2,
+         fld_wt = as.integer(rgn_id == r2)) %.%  # weight the 'parent' rgn_id with 1, others with 0 
+  filter(rgn_id < 255, rgn_id != 213); head(sovregions)
 
-georegion_labels = read.csv('../ohicore/inst/extdata/layers.Global2013.www2013/rgn_georegions_labels_long_2013b.csv') %.%    
-  mutate(level_label = sprintf('%s_label', level)) %.%
-  dcast(rgn_id ~ level_label, value.var='label') %.%
-  left_join(
-    read.csv('../ohicore/inst/extdata/layers.Global2013.www2013/rgn_labels.csv') %.%
-      select(rgn_id, v_label=label),
-    by='rgn_id') %.%
-  arrange(r0_label, r1_label, r2_label, v_label); head(georegion_labels)
+# make weighting such that sovereign region will be 100% of the weighted mean
+m_d = m_d %.% 
+  left_join(sovregions %.%
+              select(rgn_id, fld_wt),
+            by = 'rgn_id'); head(fld_wt)
+
 
 # gapfill_georegions
 layersave = file.path(dir_d, 'data', 'rgn_wb_wgi_2014a.csv')
 attrsave  = file.path(dir_d, 'data', 'rgn_wb_wgi_2014a_attr.csv')
 
 # library(devtools); load_all('../ohicore')
+# source('../ohicore/R/gapfill_georegions.R')
 d_g_a = gapfill_georegions(
   data = m_d %.%
     filter(!rgn_id %in% c(213,255)) %.%
-    select(rgn_id, year, score),
-  fld_id = 'rgn_id',
-  georegions = georegions,
-  georegion_labels = georegion_labels,
+    select(rgn_id, year, score, fld_wt),
+  fld_id = c('rgn_id'),
+  georegions = sovregions %.%
+    select(-fld_wt),
+  fld_weight = 'fld_wt',
+#   georegion_labels = georegion_labels,
   r0_to_NA = TRUE, 
   attributes_csv = (attrsave)) # don't chain gapfill_georegions or will lose head(attr(d_g_a, 'gapfill_georegions')) ability
 
@@ -168,7 +165,7 @@ head(attr(d_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('
 # save gapfilled layer
 d_g = d_g_a %.%
   select(rgn_id, year, score) %.%
-  arrange(rgn_id, year); head(d_g)
+  arrange(rgn_id, year); head(d_g) # d_g[duplicated(d_g[, c('rgn_id', 'year')]),] 
 
 write.csv(d_g, layersave, na = '', row.names=FALSE)
 
@@ -180,65 +177,6 @@ d_g_inverse = d_g %.%
 
 write.csv(d_g_inverse, file.path(paste(file_path_sans_ext(layersave), '_inverse.csv', sep='')), na = '', row.names=FALSE)
 
-
-
-## check for duplicate regions, sum them ----
-
-# explore; identify dups
-dup = m_d[duplicated(m_d[,c('rgn_id', 'year')]),]; head(dup)
-dup_ids = unique(dup$rgn_id) # 116, 209
-filter(m_d, rgn_id == 116, year == 1996)
-filter(m_d, rgn_id == 209, year == 1996)
-
-# sum duplicates
-cleaned_layer_nodup = sum_duplicates(m_d, dup_ids); head(cleaned_layer_nodup)
-
-# confirm no more dups
-filter(cleaned_layer_nodup, rgn_id == 116, year == 1996)
-filter(cleaned_layer_nodup, rgn_id == 209, year == 1996)
-
-cleaned_layer_nodup$year = as.numeric(as.character(cleaned_layer_nodup$year))
-
-## gapfilling ----
-
-# temporal gapfilling with temporal.gapfill.r
-cleaned_layert_tmp = temporal.gapfill(cleaned_layer_nodup, 
-                                      fld.id = 'rgn_id', 
-                                      fld.value = names(cleaned_layer_nodup)[3], 
-                                      fld.year = 'year', verbose=F); head(cleaned_layert_tmp) 
-ct = cleaned_layert_tmp; ct$whence = NULL; ct$whence_details = NULL; head(ct) 
-ct = ct %.% 
-  select(rgn_id, year, score)
-
-
-# test
-a = read.csv('/Users/jstewart/github/ohiprep/Global/WorldBank-WGI_v2013/data/rgn_wb_wgi_2014a.csv')
-dup = a[duplicated(a[,c('rgn_id', 'year')]),]; head(dup)
-
-# explore; identify dups
-dup = ct[duplicated(ct[,c('rgn_id', 'year')]),]; head(dup)
-dup_ids = unique(dup$rgn_id) # 116, 209
-filter(m_d, rgn_id == 116, year == 1996)
-filter(m_d, rgn_id == 209, year == 1996)
-
-
-# sovereignty (parent-children) gapfilling with add_gapfill_sov.r 
-dirsave = file.path(dir_d, 'data')
-layersave = 'rgn_wb_wgi_2014a'
-add_gapfill_sov(ct, dirsave, layersave)
-
-# no further gapfilling required
-
-# calculate inverse file and save ----
-cleaned_data_sov =  read.csv(file.path(dir_d, 'data', paste(layersave, '.csv', sep=''))); head(cleaned_data_sov) 
-cleaned_data_sov_inverse = cleaned_data_sov %.%
-  mutate(score_inverse = (1-score)) %.%
-  select(rgn_id, year,
-         score = score_inverse, 
-         whencev01, whence_choice); head(cleaned_data_sov_inverse)
-
-write.csv(cleaned_data_sov_inverse, 
-          file.path(dirsave, paste(layersave, '_inverse.csv', sep='')), na = '', row.names=FALSE)
 
 ## --- fin
 
