@@ -193,7 +193,7 @@ com2prod = read.csv(file.path(dir_d, 'commodities2products.csv'), na.strings='')
 # correlate, swap and smooth to generate product peaks ----
 
 harvest_peak_buffer = 0.35
-scenarios_year_max = c(eez2014=2011, eez2013=2010, eez2012=2009)
+scenarios_year_max = c(eez2014=2010, eez2013=2009, eez2012=2008)
 nonzero_harvest_years_min = 4
 
 h_tonnes = read.csv(file.path(dir_d, 'data/FAO-Commodities_v2011_tonnes.csv'))
