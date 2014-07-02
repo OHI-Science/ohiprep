@@ -77,4 +77,53 @@ head(fao_diff) # no differences
 scores_np = read.csv(file.path(dir_d, 'tmp', 'scores_eez2012-2013_2014-06-27_vs_2013-10-09.csv'))
 
 
+## debug July 1 ----
+
+# read in input layers from layers_global
+layers_tonnes = read.csv(file.path(dir_d, 'data', 'FAO-Commodities_v2011_tonnes.csv')); head(layers_tonnes)
+layers_usd    = read.csv(file.path(dir_d, 'data', 'FAO-Commodities_v2011_usd.csv')); head(layers_usd)
+
+# read in calculated scores np
+scores_np = read.csv(file.path(dir_d, 'tmp', 'scores_eez2012-2013_2014-07-01_vs_2013-10-09.csv')); head(scores_np)
+prodyr_np = read.csv(file.path(dir_d, 'tmp', 'np_product-year_2014-07-01_vs_2013-10-09.csv')); head(prodyr_np)
+
+# join
+np_c = prodyr_np %>%
+  left_join(layers_tonnes, 
+            by = c('rgn_id', 'rgn_name', 'product', 'year')) %>%
+  mutate(tonnes_dif = H_new - tonnes); head(np_c)
+
+np_cdif = np_c %>%
+  filter(!is.na(tonnes_dif)) %>%
+  group_by(rgn_name, rgn_id, product) %>%
+  summarize(count = n()); np_cdif
+
+# join np_c with np_1_lm_debug.csv see which of these are modeled
+npl = read.csv('Global/FAO-Commodities_v2011/tmp/np_1_lm_debug.csv', na.strings = ''); head(npl); summary(npl)
+
+np_c_gf = np_c %>%
+  select(rgn_name, rgn_id, product, year, 
+         H_dif, S_dif, w_dif, tonnes_dif) %>%
+  left_join(npl %>%
+              select(
+                rgn_name,
+                rgn_id, 
+                product,
+                year, 
+                tonnes_mdl,
+                usd_mdl),
+            by = c('rgn_name', 'rgn_id', 'product', 'year')) %>%
+  filter(!is.na(tonnes_mdl)) %>%
+  group_by(rgn_name, rgn_id, product) %>%
+  summarize(count = n()); head(np_c_gf, 30) # don't know if this is actually helpful...
+
+summary(np_c_gf)
+# check out 
+
+
+# check out China
+filter(layers_tonnes, rgn_id == 209)
+
+
+
 
