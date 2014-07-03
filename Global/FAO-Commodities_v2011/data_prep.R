@@ -15,13 +15,11 @@
 
 # debug> options(warn=2); options(error=recover) # options(warn=0); options(error=NULL)
 
-# load libraries (dplyr last)
-library(reshape2)
+# load libraries
 library(stringr)
-library(plyr)
-library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
-library(dplyr)   # NOTE: I think dplyr needs to be loaded AFTER plyr to override functions, which prob was reason behind wierdness with group_by() and summarize() giving 1 value.
 library(zoo)  
+library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
+
 
 # get paths
 # NOTE: The default path should already be your ohiprep root directory for the rest to work.
