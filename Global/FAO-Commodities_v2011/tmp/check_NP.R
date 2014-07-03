@@ -185,20 +185,31 @@ np_c = usd_tbx %>%
          usd_tbx = usd) %>%
   left_join(tonnes_tbx %>%
               select(rgn_name, rgn_id, product, year, 
-                     tonnes_tbx = tonnes),
+                     tonnes_eez2013 = tonnes),
             by = c('rgn_name', 'rgn_id', 'product', 'year')) %>%
   inner_join(tonnes_oct %>%
                select(rgn_id, product, year, 
-                      tonnes_oct = tonnes),
+                      tonnes_2013a = tonnes),
              by = c('rgn_id', 'product', 'year')) %>%
-  mutate(tonnes_dif = tonnes_tbx - tonnes_oct) %>%
-  arrange(rgn_id, product, year); head(np_c)
+  mutate(tonnes_dif = tonnes_eez2013 - tonnes_2013a) %>%
+  arrange(rgn_id, product, year) %>%
+  select(-usd_tbx); head(np_c)
 
 np_diffs = np_c %>%
   filter(tonnes_dif != 0,
          year >= 2002, year <= 2009)
 
+np_stats = np_diffs %>%
+  group_by(rgn_name, rgn_id) %>%
+  summarize(n_diffs_per_rgn = n())
 
+np_stats2 = np_diffs %>%
+  group_by(rgn_name, rgn_id, product) %>%
+  summarize(n_diffs_per_rgn_product = n())
+
+write.csv(np_diffs,  file.path(dir_d, 'tmp', 'NP_rawFAOharvest_diffs_2013a_eez2013.csv'), row.names=F)
+write.csv(np_stats,  file.path(dir_d, 'tmp', 'NP_rawFAOharvest_diffs_2013a_eez2013_n_per_rgn.csv'), row.names=F)
+write.csv(np_stats2, file.path(dir_d, 'tmp', 'NP_rawFAOharvest_diffs_2013a_eez2013_n_per_rgn_product.csv'), row.names=F)
 
 
 
