@@ -109,3 +109,11 @@ kable(summary(select(d_usd, usd_dif_lyr_fao, usd_dif_1_fao, usd_dif_2_fao)))
 cat('\n### usd diffs head\n')
 kable(head(d_usd))
 ```
+
+## Congo problem
+```{r}
+library(git2r) # devtools::install_github('ropensci/git2r')
+
+
+
+```
