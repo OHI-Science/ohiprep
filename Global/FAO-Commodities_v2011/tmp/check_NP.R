@@ -127,3 +127,79 @@ filter(layers_tonnes, rgn_id == 209)
 
 
 
+## compare input layers used in Nature2012, Oct2013 and Toolbox2013 to see how raw FAO data changed. (July 2) ----
+library(reshape2)
+library(stringr)
+library(dplyr)
+dir_neptune_data = '/Volumes/data_edit'
+dir_d = '../ohiprep/Global/FAO-Commodities_v2011'
+
+
+# raw files for Nature2012
+# tonnes_nat = read.csv('')
+# usd_nat    = read.csv('')
+
+# raw files for 2013a (October2013)  # see prep_KL/NatProd.R to identify which files were used
+dir_oct    = 'model/GL-NCEAS-NaturalProducts_v2013a/raw/prep_KL/NP'
+
+tonnes_oct_tmp = read.csv(file.path(dir_neptune_data, dir_oct, 'GL-FAO-AllCombined_v2009-rgn-allyears-processed.csv'), na.strings=''); head(tonnes_oct_tmp)
+names(tonnes_oct_tmp)[5:38]<-c(1976:2009)
+tonnes_oct = tonnes_oct_tmp %>%
+  melt(id=c('rgn_id', 'rgn_nam', 'commodity', 'layer'), variable='year') %>%
+  select(rgn_id, 
+         product = layer,
+         year,
+         tonnes = value) %>%
+  mutate(product = str_replace(product, 'Coral' , 'corals'),
+         product = str_replace(product, 'FishOil' , 'fish_oil'),
+         product = str_replace(product, 'OrnamentalFish' , 'ornamentals'),
+         product = str_replace(product, 'Seaweeds' , 'seaweeds'),
+         product = str_replace(product, 'Shells' , 'shells'),
+         product = str_replace(product, 'Sponges' , 'sponges')) %>%
+  group_by(rgn_id, product, year) %>%
+  summarize(tonnes = sum(tonnes)); head(tonnes_oct)         
+            
+tonnes_oct$year = as.numeric(as.character(tonnes_oct$year))
+tonnes_oct$tonnes = as.numeric(as.character(tonnes_oct$tonnes)) 
+tonnes_oct$tonnes[is.na(tonnes_oct$tonnes)] = 0 # for comparison below; tonnes_tbx all have 0's
+
+dplyr::filter(tonnes_oct, rgn_id == 82) # debug
+tonnes_oct[duplicated(tonnes_oct[, c('rgn_id', 'product', 'year')]),] 
+
+weight_oct    = read.csv(file.path(dir_neptune_data, dir_oct, 'stacked_value_data.csv'), na.strings='') %>%
+  select(rgn_id  = rgn_id_2013,
+         product = Commodity..Commodity.,
+         usd     = value); head(weight_oct)
+ 
+# raw files for eez2013 (Toolbox 2013 calcs)
+tonnes_tbx = read.csv(file.path(dir_d, 'data', 'FAO-Commodities_v2011_tonnes.csv')); head(tonnes_tbx)
+usd_tbx    = read.csv(file.path(dir_d, 'data', 'FAO-Commodities_v2011_usd.csv')); head(usd_tbx)
+
+
+tonnes_tbx[duplicated(tonnes_tbx[, c('rgn_id', 'product', 'year')]),] 
+usd_tbx[duplicated(usd_tbx[, c('rgn_id', 'product', 'year')]),] 
+
+# combine
+np_c = usd_tbx %>%
+  select(rgn_name, rgn_id, product, year, 
+         usd_tbx = usd) %>%
+  left_join(tonnes_tbx %>%
+              select(rgn_name, rgn_id, product, year, 
+                     tonnes_tbx = tonnes),
+            by = c('rgn_name', 'rgn_id', 'product', 'year')) %>%
+  inner_join(tonnes_oct %>%
+               select(rgn_id, product, year, 
+                      tonnes_oct = tonnes),
+             by = c('rgn_id', 'product', 'year')) %>%
+  mutate(tonnes_dif = tonnes_tbx - tonnes_oct) %>%
+  arrange(rgn_id, product, year); head(np_c)
+
+np_diffs = np_c %>%
+  filter(tonnes_dif != 0,
+         year >= 2002, year <= 2009)
+
+
+
+
+
+
