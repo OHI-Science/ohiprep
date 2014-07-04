@@ -80,13 +80,15 @@ m_d = m_d %.%
   select(rgn_id, layer, units, year, value) %.%
   arrange(layer, units, rgn_id, year)
 
+write.csv(m_d, file.path(dir_d, 'raw', 'WorldBank-Statistics_v2012_cleaned.csv'), row.names=F)
+
 ## georegional gapfilling with gapfill_georegions.r ----
 
 # read in lookups
-georegions = read.csv('../ohicore/inst/extdata/layers.Global2013.www2013/rgn_georegions_long_2013b.csv', na.strings='') %.%
+georegions = read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %.%
   dcast(rgn_id ~ level, value.var='georgn_id')
 
-georegion_labels = read.csv('../ohicore/inst/extdata/layers.Global2013.www2013/rgn_georegions_labels_long_2013b.csv') %.%    
+georegion_labels = read.csv('../ohi-global/eez2013/layers/rgn_georegions_labels.csv') %.%    
   mutate(level_label = sprintf('%s_label', level)) %.%
   dcast(rgn_id ~ level_label, value.var='label') %.%
   left_join(
@@ -140,7 +142,7 @@ for(k in 1:length(layer_uni)) { # k=1
   
 }
 
-
+# see ohiprep/Global/WorldBank-Statistics_v2012/check_laborforce.r for sleuthing into a different way of gapfilling (without georegional).
 
 # --- fin
 
