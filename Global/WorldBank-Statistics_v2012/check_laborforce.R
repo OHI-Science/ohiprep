@@ -1,44 +1,16 @@
 # check_laborforce.r
-# compare gapfilled labor force values to total population values; other approach of gapfilling may be necessary.
-
-source('src/R/common.R') # set dir_neptune_data; load reshape2, plyr, dplyr
-source('src/R/ohi_clean_fxns.R') # get functions
-dir_d = 'Global/WorldBank-Statistics_v2012'
-
-# load libraries
-library(dplyr) 
-# devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
-# library(ohicore) 
-
-# explore ----
-# read in gapfilled labor file
-# l = read.csv(file.path(dir_d, 'data', 'rgn_wb_tlf_2014a.csv'), na.strings='') %>%
-#                select(rgn_id, year, 
-#                       labforce = count); head(l)
-# 
-# read in total population
-p = read.csv(file.path(dir_neptune_data, 'model/GL-NCEAS-CoastalPopulation_v2013/data', 'rgn_popsum2005to2015_inland25mi.csv'), na.strings=''); head(p)
-# 
-# # join l and p
-# 
-# vs = l %>%
-#   left_join(p, 
-#             by=c('rgn_id', 'year')) %>%
-#   mutate(pop_dif = popsum - labforce,
-#          pop_prob = pop_dif < 0) %>%
-#   filter(year >=2005,
-#          pop_prob != F); head(vs, 30)
-# 
-# vs_grp = vs %>%
-#   group_by(rgn_id) %>%
-#   summarize(n_prob = n())
 
 # try gapfilling labor force differently ----
 # 1. tried laborforce/totalpop, but this was L/P >> 1 in many cases. Not shown. 
 # 2. tried with a (L-(L*U)) combobelow, see (L-(L*U) / P as a ratio for gapfilling: this too was >> 1 in 1/3 of cases, so not a good approach for gapfilling. 
 
-# library(dplyr)
-# l_gg = read.csv(file.path(dir_d, 'data', 'rgn_wb_tlf_2014a.csv'), na.strings=''); head(l_gg) # georegional_gapfilling as a reminder
+source('src/R/common.R') # set dir_neptune_data; load reshape2, plyr, dplyr
+source('src/R/ohi_clean_fxns.R') # get functions
+library(dplyr) 
+dir_d = 'Global/WorldBank-Statistics_v2012'
+
+# read in total population and labor force gapfilled attributes
+p = read.csv(file.path(dir_neptune_data, 'model/GL-NCEAS-CoastalPopulation_v2013/data', 'rgn_popsum2005to2015_inland25mi.csv'), na.strings=''); head(p)
 l_attr_csv = read.csv(file.path(dir_d, 'data', 'rgn_wb_tlf_2014a_attr.csv'), na.strings=''); head(l_attr_csv) # L 
 
 ## 1. gapfill L with georegional L/ population ratio
@@ -85,6 +57,13 @@ summary(l_p)
 l_p_summary = l_p %.%
   select(r2_label, v_label, year, rgn_id, r2, L, P, L_over_P, L_over_P_flag)
 head(filter(l_p_summary, !is.na(P)))
+#       r2_label   v_label year rgn_id r2       L      P L_over_P L_over_P_flag
+# 1 Eastern Africa Mayotte 2005     29 14 5905971 196420 30.06807          TRUE
+# 2 Eastern Africa Mayotte 2006     29 14 6083524 207571 29.30816          TRUE
+# 3 Eastern Africa Mayotte 2007     29 14 6267187 218722 28.65367          TRUE
+# 4 Eastern Africa Mayotte 2008     29 14 6455776 229873 28.08410          TRUE
+# 5 Eastern Africa Mayotte 2009     29 14 6648908 241024 27.58608          TRUE
+# 6 Eastern Africa Mayotte 2010     29 14 6848570 252176 27.15790          TRUE
 summary(l_p_summary)
 
 #       r2_label                           v_label                         year          rgn_id              r2       
@@ -103,7 +82,6 @@ summary(l_p_summary)
 #  3rd Qu.:  5984075   3rd Qu.:  120625   3rd Qu.:462                   
 #  Max.   :224461759   Max.   :21159500   Max.   :Inf                   
 #  NA's   :161         NA's   :1340       NA's   :1340   
-
 
 
 ## 2. Try by adding U
@@ -170,6 +148,22 @@ lu_summary = lu_p %>%
          employed, 
          employed_over_P, 
          employed_over_P_exceeds1 = employed_over_P_flag)
+head(lu_summary)
+#    rgn_id rgn_name year      L Lgeomean      U U_geomean     Pop L_over_P L_over_P_exceeds1 employed employed_over_P
+# 1     45  Eritrea 2005 2292004  5905971 0.0590      5.90  924400 2.479451              TRUE  2156776        2.333163
+# 2     45  Eritrea 2006 2395623  6083524 0.0670      6.70  948053 2.526888              TRUE  2235117        2.357586
+# 3     45  Eritrea 2007 2491630  6267187 0.0525      5.25  971707 2.564178              TRUE  2360819        2.429559
+# 4     45  Eritrea 2008 2585821  6455776 0.0720      7.20  995360 2.597875              TRUE  2399642        2.410828
+# 5     45  Eritrea 2009 2673501  6648908 0.0490      4.90 1019010 2.623626              TRUE  2542499        2.495068
+# 6     45  Eritrea 2010 2764038  6848570 0.0770      7.70 1042670 2.650923              TRUE  2551207        2.446802
+# employed_over_P_exceeds1
+# 1                     TRUE
+# 2                     TRUE
+# 3                     TRUE
+# 4                     TRUE
+# 5                     TRUE
+# 6                     TRUE
+> 
 summary(lu_summary)
          
 # rgn_id                     rgn_name        year            L                Lgeomean               U          
