@@ -15,111 +15,125 @@
 #   concatenate data from each file into a single file
 #   run name_to_rgn.r (function by J. Stewart, B. Best)
 #   save single file
-  
+
 
 # setup ----
 
 # load libraries
 # load libraries
 library(gdata)
+library(biglm)
 library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 
 # get paths.  NOTE: Default path should be ohiprep root directory.
-source('src/R/common.R') # set dir_neptune_data
-source('src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na()
-dir_d = file.path('../../Global/FAO-CW-Trends_v2011')
+source('../ohiprep/src/R/common.R') # set dir_neptune_data
+source('../ohiprep/src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na()
+dir_d = file.path('../ohiprep/Global/FAO-CW-Trends_v2011')
 
 
 ## read in and process files ----
 
-for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*csv'), full.names=T)) {  # f = "../../Global/FAO-CW-Trends_v2011/raw/FAO_fertilizers_thru2011.csv"
+for (k in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*csv'), full.names=T)) { 
+  # k = "../ohiprep/Global/FAO-CW-Trends_v2011/raw/FAO_fertilizers_thru2011.csv"
+  # k = "../ohiprep/Global/FAO-CW-Trends_v2011/raw/FAO_pesticides_thru2011.csv" 
   
-  d.fao = read.csv(f, header=F); head(d.fao)
+  d_fao = read.csv(k, header=F); head(d_fao)
+  v = unlist(strsplit(as.character(d_fao[1,1]), ' '))[1] 
   
-  v = strsplit(as.character(f), '_') 
-  names(d.fao) = c(unlist(v)[3], 'country', 'category', 'unit', 'year', 'tonnes'); head(d.fao)
-  
-  # clean up
-  d = d.fao %.%
-    select(country, category, year, tonnes) %.%
+  # clean up data
+  d_fao2 = d_fao %.%
+    select(country = V2, 
+           category = V3, 
+           year = V5, 
+           tonnes = V6) %.%
     group_by(country, year) %.%
-    summarise(tonnes = sum(tonnes)); head(d)
+    summarise(tonnes = sum(tonnes)); head(d_fao2) #d_fao2[duplicated(d_fao2[, c('country', 'year')]),] 
+  
   
   ## add rgn_ids with name_to_rgn ----
- m_d = name_to_rgn(gci, fld_name='country', flds_unique=c('country'), fld_value='score', add_rgn_name=T) 
-
-  uifilesave = file.path(dir_d, 'raw', paste('FAO-', unlist(v)[3], '-trends_v2011-cleaned.csv', sep=''))
-  add_rgn_id(d, uifilesave)
+  d = name_to_rgn(d_fao2, fld_name='country', flds_unique=c('country', 'year'), fld_value='tonnes', add_rgn_name=T) 
   
-}
-
-## Further processing ----
-## Treat Pesticides and Fertilizer differently because Fertilizers have weird 0's and Pesticides don't 
-
-## Pesticides ----
-g = "Global/FAO-CW-Trends_v2011/raw/FAO-pesticides-trends_v2011-cleaned.csv"
-pest = read.csv(g); head(pest,30)
-
-## clean up data: described in Global SOM 2013: section 5.19 ----
-
-# see if there are a lot of 0's
-explore = pest %.%
-  filter(tonnes == 0); head(explore,30) # no there aren't
-
-# see if there are countries with only 1 year of data 
-explore2 = pest %.%
-  group_by(rgn_id, rgn_nam) %.% 
-  summarise(count = n()) %.%
-  filter(count == 1); explore2 # yes there are
-
-pest2 = pest %.% # remove countries with only 1 year of data 
-  filter(!rgn_id %in% explore2$rgn_id)
   
-# see if there are countries no data after 2005 
-explore3 = pest2 %.%
-  group_by(rgn_id, rgn_nam) %.% 
-  summarise(max_year = max(year)) %.%
-  filter(max_year < 2005); explore3 # yes there are
-
-pest3 = pest2 %.% # remove countries with no data after 2005 
-  filter(!rgn_id %in% explore3$rgn_id)
-
-# gapfilling follows, both for pesticides and fertilizers together. 
-
-
-## Fertilizers ----
-g = "Global/FAO-CW-Trends_v2011/raw/FAO-fertilizers-trends_v2011-cleaned.csv"
-fert = read.csv(g); head(fert,30)
-
-# clean up data: described in Global SOM 2013: section 5.19
-# see if there are a lot of 0's
-explore = fert %.%
-  filter(tonnes == 0); head(explore,30) # yes they are
-
-fert2 = fert %.% 
-  filter(tonnes !=0); head(fert2,30) # remove 0's; don't replace with NA because lm() below will need NAs removed 
-
-# see if there are countries with only 1 year of data 
-explore2 = fert2 %.%
-  group_by(rgn_id, rgn_nam) %.%
-  summarise(count = n()) %.%
-  filter(count == 1); explore2 # yes there are 
-
-fert3 = fert2 %.% # remove countries with only 1 year of data 
-  filter(!rgn_id %in% explore2$rgn_id)
-
-# see if there are countries no data after 2005 
-explore3 = fert3 %.%
-  group_by(rgn_id, rgn_nam) %.% 
-  summarise(max_year = max(year)) %.%
-  filter(max_year < 2005); explore3 # no there aren't
-
-
-
+  ##   clean up data: described in Global SOM 2013: section 5.19 ----
+  
+  if (v == 'Fertilizers') { # Fertilizers have weird 0's and Pesticides don't 
+    # explore:: see if there are a lot of 0's and remove
+    f = d %.%         # head(filter(d, tonnes == 0),30) 
+      filter(tonnes !=0) # remove 0's; don't replace with NA because lm() below will need NAs removed 
+    
+    
+    x1 = 2006
+    
+#     # explore:: see if there are countries with only 1 year of data and remove ¡¡¡¡¡¡¡¡¡¡¡ don't need this if georegional gapfilling...
+#     explore = f %.% # important to remove the 0's before exploring here
+#       group_by(rgn_id, rgn_name) %.%
+#       summarise(count = n()) %.%
+#       filter(count == 1); explore # yes there are (1)
+#     
+#     f = f %.% 
+#       filter(!rgn_id %in% explore$rgn_id); head(f,30)
+#     
+#     # explore:: see if there are countries no data after 2005 
+#     explore3 = f %.%
+#       group_by(rgn_id, rgn_name) %.% 
+#       summarise(max_year = max(year)) %.%
+#       filter(max_year < 2005); explore3 # no there aren't
+    
+  }else if (v == 'Pesticides') {
+    # explore:: see if there are a lot of 0's and remove
+    f = d %.%             # head(filter(d, tonnes == 0),30) 
+      filter(tonnes != 0) # no there aren't; three early years are ok
+    
+    
+    x1 = 2007
+  
+#     # explore:: see if there are countries with only 1 year of data and remove
+#     explore = f %.%
+#       group_by(rgn_id, rgn_name) %.% 
+#       summarise(count = n()) %.%
+#       filter(count == 1); explore # yes there are (3)
+#     
+#     pest2 = pest %.% # remove countries with only 1 year of data 
+#       filter(!rgn_id %in% explore2$rgn_id)
+#     
+#     # see if there are countries no data after 2005 
+#     explore3 = pest2 %.%
+#       group_by(rgn_id, rgn_nam) %.% 
+#       summarise(max_year = max(year)) %.%
+#       filter(max_year < 2005); explore3 # yes there are
+#     
+#     pest3 = pest2 %.% # remove countries with no data after 2005 
+#       filter(!rgn_id %in% explore3$rgn_id)
+    
+  }
+  
 
 ## calculate trend and gapfill for both fertilizers and pesticides:: KLo style. ----
 # See readme.md and Global SOM 2013 section 5.19. Approach by Katie Longo, September 2013: github/ohiprep/Global/FAO-CW-Trends_v2011/raw/Fertilizer_Pesticide_trend_KLongo2013.R
 # trend years: 2012a (2005:2009) and 2013a (2006:2010). Note:: error in KLo 2013 approach: trend was created through multiplying slope by 4 instead of 5
+
+#f_mdl = na.omit(f) %>%
+f_mdl = f %>%
+  filter(!is.na(tonnes)) %>%
+  select(-rgn_name) %>%
+  group_by(rgn_id) %>%
+  do(
+    mdl = lm(tonnes ~ year, data=.)) %>%
+  summarize(
+    rgn_id = rgn_id, 
+    year_ix0  = coef(mdl)['(Intercept)'],
+    year_coef = coef(mdl)['year']) %.%
+  mutate(
+    trend = 
+      max( 
+        min( 
+          year_coef / (year_coef * x1 + year_ix0) * 5, 1), 
+        -1)); head(f_mdl) ## should not be returning NAs!!!!! COME BACK
+
+
+ trend = max(min(lm(value ~ year)$coefficients[[2]] /
+#                       (lm(value ~ year)$coefficients[[2]]*x1 +
+#                          lm(value ~ year)$coefficients[[1]]) * 5, 1), -1))
 
 # set up: be able to specify the scenario. fert's timeseries is one year shorter than
 
@@ -148,41 +162,41 @@ if      (scenario == 2014){
 # y1 = x1*slope+intercept
 # trend = max(min(slope/(y1) * 5, 1), -1) # normalize slope by y in a given year (we use x1, but could be any year), multiple by 5 for the trend and bound it between -1 and 1. 
 
-# ---------
-# function that calculates trend
-  calc_trend = function(data, x1) {
-    library('plyr')
-    trend = plyr::ddply(
-      data, .(rgn_id), summarize,
-      trend = max(min(lm(value ~ year)$coefficients[[2]] /
-                        (lm(value ~ year)$coefficients[[2]]*x1 +
-                           lm(value ~ year)$coefficients[[1]]) * 5, 1), -1))
-    return(trend)
-  }
-# --------
-
-## calculate pesticide trends, start whence bookkeeping: 
-data = na.omit(pest3)
-x1 = x1_pest
-names(data) = c('rgn_id', 'rgn_nam', 'value', 'year')
-trend_pest = calc_trend(data, x1) %.%
-  mutate(whencev01 = 'OD',
-         whence_choice = 'OD'); head(trend_pest)
-
-## calculate fertilizer trends: 
-data = na.omit(fert3)
-names(data) = c('rgn_id', 'rgn_nam', 'value', 'year')
-x1 = x1_fert
-trend_fert = calc_trend(data, x1) %.%
-  mutate(whencev01 = 'OD',
-         whence_choice = 'OD'); head(trend_fert) 
-
-detach('package:plyr', unload=T)
-library(dplyr)
+# # ---------
+# # function that calculates trend
+# calc_trend = function(data, x1) {
+#   library('plyr')
+#   trend = plyr::ddply(
+#     data, .(rgn_id), summarize,
+#     trend = max(min(lm(value ~ year)$coefficients[[2]] /
+#                       (lm(value ~ year)$coefficients[[2]]*x1 +
+#                          lm(value ~ year)$coefficients[[1]]) * 5, 1), -1))
+#   return(trend)
+# }
+# # --------
+# 
+# ## calculate pesticide trends, start whence bookkeeping: 
+# data = na.omit(pest3)
+# x1 = x1_pest
+# names(data) = c('rgn_id', 'rgn_nam', 'value', 'year')
+# trend_pest = calc_trend(data, x1) %.%
+#   mutate(whencev01 = 'OD',
+#          whence_choice = 'OD'); head(trend_pest)
+# 
+# ## calculate fertilizer trends: 
+# data = na.omit(fert3)
+# names(data) = c('rgn_id', 'rgn_nam', 'value', 'year')
+# x1 = x1_fert
+# trend_fert = calc_trend(data, x1) %.%
+#   mutate(whencev01 = 'OD',
+#          whence_choice = 'OD'); head(trend_fert) 
+# 
+# detach('package:plyr', unload=T)
+# library(dplyr)
 
 ## 2) calculate pop trend. Example: 2014a for fert (2006:2010) and pest (2007:2011) ----
 # no gapfilling of pop required as was done in 2013; the pop file called is complete (missing rgn_ids are unpopulated).
-  
+
 pop_file = file.path(dir_neptune_data, 'model/GL-NCEAS-CoastalPopulation_v2013/data/', 'rgn_popsum2005to2015_inland25mi.csv') # dir_neptune_data defined in common.R                  
 pop = read.csv(pop_file) %.%
   filter(rgn_id < 255); head(pop)
