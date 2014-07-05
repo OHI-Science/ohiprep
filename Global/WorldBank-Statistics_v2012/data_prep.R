@@ -11,143 +11,173 @@
 
 #   add OHI region_ids with name_to_rgn_id.r  ** differs from data_prep.old
 #   georegional gapfilling with gapfill_georegions.R ** differs from data_prep.old
+#
+# TODO: manually fix any missing GDP with Wikipedia lookups
 
 # setup ----
 
-
 # from get paths configuration based on host machine name
+setwd('~/github/ohiprep')
 source('src/R/common.R') # set dir_neptune_data; load reshape2, plyr, dplyr
 source('src/R/ohi_clean_fxns.R') # get functions
 dir_d = 'Global/WorldBank-Statistics_v2012'
 
 # load libraries
 library(gdata)
-# devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
-library(ohicore)  # for github/ohicore/R/gapfill_georegions.R
+library(stringr)
+
+#library(ohicore)  # for github/ohicore/R/gapfill_georegions.R # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
+library(devtools)
+load_all('~/github/ohicore')
 
 # read in and process files ----
-d.all =  matrix(nrow=0, ncol=0)
+if (exists('d_all')) rm(d_all)
 count = 0
-for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), full.names=T)) {  # f = "Global/WorldBank-Statistics_v2012/raw/sl.uem.totl.zs_Indicator_en_excel_v2.xls"
+for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), full.names=T)) {  # f = "Global/WorldBank-Statistics_v2012/raw/sl.tlf.totl.in_Indicator_en_excel_v2.xls"
+  cat(sprintf('processing %s\n', basename(f)))
+  
   count = count + 1
   #d = read.xls(file.path(dir_d, 'raw', f), sheet=1, skip=1, check.names=F) # do not add the stupid X in front of the numeric column names
   d = read.xls(f, sheet=1, skip=1, check.names=F);  head(d) # do not add the stupid X in front of the numeric column names
   
   # remove final year column if it is completely NAs
-  aa = dim(d)[1] - sum(is.na(d[,dim(d)[2]]))
-  if(aa == 0) {
-    d = d[,-dim(d)[2]]
+  if(nrow(d)[1] - sum(is.na(d[,ncol(d)])) == 0) {
+    d = d[,-ncol(d)]
   }
   
-  # remove any countries that have no data for the whole dataset:
-  d.1 = matrix(nrow=0, ncol=0)
-  for(i in 1:dim(d)[1]){             # d = d[complete.cases(d),] # suboptimal: this removes anytime there are missing values
-    bb = dim(d)[2] - sum(is.na(d[i,]))
-    if(bb != 2) { # this means just the countryname and country code name are not NA
-      d.1 = rbind(d.1,d[i,])
-    }
-  }
+  #   # remove any countries that have no data for the whole dataset:
+  #   d.1 = matrix(nrow=0, ncol=0)
+  #   for(i in 1:dim(d)[1]){             # d = d[complete.cases(d),] # suboptimal: this removes anytime there are missing values
+  #     bb = dim(d)[2] - sum(is.na(d[i,]))
+  #     if(bb != 2) { # this means just the countryname and country code name are not NA
+  #       d.1 = rbind(d.1,d[i,])
+  #     }
+  #   }
+  #   # BB: WOOPS! This didn't remove Aruba or Andorra for sl.tlf.totl.in_Indicator_en_excel_v2.xls
   
-  d.1 = d.1[,-(2:4)] # get rid of extra columns in .xls sheet
-  d.m = melt(data=d.1, id.vars=names(d.1)[1], variable.name='year')
-  names(d.m) = c('country','year','value'); head(d.m)
-  
+  # melt data
+  d = d %>%
+    select(country=1, matches('\\d')) %>% # get first column as country and all other year columns that are \\digits in regex speak
+    melt(id='country', variable='year') %>%
+    arrange(country, year) %>%    
+    # remove NAs
+    filter(!is.na(value))  
+
   # add layer column
-  #a = strsplit(f, '.', fixed=TRUE)
-  a = strsplit(basename(f), '.', fixed=TRUE) # tools::file_path_sans_ext(basename(f))
-  d.m$layer = rep.int(unlist(a)[2], length(d.m$year)) 
-  lkup = c('gdp' = 'usd', 
-           'tlf' = 'count',
-           'uem' = 'percent') # names(lkup)[count]
-  d.m$units = rep.int(lkup[count], length(d.m$year)); head(d.m)
-  
-  # concatenate f files
-  d.all = rbind(d.all, d.m)
+  d$layer = str_split_fixed(basename(f), fixed('.'), 3)[2]
+        
+  # rbind
+  if (!exists('d_all')){
+    d_all = d
+  } else {
+    d_all = rbind_list(d_all, d)
+  }
 }
 
-# remove Channel Islands and Isle of Man
-d.all <- d.all[d.all[,1] != "Channel Islands",] # remove Channel Islands
-d.all <- d.all[d.all[,1] != "Isle of Man",] # remove Isle of Man
+filter(d_all, country=='Albania' & year==1990)
 
+# remove Channel Islands and Isle of Man
+d_all = d_all %>%
+  filter(!country %in% c('Channel Islands', 'Isle of Man'))
+  
 # Print out all the unique indicators
-print('these are all the variables that are included in the cleaned file: ')
-print(data.frame(unique(d.all$layer)))
+print('These are all the variables with year counts included in the cleaned file: ')
+print(table(d_all$layer))
+#  gdp  tlf  uem 
+# 9936 4919 3184 
 
 # add rgn_id: country to rgn_id  # source('../ohiprep/src/R/ohi_clean_fxns.R') ----
-m_d = name_to_rgn(d.all, fld_name='country', flds_unique=c('country','year','layer', 'units'), fld_value='value', add_rgn_name=T) 
+source('src/R/ohi_clean_fxns.R') # get functions
+r = name_to_rgn(d_all, fld_name='country', flds_unique=c('country','year','layer'), fld_value='value', add_rgn_name=T) 
 
-m_d = m_d %.%
-  select(rgn_id, layer, units, year, value) %.%
-  arrange(layer, units, rgn_id, year)
+# remove Antarctica[213] and DISPUTED[255]
+r = r %>%
+  filter(!rgn_id %in% c(213,255))
 
-write.csv(m_d, file.path(dir_d, 'raw', 'WorldBank-Statistics_v2012_cleaned.csv'), row.names=F)
-
-## georegional gapfilling with gapfill_georegions.r ----
+# georegional gapfilling with gapfill_georegions.r ----
 
 # read in lookups
 georegions = read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %.%
   dcast(rgn_id ~ level, value.var='georgn_id')
 
-georegion_labels = read.csv('../ohi-global/eez2013/layers/rgn_georegions_labels.csv') %.%    
+georegion_labels = read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv') %.%    
   mutate(level_label = sprintf('%s_label', level)) %.%
   dcast(rgn_id ~ level_label, value.var='label') %.%
   left_join(
-    read.csv('../ohicore/inst/extdata/layers.Global2013.www2013/rgn_labels.csv') %.%
+    read.csv('../ohi-global/eez2013/layers/rgn_labels.csv') %.%
       select(rgn_id, v_label=label),
     by='rgn_id') %.%
   arrange(r0_label, r1_label, r2_label, v_label); head(georegion_labels)
 
+# get global population (layer le_popn)
+popn = read.csv(sprintf('%s/model/GL-WorldBank-Statistics_v2012/data/rgn_wb_pop_2013a_updated.csv', dir_neptune_data)) %>%
+  group_by(rgn_id) %>%
+  summarize(popn = last(count, order_by=year))
 
-# prepare for for loop below
-layer_uni = unique(m_d$layer)
-layername = sprintf('rgn_wb_%s_2014a.csv', layer_uni)
-attrname  = sprintf('rgn_wb_%s_2014a_attr.csv', layer_uni)
+# setup list to process gapfilling of layers
+layers = list(  
+  # Total Labor Force (TLF)
+  tlf = list(
+    units           = 'count',
+    var_rgn_weights = 'popn',  # NULL or string name of data.frame variable having columns: rgn_id, [any var name as weight]
+    ratio_weights   = TRUE),   # TRUE to multiply by ratio w_i / w_regional in cases where value is a relative total, eg total labor force
+  # Gross Domestic Product (GDP)
+  gdp = list(
+    units           = 'usd',
+    var_rgn_weights = 'popn',
+    ratio_weights   = TRUE),
+  # Unemployment Rate (UEM)
+  uem = list(
+    units           = 'percent',
+    var_rgn_weights = 'popn',
+    ratio_weights   = FALSE))
 
-for(k in 1:length(layer_uni)) { # k=1
-  m_l = m_d[m_d$layer == layer_uni[k],] 
-  names_m_l = names(m_l)
-   
-  m_l2 = m_l %.%
-  select(-layer, -units); head(m_l2)  # before troubleshooting, also selected rgn_name
+for (lyr in names(layers)){ # lyr='tlf'
 
-  layersave = file.path(dir_d, 'data', layername[k])
-  attrsave  = file.path(dir_d, 'data', attrname[k])
-  
-  # library(devtools); load_all('../ohicore')
-  d_g_a = gapfill_georegions(
-    data = m_l2 %.%
-      filter(!rgn_id %in% c(213,255)) %.%
-      select(rgn_id, year, value),
-    fld_id = 'rgn_id',
-    georegions = georegions,
-    georegion_labels = georegion_labels,
-    r0_to_NA = TRUE, 
-    attributes_csv = (attrsave)) # don't chain gapfill_georegions or will lose head(attr(d_g_a, 'gapfill_georegions')) ability
-  
-  # investigate attribute tables
-  head(attr(d_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('open %s', attrsave))
-  
-  # save gapfilled layer
-  d_g = d_g_a %.%
-    select(rgn_id, year, value) %.%
-    arrange(rgn_id, year); head(d_g)
-  
-  if (layer_uni[k] == 'uem'){
-    names(d_g)[names(d_g) == 'value'] = 'percent'
+  # setup vars
+  units           = layers[[lyr]][['units']]
+  ratio_weights   = layers[[lyr]][['ratio_weights']]
+  var_rgn_weights = layers[[lyr]][['var_rgn_weights']]
+  if (is.null(var_rgn_weights)){
+    rgn_weights = NULL
   } else {
-    names(d_g)[names(d_g) == 'value'] <- m_l$units[1]
+    rgn_weights = get(var_rgn_weights)
   }
+  csv_dat         = sprintf('%s/data/rgn_wb_%s_2014a_ratio-gapfilled.csv', dir_d, lyr)
+  csv_attr        = sprintf('%s/data/rgn_wb_%s_2014a_ratio-gapfilled_attr.csv'   , dir_d, lyr)  
+  cat(sprintf('processing %s: %s\n', lyr, basename(csv_dat)))
   
-  write.csv(d_g, layersave, na = '', row.names=FALSE)
+  # extract data
+  d = r %>%
+    filter(layer==lyr) %>%    
+    select(rgn_id, year, value)
   
+  #load_all('~/github/ohicore')
+  d_g = gapfill_georegions(
+    data              = d,
+    fld_id            = 'rgn_id',
+    fld_value         = 'value',
+    georegions        = georegions,
+    rgn_weights       = rgn_weights,
+    ratio_weights     = ratio_weights,
+    georegion_labels  = georegion_labels,
+    r0_to_NA          = TRUE, 
+    attributes_csv    = csv_attr)
+    
+  # rename value to units
+  d_g = d_g %>%
+    select(rgn_id, year, value) %>%
+    arrange(rgn_id, year) %>%
+    rename(
+      setNames(units, 'value'))
+  
+  # write to csv
+  write.csv(d_g, csv_dat, na='', row.names=F)
 }
 
-# see ohiprep/Global/WorldBank-Statistics_v2012/check_laborforce.r for sleuthing into a different way of gapfilling (without georegional).
+# TODO: check that tlf < popn
 
 # --- fin
-
-
-
 
 # # compare gapfill_georegions.r by BB to add_gapfill.r by JSL
 # 
