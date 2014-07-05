@@ -131,6 +131,9 @@ name_to_rgn = function(d, fld_name='country', flds_unique=fld_name, fld_value='v
       rgn_type = first(rgn_type)) %.%
     ungroup()
   
+  #browser()
+  #filter(d, country=='Albania' & year==1990)
+  
   # combine to have a unique tmp_name to rgn_id lookup
   r = rbind_list(
     rgns %.%
