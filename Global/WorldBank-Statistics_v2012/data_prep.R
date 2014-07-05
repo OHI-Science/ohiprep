@@ -144,8 +144,8 @@ for (lyr in names(layers)){ # lyr='tlf'
     rgn_weights = get(var_rgn_weights)
   }
   csv_dat         = sprintf('%s/data/rgn_wb_%s_2014a_ratio-gapfilled.csv', dir_d, lyr)
-  csv_attr        = sprintf('%s/data/rgn_wb_%s_2014a_ratio-gapfilled-attr.csv'   , dir_d, lyr)  
-  cat(sprintf('processing %s: %s\n', lyr, csv_dat))
+  csv_attr        = sprintf('%s/data/rgn_wb_%s_2014a_ratio-gapfilled_attr.csv'   , dir_d, lyr)  
+  cat(sprintf('processing %s: %s\n', lyr, basename(csv_dat)))
   
   # extract data
   d = r %>%
@@ -162,7 +162,7 @@ for (lyr in names(layers)){ # lyr='tlf'
     ratio_weights     = ratio_weights,
     georegion_labels  = georegion_labels,
     r0_to_NA          = TRUE, 
-    attributes_csv    = (sprintf('%s/data/rgn_wb_tlf_2014a_ratio-gapfilled_attr.csv', dir_d, lyr)))
+    attributes_csv    = csv_attr)
     
   # rename value to units
   d_g = d_g %>%
