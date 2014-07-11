@@ -1,0 +1,366 @@
+"rgn_name","rgn_id","product","n_diffs_per_rgn_product"
+"Algeria",84,"ornamentals",2
+"Argentina",172,"fish_oil",5
+"Argentina",172,"seaweeds",1
+"Argentina",172,"shells",1
+"Aruba",250,"seaweeds",1
+"Australia",16,"ornamentals",7
+"Australia",16,"seaweeds",8
+"Bangladesh",204,"shells",1
+"Barbados",124,"fish_oil",4
+"Barbados",124,"seaweeds",1
+"Barbados",124,"shells",1
+"Belgium",59,"fish_oil",1
+"Belgium",59,"ornamentals",1
+"Belgium",59,"sponges",4
+"Belize",164,"shells",2
+"Bonaire",245,"corals",2
+"Bonaire",245,"fish_oil",3
+"Bonaire",245,"ornamentals",8
+"Bosnia and Herzegovina",232,"seaweeds",2
+"Brazil",171,"fish_oil",7
+"Brazil",171,"seaweeds",5
+"Brazil",171,"sponges",5
+"Bulgaria",71,"ornamentals",4
+"Bulgaria",71,"seaweeds",3
+"Bulgaria",71,"sponges",3
+"Canada",218,"sponges",8
+"Cayman Islands",113,"corals",1
+"Chile",224,"fish_oil",1
+"Chile",224,"ornamentals",5
+"Chile",224,"seaweeds",1
+"Chile",224,"sponges",1
+"China",209,"fish_oil",7
+"China",209,"seaweeds",8
+"China",209,"sponges",5
+"Colombia",132,"corals",4
+"Colombia",132,"fish_oil",4
+"Colombia",132,"seaweeds",5
+"Cook Islands",153,"ornamentals",7
+"Cook Islands",153,"shells",2
+"Costa Rica",130,"fish_oil",2
+"Costa Rica",130,"seaweeds",2
+"Croatia",187,"fish_oil",7
+"Croatia",187,"ornamentals",1
+"Croatia",187,"seaweeds",8
+"Croatia",187,"sponges",2
+"Cuba",112,"ornamentals",8
+"Cuba",112,"seaweeds",2
+"Cuba",112,"shells",2
+"Cuba",112,"sponges",7
+"Curacao",244,"shells",1
+"Cyprus",81,"sponges",2
+"Denmark",175,"fish_oil",1
+"Denmark",175,"ornamentals",2
+"Denmark",175,"sponges",3
+"Djibouti",46,"shells",2
+"Dominica",123,"seaweeds",3
+"Dominica",123,"shells",1
+"Dominican Republic",115,"corals",5
+"Dominican Republic",115,"fish_oil",4
+"Dominican Republic",115,"seaweeds",3
+"Ecuador",137,"corals",2
+"Ecuador",137,"fish_oil",1
+"Ecuador",137,"seaweeds",4
+"Egypt",214,"corals",3
+"Egypt",214,"ornamentals",2
+"Egypt",214,"sponges",3
+"El Salvador",134,"corals",5
+"El Salvador",134,"ornamentals",1
+"Equatorial Guinea",104,"ornamentals",2
+"Eritrea",45,"seaweeds",1
+"Estonia",70,"fish_oil",6
+"Estonia",70,"ornamentals",2
+"Estonia",70,"shells",2
+"Estonia",70,"sponges",1
+"Faeroe Islands",141,"fish_oil",1
+"Faeroe Islands",141,"shells",1
+"Fiji",18,"seaweeds",1
+"Fiji",18,"sponges",2
+"Finland",174,"fish_oil",3
+"Finland",174,"ornamentals",8
+"Finland",174,"seaweeds",5
+"Finland",174,"shells",4
+"Finland",174,"sponges",5
+"France",179,"fish_oil",4
+"France",179,"ornamentals",8
+"French Guiana",169,"ornamentals",5
+"French Polynesia",147,"ornamentals",8
+"French Polynesia",147,"seaweeds",3
+"Gabon",198,"ornamentals",3
+"Gambia",65,"ornamentals",2
+"Georgia",74,"fish_oil",1
+"Georgia",74,"ornamentals",1
+"Georgia",74,"seaweeds",1
+"Germany",176,"fish_oil",1
+"Germany",176,"ornamentals",8
+"Germany",176,"sponges",8
+"Ghana",106,"ornamentals",4
+"Ghana",106,"sponges",5
+"Greece",80,"fish_oil",6
+"Greece",80,"ornamentals",6
+"Greece",80,"seaweeds",4
+"Greenland",145,"corals",1
+"Greenland",145,"ornamentals",8
+"Guadeloupe and Martinique",140,"ornamentals",2
+"Guatemala",136,"fish_oil",2
+"Guatemala",136,"ornamentals",3
+"Guatemala",136,"seaweeds",6
+"Guatemala",136,"sponges",2
+"Guinea",194,"ornamentals",8
+"Guinea",194,"shells",1
+"Guinea Bissau",193,"ornamentals",6
+"Guyana",167,"ornamentals",8
+"Guyana",167,"shells",2
+"Haiti",114,"corals",8
+"Haiti",114,"ornamentals",8
+"Haiti",114,"shells",2
+"Honduras",133,"corals",8
+"Honduras",133,"ornamentals",5
+"Iceland",143,"corals",7
+"Iceland",143,"sponges",1
+"India",203,"corals",7
+"India",203,"fish_oil",1
+"India",203,"ornamentals",8
+"India",203,"shells",4
+"Indonesia",216,"corals",8
+"Indonesia",216,"ornamentals",8
+"Iran",191,"fish_oil",1
+"Iran",191,"ornamentals",5
+"Ireland",181,"fish_oil",1
+"Ireland",181,"ornamentals",6
+"Ireland",181,"sponges",3
+"Israel",79,"fish_oil",3
+"Israel",79,"ornamentals",1
+"Israel",79,"seaweeds",5
+"Italy",184,"ornamentals",8
+"Italy",184,"sponges",1
+"Ivory Coast",195,"ornamentals",3
+"Jamaica",166,"corals",6
+"Jamaica",166,"ornamentals",3
+"Jamaica",166,"seaweeds",1
+"Japan",210,"corals",8
+"Japan",210,"ornamentals",8
+"Japan",210,"sponges",2
+"Jordan",215,"ornamentals",1
+"Kenya",43,"corals",1
+"Kenya",43,"fish_oil",2
+"Kenya",43,"ornamentals",7
+"Kenya",43,"sponges",1
+"Kiribati",212,"ornamentals",4
+"Kiribati",212,"seaweeds",3
+"Kuwait",51,"corals",8
+"Kuwait",51,"fish_oil",1
+"Kuwait",51,"seaweeds",1
+"Kuwait",51,"shells",1
+"Kuwait",51,"sponges",1
+"Latvia",69,"fish_oil",6
+"Latvia",69,"ornamentals",2
+"Latvia",69,"seaweeds",6
+"Latvia",69,"shells",2
+"Latvia",69,"sponges",4
+"Lebanon",78,"fish_oil",1
+"Lebanon",78,"ornamentals",7
+"Lebanon",78,"seaweeds",3
+"Lebanon",78,"sponges",1
+"Liberia",97,"ornamentals",2
+"Libya",67,"fish_oil",3
+"Libya",67,"ornamentals",1
+"Libya",67,"sponges",8
+"Lithuania",189,"fish_oil",6
+"Lithuania",189,"ornamentals",1
+"Lithuania",189,"seaweeds",1
+"Lithuania",189,"sponges",3
+"Madagascar",42,"corals",7
+"Madagascar",42,"fish_oil",2
+"Madagascar",42,"ornamentals",4
+"Madagascar",42,"sponges",1
+"Malaysia",206,"corals",8
+"Malaysia",206,"seaweeds",4
+"Malaysia",206,"shells",2
+"Malaysia",206,"sponges",1
+"Maldives",39,"corals",7
+"Maldives",39,"fish_oil",1
+"Maldives",39,"shells",3
+"Marshall Islands",11,"corals",8
+"Marshall Islands",11,"ornamentals",1
+"Marshall Islands",11,"shells",3
+"Mauritius",37,"corals",7
+"Mauritius",37,"fish_oil",1
+"Mauritius",37,"ornamentals",8
+"Mauritius",37,"seaweeds",3
+"Mayotte",29,"ornamentals",3
+"Mexico",135,"corals",8
+"Mexico",135,"fish_oil",3
+"Mexico",135,"shells",3
+"Mexico",135,"sponges",4
+"Micronesia",9,"corals",8
+"Micronesia",9,"ornamentals",1
+"Montenegro",186,"corals",8
+"Montenegro",186,"fish_oil",2
+"Montenegro",186,"ornamentals",2
+"Montenegro",186,"sponges",2
+"Morocco",62,"corals",3
+"Morocco",62,"fish_oil",4
+"Morocco",62,"sponges",1
+"Mozambique",41,"fish_oil",2
+"Mozambique",41,"ornamentals",2
+"Mozambique",41,"seaweeds",1
+"Namibia",101,"fish_oil",2
+"Namibia",101,"ornamentals",1
+"Namibia",101,"seaweeds",2
+"Namibia",101,"shells",7
+"Namibia",101,"sponges",3
+"Netherlands",177,"sponges",7
+"New Caledonia",5,"seaweeds",1
+"New Caledonia",5,"shells",6
+"New Caledonia",5,"sponges",4
+"New Zealand",162,"ornamentals",2
+"New Zealand",162,"seaweeds",8
+"Nicaragua",131,"corals",8
+"Nigeria",196,"corals",1
+"Nigeria",196,"sponges",2
+"North Korea",21,"corals",8
+"North Korea",21,"fish_oil",1
+"North Korea",21,"seaweeds",1
+"Norway",223,"corals",8
+"Norway",223,"seaweeds",3
+"Norway",223,"sponges",3
+"Oman",48,"corals",5
+"Pakistan",53,"corals",4
+"Pakistan",53,"fish_oil",1
+"Pakistan",53,"seaweeds",1
+"Pakistan",53,"shells",3
+"Palau",8,"corals",7
+"Panama",129,"shells",1
+"Papua New Guinea",17,"corals",5
+"Papua New Guinea",17,"ornamentals",4
+"Papua New Guinea",17,"shells",4
+"Peru",138,"corals",6
+"Peru",138,"seaweeds",2
+"Peru",138,"sponges",1
+"Philippines",15,"corals",6
+"Philippines",15,"fish_oil",3
+"Philippines",15,"ornamentals",5
+"Philippines",15,"seaweeds",6
+"Poland",178,"fish_oil",5
+"Poland",178,"ornamentals",3
+"Poland",178,"seaweeds",1
+"Portugal",183,"ornamentals",2
+"Portugal",183,"shells",3
+"Portugal",183,"sponges",4
+"Romania",72,"corals",8
+"Romania",72,"ornamentals",3
+"Romania",72,"seaweeds",3
+"Russia",73,"corals",8
+"Russia",73,"fish_oil",1
+"Russia",73,"sponges",1
+"Saba",248,"corals",2
+"Saba",248,"fish_oil",3
+"Saba",248,"ornamentals",8
+"Saint Helena",86,"ornamentals",1
+"Saint Lucia",122,"ornamentals",1
+"Saint Lucia",122,"seaweeds",3
+"Saint Pierre and Miquelon",219,"seaweeds",1
+"Saint Vincent and the Grenadines",127,"corals",1
+"Saint Vincent and the Grenadines",127,"fish_oil",6
+"Samoa",152,"corals",7
+"Samoa",152,"ornamentals",1
+"Samoa",152,"shells",2
+"Saudi Arabia",50,"fish_oil",2
+"Saudi Arabia",50,"seaweeds",2
+"Senegal",66,"corals",6
+"Senegal",66,"seaweeds",2
+"Seychelles",31,"fish_oil",1
+"Seychelles",31,"seaweeds",1
+"Seychelles",31,"shells",1
+"Sierra Leone",96,"corals",8
+"Sierra Leone",96,"ornamentals",3
+"Singapore",208,"corals",8
+"Sint Eustatius",249,"corals",2
+"Sint Eustatius",249,"fish_oil",3
+"Sint Eustatius",249,"ornamentals",8
+"Sint Maarten",220,"corals",2
+"Sint Maarten",220,"fish_oil",3
+"Sint Maarten",220,"ornamentals",8
+"Slovenia",188,"fish_oil",4
+"Slovenia",188,"ornamentals",3
+"Slovenia",188,"seaweeds",6
+"Slovenia",188,"shells",4
+"Slovenia",188,"sponges",5
+"Solomon Islands",7,"corals",8
+"Solomon Islands",7,"ornamentals",2
+"Solomon Islands",7,"seaweeds",2
+"Somalia",44,"corals",7
+"Somalia",44,"shells",2
+"South Africa",102,"corals",8
+"South Africa",102,"seaweeds",4
+"South Africa",102,"shells",8
+"South Korea",20,"fish_oil",1
+"South Korea",20,"ornamentals",7
+"South Korea",20,"seaweeds",2
+"South Korea",20,"sponges",2
+"Spain",182,"corals",3
+"Spain",182,"shells",1
+"Spain",182,"sponges",6
+"Sri Lanka",40,"corals",8
+"Sri Lanka",40,"fish_oil",6
+"Sri Lanka",40,"ornamentals",8
+"Sri Lanka",40,"seaweeds",8
+"Sri Lanka",40,"shells",2
+"Sudan",49,"corals",8
+"Suriname",168,"corals",7
+"Suriname",168,"ornamentals",5
+"Sweden",222,"fish_oil",2
+"Sweden",222,"ornamentals",1
+"Sweden",222,"seaweeds",3
+"Sweden",222,"sponges",8
+"Syria",77,"corals",5
+"Syria",77,"ornamentals",2
+"Syria",77,"seaweeds",2
+"Syria",77,"shells",1
+"Syria",77,"sponges",1
+"Taiwan",14,"corals",8
+"Taiwan",14,"ornamentals",1
+"Taiwan",14,"seaweeds",1
+"Taiwan",14,"shells",1
+"Tanzania",202,"corals",2
+"Tanzania",202,"fish_oil",1
+"Thailand",25,"corals",7
+"Thailand",25,"fish_oil",1
+"Thailand",25,"ornamentals",5
+"Thailand",25,"seaweeds",6
+"Thailand",25,"shells",1
+"Togo",98,"shells",1
+"Tonga",155,"shells",4
+"Trinidad and Tobago",126,"fish_oil",1
+"Trinidad and Tobago",126,"seaweeds",5
+"Trinidad and Tobago",126,"shells",6
+"Tunisia",61,"corals",8
+"Tunisia",61,"ornamentals",1
+"Turkey",76,"corals",8
+"Turkey",76,"fish_oil",3
+"Turkey",76,"ornamentals",2
+"Turkey",76,"seaweeds",3
+"Turkey",76,"sponges",7
+"Ukraine",75,"corals",1
+"Ukraine",75,"fish_oil",4
+"Ukraine",75,"seaweeds",2
+"United Arab Emirates",54,"corals",2
+"United Arab Emirates",54,"ornamentals",2
+"United Arab Emirates",54,"seaweeds",1
+"United Arab Emirates",54,"shells",1
+"United States",163,"corals",8
+"Uruguay",173,"seaweeds",1
+"Vanuatu",6,"corals",5
+"Vanuatu",6,"ornamentals",1
+"Vanuatu",6,"shells",3
+"Venezuela",139,"corals",6
+"Venezuela",139,"fish_oil",5
+"Venezuela",139,"ornamentals",1
+"Venezuela",139,"sponges",2
+"Vietnam",207,"corals",8
+"Vietnam",207,"fish_oil",1
+"Vietnam",207,"seaweeds",2
+"Yemen",47,"fish_oil",3
+"Yemen",47,"seaweeds",3
