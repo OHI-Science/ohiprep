@@ -1,49 +1,36 @@
 GL-WHOUNICEF-Sanitation_v2012
 ===========================
 
-Data from WHO/UNICEF JMP: Joint Monitoring Programme, 1990-2011 
+Data from WHO/UNICEF JMP: Joint Monitoring Programme, 1990-2012 
+
+Nature 2012 SOM p. 51: 'Access to improved sanitation facilities is defined as the percentage of the population within a country with at least adequate access to excreta disposal facilities that can effectively prevent human, animal, and insect contact with excreta. These data are a country-wide average (not specific to the coastal region) and the most recent year available is 2008. Percentages (0-100) for each country were rescaled to 0-1 based on a maximum target of 100% of the population with access to improved sanitation, and a minimum value of 0'
+
 
 Files produced
 ==============
 FILES: 
 
-* rgn_jmp_san_2012a.csv
-* rgn_jmp_san_2013a.csv
-* rgn_jmp_san_allyears.csv
+* rgn_jmp_san_2014a.csv
+* rgn_jmp_san_2014a_attr.csv
 
 PATH: 
 
-* model/GL-WHOUNICEF-Sanitation_v2012/data
+* ohiprep/Global/WHOUNICEF-Sanitation_v2012/data/
 
 
 Description
 ===========
 ACCESS:
 
-* Data accessed from JMP: http://www.wssinfo.org/data-estimates/table/. WHOUNICEF_SanitationDataQuery.png file isthe exact queries are stored with the .cvs files in the raw folder. Headers were reformatted so they are all on one line and file was saved as wssinfo_data_sanitation_reformatted.csv
-
-DATA:
-
-Data from 1990-2011. Variables:
-
-* Country
-* Year 
-* PopNtl (x1000)
-* ImprovedTotal (x1000)  \*\* Improved = access to improved sanitation
-* ImprovedTotal (%)
-* UnimprovedTotal (x1000)  \*\* Unimproved = access to rudimentary sanitation/no sanitation
-* UnimprovedTotal (%)
-* Proportion of the 2010 population that gained access since 1995 (%)
+* Data accessed from JMP: http://www.wssinfo.org/data-estimates/tables/. Website has been updated since OHI 2013a. WHOUNICEF_SanitationDataQuery.png file shows the exact queries used.
 
 
 R scripts involved
 ==================
 SCRIPT:
-* clean_WHOUNICEF.r
+* data_prep.r
 
-DETAILS: cleaning
-
-* wssinfo_data_sanitation.csv is the product of just providing data for countries that do not have access to improved sanitation conditions: this is called "unimproved". The reformatted file is what is called by clean_WHOUNICEF.r
+DETAILS: 
 
 
 Gapfilling 
@@ -62,8 +49,8 @@ DETAILS:
 ================
 
 
-Methods
-=======
+Methods 2013
+============
 
 5.57. Pathogen pollution
 Update: additional year(s) available
