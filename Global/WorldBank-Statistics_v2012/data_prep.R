@@ -90,6 +90,8 @@ print(table(d_all$layer))
 source('src/R/ohi_clean_fxns.R') # get functions
 r = name_to_rgn(d_all, fld_name='country', flds_unique=c('country','year','layer'), fld_value='value', add_rgn_name=T) 
 
+
+
 # remove Antarctica[213] and DISPUTED[255]
 r = r %>%
   filter(!rgn_id %in% c(213,255))
