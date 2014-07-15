@@ -98,6 +98,7 @@ Quandl.auth("JULES32")
 qs = Quandl.search(query = "WHO / UNICEF Joint Monitoring Program for Water Supply and Sanitation", silent = FALSE)
 
 # in the future, pull the names of each country (x below) from the qs list, and loop through to pull them all and make a data.frame. 
+# to make the loop, either pull from qs above or download the 'complete list' of data that match this search: http://www.quandl.com/WHO_UNICEF?keyword=%20&page=4&code=WHO_UNICEF&source_ids=439
 x = 'WHO_UNICEF/WATERSAN_ABS_DENMARK'
 JMP_san = Quandl(x); summary(JMP_san)
 
