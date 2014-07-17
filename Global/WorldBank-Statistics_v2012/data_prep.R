@@ -2,15 +2,18 @@
 # Reformat and add rgn_ids for World Bank statistics data
 # Previously had been named clean_BWstats.r (by JStewart May2013). This script was created by JStewartLowndes Mar2014 with improved functions by BBest in Jun2014
 #   Data: 
-#         GDP = Gross Domestic Product (current $USD)
-#         LAB = Labor force, total (# people)
-#         UEM = Unemployment, total (% of total labor force)
-#         PPP = Purchase power parity
-#         PPPpcGDP = GDP adjusted per capita by PPP     
-#         POP = Total population count
+#       * gdp: Gross Domestic Product (current \$USD)
+#         + http://data.worldbank.org/indicator/NY.GDP.MKTP.CD
+#       * uem = Unemployment, total (\% of total labor force) 
+#         + http://data.worldbank.org/indicator/SL.UEM.TOTL.ZS
+#       * tlf = Total Labor force, total (\# people)
+#       	+ http://data.worldbank.org/indicator/SL.TLF.TOTL.IN
+#       * ppppcgdp = GDP adjusted per capita by PPP                 # GDP per capita based on purchasing power parity (PPP).
+#       	+ http://data.worldbank.org/indicator/NY.GDP.PCAP.PP.CD
+  
 
-#   add OHI region_ids with name_to_rgn_id.r  ** differs from data_prep.old
-#   georegional gapfilling with gapfill_georegions.R ** differs from data_prep.old
+#   add OHI region_ids with name_to_rgn_id.r          ** differs from data_prep.old
+#   georegional gapfilling with gapfill_georegions.R  ** differs from data_prep.old
 #
 # TODO: manually fix any missing GDP with Wikipedia lookups
 
@@ -37,24 +40,13 @@ for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), fu
   cat(sprintf('processing %s\n', basename(f)))
   
   count = count + 1
-  #d = read.xls(file.path(dir_d, 'raw', f), sheet=1, skip=1, check.names=F) # do not add the stupid X in front of the numeric column names
   d = read.xls(f, sheet=1, skip=1, check.names=F);  head(d) # do not add the stupid X in front of the numeric column names
   
   # remove final year column if it is completely NAs
   if(nrow(d)[1] - sum(is.na(d[,ncol(d)])) == 0) {
     d = d[,-ncol(d)]
   }
-  
-  #   # remove any countries that have no data for the whole dataset:
-  #   d.1 = matrix(nrow=0, ncol=0)
-  #   for(i in 1:dim(d)[1]){             # d = d[complete.cases(d),] # suboptimal: this removes anytime there are missing values
-  #     bb = dim(d)[2] - sum(is.na(d[i,]))
-  #     if(bb != 2) { # this means just the countryname and country code name are not NA
-  #       d.1 = rbind(d.1,d[i,])
-  #     }
-  #   }
-  #   # BB: WOOPS! This didn't remove Aruba or Andorra for sl.tlf.totl.in_Indicator_en_excel_v2.xls
-  
+    
   # melt data
   d = d %>%
     select(country=1, matches('\\d')) %>% # get first column as country and all other year columns that are \\digits in regex speak
@@ -63,8 +55,11 @@ for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), fu
     # remove NAs
     filter(!is.na(value))  
 
-  # add layer column
+  # add layer column, overwriting if gdp.pcap.pp
   d$layer = str_split_fixed(basename(f), fixed('.'), 3)[2]
+  if (basename(f) == 'ny.gdp.pcap.pp.cd_Indicator_en_excel_v2.xls'){
+    d$layer = 'gdppcppp' 
+  } 
         
   # rbind
   if (!exists('d_all')){
@@ -83,8 +78,8 @@ d_all = d_all %>%
 # Print out all the unique indicators
 print('These are all the variables with year counts included in the cleaned file: ')
 print(table(d_all$layer))
-#  gdp  tlf  uem 
-# 9936 4919 3184 
+#  gdp   gdppcppp      tlf      uem 
+# 9936       5147     4919     3184 
 
 # add rgn_id: country to rgn_id  # source('../ohiprep/src/R/ohi_clean_fxns.R') ----
 source('src/R/ohi_clean_fxns.R') # get functions
@@ -128,6 +123,11 @@ layers = list(
     units           = 'usd',
     var_rgn_weights = 'popn',
     ratio_weights   = TRUE),
+  # Gross Domestic Product Per Capita PPP (GDPPCPPP)
+  gdppcppp = list(
+    units           = 'intl_dollar', #GDP to international dollars (intl_dollar) using PPP rates. intl_dollar has same purchasing power over GDP as the USD has in the US.
+    var_rgn_weights = NULL,
+    ratio_weights   = FALSE),
   # Unemployment Rate (UEM)
   uem = list(
     units           = 'percent',
@@ -155,6 +155,7 @@ for (lyr in names(layers)){ # lyr='tlf'
     select(rgn_id, year, value)
   
   #load_all('~/github/ohicore')
+  source('../ohicore/R/gapfill_georegions.R')
   d_g = gapfill_georegions(
     data              = d,
     fld_id            = 'rgn_id',
