@@ -194,6 +194,16 @@ for (i in 1:length(names(scenario))) { # i=1
 
 }
 
+#   for 2014a, pressures will use yr_max == 2012
+#   rescaled scores based on max(value) == 3231 counts of targeted harvest (catch from Greenland)
+# 
+#   for 2013a, pressures will use yr_max == 2011
+#   rescaled scores based on max(value) == 4094 counts of targeted harvest (catch from Greenland)
+# 
+#   for 2012a, pressures will use yr_max == 2010
+#   rescaled scores based on max(value) == 7489 counts of targeted harvest (catch from Japan)
+
+
 
 ## --- fin ---
 

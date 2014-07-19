@@ -107,7 +107,7 @@ for (k in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*csv'), fu
       filter(rgn_id < 255, 
              year %in% yr_min:yr_max); head(pop)
     
-    ## calculate pop trends for pest years:
+    ## calculate pop trends for past years:
     p_mdl = pop %>%
       select(rgn_id, year, 
              value = popsum) %>%
@@ -158,8 +158,6 @@ for (k in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*csv'), fu
   }  
 }
 
-# calc CW pressures scores too?
-# clean waters scores are the 'inverse' of pressures, so the delta in score is the 'inverse' of the pressure trend
 
 # --- fin
 
