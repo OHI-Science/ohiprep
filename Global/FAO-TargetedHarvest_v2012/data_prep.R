@@ -161,7 +161,8 @@ m_r = name_to_rgn(m_l2, fld_name='country', flds_unique=c('country','year'), fld
   select(rgn_name, rgn_id, year, value) %.%
   arrange(rgn_name, year)
 m_r$year = as.numeric(as.character(factor(m_r$year))); head(m_r)
-
+stopifnot(anyDuplicated(m_r[,c('rgn_id', 'year', 'rgn_name')]) == 0)
+m_r[duplicated(m_r[,c('rgn_id', 'rgn_name', 'year')]),]
 
 ## for each scenario: id year, rescale and save pressures layer ----
 # makes obsolete: ohiprep:src/R/ohi_clean_fxns.R:: save_pressure_layers_2012a_2013a.r 
@@ -178,7 +179,7 @@ scenario = c('2014' = 0,
 scen_earliest = max(m_r$year) - as.numeric(as.character(factor(scenario[length(scenario)])))
 m_scen = m_r %>%
   filter(year >= scen_earliest) %>% 
-  filter(value == max(value)); m_scens 
+  filter(value == max(value)); m_scen
 value_max = m_scen$value
 message(sprintf('\n  for rescaling pressures, will use the max value since %d', scen_earliest))
 message(sprintf('\n  rescaled scores based on %d counts of targeted harvest (catch from %s in %s)', 
@@ -203,18 +204,17 @@ for (i in 1:length(names(scenario))) { # i=1
   
 ## any regions that did not have a catch should have score = 0 ----
 
-rgns = read.csv('src/LookupTables/eez_rgn_2013master.csv') %.%
-  select(rgn_id = rgn_id_2013,
-         rgn_name = rgn_nam_2013)  %.%
+rgns = read.csv('../ohi-global/eez2014/layers/rgn_global.csv') %.%
+  select(rgn_id)  %.%
   filter(rgn_id < 255) %.%
   arrange(rgn_id); head(rgns)
 
 m_f_fin = rbind(m_f, 
                rgns %>%
                  anti_join(m_f, by = 'rgn_id') %>%
-                 mutate(score = 0) %>%
-                 select(-rgn_name)) %>%
+                 mutate(score = 0)) %>%
   arrange(rgn_id); head(m_f_fin); summary(m_f_fin)
+# m_f_fin[duplicated(m_f_fin[,c('rgn_id')]),]
 
   filesave = paste('rgn_fao_targeted_', names(scenario)[i], 'a.csv', sep='')
   write.csv(m_f_fin, file.path(dir_d, 'data', filesave), row.names = F)
