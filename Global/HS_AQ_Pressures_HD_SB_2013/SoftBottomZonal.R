@@ -167,3 +167,34 @@ plot(dem_nd_hb)
  
  
 
+
+ 
+ ##################################################
+ ## Transfering these data for the website ----
+ ##################################################
+ dir("/var/cache/halpern-et-al/var/www/ebm-site/GlobalMarine/impacts/raw_data/tif")
+ # pel_lb:
+ pel_lb <- raster("/var/data/ohi/git-annex/Global/SAUP-FishCatchByGearType_Halpern2008/data/fishprod_pel_lb_gcs.tif")
+ plot(pel_lb)
+ writeRaster(pel_lb, filename="/var/cache/halpern-et-al/var/www/ebm-site/GlobalMarine/impacts/raw_data/tif/fishprod_pel_lb_gcs.tif", format="GTiff")
+ 
+ # pel_hb:
+ pel_hb <- raster("/var/data/ohi/git-annex/Global/SAUP-FishCatchByGearType_Halpern2008/data/fishprod_pel_hb_gcs.tif")
+ plot(pel_hb)
+ writeRaster(pel_hb, filename="/var/cache/halpern-et-al/var/www/ebm-site/GlobalMarine/impacts/raw_data/tif/fishprod_pel_hb_gcs.tif", format="GTiff")
+ 
+ # dem_d:
+ dem_d <- raster("/var/data/ohi/git-annex/Global/SAUP-FishCatchByGearType_Halpern2008/data/fishprod_dem_d_gcs.tif")
+ plot(dem_d)
+ writeRaster(dem_d, filename="/var/cache/halpern-et-al/var/www/ebm-site/GlobalMarine/impacts/raw_data/tif/fishprod_dem_d_gcs.tif", format="GTiff")
+ 
+ # dem_nd_lb:
+ dem_nd_lb <- raster("/var/data/ohi/git-annex/Global/SAUP-FishCatchByGearType_Halpern2008/data/fishprod_dem_nd_lb_gcs.tif")
+ plot(dem_nd_lb)
+ writeRaster(dem_nd_lb, filename="/var/cache/halpern-et-al/var/www/ebm-site/GlobalMarine/impacts/raw_data/tif/fishprod_dem_nd_lb_gcs.tif", format="GTiff")
+ 
+ # dem_nd_hb:
+ dem_nd_hb <- raster("/var/data/ohi/git-annex/Global/SAUP-FishCatchByGearType_Halpern2008/data/fishprod_dem_nd_hb_gcs.tif")
+ plot(dem_nd_hb)
+ writeRaster(dem_nd_hb, filename="/var/cache/halpern-et-al/var/www/ebm-site/GlobalMarine/impacts/raw_data/tif/fishprod_dem_nd_hb_gcs.tif", format="GTiff")
+ 
