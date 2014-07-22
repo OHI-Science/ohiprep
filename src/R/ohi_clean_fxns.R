@@ -98,14 +98,14 @@ sum_na = function(x){
 }
 
 name_to_rgn = function(d, fld_name='country', flds_unique=fld_name, fld_value='value', collapse_fxn = sum_na,
-                       dir_lookup = 'src/LookupTables',
+                       dir_lookup = '../ohiprep/src/LookupTables',
                        rgn_master.csv   = file.path(dir_lookup, 'eez_rgn_2013master.csv'),
                        rgn_synonyms.csv = file.path(dir_lookup, 'rgn_eez_v2013a_synonyms.csv'),
                        add_rgn_name=F, add_rgn_type=F) {
   # DETAIL. Return a data.frame (vs add_rgn_id which writes to a csv) and perform extra checks, including collapsing on duplicates.
   #  Note: The original fld_name lost because possible to collapse multiple countries into a single region.
   #
-  # debug: fld_name='country'; flds_unique=c('country','commodity','year'); fld_value='value'; collapse_fxn=function(x) sum(x, na.rm=T); dpath = 'src/LookupTables'; rgn_master.csv   = file.path(dpath, 'eez_rgn_2013master.csv'); rgn_synonyms.csv = file.path(dpath, 'rgn_eez_v2013a_synonyms.csv')
+  # debug: fld_name='country'; flds_unique=c('country','commodity','year'); fld_value='value'; collapse_fxn=function(x) sum(x, na.rm=T); dpath = '../ohiprep/src/LookupTables'; rgn_master.csv   = file.path(dpath, 'eez_rgn_2013master.csv'); rgn_synonyms.csv = file.path(dpath, 'rgn_eez_v2013a_synonyms.csv')
   
   #   # ensure dplyr's summarize overrides plyr's summarize by loading in succession
   #   if ('package:reshape2'  %in% search()) detach('package:reshape2')
@@ -130,6 +130,9 @@ name_to_rgn = function(d, fld_name='country', flds_unique=fld_name, fld_value='v
       rgn_name = first(rgn_name),
       rgn_type = first(rgn_type)) %.%
     ungroup()
+  
+  #browser()
+  #filter(d, country=='Albania' & year==1990)
   
   # combine to have a unique tmp_name to rgn_id lookup
   r = rbind_list(
