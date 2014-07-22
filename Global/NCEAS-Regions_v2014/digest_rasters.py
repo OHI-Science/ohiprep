@@ -58,37 +58,43 @@ buffers = ['offshore','inland','inland1km','offshore1km','offshore3nm','inland25
 for buf in buffers:          # buf = buffers[0]
     for pfx in ('rgn', 'sp'): # pfx = ('sp','rgn')[0]
 
-        # debug: buf = 'offshore'; pfx = 'rgn'
-        print('%s_%s' % (pfx, buf))
-
-        fc_gcs  = '%s/%s_%s_gcs' % (gdb, pfx, buf)
-        fc_mol  = '%s/%s_%s_mol' % (gdb, pfx, buf)        
-        tif_mol = '%s/data/%s_%s_mol.tif' % (dir_tmp, pfx, buf)
-        tif_gcs = '%s/data/%s_%s_gcs.tif' % (dir_tmp, pfx, buf)
-        fld_id  = '%s_id' % pfx
-
-        # project feature class to Mollweide
-        #print('  *_mol.shp (%s)' % time.strftime('%H:%M:%S'))
-        #arcpy.Project_management(fc_gcs, fc_mol, sr_mol)
-
-        # project to raster, setting snap raster first to sp_[mol|gcs].tif
-        print('  *_mol.tif (%s)' % time.strftime('%H:%M:%S'))
-        arcpy.env.outputCoordinateSystem = m
-        arcpy.env.snapRaster = m
-        arcpy.env.extent = m
-        arcpy.FeatureToRaster_conversion(fc_mol, fld_id, tif_mol, cellsize) # meters
-        
-        print('  *_gcs.tif (%s)' % time.strftime('%H:%M:%S'))
-        arcpy.env.outputCoordinateSystem = sr_gcs
-        arcpy.env.extent = None
-        if (pfx, buf) != ('sp','offshore'):
-            arcpy.env.snapRaster = '%s/data/sp_offshore_gcs.tif' % dir_tmp
+        if ('%s_%s' % (pfx, buf) in ('rgn_offshore','sp_offshore','rgn_inland','sp_inland','rgn_inland1km')):
+            print('%s_%s: SKIPPING' % (pfx, buf))
         else:
-            arcpy.env.snapRaster = None
-        arcpy.FeatureToRaster_conversion(fc_gcs, fld_id, tif_gcs,  0.1) # degrees
 
-        # copy to server
-        print('  copying to server (%s)' % time.strftime('%H:%M:%S'))
-        #arcpy.CopyFeatures_management( fc_mol, '%s/data/%s_%s_mol.shp' % (dir_anx, pfx, buf))
-        arcpy.Copy_management(        tif_mol, '%s/data/%s_%s_mol.tif' % (dir_anx, pfx, buf))
-        arcpy.Copy_management(        tif_gcs, '%s/data/%s_%s_gcs.tif' % (dir_anx, pfx, buf))
+            # debug: buf = 'offshore'; pfx = 'sp'
+            print('%s_%s' % (pfx, buf))
+
+            fc_gcs  = '%s/%s_%s_gcs' % (gdb, pfx, buf)
+            fc_mol  = '%s/%s_%s_mol' % (gdb, pfx, buf)        
+            tif_mol = '%s/data/%s_%s_mol.tif' % (dir_tmp, pfx, buf)
+            tif_gcs = '%s/data/%s_%s_gcs.tif' % (dir_tmp, pfx, buf)
+            fld_id  = '%s_id' % pfx
+
+            # project feature class to Mollweide
+            #print('  *_mol.shp (%s)' % time.strftime('%H:%M:%S'))
+            #arcpy.Project_management(fc_gcs, fc_mol, sr_mol)
+
+            ##            # project to raster, setting snap raster first to sp_[mol|gcs].tif
+            ##            print('  *_mol.tif (%s)' % time.strftime('%H:%M:%S'))
+            ##            arcpy.env.outputCoordinateSystem = m
+            ##            arcpy.env.snapRaster = m
+            ##            arcpy.env.extent = m
+            ##            arcpy.FeatureToRaster_conversion(fc_mol, fld_id, tif_mol, cellsize) # meters
+            ##
+            ##            print('  *_gcs.tif (%s)' % time.strftime('%H:%M:%S'))
+            ##            arcpy.env.outputCoordinateSystem = sr_gcs
+            ##            arcpy.env.extent = None
+            ##            if (pfx, buf) != ('sp','offshore'):
+            ##                arcpy.env.snapRaster = '%s/data/sp_offshore_gcs.tif' % dir_tmp
+            ##            else:
+            ##                arcpy.env.snapRaster = None
+            ##            arcpy.FeatureToRaster_conversion(fc_gcs, fld_id, tif_gcs,  0.1) # degrees
+
+            # copy to server
+            print('  copying to server (%s)' % time.strftime('%H:%M:%S'))
+            #arcpy.CopyFeatures_management( fc_mol, '%s/data/%s_%s_mol.shp' % (dir_anx, pfx, buf))
+            # TODO: copy everything on to server after 'rgn_offshore','sp_offshore','rgn_inland','sp_inland','rgn_inland1km'
+            arcpy.Copy_management(        tif_mol, '%s/data/%s_%s_mol.tif' % (dir_anx, pfx, buf))
+            arcpy.Copy_management(        tif_gcs, '%s/data/%s_%s_gcs.tif' % (dir_anx, pfx, buf))
+            
