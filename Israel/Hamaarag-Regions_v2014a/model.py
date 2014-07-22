@@ -1,18 +1,20 @@
 # Run on cmd: C:\Python27\ArcGISx6410.2\python.exe G:\ohiprep\Israel\Hamaarag-Regions_v2014a\model.py
 
 # packages
-import arcpy, os, socket, numpy, pandas, time
+import arcpy, os, socket, numpy, numpy.lib.recfunctions, pandas, time
 
 # paths
-wd       = 'G:/ohiprep/Israel/Hamaarag-Regions_v2014a'
-gdb      = '%s/tmp/geodb.gdb'             % wd
-shp_in   = '%s/raw/Subregions_WGS.shp'    % wd
-shp_out  = '%s/data/regions_gcs.shp'      % wd
-csv_out  = '%s/data/regions_gcs_data.shp' % wd
-gl_gdb   = r'C:\tmp\Global\NCEAS-Regions_v2014\geodb.gdb'             # neptune_data:git-annex/Global/NCEAS-Regions_v2014/geodb.gdb
-
-gadm     = r'C:\tmp\Global\GL-GADM-AdminAreas_v2\data\gadm2.gdb\gadm' # neptune_data:stable/GL-GADM-AdminAreas_v2/data/gadm2.gdb
-country  = 'Israel'
+wd        = 'G:/ohiprep/Israel/Hamaarag-Regions_v2014a'
+tmp       = 'C:/tmp/Israel/Hamaarag-Regions_v2014a'
+gdb       = '%s/geodb.gdb'                 % tmp
+eco_shp   = r'N:\git-annex\Israel\Hamaarag-Regions_v2014a\Subregions_Int.shp'
+eco_haifabay_shp   = '%s/raw\HaifaBay_offshore_inland5km_manualedit.shp' % wd
+shp_out   = '%s/data/regions_gcs.shp'      % wd
+csv_out   = '%s/data/regions_gcs_data.shp' % wd
+sp_gdb    = r'C:\tmp\Global\NCEAS-Regions_v2014\geodb.gdb'             # neptune_data:git-annex/Global/NCEAS-Regions_v2014/geodb.gdb
+pol_gadm  = r'C:\tmp\Global\GL-GADM-AdminAreas_v2\data\gadm2.gdb\gadm2' # neptune_data:stable/GL-GADM-AdminAreas_v2/data/gadm2.gdb
+countries = ['Israel','Palestina'] # special case for Israel: excise Palestine from EEZ and land
+country = 'Israel'
 
 # projections
 sr_mol = arcpy.SpatialReference('Mollweide (world)') # projected Mollweide (54009)
@@ -22,6 +24,7 @@ sr_gcs = arcpy.SpatialReference('WGS 1984')          # geographic coordinate sys
 os.chdir(wd)
 if not os.path.exists('tmp'): os.makedirs('tmp')
 if not os.path.exists('data'): os.makedirs('data')
+if not os.path.exists(tmp): os.makedirs(tmp)
 if not arcpy.Exists(gdb): arcpy.CreateFileGDB_management(os.path.dirname(gdb), os.path.basename(gdb))
 
 # environment
@@ -30,69 +33,115 @@ arcpy.env.overwriteOutput        = True
 arcpy.env.outputCoordinateSystem = sr_gcs
 
 # copy
-if not arcpy.Exists('%s/b' % gdb):
-    arcpy.FeatureClassToFeatureClass_conversion(shp_in, gdb, 'a')
-if not arcpy.Exists('%s/p' % gdb):
-    arcpy.Select_analysis(shp_in, gdb, 'a')
-    arcpy.Select_analysis(gadm, 'p', '"NAME_0"  = \'%s\'' % country)
+if not arcpy.Exists('%s/eco' % gdb):
+    arcpy.CopyFeatures_management(eco_shp, 'eco')
+if not arcpy.Exists('%s/eco_haifabay' % gdb):
+##    #arcpy.FeatureClassToFeatureClass_conversion(eco_shp, gdb, 'eco')
+##    
+    arcpy.CopyFeatures_management(eco_haifabay_shp, 'eco_haifabay')
+if not arcpy.Exists('%s/pol' % gdb):
+    arcpy.Select_analysis(pol_gadm, 'pol', "\"NAME_0\" IN ('%s')" % "','".join(countries))
+if not arcpy.Exists('%s/sp' % gdb):
+    arcpy.Select_analysis('%s/sp_gcs' % sp_gdb, 'sp', "\"sp_name\" = '%s'" % country)
 
-# add rgn_id, rgn_name specific to input shapefile
-arcpy.AddField_management(      'a', 'rgn_id'  , 'SHORT')
-arcpy.CalculateField_management('a', 'rgn_id'  , '!Region!', 'PYTHON_9.3')
-arcpy.AddField_management(      'a', 'rgn_name', 'TEXT')
-arcpy.CalculateField_management('a', 'rgn_name', '!Name!'  , 'PYTHON_9.3')
-
-# add area
-arcpy.AddField_management(      'a', 'area_km2', 'DOUBLE')
-arcpy.CalculateField_management('a', 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
+# dissolve to district for Israel and Palestina districts to remove after extending: West Bank, Gaza
+arcpy.Dissolve_management('pol', 'pol_d', ['NAME_1'])
+### add rgn_id, rgn_name specific to input shapefile
+##arcpy.AddField_management(      'eco', 'rgn_id'  , 'SHORT')
+##arcpy.CalculateField_management('eco', 'rgn_id'  , '!Region!', 'PYTHON_9.3')
+##arcpy.AddField_management(      'eco', 'rgn_name', 'TEXT')
+##arcpy.CalculateField_management('eco', 'rgn_name', '!Name!'  , 'PYTHON_9.3')
+##
+### add area
+##arcpy.AddField_management(      'eco', 'area_km2', 'DOUBLE')
+##arcpy.CalculateField_management('eco', 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
 
 # setup for theissen polygons
-arcpy.Buffer_analysis('a', 'a_buf200km', '200 kilometers', dissolve_option='ALL')
-arcpy.env.extent = 'a_buf200km'
+arcpy.env.extent = 'sp'
 arcpy.env.outputCoordinateSystem = sr_mol
-arcpy.CopyFeatures_management('a', 'thie')
-arcpy.Densify_edit('thie', 'DISTANCE', '1 Kilometers')
-arcpy.FeatureVerticesToPoints_management('thie', 'thie_pts', 'ALL')
+arcpy.CopyFeatures_management('pol_d', 'pol_t')
+arcpy.Densify_edit('pol_t', 'DISTANCE', '1 Kilometers')
+arcpy.FeatureVerticesToPoints_management('pol_t', 'pol_t_pts', 'ALL')
  
-# delete interior points
-arcpy.Dissolve_management('thie', 'thie_d')
-arcpy.MakeFeatureLayer_management('thie_pts', 'lyr_pts')
-arcpy.SelectLayerByLocation_management('lyr_pts', 'WITHIN_CLEMENTINI', 'thie_d')
+# delete interior points to make thiessen calculate faster
+arcpy.Dissolve_management('pol_t', 'pol_t_d')
+arcpy.MakeFeatureLayer_management('pol_t_pts', 'lyr_pts')
+arcpy.SelectLayerByLocation_management('lyr_pts', 'WITHIN_CLEMENTINI', 'pol_t_d')
 arcpy.DeleteFeatures_management('lyr_pts')
- 
-# generate thiessen polygons
-arcpy.CreateThiessenPolygons_analysis('thie_pts', 'thie_polys', 'ALL')
-arcpy.Dissolve_management('thie_polys', 'a_thiessen_mol', ['rgn_id','rgn_name'])
-arcpy.RepairGeometry_management('a_thiessen_mol')
+arcpy.Delete_management('lyr_pts')
+
+# generate thiessen polygons, in Mollweide
+arcpy.CreateThiessenPolygons_analysis('pol_t_pts', 'pol_thie', 'ALL')
+arcpy.Dissolve_management('pol_thie', 'pol_thie_d', ['NAME_1'])
+arcpy.RepairGeometry_management('pol_thie_d')
+
+# burn land pol back in
+arcpy.Erase_analysis('pol_thie_d', 'pol_d', 'pol_thie_d_e')
+arcpy.Merge_management(['pol_d', 'pol_thie_d_e'], 'pol_thie_m')
+arcpy.Dissolve_management('pol_thie_m', 'pol_thie_mol', ['NAME_1'])
+    
+# remove districts in Palestina: West Bank, Gaza
+arcpy.MakeFeatureLayer_management('pol_thie_mol', 'lyr')
+arcpy.SelectLayerByAttribute_management('lyr', 'NEW_SELECTION', "NAME_1 IN ('West Bank','Gaza')")
+arcpy.DeleteFeatures_management('lyr')
+arcpy.Delete_management('lyr')
+
+# setup Haifa Bay with inland component
+## arcpy.Select_analysis(eco_shp, 'eco_haifabay', "\"Region_Eng\" = 'Haifa Bay'")
+## arcpy.Buffer_analysis('eco_haifabay', 'eco_haifabay_buf5km', '5 kilometers')
+## manually: copied feature class and edited vertices to create HaifaBay_shp
+arcpy.AlterField_management('eco_haifabay', 'Region_Eng', 'NAME_1', 'NAME_1')
+arcpy.Erase_analysis('pol_thie_mol', 'eco_haifabay', 'pol_thie_mol_e')
+arcpy.Merge_management(['pol_thie_mol_e', 'eco_haifabay'], 'pol_thie_mol_e_m')
+
+# dissolve to just field NAME_1 and rename to rgn_name
+arcpy.Dissolve_management('pol_thie_mol_e_m', 'pol_thie_mol_e_m_d', ['NAME_1'])
+arcpy.AlterField_management('pol_thie_mol_e_m_d', 'NAME_1', 'rgn_name_e', 'rgn_name_e')
+
+# add fields rgn_name (in Hebrew) and rgn_id
+r = arcpy.da.TableToNumPyArray('pol_thie_mol_e_m_d', ['OBJECTID','rgn_name_e'])
+h = dict(arcpy.da.TableToNumPyArray('eco', ['Region_Eng','Region_Heb']))
+h[u'HaZafon']   = h[u'Northern']
+h[u'HaMerkaz']  = h[u'Central']
+h[u'HaDarom']   = h[u'Southern']
+h[u'Golan']     = ''
+h[u'Jerusalem'] = ''
+rgn_name = numpy.array([(h[x],) for x in r['rgn_name_e']], dtype=[('rgn_name', '<U50')])
+rgn_id = numpy.array([(x,) for x in range(1, len(r)+1)], dtype=[('rgn_id', '<i4')])
+r = numpy.lib.recfunctions.merge_arrays([r, rgn_id, rgn_name], flatten=True)
+arcpy.da.ExtendTable('pol_thie_mol_e_m_d', 'OBJECTID', r, 'OBJECTID', append_only=False)
+
+# create geographic coordinate system version
 arcpy.env.outputCoordinateSystem = sr_gcs
-arcpy.CopyFeatures_management('a_thiessen_mol', 'a_thiessen_gcs')
+arcpy.CopyFeatures_management('pol_thie_mol_e_m_d', 'thie_gcs')
 
 # copy global and buffers
-countries = ['Israel']
-bufs = ('','_inland1km','_offshore3nm','_inland25km','_offshore1km','_inland50km')
+bufs = ('inland','offshore','inland1km','offshore3nm','inland25km','offshore1km','inland50km')
 for buf in bufs:
-    fc_in = 'sp%s_gcs' % buf
-    print('%s (%s)' % (fc_in, time.strftime('%H:%M:%S')))
-    
-    # copy fc
-    arcpy.Select_analysis('%s/%s' % (gl_gdb, fc_in), fc_in, '"sp_name" IN (\'%s\')' % "','".join(countries))
-    arcpy.DeleteField_management(fc_in, ['rgn_id', 'rgn_name', 'rgn_type']) 
-    arcpy.AddField_management(fc_in, 'rgn_type', 'TEXT')
-    arcpy.CalculateField_management(fc_in, 'rgn_type', '!sp_type!', 'PYTHON_9.3')
+buf = 'inland'
 
-    # intersect and dissolve
-    arcpy.Intersect_analysis([fc_in, 'a_thiessen_gcs', 'a_buf200km'], 'thie%s_gcs' % buf)
-    arcpy.Dissolve_management('thie%s_gcs' % buf, 'rgn%s_gcs' % buf, ['rgn_type','rgn_id', 'rgn_name'])
+print('%s (%s)' % (buf, time.strftime('%H:%M:%S')))
+# copy fc and clip
+arcpy.Select_analysis('%s/sp_%s_gcs' % (sp_gdb, buf), 'sp_%s' % buf, "sp_name = '%s'" % country)
+arcpy.Dissolve_management('sp_%s' % buf, 'sp_%s_d' % buf)
+##arcpy.Clip_analysis('pol_thie_gcs', fc_in, 'thie%s_gcs' % buf)
 
-    # add area
-    arcpy.AddField_management('%s/rgn%s_gcs' % (gdb, buf), 'area_km2', 'DOUBLE')
-    arcpy.CalculateField_management('%s/rgn%s_gcs' % (gdb, buf), 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
+# TODO: for inland, use more accurate GADM2 over MarineRegions EEZ, ie rgn_inland*_gcs. In which case run buffer again.
 
-    # export shp and csv
-    arcpy.CopyFeatures_management('%s/rgn%s_gcs' % (gdb, buf), '%s/data/rgn%s_gcs.shp' % (wd, buf))
-    d = pandas.DataFrame(arcpy.da.TableToNumPyArray('rgn%s_gcs' % buf, ['rgn_type','rgn_id','rgn_name','area_km2']))
-    d.to_csv('%s/data/rgn%s_data.csv' % (wd, buf), index=False, encoding='utf-8')
+# intersect and dissolve
+arcpy.Intersect_analysis(['thie_gcs', 'sp_%s_d' % buf], 'thie_%s' % buf)
+arcpy.Dissolve_management('thie_%s' % buf, 'rgn_%s_gcs' % buf, ['rgn_id', 'rgn_name', 'rgn_name_e'])
+
+# add area
+arcpy.AddField_management(      'rgn_%s_gcs' % buf, 'area_km2', 'DOUBLE')
+arcpy.CalculateField_management('rgn_%s_gcs' % buf, 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
+
+# export shp and csv
+arcpy.CopyFeatures_management('rgn_%s_gcs' % buf, '%s/data/rgn_%s_gcs.shp' % (wd, buf))
+d = pandas.DataFrame(arcpy.da.TableToNumPyArray('rgn_%s_gcs' % buf, ['rgn_id','rgn_name','rgn_name_e','area_km2']))
+d.to_csv('%s/data/rgn_%s_data.csv' % (wd, buf), index=False, encoding='utf-8')
+
 
 # simplify for geojson
-arcpy.cartography.SmoothPolygon('%s/rgn_gcs' % gdb, 'rgn_smooth_gcs', 'PAEK', 100, 'FIXED_ENDPOINT', 'FLAG_ERRORS') # , 100, "FLAG_ERRORS")
-arcpy.CopyFeatures_management('%s/rgn_smooth_gcs' % gdb, '%s/data/rgn_smooth_gcs.shp' % wd)
+##arcpy.cartography.SmoothPolygon('%s/rgn_gcs' % gdb, 'rgn_smooth_gcs', 'PAEK', 100, 'FIXED_ENDPOINT', 'FLAG_ERRORS') # , 100, "FLAG_ERRORS")
+##arcpy.CopyFeatures_management('%s/rgn_smooth_gcs' % gdb, '%s/data/rgn_smooth_gcs.shp' % wd)
