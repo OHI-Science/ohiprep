@@ -42,12 +42,19 @@ d = d %>%
 d.1 = d %>%
   select(country, year,
          percent = improved_tot_perc) %>%
-  mutate(percent = percent/100); summary(d.1); head(d.1)
+  mutate(prop_access = percent/100); summary(d.1); head(d.1)
 
 
 # add rgn_id: country to rgn_id ----
-r = name_to_rgn(d.1, fld_name='country', flds_unique=c('country','year'), fld_value='percent', add_rgn_name=T); head(r) 
+r = name_to_rgn(d.1, fld_name='country', flds_unique=c('country','year'), fld_value='prop_access', add_rgn_name=T); head(r) 
 
+# a check:
+a = r %>%
+  filter(year >=2004) %>%
+  select(rgn_id, prop_access) %>%
+  group_by(rgn_id) %>%
+  mutate(count = n())
+head(a); summary(a)
 
 ## georegional gapfilling with gapfill_georegions.r ----
 georegions = read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %.%
@@ -63,7 +70,7 @@ georegion_labels = read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.c
   arrange(r0_label, r1_label, r2_label, v_label); head(georegion_labels)
 
 
-layersave = file.path(dir_d, 'data', 'rgn_jmp_san_2014a.csv')
+layersave = file.path(dir_d, 'data', 'rgn_jmp_san_2014a_raw_prop_access.csv')
 attrsave  = file.path(dir_d, 'data', 'rgn_jmp_san_2014a_attr.csv')
 
 # library(devtools); load_all('../ohicore')
@@ -71,7 +78,7 @@ attrsave  = file.path(dir_d, 'data', 'rgn_jmp_san_2014a_attr.csv')
 r_g_a = gapfill_georegions(
   data = r %.%
     filter(!rgn_id %in% c(213,255)) %.%
-    select(rgn_id, year, percent),
+    select(rgn_id, year, prop_access),
   fld_id = 'rgn_id',
   georegions = georegions,
   georegion_labels = georegion_labels,
@@ -81,12 +88,121 @@ r_g_a = gapfill_georegions(
 # investigate attribute tables
 head(attr(r_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('open %s', attrsave))
 
-## save ----
-r_g = r_g_a %.%
-  select(rgn_id, year, percent) %.%
-  arrange(rgn_id, year); head(r_g)
 
+## save raw proportion with access ----
+r_g = r_g_a %.%
+  select(rgn_id, year, prop_access) %.%
+  arrange(rgn_id, year); head(r_g)
 write.csv(r_g, layersave, na = '', row.names=FALSE)
+
+
+## model the trend and rescale, different from 2013a style ----
+# based from neptune_data:model/GL-NCEAS-Pressures_v2013a/model_pathogens.R
+
+popn_density_file = read.csv(file.path(dir_neptune_data, 'model/GL-NCEAS-CoastalPopulation_v2013/data', 
+                                       'rgn_popsum_area_density_2005to2015_inland25mi.csv')); head(popn_density_file) 
+
+# explore skew of population density ----
+popn_density = popn_density_file %>%  
+  filter(pop_per_km2 != 0) %>% # remove any unpopulated regions (rgn_id 149, 158)
+  mutate(
+    pop_per_km2_lin     = pop_per_km2 / max(pop_per_km2),
+    pop_per_km2_log     = ifelse(pop_per_km2!=0, log(pop_per_km2), 0),
+    pop_per_km2_log_lin = ( pop_per_km2_log - min(pop_per_km2_log) ) / ( max(pop_per_km2_log) - min(pop_per_km2_log) )) %>%
+  select(rgn_id, year, pop_per_km2, pop_per_km2_lin, pop_per_km2_log_lin) %>%
+  arrange(desc(pop_per_km2)); head(popn_density)
+
+# to add any missing regions as NA
+rgns = read.csv('src/LookupTables/eez_rgn_2013master.csv') %.%
+  select(rgn_id = rgn_id_2013,
+         rgn_name = rgn_nam_2013)  %.%
+  filter(rgn_id < 255) %.%
+  arrange(rgn_id); head(rgns)
+
+
+## calculate by scenario ----
+# for each scenario, divide by population in current year
+scenario = c('2014' = 0,
+             '2013' = 1,
+             '2012' = 2)
+
+for (i in 1:length(names(scenario))) { # i=1
+  
+  yr_max_san = max(r_g$year) - as.numeric(as.character(factor(scenario[i])))
+  yr_min_san = yr_max_san - 4   # inclusive: this is 5 years
+  yr_max_pop = as.numeric(as.character(factor(names(scenario)[i])))
+  yr_min_pop = yr_max_pop - 4
+  
+  
+  ## calculate access status for 5 years ----
+  
+  san_pop = r_g %>%  # sanitation-population (san_pop)
+    filter(year <= yr_max_san & year >= yr_min_san, #  
+           !is.na(prop_access)) %>%  
+    mutate(yr_id = year - yr_min_san+1) %>%
+    select(rgn_id, yr_id, prop_access) %>%
+    left_join(popn_density %>%
+                filter(year <= yr_max_pop & year >= yr_min_pop) %>%
+                mutate(yr_id = year - yr_min_pop+1) %>%
+                select(rgn_id, yr_id, pop_per_km2), 
+              by=c('rgn_id', 'yr_id')) %>%
+    mutate(prop_x_pop          = prop_access * pop_per_km2,
+           prop_x_pop_log      = log(prop_x_pop+1),   # log is important because the skew was high otherwise
+           prop_x_pop_rescaled = prop_x_pop_log / max(prop_x_pop_log, na.rm=T),
+           pressure_score      = (1 - prop_x_pop_rescaled) ); head(san_pop); summary(san_pop) 
+  
+  ## save as pressure layer ----
+  
+  sp_pressure = rbind(san_pop %>%
+                        filter(yr_id == max(yr_id)) %>% # capture only the most recent year
+                        select(rgn_id, pressure_score), 
+                      rgns %>%
+                        anti_join(san_pop, by = 'rgn_id') %>% # add any missing regions as 0
+                        mutate(pressure_score = 0) %>%
+                        select(-rgn_name)) %>%
+    arrange(rgn_id); head(sp_pressure); summary(sp_pressure)
+  stopifnot(anyDuplicated(sp_pressure[,c('rgn_id')]) == 0)
+  
+  csv_p = file.path(dir_d, 'data', sprintf('po_pathogens_popdensity25km_%sa.csv', names(scenario)[i])) 
+  # sprintf('po_pathogens_sanitation%d_popninland25km%d.csv', yr_max_san, yr_max_pop)) # previous, longer name
+  write.csv(sp_pressure, csv_p, row.names=F, na='')
+  
+  ## model 5 year trend ----
+  # use a linear model since there is enough data. See below at the end for approach used in 2013a
+  sp_mdl = san_pop %>%
+    select(rgn_id, yr_id, prop_x_pop_log) %>%
+    filter(!is.na(prop_x_pop_log)) %>% # lm can't handle NAs!!
+    group_by(rgn_id) %>%
+    do(
+      mdl = lm(prop_x_pop_log ~ yr_id, data=.)) %>% 
+    summarize(
+      rgn_id = rgn_id, 
+      year_ix0  = coef(mdl)['(Intercept)'],
+      year_coef = coef(mdl)['yr_id']) %.%
+    mutate(
+      trend_tmp = year_coef / (year_coef * yr_max_san + year_ix0) * 5, # save these as separate steps to check it's working
+      trend_min = pmin(trend_tmp, 1, na.rm = T),
+      trend_max = pmax(trend_min, -1)) %>% 
+    select(rgn_id, 
+           trend = trend_max); head(sp_mdl); summary(sp_mdl)
+  
+  # save 5-year trend 
+  # add any missing regions as 0
+  sp_mdl_fin = rbind(sp_mdl, 
+                     rgns %>%
+                       anti_join(sp_mdl, by = 'rgn_id') %>%
+                       mutate(trend = 0) %>%
+                       select(-rgn_name)) %>%
+    arrange(rgn_id); head(sp_mdl_fin); summary(sp_mdl_fin)
+  stopifnot(anyDuplicated(sp_mdl_fin[,c('rgn_id')]) == 0)
+  
+  csv_t = file.path(dir_d, 'data', sprintf('pathogens_popdensity25km_trend_%sa.csv', names(scenario)[i])) 
+  # sprintf('po_pathogens_trend_sanitation%d_popninland25km%d.csv', yr_max_san, yr_max_pop)) # previous, longer name
+  write.csv(sp_mdl_fin, csv_t, row.names=F, na='')
+  
+}
+
+
 
 ## test with Quandl ----
 # for now, Quandl (2010) doesn't have the up-to-date information that the JMP website does (2012).
@@ -101,6 +217,39 @@ qs = Quandl.search(query = "WHO / UNICEF Joint Monitoring Program for Water Supp
 # to make the loop, either pull from qs above or download the 'complete list' of data that match this search: http://www.quandl.com/WHO_UNICEF?keyword=%20&page=4&code=WHO_UNICEF&source_ids=439
 x = 'WHO_UNICEF/WATERSAN_ABS_DENMARK'
 JMP_san = Quandl(x); summary(JMP_san)
+
+
+## 2013a approach: model_pathogens.R ----
+
+# similar approach to what was done in 2013a: in model_pathogens.R
+#    for (scen in names(scenarios)){ # scen = names(scenarios)[1]
+#     yr.san = scenarios[[scen]][['sanitation']]
+#     yr.pop = scenarios[[scen]][['population']]
+#     d = rename(subset(m, year==yr.san), setNames('popsum_inland25mi', sprintf('popsum%d_inland25mi', yr.pop))); head(d)
+#     d = within(d, {
+#       popn_density           = popsum_inland25mi / area_inland25mi_km2
+#       #popn_density_log       = ifelse(popn_density!=0, log(popn_density), 0)
+#       popn_density_log       = log(popn_density+1)
+#       popn_density_log_lin   = ( popn_density_log - min(popn_density_log) ) / ( max(popn_density_log) - min(popn_density_log) )
+#       pct_without_sanitation = (100 - pct_sanitation_access)
+#       score_raw              = pct_without_sanitation / 100 * popn_density_log_lin
+#       pressure_score         = score_raw/(max(score_raw)*1.10)
+#     })
+
+
+# calculate trend from two files ----
+# d = merge(rename(read.csv('data/po_pathogens_sanitation2008_popninland25km2008.csv', na.strings=''),
+#                  c('pressure_score' = 'pressure_score_2008')),
+#           rename(read.csv('data/po_pathogens_sanitation2011_popninland25km2013.csv', na.strings=''),
+#                  c('pressure_score' = 'pressure_score_2011'))); head(d)
+# # get 5 year trend from this 3 year period
+# d = within(d, {
+#   trend = (pressure_score_2011 - pressure_score_2008) / 3 * 5}); head(d)
+# write.csv(d[,c('rgn_id','trend')], 'data/po_pathogens_trend_sanitation2008to2011_popninland25km2008to2013.csv', row.names=F, na='')
+
+
+
+
 
 # --- fin ---
 
