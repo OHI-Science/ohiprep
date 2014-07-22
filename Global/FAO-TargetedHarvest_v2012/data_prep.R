@@ -100,13 +100,13 @@ for (i in 1:length(keywords)){ # i=1
   }
 }
 
-# check for commodities in lookup not found in data
+# check for species in lookup not found in data
 l_missing_d = anti_join(sp2grp, m, by='species')
 if (length(l_missing_d)>0){
-  cat(sprintf('\nMISSING: These commodities in the lookup are not found in the data %s:\n    ', basename(fis_fao)))
+  cat(sprintf('\nMISSING: These species in the lookup are not found in the data %s:\n    ', basename(fis_fao)))
   print(l_missing_d)
 }
-# MISSING: These commodities in the lookup are not found in the data FAO_raw_captureprod_1950_2012.csv:
+# MISSING: These species in the lookup are not found in the data FAO_raw_captureprod_1950_2012.csv:
 #         target                  species incl_excl
 # 1 cetacean      Spotted dolpins nei   include
 # 2 cetacean Nothern bottlenose whale   include
@@ -152,7 +152,8 @@ m_l = m_w %.%
 # summarize across target for totals per region per year
 m_l2 = m_l %>%
   group_by(country, year) %>%
-  summarize(value = sum(value)); head(m_l2)
+  summarize(value = sum(value)) %>%
+  filter(value != 0); head(m_l2) # remove zeros 
 
 ## add rgn_ids: name_to_rgn ----
 # source('src/R/ohi_clean_fxns.R')
@@ -173,24 +174,50 @@ scenario = c('2014' = 0,
 #              '2010' = 4,
 #              '2009' = 5)
 
+# find max count across all scenarios
+scen_earliest = max(m_r$year) - as.numeric(as.character(factor(scenario[length(scenario)])))
+m_scen = m_r %>%
+  filter(year >= scen_earliest) %>% 
+  filter(value == max(value)); m_scens 
+value_max = m_scen$value
+message(sprintf('\n  for rescaling pressures, will use the max value since %d', scen_earliest))
+message(sprintf('\n  rescaled scores based on %d counts of targeted harvest (catch from %s in %s)', 
+                value_max, m_scen$rgn_name, names(scenario[length(scenario)])))
+
 for (i in 1:length(names(scenario))) { # i=1
   
   yr_max = max(m_r$year) - as.numeric(as.character(factor(scenario[i])))
   
   m_f_tmp = m_r %>%
     filter(year == yr_max) %>%
-    mutate(score = value/(max(value) * 1.10)) # this was done in 2013a: neptune_data:model/GL-FAO-TargetedHarvest_v2011/export_layers.R
-  hi_rgn = filter(m_f_tmp, value == max(value)) 
+    mutate(score = value/value_max) # * 1.10:  don't multiply by 1.10 since comparing to the max across all scenarios
+  head(m_f_tmp); summary(m_f_tmp)
   
   m_f = m_f_tmp %>%  
     select(rgn_id, score) %>%
     arrange(rgn_id); head(m_f); summary(m_f)
   
-  message(sprintf('\n  for %sa, pressures will use yr_max == %d', names(scenario)[i], yr_max))
-  message(sprintf('\n  rescaled scores based on max(value) == %d counts of targeted harvest (catch from %s)', max(m_f_tmp$value), hi_rgn$rgn_name))
- 
+#   hi_rgn = filter(m_f_tmp, value == max(value)) 
+#   message(sprintf('\n  for %sa, pressures will use yr_max == %d', names(scenario)[i], yr_max))
+#   message(sprintf('\n  rescaled scores based on max(value) == %d counts of targeted harvest (catch from %s)', max(m_f_tmp$value), hi_rgn$rgn_name))
+  
+## any regions that did not have a catch should have score = 0 ----
+
+rgns = read.csv('src/LookupTables/eez_rgn_2013master.csv') %.%
+  select(rgn_id = rgn_id_2013,
+         rgn_name = rgn_nam_2013)  %.%
+  filter(rgn_id < 255) %.%
+  arrange(rgn_id); head(rgns)
+
+m_f_fin = rbind(m_f, 
+               rgns %>%
+                 anti_join(m_f, by = 'rgn_id') %>%
+                 mutate(score = 0) %>%
+                 select(-rgn_name)) %>%
+  arrange(rgn_id); head(m_f_fin); summary(m_f_fin)
+
   filesave = paste('rgn_fao_targeted_', names(scenario)[i], 'a.csv', sep='')
-  write.csv(m_f, file.path(dir_d, 'data', filesave), row.names = F)
+  write.csv(m_f_fin, file.path(dir_d, 'data', filesave), row.names = F)
 
 }
 
