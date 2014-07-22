@@ -64,12 +64,14 @@ for (k in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*csv'), fu
     filter(tonnes != 0) 
   
   # for each scenario
-  for (i in 1:length(names(scenario))) {
+  for (i in 1:length(names(scenario))) { # i=1
     
     yr_max = max(dn$year) - as.numeric(as.character(factor(scenario[i])))
     yr_min = yr_max - 4 # yr_min:max(f$year) is 5 years
     
-    dn = dn %>%
+    message(sprintf('\n  for %s %sa, calculate trend using yr_min == %d and yr_max == %d', v, names(scenario)[i], yr_min, yr_max))
+    
+    dn2 = dn %>%
       filter(year %in% yr_min:yr_max)
     
     ## calculate trend and gapfill for both fertilizers and pesticides:: KLo style. ----
@@ -79,7 +81,7 @@ for (k in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*csv'), fu
     # 2013 approach: trend was created through multiplying slope by 4 instead of 5
     
     #   1) calculate fert and pest trend ----
-    d_mdl = dn %>%
+    d_mdl = dn2 %>%
       filter(!is.na(tonnes)) %>%
       select(-rgn_name) %>%
       group_by(rgn_id) %>%
@@ -105,7 +107,7 @@ for (k in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*csv'), fu
       filter(rgn_id < 255, 
              year %in% yr_min:yr_max); head(pop)
     
-    ## calculate pop trends for pest years:
+    ## calculate pop trends for past years:
     p_mdl = pop %>%
       select(rgn_id, year, 
              value = popsum) %>%
@@ -156,8 +158,6 @@ for (k in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*csv'), fu
   }  
 }
 
-# calc CW pressures scores too?
-# clean waters scores are the 'inverse' of pressures, so the delta in score is the 'inverse' of the pressure trend
 
 # --- fin
 
