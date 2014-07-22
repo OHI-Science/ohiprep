@@ -1,5 +1,6 @@
 # split livelihoods interpolated prep data product model outputs into layer files digestable by toolbox
 # TODO: reconsolidate in upgraded toolbox
+# setwd('~/github/ohiprep')
 
 library(reshape2)
 library(plyr)
@@ -134,5 +135,45 @@ for (yr in 2012:2013){ # yr=2013
   }
 }
 
-# write metadata
-write.csv(meta, sprintf('%s/data/le_layers_metadata.csv', dir_prod), row.names=F, na='')
+
+# trend layers ---
+
+# layer: le_unemployment
+# differs slightly from ohiprep:Global/WorldBank-Statistics_v2012/data/rgn_wb_uem_2014a_ratio-gapfilled.csv
+#  presumably b/c of different gapfilling technique (see p. 28 of Halpern et al 2012 Nature Supplement)
+# read.csv(sprintf('%s/stable/GL-NCEAS-Livelihoods/data/global_li_srcdata_adj_worldbank_emp.csv', dir_neptune_data), na.strings='') %>%
+#   mutate(percent=100-VALUE) %>%
+#   select(cntry_key=ISO3166, year=YEAR, percent) %>%
+#   write.csv(sprintf('%s/data/le_unemployment.csv', dir_prod), row.names=F, na='')
+dbGetQuery(pg, "SELECT * FROM adjustments WHERE metric='jobs_adj'") %>%
+  filter(!is.na(value)) %>%
+  mutate(percent=100-value) %>%
+  select(cntry_key=iso3166, year, percent) %>% 
+  write.csv(sprintf('%s/data/le_unemployment.csv', dir_prod), row.names=F, na='')
+
+# rev: gdp, le_gdp
+# rev_gdp = read.csv('~/github/ohiprep/Global/NCEAS-Livelihoods_v2013/data/le_revenue_adj.csv', na.strings='')
+dbGetQuery(pg, "SELECT * FROM adjustments WHERE metric='rev_adj'") %>%
+  filter(!is.na(value)) %>%
+  select(cntry_key=iso3166, year, usd=value) %>% 
+  write.csv(sprintf('%s/data/le_gdp.csv', dir_prod), row.names=F, na='')
+
+for (yr in 2012:2013){ # yr=2013
+  dir = sprintf('%s/model/GL-NCEAS-Livelihoods_2012/data_%s', dir_neptune_data, yr)
+  
+  # table 2. metric_sector_year, limited by metric_sector_refperiod
+  d = read.csv(file.path(dir, 'global_li_metric_sector_year.csv'), na.strings='') %>%
+    left_join(
+      read.csv(file.path(dir, 'global_li_metric_sector_refperiod.csv'), na.strings=''),
+      by=c('metric','iso3166','sector')) %>%
+    filter(year <= cur_year & year >= ref_year) %>%
+    arrange(metric, iso3166, sector, year) %>%
+    select(metric, cntry_key=iso3166, sector, year, value)
+  
+  for (m in c('jobs','rev','wage')){
+    d %>%
+      filter(metric==m) %>%
+      select(-metric) %>%
+      write.csv(sprintf('%s/data/le_eez%d_trend_%s_sector-year.csv', dir_prod, yr, m), row.names=F, na='')
+  }
+}
