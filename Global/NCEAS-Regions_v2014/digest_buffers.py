@@ -49,7 +49,8 @@ gd      = '{0}/Global/{1}'.format(conf['dir_git'], nm)               # git direc
 
 # inputs
 sp_gcs = '{0}/sp_gcs'.format(gdb)
-buffers = ['inland1km','offshore3nm','inland25km','offshore1km','inland50km'] # 'offshore100nm',
+##buffers = ['inland1km','offshore3nm','inland25km','offshore1km','inland50km'] # 'offshore100nm',
+buffers = ['inland25km'] # 'offshore100nm',
 redo = True
 redo_except = ['buf_inland25km_000073_s_b','buf_inland25km_000073_s_b_i','buf_inland25km_000253_s_b','buf_inland25km_000253_s_b_i']
 
@@ -151,7 +152,7 @@ sp_dict_do  = {x: sp_dict_inland[x] for x in sp_ids_offshore_do}
 sp_dict_all = {x: sp_dict_inland[x] for x in sp_ids_offshore_withland}
 
 # buffer
-for buf in buffers:  # buf = 'inland1km'
+for buf in buffers:  # buf = 'inland25km'
     
     # identify buffer
     ##sp_buf  = 'sp_%s_%s_gcs'  % (buf, sp_class)
