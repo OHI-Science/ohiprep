@@ -4,10 +4,10 @@
 #  read in identified trash file
 #  name_to_rgn.r
 #  read in newly accessed 2012 file, but also older 2010 and 2011 files and concatenate them all. 
-#  calculate lbs_per_mile
+#  calculate pounds_per_mile
 #  georegional gapfilling with gapfill_georegions.r
 
-# Note: some countries have data for pounds but not miles; currently lbs_per_mi
+# Note: some countries have data for pounds but not miles; currently pounds_per_mile
 # is calculated as NA, but could gapfill miles separately, weighted by coastline first
 
 
@@ -63,6 +63,10 @@ f = cbind(country, f) %>%
          miles   = str_replace_all(miles,   ',', ''))        # replace , with nothing
 f$pounds = as.numeric(as.character(factor(f$pounds)))
 f$miles = as.numeric(as.character(factor(f$miles))); head(f); summary(f)
+
+prob = f %>% 
+  filter(miles <= 1) %>%
+  mutate(pounds_per_mile = pounds/miles)
 
 # deal with Netherlands Antilles
 f = f %>%
@@ -173,20 +177,29 @@ t = rbind(tt %>%
             summarize(pounds = sum(pounds),
                       miles  = sum(miles)) %>%
             mutate(country = 'United Kingdom') %>%
-            select(country, year, pounds, miles))
+            select(country, year, pounds, miles))%>%
+  arrange(country, year)
+
+# checking for miles that are super tiny
+# prob = t %>% 
+#   filter(miles <= 1)
+# #          year == 2013) %>%
+#   mutate(pounds_per_mile = pounds/miles)
+# t %>% filter(country == 'Australia') # could fix this with an average of miles from other years
+# t %>% filter(country == 'Ghana')     # that fix would help here too
+# t %>% filter(country == 'Curacao')   # not here
 
 ## calculate trash density: pounds/miles ----
 t$miles[t$miles == 0] = NA
 t = t %>%
-  mutate(lbs_per_mi = pounds/miles) %>%
-  select(country, year, lbs_per_mi) %>%
-  arrange(country, year); head(t); summary(t)
+  mutate(pounds_per_mile = pounds/miles) %>%
+  select(country, year, pounds_per_mile); head(t); summary(t)
 
 # anyDuplicated(t[,c('country','year')])
 
 ## add rgn_ids with name_to_rgn ---- 
 # source('../ohiprep/src/R/ohi_clean_fxns.R')
-t_f = name_to_rgn(t, fld_name='country', flds_unique=c('country', 'year'), fld_value='lbs_per_mi', add_rgn_name=T) %>%
+t_f = name_to_rgn(t, fld_name='country', flds_unique=c('country', 'year'), fld_value='pounds_per_mile', add_rgn_name=T) %>%
   arrange(rgn_id, year)
 
 write.csv(t_f, file.path(dir_d, 'data', 'rgn_oc_trash_2014a_notgapfilled.csv'),
@@ -214,7 +227,7 @@ attrsave  = file.path(dir_d, 'data', 'rgn_oc_trash_2014a_attr.csv')
 t_g_a = gapfill_georegions(
   data = t_f %.%
     filter(!rgn_id %in% c(213,255)) %.%
-    select(rgn_id, year, lbs_per_mi),
+    select(rgn_id, year, pounds_per_mile),
   fld_id = 'rgn_id',
   georegions = georegions,
   georegion_labels = georegion_labels,
@@ -226,10 +239,54 @@ head(attr(t_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('
 
 # save
 t_g = t_g_a %.%
-  select(rgn_id, year, lbs_per_mi) %.%
-  arrange(rgn_id, year); head(t_g)
+  select(rgn_id, year, pounds_per_mile) %.%
+  arrange(rgn_id, year); head(t_g); summary(t_g)
 
 write.csv(t_g, layersave, na = '', row.names=FALSE)
+
+
+## model trash; finalize layer ----
+# from dir_neptune_data: model/GL-NCEAS-Pressures_v2013a/model_trash.R
+
+# write out files using reference years
+scenarios = list('2012a'=2011,
+                 '2013a'=2012,
+                 '2014a'=2013)
+
+scen_earliest = scenarios[[names(scenarios)[1]]]
+
+h_scen = t_g %>%
+  filter(year >= scen_earliest)
+
+ppm_max = max(h_scen$pounds_per_mile, na.rm=T)
+h_max = h_scen %>% filter(pounds_per_mile == ppm_max)
+print(h_scen %>%
+        filter(pounds_per_mile == ppm_max))
+
+for (scen in names(scenarios)){ # scen = names(scenarios)[1]
+  
+  yr = scenarios[[scen]]
+  cat(sprintf('\nScenario %s using year == %d\n', scen, yr))
+  
+  h = t_g %>%
+    filter(year == yr) %>%
+    mutate(score_raw = log(pounds_per_mile + 1) / log(ppm_max),
+           pressure_score = score_raw / (max(score_raw, na.rm=T) * 1.1)); head(h); summary(h)
+  
+  h_fin = h %>%
+    select(rgn_id, pressure_score)
+  
+  csv = file.path(dir_d, 'data', sprintf('po_trash_%s.csv', scen))
+  write.csv(h_fin, csv, row.names=F, na='')
+}
+
+# Scenario 2012a using reference year 2011
+#  max reference: rgn_id pounds_per_mile
+#     196           72,805
+#
+# Scenario 2013a using reference year 2012
+#  max reference: rgn_id pounds_per_mile
+#     106        31,648.89
 
 
 ## georegional gapfilling-- save as separate files
