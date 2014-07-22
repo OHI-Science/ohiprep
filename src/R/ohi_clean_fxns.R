@@ -16,7 +16,7 @@ add_rgn_id = function(uidata, uifilesave,
   print('-->>> add_rgn_id.r expects that the first two columns of the matrix will be country_name, value_units ')
   
   # load libraries
-    library(dplyr)
+  library(dplyr)
   
   # read in lookup files, combine into one dataframe
   rk = read.csv(rgn_master.csv); head(rk) # master file by BB
@@ -90,6 +90,148 @@ add_rgn_id = function(uidata, uifilesave,
   write.csv(uidata_rgn, uifilesave, na = '', row.names=FALSE)
   
 }
+
+sum_na = function(x){
+  # sum with na.rm=T, but if all NAs return NA and not 0
+  if (sum(is.na(x)) == length(x)) return(NA)
+  return(sum(x, na.rm=T))    
+}
+
+name_to_rgn = function(d, fld_name='country', flds_unique=fld_name, fld_value='value', collapse_fxn = sum_na,
+                       dir_lookup = '../ohiprep/src/LookupTables',
+                       rgn_master.csv   = file.path(dir_lookup, 'eez_rgn_2013master.csv'),
+                       rgn_synonyms.csv = file.path(dir_lookup, 'rgn_eez_v2013a_synonyms.csv'),
+                       add_rgn_name=F, add_rgn_type=F) {
+  # DETAIL. Return a data.frame (vs add_rgn_id which writes to a csv) and perform extra checks, including collapsing on duplicates.
+  #  Note: The original fld_name lost because possible to collapse multiple countries into a single region.
+  #
+  # debug: fld_name='country'; flds_unique=c('country','commodity','year'); fld_value='value'; collapse_fxn=function(x) sum(x, na.rm=T); dpath = '../ohiprep/src/LookupTables'; rgn_master.csv   = file.path(dpath, 'eez_rgn_2013master.csv'); rgn_synonyms.csv = file.path(dpath, 'rgn_eez_v2013a_synonyms.csv')
+  
+  #   # ensure dplyr's summarize overrides plyr's summarize by loading in succession
+  #   if ('package:reshape2'  %in% search()) detach('package:reshape2')
+  #   if ('package:plyr'      %in% search()) detach('package:plyr')
+  #   if ('package:dplyr'     %in% search()) detach('package:dplyr')
+  #   library(reshape2)
+  #   library(plyr)
+  #   library(dplyr)
+  
+  # check for valid arguments
+  stopifnot(fld_name %in% names(d))
+  stopifnot(fld_value %in% names(d))
+  stopifnot(all(flds_unique %in% names(d)))  
+  stopifnot( sum( duplicated(d[,flds_unique]) ) == 0 )
+  
+  # get authoritative rgn_id and rgn_name
+  rgns = read.csv(rgn_master.csv, na='', stringsAsFactors=F) %.% 
+    select(rgn_id=rgn_id_2013, rgn_name=rgn_nam_2013, rgn_type=rgn_typ) %.% 
+    arrange(rgn_type, rgn_id, rgn_name) %.% 
+    group_by(rgn_id) %.% 
+    summarize(
+      rgn_name = first(rgn_name),
+      rgn_type = first(rgn_type)) %.%
+    ungroup()
+  
+  #browser()
+  #filter(d, country=='Albania' & year==1990)
+  
+  # combine to have a unique tmp_name to rgn_id lookup
+  r = rbind_list(
+    rgns %.%
+      select(rgn_id, tmp_name = rgn_name, tmp_type = rgn_type),
+    read.csv(rgn_synonyms.csv, na='') %.%
+      select(rgn_id=rgn_id_2013, tmp_name=rgn_nam_2013, tmp_type=rgn_typ)) %.%
+    group_by(tmp_name) %.%
+    summarize(
+      rgn_id = first(rgn_id),
+      tmp_type = first(tmp_type))
+  
+  # remove accents from data
+  d['tmp_name'] = d[fld_name]
+  d = d %.%
+    mutate(
+      tmp_name = str_replace(tmp_name, "^'"           , ''),                      # get rid of beginning quote
+      tmp_name = str_replace(tmp_name, '.+voire'      , 'Ivory Coast'),           # Ivory Coast
+      tmp_name = str_replace(tmp_name, '.+union'      , 'Reunion'),               # Reunion
+      tmp_name = str_replace(tmp_name, '.+publique du', 'Republic of'),           # Congo
+      tmp_name = str_replace(tmp_name, 'Cura.+'       , 'Curacao'),               # Curacao 
+      tmp_name = str_replace(tmp_name, 'Saint Barth.+', 'Saint Barthelemy'),      # Saint Barthelemy 
+      tmp_name = str_replace(tmp_name, '.+Principe'   , 'Sao Tome and Principe')) # Sao Tome and Principe
+  
+  # merge data and regions
+  m = merge(d, r, by='tmp_name') %.%
+    filter(tmp_type %in% c('eez','ohi_region')) # exclude: disputed, fao, landlocked, largescale
+  
+  # check the regions removed
+  m_r = left_join(d, r, by='tmp_name') %.%
+    filter(!tmp_type %in% c('eez','ohi_region')) %.%
+    mutate(tmp_name = factor(as.character(tmp_name)))
+  
+  # if any rgn_type is NA, then presume not matched in lookups and error out
+  if (sum(is.na(m_r$tmp_type)) > 0){
+    cat('\nThese data were removed for not having any match in the lookup tables:\n')  
+    print(table(subset(m_r, is.na(tmp_type), tmp_name)))
+    # stop('FIX region lookups.') # commented out because larger regions (eg Middle East) would cause this to stop with an error. Check printed table instead. 
+  }
+  
+  # show table of others filtered out
+  if (nrow(m_r) > 0){
+    cat('\nThese data were removed for not being of the proper rgn_type (eez,ohi_region) or mismatching region names in the lookup tables:\n')  
+    print(table(select(m_r, tmp_name, tmp_type), useNA='ifany'))
+  }  
+  
+  # stop if any still need to be assigned rgn_id
+  m_na = filter(m, is.na(rgn_id))
+  if (nrow(m_na) > 0){
+    cat('\nThese data have a valid tmp_type but no rgn_id:\n')  
+    print(table(m_na[,c(fld_name, 'tmp_type')], useNA='ifany'))
+    stop('FIX region lookups.')
+  }
+  
+  # collapse duplicates
+  flds_unique_rgn_id = c('rgn_id', setdiff(c(flds_unique), fld_name))
+  i_dup = duplicated(m[,flds_unique_rgn_id], fromLast=F) | duplicated(m[,flds_unique_rgn_id], fromLast=T)  
+  
+  if (sum(i_dup) > 0){
+    
+    cat('\nDUPLICATES found. Resolving by collapsing rgn_id with collapse_fxn after first removing all NAs from duplicates...\n')
+    print(collapse_fxn)
+    m_dup = m[i_dup,]
+    
+    m_dup$tmp_value = m_dup[[fld_value]]                                    
+    m_dup$fld_name  = m_dup[[fld_name]]
+    m_dup =  mutate(m_dup, fld_name = factor(as.character(fld_name)) )
+    print(table(select(m_dup, fld_name, rgn_id)))
+    
+    m_dup = m_dup %.%
+      filter(!is.na(tmp_value)) %.%
+      regroup(as.list(flds_unique_rgn_id)) %.%                      
+      summarize(tmp_value = collapse_fxn(tmp_value)) %.%            
+      rename(setNames(fld_value, 'tmp_value')); head(m_dup)         
+    m_d = rbind_list(
+      m[ !i_dup, c(flds_unique_rgn_id, fld_value) ], 
+      m_dup)            
+    
+  } else {
+    
+    m_d = m
+    
+  }
+  # limit to same subset of fields for consistent behavior regardless of duplicates presents
+  m_d = m_d[, c(flds_unique_rgn_id, fld_value)]
+  
+  # add fields if explicitly requested
+  if (add_rgn_type) m_d = left_join(m_d, rgns %.% select(rgn_id, rgn_type), by='rgn_id')
+  if (add_rgn_name) m_d = left_join(m_d, rgns %.% select(rgn_id, rgn_name), by='rgn_id')
+  
+  # check to ensure no duplicates
+  stopifnot(duplicated(m_d[, c(flds_unique_rgn_id)]) == 0) 
+  
+  # return data.fram    
+  return(as.data.frame(m_d))
+  
+}
+
+
 
 # identify duplicate regions and sum them (currently supports rgn_id = 13, 116, 140, 209) 
 sum_duplicates = function(cleandata, dup_ids, fld.nam = 'value') {
@@ -512,7 +654,7 @@ temporal.gapfill = function(data, fld.id = 'rgn_id', fld.value = 'value', fld.ye
 }
 
 #JS
-add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL, 
+add_gapfill = function(cleandata, dirsave, layersave, s_island_val, 
                        dpath = 'src/LookupTables',   
                        rgn_georegions.csv = file.path(dpath, 'rgn_georegions_wide_2013b.csv'),
                        rgns.csv           = file.path(dpath, 'rgn_details.csv')) {
@@ -547,7 +689,7 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
     group_by(r2, year); head(d_r2a)
   
   d_r2 = d_r2a %.%  # Have to split this chain so can save whence information below...
-    summarize(r2mean = mean(value, na.rm=T)) %.%  # if this gives errors check to make sure this is dplyr::summarize not plyr::summarize
+    dplyr::summarize(r2mean = mean(value, na.rm=T)) %.%  # if this gives errors check to make sure this is dplyr::summarize not plyr::summarize. See detach() above
     mutate(whence_choice = rep('r2')); head(d_r2)
   
   d_r1a = cleandata %.%
@@ -555,7 +697,7 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
     group_by(r1, year); head(d_r1a)
   
   d_r1 = d_r1a %.%
-    summarize(r1mean = mean(value, na.rm=T)) %.%
+    dplyr::summarize(r1mean = mean(value, na.rm=T)) %.%
     mutate(whence_choice = rep('r1')); head(d_r1)
   
   
@@ -573,16 +715,28 @@ add_gapfill = function(cleandata, dirsave, layersave, s_island_val=NULL,
   
   # create rows in rgn_to_gapfill_tmp for each unique year
   ind = c((rgn_to_gapfill_tmp$rgn_id %in% 213) | (!rgn_to_gapfill_tmp$r2 %in% NA)) # removes open ocean and disputed 
-  year_uni = as.data.frame(unique(cleandata$year))
+  year_uni = as.data.frame(unique(cleandata$year)) 
   names(year_uni) = 'year'
-  year_uni$year = as.numeric(year_uni$year)
+  year_uni$year = as.integer(year_uni$year) 
+  year_uni = year_uni %.%
+    arrange(year)
   
-  rgn_to_gapfill = data.frame(rgn_id=rep(rgn_to_gapfill_tmp$rgn_id[ind], dim(year_uni)[1]), 
-                              rgn_nam=rep(rgn_to_gapfill_tmp$rgn_nam[ind], dim(year_uni)[1]), 
-                              r2=rep(rgn_to_gapfill_tmp$r2[ind], dim(year_uni)[1]),
-                              r1=rep(rgn_to_gapfill_tmp$r1[ind], dim(year_uni)[1]),
-                              year=unique(cleandata$year))
-  rgn_to_gapfill = arrange(rgn_to_gapfill, rgn_id, year); head(rgn_to_gapfill)
+  # must create this in two steps otherwise, otherwise years do not align with regions and duplicates are introduced
+  rgn_to_gapfill_tmp2 = data.frame(rgn_id  = rep(rgn_to_gapfill_tmp$rgn_id[ind], dim(year_uni)[1]), 
+                                   rgn_nam = rep(rgn_to_gapfill_tmp$rgn_nam[ind], dim(year_uni)[1]), 
+                                   r2      = rep(rgn_to_gapfill_tmp$r2[ind], dim(year_uni)[1]),
+                                   r1      = rep(rgn_to_gapfill_tmp$r1[ind], dim(year_uni)[1])) %.%
+    arrange(rgn_id);
+  rgn_to_gapfill = data.frame(rgn_to_gapfill_tmp2,  
+                              year_uni)  
+  ####
+  
+  #   rgn_to_gapfill = data.frame(rgn_id  = rep(rgn_to_gapfill_tmp$rgn_id[ind], dim(year_uni)[1]), 
+  #                               rgn_nam = rep(rgn_to_gapfill_tmp$rgn_nam[ind], dim(year_uni)[1]), 
+  #                               r2      = rep(rgn_to_gapfill_tmp$r2[ind], dim(year_uni)[1]),
+  #                               r1      = rep(rgn_to_gapfill_tmp$r1[ind], dim(year_uni)[1]),
+  #                               year    = year_uni)
+  #   rgn_to_gapfill = arrange(rgn_to_gapfill, rgn_id, year); head(rgn_to_gapfill)
   
   
   ## gapfill data
