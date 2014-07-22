@@ -1,0 +1,387 @@
+---
+title: "GL-FAO-Commodities_v2011"
+author: "Ben Best"
+date: "June 24, 2014"
+output: 
+  md_document:
+    toc: true
+    variant: markdown_github
+---
+
+GL-FAO-Commodities_v2011
+====
+
+The value (constant 2000 US dollars) and harvest (meric tonnes) data for natural products was extracted from the **FAO Fishery Commodities and Trade dataset** (http://www.fao.org/fishery/statistics/global-commodities-production/en), as applicable to the Natural Products goal. (See neptune_data:model/GL-NCEAS-NaturalProducts_v2013a/README.md for further handling.)
+
+The following commodities were collapsed into these categories.
+```{r, results='asis', echo=FALSE}
+library(knitr)
+kable(read.csv('commodities2products.csv'))
+```
+
+Files produced
+==============
+FILES: 
+
+```{r}
+list.files('data')
+```
+
+PATH: 
+
+Description
+===========
+
+ACCESS:
+
+* Data accessed using FishstatJ 2.1.0 (FAO's software) in June, 2014
+
+DATA: 
+
+* Global commodities production and trade - quantity (1976-2011). Metadata below.
+  + \>\>\>NOTE: check that .csv files saved from FishstatJ are complete--there are hiccups and select all > save as .csv does not always capture all the data. On OSX 10.9, can save the .csv files but must restart FishStatJ in order to do so (can only save one file per session apparently)
+
+FILTERS:
+
+* Country: all countries
+* Commodities: ISSCAAP:Sponges, FAO Major Group:Fish Oil, FAO Major Group:Seaweed and Plants, Individual:Ornamental Fish, FAO Major Group:Corals, FAO Major Group:Shells (see subcategories below)
+* Trade filter: Exports
+
+Subcategories (see Halpern et al 2012 Table S19): 
+
+* \>\>Note: these subcategories are reported separately, so that each country may have multiple entries
+* SPONGES:
+	+ Natural Sponges nei
+	+ Natural Sponges other than raw
+	+ Natural Sponges raw
+	 
+* FISH OIL:
+	+ Alaska pollock oil nei
+	+ Anchoveta oil
+	+ Capelin oil
+	+ Clupeoid oils nei
+	+ Cod liver oil
+  + Demersal fish oils, nei -- added for 2014a 
+	+ Fish body oils nei
+	+ Fish liver oils nei
+  + Gadoid liver oils nei
+	+ Hake liver oil
+	+ Halibuts liver oils
+	+ Herring oil
+	+ Jack mackerel oil
+	+ Menhaden oil
+	+ Pilchard oil
+	+ Redfish oil
+	+ Sardine oil
+	+ Shark liver oil
+	+ Shark oil
+	+ Squid oil
+  
+	
+* SEAWEED AND PLANTS:
+	+ Agar agar in powder
+	+ Agar agar in strips
+	+ Agar agar nei
+	+ Carrageen (Chondrus crispus)
+	+ Green laver
+	+ Hizikia fusiforme (brown algae)
+	+ Kelp
+	+ Kelp meal
+	+ Laver, dry
+	+ Laver, nei
+	+ Other brown algae (laminaria, eisenia/ecklonia)
+	+ Other edible seaweeds
+	+ Other inedible seaweeds
+	+ Other red algae
+	+ Other seaweeds and aquatic plants and products thereof
+	+ Undaria pinnafitida (brown algae)
+	+ SPECIAL NOTE: a few subcategories used in 2012 (FAO 2007 data) are not available for the 2013 update (FAO 2009 data) or 2014 (FAO 2011 data): 
+	+ Agar agar in blocks
+	+ Laver, smoked
+	+ Rock laver
+	 	
+* ORNAMENTAL FISH:
+	+ Ornamental saltwater fish
+	+ Ornamental fish nei
+	 
+* CORALS:
+	+ Coral and the like
+	+ Miscellaneous corals and shells 
+	 
+* SHELLS:
+	+ Abalone shells
+	+ Miscellaneous corals and shells [excluded since reported above in corals]
+	+ Mother of pearl shells
+	+ Oyster shells
+	+ Sea snail shells
+	+ Shells nei
+	+ Trochus shells
+
+
+R scripts involved
+==================
+SCRIPT:
+
+* clean_FAOcommodities.r
+* (clean_FAOcommoditiesOLD.r for record purposes only)
+
+DETAILS: cleaning
+
+* Each Commodity was accessed and saved as a separate .csv file in the folder GL-FAO-Commodities_v2009. 
+Data cleaned using clean.r:
+* translated FAO's coding system (see SYMBOLS USED below)
+* saved all Commodities as one .csv file called GL-FAO-Commodities
+* 'miscellaneous corals and shells' are reported as both corals and shells--remove from Corals
+* rgn_id codes added by calling add_rgn_id.r
+* Countries that fall out because no rgn_id codes:
+	+ Yugoslavia (only fish oil for a few years in the 1980's)
+
+All commodities were summed across subcategories within each country (eg all reports for shell types within a country were summed). 
+
+
+
+
+Gapfilling 
+==========
+CATEGORY: TP
+
+EXCEPTIONS: NA
+
+DETAILS:
+
+Checking and gap-filling, Aug. 2013.
+========================
+
+went through the regions KL had do by hand for MAR/FIS: called FAO_MAR_country_rematch_rules.docx
+
+OK: Aug 2013. GL-FAO-AllCombined_v2009-rgn.csv was combined in clean_FAOcommodities.r and saved as GL-FAO-AllCombined_v2009-rgn-processed.csv. These are sorted by rgn_id_2013 so that I can look through and see if there are problems by country, and then commodity. In format long, from 1997-2009. That means:
+
+* Channel Islands: no reporting in FAO commodities
+* Guadeloupe and Martinique: 
+	+ Ornamental fish:  were reported separately for Ornamental fish nei. I combined them into one row. 
+	+ Martinique sponges was all NAs (blanks in this file) since 1997. Row deleted.
+	+ Serbia and Montenegro/Montenegro: no problems, will just get aggregated.
+	+ Netherland Antilles: Just copy and paste for the 6 ohi regions: Sint Maarten, Curacao, Bonaire, Saba, Sint Eustasius, Aruba. And put their rgn_id_2013 by hand. Delete Netherlands Antilles. 	
+
+* Also removed rows that were all NA (blanks):
+	+ USA Ornamental fish nei
+	+ Nigeria Ornamental fish nei
+	+ Congo, Dem Rep of the Ornamental fish nei
+	+ Myanmar Ornamental fish nei
+	+ Singapore Ornamental fish nei
+	
+
+
+2014 Resolutions
+================
+add to toolbox in order to reproduce
+
+
+Methods
+=======
+
+5.52. Natural Products harvest
+Update: additional year(s) available.
+Description: Updated data were available through 2009 for all Natural Products categories (sponges, fish oil, seaweed and plants, ornamental fish, corals, shells), which were accessed from FAO using FishstatJ 2.0.0 (www.fao.org/fishery/statistics/software/fishstatj/en). Only export data were used, with commodity types and their subcategories accessed the same way as in the 2012 assessment, although some subcategories are no longer reported (Agar agar in blocks, Laver smoked, Rock laver). See Table S5. 
+
+
+Metadata
+========
+
+METADATA:
+NOTES for GLOBAL FISHERIES COMMODITIES PRODUCTION and TRADE DATASET
+
+Some commodities (major groups: "Sponges, corals, etc."; "Aquatic plants"; "Inedible") included in this dataset, are excluded from the summary tables contained in the "FAO Yearbook of Fishery Statistics - Commodities". To obtain totals compatible with the yearbook, please execute the following steps:
+
+1. Open the Filter Dialog Box (Data->Filter or F4).
+2. Click the <Commodities> tab.
+3. Click the Groups combo box and select <Custom Group>.
+4. Click <Fish, crustaceans, molluscs, etc>.
+5. Click the single left arrow in order to move under the "Include" left panel all selected species belonging to <Fish, crustaceans, molluscs, etc>.
+6. Click <OK>. The program will return you to the Main Window.
+
+In the section 'Commodities' of the FAO yearbook of fishery and aquaculture statistics, exports and re-exports are grouped and reported as "export". To arrive to the same values as in the yearbook, you have to add exports to re-exports.
+
+SYMBOLS USED
+ 
+...	Data not available; unobtainable; data not separately available but included in another category 
+-	Nil or zero 
+0 0	More than zero but less than half the unit used 
+nei	Not elsewhere included
+F	FAO estimate from available sources of information 
+
+
+GENERAL NOTES:
+
+NOTES ON ANNUAL PERIODS
+
+The annual period used is the calendar year (1 January - 31 December) except for the following countries which report data on a split-year basis as indicated:
+
+AUSTRALIA 	Year ending 30 June (only imports - up to 1999)	
+BANGLADESH	Year ending 30 June	
+GAMBIA		Year ending 30 June	
+INDIA		Year beginning April	
+IRAN I R	Year beginning 20-23 March	
+MYANMAR 	Year beginning April (only exports)	
+NEPAL		Year ending 30 June	
+NEW ZEALAND	Year ending 30 June	
+PAKISTAN	Year ending 30 June	
+SAUDI ARABIA	Islamic lunar (Hegira) Year	
+SWAZILAND 	Year beginning April
+
+Where data for split-years are tabulated together with data on a calendar year basis, those for split-years are shown under the calendar years in which the split-years end.
+
+Data on the quantities of fishery commodities produced and on imports and exports, are expressed in tonnes and refer to the net weight of the commodities. The values in international trade tabulations are expressed in thousands of US dollars.
+
+FAO’s International Standard Statistical Classification of Fishery Commodities (ISSCFC), has been used for collation of national details. ISSCFC is an expansion of the United Nations Standard International Trade Classification, Revision 3 (SITC Rev.3) and is linked with the Harmonized System of the World Customs Organization. The commodity categories cover products derived from fish, crustaceans, molluscs and other aquatic animals and residues caught for commercial, industrial or subsistence uses, by all types of classes of fishing units operating in inland, fresh and brackish waters, in inshore, offshore or high seas fishing areas. Commodities produced from the raw materials supplied by all kinds of aquaculture are also included.
+
+
+
+SYSTEMS OF TRADE
+
+Two systems of recording trade are in common use, differing mainly in the way warehoused and re-exported goods are recorded: special trade and general trade.
+
+a)Special trade is a system of recording imports for domestic consumption on the one hand and exports of domestic goods on the other.
+
+Special imports include goods for domestic consumption and withdrawals from bonded warehouses or free zones for purposes of domestic consumption.
+
+Special exports comprise exports of goods wholly or partially produced or manufactured in the country, together with exports of «nationalized goods», but not of goods held in bonded warehouses or free zones.
+
+
+b)General trade is a system which records total imports and total exports including re-exports. General imports consist of all imports into a country, including goods for domestic consumption and imports into bonded warehouses or free zones.
+
+General exports consist of the combined total of national exports and re-exports. Re-exports, in the general trade system, consist of the outward movement of nationalized goods plus goods which, after importation, move outward from bonded warehouses or free zones without having been transformed.
+
+Export and import data in this dataset relate to general trade for all countries except those named below, which report on the basis of special trade:
+
+ALGERIA		ANGOLA
+ARGENTINA	ARUBA
+AUSTRIA		BELGIUM
+BENIN		BOLIVIA
+BOTSWANA	BRAZIL
+BRUNEI 	DARSM	BURKINA FASO
+BURUNDI		CAMBODIA
+CAMEROON	CAPE VERDE
+CAYMAN ISL	CENT AF REP
+CHAD		CHILE
+COLOMBIA	CONGO REP
+COSTA RICA	CUBA
+DENMARK		DJIBOUTI
+EGYPT		EL SALVADOR
+FINLAND		FRANCE
+FR GUIANA	FR POLYNESIA
+GABON		GERMANY
+GREECE		GUADELOUPE
+GUATEMALA	GUINEA BISSAU
+GUYANA		HONDURAS
+ICELAND		INDONESIA
+IRAN I R	IRAQ
+IRELAND		ISRAEL
+ITALY		KOREA REP
+KUWAIT		LAOS
+LEBANON		LIBERIA
+LUXEMBOURG	MADAGASCAR
+MALI		MARTINIQUE
+MAURITANIA	MOROCCO
+MOZAMBIQUE	NETHERLANDS
+NETH ANTILLES	NEW CALEDONIA
+NIGER		PANAMA
+PARAGUAY	PERU
+PORTUGAL	REUNION
+ROMANIA		RWANDA
+SAINT LUCIA	ST PIER MIQU
+ST VINCENT	SAO TOME PRN
+SAUDI ARABIA	SENEGAL
+SOLOMON IS	SOMALIA
+SPAIN		SURINAME
+SWEDEN		SWITZERLAND
+SYRIA		TOGO
+TRINIDAD TOB	TURKEY
+UK		URUGUAY 
+
+
+Differences between figures given for total exports and total imports of any one commodity may be due to several factors, e.g. the time lapse between the dispatch of goods from the exporting country and their arrival in the importing country; the use of a different classification of the same product by different countries; or the fact that some countries supply trade data on general trade, while others give data on special trade.
+
+
+
+STATISTICAL TREATMENT OF FISH LANDINGS IN THE INTERNATIONAL TRADE
+
+In accordance with the internationally recommended practice, import statistics include fish caught by foreign fishing craft, whether or not processed on board, landed in domestic ports; export statistics include fish caught by domestic fishing craft, whether or not processed on board, landed in foreign ports.
+
+
+
+VALUATION
+
+In general exports values are f.o.b. and import values are c.i.f.
+
+For the following countries or areas import and export values are both f.o.b.:
+
+AUSTRALIA
+BERMUDA
+CANADA
+FYRMACEDONIA
+PAPUA N GUIN
+PARAGUAY
+POLAND
+SLOVAKIA
+SOLOMON IS
+SOUTH AFRICA
+VENEZUELA
+
+
+COVERAGE OF STATISTICS ON PRODUCTION OF PRESERVED AND PROCESSED FISHERY COMMODITIES
+
+The data cover the quantities of preserved and processed fishery commodities produced from:
+
+a)nominal catches of all aquatic animals (except the catches of all aquatic mammals and the production of all aquatic plants) taken for commercial, industrial and subsistence purposes, by all types of fishing units operating in freshwater and marine areas;
+
+b)aquaculture production;
+
+c)imported raw materials.
+
+The statistics include the output of processed commodities, produced on board factoryships and by fishermen's families as domestic activities, e.g. drying, salting, smoking, etc.
+
+The statistics include also the preserved and processed fishery commodities produced on board domestic fish factoryships and fishing craft from the reporting country or area, even when landed directly in foreign ports. However, data do not include fishery commodities produced on board of foreign fish factoryships or fishing craft and landed directly in domestic ports.
+
+Production data for ‘Fish, live, fresh or chilled’, ‘Live crustaceans’, ‘Live molluscs’, ‘Fresh unpeeled crustaceans’ and ‘Fresh unshucked molluscs’ are not included in the relevant tables, as these items cannot be considered to be either preserved or processed products.
+
+
+
+NOTES ON COUNTRIES OR AREAS
+
+The term country or area used covers territories, cities, land areas, as well as provinces, districts, enclaves, exclaves and other parts of territories or combinations of countries or areas such as economic or customs unions.
+
+Country or area names and designations are subject to nationally announced changes. Name changes announced after 31 December 2010 have not necessarily been incorporated in this dataset but will be reflected in future releases.
+
+Final data have been provided by many national offices; others submitted provisional figures only. Whenever national offices failed to report their annual statistics in time for publication, FAO, in the absence of other information, has generally used as production estimates the national figures available for the most recent years; and as trade estimates the returns of trading partners.
+
+Where national figures in this dataset differ from those previously released by FAO, the most recently published data represent the latest revisions.
+
+
+COPYRIGHT CLAUSE
+
+All rights reserved. FAO encourages the reproduction and dissemination of material in this information product. Non-commercial uses will be authorized free of charge, upon request. Reproduction for resale or other commercial purposes, including educational purposes, may incur fees. Applications for permission to reproduce or disseminate FAO copyright materials, and all queries concerning rights and licences, should be addressed by e-mail to copyright@fao.org or to the: 
+
+Chief, Publishing Policy and Support Branch 
+Office of Knowledge Exchange, Research and Extension 
+FAO 
+Viale delle Terme di Caracalla 
+00153 Rome, Italy 
+
+© FAO 2012
+
+The Food and Agriculture Organization of the United Nations encourages the dissemination of material contained in this information product, provided that reference is made to the source. 
+
+CITATION
+
+When quoting FISHSTAT data, please use the following reference:
+
+FAO. ©2012. Fishery and Aquaculture Statistics. Global Fisheries commodities production and trade 1976-2009 (FishstatJ).
+In: FAO Fisheries and Aquaculture Department [online or CD-ROM]. Rome. Updated  2012. http://www.fao.org/fishery/statistics/software/fishstatj/en
+
+
+DISCLAIMER NOTICE
+
+The designations employed and the presentation of material in this information product do not imply the expression of any opinion whatsoever on the part of the Food and Agriculture Organization of the United Nations (FAO) concerning the legal or development status of any country, territory, city or area or of its authorities, or concerning the delimitation of its frontiers or boundaries. The mention of specific companies or products of manufacturers, whether or not these have been patented, does not imply that these have been endorsed or recommended by FAO in preference to others of a similar nature that are not mentioned. The views expressed in this information product are those of the author(s) and do not necessarily reflect the views of FAO.
+FAO declines all responsibility for errors or deficiencies in the database or software or in the documentation accompanying it, for program maintenance and upgrading as well as for any damage that may arise from them. FAO also declines any responsibility for updating the data and assumes no responsibility for errors and omissions in the data provided. Users are, however, kindly asked to report any errors or deficiencies in this product to FAO.
+The word "countries" appearing in the text refers to countries, territories and areas without distinction. 
