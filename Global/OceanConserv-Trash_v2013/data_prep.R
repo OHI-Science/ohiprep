@@ -275,71 +275,13 @@ for (scen in names(scenarios)){ # scen = names(scenarios)[1]
   
   h_fin = h %>%
     select(rgn_id, pressure_score)
+  stopifnot(anyDuplicated(h_fin[,c('rgn_id')]) == 0)
   
   csv = file.path(dir_d, 'data', sprintf('po_trash_%s.csv', scen))
   write.csv(h_fin, csv, row.names=F, na='')
 }
 
-# Scenario 2012a using reference year 2011
-#  max reference: rgn_id pounds_per_mile
-#     196           72,805
-#
-# Scenario 2013a using reference year 2012
-#  max reference: rgn_id pounds_per_mile
-#     106        31,648.89
+## --- fin ---
 
 
-## georegional gapfilling-- save as separate files
 
-
-# 
-# 
-# cleaned_data1 = read.csv(uifilesave)
-# 
-# year_uni = unique(cleaned_data1$year)
-# layernames = sprintf('rgn_oc_trash_%sa.csv', year_uni+1) # because 2013a uses 2012 data, 2012a data uses 2011 data. 
-# 
-# for(i in 1:length(year_uni)) { # i=1
-#   cleaned_layer = cleaned_data1[cleaned_data1$year == year_uni[i],]
-#   cleaned_layer$year = NULL
-#   cleaned_layer$rgn_nam = NULL
-#   
-#   layersave = file.path(dir1, 'data', layernames[i]) 
-#   
-#   add_gapfill_singleyear(cleaned_layer, layersave, s_island_val=0)
-# }
-# 
-# ##
-# ##
-# ## whence tracking; May/June 2014 ---- 
-# dir_neptune_data = c('Windows' = '//neptune/data_edit',
-#                      'Darwin'  = '/Volumes/data_edit',
-#                      'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
-# dir_root = file.path('/Users', Sys.info()[['user']]) # or dri_root = path.expand("~/")
-# source(file.path(dir_root, 'github/ohiprep/src/R/ohi_clean_fxns.R'))
-# library(dplyr)
-# 
-# 
-# d = read.csv(uifilesave); head(d)
-# 
-# year_uni = unique(d$year)
-# layernames = sprintf('rgn_oc_trash_%sa_whence', year_uni+1) # because 2013a uses 2012 data, 2012a data uses 2011 data. 
-# dirsave = file.path(dir1, 'data') 
-# 
-# for(i in 1:length(year_uni)) { # i=1
-#   cleaned_layer = d[d$year == year_uni[i],] 
-#   cleaned_layer$rgn_nam = NULL # keep year column so that add_gapfill will work; remove afterwards. 
-#   
-#   layersave = layernames[i]
-# 
-#   add_gapfill(cleaned_layer, dirsave, layersave, s_island_val=0, dpath = file.path(dir_root, 'github/ohiprep/src/LookupTables'))
-# 
-#   f = read.csv(file.path(dirsave, paste(layersave, '.csv', sep=''))) 
-#   f = f %.%
-#     select(-year) #remove year column as a fix for now
-#   write.csv(f, file.path(dirsave, paste(layersave, '.csv', sep=''))) 
-# }
-# 
-# 
-# 
-# 
