@@ -180,20 +180,24 @@ t = rbind(tt %>%
             select(country, year, pounds, miles))%>%
   arrange(country, year)
 
+## calculate trash density: pounds/miles ----
+
+t = t %>%
+  mutate(pounds_per_mile = pounds/miles) %>%
+  select(country, year, pounds, miles, pounds_per_mile)
+  
 # checking for miles that are super tiny
-# prob = t %>% 
-#   filter(miles <= 1)
+# t %>% filter(miles <= 1)
 # #          year == 2013) %>%
-#   mutate(pounds_per_mile = pounds/miles)
 # t %>% filter(country == 'Australia') # could fix this with an average of miles from other years
 # t %>% filter(country == 'Ghana')     # that fix would help here too
 # t %>% filter(country == 'Curacao')   # not here
 
-## calculate trash density: pounds/miles ----
-t$miles[t$miles == 0] = NA
+# narrow selection
 t = t %>%
-  mutate(pounds_per_mile = pounds/miles) %>%
+  filter(miles != 0) %>%
   select(country, year, pounds_per_mile); head(t); summary(t)
+
 
 # anyDuplicated(t[,c('country','year')])
 
