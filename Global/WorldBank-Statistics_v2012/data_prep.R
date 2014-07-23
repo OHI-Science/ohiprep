@@ -173,47 +173,45 @@ for (lyr in names(layers)){ # lyr='tlf'
     arrange(rgn_id, year) %>%
     rename(
       setNames(units, 'value'))
-  
+  stopifnot(anyDuplicated(sp_pressure[,c('rgn_id', 'year')]) == 0)
   # write to csv
   write.csv(d_g, csv_dat, na='', row.names=F)
 }
 
 # TODO: check that tlf < popn
 
-# --- fin
-
-# # compare gapfill_georegions.r by BB to add_gapfill.r by JSL
-# 
-# # unemployment
-# gg = read.csv('Global/WorldBank-Statistics_v2012/data/rgn_wb_uem_2014a.csv'); head(gg)
-# ag = read.csv('Global/WorldBank-Statistics_v2012/tmp/rgn_wb_uem_2014awith_add_gapfill.csv'); head(ag)
-# 
-# vs = gg %.%
-#   select(rgn_id, 
-#          year,
-#          value_gg = value) %.%
-#   left_join(ag %.%
-#               select(rgn_id, 
-#                      year, 
-#                      value_ag = perc), 
-#             by = c('rgn_id', 'year')) %.%
-#   mutate(
-#     val_dif    = value_gg - value_ag,
-#     val_notna  = is.na(value_gg)!=is.na(value_ag)) %.%   
-#   filter(abs(val_dif) > 0.01 | val_notna == T) 
-#   
-# van = vs %.%
-#   filter(rgn_id == 6)
-# #               arrange(goal, desc(dimension), desc(score_notna), desc(abs(score_dif))) %.%
-# #         select(goal, dimension, region_id, region_label, score_old, score, score_dif)
-#               
+## final rescaling ----
 
 
-# other trouble shooting-- this actually doesn't work because ohicore requires these packages. So this is not the problem. 
-#     # ensure dplyr's summarize overrides plyr's summarize by loading in succession
-#     if ('package:reshape2'  %in% search()) detach('package:reshape2')
-#     if ('package:plyr'      %in% search()) detach('package:plyr')
-#     if ('package:dplyr'     %in% search()) detach('package:dplyr')
-#     library(reshape2)
-#     library(plyr)
-#     library(dplyr)
+## rescale PPPpcGDP by the max of each year
+
+ppp = read.csv(file.path(dir_d, 'data', 'rgn_wb_gdppcppp_2014a_ratio-gapfilled.csv')); head(ppp)
+
+p = ppp %>%
+  left_join(ppp %>%
+              group_by(year) %>%
+              summarize(max_intl_dollar = max(intl_dollar, na.rm=T)),
+            by='year') %>% 
+  mutate(scaled = intl_dollar/max_intl_dollar,
+         value = 1-scaled); head(p); summary(p)
+
+## save
+scenarios = list('2012a'=2011,
+                 '2013a'=2012,
+                 '2014a'=2013)
+
+for (scen in names(scenarios)){ # scen = names(scenarios)[1]
+  
+  yr = scenarios[[scen]]
+  cat(sprintf('\nScenario %s using year == %d\n', scen, yr))
+  
+  p_yr = p %>%
+    filter(year <= yr) %>% # remove any years greater than the scenario
+    select(rgn_id, year, value)
+  
+  csv = sprintf('rgn_wb_gdppcppp_rescaled_%s.csv', scen)
+  write.csv(p_yr, file.path(dir_d, 'data', csv), row.names=F)
+  
+}
+
+# --- fin ---
