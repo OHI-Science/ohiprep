@@ -56,37 +56,38 @@ for (s in wgisheets){ # s=2
   # Redo capitalization: capitalize just the first letter: function from R help page for sapply
   capwords <- function(s, strict = FALSE) {
     cap <- function(s) paste(toupper(substring(s, 1, 1)), 
-                             {s <- substring(s, 2); if(strict) tolower(s) else s},
-                             sep = "", collapse = " " )
-    sapply(strsplit(s, split = " "), cap, USE.NAMES = !is.null(names(s)))
+{s <- substring(s, 2); if(strict) tolower(s) else s},
+sep = "", collapse = " " )
+sapply(strsplit(s, split = " "), cap, USE.NAMES = !is.null(names(s)))
   }
 
-  d.m$country = tolower(d.m$country)
-  d.m$country = sapply(d.m$country, function(x) capwords(x))
-  d.m$country = as.character(lapply(as.character(d.m$country), function(x) capwords(x)))
-  
-  d.m$country = gsub('And ', 'and ', d.m$country, fixed=TRUE) # and a few to do by hand
-  d.m$country = gsub('Sar', 'SAR', d.m$country, fixed=TRUE)
-  d.m$country = gsub('Fyr', 'FYR', d.m$country, fixed=TRUE)
-  d.m$country = gsub('Rb', 'RB', d.m$country, fixed=TRUE)
-  d.m$country = gsub('Pdr', 'PDR', d.m$country, fixed=TRUE)
-  d.m$country = gsub('u.s.', 'U.S.', d.m$country, fixed=TRUE)
-  
-  # cast
-  d.c = dcast(d.m, country + WGI + year ~ metric) 
-  # or by year: dcast(d.m, country + WGI + metric ~ year)
-  names(d.c) = c("country","WGI","year","Estimate","Lower","NumSrc","P","StdErr","Upper")
-  
-  
-  # concatenate f files
-  d.all = rbind(d.all, d.c)
-  
+d.m$country = tolower(d.m$country)
+d.m$country = sapply(d.m$country, function(x) capwords(x))
+d.m$country = as.character(lapply(as.character(d.m$country), function(x) capwords(x)))
+
+d.m$country = gsub('And ', 'and ', d.m$country, fixed=TRUE) # and a few to do by hand
+d.m$country = gsub('Sar', 'SAR', d.m$country, fixed=TRUE)
+d.m$country = gsub('Fyr', 'FYR', d.m$country, fixed=TRUE)
+d.m$country = gsub('Rb', 'RB', d.m$country, fixed=TRUE)
+d.m$country = gsub('Pdr', 'PDR', d.m$country, fixed=TRUE)
+d.m$country = gsub('u.s.', 'U.S.', d.m$country, fixed=TRUE)
+
+# cast
+d.c = dcast(d.m, country + WGI + year ~ metric) 
+# or by year: dcast(d.m, country + WGI + metric ~ year)
+names(d.c) = c("country","WGI","year","Estimate","Lower","NumSrc","P","StdErr","Upper")
+
+
+# concatenate f files
+d.all = rbind(d.all, d.c)
+
 }
 
-# save tmp file so can just load this instead of running the whole thing
-tmpsave = 'rgn_wb_wgi_2014a_tmp.csv'
-# write.csv(d.all, file.path(dir_d, 'tmp', tmpsave), na = '', row.names=F)
-d.all = read.csv(file.path(dir_d, 'tmp', tmpsave)); head(d.all)
+## save tmp file ----
+#so can just load this instead of running the whole thing
+tmpsave = file.path(dir_d, 'tmp', 'rgn_wb_wgi_2014a_tmp.csv')
+# write.csv(d.all, tmpsave, na = '', row.names=F)
+d.all = read.csv(tmpsave); head(d.all)
 
 # prepare to add rgn_ids: d.all2 would be final, but must combine the 6 separate indicators 
 d.all2 = d.all %.%
@@ -112,11 +113,10 @@ d.m3 = rbind(d.m2[!ind,],
                         score=rep(d.m2$score[ind], 5),
                         year=rep(d.m2$year[ind], 5)))
 
-
 ##  add rgn_id  ----
 m_d = name_to_rgn(d.m3, fld_name='country', flds_unique=c('country','year'), 
                   fld_value='score', add_rgn_name=T, collapse_fxn = mean); head(m_d); summary(m_d) 
-                  # m_d[duplicated(m_d[, c('rgn_id', 'year')]),] 
+# m_d[duplicated(m_d[, c('rgn_id', 'year')]),] 
 
 
 ## sovereign gapfilling with gapfill_georegions.r ----
@@ -137,10 +137,9 @@ sovregions = read.csv('../ohiprep/src/LookupTables/eez_rgn_2013master.csv', na.s
 m_d = m_d %.% 
   left_join(sovregions %.%
               select(rgn_id, fld_wt),
-            by = 'rgn_id'); head(fld_wt)
+            by = 'rgn_id'); head(m_d)
 
 # gapfill_georegions
-layersave = file.path(dir_d, 'data', 'rgn_wb_wgi_2014a.csv')
 attrsave  = file.path(dir_d, 'data', 'rgn_wb_wgi_2014a_attr.csv')
 
 # library(devtools); load_all('../ohicore')
@@ -159,20 +158,43 @@ d_g_a = gapfill_georegions(
 # investigate attribute tables
 head(attr(d_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('open %s', attrsave))
 
-# save gapfilled layer
+## save for scenarios separately----
 d_g = d_g_a %.%
   select(rgn_id, year, score) %.%
   arrange(rgn_id, year); head(d_g) # d_g[duplicated(d_g[, c('rgn_id', 'year')]),] 
 
-write.csv(d_g, layersave, na = '', row.names=FALSE)
+# for each scenario separately
+scenarios = list('2012a'=2010,
+                 '2013a'=2011,
+                 '2014a'=2012)
 
-# calculate inverse file and save ----
-d_g_inverse = d_g %.%
-  mutate(score_inverse = (1-score)) %.%
-  select(rgn_id, year,
-         score = score_inverse); head(d_g_inverse)
+for (scen in names(scenarios)){ # scen = names(scenarios)[1]
+  
+  yr = scenarios[[scen]]
+  cat(sprintf('\nScenario %s using year == %d\n', scen, yr))
+  
+  ## save gapfilled layer
+  d_g_yr = d_g %>%
+    filter(year == yr) %>% # only keep scenario year
+    select(rgn_id, score); summary(d_g_yr)
+  
+  layersave = file.path(dir_d, 'data', sprintf('rgn_wb_wgi_%s.csv', scen))
+  write.csv(d_g_yr, layersave, na = '', row.names=FALSE)
+  
+  
+  # calculate inverse file and save ----
+  d_g_inverse = d_g_yr %.%
+    mutate(score_inverse = (1-score)) %.%
+    select(rgn_id,
+           score = score_inverse); summary(d_g_inverse)
+  
+  layersave2 = file.path(paste(file_path_sans_ext(layersave), '_inverse.csv', sep=''))
+  write.csv(d_g_inverse, layersave2, na = '', row.names=FALSE)
+  
+}
 
-write.csv(d_g_inverse, file.path(paste(file_path_sans_ext(layersave), '_inverse.csv', sep='')), na = '', row.names=FALSE)
+
+
 
 
 ## --- fin
