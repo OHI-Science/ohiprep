@@ -180,10 +180,10 @@ for (lyr in names(layers)){ # lyr='tlf'
 
 # TODO: check that tlf < popn
 
-## final rescaling ----
+## final GDPpcPPP rescaling ----
 
 
-## rescale PPPpcGDP by the max of each year
+## rescale GDPpcPPP by the max of each year
 
 ppp = read.csv(file.path(dir_d, 'data', 'rgn_wb_gdppcppp_2014a_ratio-gapfilled.csv')); head(ppp)
 
