@@ -180,7 +180,7 @@ for (lyr in names(layers)){ # lyr='tlf'
 
 # TODO: check that tlf < popn
 
-## final GDPpcPPP rescaling ----
+## final GDPpcPPP rescaling; save for each scenario ----
 
 
 ## rescale GDPpcPPP by the max of each year
@@ -213,5 +213,69 @@ for (scen in names(scenarios)){ # scen = names(scenarios)[1]
   write.csv(p_yr, file.path(dir_d, 'data', csv), row.names=F)
   
 }
+
+
+## translate total labor force to cntry_key; save for each scenario ----
+# this makes obsolete the troublesome (because of NAs and unknown origin) file on Neptune: model/GL-NCEAS-LayersDisaggregated_v2013a/data/le_workforcesize_adj.csv 
+
+fname = 'rgn_wb_tlf_2014a_ratio-gapfilled.csv'
+f = read.csv(file.path(dir_d, 'data', fname)); head(f)
+
+lf = f %>%
+  select(rgn_id, year, count) %>%
+  left_join(read.csv(file.path(dir_neptune_data, 'model/GL-NCEAS-CoastalPopulation_v2013/data', 
+                               'cntry_popsum2013_inland25mi_complete.csv')),
+            by = 'rgn_id') %>%
+  left_join(lf %>%
+              group_by(rgn_id, year) %>%
+              summarize(rgn_popsum = sum(cntry_popsum2013_inland25mi)), 
+            by = c('rgn_id', 'year')) %>%
+  mutate(pop_ratio = cntry_popsum2013_inland25mi/rgn_popsum,
+         jobs = count * pop_ratio) %>%
+  select(cntry_key, year, jobs) %>%
+  arrange(cntry_key, year); head(lf); summary(lf)
+
+# show which rgn_ids and cntry_keys are split with pop_ratio
+# lf %>% filter(pop_ratio != 1)
+# 13  GUM
+# 13  MNP
+# 116 PRI
+# 116 VIR
+# 137 ECU
+# 137 Galapagos Islands
+# 140 MTQ
+# 140 GLP
+# 163 Hawaii
+# 163 USA
+# 163 Alaska
+# 171 Trindade
+# 171 BRA
+# 224 Easter Island
+# 224 CHL
+
+# lf %>% filter(rgn_id == 163, year == 2012)
+# lf %>% filter(rgn_id == 171, year == 2012)
+
+
+# save for each scenario 
+
+scenarios = list('2012a'= max(lf$year)-2,
+                 '2013a'= max(lf$year)-1,
+                 '2014a'= max(lf$year))
+
+for (scen in names(scenarios)){ # scen = names(scenarios)[1]
+  
+  yr = scenarios[[scen]]
+  cat(sprintf('\nScenario %s using year == %d\n', scen, yr))
+  
+  lf_yr = lf %>%
+    filter(year <= yr) # remove any years greater than the scenario
+  stopifnot(anyDuplicated(lf_yr[,c('cntry_key', 'year')]) == 0)
+  
+  csv = sprintf('cntry_wb_tlf_%s_ratio-gapfilled.csv', scen) # file_path_sans_ext(fname)
+  write.csv(lf_yr, file.path(dir_d, 'data', csv), row.names=F)
+  
+}
+
 
 # --- fin ---
