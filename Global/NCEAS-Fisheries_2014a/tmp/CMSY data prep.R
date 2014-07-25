@@ -17,7 +17,7 @@ names(newSAUP)[names(newSAUP)=="IYear"]<-"yr" # rename variable
 nS <- newSAUP[newSAUP$Taxonkey>600000,] # remove non-species level taxa
 
 # load species names lookup table
-dir_lc_FIS = 'Global/NCEAS-Fisheries_v2014/tmp'
+dir_lc_FIS = 'Global/NCEAS-Fisheries_2014a/tmp'
 file_2<- 'TaxonLookup.csv'
 tax <- read.csv(file.path(dir_lc_FIS, file_2 )) ; head(tax)
 nS<-left_join(nS,tax[,1:2]) # add species names # Joining by: "Taxonkey"
