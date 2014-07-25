@@ -12,19 +12,19 @@ source('../ohiprep/src/R/ohi_clean_fxns.R') # name-to-region functions (but need
 dir_d = '../ohiprep/Global/GL-Resilience_Fish_Hab_2014a/tmp' # set folder where files are saved
 
 MPA_data = '../ohiprep/Global/WDPA-MPA_v2014/data'
+rgn_data = '../ohiprep/tmp/install_local/ohi-global-master/eez2014/layers'
 #
 r_hab<-read.csv(file.path(dir_d, 'r_habitat_2013a.csv')) ; head(r_hab)
 r_mora<-read.csv(file.path(dir_d, 'r_mora_2013a.csv'))  ; head(r_mora)
 r_mora_s4<-read.csv(file.path(dir_d, 'r_mora_s4_2013a.csv')) ; head(r_mora_s4) # a table with the list of layers that apply to each resilience layer
 r_MPA_raw<-read.csv(file.path(MPA_data,'lsp_protarea_offshore3nm.csv') ); head(r_MPA_raw)
-r_MPAe12<-read.csv(file.path(dir_d, 'r_MPA_eez_2012.csv') 
-r_MPAe13<-read.csv(file.path(dir_d, 'r_MPA_eez_2013.csv') 
-                 
+# r_MPAe12<-read.csv(file.path(dir_d, 'r_MPA_eez_2012.csv') ) ; head(r_MPAe12)
+# r_MPAe13<-read.csv(file.path(dir_d, 'r_MPA_eez_2013.csv') ) ; head(r_MPAe13)
 # r_MPAe14<-  data not found on Github                  
-r_combos<-read.csv("Data/Resilience/r_combos.csv")
+r_combos<-read.csv(file.path(dir_d, 'r_combos.csv')) ; head(r_combos)
 r_combos[r_combos==0]<-NA # change 0s to NAs so they can be excluded from the averaging, as opposed to real 0s in the data
-r_join<-read.csv("Data/Resilience/r_join.csv") #  a table with the complete list of v2013a region ids and a "join" column
-r_combo<-merge(r_join,r_combos,by="Join",all.x=T) # create the "weights" matrix, where a 1 means that resilience indicator is included in that resilience layer combo, and 0 means it's omitted
+r_join<-read.csv(file.path(dir_d, 'r_join.csv')) ; head(r_join) #  a table with the complete list of v2013a region ids and a "join" column
+r_combo<-join(r_join,r_combos) # create the "weights" matrix, where a 1 means that resilience indicator is included in that resilience layer combo, and 0 means it's omitted
 names(r_combo)[5:9]<-paste("w_",names(r_combo)[5:9],sep="")
 names(r_combo)[2]<-"rgn_id"
 r_combo<-r_combo[,-1]
@@ -32,17 +32,29 @@ r_combo<-r_combo[,-1]
 names(r_hab)[2]<-"hab"
 names(r_mora)[2]<-"mora"
 names(r_mora_s4)[2]<-"mora_s4"
-names(r_MPAc13)[2]<-"MPA3nm_13"
-names(r_MPAc12)[2]<-"MPA3nm_12"
+
+area_3nm<-read.csv(file.path(rgn_data, 'rgn_area_offshore3nm.csv')) ; head(area_3nm) 
+names(area_3nm)[2]<-"tot_area_km2"
+r_MPA<-join(r_MPA_raw,area_3nm)# join 3nm coastal area
+# get total MPA area for each scenario
+r_MPAc12<-summarise(group_by(r_MPA[r_MPA$year<2012,],rgn_id,tot_area_km2),mpa_area=sum(area_km2))
+r_MPAc13<-summarise(group_by(r_MPA[r_MPA$year<2013,],rgn_id,tot_area_km2),mpa_area=sum(area_km2))
+r_MPAc14<-summarise(group_by(r_MPA,rgn_id, tot_area_km2),mpa_area=sum(area_km2))
+
+# calculate MPA score (where MPA areas occupying 30% of the coastal area within 3nm gets a score of 1)
+r_MPAc12$score<-ifelse(r_MPAc12$mpa_area/r_MPAc12$tot_area_km2*1/0.3>1,1,r_MPAc12$mpa_area/r_MPAc12$tot_area_km2*1/0.3) # calculate MPA score
+r_MPAc13$score<-ifelse(r_MPAc13$mpa_area/r_MPAc13$tot_area_km2*1/0.3>1,1,r_MPAc13$mpa_area/r_MPAc13$tot_area_km2*1/0.3) 
+r_MPAc14$score<-ifelse(r_MPAc14$mpa_area/r_MPAc14$tot_area_km2*1/0.3>1,1,r_MPAc14$mpa_area/r_MPAc14$tot_area_km2*1/0.3) 
+
+names(r_MPAc14)[4]<-"MPA3nm_43"
+names(r_MPAc13)[4]<-"MPA3nm_13"
+names(r_MPAc12)[4]<-"MPA3nm_12"
 # names(r_MPAe13)[2]<-"MPA3eez_13"
 # names(r_MPAe12)[2]<-"MPA3eez_12"
 
-r_MPAc13[2]<-r_MPAc13[2]/100 # all must scale 0 to 1
-r_MPAc12[2]<-r_MPAc12[2]/100
-r_MPAe13[2]<-r_MPAe13[2]/100
-r_MPAe12[2]<-r_MPAe12[2]/100
-
-
+############################################
+##### need to finish updating script #####
+install.packages("reshape")
 library(reshape) # this library has fun "merge_recurse", which is missing in "reshape2"
 r_combo2<-merge_recurse(list(r_combo,r_mora,r_mora_s4,r_hab,r_MPAc12,r_MPAe12,r_MPAc13,r_MPAe13),by="rgn_id")
 r_combo2<-r_combo2[!is.na(r_combo2$Layer),] 
