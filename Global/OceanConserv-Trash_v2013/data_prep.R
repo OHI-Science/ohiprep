@@ -4,10 +4,10 @@
 #  read in identified trash file
 #  name_to_rgn.r
 #  read in newly accessed 2012 file, but also older 2010 and 2011 files and concatenate them all. 
-#  calculate pounds_per_mile
+#  calculate lbs_per_mi
 #  georegional gapfilling with gapfill_georegions.r
 
-# Note: some countries have data for pounds but not miles; currently pounds_per_mile
+# Note: some countries have data for pounds but not miles; currently lbs_per_mi
 # is calculated as NA, but could gapfill miles separately, weighted by coastline first
 
 
@@ -66,7 +66,7 @@ f$miles = as.numeric(as.character(factor(f$miles))); head(f); summary(f)
 
 prob = f %>% 
   filter(miles <= 1) %>%
-  mutate(pounds_per_mile = pounds/miles)
+  mutate(lbs_per_mi = pounds/miles)
 
 # deal with Netherlands Antilles
 f = f %>%
@@ -185,9 +185,9 @@ k = rbind(kk %>%
 
 k = k %>%
   filter(miles > 1) %>% # several entries with < 1 miles that are odd
-  mutate(pounds_per_mile = pounds/miles) %>%
-  select(country, year, pounds, miles, pounds_per_mile) %>%
-  arrange(desc(pounds_per_mile)); head(k, 20)
+  mutate(lbs_per_mi = pounds/miles) %>%
+  select(country, year, pounds, miles, lbs_per_mi) %>%
+  arrange(desc(lbs_per_mi)); head(k, 20)
 
 # checking for miles that are super tiny
 # k %>% filter(miles <= 1)
@@ -198,14 +198,14 @@ k = k %>%
 
 # narrow selection
 k = k %>%
-  select(country, year, pounds_per_mile); head(k); summary(k)
+  select(country, year, lbs_per_mi); head(k); summary(k)
 
 
 # anyDuplicated(k[,c('country','year')])
 
 ## add rgn_ids with name_to_rgn ---- 
 # source('../ohiprep/src/R/ohi_clean_fxns.R')
-t_f = name_to_rgn(k, fld_name='country', flds_unique=c('country', 'year'), fld_value='pounds_per_mile', add_rgn_name=T) %>%
+t_f = name_to_rgn(k, fld_name='country', flds_unique=c('country', 'year'), fld_value='lbs_per_mi', add_rgn_name=T) %>%
   arrange(rgn_id, year)
 
 write.csv(t_f, file.path(dir_d, 'data', 'rgn_oc_trash_2014a_notgapfilled.csv'),
@@ -225,7 +225,7 @@ georegion_labels = read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.c
   arrange(r0_label, r1_label, r2_label, v_label); head(georegion_labels)
 
 
-layersave = file.path(dir_d, 'data', 'rgn_oc_trash_2014a.csv')
+layersave = file.path(dir_d, 'data', 'rgn_oc_trash_2014a_unscaled.csv')
 attrsave  = file.path(dir_d, 'data', 'rgn_oc_trash_2014a_attr.csv')
 
 # library(devtools); load_all('../ohicore')
@@ -233,7 +233,7 @@ attrsave  = file.path(dir_d, 'data', 'rgn_oc_trash_2014a_attr.csv')
 t_g_a = gapfill_georegions(
   data = t_f %.%
     filter(!rgn_id %in% c(213,255)) %.%
-    select(rgn_id, year, pounds_per_mile),
+    select(rgn_id, year, lbs_per_mi),
   fld_id = 'rgn_id',
   georegions = georegions,
   georegion_labels = georegion_labels,
@@ -245,12 +245,12 @@ head(attr(t_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('
 
 # explore a bit
 filter(t_g_a, rgn_id == 16)
-a = attr(t_g_a, 'gapfill_georegions')
-filter(t_g_a, id == 16)
+
 
 # save
 t_g = t_g_a %.%
-  select(rgn_id, year, pounds_per_mile) %.%
+  select(rgn_id, year, lbs_per_mi) %.%
+  mutate(log_lbs_per_mi = log(lbs_per_mi+1)) %>%
   arrange(rgn_id, year); head(t_g); summary(t_g)
 
 write.csv(t_g, layersave, na = '', row.names=FALSE)
@@ -267,12 +267,11 @@ scenarios = list('2012a'= max(t_g$year)-2,
 scen_earliest = scenarios[[names(scenarios)[1]]]
 
 h_scen = t_g %>%
-  filter(year >= scen_earliest)
+  filter(year >= scen_earliest); head(h_scen); summary(h_scen)
 
-ppm_max = max(h_scen$pounds_per_mile, na.rm=T)
-h_max = h_scen %>% filter(pounds_per_mile == ppm_max)
+log_ppm_max = max(h_scen$log_lbs_per_mi, na.rm=T)
 print(h_scen %>%
-        filter(pounds_per_mile == ppm_max))
+        filter(log_lbs_per_mi == log_ppm_max))
 
 for (scen in names(scenarios)){ # scen = names(scenarios)[1]
   
@@ -281,15 +280,12 @@ for (scen in names(scenarios)){ # scen = names(scenarios)[1]
   
   h = t_g %>%
     filter(year == yr) %>%
-    mutate(logppm = log(pounds_per_mile+1),
-           score_raw = log(pounds_per_mile+1) / log(ppm_max),
-           pressure_score = score_raw / max(score_raw, na.rm=T)); head(h); summary(h)
-  #   hist(h$score_raw)
+    mutate(pressure_score = log_lbs_per_mi / log_ppm_max); head(h); summary(h)
+  #   hist(h$pressure_score)
   
   # debug
-#   tmp = filter(h, rgn_id == 163)
-#   print( tmp$pressure_score)
-  #   cat(sprintf('\n US score = %d in %s', tmp$pressure_score, scen))
+  tmp = filter(h, rgn_id == 163)
+  print( tmp$pressure_score)
   
   h_fin = h %>%
     select(rgn_id, pressure_score)
