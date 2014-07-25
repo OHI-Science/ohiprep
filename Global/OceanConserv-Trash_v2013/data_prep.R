@@ -107,6 +107,7 @@ ant  # returns Aruba, Bonaire, and Saba; no 'Netherlands Antilles' so no partiti
 
 p = pt3; head(p); summary(p)
 
+
 ## read in 2011 data ----
 dt = read.xls(files$f2011, skip=1, na.strings=''); head(dt)
 dt2 = dt %>%
@@ -167,11 +168,11 @@ ant # returns only 'Aruba': no partitioning for 'Netherlands Antilles'
 m = mt2; head(m); summary(m)
 
 ## combine all years, collapse UK regions ----
-tt = rbind(f, p, d, m) 
+kk = rbind(f, p, d, m) 
 
-t = rbind(tt %>%
+k = rbind(kk %>%
             filter(!country %in% c('United Kingdom', 'Northern Ireland','Scotland', 'Wales')),
-          tt %>%
+          kk %>%
             filter(country %in% c('United Kingdom', 'Northern Ireland','Scotland', 'Wales')) %>%
             group_by(year) %>%
             summarize(pounds = sum(pounds),
@@ -182,28 +183,29 @@ t = rbind(tt %>%
 
 ## calculate trash density: pounds/miles ----
 
-t = t %>%
+k = k %>%
+  filter(miles > 1) %>% # several entries with < 1 miles that are odd
   mutate(pounds_per_mile = pounds/miles) %>%
-  select(country, year, pounds, miles, pounds_per_mile)
-  
+  select(country, year, pounds, miles, pounds_per_mile) %>%
+  arrange(desc(pounds_per_mile)); head(k, 20)
+
 # checking for miles that are super tiny
-# t %>% filter(miles <= 1)
+# k %>% filter(miles <= 1)
 # #          year == 2013) %>%
-# t %>% filter(country == 'Australia') # could fix this with an average of miles from other years
-# t %>% filter(country == 'Ghana')     # that fix would help here too
-# t %>% filter(country == 'Curacao')   # not here
+# k %>% filter(country == 'Australia') # could fix this with an average of miles from other years
+# k %>% filter(country == 'Ghana')     # that fix would help here too
+# k %>% filter(country == 'Curacao')   # not here
 
 # narrow selection
-t = t %>%
-  filter(miles != 0) %>%
-  select(country, year, pounds_per_mile); head(t); summary(t)
+k = k %>%
+  select(country, year, pounds_per_mile); head(k); summary(k)
 
 
-# anyDuplicated(t[,c('country','year')])
+# anyDuplicated(k[,c('country','year')])
 
 ## add rgn_ids with name_to_rgn ---- 
 # source('../ohiprep/src/R/ohi_clean_fxns.R')
-t_f = name_to_rgn(t, fld_name='country', flds_unique=c('country', 'year'), fld_value='pounds_per_mile', add_rgn_name=T) %>%
+t_f = name_to_rgn(k, fld_name='country', flds_unique=c('country', 'year'), fld_value='pounds_per_mile', add_rgn_name=T) %>%
   arrange(rgn_id, year)
 
 write.csv(t_f, file.path(dir_d, 'data', 'rgn_oc_trash_2014a_notgapfilled.csv'),
@@ -241,6 +243,11 @@ t_g_a = gapfill_georegions(
 # investigate attribute tables
 head(attr(t_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('open %s', attrsave))
 
+# explore a bit
+filter(t_g_a, rgn_id == 16)
+a = attr(t_g_a, 'gapfill_georegions')
+filter(t_g_a, id == 16)
+
 # save
 t_g = t_g_a %.%
   select(rgn_id, year, pounds_per_mile) %.%
@@ -253,9 +260,9 @@ write.csv(t_g, layersave, na = '', row.names=FALSE)
 # from dir_neptune_data: model/GL-NCEAS-Pressures_v2013a/model_trash.R
 
 # write out files using reference years
-scenarios = list('2012a'=2011,
-                 '2013a'=2012,
-                 '2014a'=2013)
+scenarios = list('2012a'= max(t_g$year)-2,
+                 '2013a'= max(t_g$year)-1,
+                 '2014a'= max(t_g$year))
 
 scen_earliest = scenarios[[names(scenarios)[1]]]
 
@@ -274,8 +281,15 @@ for (scen in names(scenarios)){ # scen = names(scenarios)[1]
   
   h = t_g %>%
     filter(year == yr) %>%
-    mutate(score_raw = log(pounds_per_mile + 1) / log(ppm_max),
-           pressure_score = score_raw / (max(score_raw, na.rm=T) * 1.1)); head(h); summary(h)
+    mutate(logppm = log(pounds_per_mile+1),
+           score_raw = log(pounds_per_mile+1) / log(ppm_max),
+           pressure_score = score_raw / max(score_raw, na.rm=T)); head(h); summary(h)
+  #   hist(h$score_raw)
+  
+  # debug
+#   tmp = filter(h, rgn_id == 163)
+#   print( tmp$pressure_score)
+  #   cat(sprintf('\n US score = %d in %s', tmp$pressure_score, scen))
   
   h_fin = h %>%
     select(rgn_id, pressure_score)
