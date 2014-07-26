@@ -43,18 +43,12 @@ d.1 = d %>%
   select(country, year,
          percent = improved_tot_perc) %>%
   mutate(prop_access = percent/100); summary(d.1); head(d.1)
-
+# d.1[duplicated(d.1[,c('country', 'year')]),]
 
 # add rgn_id: country to rgn_id ----
-r = name_to_rgn(d.1, fld_name='country', flds_unique=c('country','year'), fld_value='prop_access', add_rgn_name=T); head(r) 
+r = name_to_rgn(d.1, fld_name='country', flds_unique=c('country','year'), fld_value='prop_access', collapse_fxn = mean, add_rgn_name=T); head(r); summary(r) 
+    # must use mean, otherwise prop_access > 1
 
-# a check:
-a = r %>%
-  filter(year >=2004) %>%
-  select(rgn_id, prop_access) %>%
-  group_by(rgn_id) %>%
-  mutate(count = n())
-head(a); summary(a)
 
 ## georegional gapfilling with gapfill_georegions.r ----
 georegions = read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %.%
@@ -94,7 +88,7 @@ r_g = r_g_a %.%
   select(rgn_id, year, prop_access) %.%
   arrange(rgn_id, year); head(r_g)
 write.csv(r_g, layersave, na = '', row.names=FALSE)
-
+# r_g = read.csv('ohiprep/Global/WHOUNICEF-Sanitation_v2012/data/rgn_jmp_san_2014a_raw_prop_access.csv')
 
 ## model the trend and rescale, different from 2013a style ----
 # based from neptune_data:model/GL-NCEAS-Pressures_v2013a/model_pathogens.R
@@ -126,6 +120,26 @@ scenario = c('2014' = 0,
              '2013' = 1,
              '2012' = 2)
 
+# find max prop_x_pop_log across all scenarios
+scen_earliest_san = max(r_g$year) - as.numeric(as.character(factor(scenario[length(scenario)])))
+scen_earliest_pop = as.numeric(as.character(factor(names(scenario)[i])))
+
+san_pop_earliest = r_g %>%  # sanitation-population (san_pop)
+  filter(year >= scen_earliest_san, #  
+         !is.na(prop_access)) %>%  
+  mutate(yr_id = year - scen_earliest_san+1) %>% # +1 just so it's not 0 as an identifier
+  select(rgn_id, yr_id, prop_access) %>%
+  left_join(popn_density %>%
+              filter(year >= scen_earliest_pop) %>%
+              mutate(yr_id = year - scen_earliest_pop+1) %>%
+              select(rgn_id, yr_id, pop_per_km2), 
+            by=c('rgn_id', 'yr_id')) %>%
+  mutate(prop_x_pop     = prop_access * pop_per_km2,
+         prop_x_pop_log = log(prop_x_pop+1))   # log is important because the skew was high otherwise
+  head(san_pop_earliest); summary(san_pop_earliest) 
+pp_max = max(san_pop_earliest$prop_x_pop_log, na.rm=T)
+
+
 for (i in 1:length(names(scenario))) { # i=1
   
   yr_max_san = max(r_g$year) - as.numeric(as.character(factor(scenario[i])))
@@ -139,7 +153,7 @@ for (i in 1:length(names(scenario))) { # i=1
   san_pop = r_g %>%  # sanitation-population (san_pop)
     filter(year <= yr_max_san & year >= yr_min_san, #  
            !is.na(prop_access)) %>%  
-    mutate(yr_id = year - yr_min_san+1) %>%
+    mutate(yr_id = year - yr_min_san+1) %>% # +1 just so it's not 0 as an identifier
     select(rgn_id, yr_id, prop_access) %>%
     left_join(popn_density %>%
                 filter(year <= yr_max_pop & year >= yr_min_pop) %>%
@@ -148,7 +162,7 @@ for (i in 1:length(names(scenario))) { # i=1
               by=c('rgn_id', 'yr_id')) %>%
     mutate(prop_x_pop          = prop_access * pop_per_km2,
            prop_x_pop_log      = log(prop_x_pop+1),   # log is important because the skew was high otherwise
-           prop_x_pop_rescaled = prop_x_pop_log / max(prop_x_pop_log, na.rm=T),
+           prop_x_pop_rescaled = prop_x_pop_log / pp_max, # max(prop_x_pop_log, na.rm=T) when rescaled for each year individually
            pressure_score      = (1 - prop_x_pop_rescaled) ); head(san_pop); summary(san_pop) 
   
   ## save as pressure layer ----

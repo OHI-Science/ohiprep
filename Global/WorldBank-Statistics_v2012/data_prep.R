@@ -12,6 +12,7 @@
 #       	+ http://data.worldbank.org/indicator/NY.GDP.PCAP.PP.CD
   
 
+
 #   add OHI region_ids with name_to_rgn_id.r          ** differs from data_prep.old
 #   georegional gapfilling with gapfill_georegions.R  ** differs from data_prep.old
 #
@@ -173,47 +174,109 @@ for (lyr in names(layers)){ # lyr='tlf'
     arrange(rgn_id, year) %>%
     rename(
       setNames(units, 'value'))
-  
+  stopifnot(anyDuplicated(sp_pressure[,c('rgn_id', 'year')]) == 0)
   # write to csv
   write.csv(d_g, csv_dat, na='', row.names=F)
 }
 
 # TODO: check that tlf < popn
 
-# --- fin
-
-# # compare gapfill_georegions.r by BB to add_gapfill.r by JSL
-# 
-# # unemployment
-# gg = read.csv('Global/WorldBank-Statistics_v2012/data/rgn_wb_uem_2014a.csv'); head(gg)
-# ag = read.csv('Global/WorldBank-Statistics_v2012/tmp/rgn_wb_uem_2014awith_add_gapfill.csv'); head(ag)
-# 
-# vs = gg %.%
-#   select(rgn_id, 
-#          year,
-#          value_gg = value) %.%
-#   left_join(ag %.%
-#               select(rgn_id, 
-#                      year, 
-#                      value_ag = perc), 
-#             by = c('rgn_id', 'year')) %.%
-#   mutate(
-#     val_dif    = value_gg - value_ag,
-#     val_notna  = is.na(value_gg)!=is.na(value_ag)) %.%   
-#   filter(abs(val_dif) > 0.01 | val_notna == T) 
-#   
-# van = vs %.%
-#   filter(rgn_id == 6)
-# #               arrange(goal, desc(dimension), desc(score_notna), desc(abs(score_dif))) %.%
-# #         select(goal, dimension, region_id, region_label, score_old, score, score_dif)
-#               
+## final GDPpcPPP rescaling; save for each scenario ----
 
 
-# other trouble shooting-- this actually doesn't work because ohicore requires these packages. So this is not the problem. 
-#     # ensure dplyr's summarize overrides plyr's summarize by loading in succession
-#     if ('package:reshape2'  %in% search()) detach('package:reshape2')
-#     if ('package:plyr'      %in% search()) detach('package:plyr')
-#     if ('package:dplyr'     %in% search()) detach('package:dplyr')
-#     library(reshape2)
-#     library(plyr)
-#     library(dplyr)
+## rescale GDPpcPPP by the max of each year
+
+ppp = read.csv(file.path(dir_d, 'data', 'rgn_wb_gdppcppp_2014a_ratio-gapfilled.csv')); head(ppp)
+
+p = ppp %>%
+  left_join(ppp %>%
+              group_by(year) %>%
+              summarize(max_intl_dollar = max(intl_dollar, na.rm=T)),
+            by='year') %>% 
+  mutate(scaled = intl_dollar/max_intl_dollar,
+         value = 1-scaled); head(p); summary(p)
+
+## save
+scenarios = list('2012a'=2011,
+                 '2013a'=2012,
+                 '2014a'=2013)
+
+for (scen in names(scenarios)){ # scen = names(scenarios)[1]
+  
+  yr = scenarios[[scen]]
+  cat(sprintf('\nScenario %s using year == %d\n', scen, yr))
+  
+  p_yr = p %>%
+    filter(year <= yr) %>% # remove any years greater than the scenario
+    select(rgn_id, year, value)
+  
+  csv = sprintf('rgn_wb_gdppcppp_rescaled_%s.csv', scen)
+  write.csv(p_yr, file.path(dir_d, 'data', csv), row.names=F)
+  
+}
+
+
+## translate total labor force to cntry_key; save for each scenario ----
+# this makes obsolete the troublesome (because of NAs and unknown origin) file on Neptune: model/GL-NCEAS-LayersDisaggregated_v2013a/data/le_workforcesize_adj.csv 
+
+fname = 'rgn_wb_tlf_2014a_ratio-gapfilled.csv'
+f = read.csv(file.path(dir_d, 'data', fname)); head(f)
+
+lf = f %>%
+  select(rgn_id, year, count) %>%
+  left_join(read.csv(file.path(dir_neptune_data, 'model/GL-NCEAS-CoastalPopulation_v2013/data', 
+                               'cntry_popsum2013_inland25mi_complete.csv')),
+            by = 'rgn_id') %>%
+  left_join(lf %>%
+              group_by(rgn_id, year) %>%
+              summarize(rgn_popsum = sum(cntry_popsum2013_inland25mi)), 
+            by = c('rgn_id', 'year')) %>%
+  mutate(pop_ratio = cntry_popsum2013_inland25mi/rgn_popsum,
+         jobs = count * pop_ratio) %>%
+  select(cntry_key, year, jobs) %>%
+  arrange(cntry_key, year); head(lf); summary(lf)
+
+# show which rgn_ids and cntry_keys are split with pop_ratio
+# lf %>% filter(pop_ratio != 1)
+# 13  GUM
+# 13  MNP
+# 116 PRI
+# 116 VIR
+# 137 ECU
+# 137 Galapagos Islands
+# 140 MTQ
+# 140 GLP
+# 163 Hawaii
+# 163 USA
+# 163 Alaska
+# 171 Trindade
+# 171 BRA
+# 224 Easter Island
+# 224 CHL
+
+# lf %>% filter(rgn_id == 163, year == 2012)
+# lf %>% filter(rgn_id == 171, year == 2012)
+
+
+# save for each scenario 
+
+scenarios = list('2012a'= max(lf$year)-2,
+                 '2013a'= max(lf$year)-1,
+                 '2014a'= max(lf$year))
+
+for (scen in names(scenarios)){ # scen = names(scenarios)[1]
+  
+  yr = scenarios[[scen]]
+  cat(sprintf('\nScenario %s using year == %d\n', scen, yr))
+  
+  lf_yr = lf %>%
+    filter(year <= yr) # remove any years greater than the scenario
+  stopifnot(anyDuplicated(lf_yr[,c('cntry_key', 'year')]) == 0)
+  
+  csv = sprintf('cntry_wb_tlf_%s_ratio-gapfilled.csv', scen) # file_path_sans_ext(fname)
+  write.csv(lf_yr, file.path(dir_d, 'data', csv), row.names=F)
+  
+}
+
+
+# --- fin ---

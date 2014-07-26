@@ -4,7 +4,7 @@
 #  read in identified trash file
 #  name_to_rgn.r
 #  read in newly accessed 2012 file, but also older 2010 and 2011 files and concatenate them all. 
-#  calculate lbs_per_mile
+#  calculate lbs_per_mi
 #  georegional gapfilling with gapfill_georegions.r
 
 # Note: some countries have data for pounds but not miles; currently lbs_per_mi
@@ -64,6 +64,10 @@ f = cbind(country, f) %>%
 f$pounds = as.numeric(as.character(factor(f$pounds)))
 f$miles = as.numeric(as.character(factor(f$miles))); head(f); summary(f)
 
+prob = f %>% 
+  filter(miles <= 1) %>%
+  mutate(lbs_per_mi = pounds/miles)
+
 # deal with Netherlands Antilles
 f = f %>%
   mutate(
@@ -102,6 +106,7 @@ ant = pt3 %>%
 ant  # returns Aruba, Bonaire, and Saba; no 'Netherlands Antilles' so no partitioning needed
 
 p = pt3; head(p); summary(p)
+
 
 ## read in 2011 data ----
 dt = read.xls(files$f2011, skip=1, na.strings=''); head(dt)
@@ -163,30 +168,44 @@ ant # returns only 'Aruba': no partitioning for 'Netherlands Antilles'
 m = mt2; head(m); summary(m)
 
 ## combine all years, collapse UK regions ----
-tt = rbind(f, p, d, m) 
+kk = rbind(f, p, d, m) 
 
-t = rbind(tt %>%
+k = rbind(kk %>%
             filter(!country %in% c('United Kingdom', 'Northern Ireland','Scotland', 'Wales')),
-          tt %>%
+          kk %>%
             filter(country %in% c('United Kingdom', 'Northern Ireland','Scotland', 'Wales')) %>%
             group_by(year) %>%
             summarize(pounds = sum(pounds),
                       miles  = sum(miles)) %>%
             mutate(country = 'United Kingdom') %>%
-            select(country, year, pounds, miles))
+            select(country, year, pounds, miles))%>%
+  arrange(country, year)
 
 ## calculate trash density: pounds/miles ----
-t$miles[t$miles == 0] = NA
-t = t %>%
-  mutate(lbs_per_mi = pounds/miles) %>%
-  select(country, year, lbs_per_mi) %>%
-  arrange(country, year); head(t); summary(t)
 
-# anyDuplicated(t[,c('country','year')])
+k = k %>%
+  filter(miles > 1) %>% # several entries with < 1 miles that are odd
+  mutate(lbs_per_mi = pounds/miles) %>%
+  select(country, year, pounds, miles, lbs_per_mi) %>%
+  arrange(desc(lbs_per_mi)); head(k, 20)
+
+# checking for miles that are super tiny
+# k %>% filter(miles <= 1)
+# #          year == 2013) %>%
+# k %>% filter(country == 'Australia') # could fix this with an average of miles from other years
+# k %>% filter(country == 'Ghana')     # that fix would help here too
+# k %>% filter(country == 'Curacao')   # not here
+
+# narrow selection
+k = k %>%
+  select(country, year, lbs_per_mi); head(k); summary(k)
+
+
+# anyDuplicated(k[,c('country','year')])
 
 ## add rgn_ids with name_to_rgn ---- 
 # source('../ohiprep/src/R/ohi_clean_fxns.R')
-t_f = name_to_rgn(t, fld_name='country', flds_unique=c('country', 'year'), fld_value='lbs_per_mi', add_rgn_name=T) %>%
+t_f = name_to_rgn(k, fld_name='country', flds_unique=c('country', 'year'), fld_value='lbs_per_mi', add_rgn_name=T) %>%
   arrange(rgn_id, year)
 
 write.csv(t_f, file.path(dir_d, 'data', 'rgn_oc_trash_2014a_notgapfilled.csv'),
@@ -206,7 +225,7 @@ georegion_labels = read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.c
   arrange(r0_label, r1_label, r2_label, v_label); head(georegion_labels)
 
 
-layersave = file.path(dir_d, 'data', 'rgn_oc_trash_2014a.csv')
+layersave = file.path(dir_d, 'data', 'rgn_oc_trash_2014a_unscaled.csv')
 attrsave  = file.path(dir_d, 'data', 'rgn_oc_trash_2014a_attr.csv')
 
 # library(devtools); load_all('../ohicore')
@@ -224,65 +243,59 @@ t_g_a = gapfill_georegions(
 # investigate attribute tables
 head(attr(t_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('open %s', attrsave))
 
+# explore a bit
+filter(t_g_a, rgn_id == 16)
+
+
 # save
 t_g = t_g_a %.%
   select(rgn_id, year, lbs_per_mi) %.%
-  arrange(rgn_id, year); head(t_g)
+  mutate(log_lbs_per_mi = log(lbs_per_mi+1)) %>%
+  arrange(rgn_id, year); head(t_g); summary(t_g)
 
 write.csv(t_g, layersave, na = '', row.names=FALSE)
 
 
-## georegional gapfilling-- save as separate files
+## model trash; finalize layer ----
+# from dir_neptune_data: model/GL-NCEAS-Pressures_v2013a/model_trash.R
+
+# write out files using reference years
+scenarios = list('2012a'= max(t_g$year)-2,
+                 '2013a'= max(t_g$year)-1,
+                 '2014a'= max(t_g$year))
+
+scen_earliest = scenarios[[names(scenarios)[1]]]
+
+h_scen = t_g %>%
+  filter(year >= scen_earliest); head(h_scen); summary(h_scen)
+
+log_ppm_max = max(h_scen$log_lbs_per_mi, na.rm=T)
+print(h_scen %>%
+        filter(log_lbs_per_mi == log_ppm_max))
+
+for (scen in names(scenarios)){ # scen = names(scenarios)[1]
+  
+  yr = scenarios[[scen]]
+  cat(sprintf('\nScenario %s using year == %d\n', scen, yr))
+  
+  h = t_g %>%
+    filter(year == yr) %>%
+    mutate(pressure_score = log_lbs_per_mi / log_ppm_max); head(h); summary(h)
+  #   hist(h$pressure_score)
+  
+  # debug
+  tmp = filter(h, rgn_id == 163)
+  print( tmp$pressure_score)
+  
+  h_fin = h %>%
+    select(rgn_id, pressure_score)
+  stopifnot(anyDuplicated(h_fin[,c('rgn_id')]) == 0)
+  
+  csv = file.path(dir_d, 'data', sprintf('po_trash_%s.csv', scen))
+  write.csv(h_fin, csv, row.names=F, na='')
+}
+
+## --- fin ---
 
 
-# 
-# 
-# cleaned_data1 = read.csv(uifilesave)
-# 
-# year_uni = unique(cleaned_data1$year)
-# layernames = sprintf('rgn_oc_trash_%sa.csv', year_uni+1) # because 2013a uses 2012 data, 2012a data uses 2011 data. 
-# 
-# for(i in 1:length(year_uni)) { # i=1
-#   cleaned_layer = cleaned_data1[cleaned_data1$year == year_uni[i],]
-#   cleaned_layer$year = NULL
-#   cleaned_layer$rgn_nam = NULL
-#   
-#   layersave = file.path(dir1, 'data', layernames[i]) 
-#   
-#   add_gapfill_singleyear(cleaned_layer, layersave, s_island_val=0)
-# }
-# 
-# ##
-# ##
-# ## whence tracking; May/June 2014 ---- 
-# dir_neptune_data = c('Windows' = '//neptune/data_edit',
-#                      'Darwin'  = '/Volumes/data_edit',
-#                      'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
-# dir_root = file.path('/Users', Sys.info()[['user']]) # or dri_root = path.expand("~/")
-# source(file.path(dir_root, 'github/ohiprep/src/R/ohi_clean_fxns.R'))
-# library(dplyr)
-# 
-# 
-# d = read.csv(uifilesave); head(d)
-# 
-# year_uni = unique(d$year)
-# layernames = sprintf('rgn_oc_trash_%sa_whence', year_uni+1) # because 2013a uses 2012 data, 2012a data uses 2011 data. 
-# dirsave = file.path(dir1, 'data') 
-# 
-# for(i in 1:length(year_uni)) { # i=1
-#   cleaned_layer = d[d$year == year_uni[i],] 
-#   cleaned_layer$rgn_nam = NULL # keep year column so that add_gapfill will work; remove afterwards. 
-#   
-#   layersave = layernames[i]
-# 
-#   add_gapfill(cleaned_layer, dirsave, layersave, s_island_val=0, dpath = file.path(dir_root, 'github/ohiprep/src/LookupTables'))
-# 
-#   f = read.csv(file.path(dirsave, paste(layersave, '.csv', sep=''))) 
-#   f = f %.%
-#     select(-year) #remove year column as a fix for now
-#   write.csv(f, file.path(dirsave, paste(layersave, '.csv', sep=''))) 
-# }
-# 
-# 
-# 
-# 
+

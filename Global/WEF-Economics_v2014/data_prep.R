@@ -48,14 +48,14 @@ m_d = name_to_rgn(gci, fld_name='country', flds_unique=c('country'), fld_value='
 stopifnot(max(m_d$score) < 1)
 
 ## georegional gapfilling with gapfill_georegions.r ----
-georegions = read.csv('eez2013/layers/rgn_georegions.csv', na.strings='') %.%
+georegions = read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %.%
   dcast(rgn_id ~ level, value.var='georgn_id')
 
-georegion_labels = read.csv('eez2013/layers/rgn_georegion_labels.csv') %.%    
+georegion_labels = read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv') %.%    
   mutate(level_label = sprintf('%s_label', level)) %.%
   dcast(rgn_id ~ level_label, value.var='label') %.%
   left_join(
-    read.csv('eez2013/layers/rgn_labels.csv') %.%
+    read.csv('../ohi-global/eez2013/layers/rgn_labels.csv') %.%
       select(rgn_id, v_label=label),
     by='rgn_id') %.%
   arrange(r0_label, r1_label, r2_label, v_label); head(georegion_labels)
@@ -65,6 +65,7 @@ layersave = file.path(dir_d, 'data', 'rgn_wef_gci_2014a.csv')
 attrsave  = file.path(dir_d, 'data', 'rgn_wef_gci_2014a_attr.csv')
 
 # library(devtools); load_all('../ohicore')
+# source('../ohicore/R/gapfill_georegions.R')
 d_g_a = gapfill_georegions(
   data = m_d %.%
     filter(!rgn_id %in% c(213,255)) %.%
@@ -93,6 +94,7 @@ s_min = min(d_g %.%
 d_g$score[d_g$rgn_id == 21] = s_min 
 
 # save
+stopifnot(anyDuplicated(d_g[,c('rgn_id')]) == 0)
 write.csv(d_g, layersave, na = '', row.names=FALSE)
 
 
