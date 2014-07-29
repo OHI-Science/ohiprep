@@ -13,17 +13,16 @@ dir_FIS_data = 'git-annex/Global/SAUP-Fisheries_v2011/raw'
 file_1<- 'Extended catch data 1950-2011_18 July 2014.txt'
 newSAUP <- read.delim(file.path(dir_neptune_data, dir_FIS_data, file_1 )) ; head(newSAUP)
 
-names(newSAUP)[names(newSAUP)=="IYear"]<-"yr" # rename variable
-nS <- newSAUP[newSAUP$Taxonkey>600000,] # remove non-species level taxa
-
 # load species names lookup table
 dir_lc_FIS = 'Global/NCEAS-Fisheries_2014a/tmp'
 file_2<- 'TaxonLookup.csv'
 tax <- read.csv(file.path(dir_lc_FIS, file_2 )) ; head(tax)
-nS<-left_join(nS,tax[,1:2]) # add species names # Joining by: "Taxonkey"
-
+newSAUP<-left_join(newSAUP,tax[,1:2]) # add species names # Joining by: "Taxonkey"
 # create a unique stock id name for every species/FAO region pair
-nS$stock_id <- paste(nS$TaxonName,nS$FAO,sep='_')
+newSAUP$stock_id <- paste(newSAUP$TaxonName,newSAUP$FAO,sep='_')
+
+spSAUP <- newSAUP[newSAUP$Taxonkey>600000,] # remove non-species level taxa
+names(spSAUP)[names(spSAUP)=="IYear"]<-"yr" # rename variable
 
 # load old SAUP data to join the resilience traits
 file_3<-'Extension_redo_withFlag.csv'
@@ -35,7 +34,7 @@ old_tax<-old_tax[old_tax$LH!="",]
 # but the old SAUP data with the resilience values still has that issue, so need to join by Taxonkey not TaxonName to ensure both Clupea spp get their resil value
 
 ## Step 2. ##
-nS2<-left_join(nS,old_tax) # Joining by: c("FAO", "Taxonkey")
+nS2<-left_join(spSAUP,old_tax) # Joining by: c("FAO", "Taxonkey")
 nS3<-summarise(group_by(nS2,stock_id,yr,Resilience),ct=sum(Catch, na.rm = TRUE)) # total catch per year per stock
 names(nS3)[names(nS3)=='Resilience']<-"res" ; head(nS3)
 
