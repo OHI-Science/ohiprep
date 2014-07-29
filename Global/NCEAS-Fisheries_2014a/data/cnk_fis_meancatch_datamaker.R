@@ -8,7 +8,7 @@ library(stringr)
 library(ohicore)
 library(plyr)
 library(dplyr)
-library(tidyr)
+# library(tidyr)
 
 source('../ohiprep/src/R/common.R') # set dir_neptune_data
 source('../ohiprep/src/R/ohi_clean_fxns.R') # name-to-region functions (but need to add new saup names files)
