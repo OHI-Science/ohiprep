@@ -76,4 +76,7 @@ nS7<-join(nS6[,c(1:2,4:6)],alls)
 nS7<-nS7[,c(6,2,5,3,1)]
 
 # write.csv(nS7,'OHICatchHistoryCMSY_added0s_07_21_2014.csv')
-
+# check differences between the two time-series
+# test<-nS5 %>% group_by(stock_id) %>% summarise (mean_ct_no_0=mean(ct, na.rm=T),n_yrs_no_0=n())
+# test2<-nS7 %>% group_by(stock_id) %>% summarise (mean_ct_w_0=mean(ct, na.rm=T),n_yrs_w_0=n())
+# write.csv(test3,file.path(dir_lc_FIS,'cfr_adding0toCatch.csv'),row.names=F)
