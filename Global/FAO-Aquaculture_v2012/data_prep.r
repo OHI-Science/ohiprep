@@ -119,3 +119,31 @@ m_u = rename(m_s, setNames(units, 'value'))
 f_out = sprintf('%s/data/%s_%s.csv', dir_d, basename(dir_d), units)
 write.csv(m_u, f_out, row.names=F, na='')
 }
+
+## save as different scenarios ----
+
+# this code was stolen from ohiprep/Global/WorldBank-Statistics_v2012/data_prep.R as an example of how to
+
+
+# example data
+lf = data.frame(rgn_id = 1:20, year = 1994:2013, count = sample(1:100, 20))
+
+# identify scenarios and max years
+scenarios = list('2012a'= max(lf$year)-2,
+                 '2013a'= max(lf$year)-1,
+                 '2014a'= max(lf$year))
+
+# loop through and save
+for (scen in names(scenarios)){ # scen = names(scenarios)[1]
+  
+  yr = scenarios[[scen]]
+  cat(sprintf('\nScenario %s using year == %d\n', scen, yr))
+  
+  lf_yr = lf %>%
+    filter(year <= yr) # remove any years greater than the scenario
+  stopifnot(anyDuplicated(lf_yr[,c('rgn_id', 'year')]) == 0)
+  
+  csv = sprintf('rgn_id_fao_mar_%s_.csv', scen) 
+  write.csv(lf_yr, file.path(dir_d, 'data', csv), row.names=F)
+  
+}

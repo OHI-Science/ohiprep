@@ -167,8 +167,8 @@ write.csv(h_racurrent_sum, paste(f_out, '_currentRAsum.csv', sep = ''), row.name
 
 # a few calculations:
 p = as.numeric(h_racurrent_sum$area_eez/hb_globalsum$area_eez *100 )
-cat(sprintf('Currently, OHI covers %f percent of global EEZs for the benefit of %d people', 
-            p, h_racurrent_sum$coastal_pop))
+cat(sprintf('Currently, OHI covers %f percent of global EEZs, benefits %d people, accounts for %f coastal jobs and %f coastal revenue', 
+            p, h_racurrent_sum$coastal_pop, h_racurrent_sum$coastal_jobs, h_racurrent_sum$coastal_rev))
 
 
 # --- fin ---
