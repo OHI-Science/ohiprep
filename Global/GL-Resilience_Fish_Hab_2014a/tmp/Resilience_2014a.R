@@ -18,8 +18,6 @@ rgn_data = '../ohiprep/tmp/install_local/ohi-global-master/eez2014/layers'
 r_hab<-read.csv(file.path(dir_d, 'r_habitat_2013a.csv')) ; head(r_hab)
 r_mora<-read.csv(file.path(dir_d, 'r_mora_2013a.csv'))  ; head(r_mora)
 r_mora_s4<-read.csv(file.path(dir_d, 'r_mora_s4_2013a.csv')) ; head(r_mora_s4) # a table with the list of layers that apply to each resilience layer
-# MPA area data updated from WDPA (see containing folder ReadMe)
-r_MPA_raw<-read.csv(file.path(MPA_data,'lsp_protarea_offshore3nm.csv') ); head(r_MPA_raw)
 
 r_combos<-read.csv(file.path(dir_d, 'r_combos.csv')) ; head(r_combos)
 r_combos[r_combos==0]<-NA # change 0s to NAs so they can be excluded when calculating the mean (see below)
@@ -33,19 +31,31 @@ names(r_hab)[2]<-"hab"
 names(r_mora)[2]<-"mora"
 names(r_mora_s4)[2]<-"mora_s4"
 
+# MPA area data updated from WDPA (see containing folder ReadMe) - MPAs within 3nm
+r_MPA_raw<-read.csv(file.path(MPA_data,'lsp_protarea_offshore3nm.csv') ); head(r_MPA_raw)
 rgn<-read.csv(file.path(rgn_data,'rgn_global.csv')) # read in full list of regions... 
 r_MPA<-left_join(rgn,r_MPA_raw) ; length(unique(r_MPA$rgn_id)) # ...to fill in missing regions with 0s
-r_MPA$year<-replace(r_MPA$year, r_MPA$year==0, 1881) # replace missing years with one year prior to the earliest year in the series (1882)
-r_MPA$year<-replace(r_MPA$year, is.na(r_MPA$year), 1881) # aff a year for empty time-series that were added by joining the regions
+r_yr<-min(r_MPA_raw$year[r_MPA_raw$year>0]) # place-holder year for missing records or missing year
+r_MPA$year<-replace(r_MPA$year, r_MPA$year==0, r_yr-1) # replace years reported as '0' with place-holder year (min_year-1 = 1882-1 = 1881)
+r_MPA$year<-replace(r_MPA$year, is.na(r_MPA$year), r_yr-1) # replace year in empty time-series that were added by joining the regions
 r_MPA$area_km2<-ifelse(is.na(r_MPA$area_km2),0,r_MPA$area_km2)
 
 area_3nm<-read.csv(file.path(rgn_data, 'rgn_area_offshore3nm.csv')) ; head(area_3nm) 
 names(area_3nm)[2]<-"tot_area_km2"
 r_MPA<-join(r_MPA,area_3nm) ; length(unique(r_MPA$rgn_id))# join 3nm coastal area
+r_MPA<-arrange(r_MPA,rgn_id,year)
 
-########
-### MISSING: MPA areas at EEZ scale
-#######
+# MPA area data updated from WDPA (see containing folder ReadMe) - MPAs within EEZ
+r_MPA_eez<-read.csv(file.path(MPA_data,'lsp_protarea_eez.csv') ); head(r_MPA_eez)
+MPA_z<-left_join(rgn,r_MPA_eez) ; length(unique(MPA_z$rgn_id)) # ...to fill in missing regions with 0s
+MPA_z$year<-replace(MPA_z$year, MPA_z$year==0, r_yr-1) # replace years reported as '0' with place-holder year (min_year-1 = 1882-1 = 1881)
+MPA_z$year<-replace(MPA_z$year, is.na(MPA_z$year), r_yr-1) # replace year in empty time-series that were added by joining the regions
+MPA_z$area_km2<-ifelse(is.na(MPA_z$area_km2),0,MPA_z$area_km2)
+
+area_eez<-read.csv(file.path(rgn_data, 'rgn_area.csv')) ; head(area_eez) 
+area_eez<-rename(area_eez,c("area_km2"="tot_area_km2"))
+MPA_z<-join(MPA_z,area_eez) ; length(unique(MPA_z$rgn_id))# join eez area
+MPA_z<-arrange(MPA_z,rgn_id,year)
 
 #### Step 2 ## process MPA data to get a score for each OHI scenario
 r_MPAc12<-r_MPA %>% filter(year<2012) %>% group_by(rgn_id,tot_area_km2) %>%  summarise(mpa_area=sum(area_km2)) %>% mutate(scen='v2012')
@@ -57,28 +67,37 @@ r_MPAc<-rbind(r_MPAc12,r_MPAc13,r_MPAc14)
 r_MPAc<-r_MPAc %>% mutate(score=ifelse(mpa_area/tot_area_km2*1/0.3>1,1,mpa_area/tot_area_km2*1/0.3))
 r_MPA3nm<-r_MPAc %>% select(rgn_id, scen, 'MPA_coast'=score)
 
+# same for MPAs within EEZ area
+r_MPAe12<-r_MPA %>% filter(year<2012) %>% group_by(rgn_id,tot_area_km2) %>%  summarise(mpa_area=sum(area_km2)) %>% mutate(scen='v2012')
+r_MPAe13<- r_MPA %>% filter(year<2013) %>% group_by(rgn_id,tot_area_km2) %>%  summarise(mpa_area=sum(area_km2)) %>% mutate(scen='v2013')
+r_MPAe14<-r_MPA %>% group_by(rgn_id,tot_area_km2) %>%  summarise(mpa_area=sum(area_km2)) %>% mutate(scen='v2014')
+r_MPAe<-rbind(r_MPAe12,r_MPAe13,r_MPAe14)
+
+# calculate MPA score (where MPA areas occupying 30% of the coastal area within 3nm gets a score of 1)
+r_MPAe<-r_MPAe %>% mutate(score=ifelse(mpa_area/tot_area_km2*1/0.3>1,1,mpa_area/tot_area_km2*1/0.3))
+r_MPAeez<-r_MPAe %>% select(rgn_id, scen, 'MPA_eez'=score)
+
+
 ## merge all resilience data and weights into a single dataframe
 # sv_combo<-r_combo
 # r_combo<-sv_combo
 # r_combo<- inner_join(sv_combo,r_mora)
- r_combo<- left_join(r_combo,r_mora)
-r_combo<- left_join(r_combo,r_mora_s4)
-r_combo<- left_join(r_combo,r_hab)
-r_combo<- join(r_MPA3nm,r_combo)
-# r_combo<- left_join(r_combo,r_MPAeez)
-# dim(r_combo[!is.na(r_combo$Layer),])
+r_combo<- left_join(r_combo,r_mora) # Joining by: rgn_id
+r_combo<- left_join(r_combo,r_mora_s4) # Joining by: rgn_id
+r_combo<- left_join(r_combo,r_hab); dim(r_combo) # Joining by: rgn_id
+r_combo<- join(r_MPA3nm,r_combo) # Joining by: rgn_id
+r_combo<-r_combo[,c(1:2,4:12,3)]
+r_combo<- left_join(r_combo,r_MPAeez); dim(r_combo) # Joining by: c("rgn_id", "scen")
 
 # multiply each layer by its weight, and sum to obtain a resilience score per layer, region, per scenario
+r_scores <-r_combo %>% group_by(rgn_id, scen, Layer) %>% mutate(score=sum(w_Mora*mora, w_Mora_s4*mora_s4, w_CBD_hab*hab, MPA_coast*w_MPA_coast, w_MPA_eez*MPA_eez,
+                                                                        na.rm=T)/sum(w_Mora, w_Mora_s4, w_CBD_hab, w_MPA_coast, w_MPA_eez, na.rm=T)
+                                                                        ) ; head(r_scores)
+                                                                        
+r_scores<-r_scores %>% select(rgn_id,  scen, score) # Layer is also included because they're all the variables in the grouping factor
 
-r_scores<-r_combo %>% group_by(rgn_id, scen, Layer) %>% mutate(score=sum(w_Mora*mora, w_Mora_s4*mora_s4, w_CBD_hab*hab, MPA_coast*w_MPA_coast, 
-                                                               #  w_MPA_eez*MPA_eez,
-                                                                        na.rm=T)/sum(w_Mora, w_Mora_s4, w_CBD_hab, w_MPA_coast,
-                                                                        # w_MPA_eez,
-                                                                        na.rm=T)
-                                                                )
-
+###############################################
+##### to do: save as layers
 #  save as separate scores by scenario and layer (what format is needed for toolbox??)
-
-r_scores<-r_scores %>% select(rgn_id,  scen, score)
 write.csv()
 
