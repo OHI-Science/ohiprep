@@ -1,91 +1,12 @@
 ####################################################################
-## Fisheries (FIS) calculation (Part 1):
+## Fisheries (FIS) calculation:
 ## Data preparation 
+## This calculates the saup to fao conversion (from earlier)
+## this doesn't need to be updated, but this is the script to do so
 ####################################################################
 library(plyr)
 setwd("C:\\Users\\Melanie\\Desktop\\Revising FIS")
 
-#---------------------------------------------------------
-## Species estimates of b/bmsy
-#---------------------------------------------------------
-load("raw\\cmsy_ohi_results_table.RData")
-head(cmsy.ohi.df)
-
-# Interpolate Euphausia superba_88 for 1988 and 1989 for FAO 88 to solve NA problem
-interp1988 <- data.frame(stock_id="Euphausia superba_88",yr=1988,
-                         b_bmsy = cmsy.ohi.df$b_bmsy[cmsy.ohi.df$stock_id=="Euphausia superba_88" & cmsy.ohi.df$yr=="1987"] + 
-                           (1/3)*(cmsy.ohi.df$b_bmsy[cmsy.ohi.df$stock_id=="Euphausia superba_88" & cmsy.ohi.df$yr=="1990"] -
-                              cmsy.ohi.df$b_bmsy[cmsy.ohi.df$stock_id=="Euphausia superba_88" & cmsy.ohi.df$yr=="1987"]))
-
-interp1989 <- data.frame(stock_id="Euphausia superba_88",yr=1989,
-                         b_bmsy = cmsy.ohi.df$b_bmsy[cmsy.ohi.df$stock_id=="Euphausia superba_88" & cmsy.ohi.df$yr=="1987"] + 
-                           (2/3)*(cmsy.ohi.df$b_bmsy[cmsy.ohi.df$stock_id=="Euphausia superba_88" & cmsy.ohi.df$yr=="1990"] -
-                                    cmsy.ohi.df$b_bmsy[cmsy.ohi.df$stock_id=="Euphausia superba_88" & cmsy.ohi.df$yr=="1987"]))
-
-cmsy.ohi.df <- rbind.fill(cmsy.ohi.df, interp1988, interp1989)
-
-#Produce a dataframe that has just the id, year and BvBmsy
-cmsy.ohi.df <- cmsy.ohi.df[,c("stock_id","yr","b_bmsy")]
-
-# Deparse the name to get the fao_id region
-cmsy.ohi.df$fao_id <- sapply(strsplit(as.character(cmsy.ohi.df$stock_id), "_"), function(x)x[2])
-cmsy.ohi.df$TaxonName <- sapply(strsplit(as.character(cmsy.ohi.df$stock_id), "_"), function(x)x[1])
-cmsy.ohi.df <- rename(cmsy.ohi.df, c(yr="year"))
-cmsy.ohi.df <- subset(cmsy.ohi.df, select=c("fao_id", "TaxonName", "year", "b_bmsy"))
-
-#write.csv(cmsy.ohi.df, "data\\fnk_fis_b_bmsy.csv", row.names=FALSE)
-
-#---------------------------------------------------------
-## Catch data
-#---------------------------------------------------------
-
-country.level.data <- read.csv("raw\\Extension_redo_withFlag.csv")
-
-# Need to fix Clupea harengus from FAO 27 (2 catch streams for same species in the same FAO - sum them together)
-ClupeaHarengus27 <- country.level.data[country.level.data$TaxonName == "Clupea harengus" 
-                                       & country.level.data$FAO==27, ]
-
-SummedCH27 <- ddply(ClupeaHarengus27,.(IYear,EEZ,FAO,Fishing_area,TaxonName,CommonName,LH,Resilience,CHANGE,TLevel),
-                    summarise,Catch=sum(Catch),Taxonkey=mean(Taxonkey))
-
-country.level.data <- rbind.fill(country.level.data[!(country.level.data$TaxonName == "Clupea harengus" &
-                                                 country.level.data$FAO == 27), ], SummedCH27)
-
-# Recode TaxonKey such that the FAO TaxonKey takes precedence over the Sea 
-# Around Us TaxonKey to give credit to those who report at higher level 
-# than was ultimately reported in the SAUP data. 
-country.level.data$NewTaxonKey <- ifelse(is.na(country.level.data$TLevel)==TRUE,
-                                         country.level.data$Taxonkey,
-                                   100000*country.level.data$TLevel)
-country.level.data$TaxonName_TaxonKey <- paste(country.level.data$TaxonName, 
-                            as.character(country.level.data$NewTaxonKey), sep="_")
-country.level.data <- rename(country.level.data, c(IYear="year", EEZ="saup_id", FAO="fao_id"))
-country.level.data <- country.level.data[country.level.data$saup_id>0,] # clean Data
-country.level.data <- country.level.data[country.level.data$year >= 1980,]
-
-# Calculate mean catch over all years per taxon and saup_id/fao_id
-MeanCatch <- ddply(country.level.data, .(saup_id, fao_id, Taxonkey, TaxonName), 
-                   summarize, MeanCatch=mean(Catch), .progress = "text")
-
-country.level.data<-join(country.level.data, MeanCatch, by=c("saup_id","fao_id","Taxonkey","TaxonName"))
-head(country.level.data)
-
-# remove mean catch == 0
-country.level.data <- country.level.data[country.level.data$MeanCatch != 0, ]
-country.level.data <- country.level.data[country.level.data$year>2005,]
-
-country.level.data$fao_saup_id <- paste(country.level.data$fao_id, 
-                            country.level.data$saup_id, sep="_")
-
-country.level.data <- subset(country.level.data, select=c("fao_saup_id", "TaxonName_TaxonKey", 
-                                                          "year", "MeanCatch"))
-
-write.csv(country.level.data, "data\\cnk_fis_meancatch.csv", row.names=FALSE)
-
-
-#---------------------------------------------------------
-## Reporting zones
-#---------------------------------------------------------
 # OHI reporting regions are often comprised of multiple saup regions.
 # The proportional area of each saup region within each OHI reporting region
 # is used to weight the calculated status within each OHI reporting region.
@@ -119,59 +40,3 @@ combined_v2013a <- subset(combined_v2013a, select=c("saup_id",
 write.csv(combined_v2013a, "data\\snk_fis_propArea_saup2rgn.csv", row.names=FALSE)
 
 
-# ------------------------------------------------------------------------
-# Make a fake layers data set to get things going 
-# ------------------------------------------------------------------------
-fileName <- "cnk_fis_meancatch"
-CatchSpecies <- read.csv(paste("data\\", fileName, ".csv", sep=""))
-head(CatchSpecies)
-names(CatchSpecies) <- c("id_num", "category", "year", "value_num")
-CatchSpecies_lyr <- data.frame(layer=fileName,
-                               id_num=CatchSpecies$id_num,
-                               id_chr=NA,
-                               category=CatchSpecies$category,
-                               year=CatchSpecies$year,
-                               value_num=CatchSpecies$value_num,
-                               value_chr=NA)
-CatchSpecies_lyr[,1:5] <- apply(CatchSpecies_lyr[,1:5], 2, function(x)as.character(x))
-
-##########################################################################
-### SpeciesStatus data
-### Yearly stock assessments (B/BMSY) of taxa identified to species were obtained 
-### using the catch data at the FAO scale.  
-fileName <- "fnk_fis_b_bmsy"
-bmsy <- read.csv(paste("data\\", fileName, ".csv", sep=""))
-head(bmsy)
-names(bmsy) <- c("id_num", "category", "year", "value_num")
-bmsy_lyr <- data.frame(layer=fileName,
-                       id_num=bmsy$id_num,
-                       id_chr=NA,
-                       category=bmsy$category,
-                       year=bmsy$year,
-                       value_num=bmsy$value_num,
-                       value_chr=NA)
-
-bmsy_lyr[,1:5] <- apply(bmsy_lyr[,1:5], 2, function(x)as.character(x))
-
-#############################################################
-### saup2ohi
-### Proportion of area of each of the saups comprising each 
-### OHI reporting region.  These data were used to convert 
-### the status calculated at the saup scale to OHI reporting scale
-fileName <- "snk_fis_propArea_saup2rgn"
-saup2ohi <- read.csv(paste("data\\", fileName, ".csv", sep=""))
-head(saup2ohi)
-names(saup2ohi) <- c("id_num", "category", "value_num")
-saup2ohi_lyr <- data.frame(layer=fileName,
-                           id_num=saup2ohi$id_num,
-                           id_chr=NA,
-                           category=saup2ohi$category,
-                           year=NA,
-                           value_num=saup2ohi$value_num,
-                           value_chr=NA)
-saup2ohi_lyr[,1:5] <- apply(saup2ohi_lyr[,1:5], 2, function(x)as.character(x))
-
-
-layers_data <- rbind(CatchSpecies_lyr, bmsy_lyr, saup2ohi_lyr)
-layers_data$value_num <- as.numeric(layers_data$value_num)
-write.csv(layers_data, "data\\layers_data.csv", row.names=FALSE)
