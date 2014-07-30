@@ -49,8 +49,10 @@ nS4<-select(nS3,id,stock_id,res,ct, yr)
 
 ## step 4. ##
 nS4<-nS4[!is.na(nS4$ct),] # remove NAs
-nS5<-filter(group_by(nS4,stock_id),length(yr)>=10) # remove time-series <10 years 
-
+nS5<-filter(group_by(nS4,stock_id),length(yr)>=10) %>% # remove time-series <10 years 
+  arrange(stock_id,yr)
+# any duplicates?
+nrow(nS5[duplicated(nS5),])==0
 # write.csv(nS5,'OHICatchHistoryCMSY_07_21_2014.csv')
 
 ################################################################
@@ -74,6 +76,8 @@ nS6<-join(nS6[c(1:3,5:6)],"res"=resil)
 # re-create the id field
 nS7<-join(nS6[,c(1:2,4:6)],alls)
 nS7<-nS7[,c(6,2,5,3,1)]
+
+nrow(nS7[duplicated(nS7),])==0
 
 # write.csv(nS7,'OHICatchHistoryCMSY_added0s_07_21_2014.csv')
 # check differences between the two time-series
