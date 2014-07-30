@@ -1,6 +1,5 @@
 ##############################################################################
 ############### prep SAUP data to provide weights for FIS calculation ########
-###############  and structure b_bmsy dataset for toolbox             ########
 ##############################################################################
 ## modified from FIS_dataPrep.R created by Mel##
 # setup
@@ -11,15 +10,10 @@ library(plyr)
 library(dplyr)
 # library(tidyr)
 
-source('src/R/common.R') # set dir_neptune_data
-source('src/R/ohi_clean_fxns.R') # name-to-region functions (but need to add new saup names files)
+source('../ohiprep/src/R/common.R') # set dir_neptune_data
+source('../ohiprep/src/R/ohi_clean_fxns.R') # name-to-region functions (but need to add new saup names files)
 
-dir_d = 'Global/NCEAS-Fisheries_2014a' # set folder where files are saved
-data <- file.path(dir_neptune_data, "model/GL-NCEAS-FIS_2014a")
-
-#############################################
-### Weight data ----
-#############################################
+dir_d = '../ohiprep/Global/NCEAS-Fisheries_2014a' # set folder where files are saved
 
 ## Step 1. ## get files sourcing CMSY script
 source(file.path(dir_d,'tmp/CMSY data prep.R') # upload directory names and upload SAUP data in object newSAUP
@@ -115,15 +109,3 @@ write.csv(cnk_fis_meancatch,file.path(dir_d,'data/cnk_fis_meancatch.csv'),row.na
 
 
 
-###############################################
-## B-Bmsy data----
-###############################################
-b_bmsy <- read.csv(file.path(data, "raw/cmsy.ohi.df_Jul292014.csv"), na.strings='')
-cmsy.ohi.df$fao_id <- sapply(strsplit(as.character(cmsy.ohi.df$stock_id), "_"), function(x)x[2])
-cmsy.ohi.df$TaxonName <- sapply(strsplit(as.character(cmsy.ohi.df$stock_id), "_"), function(x)x[1])
-
-b_bmsy_lyr <- b_bmsy %.%
-  mutate(fao_id = sapply(strsplit(as.character(stock_id), "_"), function(x)x[2]),
-         taxon_name = sapply(strsplit(as.character(stock_id), "_"), function(x)x[1])) %.%
-  select(fao_id, taxon_name, year=yr, b_bmsy)
-write.csv(b_bmsy_lyr, file.path(dir_d, 'data/fnk_fis_b_bmsy_lyr.csv'), row.names=F, na='')
