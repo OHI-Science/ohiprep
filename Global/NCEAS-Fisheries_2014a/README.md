@@ -16,7 +16,6 @@ Also, we never actually used the geometric mean. It was always the arithmetic me
 
 Prepares files: cnk_fis_meancatch.csv and fnk_fis_b_bmsy_lyr.csv for Toolbox    
 
-2. **fis_layer.R** This has mostly been replaced by cnk_fis_meancatch_datamaker.R.  But there may be some information about other data layers.
 
 ## History
 Based heavily on scripts located here: N:\model\GL-NCEAS_FIS_v2013a\RevisingFIS
