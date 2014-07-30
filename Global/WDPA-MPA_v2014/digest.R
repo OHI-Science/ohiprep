@@ -1,17 +1,16 @@
 library(foreign)
 library(reshape2)
-library(plyr)
 library(dplyr)
 
 source('src/R/common.R')
 dir_prod = 'Global/WDPA-MPA_v2014'
-dir_tmp  = sprintf('C:/tmp/%s', dir_prod)
+dir_tmp  = file.path(dir_neptune_data, sprintf('git-annex/%s/tmp', dir_prod))
 
 dir.create(file.path(dir_prod, 'data'), showWarnings=F)
 
 # read in tabulated areas and write out LSP layers ----
-lyrs = c('rgn_offshore3nm_wdpa.dbf' = 'lsp_protarea_inland1km.csv',
-         'rgn_inland1km_wdpa.dbf'   = 'lsp_protarea_offshore3nm.csv')
+lyrs = c('rgn_offshore3nm_wdpa.dbf' = 'lsp_protarea_offshore3nm.csv',
+         'rgn_inland1km_wdpa.dbf'   = 'lsp_protarea_inland1km.csv')
 
 for (i in 1:length(lyrs)){ # i=1
   dbf = names(lyrs)[i]
