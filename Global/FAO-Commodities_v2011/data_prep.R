@@ -191,7 +191,7 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
 # correlate, swap and smooth to generate product peaks ----
 
 harvest_peak_buffer = 0.35
-scenarios_year_max = c(eez2014=2010, eez2013=2009, eez2012=2008)
+scenarios_year_max = c(eez2014=2011, eez2013=2010, eez2012=2009)
 nonzero_harvest_years_min = 4
 
 h_tonnes = read.csv(file.path(dir_d, 'data/FAO-Commodities_v2011_tonnes.csv'))
