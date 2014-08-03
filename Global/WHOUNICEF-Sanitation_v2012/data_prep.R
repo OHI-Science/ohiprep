@@ -100,9 +100,9 @@ popn_density_file = read.csv(file.path(dir_neptune_data, 'model/GL-NCEAS-Coastal
 popn_density = popn_density_file %>%  
   filter(pop_per_km2 != 0) %>% # remove any unpopulated regions (rgn_id 149, 158)
   mutate(
-    pop_per_km2_lin     = pop_per_km2 / max(pop_per_km2),
+    pop_per_km2_lin     = pop_per_km2 / max(pop_per_km2, na.rm=T),
     pop_per_km2_log     = ifelse(pop_per_km2!=0, log(pop_per_km2), 0),
-    pop_per_km2_log_lin = ( pop_per_km2_log - min(pop_per_km2_log) ) / ( max(pop_per_km2_log) - min(pop_per_km2_log) )) %>%
+    pop_per_km2_log_lin = ( pop_per_km2_log - min(pop_per_km2_log) ) / ( max(pop_per_km2_log, na.rm) - min(pop_per_km2_log) )) %>%
   select(rgn_id, year, pop_per_km2, pop_per_km2_lin, pop_per_km2_log_lin) %>%
   arrange(desc(pop_per_km2)); head(popn_density)
 
@@ -121,7 +121,7 @@ scenario = c('2014' = 0,
              '2012' = 2)
 
 # find max prop_x_pop_log across all scenarios
-scen_earliest_san = max(r_g$year) - as.numeric(as.character(factor(scenario[length(scenario)])))
+scen_earliest_san = max(r_g$year, na.rm) - as.numeric(as.character(factor(scenario[length(scenario)])))
 scen_earliest_pop = as.numeric(as.character(factor(names(scenario)[i])))
 
 san_pop_earliest = r_g %>%  # sanitation-population (san_pop)
@@ -142,7 +142,7 @@ pp_max = max(san_pop_earliest$prop_x_pop_log, na.rm=T)
 
 for (i in 1:length(names(scenario))) { # i=1
   
-  yr_max_san = max(r_g$year) - as.numeric(as.character(factor(scenario[i])))
+  yr_max_san = max(r_g$year, na.rm=T) - as.numeric(as.character(factor(scenario[i])))
   yr_min_san = yr_max_san - 4   # inclusive: this is 5 years
   yr_max_pop = as.numeric(as.character(factor(names(scenario)[i])))
   yr_min_pop = yr_max_pop - 4
@@ -168,7 +168,7 @@ for (i in 1:length(names(scenario))) { # i=1
   ## save as pressure layer ----
   
   sp_pressure = rbind(san_pop %>%
-                        filter(yr_id == max(yr_id)) %>% # capture only the most recent year
+                        filter(yr_id == max(yr_id, na.rm=T)) %>% # capture only the most recent year
                         select(rgn_id, pressure_score), 
                       rgns %>%
                         anti_join(san_pop, by = 'rgn_id') %>% # add any missing regions as 0
