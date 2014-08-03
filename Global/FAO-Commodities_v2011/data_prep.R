@@ -68,7 +68,7 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
     mutate(
       # gapfill: Carry previous year's value forward if value for max(year) is NA.
       #   This gives wiggle room for regions still in production but not able to report by the FAO deadline.            
-      year_max   = max(year),    # note: currenly year_max is always max year of whole dataset b/c input is wide format
+      year_max   = max(year, na.rm=T),    # note: currenly year_max is always max year of whole dataset b/c input is wide format
       year_prev  = lag(year,  order_by=year),
       value_prev = lag(value, order_by=year),
       value_ext  =        is.na(value) & year==year_max & year_prev==year-1,
@@ -161,7 +161,7 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   print(m_p %.%
     group_by(product, commodity) %.%
     summarize(
-      year_max = max(year)))
+      year_max = max(year, na.rm=T)))
 
   # product summarize
   m_s = m_p %.%
