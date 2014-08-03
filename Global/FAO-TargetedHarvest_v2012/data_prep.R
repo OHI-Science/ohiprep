@@ -63,7 +63,7 @@ m = m %.%
   mutate(
     # gapfill: Carry previous year's value forward if value for max(year) is NA.
     #   This gives wiggle room for regions still in production but not able to report by the FAO deadline.            
-    year_max   = max(year),    # note: currenly year_max is always max year of whole dataset b/c input is wide format
+    year_max   = max(year, na.rm=T),    # note: currenly year_max is always max year of whole dataset b/c input is wide format
     year_prev  = lag(year,  order_by=year),
     value_prev = lag(value, order_by=year),
     value_ext  =        is.na(value) & year==year_max & year_prev==year-1,
@@ -176,10 +176,10 @@ scenario = c('2014' = 0,
 #              '2009' = 5)
 
 # find max count across all scenarios
-scen_earliest = max(m_r$year) - as.numeric(as.character(factor(scenario[length(scenario)])))
+scen_earliest = max(m_r$year, na.rm=T) - as.numeric(as.character(factor(scenario[length(scenario)])))
 m_scen = m_r %>%
   filter(year >= scen_earliest) %>% 
-  filter(value == max(value)); m_scen
+  filter(value == max(value, na.rm=T)); m_scen
 value_max = m_scen$value
 message(sprintf('\n  for rescaling pressures, will use the max value since %d', scen_earliest))
 message(sprintf('\n  rescaled scores based on %d counts of targeted harvest (catch from %s in %s)', 
@@ -187,7 +187,7 @@ message(sprintf('\n  rescaled scores based on %d counts of targeted harvest (cat
 
 for (i in 1:length(names(scenario))) { # i=1
   
-  yr_max = max(m_r$year) - as.numeric(as.character(factor(scenario[i])))
+  yr_max = max(m_r$year, na.rm=T) - as.numeric(as.character(factor(scenario[i])))
   
   m_f_tmp = m_r %>%
     filter(year == yr_max) %>%
