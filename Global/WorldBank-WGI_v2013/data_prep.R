@@ -127,7 +127,7 @@ sovregions = read.csv('../ohiprep/src/LookupTables/eez_rgn_2013master.csv', na.s
   select(rgn_id = rgn_id_2013,
          r2 = sov_id) %.%     # r2 is actually rgn_ids of sovereign regions
   group_by(rgn_id) %.%                       # remove duplicated countrys from this rgn_id list                    
-  summarize(r2 = mean(r2)) %.% # duplicates always have the same sov_id (r2 value)
+  summarize(r2 = mean(r2, na.rm=T)) %.% # duplicates always have the same sov_id (r2 value)
   mutate(r1 = r2, 
          r0 = r2,
          fld_wt = as.integer(rgn_id == r2)) %.%  # flag the 'parent' rgn_id with 1, others with 0 
