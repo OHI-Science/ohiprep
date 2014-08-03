@@ -21,7 +21,6 @@
 # setup ----
 
 # from get paths configuration based on host machine name
-setwd('~/github/ohiprep')
 source('src/R/common.R') # set dir_neptune_data; load reshape2, plyr, dplyr
 source('src/R/ohi_clean_fxns.R') # get functions
 dir_d = 'Global/WorldBank-Statistics_v2012'
@@ -66,7 +65,7 @@ for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), fu
   if (!exists('d_all')){
     d_all = d
   } else {
-    d_all = rbind_list(d_all, d)
+    d_all = rbind(d_all, d)
   }
 }
 
@@ -174,7 +173,7 @@ for (lyr in names(layers)){ # lyr='tlf'
     arrange(rgn_id, year) %>%
     rename(
       setNames(units, 'value'))
-  stopifnot(anyDuplicated(sp_pressure[,c('rgn_id', 'year')]) == 0)
+  stopifnot(anyDuplicated(d_g[,c('rgn_id', 'year')]) == 0)
   # write to csv
   write.csv(d_g, csv_dat, na='', row.names=F)
 }
@@ -221,18 +220,21 @@ for (scen in names(scenarios)){ # scen = names(scenarios)[1]
 
 fname = 'rgn_wb_tlf_2014a_ratio-gapfilled.csv'
 f = read.csv(file.path(dir_d, 'data', fname)); head(f)
+cp = read.csv(file.path(dir_neptune_data, 'model/GL-NCEAS-CoastalPopulation_v2013/data', 
+                                 'cntry_popsum2013_inland25mi_complete.csv'))
 
-lf = f %>%
+lf1 = f %>%
   select(rgn_id, year, count) %>%
-  left_join(read.csv(file.path(dir_neptune_data, 'model/GL-NCEAS-CoastalPopulation_v2013/data', 
-                               'cntry_popsum2013_inland25mi_complete.csv')),
-            by = 'rgn_id') %>%
-  left_join(lf %>%
+  left_join(cp,
+            by = 'rgn_id') 
+
+lf = lf1 %>%
+  left_join(lf1 %>%
               group_by(rgn_id, year) %>%
               summarize(rgn_popsum = sum(cntry_popsum2013_inland25mi)), 
             by = c('rgn_id', 'year')) %>%
   mutate(pop_ratio = cntry_popsum2013_inland25mi/rgn_popsum,
-         jobs = count * pop_ratio) %>%
+         jobs = count * pop_ratio) %>% # debug: lf %>% filter(pop_ratio != 1) see below
   select(cntry_key, year, jobs) %>%
   arrange(cntry_key, year); head(lf); summary(lf)
 
@@ -260,9 +262,9 @@ lf = f %>%
 
 # save for each scenario 
 
-scenarios = list('2012a'= max(lf$year)-2,
-                 '2013a'= max(lf$year)-1,
-                 '2014a'= max(lf$year))
+scenarios = list('2012a'= max(lf$year, na.rm=T)-2,
+                 '2013a'= max(lf$year, na.rm=T)-1,
+                 '2014a'= max(lf$year, na.rm=T))
 
 for (scen in names(scenarios)){ # scen = names(scenarios)[1]
   
