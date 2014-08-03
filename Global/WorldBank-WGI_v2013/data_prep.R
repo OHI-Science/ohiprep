@@ -100,7 +100,7 @@ d.all2 = d.all %.%
 
 d.m = d.all2 %.%
   group_by(country, year) %.%
-  summarize(score = mean(score)); head(d.m); summary(d.m)
+  summarize(score = mean(score, na.rm=T)); head(d.m); summary(d.m)
 
 rng = c(-2.5, 2.5)
 d.m2 = within(d.m,{
