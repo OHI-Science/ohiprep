@@ -260,9 +260,9 @@ write.csv(t_g, layersave, na = '', row.names=FALSE)
 # from dir_neptune_data: model/GL-NCEAS-Pressures_v2013a/model_trash.R
 
 # write out files using reference years
-scenarios = list('2012a'= max(t_g$year)-2,
-                 '2013a'= max(t_g$year)-1,
-                 '2014a'= max(t_g$year))
+scenarios = list('2012a'= max(t_g$year, na.rm=T)-2,
+                 '2013a'= max(t_g$year, na.rm=T)-1,
+                 '2014a'= max(t_g$year, na.rm=T))
 
 scen_earliest = scenarios[[names(scenarios)[1]]]
 
