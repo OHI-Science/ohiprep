@@ -66,7 +66,7 @@ for (k in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*csv'), fu
   # for each scenario
   for (i in 1:length(names(scenario))) { # i=1
     
-    yr_max = max(dn$year) - as.numeric(as.character(factor(scenario[i])))
+    yr_max = max(dn$year, na.rm=T) - as.numeric(as.character(factor(scenario[i])))
     yr_min = yr_max - 4 # yr_min:max(f$year) is 5 years
     
     message(sprintf('\n  for %s %sa, calculate trend using yr_min == %d and yr_max == %d', v, names(scenario)[i], yr_min, yr_max))
