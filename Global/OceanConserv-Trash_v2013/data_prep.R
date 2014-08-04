@@ -30,7 +30,9 @@
 library(gdata)
 library(stringr)
 library(zoo)
-library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
+#library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
+library(devtools)
+load_all('~/github/ohicore')
 
 # get paths
 source('src/R/common.R') # set dir_neptune_data
@@ -74,6 +76,7 @@ f = f %>%
     country = str_replace(country, 'Saba  Netherlands', 'Saba'),
     country = str_replace(country, 'Sint Maarten  Dutch West Indies', 'Sint Maarten'),
     country = str_replace(country, 'U S  Virgin Islands', 'US Virgin Islands')); head(f); summary(f)
+
 
 ## read in 2012 data ----
 pt = read.xls(files$f2012, skip=1, na.strings=''); head(pt)
@@ -167,13 +170,14 @@ ant # returns only 'Aruba': no partitioning for 'Netherlands Antilles'
 
 m = mt2; head(m); summary(m)
 
+
 ## combine all years, collapse UK regions ----
-kk = rbind(f, p, d, m) 
+kk = rbind(f, p, d, m)
 
 k = rbind(kk %>%
             filter(!country %in% c('United Kingdom', 'Northern Ireland','Scotland', 'Wales')),
           kk %>%
-            filter(country %in% c('United Kingdom', 'Northern Ireland','Scotland', 'Wales')) %>%
+            filter( country %in% c('United Kingdom', 'Northern Ireland','Scotland', 'Wales')) %>%
             group_by(year) %>%
             summarize(pounds = sum(pounds),
                       miles  = sum(miles)) %>%
@@ -198,10 +202,11 @@ k = k %>%
 
 # narrow selection
 k = k %>%
-  select(country, year, lbs_per_mi); head(k); summary(k)
+  select(country, year, lbs_per_mi) %>%
+  arrange(country, year); head(k); summary(k)
+# k[duplicated(k[,c('country','year')]),]
+stopifnot(anyDuplicated(k[,c('country', 'year')]) == 0)
 
-
-# anyDuplicated(k[,c('country','year')])
 
 ## add rgn_ids with name_to_rgn ---- 
 # source('../ohiprep/src/R/ohi_clean_fxns.R')
@@ -244,7 +249,7 @@ t_g_a = gapfill_georegions(
 head(attr(t_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('open %s', attrsave))
 
 # explore a bit
-filter(t_g_a, rgn_id == 16)
+# filter(t_g_a, rgn_id == 16)
 
 
 # save
