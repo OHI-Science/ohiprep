@@ -10,7 +10,7 @@ dir_d = '../ohiprep/Global/FAO-Aquaculture_v2012'
 ##############################################
 # PART 1 - get raw MAR data and clean it
 ##############################################
-d <- read.csv(file.path(dir_d,'raw','FAO_raw_aquaculture_quant_1950_2012.csv'),check.names=F, stringsAsFactors=F) ; head(d)
+d <- read.csv(file.path(dir_d,'raw','FAO_raw_aquaculture_quant_1950_2012.csv'), check.names=F, stringsAsFactors=F) ; head(d)
 
 # a) melt into long format from wide format
 # b) rename, deal with the weird FAO format with the ...'s and 0 0's, remove Yugoslavia, U.S.S.R., occupied Palestine (don't do this for nat prods: you may miss the peak fi you remove early years)
@@ -112,75 +112,95 @@ m3 <- m3 %>% select(rgn_nm , rgn_id, country, species, fao, environment, year, v
 # load Trujillo score tables (original, with converted names; spp average, group1 avg, group2 avg, sp_env+group1+group2_table)
 # add rows to sp+group1+group2_table, if new species_env reported
 
-m_s<-read.csv(file.path(dir_d, 'tmp/MARdata_JUL312014_sust.csv'), stringsAsFactors=F) ; head(m_s)
+Ta <- read.csv(file.path(dir_d, 'raw/Truj_sp_cn_sust.csv'), stringsAsFactors=F, check.names=F, ) ; head(Ta) # Trujillo scores
+# change country names to match FAO - (would be good to merge this with 'updated 2014_country_names.csv' next time)
+Tfn <- read.csv(file.path(dir_d, 'raw/Truj_fao_c_names.csv'),stringsAsFactors=F) ; head(Tfn)
+Tfn <- rename(Tfn, c('cn_nm_Truj' = "Country")) # join by Trujillo country name
+Ta <- left_join(Ta, Tfn) # Joining by: "Country"
+Ta <- Ta %>% mutate( country = ifelse (is.na(cn_nm_fao), Country, cn_nm_fao)) %>% select (country, Sp, Maric_sustainability) %>% 
+        rename(c('Sp' = 'species', 'Maric_sustainability' = 'sust'))
 
-# get an average sustainability score per country-species pair (the code is set up so there's a unique resil for country-spp pair, this is untrue: there may be several)
-# dim(unique(m_s[,3:4])) ; dim(unique(m_s[,1:5])) # 1007 against 1063 (in some cases the values are identical, but in several cases they are not)
-# short-term fix: average the sustainability score to fit the code
+# join Trujillo species names to mariculture data, by species-country-fao_region
+Tsfao <- read.csv(file.path(dir_d, 'raw/fao_sp_nm_byFAOarea.csv'),stringsAsFactors=F) ; head(Tsfao)
+Tsfao <- Tsfao %>% rename(c("species_fao" = 'species',  "fao_area" = 'fao' ))
+m4 <- join(m3,Tsfao) # Joining by: country, species, fao
 
-m_s$final_sust <- as.numeric(as.character(m_s$final_sust))
-m_s<- m_s %>% group_by(rgn_nm, rgn_id, country, species) %>% summarise(sust = mean(final_sust))
+# join Trujillo species names to mariculture data, by species-country-environment
+Tsen <- read.csv(file.path(dir_d, 'raw/fao_sp_nm_byEnv.csv'), stringsAsFactors=F) ; head(Tsen)
+Tsen <- Tsen %>% rename(c("species_fao" = 'species', 'species_Truj' = 'species_Truj_env'))
+m4 <- join(m4, Tsen) # Joining by: country, species, environment
+m4 <- m4 %>% mutate (new.species = ifelse( is.na(species_Truj), ifelse( is.na(species_Truj_env),species, species_Truj_env), species_Truj)) %>% 
+        select(rgn_nm, rgn_id, country, new.species, year, yield) %>% rename(c('new.species' = 'species'))
+
+# substitute some of the species names (would be good to merge this with 'updated 2014_sp_list.csv' next time)
+Tsn <- read.csv(file.path(dir_d, 'raw/Truj_sp_nm_replace.csv'),stringsAsFactors=F) ; head(Tsn)
+Tsn <- Tsn %>% rename(c('Row.Labels' = 'species')) %>% select( species, Alias)
+m5 <- left_join(m4, Tsn) %>% mutate( species = ifelse(is.na(Alias), species, Alias) )  # Joining by: species
+# no matches where Alias=='REMOVE', otherwise would filter them out
+  
+# join with Trujillo country-spp sust scores
+m5 <- join(m5, Ta) %>% select (rgn_nm, rgn_id, country, species, year, sust, yield) # Join by: country, species
+
+# sum duplicate records (don't need to separate by fao area or envrionment anymore, now that I matched with sust scores)
+m5 <- m5 %>% group_by(rgn_nm, rgn_id, country, species, year, sust) %>% summarise( yield = sum(yield))
+# anyDuplicated(m5[,1:6]) # check for duplicates
+# anyDuplicated (m5[,1:5]) # check for sustainability duplicates
+
+# add in species level sustainability
+Tss <- read.csv(file.path (dir_d, 'raw/Truj_sp_sust.csv'), stringsAsFactors=F, check.names=F) ; head(Tss)
+names(Tss) <- c('species', 'sp_sust', 'whence')
+m6 <- left_join(m5, Tss[,1:2]) # Joining by: "species"
+
+# add in taxon names and join taxon level sustainability 
+tn <- read.csv(file.path (dir_d, 'raw/Truj_tax_nm_replace.csv'), stringsAsFactors=F, check.names=F) ; head(tn)
+names(tn) <- c('species', 'taxon', 'added')
+Tts <- read.csv(file.path (dir_d, 'raw/Truj_tax_sust.csv'), stringsAsFactors=F, check.names=F) ; head(Tts)
+names(Tts)[2:3] <- c( 'taxon', 'tax_sust')
+m7 <- left_join( m6, tn[,1:2]) # Joining by: "species"
+m7 <- left_join( m7, Tts[,2:3]) # Joining by: "taxon"
+
+# select the highest taxonomic level of sustainability score possible (highest priority to country-species matches)
+m7 <- m7 %>% mutate (sust.all = ifelse( is.na(sust),  
+                                    ifelse(is.na(sp_sust), tax_sust, sp_sust),
+                                      sust)
+                     ) 
+m7 <- ungroup(m7) %>% select (rgn_nm, rgn_id, country, species, year, sust.all, yield) %>% rename(c( 'sust.all' = 'sust_coeff' , 'yield' = 'tonnes'))
 
 ############################################
 # create layers:
 
-# mar_sustainability_score_lyr.csv
-# rgn_id  species	sust_coeff
+# mar_harvest_species_lyr.csv : species_code  species (species code up to 1183 in ohi2013, one number per species name )
+m7 <- m7 %>% mutate (sp_lab = paste(country, species, sep='_')) 
+temp <- filter(m7, year >2006) %>% group_by( country, species) %>% summarise(sp_lab = unique(sp_lab))  %>% 
+          ungroup() %>% mutate (species_code = 1:length(sp_lab))
+mar_harvest_species_2013a <- temp %>% select (species_code,  species)
+mar_harvest_species_2012a <- filter(m7, year %in% 2005:2011) %>% group_by( country, species) %>% summarise(sp_lab = unique(sp_lab))  %>% 
+                                ungroup() %>% mutate (species_code = 1:length(sp_lab))  %>% select (species_code,  species)
 
-# mar_trend_years_lyr.csv
-# rgn_id	trend_yrs (= one of '5_yr', if value_ext = F or '4_yr', if value_ext = T)
-# join rgn_id w 5_yr
-# 
-# mar_harvest_tonnes_lyr.csv
-# rgn_id	species_code	year	tonnes
-# 
-# mar_harvest_species_lyr.csv
-# species_code	species (species code currently up to 1183, one number per species name - this is not a unique code!!)
+anyDuplicated(mar_harvest_species_2013a)
+anyDuplicated(mar_harvest_species_2012a)
 
+# mar_trend_years_lyr.csv: rgn_id  trend_yrs (= one of '5_yr', if value_ext = F or '4_yr', if value_ext = T)
+mar_trend_years_2013a <- m7 %>% group_by (rgn_id)  %>% summarise (rgn_ids = unique(rgn_id)) %>% 
+                              mutate( trend_yrs = rep('5_yr') )  %>% select( rgn_id, trend_yrs )
+anyDuplicated(mar_trend_years_2013a)
 
-
-# rgn_id: country to rgn_id  # source('src/R/ohi_clean_fxns.R')
-m_r = name_to_rgn(m_l, fld_name='country', flds_unique=c('country','commodity','year'), fld_value='value', add_rgn_name=T) %.%
-  select(rgn_name, rgn_id, commodity, year, value) %.%
-  arrange(rgn_name, commodity, year)
-
-
-
-# check for duplicates
-stopifnot( sum(duplicated(m_s[,c('rgn_id', 'product', 'year')])) == 0 )
-
-# units: rename value field to units based on filename
-m_u = rename(m_s, setNames(units, 'value'))  
-
-# output
-f_out = sprintf('%s/data/%s_%s.csv', dir_d, basename(dir_d), units)
-write.csv(m_u, f_out, row.names=F, na='')
-}
-
-## save as different scenarios ----
-
-# this code was stolen from ohiprep/Global/WorldBank-Statistics_v2012/data_prep.R as an example of how to
-
-
-# example data
-lf = data.frame(rgn_id = 1:20, year = 1994:2013, count = sample(1:100, 20))
-
-# identify scenarios and max years
-scenarios = list('2012a'= max(lf$year)-2,
-                 '2013a'= max(lf$year)-1,
-                 '2014a'= max(lf$year))
-
-# loop through and save
-for (scen in names(scenarios)){ # scen = names(scenarios)[1]
+# mar_sustainability_score_lyr.csv: rgn_id  species	sust_coeff
+mar_sustainability_score_2013a <- filter(m7, year>2006 ) %>% group_by(rgn_id, species) %>% summarise (sust_coeff = unique(sust_coeff))
+anyDuplicated(mar_sustainability_score_2013a)
   
-  yr = scenarios[[scen]]
-  cat(sprintf('\nScenario %s using year == %d\n', scen, yr))
+# mar_harvest_tonnes_lyr.csv: rgn_id	species_code	year	tonnes
+mar_harvest_tonnes_2013a <- left_join ( m7, temp) # Joining by: c("country", "species", "sp_lab")
+mar_harvest_tonnes_2013a <- mar_harvest_tonnes_2013a %>% select(rgn_id,  species_code,	year,	yield) %>% rename ( c( 'yield' = 'tonnes') )
+
+anyDuplicated(mar_harvest_tonnes_2013a) #not0! it's Brunei's fault: groupers nei got duplicted when generating m6 (why??)
+mar_harvest_tonnes_2013a < -mar_harvest_tonnes_2013a [ !duplicated(mar_harvest_tonnes_2013a), ] #removed
+# head(mar_harvest_tonnes_2013a[anyDuplicated(mar_harvest_tonnes_2013a),])
+
   
-  lf_yr = lf %>%
-    filter(year <= yr) # remove any years greater than the scenario
-  stopifnot(anyDuplicated(lf_yr[,c('rgn_id', 'year')]) == 0)
-  
-  csv = sprintf('rgn_id_fao_mar_%s_.csv', scen) 
-  write.csv(lf_yr, file.path(dir_d, 'data', csv), row.names=F)
-  
-}
+# save outputs
+write.csv(mar_harvest_species_2013a, file.path(dir_d, 'data/mar_harvest_species_2013a_lyr.csv'), row.names=F)
+write.csv(mar_harvest_species_2012a, file.path(dir_d, 'data/mar_harvest_species_2012a_lyr.csv'), row.names=F)
+write.csv(mar_trend_years_2013a, file.path(dir_d, 'data/mar_trend_years_2013a_lyr.csv'), row.names=F)
+write.csv(mar_sustainability_score_2013a, file.path(dir_d, 'data/mar_sustainability_score_2013a_lyr.csv'), row.names=F)
+write.csv(mar_harvest_tonnes_2013a, file.path(dir_d, 'data/mar_harvest_tonnes_2013a_lyr.csv'), row.names=F)

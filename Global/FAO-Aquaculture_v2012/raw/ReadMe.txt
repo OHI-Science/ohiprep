@@ -37,11 +37,16 @@ FAO species names and corresponding taxonomic groups
 ####################
 ##### other changes made to match FAO and Trujillo data:
 
-Countries changed from Trujillo original:
+# Countries changed from Trujillo original:
 FAOcountry	TrujilloCountryIran (Islamic Republic of)	IranFaroe Islands	Faeroe Ils.Korea, Dem. People's Rep	Korea, Dem.Republic of Korea	KoreaRussian Federation	Russian Fed.Taiwan Province of China	TaiwanUnited Kingdom of Great Britain and Northern Ireland	United KingdomUnited States of America	U.S. of AmericaVenezuela, Boliv Rep of	Venezuela
 
-FAO areas replaced from Trujillo original:
+# FAO areas replaced from Trujillo original:
 FAOarea	TrujilloRegionAtantic	AtlPacific	PacMediterranean and Black Sea	MedIndian Ocean, Eastern	IndiaIndian Ocean, Eastern	IndAsia - Inland waters	EastAfrica - Inland waters	Med
 
-Suffix removed because a unique time series reported for species-country pair:
+# Suffix removed because a unique time series reported for species-country pair:
 Suffix	For(Med)	Egypt, Flathead grey mullet(India)	Indonesia, Banana prawn(India)	Indonesia, Giant tiger prawn(India)	Malaysia, Giant tiger prawn (only the "Inland waters" one is in the timeseries)(Med)	Morocco_Pacific cupped oyster (only the Atlantic one appears int eh timeseries)(Ind)	Thailand_Giant tiger prawn (only listed for Asia inland waters)(Pac)	Whiteleg shrimp (br) §(only reported for US and only brackish)(East)	Asia - Inland waters, (deleted just "(East)")(med)	replaced with (Med)
+
+removed: 
+Taiwan Province of China	Groupers nei (br)Taiwan Province of China	Groupers nei (Pac) (br)
+because had the same sustainability as
+Taiwan Province of China	Groupers nei
