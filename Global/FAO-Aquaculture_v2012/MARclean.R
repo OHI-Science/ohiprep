@@ -173,34 +173,34 @@ m7 <- ungroup(m7) %>% select (rgn_nm, rgn_id, country, species, year, sust.all, 
 m7 <- m7 %>% mutate (sp_lab = paste(country, species, sep='_')) 
 temp <- filter(m7, year >2006) %>% group_by( country, species) %>% summarise(sp_lab = unique(sp_lab))  %>% 
           ungroup() %>% mutate (species_code = 1:length(sp_lab))
-mar_harvest_species_2013a <- temp %>% select (species_code,  species)
-mar_harvest_species_2012a <- filter(m7, year %in% 2005:2011) %>% group_by( country, species) %>% summarise(sp_lab = unique(sp_lab))  %>% 
+mar_harvest_species_2014a <- temp %>% select (species_code,  species)
+mar_harvest_species_2013a <- filter(m7, year %in% 2005:2011) %>% group_by( country, species) %>% summarise(sp_lab = unique(sp_lab))  %>% 
                                 ungroup() %>% mutate (species_code = 1:length(sp_lab))  %>% select (species_code,  species)
 
+anyDuplicated(mar_harvest_species_2014a)
 anyDuplicated(mar_harvest_species_2013a)
-anyDuplicated(mar_harvest_species_2012a)
 
 # mar_trend_years_lyr.csv: rgn_id  trend_yrs (= one of '5_yr', if value_ext = F or '4_yr', if value_ext = T)
-mar_trend_years_2013a <- m7 %>% group_by (rgn_id)  %>% summarise (rgn_ids = unique(rgn_id)) %>% 
+mar_trend_years_2014a <- m7 %>% group_by (rgn_id)  %>% summarise (rgn_ids = unique(rgn_id)) %>% 
                               mutate( trend_yrs = rep('5_yr') )  %>% select( rgn_id, trend_yrs )
-anyDuplicated(mar_trend_years_2013a)
+anyDuplicated(mar_trend_years_2014a)
 
 # mar_sustainability_score_lyr.csv: rgn_id  species	sust_coeff
-mar_sustainability_score_2013a <- filter(m7, year>2006 ) %>% group_by(rgn_id, species) %>% summarise (sust_coeff = unique(sust_coeff))
-anyDuplicated(mar_sustainability_score_2013a)
+mar_sustainability_score_2014a <- filter(m7, year>2006 ) %>% group_by(rgn_id, species) %>% summarise (sust_coeff = unique(sust_coeff))
+anyDuplicated(mar_sustainability_score_2014a)
   
 # mar_harvest_tonnes_lyr.csv: rgn_id	species_code	year	tonnes
-mar_harvest_tonnes_2013a <- left_join ( m7, temp) # Joining by: c("country", "species", "sp_lab")
-mar_harvest_tonnes_2013a <- mar_harvest_tonnes_2013a %>% select(rgn_id,  species_code,	year,	yield) %>% rename ( c( 'yield' = 'tonnes') )
+mar_harvest_tonnes_2014a <- left_join ( m7, temp) # Joining by: c("country", "species", "sp_lab")
+mar_harvest_tonnes_2014a <- mar_harvest_tonnes_2014a %>% select(rgn_id,  species_code,	year,	yield) %>% rename ( c( 'yield' = 'tonnes') )
 
-anyDuplicated(mar_harvest_tonnes_2013a) #not0! it's Brunei's fault: groupers nei got duplicted when generating m6 (why??)
-mar_harvest_tonnes_2013a < -mar_harvest_tonnes_2013a [ !duplicated(mar_harvest_tonnes_2013a), ] #removed
-# head(mar_harvest_tonnes_2013a[anyDuplicated(mar_harvest_tonnes_2013a),])
+anyDuplicated(mar_harvest_tonnes_2014a) #not0! it's Brunei's fault: groupers nei got duplicted when generating m6 (why??)
+mar_harvest_tonnes_2014a < -mar_harvest_tonnes_2014a [ !duplicated(mar_harvest_tonnes_2014a), ] #removed
+# head(mar_harvest_tonnes_2014a[anyDuplicated(mar_harvest_tonnes_2014a),])
 
   
 # save outputs
+write.csv(mar_harvest_species_2014a, file.path(dir_d, 'data/mar_harvest_species_2014a_lyr.csv'), row.names=F)
 write.csv(mar_harvest_species_2013a, file.path(dir_d, 'data/mar_harvest_species_2013a_lyr.csv'), row.names=F)
-write.csv(mar_harvest_species_2012a, file.path(dir_d, 'data/mar_harvest_species_2012a_lyr.csv'), row.names=F)
-write.csv(mar_trend_years_2013a, file.path(dir_d, 'data/mar_trend_years_2013a_lyr.csv'), row.names=F)
-write.csv(mar_sustainability_score_2013a, file.path(dir_d, 'data/mar_sustainability_score_2013a_lyr.csv'), row.names=F)
-write.csv(mar_harvest_tonnes_2013a, file.path(dir_d, 'data/mar_harvest_tonnes_2013a_lyr.csv'), row.names=F)
+write.csv(mar_trend_years_2014a, file.path(dir_d, 'data/mar_trend_years_2014a_lyr.csv'), row.names=F)
+write.csv(mar_sustainability_score_2014a, file.path(dir_d, 'data/mar_sustainability_score_2014a_lyr.csv'), row.names=F)
+write.csv(mar_harvest_tonnes_2014a, file.path(dir_d, 'data/mar_harvest_tonnes_2014a_lyr.csv'), row.names=F)
