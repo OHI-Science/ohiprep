@@ -162,5 +162,85 @@ combined_v2013a <- subset(combined_v2013a, select=c("saup_id",
 
 write.csv(combined_v2013a, "data\\snk_fis_propArea_saup2rgn.csv", row.names=FALSE)
 
+##################################################################################################
+############# MAKE mean catch for High Seas 
+############# (the b_bmsy data used for eezs is used asis for high seas as well)
+##################################################################################################
 
+# setup
+library(gdata)
+library(stringr)
+library(ohicore)
+library(plyr)
+library(dplyr)
 
+source('../ohiprep/src/R/common.R') # set dir_neptune_data
+source('../ohiprep/src/R/ohi_clean_fxns.R') # name-to-region functions (but need to add new saup names files)
+
+dir_d = '../ohiprep/Global/NCEAS-Fisheries_2014a' # set folder where files are saved
+data = file.path(dir_neptune_data, "model/GL-NCEAS-FIS_2014a")
+
+## Step 1hs. ## get files sourcing CMSY script
+# if newSAUP is already in the workspace, avoid next step as it's a bit time-consuming to regenerate
+# source(file.path(dir_d,'tmp/CMSY data prep.R')) # upload directory names and upload SAUP data in object newSAUP
+
+## Step 2hs. ## rearrange the dataset
+ nS.hs <- newSAUP[newSAUP$EEZ == 0,] # select eez data
+ nS.hs <- rename (nS.hs, c("IYear" = "year")) %>% filter(year>=1980, Catch!=0) ; dim(nS.hs) # rename, cut off pre-1980 data, exclude 0 data
+
+# ISSUE1: need to sum catch to remove duplicate 'Marine fishes not identified', 'Shrimps and prawns', 'Sharks rays and chimaeras' for the same year, saup_id
+# multiple taxonkeys (but unique common.names!) are associated with each of these 3 taxonnames - 
+# the data was prepared using taxonName, Taxonkey was joined later, then TaxonName was removed)
+# ISSUE2: need to keep 'TLevel' as a grouping variable in case part of the catch assigned to a taxon should be given a new taxonkey (see step 3)
+ nS.hs<-nS.hs %>% group_by(year, FAO, stock_id, Taxonkey, TaxonName, TLevel) %>% summarise (Catch2=sum(Catch)) ; dim(nS.hs)
+# # dim(nS.hs[is.na(nS.hs$Catch),]) # check how many NAs added : 482283
+ names(nS.hs)[names(nS.hs)=='Catch2']<-'Catch'
+ 
+ ## Step 3hs. # Recode TaxonKey such that the FAO TaxonKey takes precedence over SAUP TaxonKey
+ # to give credit to those who report at higher level than was ultimately reported in the SAUP data. 
+ nS.hs$NewTaxonKey <- ifelse(is.na(nS.hs$TLevel),
+                                nS.hs$Taxonkey,
+                                    100000*nS.hs$TLevel)
+
+nS.hs$taxon_name_key <- paste(nS.hs$TaxonName, as.character(nS.hs$NewTaxonKey), sep="_")
+nS.hs <- rename(nS.hs, c(FAO="fao_id"))
+
+# eez data needed a stock identifier combining: taxonkey, fao_id, saup_id - not for hs
+nS.hs$taxon_name_key_id <- paste(nS.hs$taxon_name_key , nS.hs$fao_id, sep="_") 
+
+# Step 4hs. ## years of missing data should be treated as 0 catch, this affects the average!
+# create a full matrix of years for each stock and pad missing records with 0s
+yrs<-as.data.frame(cbind("year"=1980:2011,'join'=rep(1,times=2011-1980+1)))
+stockshs<-as.data.frame(cbind('taxon_name_key_id'=unique(nS.hs$taxon_name_key_id),'join'=rep(1,times=length(unique(nS.hs$taxon_name_key_id)))))
+yr_stck<-join(yrs,stockshs)# Joining by: "join" # beware: this uses plyr's 'join' instead of dplyr because I want rows for all multiple correspondences between years and ids
+
+hs2 <- join (yr_stck[ ,c(1,3)], nS.hs) ; head(hs2) # Joining by: year, taxon_name_key_id
+min_yr <- hs2 %>% group_by(taxon_name_key_id) %>% summarise(min_year = min( year[!is.na(Catch) ]) )
+ hs3 <- join(hs2, min_yr) # Joining by: taxon_name_key_id
+ hs3$Catch <- ifelse( is.na(hs3$Catch), ifelse(hs3$year<hs3$min_year, NA, 0), hs3$Catch ) ; dim(hs3) # pad with 0s
+ hs3 <- hs3[!is.na(hs3$Catch), ] ; dim(nS3) # rm NAs (the rows before first catch aren't necessary anymore)
+hs3 <- ungroup(hs3)
+# Calculate mean catch over all years per taxon and fao_id
+hs.MeanCatch <- hs3 %>% group_by(fao_id, stock_id, taxon_name_key) %>% summarise(mean_catch = mean(Catch))
+hs3 <- join(hs3, hs.MeanCatch) ; head(hs3) # Joining by: fao_id, stock_id, taxon_name_key
+ # remove mean catch == 0
+
+ hs3 <- filter( hs3, mean_catch != 0, year>2005) %>% ungroup()
+ hs3 <- select(hs3, taxon_name_key, year, mean_catch)
+
+cnk_fis_meancatch <- select(hs3, fao_id, taxon_name_key, year, mean_catch)
+
+ # are there duplicate stocks ids per taxon-year-region?
+anyDuplicated(cnk_fis_meancatch)
+anyDuplicated(cnk_fis_meancatch[,1:3])
+ 
+ # no duplicates! Proceed to save the file
+hs_d <- '../ohiprep/Antarctica/AQ_FIS_2014a/data'
+/Users/katielongo/github/ohiprep/Antarctica/AQ_FIS_2014a/data/CCAMLR_data_Jul31_2014.csv
+ write.csv(cnk_fis_meancatch, file.path(hs_d,'fnk_fis_meancatch_lyr.csv'), row.names=F)
+# 
+# # same process for high seas
+# # HS.data <- nS[nS$EEZ == 0,] # select high seas data
+# # NOTE:  MeanCatch should be by fao_id instead of saup_fao_id
+# 
+# 
