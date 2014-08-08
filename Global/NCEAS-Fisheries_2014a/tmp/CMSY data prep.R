@@ -71,7 +71,8 @@ nS6<-nS6[!is.na(nS6$ct),]
 
 # re-create the resilience field
 resil<-unique(nS2[,c(9,11)])
-nS6<-join(nS6[c(1:3,5:6)],"res"=resil)
+resil <- rename(resil, c("Resilience" = "res"))
+nS6<-join(nS6[c(1:3,5:6)], resil) 
 
 # re-create the id field
 nS7<-join(nS6[,c(1:2,4:6)],alls)
