@@ -12,6 +12,10 @@ was replaced with a uniform prior:
 
 finalbio    <- c(0.01,0.7) 
 
+Or to have an intermediate (relaxed) prior:
+
+finalbio    <- if(ct[nyr]/max(ct) > 0.5) {c(0.4,0.8)} else {c(0.01,0.8)}
+
 This removed the bimodal distribution of results, where many stocks had very low, or very high b_bmsy.
 
 An additional custimization that can be done, at least when not running on mutiple cores (i.e. mpi wrapper removed) is to include resilience parameters - in the PARAMETERS section, replace:
