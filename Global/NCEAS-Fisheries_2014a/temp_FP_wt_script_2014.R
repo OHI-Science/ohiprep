@@ -51,5 +51,5 @@ anyDuplicated(FP2013a[,1])
 anyDuplicated(FP2014a[,1])
 
 dir_d = '../ohiprep/Global/NCEAS-Fisheries_2014a/data'
-write.csv(FP2014a, file.path(dir_d, 'GL_FP_wildcaught_weight_v2014a_lyr.csv'), row.names=F)
-write.csv(FP2013a, file.path(dir_d, 'GL_FP_wildcaught_weight_v2013a_lyr.csv'), row.names=F)
+write.csv(FP2014a, file.path(dir_d, 'FP_mar_fis_weight_2014a.csv'), row.names=F)
+write.csv(FP2013a, file.path(dir_d, 'FP_mar_fis_weight_2013a.csv'), row.names=F)
