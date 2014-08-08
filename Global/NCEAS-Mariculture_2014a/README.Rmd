@@ -1,0 +1,57 @@
+---
+title: "README"
+output: html_document
+---
+
+MAR status/trend: changes made to country names in FAO aquaculture harvest data
+
+NOTE 1: records for 'Yugoslavia SFR', 'Un. Sov. Soc. Rep.' and 'Serbia & Montenegro' can be deleted from the data if the calculation doesn't involve a time-series, as is the case for MAR. But should be kept and renamed to the current coutry names for NP, where status relies on historical peak (e.g. if peak harvest occurred in U.S.S.R. records, dropping them will bias Russia's score)
+
+NOTE 2: disaggregation of 'Netherland Antilles' to teh various Aruba/Bonaire/Curacao/St Maarten/Sint Eustatius/Saba should take into account: 1) what countries already report separately (e.g. Aruba), and 2) lit search if any record of those products in those countries before assigning to them (for MAR, that is calculated as harvest/population, and that is done for only a few species in very few of the islands, this would artificially generate low scores everywhere)
+
+OHI 2013 MAR:
+```{r, echo=FALSE}
+mar_13 <- read.csv('tmp/cn_nm_change_mar2013.csv')
+mar_13
+
+#
+# mar <- read.csv('https://github.com/OHI-Science/ohiprep/blob/master/Global/FAO-Aquaculture_v2012/tmp/cn_nm_change_mar2013.csv')
+# c1<-mar_nm_2013[,1]
+# c1
+# cn_2013<- c('Channel Islands',
+# 'Martinique',
+# 'Guadeloupe',
+# 'Montenegro',
+# 'Serbia and Montenegro',
+# 'Palestine, Occupied Tr.',
+# 'Zanzibar',
+# 'Netherlands Antilles',
+# 'Yugoslavia SFR',
+# 'Un. Sov. Soc. Rep.',
+# 'Bonaire/S.Eustatius/Saba'
+# )
+# iso_2013 <- c(
+# "GBR",
+# "GP-MQ",
+# "GP-MQ",
+# "MNE",
+# "MNE",
+# "NA",
+# "GBR",
+# "CW, SXM, AW",
+# "NA",
+# "NA",
+# "BQ"
+# )
+ # table_2013 <-  as.data.frame(cbind('fao c name' = mar_nm_2013$fao.country.name, 'ISO' = mar_nm_2013$ISO))
+
+```
+
+OHI 2014 MAR:
+```{r, echo=FALSE}
+
+mar_14 <- read.csv('tmp/cn_nm_change_mar2013.csv')
+mar_14
+```
+
+to be prettied...
