@@ -179,6 +179,7 @@ minyear_all = scenario_maxyear[length(scenario_maxyear)]
 for (i in 1:length(names(scenario_maxyear))) { # i=1
   
   maxyear = scenario_maxyear[i]
+  scen = as.character(str_extract(names(scenario_maxyear)[i], "\\d{4}"))
   
   m_f = m_r %>%
     filter(year >= minyear_all & year <= maxyear) %>%
@@ -194,6 +195,7 @@ for (i in 1:length(names(scenario_maxyear))) { # i=1
                   m_f_max$rgn_name, m_f_max$year, m_f_max$value))
   
   m_f = m_f %>%
+    filter(year == maxyear) %>%
     select(rgn_id, score) %>%
     arrange(rgn_id); head(m_f); summary(m_f)
   
@@ -208,9 +210,9 @@ for (i in 1:length(names(scenario_maxyear))) { # i=1
                     anti_join(m_f, by = 'rgn_id') %>%
                     mutate(score = 0)) %>%
     arrange(rgn_id); head(m_f_fin); summary(m_f_fin)
-  stopifnot(length(unique(m_f_fin$rgn_id)) == 221)
+  stopifnot(length(m_f_fin$rgn_id) == 221)
   
-  filesave = paste('rgn_fao_targeted_', names(scenario_maxyear)[i], 'a.csv', sep='')
+  filesave = sprintf('rgn_fao_targeted_%sa.csv', scen)
   write.csv(m_f_fin, file.path(dir_d, 'data', filesave), row.names = F)
   
 }
