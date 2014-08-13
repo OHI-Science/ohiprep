@@ -68,6 +68,31 @@ dbSendQuery(db, 'CREATE UNIQUE INDEX idx_cells ON cells(cid)')
 dbSendQuery(db, 'CREATE UNIQUE INDEX idx_cells_spp ON cells_spp(cid, sid)')
 dbSendQuery(db, 'CREATE UNIQUE INDEX idx_spp ON spp(sid)')
 
+
+# test for species duplicates ----
+# see https://github.com/OHI-Science/issues/issues/40
+
+# check duplicate species names from spp.db on neptune
+spp.n = dbReadTable(db, 'spp')
+nrow(spp.n)
+# 8173
+sum(duplicated(spp.n$sciname))
+# 0
+head(spp.n)
+table(spp.n$habitat)
+
+# check duplicate species names from https://www.nceas.ucsb.edu/~bbest/ohi_spp/ per email SU: IUCN data
+spp.o = read.csv('~/Documents/OHI/ohi_spp/data/spp.csv')
+nrow(spp.o)
+# 12840
+sum(duplicated(spp.o$scientific))
+# 54
+nrow(spp.o) - nrow(spp.n)
+# 4667
+spp.o[duplicated(spp.o$scientific), c('scientific','class')]
+# all Actinopterygii
+
+
 # handle distributions, append AquaMaps ----
 
 # flag species which have distribution determined already by IUCN rangemaps
