@@ -33,15 +33,23 @@ newSAUP2<-newSAUP2[!is.na(newSAUP2$OHI_2013_EEZ_ID),]
 FISdata3<- newSAUP2 %>% group_by(OHI_2013_EEZ_ID,year) %>% filter(year>2003) %>% summarise(tot_ct_f=sum(Catch)) ; head(FISdata3)
 FISdata3<-rename(FISdata3,c('OHI_2013_EEZ_ID'='rgn_id'))
 
-FPdata3<-join(FISdata3,MARd3) # Joining by: rgn_id_2013, year
-FPdata3$tot_ct_m<-ifelse(is.na(FPdata3$tot_ct_m),0,FPdata3$tot_ct_m) # replace NA with 0 - there are NAs only in the MAR data
-FPdata3<- FPdata3 %>% mutate(w_fis = tot_ct_f / (tot_ct_f+tot_ct_m) )
+FISdata3 <- ungroup(FISdata3)
 
-# create the weights files for 2012 and 2013
-FPdata3<-ungroup(FPdata3)
-fp_wildcaught_weight_2014a <- FPdata3 %>% filter(year==2012)  %>% select(rgn_id,w_fis)
-anyDuplicated(fp_wildcaught_weight_2014a[,1])
+# create the weights files for 2012 and 2013 (note: use the same year of fisheries for both layers)
+FIS_ct_2011 <- filter(FISdata3, year == 2011) %>% select(rgn_id, tot_ct_f)
+MAR_y_2011 <- filter(MARd3, year == 2011) %>% select(rgn_id, tot_ct_m)
+MAR_y_2012 <- filter(MARd3, year == 2012) %>% select(rgn_id, tot_ct_m)
+
+FP2013a<-join(FIS_ct_2011,MAR_y_2011) # Joining by: rgn_id
+FP2013a <- FP2013a %>% mutate (tot_ct_m = ifelse(is.na(tot_ct_m),0,tot_ct_m), w_fis = tot_ct_f / (tot_ct_f+tot_ct_m)) %>% select(rgn_id,w_fis) # replace NA with 0 - there are NAs only in the MAR data
+
+FP2014a<-join(FIS_ct_2011,MAR_y_2012) # Joining by: rgn_id
+FP2014a <- FP2014a %>% mutate (tot_ct_m = ifelse(is.na(tot_ct_m),0,tot_ct_m), w_fis = tot_ct_f / (tot_ct_f + tot_ct_m)) %>% select(rgn_id,w_fis) # replace NA with 0 - there are NAs only in the MAR data
+
+# check for duplicates
+anyDuplicated(FP2013a[,1])
+anyDuplicated(FP2014a[,1])
 
 dir_d = '../ohiprep/Global/NCEAS-Fisheries_2014a/data'
-write.csv(fp_wildcaught_weight_2014a,file.path(dir_d, 'GL_FP_wildcaught_weight_v2014a_lyr.csv'),row.names=F)
-
+write.csv(FP2014a, file.path(dir_d, 'FP_mar_fis_weight_2014a.csv'), row.names=F)
+write.csv(FP2013a, file.path(dir_d, 'FP_mar_fis_weight_2013a.csv'), row.names=F)
