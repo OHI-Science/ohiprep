@@ -168,57 +168,52 @@ m_r[duplicated(m_r[,c('rgn_id', 'rgn_name', 'year')]),]
 # makes obsolete: ohiprep:src/R/ohi_clean_fxns.R:: save_pressure_layers_2012a_2013a.r 
 #                 neptune_data:model/GL-FAO-TargetedHarvest_v2011/export_layers.R 
 
-scenario = c('2014' = 0,
-             '2013' = 1,
-             '2012' = 2)
-#              '2011' = 3, # just to look into 
-#              '2010' = 4,
-#              '2009' = 5)
+# identify  years for each scenario and overall
+maxyear_all = max(m_r$year, na.rm=T)
+scenario_maxyear = c('eez2014' = maxyear_all,
+                     'eez2013' = maxyear_all - 1,
+                     'eez2012' = maxyear_all - 2)
+minyear_all = scenario_maxyear[length(scenario_maxyear)]
 
-# find max count across all scenarios
-scen_earliest = max(m_r$year, na.rm=T) - as.numeric(as.character(factor(scenario[length(scenario)])))
-m_scen = m_r %>%
-  filter(year >= scen_earliest) %>% 
-  filter(value == max(value, na.rm=T)); m_scen
-value_max = m_scen$value
-message(sprintf('\n  for rescaling pressures, will use the max value since %d', scen_earliest))
-message(sprintf('\n  rescaled scores based on %d counts of targeted harvest (catch from %s in %s)', 
-                value_max, m_scen$rgn_name, names(scenario[length(scenario)])))
+# find max count across all previous scenarios
 
-for (i in 1:length(names(scenario))) { # i=1
+for (i in 1:length(names(scenario_maxyear))) { # i=1
   
-  yr_max = max(m_r$year, na.rm=T) - as.numeric(as.character(factor(scenario[i])))
+  maxyear = scenario_maxyear[i]
   
-  m_f_tmp = m_r %>%
-    filter(year == yr_max) %>%
-    mutate(score = value/value_max) # * 1.10:  don't multiply by 1.10 since comparing to the max across all scenarios
-  head(m_f_tmp); summary(m_f_tmp)
+  m_f = m_r %>%
+    filter(year >= minyear_all & year <= maxyear) %>%
+    mutate(score = value / max(value, na.rm = T)) # * 1.10:  don't multiply by 1.10 since comparing to the max across all scenarios
+  head(m_f); summary(m_f)
   
-  m_f = m_f_tmp %>%  
+  m_f_max = m_f %>%
+    filter(value == max(value, na.rm = T))
+  
+  message(sprintf('\n%s pressures scores for %d regions are rescaled to the max harvest since %s (%d-%d):', 
+                  names(scenario_maxyear)[i], length(unique(m_f$rgn_id)), names(minyear_all), minyear_all, maxyear))
+  message(sprintf('%s in %s: %d marine mammals and sea turtles harvested', 
+                  m_f_max$rgn_name, m_f_max$year, m_f_max$value))
+  
+  m_f = m_f %>%
     select(rgn_id, score) %>%
     arrange(rgn_id); head(m_f); summary(m_f)
   
-#   hi_rgn = filter(m_f_tmp, value == max(value)) 
-#   message(sprintf('\n  for %sa, pressures will use yr_max == %d', names(scenario)[i], yr_max))
-#   message(sprintf('\n  rescaled scores based on max(value) == %d counts of targeted harvest (catch from %s)', max(m_f_tmp$value), hi_rgn$rgn_name))
+  # any regions that did not have a catch should have score = 0 
+  rgns = read.csv('../ohi-global/eez2014/layers/rgn_global.csv') %.%
+    select(rgn_id)  %.%
+    filter(rgn_id < 255) %.%
+    arrange(rgn_id); head(rgns)
   
-## any regions that did not have a catch should have score = 0 ----
-
-rgns = read.csv('../ohi-global/eez2014/layers/rgn_global.csv') %.%
-  select(rgn_id)  %.%
-  filter(rgn_id < 255) %.%
-  arrange(rgn_id); head(rgns)
-
-m_f_fin = rbind(m_f, 
-               rgns %>%
-                 anti_join(m_f, by = 'rgn_id') %>%
-                 mutate(score = 0)) %>%
-  arrange(rgn_id); head(m_f_fin); summary(m_f_fin)
-# m_f_fin[duplicated(m_f_fin[,c('rgn_id')]),]
-
-  filesave = paste('rgn_fao_targeted_', names(scenario)[i], 'a.csv', sep='')
+  m_f_fin = rbind(m_f, 
+                  rgns %>%
+                    anti_join(m_f, by = 'rgn_id') %>%
+                    mutate(score = 0)) %>%
+    arrange(rgn_id); head(m_f_fin); summary(m_f_fin)
+  stopifnot(length(unique(m_f_fin$rgn_id)) == 221)
+  
+  filesave = paste('rgn_fao_targeted_', names(scenario_maxyear)[i], 'a.csv', sep='')
   write.csv(m_f_fin, file.path(dir_d, 'data', filesave), row.names = F)
-
+  
 }
 
 #   for 2014a, pressures will use yr_max == 2012
