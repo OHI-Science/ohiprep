@@ -175,8 +175,7 @@ scenario_maxyear = c('eez2014' = maxyear_all,
                      'eez2012' = maxyear_all - 2)
 minyear_all = scenario_maxyear[length(scenario_maxyear)]
 
-# find max count across all previous scenarios
-
+# calculate and save for each scenario
 for (i in 1:length(names(scenario_maxyear))) { # i=1
   
   maxyear = scenario_maxyear[i]
@@ -216,15 +215,14 @@ for (i in 1:length(names(scenario_maxyear))) { # i=1
   
 }
 
-#   for 2014a, pressures will use yr_max == 2012
-#   rescaled scores based on max(value) == 3231 counts of targeted harvest (catch from Greenland)
+# eez2014 pressures scores for 30 regions are rescaled to the max harvest since eez2012 (2010-2012):
+#   Japan in 2010: 7489 marine mammals and sea turtles harvested
 # 
-#   for 2013a, pressures will use yr_max == 2011
-#   rescaled scores based on max(value) == 4094 counts of targeted harvest (catch from Greenland)
+# eez2013 pressures scores for 29 regions are rescaled to the max harvest since eez2012 (2010-2011):
+#   Japan in 2010: 7489 marine mammals and sea turtles harvested
 # 
-#   for 2012a, pressures will use yr_max == 2010
-#   rescaled scores based on max(value) == 7489 counts of targeted harvest (catch from Japan)
-
+# eez2012 pressures scores for 22 regions are rescaled to the max harvest since eez2012 (2010-2010):
+#   Japan in 2010: 7489 marine mammals and sea turtles harvested
 
 
 ## --- fin ---
