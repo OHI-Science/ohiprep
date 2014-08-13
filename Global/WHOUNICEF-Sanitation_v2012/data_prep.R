@@ -178,7 +178,7 @@ for (i in 1:length(names(scenario_maxyear_san))) { # i=1
   stopifnot(anyDuplicated(sp_pressure[,c('rgn_id')]) == 0)
   
   message(sprintf('\n%s pressures scores are rescaled to maximum \'poopers\' since %s (%d-%d):', 
-                  names(scenario_maxyear_san)[i], names(minyear_all), minyear_all_san, maxyear_san))
+                  maxyear_pop, names(minyear_all_san), minyear_all_san, maxyear_san))
   message(sprintf('%s in %s', 
                   sp_press_max$rgn_name, sp_press_max$year))
   
