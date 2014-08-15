@@ -19,8 +19,9 @@ file_2<- 'TaxonLookup.csv'
 tax <- read.csv(file.path(dir_lc_FIS, file_2 )) ; head(tax)
 newSAUP<-left_join(newSAUP,tax[,1:2]) # add species names # Joining by: "Taxonkey"
 # create a unique stock id name for every species/FAO region pair
-newSAUP$stock_id <- paste(newSAUP$TaxonName,newSAUP$FAO,sep='_')
+newSAUP$stock_id <- paste(newSAUP$TaxonName,newSAUP$FAO,sep='_') #newSAUP is catch data for weighted means!
 
+#Following gets species data prepped for CMSY
 spSAUP <- newSAUP[newSAUP$Taxonkey>600000,] # remove non-species level taxa
 names(spSAUP)[names(spSAUP)=="IYear"]<-"yr" # rename variable
 
