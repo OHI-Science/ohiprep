@@ -2,12 +2,12 @@
 ## CMSY script to obtain b/bmsy data
 
 runCMSY<-function(cdat, stockNumber){ 
+  #stockNumber <- 1 #MRF addition
   stock_id<-unique(cdat$stock_id)
   ##
   seed<-ceiling(runif(1,0,1e6))
   set.seed(seed)
   ##
-  #stockNumber <- 1 #MRF addition
   
   yr   <- cdat$yr[as.character(cdat$stock)==stock_id[stockNumber]]
   ct   <- as.numeric(cdat$ct[as.character(cdat$stock)==stock_id[stockNumber]])/1000  ## assumes that catch is given in tonnes, transforms to '000 tonnes
@@ -26,7 +26,7 @@ runCMSY<-function(cdat, stockNumber){
   startbio    <- if(ct[1]/max(ct) < 0.2) {c(0.5,0.9)} else {c(0.2,0.6)} ## use for batch processing   ****THIS IS AN UPDATE FROM RAINER--Oct 12, 2012  
   interyr     <- yr[2]   ## interim year within time series for which biomass estimate is available; set to yr[2] if no estimates are available
   interbio     <- c(0, 1) ## biomass range for interim year, as fraction of k; set to 0 and 1 if not available
-  finalbio    <- c(0.01,0.7) ## THIS IS AN UPDATE FROM Kristin Jul 29 2014
+  finalbio <- if(ct[nyr]/max(ct) > 0.5) {c(0.4,0.8)} else {c(0.01,0.8)}
   n           <- 1e5  ## number of iterations
   sigR        <- 0.0   ## process error; 0 if deterministic model; 0.05 reasonable value? 0.2 is too high
   startbt     <- seq(startbio[1], startbio[2], by = 0.05) ## apply range of start biomass in steps of 0.05  
