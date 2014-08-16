@@ -2,20 +2,22 @@
 ## Calculate Status/Trend for Antarctica
 ## April 1 2014 
 ####################################################################
+rm(list=ls())
 
 ### MeanCatch: The catch data averaged across years (>= 1980) for each Taxon/region. 
+source('~/ohiprep/src/R/common.R')
 
-rm(list=ls())
 library(plyr)
 library(reshape2)
 library(dplyr)
 
-setwd("N:\\model\\GL-HS-AQ-Fisheries_v2013\\Antarctica")
+data_files <- "Global/GL-AQ-FIS_v2013"
 
-regions <- read.csv("N:/git-annex/Global/NCEAS-Antarctica-Other_v2014/rgn_labels_ccamlr.csv")
-c <- read.csv("tmp/cnk_fis_meancatch.csv")
-b <- read.csv("tmp/fnk_fis_b_bmsy.csv")
-extra_ccmsy <- read.csv("tmp/fnk_fis_ccmsy.csv")
+regions <- read.csv(file.path(dir_neptune_data, 
+                              "git-annex/Global/NCEAS-Antarctica-Other_v2014/rgn_labels_ccamlr.csv"))
+c <- read.csv(file.path(data_files, "tmp/cnk_fis_meancatch.csv"))
+b <- read.csv(file.path(data_files, "tmp/fnk_fis_b_bmsy.csv"))
+extra_ccmsy <- read.csv(file.path(data_files, "tmp/fnk_fis_ccmsy.csv"))
 
 status.year <- 2012
 trend.years <- (status.year-4):status.year
@@ -82,7 +84,7 @@ UnAssessedCatches <- join(UnAssessedCatches, b_summary, by=c("year"),
 #  ***********************************************
 
 penaltyTable <- data.frame(TaxonKey=1:6, 
-                           penalty=c(0.01, 0.1, 0.25, 0.5, 0.75, 1))
+                           penalty=c(0.01, 0.25, 0.5, 0.8, 0.9, 1))
 # 2d.Merge with data
 UnAssessedCatches <- join(UnAssessedCatches, penaltyTable, by="TaxonKey")
 
@@ -201,7 +203,7 @@ Status <- StatusData[StatusData$year==status.year, ]
 Status$status <- round(Status$Status*100, 2)
 Status <- subset(Status, select=c("sp_id", "status"))
 
-#write.csv(Status, "data\\status.csv", row.names=F, na="")
+write.csv(Status, file.path(data_files, "data/FISstatus.csv"), row.names=F, na="")
 
 StatusData <- data.frame(StatusData)
 
@@ -217,5 +219,5 @@ TrendData = plyr::ddply(
 TrendData <- TrendData %.%
   select(sp_id, trend=V1)
 
-write.csv(TrendData, "data\\trend.csv", row.names=F, na='')
+write.csv(TrendData, file.path(data_files, "data/FIStrend.csv"), row.names=F, na='')
 

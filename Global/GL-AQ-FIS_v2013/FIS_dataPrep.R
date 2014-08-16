@@ -2,36 +2,35 @@
 ## Fisheries (FIS) calculation (Part 1):
 ## Data preparation 
 ####################################################################
+source('~/ohiprep/src/R/common.R')
+
 library(dplyr)
 library(reshape2)
 library(stringr)
 
-
-rm(list=ls())
-setwd("N:\\model\\GL-HS-AQ-Fisheries_v2013\\Antarctica")
-
+data_files <- "Global/GL-AQ-FIS_v2013"
 
 #---------------------------------------------------------
 ## BMSY data ----
 #---------------------------------------------------------
 # b_bmsy values generated using cmsy_ohi.R script
-b_bmsy_all <- read.csv("tmp\\b_bmsy_AQ_with_zeros.csv") 
+b_bmsy_all <- read.csv(file.path(data_files, "tmp/b_bmsy_AQ_with_zeros.csv")) 
 
 
 # We want to exclude taxa with <7 years of non-zero data (determine these species with these data):
-b_bmsy_catch_data <- read.csv("raw\\CCAMLR_t_LHcorr_v2.csv")
+b_bmsy_catch_data <- read.csv(file.path(data_files, "raw/CCAMLR_t_LHcorr_v2.csv"))
 b_bmsy_catch_data <- b_bmsy_catch_data %.%
   filter(Catch != 0) %.%
   group_by(ScientificName) %.%
   summarize(count=length(season.year))
 
-species <- b_bmsy_catch_data$ScientificName[b_bmsy_catch_data$count >= 7]
+species <- b_bmsy_catch_data$ScientificName[b_bmsy_catch_data$count >= 10]
 
 b_bmsy_all <- b_bmsy_all %.%
   select(taxon_name=stock_id, b_bmsy, year) %.%
   filter(taxon_name %in% species)
 
-write.csv(b_bmsy_all, "tmp\\fnk_fis_b_bmsy.csv", row.names=FALSE)
+write.csv(b_bmsy_all, file.path(data_files, "tmp/fnk_fis_b_bmsy.csv"), row.names=FALSE)
 
 #---------------------------------------------------------
 ## CMSY data: 3 additional taxa (these have c/cmsy data) ----
