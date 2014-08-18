@@ -6,21 +6,20 @@ rm(list=ls())
 
 ### MeanCatch: The catch data averaged across years (>= 1980) for each Taxon/region. 
 source('~/ohiprep/src/R/common.R')
-
-library(plyr)
 library(reshape2)
-library(dplyr)
 
 data_files <- "Global/GL-AQ-FIS_v2013"
 
 regions <- read.csv(file.path(dir_neptune_data, 
                               "git-annex/Global/NCEAS-Antarctica-Other_v2014/rgn_labels_ccamlr.csv"))
 c <- read.csv(file.path(data_files, "tmp/cnk_fis_meancatch.csv"))
-b <- read.csv(file.path(data_files, "tmp/fnk_fis_b_bmsy.csv"))
+#b <- read.csv(file.path(data_files, "tmp/fnk_fis_b_bmsy.csv"))
+b <- read.csv(file.path(data_files, "tmp/b_bmsy_AQ_with_zeros_constrained.csv"))
+#b <- read.csv(file.path(data_files, "tmp/b_bmsy_AQ_no_zeros_constrained.csv"))
 extra_ccmsy <- read.csv(file.path(data_files, "tmp/fnk_fis_ccmsy.csv"))
 
 status.year <- 2012
-trend.years <- (status.year-4):status.year
+trend.years <- (status.year-5):status.year
  
 # catch data
 c$fao_id <- as.numeric(sapply(strsplit(as.character(c$fao_saup_id), "_"), function(x)x[1]))
@@ -203,7 +202,8 @@ Status <- StatusData[StatusData$year==status.year, ]
 Status$status <- round(Status$Status*100, 2)
 Status <- subset(Status, select=c("sp_id", "status"))
 
-write.csv(Status, file.path(data_files, "data/FISstatus.csv"), row.names=F, na="")
+#write.csv(Status, file.path(data_files, "data/FISstatus_noZeros_constrained.csv"), row.names=F, na="")
+write.csv(Status, file.path(data_files, "data/FISstatus_Zeros_constrained.csv"), row.names=F, na="")
 
 StatusData <- data.frame(StatusData)
 
@@ -219,5 +219,46 @@ TrendData = plyr::ddply(
 TrendData <- TrendData %.%
   select(sp_id, trend=V1)
 
-write.csv(TrendData, file.path(data_files, "data/FIStrend.csv"), row.names=F, na='')
+#write.csv(TrendData, file.path(data_files, "data/FIStrend_noZeros_constrained.csv"), row.names=F, na='')
+write.csv(TrendData, file.path(data_files, "data/FIStrend_Zeros_constrained.csv"), row.names=F, na='')
+
+#########################
+## comparing the constrained with/without zeros
+#########################
+
+noZeros <- read.csv(file.path(data_files, "data/FISstatus_noZeros_constrained.csv"))
+wZeros <- read.csv(file.path(data_files, "data/FISstatus_Zeros_constrained.csv"))
+
+compare <- noZeros %>%
+  select(sp_id, status_noZeros=status) %>%
+  left_join(wZeros, by="sp_id")
+  
+ggplot(compare, aes(x=status_noZeros, y=status))+
+  geom_point(size=5) +
+  labs(x="status: no Zeros", y="status: with Zeros") +
+  geom_abline(intercept=0, slope=1) +
+  theme_bw()
+
+ggplot(compare, aes(x=(status - status_noZeros)))+
+  geom_histogram(fill="gray", color="darkgray") +
+  labs(x="status: no Zeros minus Zeros") +
+  theme_bw()
+
+noZeros <- read.csv(file.path(data_files, "data/FIStrend_noZeros_constrained.csv"))
+wZeros <- read.csv(file.path(data_files, "data/FIStrend_Zeros_constrained.csv"))
+
+compare <- noZeros %>%
+  select(sp_id, trend_noZeros=trend) %>%
+  left_join(wZeros, by="sp_id")
+
+ggplot(compare, aes(x=trend_noZeros, y=trend))+
+  geom_point(size=5) +
+  labs(x="trend: no Zeros", y="trend: with Zeros") +
+  geom_abline(intercept=0, slope=1) +
+  theme_bw()
+
+ggplot(compare, aes(x=(trend - trend_noZeros)))+
+  geom_histogram(fill="gray", color="darkgray") +
+  labs(x="trend: no Zeros minus Zeros") +
+  theme_bw()
 
