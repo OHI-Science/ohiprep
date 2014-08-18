@@ -15,25 +15,23 @@ source('../ohiprep/src/R/ohi_clean_fxns.R') # name-to-region functions (but need
 dir_d = '../ohiprep/Global/NCEAS-Fisheries_2014a' # set folder where files are saved
 data = file.path(dir_neptune_data, "model/GL-NCEAS-FIS_2014a")
 
-## Step 1. ## get files sourcing CMSY script
-source(file.path(dir_d,'tmp/CMSY data prep.R')) # upload directory names and upload SAUP data in object newSAUP
-
-
+## Step 1. ## upload directory names and upload SAUP data in object newSAUP (same as first 10 or so rows in CMSY script, could source that but it takes a while)
+# source(file.path(dir_d,'tmp/CMSY data prep.R'))  
 ########################################################################
 ## Step 1. ## get files ex novo
-# load the new catch data
-# dir_FIS_data = 'git-annex/Global/SAUP-Fisheries_v2011/raw'
-# /Volumes/data_edit/git-annex/Global/SAUP-Fisheries_v2011/raw/Extended catch data 1950-2011_Common name_25 July2014.txt
-# file_1<- 'Extended catch data 1950-2011_18 July 2014.txt'
-# nS <- read.delim(file.path(dir_neptune_data, dir_FIS_data, file_1 )) ; head(nS)
-# 
-# # load species names lookup table - it is important that this be the same as CMSY data prep
-# file_2<- 'TaxonLookup.csv'
-# tax <- read.csv(file.path(dir_d, 'tmp', file_2 )) ; head(tax)
-# nS<-left_join(nS,tax[,1:2]) ; head(nS) # add species names # Joining by: "Taxonkey" # if I want to set it up to source 'CMSY data prep.R' I'll ahve to change this variable name
-# 
-# # create a unique stock id name for every species/FAO region pair
-# nS$stock_id <- paste(nS$TaxonName,nS$FAO,sep='_')
+load the new catch data
+dir_FIS_data = 'git-annex/Global/SAUP-Fisheries_v2011/raw'
+/Volumes/data_edit/git-annex/Global/SAUP-Fisheries_v2011/raw/Extended catch data 1950-2011_Common name_25 July2014.txt
+file_1<- 'Extended catch data 1950-2011_18 July 2014.txt'
+nS <- read.delim(file.path(dir_neptune_data, dir_FIS_data, file_1 )) ; head(nS)
+
+# load species names lookup table - it is important that this be the same as CMSY data prep
+file_2<- 'TaxonLookup.csv'
+tax <- read.csv(file.path(dir_d, 'tmp', file_2 )) ; head(tax)
+nS<-left_join(nS,tax[,1:2]) ; head(nS) # add species names # Joining by: "Taxonkey" # if I want to set it up to source 'CMSY data prep.R' I'll ahve to change this variable name
+
+# create a unique stock id name for every species/FAO region pair
+nS$stock_id <- paste(nS$TaxonName,nS$FAO,sep='_')
 ########################################################################
 
 ## Step 2. ## rearrange the dataset
@@ -203,7 +201,7 @@ data = file.path(dir_neptune_data, "model/GL-NCEAS-FIS_2014a")
                                     100000*nS.hs$TLevel)
 
 nS.hs$taxon_name_key <- paste(nS.hs$TaxonName, as.character(nS.hs$NewTaxonKey), sep="_")
-nS.hs <- rename(nS.hs, c(FAO="fao_id"))
+nS.hs <- rename(nS.hs, c(FAO="fao_id") )
 
 # eez data needed a stock identifier combining: taxonkey, fao_id, saup_id - not for hs
 nS.hs$taxon_name_key_id <- paste(nS.hs$taxon_name_key , nS.hs$fao_id, sep="_") 
@@ -226,21 +224,17 @@ hs3 <- join(hs3, hs.MeanCatch) ; head(hs3) # Joining by: fao_id, stock_id, taxon
  # remove mean catch == 0
 
  hs3 <- filter( hs3, mean_catch != 0, year>2005) %>% ungroup()
- hs3 <- select(hs3, taxon_name_key, year, mean_catch)
+ hs3 <- hs3 %>% mutate( fao_saup_id = paste(fao_id, 0, sep="_") ) # the saup_id is always 0, because we're dealing with high seas
 
-cnk_fis_meancatch <- select(hs3, fao_id, taxon_name_key, year, mean_catch)
+hs_cnk_fis_meancatch <- select(hs3, fao_saup_id, taxon_name_key, year, mean_catch)
 
  # are there duplicate stocks ids per taxon-year-region?
-anyDuplicated(cnk_fis_meancatch)
-anyDuplicated(cnk_fis_meancatch[,1:3])
+anyDuplicated(hs_cnk_fis_meancatch)
+anyDuplicated(hs_cnk_fis_meancatch[,1:3])
  
  # no duplicates! Proceed to save the file
-hs_d <- '../ohiprep/Antarctica/AQ_FIS_2014a/data'
-/Users/katielongo/github/ohiprep/Antarctica/AQ_FIS_2014a/data/CCAMLR_data_Jul31_2014.csv
- write.csv(cnk_fis_meancatch, file.path(hs_d,'fnk_fis_meancatch_lyr.csv'), row.names=F)
-# 
-# # same process for high seas
-# # HS.data <- nS[nS$EEZ == 0,] # select high seas data
-# # NOTE:  MeanCatch should be by fao_id instead of saup_fao_id
-# 
-# 
+
+# write.csv(hs_cnk_fis_meancatch, file.path(dir_neptune_data, 'model/GL-HS-AQ-Fisheries_v2013/HighSeas','fnk_fis_meancatch_lyr.csv'), row.names=F)
+# tried to save to Neptun high seas folder but have insufficient permissions - saving on github instead
+
+write.csv(hs_cnk_fis_meancatch, file.path(dir_neptune_data, 'model/GL-HS-AQ-Fisheries_v2013/HighSeas','fnk_fis_meancatch_lyr.csv'), row.names=F)
