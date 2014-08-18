@@ -1,18 +1,12 @@
 #######################################################
-## prepares catch data for cmsy
-## and provides cmsy code
-## this code should be replaced in the
-## future with code from Github/ohiprep/Global/FIS_Bbmsy
+## prepares data and runs cmsy
+## to generate b/bmsy data
 #######################################################
-
-#library(plyr)
+library(plyr)
 library(dplyr)
-
+library(parallel)
 
 rm(list = ls())
-setwd("N:\\model\\GL-HS-AQ-Fisheries_v2013\\Antarctica")
-# Testing previous data:
-# cdat_old<-read.csv("CMSY\\OHICatchHistoryCMSY.csv", stringsAsFactors=FALSE)
 
 
 ####################################################
@@ -26,271 +20,113 @@ setwd("N:\\model\\GL-HS-AQ-Fisheries_v2013\\Antarctica")
 #...
 
 #NOTES: 
-# This code limits to >=7 years of data - however, this should be 
-# changed to 10 years of data with no zero or NA values.
+# There needs to be >=7 years of data to run cmsy- however, the data 
+# is subset to include 10 years of data with no zero or NA values.
 
-# Antarctica data:
-# CCAMLR_t_LHcorr_v2 has zero values:
-# NOTE: data have been updated....there were some problems with the catch
-#       changes were relative so shouldn't affect final values - but better to
-#       get rid of this dataset and replace
-cdat <- read.csv("AntarcticaData\\CCAMLR_t_LHcorr_v2.csv")
-cdat <- cdat %.%
-  select("stock_id"=ScientificName, "ct"=Catch, "yr"=season.year) %.%
+######################################
+# Antarctica zeroes included-----
+cdat <- read.csv("Antarctica/AQ_FIS_2014a/data/CCAMLR_with0s_w_resil_Aug132014.csv")
+cdat <- cdat %>%
+  select(stock_id, ct, yr) %>%
   arrange(stock_id, yr)
 cdat <- unique(cdat)
 
-#get ID's of taxa with >= 7 years of data:
-cdat_years <- cdat %.%
-  group_by(stock_id) %.%
+ #get ID's of taxa with >= 10 years of non-zero data:
+cdat_years <- cdat %>%
+  filter(ct!=0) %>%
+  group_by(stock_id) %>%
   summarise(years=length(yr))
 
-cdat7plus <- cdat_years$stock_id[cdat_years$years>=7]
+cdat10plus <- cdat_years$stock_id[cdat_years$years>=10]
 
-# subset original data to include only the species with 7+ years
-cdat <- cdat[cdat$stock_id %in% cdat7plus, ]
+# subset original data to include only the species with 10+ years
+cdat <- cdat[cdat$stock_id %in% cdat10plus, ]
 
-### In future: delete this and call script from Github/ohiprep/Global/FIS_Bbmsy
+## Run bbmsy script
+source('Global/FIS_Bbmsy/cmsy_constrained.R')
 
-####################################################
-### function to run CMSY analysis:
-####################################################
-runCMSY<-function(cdat, stockNumber){ 
-  stock_id<-unique(cdat$stock_id)
-  ##
-  seed<-ceiling(runif(1,0,1e6))
-  set.seed(seed)
-  ##
-  #stockNumber <- 1 #MRF addition
-  
-  yr   <- cdat$yr[as.character(cdat$stock)==stock_id[stockNumber]]
-  ct   <- as.numeric(cdat$ct[as.character(cdat$stock)==stock_id[stockNumber]])/1000  ## assumes that catch is given in tonnes, transforms to '000 tonnes
-  res  <- unique(as.character(cdat$res[as.character(cdat$stock)==stock_id[stockNumber]])) ## resilience from FishBase, if needed, enable in PARAMETER SECTION
-  ##
-  method_id<-"CMSY"
-  #res  <- unique(as.character(cdat$res[as.character(cdat$stock)==stock])) ## resilience from FishBase, if needed, enable in PARAMETER SECTION
-  nyr  <- length(yr)    ## number of years in the time series
-  
-  ### MRF: mistake in here...forgot to include: ct[length(ct)-1], I added in, but might want to check
-  meanct<-(ct[length(ct)-4]+ct[length(ct)-3]+ct[length(ct)-2]+ct[length(ct)-1]+ct[length(ct)])/5 #calculate mean over last 5 years  
-  ## PARAMETER SECTION
-  # R prior
-  start_r     <- c(0.01,10)  ## disable this line if you use resilience
-  start_k     <- c(max(ct),50*max(ct)) ## default for upper k e.g. 50 * max catch         ****THIS IS AN UPDATE FROM RAINER--Oct 12, 2012    
-  startbio    <- if(ct[1]/max(ct) < 0.2) {c(0.5,0.9)} else {c(0.2,0.6)} ## use for batch processing   ****THIS IS AN UPDATE FROM RAINER--Oct 12, 2012  
-  interyr     <- yr[2]   ## interim year within time series for which biomass estimate is available; set to yr[2] if no estimates are available
-  interbio     <- c(0, 1) ## biomass range for interim year, as fraction of k; set to 0 and 1 if not available
-  finalbio    <- if(ct[nyr]/max(ct) > 0.5) {c(0.3,0.7)} else {c(0.01,0.4)} ## use for batch processing   ****THIS IS AN UPDATE FROM RAINER--Oct 12, 2012
-  n           <- 1e5  ## number of iterations
-  sigR        <- 0.0   ## process error; 0 if deterministic model; 0.05 reasonable value? 0.2 is too high
-  startbt     <- seq(startbio[1], startbio[2], by = 0.05) ## apply range of start biomass in steps of 0.05	
-  parbound    <- list(r = start_r, k = start_k, lambda = finalbio, sigR) 
-  
-  ## FUNCTIONS
-  .schaefer	<- function(theta)
-    {
-      with(as.list(theta), {  ## for all combinations of ri & ki
-        bt=0
-        ell = 0  ## initialize ell
-        J=0
-        for (j in startbt)
-          {
-            if(ell == 0) 
-              {
-                bt[1]=j*k*exp(rnorm(1,0, sigR))  ## set biomass in first year
-                for(i in 1:nyr) ## for all years in the time series
-                  {
-                    xt=rnorm(1,0, sigR)
-                    bt[i+1]=(bt[i]+r*bt[i]*(1-bt[i]/k)-ct[i])*exp(xt) ## calculate biomass as function of previous year's biomass plus net production minus catch
-                  }                
-                ##Bernoulli likelihood, assign 0 or 1 to each combination of r and k
-                ell = 0
-                if(bt[nyr+1]/k>=lam1 && bt[nyr+1]/k <=lam2 && min(bt) > 0 && max(bt) <=k && bt[which(yr==interyr)]/k>=interbio[1] && bt[which(yr==interyr)]/k<=interbio[2]) 
-                  ell = 1
-                J=j
-              }	            
-          }
-        return(list(ell=ell, J=J))
-      })
-    }
-  ##
-  sraMSY <- function(theta, N){
-    ##This function conducts the stock reduction
-    ##analysis for N trials
-    ##args:
-    ##	theta - a list object containing:
-    ##		r (lower and upper bounds for r)
-    ##		k (lower and upper bounds for k)
-    ##		lambda (limits for current depletion)
-    ##
-    #theta <- parbound #mel addition, testing
-    #N=n #mel addition, testing
-    with(as.list(theta), 
-         {
-           ri = exp(runif(N, log(r[1]), log(r[2])))  ## get N values between r[1] and r[2], assign to ri
-           ki = exp(runif(N, log(k[1]), log(k[2])))  ## get N values between k[1] and k[2], assing to ki
-           itheta=cbind(r=ri,k=ki, lam1=lambda[1],lam2=lambda[2], sigR=sigR) ## assign ri, ki, and final biomass range to itheta
-           #test <- data.frame(r=4.51446027, k=13.818701, lam1=0.01, lam2=0.40, sigR=0) #mel addition
-           #apply(test, 1, .schaefer) #mel addition
-           M = apply(itheta,1,.schaefer) ## call Schaefer function with parameters in itheta
-           i=1:N
-           ## prototype objective function
-           get.ell=function(i) M[[i]]$ell 
-           ell = sapply(i, get.ell) 
-           get.J=function(i) M[[i]]$J
-           J=sapply(i, get.J)
-           return(list(r=ri,k=ki, ell=ell, J=J)	)
-         })
-  }
-  
-  
-  ## MAIN
-  Time = system.time(
-    R1<-sraMSY(parbound, n) 
-    )
-  ## Get statistics on r, k, MSY and determine new bounds for r and k
-  r1 	<- R1$r[R1$ell==1]
-  k1 	<- R1$k[R1$ell==1]
-  j1  <- R1$J[R1$ell==1]
-  msy1  <- r1*k1/4
-  mean_msy1 <- exp(mean(log(msy1))) 
-  max_k1a  <- min(k1[r1<1.1*parbound$r[1]]) ## smallest k1 near initial lower bound of r
-  max_k1b  <- max(k1[r1*k1/4<mean_msy1]) ## largest k1 that gives mean MSY
-  max_k1 <- if(max_k1a < max_k1b) {max_k1a} else {max_k1b}
-  ##
-  if(length(r1)<10) {
-    cat("Too few (", length(r1), ") possible r-k combinations, check input parameters","\n")
-    flush.console()
-  }
-  ##
-  if(length(r1)>=10) {
-    ## set new upper bound of r to 1.2 max r1
-    parbound$r[2] <- 1.2*max(r1)
-    ## set new lower bound for k to 0.9 min k1 and upper bound to max_k1 
-    parbound$k 	  <- c(0.9 * min(k1), max_k1)    
-    #     
-    #     cat("First MSY =", format(1000*mean_msy1, digits=3),"\n")
-    #     cat("First r =", format(exp(mean(log(r1))), digits=3),"\n")
-    #     cat("New upper bound for r =", format(parbound$r[2],digits=2),"\n")	
-    #     cat("New range for k =", format(1000*parbound$k[1], digits=3), "-", format(1000*parbound$k[2],digits=3),"\n")
-    #     
-    #     
-    ## Repeat analysis with new r-k bounds
-    R1 = sraMSY(parbound, n)
-    ## Get statistics on r, k and msy
-    r = R1$r[R1$ell==1]
-    k = R1$k[R1$ell==1]
-    j = R1$J[R1$ell==1]
-    msy = r * k / 4
-    mean_ln_msy = mean(log(msy))
-    ##
-  
-    BT=0
-    getBiomass  <- function(r, k, j)
-    {
-      bt=vector()
-      for (v in 1:length(r))
-      {
-        #v <- 1 #mel addition, testing
-        bt[1]=j[v]*k[v]*exp(rnorm(1,0, sigR))  ## set biomass in first year. For: exp(rnorm(1,0,sigR)) equals 1 if sigR is 0
-        for(i in 1:nyr) ## for all years in the time series
-        {
-          #i <- 1 #mel addition, testing
-          xt=rnorm(1,0, sigR)
-          bt[i+1]=(bt[i]+r[v]*bt[i]*(1-bt[i]/k[v])-ct[i])*exp(xt) ## calculate biomass as function of previous year's biomass plus net production minus catch
-        }
-        BT=rbind(BT, t(t(bt)))        
-      }
-      return(BT)
-    }
-    R2<-getBiomass(r, k, j) 
-    R2<-R2[-1,]
-    runs<-rep(1:length(r), each=nyr+1)
-    count<-rep(1:(nyr+1), length=length(r)*(nyr+1))
-    runs<-t(runs)
-    count<-t(count)
-    R3<-cbind(as.numeric(runs), as.numeric(count), stock_id[stockNumber], as.numeric(R2) )
-    ##R4<-data.frame(R3)
-    ## CM: changed this, as otherwise biomass is the
-    ## level of the factor below
-    R4<-data.frame(R3, stringsAsFactors=FALSE)
-    ##
-    names(R4)<-c("Run", "Count", "Stock","Biomass")
-    #B0x<-R4$Biomass[R4$Count==1] # / j [for each sample]
-    #B0_x<-as.numeric(paste(B0x))
-    B0_x <- k
-    Bmsy_x<-B0_x*0.5
-    Run<-c(1:length(r)) 
-    BMSY<-cbind(Run, Bmsy_x)
-    R5<-merge(R4, BMSY, by="Run", all.x=T, all.y=F)
-    R5$B_Bmsy<-as.numeric(paste(R5$Biomass))/R5$Bmsy_x
-    ## CM, changed to get quantiles
-    ##R6<-aggregate(log(B_Bmsy)~as.numeric(Count)+Stock, data=R5, mean) # WHY NOT GETTING THE QUANTILES DIRECTLY FROM R5?
-        R6<-aggregate(log(B_Bmsy)~as.numeric(Count)+Stock, data=R5, FUN=function(z){c(mean=mean(z),sd=sd(z),upr=exp(quantile(z, p=0.975)), lwr=exp(quantile(z, p=0.025)), lwrQ=exp(quantile(z, p=0.25)), uprQ=exp(quantile(z, p=0.75)))})
-    ##R6<-aggregate(B_Bmsy~as.numeric(Count)+Stock, data=R5, FUN=function(z){c(mean=mean(z),sd=sd(z),upr=exp(quantile(z, p=0.975)), lwr=exp(quantile(z, p=0.025)))})
-    ## CM: sort out columns
-    R6<-data.frame(cbind(R6[,1:2],R6[,3][,1],R6[,3][,2],R6[,3][,3],R6[,3][,4],R6[,3][,5], R6[,3][,6]))
-    names(R6)<-c("Count", "Stock", "BoverBmsy", "BoverBmsySD","BoverBmsyUpper","BoverBmsyLower","BoverBmsylwrQ","BoverBmsyuprQ")      ## CM: remove  last entry as it is 1 greater than number of years
-    ## CHECK WITH KRISTIN!---Kristin: commented out line 209 and I'm getting plots that look reasonable
-    ## CM: 19th June 2013 removed final year here for ease of dataframe output below
-    R6<-R6[-length(R6),]
-    ## CM: geometric mean
-    R6$GM_B_Bmsy<-exp(R6$BoverBmsy)
-    ## CM: arithmetic mean
-    R6$M_B_Bmsy<-exp(R6$BoverBmsy+R6$BoverBmsySD^2/2)
-    ##
-    R6<-R6[order(R6[,1]), ]
-    ##BoverBmsy<-R6$GM_B_Bmsy
-    ## CM: note using arithmetic mean
-    BoverBmsy<-R6$M_B_Bmsy
-    b_bmsyUpper<-R6$BoverBmsyUpper
-    b_bmsyLower<-R6$BoverBmsyLower
-    BoBtest<-data.frame(BoverBmsy)
-    b_bmsylwrQ<-R6$BoverBmsylwrQ
-    b_bmsyuprQ<-R6$BoverBmsyuprQ
-    #Calculate alternative upper and lower bounds on B/Bmsy for comparison (based on
-    #the fact that a Schaefer production model will suggest the equilibrium biomass B/Bmsy 
-    #that will eventually result from a constant relative catch Y/MSY as: B/Bmsy = 1+/-sqrt(1-catch/MSY)).
-    #Additional evidence is needed to decide whether the biomass is above or below Bmsy.
-    #BoverBmsy2upper<-1+sqrt(1-ct/exp(mean(log(msy))))# WHY NOT GETTING THE QUANTILES DIRECTLY FROM R5?
-    #BoverBmsy2lower<-1-sqrt(1-ct/exp(mean(log(msy))))
-    ##
-    effective_sample_size<-length(r)
-    convergence<-ifelse(effective_sample_size<30, "NC", 
-                        ifelse(effective_sample_size>200, "SC", "WC"))
-    ##outputSIM = list("stock_id"=stock, "b_bmsy"=BoverBmsy, "b_bmsyUpper"=apply(BoBtest,MARGIN=2,FUN=quantile,prob=0.975), "b_bmsyLower"=apply(BoBtest,MARGIN=2,FUN=quantile,prob=0.025), "b_bmsy_iq25"=apply(BoBtest,MARGIN=2,FUN=quantile,prob=0.25), "b_bmsy_iq75"=apply(BoBtest,MARGIN=2,FUN=quantile,prob=0.75), "b_bmsy2U"=BoverBmsy2upper, "b_bmsy2L"=BoverBmsy2lower, "year"=yr, "seed"=seed, "convergence"=convergence, "n_iterations"=n, "effective_sample_size"=effective_sample_size, "run_time"=Time['elapsed'], "method_id"=method_id, r_params=r1, k_params=k1)
-    ## CM: changed the output to reflect changes above, please check all
-    outputSIM = list("stock_id"=stock_id[stockNumber], "b_bmsy"=BoverBmsy, "b_bmsyUpper"=b_bmsyUpper, "b_bmsyLower"=b_bmsyLower, "b_bmsy_iq25"=b_bmsylwrQ, "b_bmsy_iq75"=b_bmsyuprQ, "year"=yr, "seed"=seed, "convergence"=convergence, "n_iterations"=n, "effective_sample_size"=effective_sample_size,  "method_id"=method_id, r_params=r1, k_params=k1)
-  }else{
-    outputSIM = list("stock_id"=stock_id[stockNumber], "b_bmsy"=NA, "b_bmsyUpper"=NA, "b_bmsyLower"=NA, "b_bmsy_iq25"=NA, "b_bmsy_iq75"=NA, "year"=yr, "seed"=seed, "convergence"="NC", "n_iterations"=n, "effective_sample_size"=effective_sample_size,  "method_id"=method_id, r_params=r1, k_params=k1)
-  }
-  
-  
-  ##
-  ##res.list<-list(outputSIM)
-  ## not elegant naming of results list below
-  ## but need to have name somewhere in list names 
-  ##names(res.list)<-stock_id[stockNumber]
-  return(outputSIM)
+get_b_bmsy <- function(i){  
+  test <- runCMSY(stockNumber=i, cdat=cdat)
+  new <- data.frame(taxon_name=test[[1]],
+                    b_bmsy=test[[2]],
+                    year=test[[7]])
+  return(new)
 }
 
+print(system.time({    
+  r = mclapply(1:length(cdat10plus), get_b_bmsy, mc.cores=detectCores(), mc.preschedule=F) 
+}))
 
-### run CMSY function:
+r <- ldply(r)
 
-b_bmsy <- data.frame()
-for(i in 1:length(unique(cdat$stock_id))){  
-#for(i in 1:1){    ##troubleshooting    
-test <- runCMSY(cdat, stockNumber=i)
-new <- data.frame(taxon_name=test[[1]],
-           b_bmsy=test[[2]],
-           year=test[[7]])
-b_bmsy <- rbind(b_bmsy, new)
-i
+write.csv(r, "Global/GL-AQ-FIS_v2013/tmp/b_bmsy_AQ_with_zeros_constrained.csv", row.names=FALSE)
+
+## compared with old data and R2 was 1 - feel confident everything went well
+# ## compare with old data (should be the same):
+# old <- read.csv("Global/GL-AQ-FIS_v2013/tmp/fnk_fis_b_bmsy.csv")
+# old <- old %>%
+#   select(taxon_name, old_b_bmsy=b_bmsy, year) %>%
+#   join(r, by=c("taxon_name", "year"))
+# 
+# plot(old_b_bmsy~b_bmsy, data=old)
+# abline(0, 1)
+# mod <- lm(old_b_bmsy~b_bmsy, data=old)
+# summary(mod)
+######################################
+# Antarctica zeroes excluded-----
+
+cdat <- read.csv("Antarctica/AQ_FIS_2014a/data/CCAMLR_no0s_w_resil.csv")
+cdat <- cdat %>%
+  select(stock_id, ct, yr) %>%
+  arrange(stock_id, yr)
+cdat <- unique(cdat)
+
+#get ID's of taxa with >= 10 years of non-zero data:
+cdat_years <- cdat %>%
+  filter(ct!=0) %>%
+  group_by(stock_id) %>%
+  summarise(years=length(yr))
+
+cdat10plus <- cdat_years$stock_id[cdat_years$years>=10]
+
+# subset original data to include only the species with 10+ years
+cdat <- cdat[cdat$stock_id %in% cdat10plus, ]
+
+## Run bbmsy script
+source('Global/FIS_Bbmsy/cmsy_constrained.R')
+
+get_b_bmsy <- function(i){  
+  test <- runCMSY(stockNumber=i, cdat=cdat)
+  new <- data.frame(taxon_name=test[[1]],
+                    b_bmsy=test[[2]],
+                    year=test[[7]])
+  return(new)
 }
 
- write.csv(b_bmsy, "N:\\model\\GL-HS-AQ-Fisheries_v2013\\Antarctica\\tmp\\b_bmsy_AQ_with_zeros.csv", row.names=FALSE)
+print(system.time({    
+  r = mclapply(1:1:length(cdat10plus), get_b_bmsy, mc.cores=detectCores(), mc.preschedule=F) 
+}))
 
-# NOTE: ran for the following taxa (Scomberomorus commerson_61, Cynoscion regalis_31, Ablennes hians_51) 
-# and compared to b_bmsy results from OHI 2013 b_bmsy values (fnk_fis_b_bmsy.csv).  
-# The values were very close to the same (saved test file as: b_bmsy_test_Mar252014.csv).
-# There is some fluctuation in values each time the procedure is run - so they will not be the exact same.
+r <- ldply(r)
+
+write.csv(r, "Global/GL-AQ-FIS_v2013/tmp/b_bmsy_AQ_no_zeros_constrained.csv", row.names=FALSE)
+
+## compare zeros/no zeros
+noZ <- read.csv("Global/GL-AQ-FIS_v2013/tmp/b_bmsy_AQ_no_zeros_constrained.csv")
+Z <- read.csv("Global/GL-AQ-FIS_v2013/tmp/b_bmsy_AQ_with_zeros_constrained.csv")
+
+Compare <- noZ %>%
+  select(taxon_name, noZ_b_bmsy=b_bmsy, year) %>%
+  left_join(Z, by=c('taxon_name', 'year'))
+
+ggplot(subset(Compare, year==2011), aes(x=noZ_b_bmsy, y=b_bmsy, color=taxon_name, group=taxon_name)) +
+  geom_point() +
+  geom_abline(intercept=0, slope=1) +
+  theme_bw()+
+  theme(legend.position="none") +
+  labs(x="b/bmsy: no zeros", y="b/bmsy: zeroes included")
+
+mod <- lm(b_bmsy ~ noZ_b_bmsy, data=Compare)
+
+confint(mod)
+
