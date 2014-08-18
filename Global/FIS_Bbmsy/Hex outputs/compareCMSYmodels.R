@@ -1,7 +1,7 @@
 ## Goal:
 ##   Compare: 
-##     - uniform prior with zeros (last OHI analysis, data is on file.path(dir_neptune_data, "model/GL-NCEAS-FIS_2014a/raw/cmsy.ohi.df_Jul292014.csv")
-##     - uniform prior no zeros 
+##     - xx uniform prior with zeros (last OHI analysis, data is on file.path(dir_neptune_data, "model/GL-NCEAS-FIS_2014a/raw/cmsy.ohi.df_Jul292014.csv")
+##     - xx uniform prior no zeros 
 ##     - original prior with zeros
 ##     - original prior no zeros
 
