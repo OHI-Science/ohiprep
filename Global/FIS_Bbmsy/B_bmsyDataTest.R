@@ -121,7 +121,7 @@ get_b_bmsy <- function(i){
 }
 
 print(system.time({    
-  r = mclapply(1:length(species_bmsy), get_b_bmsy, mc.cores=detectCores(), mc.preschedule=F) # took ~ 4 hrs on neptune
+  r = mclapply(1:length(species_bmsy), get_b_bmsy, mc.cores=detectCores(), mc.preschedule=F) 
 }))
 
 r <- ldply(r)
