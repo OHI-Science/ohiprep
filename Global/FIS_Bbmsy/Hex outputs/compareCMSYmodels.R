@@ -17,8 +17,15 @@ dir_d = '../ohiprep/Global/NCEAS-Fisheries_2014a' # set folder where files are s
 ## B-Bmsy data----
 ###############################################
 #b_bmsy <- read.csv(file.path(data, "raw/cmsy.ohi.df_Jul292014.csv"), na.strings='')
-load("Global/FIS_Bbmsy/Hex outputs/cmsy_ohi_results_table_uniformPrior_no0s.RData")
-b_bmsy <- cmsy.ohi.unif.no0.df
+
+#load("Global/FIS_Bbmsy/Hex outputs/cmsy_ohi_results_table_uniformPrior_no0s.RData")
+#b_bmsy <- cmsy.ohi.unif.no0.df
+
+# load("Global/FIS_Bbmsy/Hex outputs/cmsy_ohi_results_table_originalPrio_added0s.RData")
+# b_bmsy <- cmsy.ohi.orig.with0.df
+
+load("Global/FIS_Bbmsy/Hex outputs/cmsy_ohi_results_table_originalPrio_no0s.RData")
+b_bmsy <- cmsy.ohi.orig.no0.df
 
 b_bmsy_lyr <- b_bmsy %>%
   mutate(fao_id = sapply(strsplit(as.character(stock_id), "_"), function(x)x[2]),
