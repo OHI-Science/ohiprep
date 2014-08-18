@@ -237,4 +237,4 @@ anyDuplicated(hs_cnk_fis_meancatch[,1:3])
 # write.csv(hs_cnk_fis_meancatch, file.path(dir_neptune_data, 'model/GL-HS-AQ-Fisheries_v2013/HighSeas','fnk_fis_meancatch_lyr.csv'), row.names=F)
 # tried to save to Neptun high seas folder but have insufficient permissions - saving on github instead
 
-write.csv(hs_cnk_fis_meancatch, file.path(dir_neptune_data, 'model/GL-HS-AQ-Fisheries_v2013/HighSeas','fnk_fis_meancatch_lyr.csv'), row.names=F)
+write.csv(hs_cnk_fis_meancatch, '../ohiprep/HighSeas/GL_HS_FIS/data/fnk_fis_meancatch_lyr.csv', row.names=F)
