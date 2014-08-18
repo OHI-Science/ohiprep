@@ -49,6 +49,16 @@ exam =as.data.frame(cbind( 'id'=c(6,23,24,25),
 exam
 ```
 
+The current CMSY script produces the following output: 
+```{r, echo=FALSE}
+fake_cmsy_output = as.data.frame(cbind('v1'=c('Ablennes hians_51', 'Ablennes hians_51'), 'v2'  = c('SC','SC'), 'v3' = c(30974, 30974), 'v4' = c(1985, 1986), 'v5' = c(1.112412, 1.222996), 'v6' = c(1.800000, 1.768895), 'v7' = c(1.000000, 1.014688), 'v8' = c(1.000000, 1.075699), 'v9' = c(1.000000, 1.298437), 'v10' = c(1.093932, 1.209005), 'v11' = c(1.000000, 1.160329)))
+names(fake_cmsy_output) <- c("stock_id", "convergence", "effective_sample_size", "yr", "b_bmsy", "b_bmsyUpper", "b_bmsyLower", "b_bmsyiq25", "b_bmsyiq75", "b_bmsyGM", "b_bmsyMed")
+fake_cmsy_output
+
+```
+
+where 'stock_id' is the unique identifier for each stock-region combination that was used in the input file, 'convergence' indicates ... ('SC' = strong convergence), 'effective_sample_size' reports ... , 'yr' = year, b_bmsy = B/Bmsy for the corresponding year,  b_bmsyUpper = B/Bmsy value at the upper confidence bound, b_bmsyLower = B/Bmsy value at the lower confidence bound, b_bmsyiq25 = B/Bmsy value at the first quartile, b_bmsyiq75 = B/Bmsy value at the third quartile, 
+
 ###**HOW TO**
 *1. Include resilience in the CMSY code*      
 In the CMSY R script, in the PARAMETERS section, replace the following:
@@ -71,7 +81,7 @@ with
   }
 
 *2. Make assumptions about fisheries regulations*      
-If you assume that fisheries are depleted and there isn't very much fisheries regulation, and you are using the CMSY method to assess B/Bmsy, the original model may work well. If, however, the catch of a species declined because fisheries regulations have closed or limited the fishery, the model may be too pessimistic and understimate B/Bmsy. In that case it may be best to use a version with a uniform prior on final biomass, instead of the constrained prior.  
+If you assume that fisheries are depleted and there isn't very much fisheries regulation, and you are using the CMSY method to assess B/Bmsy, the original model may work well. If, however, the catch of a species declined because fisheries regulations have closed or limited the fishery, or if a fishery was abandoned for economic reasons (e.g., change in consumer prefereces, market price dynamics, etc.), the model may be too pessimistic and understimate B/Bmsy. In that case it may be best to use a version with a uniform prior on final biomass, instead of the constrained prior.  
 The original constrained prior on final biomass is set by this line within the code:  
   
   finalbio    <- if(ct[nyr]/max(ct) > 0.5) {c(0.3,0.7)} else {c(0.01,0.4)}    
