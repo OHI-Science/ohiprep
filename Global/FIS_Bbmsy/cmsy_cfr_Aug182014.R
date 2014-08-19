@@ -137,20 +137,26 @@ top_stocks <- c( hmcr2$first_stock, hmcr2$second_stock)
 cmsy.top <- cmsy.all %>% filter(stock_id %in% top_stocks) # Joining by: "stock_id"
 
 ## 3 # join with catch time-series
-nS5 <- nS5 %>% rename(c('yr' = 'year', 'ct' = 'b_bmsy')) %>% ungroup() ; head(nS5) # it's a bit weird to rename catch with 'b_bmsy', 
+nS7 <- nS7 %>% rename(c('yr' = 'year', 'ct' = 'b_bmsy')) %>% ungroup() ; head(nS5) # it's a bit weird to rename catch with 'b_bmsy', 
 # this should be 'value' but for now will leave as is to be able to rbind to bbmsy values
 
-ct.all <- nS5 %>% 
+ct.all <- nS7 %>% 
           mutate(
                   fao_id     = as.numeric(str_replace(stock_id, '^(.*)_(.*)$', '\\2')),
                   taxon_name = str_replace(stock_id, '^(.*)_(.*)$', '\\1') ) 
-ct.all <- ct.all  %>% select ( stock_id, fao_id, taxon_name, year, b_bmsy) 
+ct.all <- ct.all %>% filter(stock_id %in% top_stocks) %>% select ( stock_id, fao_id, taxon_name, year, b_bmsy) 
 ct.all <- ct.all  %>% mutate (whence = 'catch')
 ct.all.resc <- ct.all  %>% group_by(stock_id) %>% mutate(b_bmsy = b_bmsy/max(b_bmsy))
 # then rbind it
 cmsy.top <- rbind (cmsy.top, ct.all.resc) 
 
 ## 4 # ggplot them
+
+tp <- ggplot(cmsy.top, aes(x=year,  y=b_bmsy, group=whence, color=whence)) +
+  geom_line() +
+  facet_wrap(~ stock_id) + 
+  theme_bw()
+tp
 
 tp <- ggplot(cmsy.top, aes(x=year,  y=b_bmsy, group=whence, color=whence)) +
   geom_point(position=position_jitter(width=0.01,height=.01)) +
