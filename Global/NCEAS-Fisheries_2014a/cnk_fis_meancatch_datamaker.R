@@ -27,10 +27,13 @@ nS <- read.delim(file.path(dir_neptune_data, dir_FIS_data, file_1 )) ; head(nS)
 # load species names lookup table - it is important that this be the same as CMSY data prep
 file_2<- 'TaxonLookup.csv'
 tax <- read.csv(file.path(dir_d, 'tmp', file_2 )) ; head(tax)
-nS<-left_join(nS,tax[,1:2]) ; head(nS) # add species names # Joining by: "Taxonkey" # if I want to set it up to source 'CMSY data prep.R' I'll ahve to change this variable name
+newSAUP<-left_join(newSAUP,tax[,1:2]) # add species names # Joining by: "Taxonkey"
+# create a unique stock id name for every species/FAO region pair
+newSAUP$stock_id <- paste(newSAUP$TaxonName,newSAUP$FAO,sep='_') #newSAUP is catch data for weighted means!
 
 # create a unique stock id name for every species/FAO region pair
-nS$stock_id <- paste(nS$TaxonName,nS$FAO,sep='_')
+newSAUP$stock_id <- paste(newSAUP$TaxonName,newSAUP$FAO,sep='_') #newSAUP is catch data for weighted means!
+
 ########################################################################
 
 ## Step 2. ## rearrange the dataset
@@ -38,7 +41,7 @@ nS.eez <- newSAUP[newSAUP$EEZ != 0,] # select eez data
 
 names(nS.eez)[names(nS.eez)=="IYear"]<-"year" # rename variable
 nS.eez<-nS.eez[nS.eez$year>=1980,] ; dim(nS.eez) # only use data from 1980 or later to obtain average catch
-nS.eez<-nS.eez[nS.eez$Catch!=0,] ; dim(nS.eez) # remove taxa with no catch since 1980
+# nS.eez<-nS.eez[nS.eez$Catch!=0,] ; dim(nS.eez) # remove taxa with no catch since 1980
 
 # ISSUE1: need to sum catch to remove duplicate 'Marine fishes not identified', 'Shrimps and prawns', 'Sharks rays and chimaeras' for the same year, saup_id
 # multiple taxonkeys (but unique common.names!) are associated with each of these 3 taxonnames - 
