@@ -158,6 +158,10 @@ tp <- ggplot(cmsy.top, aes(x=year,  y=b_bmsy, group=whence, color=whence)) +
   theme_bw()
 tp
 
+png("../ohiprep/HighSeas/GL_HS_FIS/Timeseries_compare_4cmsy_versions_Top2Stocks.png", width=1300, height=900)
+plot(tp)
+dev.off()
+
 tp <- ggplot(cmsy.top, aes(x=year,  y=b_bmsy, group=whence, color=whence)) +
   geom_point(position=position_jitter(width=0.01,height=.01)) +
   geom_line() +
