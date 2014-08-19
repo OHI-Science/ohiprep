@@ -19,9 +19,8 @@ data = file.path(dir_neptune_data, "model/GL-NCEAS-FIS_2014a")
 # source(file.path(dir_d,'tmp/CMSY data prep.R'))  
 ########################################################################
 ## Step 1. ## get files ex novo
-load the new catch data
+# load the new catch data
 dir_FIS_data = 'git-annex/Global/SAUP-Fisheries_v2011/raw'
-/Volumes/data_edit/git-annex/Global/SAUP-Fisheries_v2011/raw/Extended catch data 1950-2011_Common name_25 July2014.txt
 file_1<- 'Extended catch data 1950-2011_18 July 2014.txt'
 nS <- read.delim(file.path(dir_neptune_data, dir_FIS_data, file_1 )) ; head(nS)
 
