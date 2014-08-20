@@ -11,6 +11,11 @@ dir = '../ohiprep/HighSeas/GL_HS_FIS_2014' # set folder where files are saved
 dir_nept  <- file.path(dir_neptune_data, 'git-annex/Global/SAUP-Fisheries_v2011/raw') #where raw catch data are located
 dir_global <- '../ohiprep/Global/NCEAS-Fisheries_2014a' # where additional catch data are located
   
+#############################################
+## Mean catch data ----
+#############################################
+
+
 ## Step 1. ## upload SAUP dat 
 ########################################################################
 # load the new catch data
@@ -58,22 +63,48 @@ nS$taxon_name_key_id<-paste(nS$taxon_name_key, nS$fao_id, nS$saup_id, sep='_')
 
 MeanCatch <- nS %>%
   group_by(saup_id, fao_id, stock_id, taxon_name_key) %>% # equivalent to .(stock_id, taxon_name_key_id
-  summarise(mean_catch=mean(Catch))
+  summarise(mean_catch=mean(Catch)) #N = 1721
 
 nS <- join(nS, MeanCatch, by=c("saup_id","fao_id","stock_id","taxon_name_key")); head(nS)
 
-# remove mean catch == 0
-nS <- nS[nS$mean_catch != 0, ]
-nS <- nS[nS$year>2005,]
-
-nS$fao_saup_id <- paste(nS$fao_id, nS$saup_id, sep="_")
-
-
-cnk_fis_meancatch <- subset(nS, select=c("fao_saup_id", "taxon_name_key", 
-                                                 "year", "mean_catch")) 
+# Final cleaning up:
+cnk_fis_meancatch  <- nS %>%
+  filter(mean_catch != 0,
+         year > 2005) %>%
+  mutate(fao_saup_id = paste(fao_id, saup_id, sep="_")) %>%
+  select(fao_saup_id, taxon_name_key, year, mean_catch)  # N=6952
 
 # are there duplicate stocks ids per taxon-year-region?
 stopifnot(sum(duplicated(cnk_fis_meancatch[,c('fao_saup_id', 'taxon_name_key', 'year')])) == 0 )
 
 # no duplicates! Proceed to save the file
 write.csv(cnk_fis_meancatch, file.path(dir, 'data/fnk_fis_meancatch_lyr.csv'), row.names=F, na='')
+
+
+#############################################
+## b/bmsy ----
+#############################################
+# realized that this will become complicated, but for now here is an intermediate version
+## NOTE: all should access the b/bmsy data version from a b_bmsy file, rather than the global fisheries file (change in global eez as well):
+##
+b_bmsy <- read.csv("Global/NCEAS-Fisheries_2014a/data/fnk_fis_b_bmsy_lyr_constrained_w0_runningMean.csv")
+
+# filter by catch (although, not sure this is necessary)
+catch <- read.csv(file.path(dir, 'data/fnk_fis_meancatch_lyr.csv'))
+catch$TaxonName  <- sapply(strsplit(as.character(catch$taxon_name_key), "_"), function(x)x[1])
+catch$taxon_key  <- sapply(strsplit(as.character(catch$taxon_name_key), "_"), function(x)x[2])
+catch$fao_id  <- sapply(strsplit(as.character(catch$fao_saup_id), "_"), function(x)x[1])
+catch$saup_id  <- sapply(strsplit(as.character(catch$fao_saup_id), "_"), function(x)x[2])
+catch$stock_id  <- paste(catch$TaxonName, catch$fao_id, sep="_")
+
+b_bmsy <- b_bmsy %>%
+  filter(stock_id %in% catch$stock_id) %>%
+  mutate(taxon_name = sapply(strsplit(as.character(stock_id), "_"), function(x)x[1])) %>%
+  mutate(fao_id = sapply(strsplit(as.character(stock_id), "_"), function(x)x[2])) %>%
+  select(fao_id, taxon_name, year=yr, b_bmsy)
+  
+# are there duplicate stocks ids per taxon-year-region?
+stopifnot(sum(duplicated(b_bmsy[,c('taxon_name', 'fao_id', 'year')])) == 0 )
+
+# no duplicates! Proceed to save the file
+write.csv(b_bmsy, file.path(dir, 'data/fnk_fis_b_bmsy_lyr.csv'), row.names=F, na='')
