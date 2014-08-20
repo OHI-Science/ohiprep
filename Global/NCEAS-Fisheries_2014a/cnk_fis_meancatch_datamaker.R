@@ -1,7 +1,7 @@
 ##############################################################################
 ############### prep SAUP data to provide weights for FIS calculation ########
 ##############################################################################
-## modified from FIS_dataPrep.R created by Mel##
+
 # setup
 library(gdata)
 library(stringr)
