@@ -103,64 +103,64 @@ stopifnot( sum(duplicated(cnk_fis_meancatch[,c('fao_saup_id', 'taxon_name_key', 
 # no duplicates! Proceed to save the file
 write.csv(cnk_fis_meancatch, file.path(dir_d, 'data/fnk_fis_meancatch_lyr.csv'), row.names=F, na='')
 
-# #################################################
-# ## OPTION 2: adding trailing zeros to replace NA data
-# ### comment out the next part if trailing zeros do not need to be added:
+#################################################
+## OPTION 2: adding trailing zeros to replace NA data
+### delete the next part if trailing zeros do not need to be added:
+
+# Step 4 ## years of missing data should be treated as 0 catch, this affects the average!
+# create a full matrix of years for each stock and pad missing records with 0s
+nS.eez <- data.frame(nS.eez)
+nS.eez  <- nS.eez %>%
+  select(year, taxon_name_key_id, Catch)
+
+yr_stck <- expand.grid(year=1980:2011, taxon_name_key_id=unique(nS.eez$taxon_name_key_id))
+
+nS2 <- join(yr_stck, nS.eez) ; head(nS2) # Joining by: year, taxon_name_key_id # same comment as above about plyr's join fn
+
+min_yr <- ddply(nS2, .(taxon_name_key_id), summarise, min_year=min(year[!is.na(Catch)]))
+
+# pad with zeros:
+nS3 <- left_join(nS2, min_yr, by="taxon_name_key_id") # Joining by: taxon_name_key_id
+nS3$TaxonName  <- sapply(strsplit(as.character(nS3$taxon_name_key_id), "_"), function(x)x[1])
+nS3$taxon_key  <- sapply(strsplit(as.character(nS3$taxon_name_key_id), "_"), function(x)x[2])
+nS3$fao_id  <- sapply(strsplit(as.character(nS3$taxon_name_key_id), "_"), function(x)x[3])
+nS3$saup_id  <- sapply(strsplit(as.character(nS3$taxon_name_key_id), "_"), function(x)x[4])
+
+
+nS3$Catch <- ifelse(is.na(nS3$Catch) & nS3$year>= nS3$min_year, 
+                    0, 
+                    nS3$Catch)
+
+# nS3[nS3$TaxonName=='Seriola' & nS3$fao_id==37,]
 # 
-# # Step 4 ## years of missing data should be treated as 0 catch, this affects the average!
-# # create a full matrix of years for each stock and pad missing records with 0s
-# nS.eez <- data.frame(nS.eez)
-# nS.eez  <- nS.eez %>%
-#   select(year, taxon_name_key_id, Catch)
-# 
-# yr_stck <- expand.grid(year=1980:2011, taxon_name_key_id=unique(nS.eez$taxon_name_key_id))
-# 
-# nS2 <- join(yr_stck, nS.eez) ; head(nS2) # Joining by: year, taxon_name_key_id # same comment as above about plyr's join fn
-# 
-# min_yr <- ddply(nS2, .(taxon_name_key_id), summarise, min_year=min(year[!is.na(Catch)]))
-# 
-# # pad with zeros:
-# nS3 <- left_join(nS2, min_yr, by="taxon_name_key_id") # Joining by: taxon_name_key_id
-# nS3$TaxonName  <- sapply(strsplit(as.character(nS3$taxon_name_key_id), "_"), function(x)x[1])
-# nS3$taxon_key  <- sapply(strsplit(as.character(nS3$taxon_name_key_id), "_"), function(x)x[2])
-# nS3$fao_id  <- sapply(strsplit(as.character(nS3$taxon_name_key_id), "_"), function(x)x[3])
-# nS3$saup_id  <- sapply(strsplit(as.character(nS3$taxon_name_key_id), "_"), function(x)x[4])
-# 
-# 
-# nS3$Catch <- ifelse(is.na(nS3$Catch) & nS3$year>= nS3$min_year, 
-#                     0, 
-#                     nS3$Catch)
-# 
-# # nS3[nS3$TaxonName=='Seriola' & nS3$fao_id==37,]
-# # 
-# #  ggplot(subset(nS3, fao_id=='37'), aes(x=year, y=Catch)) +
-# #    geom_point() +
-# #    geom_line() + 
-# #    facet_wrap( ~TaxonName)
-# 
-# nS3<-nS3[!is.na(nS3$Catch),] ; dim(nS3)# rm NAs (the rows before first catch aren't necessary anymore)
-# 
-# # Calculate mean catch over all years per taxon and saup_id/fao_id (remember: due to new taxonkey, some stock_ids correspond to multiple taxa)
-# MeanCatch <- nS3 %>%
-#   group_by(taxon_name_key_id) %>%
-#   summarise(mean_catch = mean(Catch))
-#   
-# nS.eez_zero<-nS3 %>%
-#   join(MeanCatch, by=c("taxon_name_key_id")) %>%
-#   filter(mean_catch != 0,
-#          year>2005) %>%
-#   mutate(fao_saup_id = paste(fao_id, saup_id, sep="_")) %>%
-#   mutate(taxon_name_key = paste(TaxonName, taxon_key, sep="_")) %>%
-#   select(fao_saup_id, taxon_name_key, year, mean_catch) %>%
-#   arrange(fao_saup_id, taxon_name_key, year)
-#   
-# 
-# # are there duplicate stocks ids per taxon-year-region?
-# stopifnot(sum(duplicated(nS.eez_zero[,c('fao_saup_id', 'taxon_name_key', 'year')])) == 0 )
-#        
-# # no duplicates! Proceed to save the file
-# write.csv(nS.eez_zero,file.path(dir_d,'data/fnk_fis_meancatch_lyr.csv'),row.names=F, na='')
-#        
+#  ggplot(subset(nS3, fao_id=='37'), aes(x=year, y=Catch)) +
+#    geom_point() +
+#    geom_line() + 
+#    facet_wrap( ~TaxonName)
+
+nS3<-nS3[!is.na(nS3$Catch),] ; dim(nS3)# rm NAs (the rows before first catch aren't necessary anymore)
+
+# Calculate mean catch over all years per taxon and saup_id/fao_id (remember: due to new taxonkey, some stock_ids correspond to multiple taxa)
+MeanCatch <- nS3 %>%
+  group_by(taxon_name_key_id) %>%
+  summarise(mean_catch = mean(Catch))
+  
+nS.eez_zero<-nS3 %>%
+  join(MeanCatch, by=c("taxon_name_key_id")) %>%
+  filter(mean_catch != 0,
+         year>2005) %>%
+  mutate(fao_saup_id = paste(fao_id, saup_id, sep="_")) %>%
+  mutate(taxon_name_key = paste(TaxonName, taxon_key, sep="_")) %>%
+  select(fao_saup_id, taxon_name_key, year, mean_catch) %>%
+  arrange(fao_saup_id, taxon_name_key, year)
+  
+
+# are there duplicate stocks ids per taxon-year-region?
+stopifnot(sum(duplicated(nS.eez_zero[,c('fao_saup_id', 'taxon_name_key', 'year')])) == 0 )
+       
+# no duplicates! Proceed to save the file
+write.csv(nS.eez_zero,file.path(dir_d,'data/fnk_fis_meancatch_lyr.csv'),row.names=F, na='')
+       
        
        
 ###############################################
