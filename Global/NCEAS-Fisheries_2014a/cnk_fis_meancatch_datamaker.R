@@ -21,6 +21,20 @@ dir_FIS_data = 'git-annex/Global/SAUP-Fisheries_v2011/raw'
 file_1<- 'Extended catch data 1950-2011_18 July 2014.txt'
 nS <- read.delim(file.path(dir_neptune_data, dir_FIS_data, file_1 )) ; head(nS)
 
+## conversion between different region types:
+# EEZs <- read.csv(file.path(dir_d, "tmp/EEZlookup.csv"))
+# EEZs  <- EEZs %>%
+#   select(saup_id=SAUP_C_NUM, eez_id=OHI_2013_EEZ_ID)
+# 
+# saup_fao <- nS %>%
+#   filter(EEZ!=0) %>%
+#   select(saup_id=EEZ, fao_id=FAO) 
+# saup_fao <- unique(saup_fao)
+# 
+# saup_fao  <- saup_fao %>%
+#   left_join(EEZs, by='saup_id')
+# write.csv(saup_fao, file.path(dir_d, "tmp/saup_fao_eez_ids.csv"), row.names=FALSE)
+
 # load species names lookup table - it is important that this be the same as CMSY data prep
 file_2<- 'TaxonLookup.csv'
 tax <- read.csv(file.path(dir_d, 'tmp', file_2 )) ; head(tax)
