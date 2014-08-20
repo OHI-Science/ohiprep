@@ -77,3 +77,12 @@ stopifnot(sum(duplicated(cnk_fis_meancatch[,c('fao_saup_id', 'taxon_name_key', '
 
 # no duplicates! Proceed to save the file
 write.csv(cnk_fis_meancatch, file.path(dir, 'data/fnk_fis_meancatch_lyr.csv'), row.names=F, na='')
+
+
+##########################################################
+## B/Bmsy data
+##########################################################
+# just realized this may be complicated because it might pull from different models
+## but here is a hack for the time being
+
+
