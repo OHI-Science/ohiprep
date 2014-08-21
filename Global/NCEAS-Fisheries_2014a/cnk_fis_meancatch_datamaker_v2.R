@@ -97,7 +97,6 @@ shared <- hs_stocks[hs_stocks %in% eez_stocks]
 #                               100000*newSAUP3$TLevel)
 # 
 # newSAUP3$taxon_name_key <- paste( newSAUP3$TaxonName, as.character(newSAUP3$NewTaxonKey), sep = "_" )
-# newSAUP3 <- rename(newSAUP3, c(EEZ = "saup_id", FAO = "fao_id") )
 # newSAUP3$taxon_name_key_id <- paste( newSAUP3$taxon_name_key, newSAUP3$fao_id, newSAUP3$saup_id, sep = '_' )
 # 
 # # check whether there are multiple stock_ids for the same combination of Taxonkey and saup_id, due to the NewTaxonKey
@@ -119,6 +118,7 @@ saup_ohi <- saup_ohi %>% rename ( c('SAUP_C_NUM' = 'saup_id', 'OHI_2013_EEZ_ID' 
 eez_r <- left_join(eez_r, saup_ohi)  # Joining by: c("rgn_id", "saup_id")
 
 # get mean catch throughout the time-series (1980-2011) per stock and use it to calculate relative catch for shared stocks 
+newSAUP3 <- rename(newSAUP3, c(EEZ = "saup_id", FAO = "fao_id") )
 newSAUP4 <- newSAUP3 %>% ungroup() %>% group_by(stock_id, fao_id, saup_id) %>% summarise(av_ct = mean(Catch)) %>% mutate (rel_ct = av_ct/sum(av_ct) ) %>% arrange (fao_id, saup_id, stock_id)
 newSAUP4 <- newSAUP4 %>% filter( saup_id != 274 )  # remove Gaza strip
 
@@ -188,7 +188,7 @@ res_scores <- r_all %>% mutate (
                           part_score = rel_ct * new.relarea * Score ) %>% group_by (
                         stock_id) %>% summarise (
                           final_score = sum(part_score, na.rm =T)) %>% mutate (
-                            unif_prior = ifelse( final_score > 0.6, 1, 0)
+                            unif_prior = ifelse( final_score > 0.5, 1, 0)
                             )
 
 
