@@ -11,29 +11,16 @@ source('../ohiprep/src/R/ohi_clean_fxns.R') # name-to-region functions (but need
 
 dir_d = '../ohiprep/Global/NCEAS-Fisheries_2014a' # set folder where files are saved
 data = file.path(dir_neptune_data, "model/GL-NCEAS-FIS_2014a")
+#######################
+## Mean catch ----
+######################
 
-## Step 1. ## upload directory names and upload SAUP data in object newSAUP (same as first 10 or so rows in CMSY script, could source that but it takes a while)
 # source(file.path(dir_d,'tmp/CMSY data prep.R'))  
-########################################################################
 ## Step 1. ## get files ex novo
 # load the new catch data
 dir_FIS_data = 'git-annex/Global/SAUP-Fisheries_v2011/raw'
 file_1<- 'Extended catch data 1950-2011_18 July 2014.txt'
 nS <- read.delim(file.path(dir_neptune_data, dir_FIS_data, file_1 )) ; head(nS)
-
-## conversion between different region types:
-# EEZs <- read.csv(file.path(dir_d, "tmp/EEZlookup.csv"))
-# EEZs  <- EEZs %>%
-#   select(saup_id=SAUP_C_NUM, eez_id=OHI_2013_EEZ_ID)
-# 
-# saup_fao <- nS %>%
-#   filter(EEZ!=0) %>%
-#   select(saup_id=EEZ, fao_id=FAO) 
-# saup_fao <- unique(saup_fao)
-# 
-# saup_fao  <- saup_fao %>%
-#   left_join(EEZs, by='saup_id')
-# write.csv(saup_fao, file.path(dir_d, "tmp/saup_fao_eez_ids.csv"), row.names=FALSE)
 
 # load species names lookup table - it is important that this be the same as CMSY data prep
 file_2<- 'TaxonLookup.csv'
@@ -44,7 +31,6 @@ newSAUP <- nS %>%
   mutate(stock_id = paste(TaxonName, FAO, sep="_")) # create a unique stock id name for every species/FAO region pair
 #newSAUP is catch data for weighted means!
 
-########################################################################
 
 ## Step 2. ## select eez data (EEZ != 0) and year>=1980 for averages
 ## and correct: 
@@ -103,77 +89,117 @@ stopifnot( sum(duplicated(cnk_fis_meancatch[,c('fao_saup_id', 'taxon_name_key', 
 # no duplicates! Proceed to save the file
 write.csv(cnk_fis_meancatch, file.path(dir_d, 'data/fnk_fis_meancatch_lyr.csv'), row.names=F, na='')
 
-#################################################
-## OPTION 2: adding trailing zeros to replace NA data
-### delete the next part if trailing zeros do not need to be added:
-
-# Step 4 ## years of missing data should be treated as 0 catch, this affects the average!
-# create a full matrix of years for each stock and pad missing records with 0s
-nS.eez <- data.frame(nS.eez)
-nS.eez  <- nS.eez %>%
-  select(year, taxon_name_key_id, Catch)
-
-yr_stck <- expand.grid(year=1980:2011, taxon_name_key_id=unique(nS.eez$taxon_name_key_id))
-
-nS2 <- join(yr_stck, nS.eez) ; head(nS2) # Joining by: year, taxon_name_key_id # same comment as above about plyr's join fn
-
-min_yr <- ddply(nS2, .(taxon_name_key_id), summarise, min_year=min(year[!is.na(Catch)]))
-
-# pad with zeros:
-nS3 <- left_join(nS2, min_yr, by="taxon_name_key_id") # Joining by: taxon_name_key_id
-nS3$TaxonName  <- sapply(strsplit(as.character(nS3$taxon_name_key_id), "_"), function(x)x[1])
-nS3$taxon_key  <- sapply(strsplit(as.character(nS3$taxon_name_key_id), "_"), function(x)x[2])
-nS3$fao_id  <- sapply(strsplit(as.character(nS3$taxon_name_key_id), "_"), function(x)x[3])
-nS3$saup_id  <- sapply(strsplit(as.character(nS3$taxon_name_key_id), "_"), function(x)x[4])
-
-
-nS3$Catch <- ifelse(is.na(nS3$Catch) & nS3$year>= nS3$min_year, 
-                    0, 
-                    nS3$Catch)
-
-# nS3[nS3$TaxonName=='Seriola' & nS3$fao_id==37,]
+# #################################################
+# ## OPTION 2: adding trailing zeros to replace NA data
+# ### comment out the next part if trailing zeros do not need to be added:
 # 
-#  ggplot(subset(nS3, fao_id=='37'), aes(x=year, y=Catch)) +
-#    geom_point() +
-#    geom_line() + 
-#    facet_wrap( ~TaxonName)
-
-nS3<-nS3[!is.na(nS3$Catch),] ; dim(nS3)# rm NAs (the rows before first catch aren't necessary anymore)
-
-# Calculate mean catch over all years per taxon and saup_id/fao_id (remember: due to new taxonkey, some stock_ids correspond to multiple taxa)
-MeanCatch <- nS3 %>%
-  group_by(taxon_name_key_id) %>%
-  summarise(mean_catch = mean(Catch))
-  
-nS.eez_zero<-nS3 %>%
-  join(MeanCatch, by=c("taxon_name_key_id")) %>%
-  filter(mean_catch != 0,
-         year>2005) %>%
-  mutate(fao_saup_id = paste(fao_id, saup_id, sep="_")) %>%
-  mutate(taxon_name_key = paste(TaxonName, taxon_key, sep="_")) %>%
-  select(fao_saup_id, taxon_name_key, year, mean_catch) %>%
-  arrange(fao_saup_id, taxon_name_key, year)
-  
-
-# are there duplicate stocks ids per taxon-year-region?
-stopifnot(sum(duplicated(nS.eez_zero[,c('fao_saup_id', 'taxon_name_key', 'year')])) == 0 )
-       
-# no duplicates! Proceed to save the file
-write.csv(nS.eez_zero,file.path(dir_d,'data/fnk_fis_meancatch_lyr.csv'),row.names=F, na='')
-       
-       
+# # Step 4 ## years of missing data should be treated as 0 catch, this affects the average!
+# # create a full matrix of years for each stock and pad missing records with 0s
+# nS.eez <- data.frame(nS.eez)
+# nS.eez  <- nS.eez %>%
+#   select(year, taxon_name_key_id, Catch)
+# 
+# yr_stck <- expand.grid(year=1980:2011, taxon_name_key_id=unique(nS.eez$taxon_name_key_id))
+# 
+# nS2 <- join(yr_stck, nS.eez) ; head(nS2) # Joining by: year, taxon_name_key_id # same comment as above about plyr's join fn
+# 
+# min_yr <- ddply(nS2, .(taxon_name_key_id), summarise, min_year=min(year[!is.na(Catch)]))
+# 
+# # pad with zeros:
+# nS3 <- left_join(nS2, min_yr, by="taxon_name_key_id") # Joining by: taxon_name_key_id
+# nS3$TaxonName  <- sapply(strsplit(as.character(nS3$taxon_name_key_id), "_"), function(x)x[1])
+# nS3$taxon_key  <- sapply(strsplit(as.character(nS3$taxon_name_key_id), "_"), function(x)x[2])
+# nS3$fao_id  <- sapply(strsplit(as.character(nS3$taxon_name_key_id), "_"), function(x)x[3])
+# nS3$saup_id  <- sapply(strsplit(as.character(nS3$taxon_name_key_id), "_"), function(x)x[4])
+# 
+# 
+# nS3$Catch <- ifelse(is.na(nS3$Catch) & nS3$year>= nS3$min_year, 
+#                     0, 
+#                     nS3$Catch)
+# 
+# # nS3[nS3$TaxonName=='Seriola' & nS3$fao_id==37,]
+# # 
+# #  ggplot(subset(nS3, fao_id=='37'), aes(x=year, y=Catch)) +
+# #    geom_point() +
+# #    geom_line() + 
+# #    facet_wrap( ~TaxonName)
+# 
+# nS3<-nS3[!is.na(nS3$Catch),] ; dim(nS3)# rm NAs (the rows before first catch aren't necessary anymore)
+# 
+# # Calculate mean catch over all years per taxon and saup_id/fao_id (remember: due to new taxonkey, some stock_ids correspond to multiple taxa)
+# MeanCatch <- nS3 %>%
+#   group_by(taxon_name_key_id) %>%
+#   summarise(mean_catch = mean(Catch))
+#   
+# nS.eez_zero<-nS3 %>%
+#   join(MeanCatch, by=c("taxon_name_key_id")) %>%
+#   filter(mean_catch != 0,
+#          year>2005) %>%
+#   mutate(fao_saup_id = paste(fao_id, saup_id, sep="_")) %>%
+#   mutate(taxon_name_key = paste(TaxonName, taxon_key, sep="_")) %>%
+#   select(fao_saup_id, taxon_name_key, year, mean_catch) %>%
+#   arrange(fao_saup_id, taxon_name_key, year)
+#   
+# 
+# # are there duplicate stocks ids per taxon-year-region?
+# stopifnot(sum(duplicated(nS.eez_zero[,c('fao_saup_id', 'taxon_name_key', 'year')])) == 0 )
+#        
+# # no duplicates! Proceed to save the file
+# write.csv(nS.eez_zero,file.path(dir_d,'data/fnk_fis_meancatch_lyr.csv'),row.names=F, na='')
+#        
+#        
        
 ###############################################
 ## B-Bmsy data----
 ###############################################
-b_bmsy <- read.csv(file.path(data, "raw/cmsy.ohi.df_Jul292014.csv"), na.strings='')
-       
-b_bmsy_lyr <- b_bmsy %.%
-    mutate(fao_id = sapply(strsplit(as.character(stock_id), "_"), function(x)x[2]),
-           taxon_name = sapply(strsplit(as.character(stock_id), "_"), function(x)x[1])) %.%
-         select(fao_id, taxon_name, year=yr, b_bmsy)
-       
-write.csv(b_bmsy_lyr, file.path(dir_d, 'data/fnk_fis_b_bmsy_lyr.csv'), row.names=F, na='')
+# B/bmsy data is now generated using different models 
+# depending on the resilience score of region of the stock
+# B/bmsy scores are now based on a running 5 year average
+# NA's are not replaced with zeros
+
+# resilience scores to select the appropriate b/bmsy 
+res <- read.csv("Global/FIS_Bbmsy/stock_resil_06cutoff.csv")
+
+b_bmsy_uniform <- read.csv("Global/NCEAS-Fisheries_2014a/tmp/fnk_fis_b_bmsy_lyr_uniform_no0_runningMean.csv")
+b_bmsy_uniform <- b_bmsy_uniform %>%
+  select(stock_id, yr, b_bmsy_uniform=b_bmsy) 
+
+b_bmsy_constrained <- read.csv("Global/NCEAS-Fisheries_2014a/tmp/fnk_fis_b_bmsy_lyr_constrained_no0_runningMean.csv")
+b_bmsy_constrained <- b_bmsy_constrained %>%
+  select(stock_id, yr, b_bmsy_constrained=b_bmsy)
+
+# # 93 stocks without resilience 
+# # some of these in arctic (18) and antarctic (48, 58, 88) don't count, 
+# # remaining 45 have poor catch records
+# setdiff(res$stock_id, b_bmsy_constrained$stock_id)
+# setdiff(b_bmsy_constrained$stock_id, res$stock_id)
+# 
+# setdiff(res$stock_id, b_bmsy_uniform$stock_id)
+# noRes <- data.frame(stock_id = setdiff(b_bmsy_uniform$stock_id, res$stock_id)) 
+# noRes$TaxonName  <- sapply(strsplit(as.character(noRes$stock_id), "_"), function(x)x[1])
+# noRes$fao_id  <- sapply(strsplit(as.character(noRes$stock_id), "_"), function(x)x[2])
+# noRes <- noRes[!(noRes$fao_id %in% c(18, 48, 58, 88)),]
+# write.csv(noRes, file.path(dir_d, "missingReslience.csv"), row.names=FALSE)
+# 
+# newSAUP[newSAUP$stock_id %in% noRes$stock_id[2], ]
+# missingRes <- new_bmsy[new_bmsy$stock_id %in% noRes$stock_id,]
+# ggplot(missingRes, aes(y=b_bmsy_uniform, x=yr, group=stock_id)) +
+#   geom_point() +
+#   geom_line() +
+#   facet_wrap( ~ stock_id, nrow=7) +
+#   theme(strip.text=element_text(size=rel(0.7)))
+
+
+new_bmsy <- b_bmsy_uniform %>%
+  left_join(b_bmsy_constrained, by=c("stock_id", "yr")) %>%
+  left_join(res, by="stock_id")
+
+new_bmsy <- new_bmsy %>%
+  mutate(b_bmsy = ifelse(unif_prior==1, b_bmsy_uniform, b_bmsy_constrained)) %>%
+  select(stock_id, yr, b_bmsy) %>%
+  filter(!is.na(b_bmsy))
+
+write.csv(new_bmsy, file.path(dir_d, 'data/fnk_fis_b_bmsy_lyr.csv'), row.names=F, na='')
        
 
 ####################################################################
