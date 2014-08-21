@@ -87,7 +87,6 @@ shared <- hs_stocks[hs_stocks %in% eez_stocks]
 # # turns out all the additional high seas stocks were excluded for having too few data points
 # ##################################################################################################################
 
-## Step 3 # get mean catch throughout the time-series (1980-2011) per stock and use it to calculate relative catch for shared stocks 
 
 ####################################################################################################################
 # # Recode TaxonKey such that the FAO TaxonKey takes precedence over SAUP TaxonKey
@@ -106,59 +105,100 @@ shared <- hs_stocks[hs_stocks %in% eez_stocks]
 # check[duplicated(check[,1:2]),] # there are 13 cases of duplicate records that have two NewTaxonKey fot the same stock_id and saup_id
 ####################################################################################################################
 
-newSAUP4 <- newSAUP3 %>% ungroup() %>% group_by(stock_id, fao_id, saup_id) %>% summarise(av_ct = mean(Catch)) %>% mutate (rel_ct = av_ct/sum(av_ct) ) %>% arrange (fao_id, saup_id, stock_id)
-
-# Step 4 ## get resilience scores per EEZ and per major fishing area, calculate a weighted mean score (relative catch from newSAUP4 as weights)
+## Step 3 ## get resilience scores per EEZ and per major fishing area, calculate a weighted mean score (relative catch from newSAUP4 as weights)
 # where saup_id != 0, simply join the EEZ resil scores, 
 
 dir_r = '../ohiprep/Global/GL-Resilience_Fish_Hab_2014a' # set folder where files are saved
-file_r <- 'r_fishing_v2_eez_2013a.csv' # pick the file for OHI2013
+file_r <- 'r_fishing_v2_eez_2013a_wMontenegro.csv' # pick the file for OHI2013
 eez_r <- read.csv(file.path(dir_r, 'data', file_r), stringsAsFactors = F)  
 # EEZlookup to match ohi regions to saup ids
 saup_ohi <- read.csv(file.path(dir_d, 'tmp', 'EEZlookup.csv'), stringsAsFactors = F)
 saup_ohi <- saup_ohi %>% rename ( c('SAUP_C_NUM' = 'saup_id', 'OHI_2013_EEZ_ID' = 'rgn_id') ) %>% select (saup_id, rgn_id)
 
-# join saup_ohi to assigna  resilience score to each saup id and thus to each protion of stock_id within EEZ boundaries
+# join saup_ohi to assign a resilience score to each saup id and thus to each protion of stock_id within EEZ boundaries
 eez_r <- left_join(eez_r, saup_ohi)  # Joining by: c("rgn_id", "saup_id")
+
+# get mean catch throughout the time-series (1980-2011) per stock and use it to calculate relative catch for shared stocks 
+newSAUP4 <- newSAUP3 %>% ungroup() %>% group_by(stock_id, fao_id, saup_id) %>% summarise(av_ct = mean(Catch)) %>% mutate (rel_ct = av_ct/sum(av_ct) ) %>% arrange (fao_id, saup_id, stock_id)
+newSAUP4 <- newSAUP4 %>% filter( saup_id != 274 )  # remove Gaza strip
+
+# add resilience
 newSAUP5 <- left_join( newSAUP4, eez_r) # Joining by: "saup_id"
+r_eez <- newSAUP5 %>% filter( saup_id >0 , fao_id != 18 ) %>% mutate(  # exclude the Arctic
+                        relarea = 1, rfmo = 0) %>% rename(
+                          c('resilience.score' = 'Score')) %>% select(
+                         fao_id, saup_id, rfmo, relarea, stock_id, Score)  # don't include relative catch for now
 
-# two saup regions missing: 274, 891. Region 274 is missing from the EEZlookup (it's the Gaza strip, so correctly is excluded), 
-# region 891 is in the EEZlookup,it's OHI rgn 186: Montenegro (ex Serbia and Montenegro), missing from OHI resilience file, why?
-# gapfill it?
-
-# I now have a resilience value per saup_id != 0
-# multiply the res value by the rel_ct weight, check distr of values, adn teh countries they correspond to
-
-# where saup_id ==0, get a list per fao region of stocks, rfmos, relative rfmo area
+### get the HIGH SEAS resilience scores (saup_id ==0)
 # get the list of scores per rfmo
 dir_r2 = 'model/GL-HS-Resilience/RFMO'
-rfmo <- read.csv(file.path(dir_neptune_data, dir_r2, 'data/rfmo_2013.csv'))
-
-# 
+hs_res <- read.csv(file.path(dir_neptune_data, dir_r2, 'data/rfmo_2013.csv'), stringsAsFactors = F)
 
 # get the list of stocks for each rfmo: rfmo_id, TaxonName
-# a) import each sheet per rfmo, cbind the rfmo name field: /Volumes/data_edit/model/GL-HS-Resilience/RFMO/raw/RFMO Info 4.1.14.xls
-# b) rbind all rfmo names and species
-# c) check  spp names match SAUP TaxonName
+rfmo_sp <- read.csv('../ohiprep/HighSeas/tmp/rfmo_species.csv', stringsAsFactors = F, check.names = F)
+rfmo_sp <- unique(rfmo_sp[,3:4]) # remove duplicates and retain only the TaxonName
 
 # get the rfmo score and join: rfmo_id, TaxonName, rfmo score
-/Volumes/data_edit/model/GL-HS-Resilience/RFMO/raw/RFMOscores.csv
+rfmo_sc <- read.csv(file.path(dir_neptune_data, dir_r2, 'raw/RFMOscores.csv'), stringsAsFactors = F)
+# remove capital letters from rfmo names and rows with NAs
+rfmo_sc <- rfmo_sc %>% mutate (rfmo = tolower(rfmo_sc$RFMO)) %>% select (rfmo, Score) %>% filter (!is.na(Score))
 
 # get the rfmo to fao id lookup table: fao_id, rfmo_id, prop rfmo area in fao_id
-/Volumes/data_edit/model/GL-HS-Resilience/RFMO/tmp/RFMOperFAO.csv
+rfmo_fao <- read.csv(file.path(dir_neptune_data, dir_r2, 'tmp/RFMOperFAO.csv'), stringsAsFactors = F)
+
+# need table for fao_id to fao_name
+fao_id_rgn <- read.csv('../ohiprep/tmp/install_local/ohi-global-master/highseas2014/layers/FAOregions.csv', stringsAsFactors = F)
+
 # join this to the rfmo table: fao_id, rfmo_id, prop rfmo area in fao_id,  TaxonName, rfmo score
+rfmo_fao <- left_join(rfmo_fao, fao_id_rgn) ; rfmo_fao # Joining by: "rgn_id" 
+library(tidyr)
 
-# join this with the relative catch per stock per fao region (where saup id = 0, where saup id !=0, then prop rfmo area shoudl be set =0) 
+r_hs <- gather(rfmo_fao, key = rfmo, value = proparea, -rgn_id, -rgn_name, -total, -fao_id)
+r_hs$rfmo <- as.character(r_hs$rfmo)
+r_hs <- r_hs %>% mutate( relarea = proparea/total) ; head(r_hs)
+# add in rfmo resilience scores 
+r_hs <- left_join (r_hs, rfmo_sc) # Joining by: "rfmo"
+r_hs <-  filter( r_hs, fao_id!=18 ) # remove the Arctic
+
+# join this with the species list per rfmo
+r_hs2 <- left_join (r_hs, rfmo_sp) # Joining by: "rfmo"
+r_hs2 <- r_hs2 %>% mutate (stock_id = paste( TaxonName, fao_id, sep = '_'), saup_id = 0) # make the stock_id and add the saup_id
+r_hs2 <- r_hs2 %>% ungroup() %>% select(fao_id, saup_id, rfmo, relarea, stock_id, Score)
+
+# rbind high seas with eez resilience scores
+r_c <- rbind(r_hs2, r_eez) # unique(r_c$saup_id[is.na(r_c$Score)])  # check
+
+# join relative catch by fao+saup+stock_id
+newSAUP4$saup_id <- as.numeric(newSAUP4$saup_id)
+# generate a lookup that has the correct rfmo assigned to each saup id (non to eezs, but all 14 to high seas, where saup_id=0)
+rfmo_lookup <- unique(r_c[,1:4])
+newSAUP4 <- left_join(newSAUP4, rfmo_lookup) 
+r_all <- left_join (newSAUP4, r_c) %>% select (
+                                      fao_id, saup_id, rfmo, relarea, stock_id, rel_ct, Score) %>% filter (
+                                      fao_id != 18)
+# calculate the relative resilience score per stock, multiplying the res score by the rel prop of catch and rel rfmo area
+# when an rfmo area has area for that stock (relarea>0) but Score is na, then relarea should be recalculated excluding that rfmo
+r_all <- r_all %>% ungroup() %>% group_by (stock_id, saup_id) %>% mutate ( 
+                                            new.relarea = ifelse( is.na(Score), 0, ifelse( relarea == 0, 0,
+                                                        relarea/sum( relarea[which( !is.na(Score) ) ], na.rm =T ) 
+                                                                                )
+                                                                               ) 
+                                                                              )
+res_scores <- r_all %>% mutate ( 
+                          part_score = rel_ct * new.relarea * Score ) %>% group_by (
+                        stock_id) %>% summarise (
+                          final_score = sum(part_score, na.rm =T)) %>% mutate (
+                            unif_prior = ifelse( final_score > 0.6, 1, 0)
+                            )
 
 
-# calculate the relative resilience score per stock, multiplying the res score by the rel prop of catch and by the rel prop of rfmo (not sure if I can do this in the same df as the eex scores)
+# the score for high seas is based only on management bodies present for specific species
+# r_all[r_all$stock_id == 'Katsuwonus pelamis_67',] # example showing that the % of rfmo in the area doesn't work: since most of the area is covered by the salmon commission, the tunas appear under managed
+# only if the final score is NA does it get turned to 0
 
-# finalize calculation for shared stocks, stocks only in eezs, and stocks only in high seas (2)
-
-# any stocks occurring in high seas should get no 0 resilience for that portion as they are likely unmanaged if not in rfmos
 
 # step 5 ## pick a few stocks and plot catch, 2 cmsy versions, highlighting which one would be picked based on resilience
 
 
 
-write.csv(hs_cnk_fis_meancatch, '../ohiprep/HighSeas/GL_HS_FIS/data/fnk_fis_meancatch_lyr.csv', row.names=F)
+write.csv(res_scores, '../ohiprep/Global/FIS_Bbmsy/stock_resil_06cutoff.csv', row.names=F)
