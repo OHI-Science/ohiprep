@@ -65,3 +65,28 @@ ch2 <- ch1 + geom_vline(data = cmsy11.all.v, aes(xintercept= 1), colour='blue', 
 ch2
 
 ggsave('cmsy_combo_resil_cfr.png')
+
+##################
+head(cmsy_dif)
+cmsy_dif$stock_id <- as.character(cmsy_dif$stock_id)
+cmsy_dif.r <- left_join(cmsy_dif, res_scores) ; head(cmsy_dif.r) # 184 excluded (no recent catch)
+cmsy_dif.r <- cmsy_dif.r %>% filter (fao_id != 18)
+
+cmsydif.u <- cmsy_dif.r %>% group_by (
+  stock_id, fao_id ) %>% filter (whence == 'unif_no0', unif_prior == 1)
+cmsydif.c <- cmsy_dif.r %>% group_by (
+  stock_id, fao_id ) %>% filter (whence == 'constr_no0', unif_prior == 0)
+
+cmsydif.all <- rbind(cmsydif.u, cmsydif.c)
+# add fao region names
+fao_id_nm <- rbind( rfmo_fao[,c(2,18)], c('Mediterranean and Black Sea', 37))
+cmsydif.all <- left_join( cmsydif.all, fao_id_nm )
+cmsydif.all.06 <- cmsydif.all
+cmsydif.all.05 <- cmsydif.all
+cmsydif.all.06 <- cmsydif.all.06 %>% mutate(cutof = '0.6')
+cmsydif.all.05 <- cmsydif.all.05 %>% mutate(cutof = '0.5')
+cmsydif.all.v <- rbind(cmsydif.all.05, cmsydif.all.06)
+
+hcb <- ggplot(cmsydif.all.v, aes(x=fao_id, y=dif, fill=rgn_name)) + geom_boxplot()
+hcb1 <- hcb + facet_wrap( ~ cutof)
+hcb1
