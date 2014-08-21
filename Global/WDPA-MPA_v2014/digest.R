@@ -24,9 +24,25 @@ for (i in 1:length(lyrs)){ # i=1
       area_km2 = area_m2 / (1000 * 1000)) %>%
     select(rgn_id=VALUE, year, area_km2) %>%
     arrange(rgn_id, year)
+
+  if (i == 1) {  #   for  lsp_protarea_offshore3nm.csv, make any non-represented rgn_id == 0
+    rgns = read.csv('../ohi-global/eez2014/layers/rgn_global.csv') %.%
+      select(rgn_id)  %.%
+      filter(rgn_id < 255) %.%
+      arrange(rgn_id)
+    
+    m = rbind(m, 
+              rgns %>%
+                anti_join(m, by = 'rgn_id') %>%
+                mutate(year = max(m$year, na.rm=T),
+                       area_km2 = 0)) %>%
+      arrange(rgn_id)
+  }
+  
+  # save layer
   write.csv(m, file.path(dir_prod, 'data', csv), row.names=F, na='')
   
-  # get top 10 for sanity check
+   # get top 10 for sanity check
   cat(sprintf('%s\n',csv))
   s = m %.%
     group_by(rgn_id) %>%
