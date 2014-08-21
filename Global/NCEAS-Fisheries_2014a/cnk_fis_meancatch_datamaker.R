@@ -196,7 +196,9 @@ new_bmsy <- b_bmsy_uniform %>%
 
 new_bmsy <- new_bmsy %>%
   mutate(b_bmsy = ifelse(unif_prior==1, b_bmsy_uniform, b_bmsy_constrained)) %>%
-  select(stock_id, yr, b_bmsy) %>%
+  mutate(taxon_name = sapply(strsplit(as.character(stock_id), "_"), function(x)x[1])) %>%
+  mutate(fao_id = sapply(strsplit(as.character(stock_id), "_"), function(x)x[2])) %>%
+  select(fao_id, taxon_name, year=yr, b_bmsy) %>%
   filter(!is.na(b_bmsy))
 
 write.csv(new_bmsy, file.path(dir_d, 'data/fnk_fis_b_bmsy_lyr.csv'), row.names=F, na='')
