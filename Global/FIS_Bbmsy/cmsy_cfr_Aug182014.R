@@ -17,7 +17,7 @@ upno0 <- cmsy.ohi.unif.no0.df
 opw0 <- opw0 %.%
   mutate(fao_id = sapply(strsplit(as.character(stock_id), "_"), function(x)x[2]),
          taxon_name = sapply(strsplit(as.character(stock_id), "_"), function(x)x[1])) %.%
-  select(stock_id, fao_id, taxon_name, year=yr, b_bmsy) ; head(upw0)
+  select(stock_id, fao_id, taxon_name, year=yr, b_bmsy) ; head(opw0)
 opno0 <- opno0 %.%
   mutate(fao_id = sapply(strsplit(as.character(stock_id), "_"), function(x)x[2]),
          taxon_name = sapply(strsplit(as.character(stock_id), "_"), function(x)x[1])) %.%
