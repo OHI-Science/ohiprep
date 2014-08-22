@@ -8,6 +8,7 @@ library(grid)
 library(parallel)
 
 source("http://nceas.ucsb.edu/~frazier/myTheme.txt")
+source("~/ohiprep/src/R/common.R")
 
 ############################################################
 ## Running CMSY script on handful of species to compare data (July 16 2014)----
@@ -34,7 +35,7 @@ cdat <- catch %.%
 
 ## Run bbmsy script
 source('Global/FIS_Bbmsy/cmsy_uniform.R')
- 
+
 ### run CMSY function:
 #start the clock
 Sys.time()
@@ -49,13 +50,12 @@ for(i in 1:length(unique(cdat$stock_id))){
                     b_bmsy=test[[2]],
                     year=test[[7]])
   b_bmsy <- rbind(b_bmsy, new)
- }
+}
 # Stop the clock
 proc.time() - ptm
 Sys.time()
 
 #write.csv(b_bmsy, "Global/FIS_Bbmsy/my_bbmsy_Aug6_2014.csv", row.names=FALSE)
-#write.csv(b_bmsy, "C:\\Users\\Melanie\\Desktop\\FIS2014 cmsy\\dataRuns\\Compare_1980_v2.csv", row.names=FALSE)
 
 ## Plots of the data
 cdat$taxonName <- sapply(strsplit(as.character(cdat$stock_id), split="_"), function(x) x[1])
@@ -68,8 +68,6 @@ ggplot(cdat, aes(x=yr, y=ct, color=data, group=data)) +
   geom_line() +
   facet_wrap(taxonName ~ fao, scales="free") +
   theme_bw()
-ggsave('C:\\Users\\Melanie\\Desktop\\FIS2014 cmsy\\catch_1980start.png') 
-
 
 ## comparing Kristin's data to mine:
 mybmsy <- read.csv("Global/FIS_Bbmsy/my_bbmsy_Aug6_2014.csv")
@@ -112,7 +110,7 @@ cdat <- catch %.%
 
 ## Run bbmsy script
 # source('Global/FIS_Bbmsy/cmsy_relaxed.R')
- source('Global/FIS_Bbmsy/cmsy_original.R')
+source('Global/FIS_Bbmsy/cmsy_constrained.R')
 
 get_b_bmsy <- function(i){  
   test <- runCMSY(stockNumber=i, cdat=cdat)
@@ -123,7 +121,7 @@ get_b_bmsy <- function(i){
 }
 
 print(system.time({    
-  r = mclapply(1:length(species_bmsy), get_b_bmsy, mc.cores=detectCores(), mc.preschedule=F) # took ~ 4 hrs on neptune
+  r = mclapply(1:length(species_bmsy), get_b_bmsy, mc.cores=detectCores(), mc.preschedule=F) 
 }))
 
 r <- ldply(r)
@@ -147,7 +145,7 @@ catch_zero <- cdat %>%
   select(taxon_name=stock_id, b_bmsy=ct, year=yr) %>%
   mutate(test="catch_ct") %>%
   group_by(taxon_name, test) %>%
-  mutate(b_bmsy = b_bmsy/max(b_bmsy))
+  mutate(b_bmsy = b_bmsy/max(b_bmsy)) #not really b/bmsy but rather catch (just wanted to be able to merge thsi into other data)
 
 
 data <- rbind(relaxed, original, uniform, catch_zero)
@@ -214,7 +212,7 @@ cdat <- catch %.%
 
 ## Run bbmsy script
 # source('Global/FIS_Bbmsy/cmsy_relaxed.R')
- source('Global/FIS_Bbmsy/cmsy_original.R')
+source('Global/FIS_Bbmsy/cmsy_constrained.R')
 
 get_b_bmsy <- function(i){  
   test <- runCMSY(stockNumber=i, cdat=cdat)
@@ -228,10 +226,10 @@ get_b_bmsy <- function(i){
 print(system.time({    
   r = mclapply(1:length(species_bmsy), get_b_bmsy, mc.cores=detectCores(), mc.preschedule=F) # took ~ 4 hrs on neptune
 }))
- 
- r <- ldply(r)
+
+r <- ldply(r)
 #write.csv(r, "Global/FIS_Bbmsy/my_bbmsy_relaxed_Aug13_2014.csv", row.names=FALSE)
-write.csv(r, "Global/FIS_Bbmsy/my_bbmsy_original_Aug13_2014.csv", row.names=FALSE)
+#write.csv(r, "Global/FIS_Bbmsy/my_bbmsy_original_Aug13_2014.csv", row.names=FALSE)
 
 ### compare different methods
 relaxed <- read.csv("Global/FIS_Bbmsy/my_bbmsy_relaxed_Aug12_2014.csv")
@@ -261,8 +259,7 @@ ggplot(data, aes(x=year, y=b_bmsy, group=test, color=test)) +
 
 
 
-
- ##############################################################
+##############################################################
 ## checking results when we remove zero values
 ##############################################################
 catch <- read.csv("Global/FIS_Bbmsy/OHICatchHistoryCMSY_added0s_07_21_2014.csv", stringsAsFactors=FALSE)
@@ -277,7 +274,7 @@ cdat_zeros <- catch %.%
   #filter(Year >= 1980) %>%  #I think the earlier run restricted data to >=1980, but Kristin's did not seem to do this
   arrange(stock_id, yr) %>%
   select(stock_id, ct, yr) %>%
-    mutate(ct=ifelse(ct==0, NA, ct)) 
+  mutate(ct=ifelse(ct==0, NA, ct)) 
 
 cdat <- data.frame()
 for(i in 1:length(species_bmsy)){
@@ -336,5 +333,239 @@ ggplot(bmsy, aes(x=yr, y=my_b_bmsy, group=stock_id)) +
   geom_point(aes(x=yr, y=b_bmsy), col="red") +
   geom_line(aes(x=yr, y=b_bmsy), col="red")
 
- mod <- lm(my_b_bmsy~b_bmsy, data=bmsy)
+mod <- lm(my_b_bmsy~b_bmsy, data=bmsy)
 summary(mod)
+
+
+##############################################################
+## looking at high seas data
+##############################################################
+# look at old data to get list of stock
+
+oldCatch <- read.csv(file.path(dir_neptune_data, 
+                               'model/GL-HS-AQ-Fisheries_v2013/HighSeas/raw/Extension_redo_withFlag.csv'))
+oldCatch <- oldCatch %>%
+  filter(EEZ %in% 0,
+         FAO %in% c(31, 34, 57, 61)) %>%
+  mutate(stock_id = paste(TaxonName, FAO, sep="_")) %>%
+  select(year=IYear, stock_id, ct=Catch) %>%
+  group_by(stock_id) %>%
+  mutate(ct_norm = ct/max(ct)) %>%
+  mutate(data="old_catch") %>%
+  arrange(stock_id, year)
+
+old_bmsy <- read.csv(file.path(dir_neptune_data, 
+                               'model/GL-HS-AQ-Fisheries_v2013/HighSeas/raw/fnk_fis_b_bmsy.csv'))
+old_bmsy <- old_bmsy %>%
+  mutate(stock_id = paste(taxon_name, fao_id, sep="_")) %>%
+  filter(stock_id %in% oldCatch$stock_id) %>%
+  select(year, stock_id, b_bmsy) %>%
+  mutate(data = 'old_bmsy') %>%
+  arrange(stock_id, year)
+
+newCatch <- read.csv("Global/FIS_Bbmsy/OHICatchHistoryCMSY_added0s_07_21_2014.csv", stringsAsFactors=FALSE)
+
+newCatch <- newCatch %>% 
+  filter(stock_id %in% oldCatch$stock_id) %>%
+  select(year=yr, stock_id, ct) %>%
+  group_by(stock_id) %>%
+  mutate(ct_norm = ct/max(ct)) %>%
+  mutate(data="new_catch") %>%
+  arrange(stock_id, year)
+
+new_bmsy <- read.csv("Global/FIS_Bbmsy/cmsy.ohi.df_Jul292014.csv")
+
+new_bmsy <- new_bmsy %>%
+  filter(stock_id %in% oldCatch$stock_id) %>%
+  select(year=yr, stock_id, b_bmsy) %>%
+  mutate(data = 'new_Kristin_bmsy') %>%
+  arrange(stock_id, year)
+
+bmsy_data <- rbind(new_bmsy, old_bmsy)
+
+stock <- unique(bmsy_data$stock_id)
+
+ggplot(subset(bmsy_data, stock_id %in% stock[1:100]), aes(x=year, y=b_bmsy, color=data, group=data)) +
+  geom_point(size=1) +
+  geom_line() +
+  facet_wrap(~stock_id, nrow=10, scale="free") +
+  theme_bw()+
+  theme(strip.text=element_text(size=rel(.55)))
+#ggsave('Global/FIS_Bbmsy/FAO_oldvsnew_bmsy.png') 
+
+
+
+catch_data <- rbind(newCatch,oldCatch)
+
+catch_data  <- catch_data %>%
+  filter(stock_id %in% stock)
+
+ggplot(subset(catch_data, stock_id %in% stock[1:100]), aes(x=year, y=ct, color=data, group=data)) +
+  geom_point(size=1) +
+  geom_line() +
+  facet_wrap(~stock_id, nrow=10, scale="free") +
+  theme_bw()+
+  theme(strip.text=element_text(size=rel(.55)))
+#ggsave('Global/FIS_Bbmsy/FAO_oldvsnew_catch.png') 
+
+ggplot(subset(catch_data, stock_id %in% stock[1:100]), aes(x=year, y=ct, color=data, group=data)) +
+  geom_point(size=1) +
+  geom_line() +
+  facet_wrap(~stock_id, nrow=10, scale="free") +
+  theme_bw()+
+  theme(strip.text=element_text(size=rel(.55)))
+#ggsave('Global/FIS_Bbmsy/FAO_oldvsnew_catch.png') 
+
+ggplot(subset(catch_data, stock_id %in% stock[1:100]), aes(x=year, y=ct_norm, color=data, group=data)) +
+  geom_point(size=1) +
+  geom_line() +
+  facet_wrap(~stock_id, nrow=10, scale="free") +
+  theme_bw()+
+  geom_point(data=subset(bmsy_data, stock_id %in% stock[1:100]), 
+             aes(x=year, y=b_bmsy, color=data, group=data), size=1) + 
+  geom_line(data=subset(bmsy_data, stock_id %in% stock[1:100]), 
+             aes(x=year, y=b_bmsy, color=data, group=data)) +
+  theme(strip.text=element_text(size=rel(.55)))
+ggsave('Global/FIS_Bbmsy/FAO_oldvsnew_relcatch_bmsy.png') 
+
+## running cmsy script
+cdat <- catch_data %.% 
+  filter(data=='new_catch') %>%
+  select(stock_id, ct, yr=year) %>%
+  arrange(stock_id, yr) 
+
+
+## Run bbmsy script
+# source('Global/FIS_Bbmsy/cmsy_relaxed.R')
+source('Global/FIS_Bbmsy/cmsy_constrained.R')
+
+get_b_bmsy <- function(i){  
+  test <- runCMSY(stockNumber=i, cdat=cdat)
+  new <- data.frame(taxon_name=test[[1]],
+                    b_bmsy=test[[2]],
+                    year=test[[7]])
+  return(new)
+}
+
+
+print(system.time({    
+  r = mclapply(1:length(stock), get_b_bmsy, mc.cores=detectCores(), mc.preschedule=F)
+}))
+
+r <- ldply(r)
+#write.csv(r, "Global/FIS_Bbmsy/my_bbmsy_relaxed_Aug13_2014.csv", row.names=FALSE)
+
+
+######################################################
+## Testing the effects of cutting trailing zeros
+##  Did this before, but want to test again
+##   (results seemed surprising - and would be good to test)
+######################################################
+library(zoo)
+
+
+### removed zeros
+catch <- read.csv("Global/FIS_Bbmsy/OHICatchHistoryCMSY_added0s_07_21_2014.csv", stringsAsFactors=FALSE)
+catch_lotszero <- catch %>%
+  filter(yr>2005) %>%
+  group_by(stock_id) %>%
+  summarize(sumCatch=sum(ct)) %>%
+  filter(sumCatch==0)
+
+
+cdat_NA <- catch %.% 
+  filter(stock_id %in% catch_lotszero$stock_id) %>%
+  mutate(ct = ifelse(ct==0, NA, ct)) %>%
+  select(stock_id, ct, yr) %>%
+  arrange(stock_id, yr) 
+ 
+cdat <- data.frame()  #fake data frame
+for(i in 1:length(unique(cdat_NA$stock_id))){ 
+  #i <- 1
+  spec <- unique(cdat_NA$stock_id)[i]
+  tmp <- cdat_NA[cdat_NA$stock_id %in% spec, ]
+  tmp <- na.trim(tmp)
+  cdat <- rbind(cdat, tmp)
+}
+
+cdat$ct[is.na(cdat$ct)] <- 0  
+cdat <- subset(cdat, stock_id %in% catch_lotszero$stock_id[1:100])
+
+ggplot(cdat, aes(x=yr, y=ct, group=stock_id)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~stock_id, nrow=10)
+
+## Run bbmsy script
+source('Global/FIS_Bbmsy/cmsy_constrained.R')
+
+get_b_bmsy <- function(i){  
+  test <- runCMSY(stockNumber=i, cdat=cdat)
+  new <- data.frame(taxon_name=test[[1]],
+                    b_bmsy=test[[2]],
+                    year=test[[7]])
+  return(new)
+}
+
+print(system.time({    
+  r = mclapply(1:length(unique(cdat$stock_id)), get_b_bmsy, mc.cores=detectCores(), mc.preschedule=F) # took ~ 4 hrs on neptune
+}))
+
+ 
+r <- ldply(r)
+write.csv(r, "Global/FIS_Bbmsy/my_bbmsy_original_nozeros_Aug14_2014.csv", row.names=FALSE)
+
+
+### with zeros
+catch <- read.csv("Global/FIS_Bbmsy/OHICatchHistoryCMSY_added0s_07_21_2014.csv", stringsAsFactors=FALSE)
+
+cdat <- catch %.% 
+  filter(stock_id %in% catch_lotszero$stock_id) %>%
+  select(stock_id, ct, yr) %>%
+  arrange(stock_id, yr) 
+
+cdat <- subset(cdat, stock_id %in% catch_lotszero$stock_id[1:100])
+
+ggplot(cdat, aes(x=yr, y=ct, group=stock_id)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~stock_id, nrow=10)
+
+## Run bbmsy script
+source('Global/FIS_Bbmsy/cmsy_constrained.R')
+
+get_b_bmsy <- function(i){  
+  test <- runCMSY(stockNumber=i, cdat=cdat)
+  new <- data.frame(taxon_name=test[[1]],
+                    b_bmsy=test[[2]],
+                    year=test[[7]])
+  return(new)
+}
+
+print(system.time({    
+  r = mclapply(1:length(unique(cdat$stock_id)), get_b_bmsy, mc.cores=detectCores(), mc.preschedule=F) # took ~ 4 hrs on neptune
+}))
+
+r <- ldply(r)
+write.csv(r, "Global/FIS_Bbmsy/my_bbmsy_original_zeros_Aug14_2014.csv", row.names=FALSE)
+
+
+
+### compare data:
+zeroData <- read.csv("Global/FIS_Bbmsy/my_bbmsy_original_zeros_Aug14_2014.csv")
+noZeros <- read.csv("Global/FIS_Bbmsy/my_bbmsy_original_nozeros_Aug14_2014.csv")
+
+zeroData  <- zeroData %>%
+  mutate(test="ZeroesIncluded")
+data <- noZeros %>%
+  mutate(test="NoZeroes") %>%
+  rbind(zeroData)
+
+
+ggplot(data, aes(x=year, y=b_bmsy, group=test, color=test)) +
+  geom_point(size=1) +
+  geom_line() +
+  theme_bw() +
+  facet_wrap(~taxon_name, nrow=10, scales="free") +
+  theme(strip.text=element_text(size=rel(.55)))
+ggsave("Global/FIS_Bbmsy/zeroPaddingCompare_Aug142014.png")
