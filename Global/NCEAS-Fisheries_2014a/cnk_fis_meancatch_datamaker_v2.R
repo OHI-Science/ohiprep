@@ -34,7 +34,8 @@ newSAUP <- rename(newSAUP, c('IYear' = 'yr') )
 
 ## Step 2. ## filter out unused years, regions, taxa, stocks, and get lists of stocks that are unique or shared among EEZs and HSs
 newSAUP2 <- newSAUP %>% mutate (TL = substr(Taxonkey, 1, 1) ) %>% 
-            filter (TL == 6, yr>=1980, !FAO %in% c(48, 58, 88)) %>% # exclude data prior to 1980 and belongin to Antarctic regions
+            filter (TL == 6, yr>=1980) %>%
+# alternate version excl Antarctica:             filter (TL == 6, yr>=1980, !FAO %in% c(48, 58, 88)) %>% # exclude data prior to 1980 and belongin to Antarctic regions
             group_by (EEZ, FAO, yr, Taxonkey, CHANGE, TLevel, TaxonName, stock_id) %>%
             summarise (Catch = sum(Catch)) # remove duplicate 'Marine fishes not identified', 'Shrimps and prawns', 'Sharks rays and chimaeras' for the same year, saup_id
 # sum catch per stock by major fishing area and by year, then get the list of stocks with at least 10 years of non-0 data
@@ -124,7 +125,7 @@ newSAUP4 <- newSAUP4 %>% filter( saup_id != 274 )  # remove Gaza strip
 
 # add resilience
 newSAUP5 <- left_join( newSAUP4, eez_r) # Joining by: "saup_id"
-r_eez <- newSAUP5 %>% filter( saup_id >0 , fao_id != 18 ) %>% mutate(  # exclude the Arctic
+r_eez <- newSAUP5 %>% filter( saup_id >0 ) %>% mutate(  # DO NOT exclude the Arctic
                         relarea = 1, rfmo = 0) %>% rename(
                           c('resilience.score' = 'Score')) %>% select(
                          fao_id, saup_id, rfmo, relarea, stock_id, Score)  # don't include relative catch for now
@@ -158,7 +159,7 @@ r_hs$rfmo <- as.character(r_hs$rfmo)
 r_hs <- r_hs %>% mutate( relarea = proparea/total) ; head(r_hs)
 # add in rfmo resilience scores 
 r_hs <- left_join (r_hs, rfmo_sc) # Joining by: "rfmo"
-r_hs <-  filter( r_hs, fao_id!=18 ) # remove the Arctic
+# r_hs <-  filter( r_hs, fao_id!=18 ) # remove the Arctic
 
 # join this with the species list per rfmo
 r_hs2 <- left_join (r_hs, rfmo_sp) # Joining by: "rfmo"
@@ -174,8 +175,10 @@ newSAUP4$saup_id <- as.numeric(newSAUP4$saup_id)
 rfmo_lookup <- unique(r_c[,1:4])
 newSAUP4 <- left_join(newSAUP4, rfmo_lookup) 
 r_all <- left_join (newSAUP4, r_c) %>% select (
-                                      fao_id, saup_id, rfmo, relarea, stock_id, rel_ct, Score) %>% filter (
-                                      fao_id != 18)
+                                      fao_id, saup_id, rfmo, relarea, stock_id, rel_ct, Score)
+# %>% filter (
+#                                       fao_id != 18)
+
 # calculate the relative resilience score per stock, multiplying the res score by the rel prop of catch and rel rfmo area
 # when an rfmo area has area for that stock (relarea>0) but Score is na, then relarea should be recalculated excluding that rfmo
 r_all <- r_all %>% ungroup() %>% group_by (stock_id, saup_id) %>% mutate ( 
