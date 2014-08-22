@@ -191,7 +191,7 @@ res_scores <- r_all %>% mutate (
                           part_score = rel_ct * new.relarea * Score ) %>% group_by (
                         stock_id) %>% summarise (
                           final_score = sum(part_score, na.rm =T)) %>% mutate (
-                            unif_prior = ifelse( final_score > 0.5, 1, 0)
+                            unif_prior = ifelse( final_score > 0.6, 1, 0)
                             )
 
 
@@ -204,4 +204,32 @@ res_scores <- r_all %>% mutate (
 
 
 
-write.csv(res_scores, '../ohiprep/Global/FIS_Bbmsy/stock_resil_06cutoff.csv', row.names=F)
+write.csv(res_scores, '../ohiprep/Global/FIS_Bbmsy/stock_resil_06cutoff_ALL.csv', row.names=F)
+
+trouble <- res_scores %>% mutate ( fao_id = str_split_fixed( stock_id, '_',2) [,2] ) %>% filter (fao_id %in% c(34, 51, 71) )
+trouble <- left_join( trouble, fao_id_nm )
+
+library(ggplot2)
+ch <- ggplot(trouble, aes(x=final_score, fill = rgn_name)) + geom_histogram(binwidth=0.1,colour="white") 
+ch1 <- ch + facet_wrap( ~ rgn_name) 
+ch2 <- ch1 + geom_vline(data = trouble, aes(xintercept= 1), colour='blue', linetype="dashed", size=1)
+ch2
+
+trouble2 <- r_c 
+#%>% filter (fao_id %in% c(34, 51, 71) )
+trouble2 <- left_join(trouble2, saup_ohi)
+ohi_rg_nm <- ohi_rg[,3:4] %>% rename(c('rgn_id_2013' = 'rgn_id'))
+trouble2 <- left_join(trouble2, ohi_rg_nm) %>% mutate (type = ifelse (saup_id==0, 'hs', 'eez') )
+ trouble2 <- left_join (trouble2, fao_id_nm)
+
+# trouble3 <- trouble2 %>% group_by(fao_id, rgn_nam_2013) %>% summarise (med_score = median(Score))
+# subset <- trouble2[trouble2$fao_id==34,]
+ch <- ggplot(trouble2, aes(x=Score, fill = fao_id)) + geom_histogram(binwidth=0.1,colour="white") 
+ch1 <- ch  + facet_grid( type  ~ fao_id)
+ch2 <- ch1 + geom_vline(data = trouble2, aes(xintercept= 0.6), colour='blue', linetype="dashed", size=1)
+ch2
+
+ch <- ggplot(cmsy11.all.v, aes(x=b_bmsy, fill = rgn_name)) + geom_histogram(binwidth=0.1,colour="black") 
+ch1 <- ch + facet_grid(cutoff ~ rgn_name) 
+ch2 <- ch1 + geom_vline(data = cmsy11.all.v, aes(xintercept= 1), colour='blue', linetype="dashed", size=1)
+ch2

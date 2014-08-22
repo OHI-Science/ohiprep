@@ -158,7 +158,7 @@ write.csv(cnk_fis_meancatch, file.path(dir_d, 'data/fnk_fis_meancatch_lyr.csv'),
 # NA's are not replaced with zeros
 
 # resilience scores to select the appropriate b/bmsy 
-res <- read.csv("Global/FIS_Bbmsy/stock_resil_06cutoff.csv")
+res <- read.csv("Global/FIS_Bbmsy/stock_resil_06cutoff_ALL.csv")
 
 b_bmsy_uniform <- read.csv("Global/NCEAS-Fisheries_2014a/tmp/fnk_fis_b_bmsy_lyr_uniform_no0_runningMean.csv")
 b_bmsy_uniform <- b_bmsy_uniform %>%
