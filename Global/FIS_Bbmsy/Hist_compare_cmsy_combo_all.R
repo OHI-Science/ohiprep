@@ -69,6 +69,12 @@ ggsave('cmsy_combo_resil_cfr.png')
 ##################
 head(cmsy_dif)
 cmsy_dif$stock_id <- as.character(cmsy_dif$stock_id)
+
+# modify the resilience cutoff
+# res_scores <- res_scores %>% mutate (
+#   unif_prior = ifelse( final_score > 0.5, 1, 0)
+# )
+
 cmsy_dif.r <- left_join(cmsy_dif, res_scores) ; head(cmsy_dif.r) # 184 excluded (no recent catch)
 cmsy_dif.r <- cmsy_dif.r %>% filter (fao_id != 18)
 
@@ -81,6 +87,7 @@ cmsydif.all <- rbind(cmsydif.u, cmsydif.c)
 # add fao region names
 fao_id_nm <- rbind( rfmo_fao[,c(2,18)], c('Mediterranean and Black Sea', 37))
 cmsydif.all <- left_join( cmsydif.all, fao_id_nm )
+# save versions of the runs using different cutoffs
 cmsydif.all.06 <- cmsydif.all
 cmsydif.all.05 <- cmsydif.all
 cmsydif.all.06 <- cmsydif.all.06 %>% mutate(cutof = '0.6')
