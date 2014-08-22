@@ -191,7 +191,7 @@ res_scores <- r_all %>% mutate (
                           part_score = rel_ct * new.relarea * Score ) %>% group_by (
                         stock_id) %>% summarise (
                           final_score = sum(part_score, na.rm =T)) %>% mutate (
-                            unif_prior = ifelse( final_score > 0.5, 1, 0)
+                            unif_prior = ifelse( final_score > 0.6, 1, 0)
                             )
 
 
@@ -204,4 +204,13 @@ res_scores <- r_all %>% mutate (
 
 
 
-write.csv(res_scores, '../ohiprep/Global/FIS_Bbmsy/stock_resil_06cutoff.csv', row.names=F)
+write.csv(res_scores, '../ohiprep/Global/FIS_Bbmsy/stock_resil_06cutoff_ALL.csv', row.names=F)
+
+trouble <- res_scores %>% mutate ( fao_id = str_split_fixed( stock_id, '_',2) [,2] ) %>% filter (fao_id %in% c(34, 51, 71) )
+trouble <- left_join( trouble, fao_id_nm )
+
+library(ggplot2)
+ch <- ggplot(trouble, aes(x=final_score, fill = rgn_name)) + geom_histogram(binwidth=0.1,colour="white") 
+ch1 <- ch + facet_wrap( ~ rgn_name) 
+ch2 <- ch1 + geom_vline(data = trouble, aes(xintercept= 1), colour='blue', linetype="dashed", size=1)
+ch2
