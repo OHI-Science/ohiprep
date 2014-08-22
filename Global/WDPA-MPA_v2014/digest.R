@@ -1,5 +1,6 @@
 library(foreign)
 library(reshape2)
+library(stringr)
 library(dplyr)
 
 source('src/R/common.R')
@@ -25,7 +26,9 @@ for (i in 1:length(lyrs)){ # i=1
     select(rgn_id=VALUE, year, area_km2) %>%
     arrange(rgn_id, year)
 
-  if (i == 1) {  #   for  lsp_protarea_offshore3nm.csv, make any non-represented rgn_id == 0
+  # fix  for  lsp_protarea_offshore3nm.csv: make any non-represented rgn_id == 0, and 2 special fixes. 
+  # see https://github.com/OHI-Science/ohidev/blob/master/report/compare_scores2layers/compare_scores2layers.md#lasting-special-places
+  if (i == 1) {  
     rgns = read.csv('../ohi-global/eez2014/layers/rgn_global.csv') %.%
       select(rgn_id)  %.%
       filter(rgn_id < 255) %.%
@@ -36,7 +39,19 @@ for (i in 1:length(lyrs)){ # i=1
                 anti_join(m, by = 'rgn_id') %>%
                 mutate(year = max(m$year, na.rm=T),
                        area_km2 = 0)) %>%
-      arrange(rgn_id)
+      arrange(rgn_id, year)
+    
+    m$area_km2[m$rgn_id == 78] = 1.746501543  # special fix for Lebanon[78]
+    m$year[m$rgn_id ==78] = 1972
+    m$area_km2[m$rgn_id == 220] = 0.873250772 # special fix for Sint Maarten[220]
+    m$year[m$rgn_id == 220] = 2006
+   
+      # str_replace is doing something strange: won't do both at once, only one. 
+#       mutate(area_km2 = str_replace(rgn_id, as.character(78), 1.746501543),  # special fix for Lebanon[78]
+#              year     = str_replace(rgn_id, as.character(78), 1972)) %>%
+#       mutate(area_km2 = str_replace(rgn_id, as.character(220), 0.873250772),  # special fix for Sint Maarten[220]
+#              year     = str_replace(rgn_id, as.character(220), 2006)) %>%
+#       arrange(rgn_id, year)
   }
   
   # save layer
