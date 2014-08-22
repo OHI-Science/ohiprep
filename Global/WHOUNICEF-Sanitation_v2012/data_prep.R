@@ -128,7 +128,7 @@ minyear_all_san = scenario_maxyear_san[length(scenario_maxyear_san)]
 # scen_earliest_san = max(r_g$year, na.rm=T) - as.numeric(as.character(factor(scenario_maxyear_san[length(scenario_maxyear_san)])))
 # scen_earliest_pop = as.numeric(as.character(factor(names(scenario_maxyear_san)[i])))
 
-for (i in 1:length(names(scenario_maxyear_san))) { # i=1
+for (i in 1:length(names(scenario_maxyear_san))) { # i=2
   
   maxyear_san = scenario_maxyear_san[i]
   minyear_san = maxyear_san - 4
@@ -147,8 +147,8 @@ for (i in 1:length(names(scenario_maxyear_san))) { # i=1
                 mutate(yr_id = year - minyear_pop+1) %>%
                 select(rgn_id, yr_id, pop_per_km2), 
               by=c('rgn_id', 'yr_id')) %>%
-    mutate(prop_x_pop          = prop_access * pop_per_km2, # this is the number of 'non-poopers'
-           prop_x_pop_log      = log(prop_x_pop+1))   # log is important because the skew was high otherwise
+    mutate(propWO_x_pop     = (1 - prop_access) * pop_per_km2, # this is the number of 'POOPERS'
+           propWO_x_pop_log = log(propWO_x_pop+1))   # log is important because the skew was high otherwise
   head(san_pop); summary(san_pop) 
 
   
@@ -157,8 +157,7 @@ for (i in 1:length(names(scenario_maxyear_san))) { # i=1
   # rescale with all previous scenarios
   sp_press = san_pop %>%
     filter(include_prev_scenario == T) %>% 
-    mutate(prop_x_pop_rescaled = prop_x_pop_log / max(prop_x_pop_log, na.rm=T), # this is the number of 'non-poopers' (rescaled)
-           pressure_score      = (1 - prop_x_pop_rescaled) ) %>% # the is the number of poopers (rescaled)
+    mutate(pressure_score = propWO_x_pop_log / max(propWO_x_pop_log, na.rm=T)) %>% # number of POOPERS, RESCALED
     select(-include_prev_scenario)
   
   sp_press_max = sp_press %>%
@@ -166,7 +165,7 @@ for (i in 1:length(names(scenario_maxyear_san))) { # i=1
     left_join(rgns, by='rgn_id') %>%
     mutate(year = yr_id + minyear_san-1)
   
-  # combine with any missing regionas as 0
+  # combine with any missing regions as 0
   sp_pressure = rbind(sp_press %>%
                         filter(yr_id == max(yr_id, na.rm=T)) %>% # capture only the most recent year
                         select(rgn_id, pressure_score), 
@@ -184,13 +183,16 @@ for (i in 1:length(names(scenario_maxyear_san))) { # i=1
   
 
   csv_p = file.path(dir_d, 'data', sprintf('po_pathogens_popdensity25km_%sa.csv', 
-                                           names(scenario_maxyear_san)[i])) # sprintf('po_pathogens_sanitation%d_popninland25km%d.csv', yr_max_san, yr_max_pop)) # previous, longer name
+                                           str_extract(names(scenario_maxyear_san)[i], '\\d{4}'))) # sprintf('po_pathogens_sanitation%d_popninland25km%d.csv', yr_max_san, yr_max_pop)) # previous, longer name
   write.csv(sp_pressure, csv_p, row.names=F, na='')
   
   
   ## model 5 year trend ----
+  # trend needs to be calculated with status, which is NON-POOPERS, so must re-invert.
   # use a linear model since there is enough data. See below at the end for approach used in 2013a
   sp_mdl = san_pop %>%
+    mutate(prop_x_pop = prop_access * pop_per_km2,
+           prop_x_pop_log = log(prop_x_pop+1)) %>%  # log is important because the skew was high otherwise)
     select(rgn_id, yr_id, prop_x_pop_log) %>%
     filter(!is.na(prop_x_pop_log)) %>% # lm can't handle NAs!!
     group_by(rgn_id) %>%
@@ -201,7 +203,7 @@ for (i in 1:length(names(scenario_maxyear_san))) { # i=1
       year_ix0  = coef(mdl)['(Intercept)'],
       year_coef = coef(mdl)['yr_id']) %.%
     mutate(
-      trend_tmp = year_coef / (year_coef * maxyear_san + year_ix0) * 5, # save these as separate steps to check it's working
+      trend_tmp = year_coef / (year_coef * maxyear_san + year_ix0) * 5, # save as separate steps to check it's working
       trend_min = pmin(trend_tmp, 1, na.rm = T),
       trend_max = pmax(trend_min, -1)) %>% 
     select(rgn_id, 
@@ -218,7 +220,7 @@ for (i in 1:length(names(scenario_maxyear_san))) { # i=1
   stopifnot(anyDuplicated(sp_mdl_fin[,c('rgn_id')]) == 0)
   
   csv_t = file.path(dir_d, 'data', sprintf('pathogens_popdensity25km_trend_%sa.csv', 
-                                           names(scenario_maxyear_san)[i]))  # sprintf('po_pathogens_trend_sanitation%d_popninland25km%d.csv', yr_max_san, yr_max_pop)) # previous, longer name
+                                           str_extract(names(scenario_maxyear_san)[i], '\\d{4}')))  # sprintf('po_pathogens_trend_sanitation%d_popninland25km%d.csv', yr_max_san, yr_max_pop)) # previous, longer name
   write.csv(sp_mdl_fin, csv_t, row.names=F, na='')
   
 }
@@ -226,14 +228,14 @@ for (i in 1:length(names(scenario_maxyear_san))) { # i=1
 
 # pressures:
 
-# eez2014 pressures scores are rescaled to maximum 'poopers' since eez2012 (2010-2012):
-#   Greenland in 2010
+# 2014 pressures scores are rescaled to maximum 'poopers' since eez2012 (2010-2012):
+# Benin in 2012
 # 
-# eez2013 pressures scores are rescaled to maximum 'poopers' since eez2012 (2010-2011):
-#   Greenland in 2010
+# 2013 pressures scores are rescaled to maximum 'poopers' since eez2012 (2010-2011):
+# Benin in 2011
 # 
-# eez2012 pressures scores are rescaled to maximum 'poopers' since eez2012 (2010-2010):
-#   Greenland in 2010
+# 2012 pressures scores are rescaled to maximum 'poopers' since eez2012 (2010-2010):
+# Benin in 2010
 
 
 
