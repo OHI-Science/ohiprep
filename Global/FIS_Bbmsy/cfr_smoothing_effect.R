@@ -57,7 +57,9 @@ ch2 <- ch1 + geom_vline(data = sm.all, aes(xintercept= 1), colour='blue', linety
 ch2
 
 
+### create a list of suspect countries ###
 
+## take the most influential stocks and plot the uniform versus constrained cmsy ##
 
 then do individual plots for suspect countries
 
