@@ -18,7 +18,7 @@
 # load libraries
 library(stringr)
 library(zoo)  
-library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
+# library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 
 
 # get paths
@@ -191,8 +191,12 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
 # correlate, swap and smooth to generate product peaks ----
 
 harvest_peak_buffer = 0.35
-scenarios_year_max = c(eez2014=2011, eez2013=2010, eez2012=2009)
 nonzero_harvest_years_min = 4
+recent_harvest_years = 10
+
+scenarios_year_max = c(eez2014=2011, 
+                       eez2013=2010, 
+                       eez2012=2009)
 
 h_tonnes = read.csv(file.path(dir_d, 'data/FAO-Commodities_v2011_tonnes.csv'))
 h_usd    = read.csv(file.path(dir_d, 'data/FAO-Commodities_v2011_usd.csv'))
@@ -231,13 +235,13 @@ for (scenario in c('eez2012','eez2013','eez2014')){ # scenario  = 'eez2013'
   # merge harvest in tonnes and usd
   h = 
     merge(
-      # require at least 2 years of data, otherwise remove product to rely on others or use georegional avg if none left
+      # require at least 'nonzero_harvest_years_min' years of data, otherwise remove product to rely on others or use georegional avg if none left
       h_tonnes %>%
         filter(year <= year_max) %>%
         group_by(rgn_id, product) %>%
         mutate(
           tonnes_orig      = tonnes,
-          tonnes_nonzero_n = sum(tonnes>0)) %>%        
+          tonnes_nonzero_n = sum(tonnes>0)) %>%
         filter(tonnes_nonzero_n >= nonzero_harvest_years_min), 
       h_usd %>%
         filter(year <= year_max) %>%
@@ -245,11 +249,14 @@ for (scenario in c('eez2012','eez2013','eez2014')){ # scenario  = 'eez2013'
         mutate(
           usd_orig      = usd,
           usd_nonzero_n = sum(usd>0)) %>%
-        filter(usd_nonzero_n >= nonzero_harvest_years_min),
+        filter(usd_nonzero_n >= nonzero_harvest_years_min), 
       by=c('rgn_name','rgn_id','product','year'), all=T) %>%
     select(rgn_name, rgn_id, product, year, tonnes_orig, tonnes, usd_orig, usd) %>%
     arrange(rgn_id, product, year) %>%
     group_by(rgn_id, product) %>%
+  mutate(tonnes_na_sum = is.na(tonnes)) %>% # add this filter to remove rgn-product pairs with all NAs 
+  filter(!tonnes_na_sum) %>% 
+  select(-tonnes_na_sum) %>%
     mutate(
       n_years = n())
   
@@ -265,7 +272,7 @@ for (scenario in c('eez2012','eez2013','eez2014')){ # scenario  = 'eez2013'
     # handle NA mismatch b/n tonnes and usd with correlative model
     m_tonnes = h  %>%
       mutate(tonnes_nas   = sum(is.na(tonnes))) %>%
-      filter(tonnes_nas > 0 & !is.na(usd) & !is.na(tonnes)) %>%
+      filter(tonnes_nas >= 0 & !is.na(usd) & !is.na(tonnes)) %>%
       do(mdl = lm(tonnes ~ usd, data=.)) %>%
       summarize(
         rgn_id   = rgn_id,
@@ -274,7 +281,7 @@ for (scenario in c('eez2012','eez2013','eez2014')){ # scenario  = 'eez2013'
         usd_coef = coef(mdl)['usd'])
     m_usd = h %>%
       mutate(usd_nas = sum(is.na(usd))) %>%
-      filter(usd_nas > 0 & !is.na(usd) & !is.na(tonnes)) %>%
+      filter(usd_nas >= 0 & !is.na(usd) & !is.na(tonnes)) %>%
       do(mdl = lm(usd ~ tonnes, data=.)) %>%
       summarize(
         rgn_id      = rgn_id,
