@@ -76,7 +76,7 @@ cmsy_dif$stock_id <- as.character(cmsy_dif$stock_id)
 # )
 
 cmsy_dif.r <- left_join(cmsy_dif, res_scores) ; head(cmsy_dif.r) # 184 excluded (no recent catch)
-cmsy_dif.r <- cmsy_dif.r %>% filter (fao_id != 18)
+cmsy_dif.r <- cmsy_dif.r %>% filter (fao_id != 18)  # should no longer do this
 
 cmsydif.u <- cmsy_dif.r %>% group_by (
   stock_id, fao_id ) %>% filter (whence == 'unif_no0', unif_prior == 1)

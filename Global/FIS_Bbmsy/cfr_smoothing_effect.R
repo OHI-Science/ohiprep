@@ -56,6 +56,23 @@ ch1 <- ch + facet_grid(whence ~ rgn_name)
 ch2 <- ch1 + geom_vline(data = sm.all, aes(xintercept= 1), colour='blue', linetype="dashed", size=1)
 ch2
 
+#### compare last 2 years: 2011-2010 #####
+csm10 <- csm %>% filter( yr == 2010 ) %>% rename ( c('b_bmsy' = 'b_bmsy10') )
+csm.dif <- left_join(csm11, csm10) %>% mutate (dif = b_bmsy - b_bmsy10, whence = 'sm_const')
+
+usm10 <- usm %>% filter( yr == 2010 ) %>% rename ( c('b_bmsy' = 'b_bmsy10') )
+usm.dif <- left_join(usm11, usm10) %>% mutate (dif = b_bmsy - b_bmsy10, whence = 'sm_unif')
+
+ucsm10 <- cmsy.all %>% filter (year == 2010, whence == 'unif_no0') %>% mutate ( fao_id = str_split_fixed(stock_id, '_', 2)[,2], whence = 'unif_09')
+ucsm.dif <- left_join( ucsm11, ucsm10 ) %>% select ( stock_id, fao_id, rgn_name, b_bmsy, whence )
+
+
+sm.dif <- rbind(usm.dif, csm.dif)
+
+ch <- ggplot(sm.dif, aes(x=dif, fill = rgn_name)) + geom_histogram(binwidth=0.1,colour="white") 
+ch1 <- ch + facet_grid(whence ~ rgn_name) 
+ch2 <- ch1 + geom_vline(data = sm.dif, aes(xintercept= 0), colour='black', size=1)
+ch2
 
 ### create a list of suspect countries ###
 
