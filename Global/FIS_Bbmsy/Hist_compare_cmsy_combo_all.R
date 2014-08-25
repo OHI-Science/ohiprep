@@ -4,7 +4,7 @@ library(dplyr)
 
 cmsy11$stock_id <- as.character(cmsy11$stock_id)
 cmsy11.r <- left_join(cmsy11, res_scores) # 184 excluded (no recent catch)
-cmsy11.r <- cmsy11.r %>% filter (fao_id != 18)
+# cmsy11.r <- cmsy11.r %>% filter (fao_id != 18)
 # select only model versions without 0s
 
 # select different model versions depending on the flag in field 'unif_prior'
