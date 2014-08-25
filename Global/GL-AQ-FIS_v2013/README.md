@@ -3,7 +3,7 @@ Generating B_bmsy data and FIS status/trend for Antarctica
 
 R files
 =====================
-* cmsy_ohi.R: prepares catch data for cmsy and runs cmsy functions. Outputs b_bmsy_AQ_with_zeros.csv. (NOTE: if this is run again, changes need to be made to this file - see notes in R script)
+* cmsy_ohi.R: prepares catch data for cmsy and runs cmsy functions. 
 
 * FIS_dataPrep.R: Prepares data for FIS function to calculate status and trend
 - subsets b/bmsy data (b_bmsy_AQ_with_zeros.csv)
