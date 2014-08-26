@@ -124,10 +124,6 @@ scenario_maxyear_san = c('eez2014' = maxyear_all_san,
                          'eez2012' = maxyear_all_san - 2)
 minyear_all_san = scenario_maxyear_san[length(scenario_maxyear_san)]
 
-# find max prop_x_pop_log across all scenarios
-# scen_earliest_san = max(r_g$year, na.rm=T) - as.numeric(as.character(factor(scenario_maxyear_san[length(scenario_maxyear_san)])))
-# scen_earliest_pop = as.numeric(as.character(factor(names(scenario_maxyear_san)[i])))
-
 for (i in 1:length(names(scenario_maxyear_san))) { # i=2
   
   maxyear_san = scenario_maxyear_san[i]
@@ -154,17 +150,18 @@ for (i in 1:length(names(scenario_maxyear_san))) { # i=2
   
   ## save as pressure layer: only scenario's recent year, but rescaled, including previous scenarios ----
 
-  # rescale with all previous scenarios
+  # rescale with all previous scenarios, to 110%:  Neptune: model/GL-NCEAS-CleanWatersPressures/pathogens/sanitation-population-combo/model.R
   sp_press = san_pop %>%
     filter(include_prev_scenario == T) %>% 
-    mutate(pressure_score = propWO_x_pop_log / max(propWO_x_pop_log, na.rm=T)) %>% # number of POOPERS, RESCALED
+    mutate(pressure_score = propWO_x_pop_log / (max(propWO_x_pop_log, na.rm=T) * 1.1)) %>% # number of POOPERS, RESCALED
     select(-include_prev_scenario)
   
-  sp_press_max = sp_press %>%
-    filter(pressure_score == max(pressure_score, na.rm = T)) %>%
-    left_join(rgns, by='rgn_id') %>%
-    mutate(year = yr_id + minyear_san-1)
-  
+#   # investigate Benin[99]
+#   r %>% filter(year == 2012) %>% # eez2013
+#     arrange(prop_access) %>% head(10) 
+#   sp_press %>%
+#     arrange(desc(propWO_x_pop)) %>% head(15)
+    
   # combine with any missing regions as 0
   sp_pressure = rbind(sp_press %>%
                         filter(yr_id == max(yr_id, na.rm=T)) %>% # capture only the most recent year
@@ -174,13 +171,7 @@ for (i in 1:length(names(scenario_maxyear_san))) { # i=2
                         mutate(pressure_score = 0) %>%
                         select(-rgn_name)) %>%
     arrange(rgn_id); head(sp_pressure); summary(sp_pressure)
-  stopifnot(anyDuplicated(sp_pressure[,c('rgn_id')]) == 0)
-  
-  message(sprintf('\n%s pressures scores are rescaled to maximum \'poopers\' since %s (%d-%d):', 
-                  maxyear_pop, names(minyear_all_san), minyear_all_san, maxyear_san))
-  message(sprintf('%s in %s', 
-                  sp_press_max$rgn_name, sp_press_max$year))
-  
+  stopifnot(anyDuplicated(sp_pressure[,c('rgn_id')]) == 0)  
 
   csv_p = file.path(dir_d, 'data', sprintf('po_pathogens_popdensity25km_%sa.csv', 
                                            str_extract(names(scenario_maxyear_san)[i], '\\d{4}'))) # sprintf('po_pathogens_sanitation%d_popninland25km%d.csv', yr_max_san, yr_max_pop)) # previous, longer name
@@ -242,17 +233,17 @@ for (i in 1:length(names(scenario_maxyear_san))) { # i=2
 
 ## test with Quandl ----
 # for now, Quandl (2010) doesn't have the up-to-date information that the JMP website does (2012).
-library(devtools)
-install_github('R-package','quandl')
-library(Quandl)
-Quandl.auth("JULES32")
-
-qs = Quandl.search(query = "WHO / UNICEF Joint Monitoring Program for Water Supply and Sanitation", silent = FALSE)
-
-# in the future, pull the names of each country (x below) from the qs list, and loop through to pull them all and make a data.frame. 
-# to make the loop, either pull from qs above or download the 'complete list' of data that match this search: http://www.quandl.com/WHO_UNICEF?keyword=%20&page=4&code=WHO_UNICEF&source_ids=439
-x = 'WHO_UNICEF/WATERSAN_ABS_DENMARK'
-JMP_san = Quandl(x); summary(JMP_san)
+# library(devtools)
+# install_github('R-package','quandl')
+# library(Quandl)
+# Quandl.auth("JULES32")
+# 
+# qs = Quandl.search(query = "WHO / UNICEF Joint Monitoring Program for Water Supply and Sanitation", silent = FALSE)
+# 
+# # in the future, pull the names of each country (x below) from the qs list, and loop through to pull them all and make a data.frame. 
+# # to make the loop, either pull from qs above or download the 'complete list' of data that match this search: http://www.quandl.com/WHO_UNICEF?keyword=%20&page=4&code=WHO_UNICEF&source_ids=439
+# x = 'WHO_UNICEF/WATERSAN_ABS_DENMARK'
+# JMP_san = Quandl(x); summary(JMP_san)
 
 
 ## 2013a approach: model_pathogens.R ----
