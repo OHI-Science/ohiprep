@@ -13,6 +13,13 @@ library(tools)
 c = read.csv(file.path(dir_neptune_data, 'model/GL-NCEAS-CoastalPopulation_v2013/data', 
                        'cntry_popsum2013_inland25mi_complete.csv')); head(c)
 
+# read in total pop from Neptune for 2013
+tp = read.csv(file.path(dir_neptune_data, 'model/GL-WorldBank-Statistics_v2012/data', 
+                       'rgn_wb_pop_2013a_updated.csv')) %>%
+  group_by(rgn_id) %>%
+  filter(year == max(year)) %>% # just save the most recent year
+  mutate(layer = 'total_pop') %>%
+  select(rgn_id, value = count, layer); head(tp)
 
 ## read in regional assessments regions ----
 nonCountry = c('U.S. West Coast', 'Baltic Sea', 'Hawaii')
@@ -119,16 +126,28 @@ cl = read.csv(file.path(dir_neptune_data, 'model/GL-NCEAS-OceanRegions_v2013a/da
   mutate(layer = 'area_inland1km')
 
 
-## combine all data layers and 
-h_g = rbind(d, w, ca, cp, cl) %>%
+## combine all data layers 
+h_g = rbind(d, w, ca, cp, cl, tp) %>%
   group_by(rgn_id, layer) %>%
   summarize(value = sum(value, na.rm = T)) %>% # stopifnot(anyDuplicated(h_g[,c('rgn_id', 'layer')]) == 0)
   dcast(rgn_id ~ layer, value.var = 'value') %>%
-  select(rgn_id, area_eez, area_inland1km, coastal_pop, 
-         coastal_jobs = jobs_2014a, 
-         coastal_rev  = rev_2014a); head(h_g)
+  select(rgn_id, area_eez, area_inland1km, coastal_pop, total_pop,
+         total_jobs = jobs_2014a, 
+         total_rev  = rev_2014a)
 
+# calculate coastal ratio
+h_g$coastal_pop[h_g$total_pop == 0] = 0 # to remove infinities
+h_g = h_g %>%  
+  mutate(coastal_pop_ratio = coastal_pop/total_pop)
+h_g$coastal_pop_ratio[h_g$coastal_pop_ratio > 1] = 1 # cap at 1 for island nations
+ head(h_g); summary(h_g)
 
+# calculate coastal jobs
+h_g = h_g %>%
+  mutate(
+    coastal_jobs = total_jobs * coastal_pop_ratio,
+    coastal_rev  = total_rev  * coastal_pop_ratio)
+head(h_g,20); summary(h_g)
 
 ## save ----
 f_out = '../ohiprep/tmp/ohi_regional/regional_stats'
@@ -141,9 +160,12 @@ write.csv(hb_globalsum, paste(f_out, '_globalsum.csv', sep = ''), row.names = F,
 # save only regional assessments
 h_ra = h_g %>%
   filter(rgn_id %in% RAs$rgn_id) %>%
-  left_join(RAs, by = 'rgn_id') %>%
-  select(rgn_nam, status, area_eez, area_inland1km, coastal_pop, coastal_jobs, coastal_rev); head(h_ra)
+  left_join(RAs, by = 'rgn_id') 
 
+# h_ra$rgn_id %in% above1$rgn_id  # a check from above1
+
+h_ra = h_ra %>%
+  select(rgn_nam, status, area_eez, area_inland1km, coastal_pop, coastal_jobs, coastal_rev); head(h_ra)
 
 # add 2 eezs by hand: 
 # area_eez from Wikipedia: http://en.wikipedia.org/wiki/Exclusive_economic_zone#United_States
@@ -167,10 +189,10 @@ write.csv(h_racurrent_sum, paste(f_out, '_currentRAsum.csv', sep = ''), row.name
 
 # a few calculations:
 p = as.numeric(h_racurrent_sum$area_eez/hb_globalsum$area_eez *100 )
-cat(sprintf('Currently, OHI covers %f percent of global EEZs, benefits %d people, accounts for %f coastal jobs and %f coastal revenue', 
+cat(sprintf('Currently, OHI covers %f percent of global EEZs, benefits %d people (the population living coastally), accounts for %f coastal jobs and %f dollars of coastal revenue', 
             p, h_racurrent_sum$coastal_pop, h_racurrent_sum$coastal_jobs, h_racurrent_sum$coastal_rev))
 
 
 # --- fin ---
 
-
+# Currently, OHI covers 4.949682 percent of global EEZs, benefits 340261751 people, accounts for 434 584 891.862074 coastal jobs and 6 313 662 315 354.815430
