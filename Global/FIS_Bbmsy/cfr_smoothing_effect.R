@@ -74,17 +74,55 @@ ch1 <- ch + facet_grid(whence ~ rgn_name)
 ch2 <- ch1 + geom_vline(data = sm.dif, aes(xintercept= 0), colour='black', size=1)
 ch2
 
+
+#####################################################################################################################################
+####### take stocks with highest mean catch in SUSPECT regions #####################################
+#####################################################################################################################################
+
 ### create a list of suspect countries ###
+W_latinoamerica <- c(222,152,153,604)
+latin_lookup <- rfmo_lookup[ rfmo_lookup$saup_id %in% W_latinoamerica, ] %>% arrange(saup_id, fao_id) %>% mutate(reg = 'W_latinoamerica') ; head(latin_lookup)
+EAsia <- c(361,362,702,608,764,460,459,626)
+asian_lookup <- rfmo_lookup[ rfmo_lookup$saup_id %in% EAsia, ] %>% arrange(saup_id, fao_id) %>% mutate(reg = 'SE_Asia') ; asian_lookup
+WAfr <- c(384,566,132,288)
+WA_lookup <- rfmo_lookup[ rfmo_lookup$saup_id %in% WAfr, ] %>% arrange(saup_id, fao_id) %>% mutate(reg = 'W_Africa') ; WA_lookup
+Med <- c(300,380,434,470)
+Med_lookup <- rfmo_lookup[ rfmo_lookup$saup_id %in% Med, ] %>% arrange(saup_id, fao_id) %>% mutate(reg = 'Med') ; Med_lookup
+EAfr <- c(690,404,706,834, 462, 251, 508)
+EA_lookup <- rfmo_lookup[ rfmo_lookup$saup_id %in% EAfr, ] %>% arrange(saup_id, fao_id) %>% mutate(reg = 'E_Africa') ; EA_lookup
+Alaska <- 841
+Alaska_lookup <- rfmo_lookup[ rfmo_lookup$saup_id %in% Alaska, ] %>% arrange(saup_id, fao_id) %>% mutate(reg = 'Alaska') ; Alaska_lookup
+
+prob_rgn <- rbind( latin_lookup, asian_lookup, WA_lookup, Med_lookup, EA_lookup, Alaska_lookup )
+
+# based on rel_ct within each saup region/fao_id (newSAUP4) 
+
+
+
+3) get the top 2 stocks for rel_ct per ohi_id (no replicates)
+4) merge dfs to obtain the following info all in one file
+region identifiers : fao_id mora_score rfmo_score ohi_id saup_id
+stocks: stock_id, resilience score, rel_ct in the EEZ, catch time-series
+cmsy: smoothed with unif prior, smoothed with constrained prior, flag on which was used
+5) hist: how many of the top stocks were assigned to the constrained prior in the trouble areas? 
+-> top stocks (get rel catch and select top stocks by EEZ: 1-2)
+6) mora score vs stock score vs relstock catch in eez vs hs:
+  -> get rel ct within and outside EEZs per stock (used to calc resil score), and resil score
+stacked hist of rel_ct in high seas vs EEZ per stock, with resil score on x-axis:
+ is resil score higher for stocks with rel ct mostly in high seas? check in each fao_id
+7) time-seriesw of b_bmsy constrained prior vs uniform (smoothed, no0s) vs catch - separate plots by which was used: 
+ -> get smoothed uniform, smoothed constrained, flag of which was used, catch - only for top stocks of problem areas by fao_region/eez
+  - does constrained seem the better model when constrained was picked?
+ - does uniform seem the better model when uniform was picked?
+
+
+filter the top 2 stocks from the file above, plot catch
 
 ## take the most influential stocks and plot the uniform versus constrained cmsy ##
 
 then do individual plots for suspect countries
 
 then look at their resilience (already did for a few)
-
-#####################################################################################################################################
-####### take stocks with highest mean catch 
-#####################################################################################################################################
 
 ## 1 # get the two top mean weights per HIGH SEAS
 dir_hs <- '../ohiprep/HighSeas/GL_HS_FIS_2014'
@@ -115,7 +153,7 @@ test2 <- Mct %>% group_by (fao_id) %>% filter (year == 2011, TL == 6) %>% arrang
 top_stocks <- c( Mct$first_stock, Mct$second_stock)
 
 ############################################################################################
-## 2 # join smoothed b_bmsy for both priors, and unsmoothed b_bmsy for uniform prior - for those stocks with highest mean catch 
+## 2 # join smoothed b_bmsy for both priors, and smoothed b_bmsy combo - for those stocks with highest mean catch 
 # cmsy.all$fao_id <- as.numeric(as.character(cmsy.all$fao_id))
 cmsy.top <- cmsy.all %>% filter(stock_id %in% top_stocks) # Joining by: "stock_id"
 
