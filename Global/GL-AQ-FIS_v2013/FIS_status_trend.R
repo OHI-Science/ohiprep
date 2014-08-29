@@ -12,11 +12,9 @@ data_files <- "Global/GL-AQ-FIS_v2013"
 
 regions <- read.csv(file.path(dir_neptune_data, 
                               "git-annex/Global/NCEAS-Antarctica-Other_v2014/rgn_labels_ccamlr.csv"))
-c <- read.csv(file.path(data_files, "tmp/cnk_fis_meancatch.csv"))
-#b <- read.csv(file.path(data_files, "tmp/fnk_fis_b_bmsy.csv"))
-b <- read.csv(file.path(data_files, "tmp/b_bmsy_AQ_with_zeros_constrained.csv"))
-#b <- read.csv(file.path(data_files, "tmp/b_bmsy_AQ_no_zeros_constrained.csv"))
-extra_ccmsy <- read.csv(file.path(data_files, "tmp/fnk_fis_ccmsy.csv"))
+c <- read.csv(file.path(data_files, "data/cnk_fis_meancatch.csv"))
+b <- read.csv(file.path(data_files, "data/fnk_fis_b_bmsy.csv"))
+extra_ccmsy <- read.csv(file.path(data_files, "data/fnk_fis_ccmsy.csv"))
 
 status.year <- 2012
 trend.years <- (status.year-5):status.year
@@ -27,9 +25,10 @@ c$saup_id <- as.numeric(sapply(strsplit(as.character(c$fao_saup_id), "_"), funct
 c$taxon_name <- sapply(strsplit(as.character(c$taxon_name_key), "_"), function(x)x[1])
 c$TaxonKey <- as.numeric(sapply(strsplit(as.character(c$taxon_name_key), "_"), function(x)x[2]))
 
-setdiff(b$taxon_name, c$taxon_name)
-setdiff(c$taxon_name, b$taxon_name)
-intersect(c$taxon_name, b$taxon_name)
+c[c$fao_saup_id=='481_0' & c$taxon_name_key == "Champsocephalus gunnari_6", ]
+# setdiff(b$taxon_name, c$taxon_name)
+# setdiff(c$taxon_name, b$taxon_name)
+# intersect(c$taxon_name, b$taxon_name)
     
 # ------------------------------------------------------------------------
 # STEP 1. Merge the species status data with catch data
@@ -62,14 +61,15 @@ UnAssessedCatches <- c[!(c$year %in% AssessedCatches$year &
 #  Using the minimum B/BMSY score as an starting point
 #  for the estimate of B/BMSY for unassessed taxa not
 #  identified to species level is very conservative.
-#  This is a parameter that can be changed.
+#  This is a parameter that can be changed.  Here we used the
+#  median
 #  ***********************************************
 
 b_summary <- ddply(b, .(year), summarize,
                    Medianb_bmsy=quantile(as.numeric(b_bmsy), probs=c(0.5)), 
                    Minb_bmsy=min(as.numeric(b_bmsy))) 
-#minimum b_bmsy was used in 2013 OHI data to provide a conservative estimate of the b_bmsy for taxa this
-# could not be determined for using cmsy.  We now use the median to estimate b_bmsy for these taxa (OHI 2014, High seas, Antarctica).
+# minimum b_bmsy was used in 2013 OHI analysis to provide a conservative estimate of the b_bmsy
+# We now use the median to estimate b_bmsy for these taxa (OHI 2014, High seas, Antarctica).
 
 UnAssessedCatches <- join(UnAssessedCatches, b_summary, by=c("year"),
                           type="left", match="all")
@@ -133,15 +133,15 @@ scores <- rbind(AssessedCatches[,c("taxon_name", "TaxonKey", "year", "fao_id", "
 # ------------------------------------------------------------------------
 ## Fill in missing years/regions using mean of data
 # determine mean for each species/year and apply to missing data
-meanCMSY <- extra_ccmsy %.%
-  group_by(taxon_name, year) %.%
+meanCMSY <- extra_ccmsy %>%
+  group_by(taxon_name, year) %>%
   summarize(mean_cmsy = mean(C_msy_assmt, na.rm=TRUE))
 
 
-scoresReplace <- scores %.%
-  filter(taxon_name %in% c("Dissostichus mawsoni", "Champsocephalus gunnari", "Dissostichus eleginoides")) %.%
-  mutate(fao_id = as.integer(fao_id)) %.%
-  left_join(extra_ccmsy, by=c("taxon_name", "fao_id", "year")) %.%
+scoresReplace <- scores %>%
+  filter(taxon_name %in% c("Dissostichus mawsoni", "Champsocephalus gunnari", "Dissostichus eleginoides")) %>%
+  mutate(fao_id = as.integer(fao_id)) %>%
+  left_join(extra_ccmsy, by=c("taxon_name", "fao_id", "year")) %>%
   left_join(meanCMSY, by=c("taxon_name", "year"))
 
 scoresReplace$C_msy_assmt2 <- ifelse(is.na(scoresReplace$C_msy_assmt), scoresReplace$mean_cmsy, scoresReplace$C_msy_assmt)
