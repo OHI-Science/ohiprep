@@ -132,8 +132,8 @@ h_g = rbind(d, w, ca, cp, cl, tp) %>%
   summarize(value = sum(value, na.rm = T)) %>% # stopifnot(anyDuplicated(h_g[,c('rgn_id', 'layer')]) == 0)
   dcast(rgn_id ~ layer, value.var = 'value') %>%
   select(rgn_id, area_eez, area_inland1km, coastal_pop, total_pop,
-         total_jobs = jobs_2014a, 
-         total_rev  = rev_2014a)
+         coastal_jobs = jobs_2014a, 
+         total_rev    = rev_2014a)
 
 # calculate coastal ratio
 h_g$coastal_pop[h_g$total_pop == 0] = 0 # to remove infinities
@@ -142,10 +142,9 @@ h_g = h_g %>%
 h_g$coastal_pop_ratio[h_g$coastal_pop_ratio > 1] = 1 # cap at 1 for island nations
  head(h_g); summary(h_g)
 
-# calculate coastal jobs
+# calculate coastal rev
 h_g = h_g %>%
   mutate(
-    coastal_jobs = total_jobs * coastal_pop_ratio,
     coastal_rev  = total_rev  * coastal_pop_ratio)
 head(h_g,20); summary(h_g)
 
@@ -195,4 +194,4 @@ cat(sprintf('Currently, OHI covers %f percent of global EEZs, benefits %d people
 
 # --- fin ---
 
-# Currently, OHI covers 4.949682 percent of global EEZs, benefits 340261751 people, accounts for 434 584 891.862074 coastal jobs and 6 313 662 315 354.815430
+# Currently, OHI covers 4.949682 percent of global EEZs, benefits 340261751 people, accounts for 2 260 341 088.95 coastal jobs and 6 313 662 315 354.815430
