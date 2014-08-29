@@ -156,6 +156,13 @@ library(tidyr)
 
 r_hs <- gather(rfmo_fao, key = rfmo, value = proparea, -rgn_id, -rgn_name, -total, -fao_id)
 r_hs$rfmo <- as.character(r_hs$rfmo)
+
+Ant_rgn <- data.frame( cbind ('rgn_id' = as.numeric(c(268, 271, 278)), 'rgn_name' = c('Antarctic', 'Antarctic', 'Antarctic'), 'total' = as.numeric(c(1, 1, 1)), 'fao_id' = as.numeric(c(48, 58, 88)), 'rfmo' = c('ccamlr', 'ccamlr', 'ccamlr'), 'proparea' = as.numeric(c(1, 1, 1)) ), stringsAsFactors = F)
+Ant_rgn$proparea <- as.numeric(Ant_rgn$proparea)
+Ant_rgn$total <- as.numeric(Ant_rgn$total)
+Ant_rgn$fao_id <- as.numeric(Ant_rgn$fao_id)
+r_hs <- rbind(Ant_rgn, r_hs)
+
 r_hs <- r_hs %>% mutate( relarea = proparea/total) ; head(r_hs)
 # add in rfmo resilience scores 
 r_hs <- left_join (r_hs, rfmo_sc) # Joining by: "rfmo"
@@ -204,7 +211,7 @@ res_scores <- r_all %>% mutate (
 
 
 
-write.csv(res_scores, '../ohiprep/Global/FIS_Bbmsy/stock_resil_06cutoff_ALL.csv', row.names=F)
+write.csv(res_scores, '../ohiprep/Global/FIS_Bbmsy/stock_resil_06cutoff_ALL_v2.csv', row.names=F)
 
 trouble <- res_scores %>% mutate ( fao_id = str_split_fixed( stock_id, '_',2) [,2] ) %>% filter (fao_id %in% c(34, 51, 71) )
 trouble <- left_join( trouble, fao_id_nm )
