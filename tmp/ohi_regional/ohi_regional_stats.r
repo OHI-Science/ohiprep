@@ -9,6 +9,9 @@ library(stringr)
 library(tools)
 # library(reshape2)
 
+# read in rgn_labels
+rgns = read.csv('../ohi-global/eez2013/layers/rgn_labels.csv')
+
 # read in coastal pop from Neptune for 2013
 c = read.csv(file.path(dir_neptune_data, 'model/GL-NCEAS-CoastalPopulation_v2013/data', 
                        'cntry_popsum2013_inland25mi_complete.csv')); head(c)
@@ -135,7 +138,8 @@ h_g = rbind(d, w, ca, cp, cl, tp) %>%
   dcast(rgn_id ~ layer, value.var = 'value') %>%
   select(rgn_id, area_eez, area_inland1km, coastal_pop, total_pop,
          coastal_jobs = jobs_2014a, 
-         total_rev    = rev_2014a)
+         total_rev    = rev_2014a) %>%
+  filter(rgn_id < 255)
 
 # calculate coastal ratio
 h_g$coastal_pop[h_g$total_pop == 0] = 0 # to remove infinities
@@ -157,6 +161,14 @@ f_out = '../ohiprep/tmp/ohi_regional/regional_stats'
 # save global sum
 hb_globalsum <- data.frame(t(colSums(h_g, na.rm=T))); hb_globalsum
 write.csv(hb_globalsum, paste(f_out, '_globalsum.csv', sep = ''), row.names = F, na = '')
+
+# save all regions
+h_g_save = h_g %>%
+  left_join(rgns %>%
+              select(rgn_id, rgn_name = label), 
+            by = 'rgn_id') %>%
+  select(rgn_name, rgn_id, area_eez, area_inland1km, coastal_pop, total_pop, coastal_jobs, coastal_rev)
+write.csv(h_g_save, paste(f_out, '_all_ohi_regions.csv', sep = ''), row.names = F, na = '')
 
 # save only regional assessments
 h_ra = h_g %>%
