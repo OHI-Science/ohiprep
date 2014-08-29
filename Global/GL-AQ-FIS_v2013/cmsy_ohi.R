@@ -1,6 +1,9 @@
 #######################################################
 ## prepares data and runs cmsy
 ## to generate b/bmsy data
+## Ended up going with the non-zero padding 
+## (i.e., NA's after first recorded catch not replaced
+## with zeros)
 #######################################################
 library(plyr)
 library(dplyr)
@@ -110,6 +113,9 @@ print(system.time({
 r <- ldply(r)
 
 write.csv(r, "Global/GL-AQ-FIS_v2013/tmp/b_bmsy_AQ_no_zeros_constrained.csv", row.names=FALSE)
+
+#final data:
+write.csv(r, "Global/GL-AQ-FIS_v2013/data/fnk_fis_b_bmsy.csv", row.names=FALSE)
 
 ## compare zeros/no zeros
 noZ <- read.csv("Global/GL-AQ-FIS_v2013/tmp/b_bmsy_AQ_no_zeros_constrained.csv")
