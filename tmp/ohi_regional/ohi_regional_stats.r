@@ -15,7 +15,7 @@ c = read.csv(file.path(dir_neptune_data, 'model/GL-NCEAS-CoastalPopulation_v2013
 
 # read in total pop from Neptune for 2013
 tp = read.csv(file.path(dir_neptune_data, 'model/GL-WorldBank-Statistics_v2012/data', 
-                       'rgn_wb_pop_2013a_updated.csv')) %>%
+                        'rgn_wb_pop_2013a_updated.csv')) %>%
   group_by(rgn_id) %>%
   filter(year == max(year)) %>% # just save the most recent year
   mutate(layer = 'total_pop') %>%
@@ -78,9 +78,9 @@ for (j in list.files(dirLE, pattern=glob2rx('*.csv'), full.names=T)){ # j="../oh
   
   # rename 'value' field
   nam = str_split_fixed(basename(file_path_sans_ext(j)), '_', 2)[2]
-#   nam = names(l)[!names(l) %in% c('rgn_id', 'cntry_key', 'sector', 'category', 'year')] 
+  #   nam = names(l)[!names(l) %in% c('rgn_id', 'cntry_key', 'sector', 'category', 'year')] 
   names(l)[!names(l) %in% c('rgn_id', 'cntry_key', 'sector', 'category', 'year')] = 'value'
- 
+  
   # if cntry_key, translate to rgn_id
   if ('cntry_key' %in% names(l)){
     
@@ -88,12 +88,14 @@ for (j in list.files(dirLE, pattern=glob2rx('*.csv'), full.names=T)){ # j="../oh
       left_join(c,
                 by = 'cntry_key') %>% 
       filter(!cntry_key %in% c('ATA')) %>% # Antarctica
-      select(rgn_id, sector, value)        
+      select(rgn_id, sector, year, value)        
   }
   
   # sum by rgn_id, add layer indicator
   h = lf %>% 
     group_by(rgn_id) %>%
+    filter(year == max(year, na.rm=T)) %>% 
+    select(rgn_id, sector, value) %>%
     summarize(value = sum(value, na.rm=T)) %>% # just need to sum by rgn_id
     mutate(layer = nam) %>%
     arrange(rgn_id); head(h); summary(h) 
@@ -140,7 +142,7 @@ h_g$coastal_pop[h_g$total_pop == 0] = 0 # to remove infinities
 h_g = h_g %>%  
   mutate(coastal_pop_ratio = coastal_pop/total_pop)
 h_g$coastal_pop_ratio[h_g$coastal_pop_ratio > 1] = 1 # cap at 1 for island nations
- head(h_g); summary(h_g)
+head(h_g); summary(h_g)
 
 # calculate coastal rev
 h_g = h_g %>%
@@ -169,10 +171,10 @@ h_ra = h_ra %>%
 # add 2 eezs by hand: 
 # area_eez from Wikipedia: http://en.wikipedia.org/wiki/Exclusive_economic_zone#United_States
 h_ra2 = rbind(h_ra, 
-            data.frame(rgn_nam = 'US West Coast', status='current', area_eez=895346+1579538, 
-                       area_inland1km=NA, coastal_jobs=NA, coastal_pop=NA, coastal_rev=NA),
-            data.frame(rgn_nam = 'Hawaii', status='current', area_eez=825549, 
-                       area_inland1km=NA, coastal_jobs=NA, coastal_pop=NA, coastal_rev=NA)) %>%
+              data.frame(rgn_nam = 'US West Coast', status='current', area_eez=895346+1579538, 
+                         area_inland1km=NA, coastal_jobs=NA, coastal_pop=NA, coastal_rev=NA),
+              data.frame(rgn_nam = 'Hawaii', status='current', area_eez=825549, 
+                         area_inland1km=NA, coastal_jobs=NA, coastal_pop=NA, coastal_rev=NA)) %>%
   arrange(status, rgn_nam); h_ra2
 
 write.csv(h_ra2, paste(f_out, '.csv', sep = ''), row.names = F, na = '')
@@ -194,4 +196,4 @@ cat(sprintf('Currently, OHI covers %f percent of global EEZs, benefits %d people
 
 # --- fin ---
 
-# Currently, OHI covers 4.949682 percent of global EEZs, benefits 340261751 people, accounts for 2 260 341 088.95 coastal jobs and 6 313 662 315 354.815430
+# Currently, OHI covers 4.949682 percent of global EEZs, benefits 340261751 people (the population living coastally), accounts for 89598500.000000 coastal jobs and 374408616717.593140 dollars of coastal revenue
