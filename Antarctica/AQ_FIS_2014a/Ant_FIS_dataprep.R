@@ -1,7 +1,11 @@
 # prep AQ catch data for CMSY runs and for calculating mean catch ####
+library(plyr)
+library(dplyr)
+
+dir_AQ <- '../ohiprep/Antarctica/AQ_FIS_2014a'
 
 ## Calculating: (1) catch time-series for CMSY and (2) weights for food provision FIS
-CCAMLR_FIS<-read.csv("Ant_Data/CCAMLR_FIS.csv") # load CCAMLR data
+CCAMLR_FIS<-read.csv(file.path(dir_AQ, "raw/CCAMLR_FIS.csv") ) # load CCAMLR data
 length(unique(CCAMLR_FIS$SpeciesCode)) # count unique taxa: 225
 
 # sum CCAMLR catch by year, CCAMLR area, and add species details
@@ -10,7 +14,7 @@ CCAMLR_sum<-aggregate(CCAMLR_FIS[,3], by=list(CCAMLR_FIS[,4], CCAMLR_FIS[,6], CC
 names(CCAMLR_sum)[1:3]<-names(CCAMLR_FIS)[c(4,6,2)]
 names(CCAMLR_sum)[4]<-"totC"
 # alternate using: library(plyr) # CCAMLR_sum<- ddply(CCAMLR_FIS, .(season.year, ASD, SpeciesCode),summarize, totC=sum(CatchWeight))
-CCAMLR_spp<-read.csv("Ant_Data/CCAMLR_spp.csv") #load spp names for reference
+CCAMLR_spp<-read.csv(file.path(dir_AQ, "raw/CCAMLR_spp.csv") ) #load spp names for reference
 CCAMLR_c<-merge(CCAMLR_sum, CCAMLR_spp, all.x=T)
 table(is.na(CCAMLR_c$ScientificName)) # check for NAs
 CCAMLR_c$FIS.target[CCAMLR_c$SpeciesCode=="SQA"]<-"y" # add Illex argentinus (Argentine shortfin squid)
@@ -42,11 +46,9 @@ length(unique(CCAMLR_y$ScientificName))# count unique taxa again: 169 (still hig
 CCAMLR_cs<-CCAMLR_c[CCAMLR_y$Tax_Lev==6,]
 # 1c # sum catch per taxon and year, irrespective of area
 # CCAMLR_t<-ddply(CCAMLR_cs, .(SpeciesCode, ScientificName, EnglishName, season.year),summarize, Catch=sum(totC)) # create the catch time series for CMSY
-library(plyr)
-library(dplyr)
 
 # the ccamlr region names have duplicates due to trailing spaces
 CCAMLR_cs <- CCAMLR_cs %>% mutate( ASD = gsub(' ', '', ASD) )
 CCAMLR_t <- CCAMLR_cs %>% rename (c('season.year' = 'yr')) %>% group_by(ASD, yr, ScientificName) %>% summarise (ct = sum (totC, na.rm =T) )
 
-write.csv(CCAMLR_t,"Ant_Outputs/CCAMLR_t.csv",row.names = F)
+write.csv(CCAMLR_t, file.path(dir_AQ ,"data/CCAMLR_ct_rgn_Aug29_2014.csv"),row.names = F)
