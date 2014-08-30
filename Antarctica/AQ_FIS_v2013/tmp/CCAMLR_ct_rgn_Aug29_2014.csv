@@ -1,2436 +1,2231 @@
 "ASD","yr","ScientificName","ct"
-"4132",1989,"Illex argentinus",1036000
-"4132",1989,"Micromesistius australis",2000
-"48",1978,"Dissostichus eleginoides",1407000
-"48",1978,"Notothenia gibberifrons",8294000
-"48",1978,"Notothenia rossii",5468000
-"48",1978,"Osteichthyes",15052000
-"48",1979,"Dissostichus eleginoides",7000
-"48",1979,"Notothenia gibberifrons",1600000
-"48",1979,"Notothenia rossii",4469000
-"48",1979,"Osteichthyes",3538000
-"48",1986,"Champsocephalus gunnari",32000
-"481",1978,"Chaenocephalus aceratus",5000
-"481",1978,"Champsocephalus gunnari",5573000
-"481",1978,"Notothenia gibberifrons",68000
-"481",1978,"Pseudochaenichthys georgianus",13000
-"481",1979,"Chaenocephalus aceratus",1388000
-"481",1979,"Champsocephalus gunnari",30357000
-"481",1979,"Channichthyidae",26000
-"481",1979,"Dissostichus eleginoides",1e+05
-"481",1979,"Loliginidae, Ommastrephidae",2000
-"481",1979,"Notothenia gibberifrons",3212000
-"481",1979,"Osteichthyes",79000
-"481",1979,"Pseudochaenichthys georgianus",384000
-"481",1979,"Rajiformes",1000
-"481",1980,"Champsocephalus gunnari",1087000
-"481",1980,"Dissostichus eleginoides",2000
-"481",1980,"Myctophidae",48000
-"481",1980,"Osteichthyes",551000
-"481",1980,"Pseudochaenichthys georgianus",72000
-"481",1981,"Chaenocephalus aceratus",38
-"481",1981,"Champsocephalus gunnari",1700039
-"481",1981,"Channichthyidae",16
-"481",1981,"Dissostichus mawsoni",1
-"481",1981,"Loliginidae, Ommastrephidae",1
-"481",1981,"Myctophidae",1
-"481",1981,"Osteichthyes",4230035
-"481",1981,"Pleuragramma antarcticum",5
-"481",1981,"Pseudochaenichthys georgianus",56
-"481",1981,"Rajiformes",154
-"481",1981,"Trematomus spp",3
-"481",1982,"Chaenocephalus aceratus",221
-"481",1982,"Champsocephalus gunnari",23
-"481",1982,"Channichthyidae",44
-"481",1982,"Dissostichus mawsoni",9
-"481",1982,"Myctophidae",38
-"481",1982,"Pleuragramma antarcticum",4
-"481",1982,"Pseudochaenichthys georgianus",2
-"481",1982,"Rajiformes",13
-"481",1982,"Trematomus spp",102
-"481",1983,"Champsocephalus gunnari",2604000
-"481",1983,"Osteichthyes",16000
-"481",1985,"Champsocephalus gunnari",17300
-"481",1985,"Channichthyidae",100
-"481",1985,"Channichthys rhinoceratus",19500
-"481",1985,"Notothenia rossii",4800
-"481",1985,"Pseudochaenichthys georgianus",600
-"481",1986,"Champsocephalus gunnari",60000
-"481",1987,"Chaenocephalus aceratus",1774
-"481",1987,"Champsocephalus gunnari",15440
-"481",1987,"Dissostichus mawsoni",33
-"481",1987,"Notothenia kempi",11
-"481",1987,"Notothenia neglecta",1286
-"481",1987,"Osteichthyes",1094
-"481",1987,"Pleuragramma antarcticum",4000
-"481",1987,"Pseudochaenichthys georgianus",27
-"481",1987,"Rajiformes",293
-"481",1988,"Chaenocephalus aceratus",2316
-"481",1988,"Champsocephalus gunnari",499
-"481",1988,"Dissostichus mawsoni",21
-"481",1988,"Notothenia kempi",52
-"481",1988,"Notothenia neglecta",1309
-"481",1988,"Osteichthyes",197
-"481",1988,"Pleuragramma antarcticum",6
-"481",1988,"Rajiformes",32
-"481",1989,"Chaenocephalus aceratus",1000
-"481",1989,"Champsocephalus gunnari",141000
-"481",1989,"Myctophidae",17000
-"481",1991,"Myctophidae",50000
-"481",1998,"Dissostichus eleginoides",33
-"481",1998,"Dissostichus mawsoni",1156
-"481",1998,"Osteichthyes",512
-"481",1998,"Rajiformes",28
-"481",2001,"Chaenocephalus aceratus",738
-"481",2001,"Champsocephalus gunnari",788
-"481",2001,"Channichthyidae",48
-"481",2001,"Dissostichus mawsoni",40
-"481",2001,"Notothenia neglecta",2296
-"481",2001,"Osteichthyes",142
-"481",2001,"Pleuragramma antarcticum",1
-"481",2001,"Pseudochaenichthys georgianus",142
-"481",2001,"Rajiformes",80
-"481",2001,"Trematomus spp",120
-"481",2005,"Chaenocephalus aceratus",1
-"481",2005,"Champsocephalus gunnari",5
-"481",2005,"Pleuragramma antarcticum",4
-"481",2005,"Pseudochaenichthys georgianus",3
-"481",2006,"Aethotaxis mitopteryx",0.21
-"481",2006,"Artedidraco skottsbergi",0.028
-"481",2006,"Bathylagus antarcticus",0.029
-"481",2006,"Bathyraja eatonii",15.925
-"481",2006,"Bathyraja maccaini",89.299
-"481",2006,"Chaenocephalus aceratus",2618.844
-"481",2006,"Champsocephalus gunnari",15964.613
-"481",2006,"Dissostichus mawsoni",19.914
-"481",2006,"Gymnoscopelus braueri",0.107
-"481",2006,"Gymnoscopelus nicholsi",9.523
-"481",2006,"Gymnoscopelus opisthopterus",0.038
-"481",2006,"Magnisudis prionosa",1.21
-"481",2006,"Notolepis spp",970
-"481",2006,"Notothenia gibberifrons",718.803
-"481",2006,"Ophthalmolycus amberensis",1.951
-"481",2006,"Pachycara brachycephalum",3.813
-"481",2006,"Pagetopsis macropterus",5.944
-"481",2006,"Pagothenia hansoni",5.587
-"481",2006,"Parachaenichthys charcoti",10.103
-"481",2006,"Platax spp",2.239
-"481",2006,"Pleuragramma antarcticum",14200.298
-"481",2006,"Pogonophryne marmorata",0.587
-"481",2006,"Pseudochaenichthys georgianus",3400
-"481",2006,"Racovitzia glacialis",0.198
-"481",2006,"Trematomus bernacchii",6.79
-"481",2006,"Trematomus eulepidotus",156.647
-"481",2006,"Trematomus loennbergii",0.257
-"481",2006,"Trematomus newnesi",159.544
-"481",2006,"Trematomus pennellii",4.413
-"481",2006,"Trematomus scotti",0.493
-"481",2006,"Trematomus tokarevi",4.211
-"481",2007,"Aethotaxis mitopteryx",1.43
-"481",2007,"Anotopterus pharao",0.607
-"481",2007,"Artedidraco skottsbergi",0.299
-"481",2007,"Bathyraja maccaini",95.843
-"481",2007,"Bathyraja spp",21.254
-"481",2007,"Chaenocephalus aceratus",242.163
-"481",2007,"Champsocephalus gunnari",758.015
-"481",2007,"Chionodraco myersi",0.19
-"481",2007,"Dissostichus mawsoni",33.934
-"481",2007,"Gymnodraco acuticeps",7.68
-"481",2007,"Gymnoscopelus braueri",0.096
-"481",2007,"Gymnoscopelus nicholsi",10.76
-"481",2007,"Harpagifer antarcticus",0.032
-"481",2007,"Lycodichthys antarcticus",0.05
-"481",2007,"Macrourus holotrachys",0.062
-"481",2007,"Muraenolepis microps",5.874
-"481",2007,"Notolepis coatsi",0.096
-"481",2007,"Notothenia gibberifrons",3226.235
-"481",2007,"Notothenia squamifrons",32.55
-"481",2007,"Ophthalmolycus amberensis",8.664
-"481",2007,"Pachycara brachycephalum",1.059
-"481",2007,"Pagetopsis macropterus",4.641
-"481",2007,"Parachaenichthys charcoti",2.875
-"481",2007,"Paradiplospinus gracilis",0.166
-"481",2007,"Paraliparis spp",0.002
-"481",2007,"Pleuragramma antarcticum",4.049
-"481",2007,"Pogonophryne phyllopogon",0.011
-"481",2007,"Pogonophryne spp",0.053
-"481",2007,"Prionodraco evansii",0.022
-"481",2007,"Protomyctophum spp",0.013
-"481",2007,"Pseudochaenichthys georgianus",24.073
-"481",2007,"Racovitzia glacialis",0.22
-"481",2007,"Trematomus bernacchii",4.358
-"481",2007,"Trematomus eulepidotus",66.57
-"481",2007,"Trematomus loennbergii",0.009
-"481",2007,"Trematomus newnesi",17.73
-"481",2007,"Trematomus nicolai",2.928
-"481",2007,"Trematomus scotti",0.705
-"481",2010,"Dissostichus mawsoni",0.0079
-"481",2010,"Protomyctophum spp",0.002
-"481",2011,"Anotopterus pharao",0.704
-"481",2011,"Champsocephalus gunnari",19
-"481",2011,"Pleuragramma antarcticum",28
-"481",2012,"Aethotaxis mitopteryx",0.3
-"481",2012,"Anotopterus pharao",47
-"481",2012,"Antimora rostrata",13
-"481",2012,"Artedidraco skottsbergi",0.1
-"481",2012,"Bathyraja eatonii",8.8
-"481",2012,"Bathyraja maccaini",54.5
-"481",2012,"Bathyraja spp",9.7
-"481",2012,"Chaenocephalus aceratus",538.23
-"481",2012,"Champsocephalus gunnari",8081.3
-"481",2012,"Chionobathyscus dewitti",0.2
-"481",2012,"Dissostichus mawsoni",124.4
-"481",2012,"Gymnoscopelus braueri",0.1
-"481",2012,"Gymnoscopelus nicholsi",97.3
-"481",2012,"Harpagifer antarcticus",0.1
-"481",2012,"Lycodichthys antarcticus",0.3
-"481",2012,"Muraenolepis microps",10
-"481",2012,"Notothenia gibberifrons",1655.5
-"481",2012,"Ophthalmolycus amberensis",5
-"481",2012,"Osteichthyes",0.005
-"481",2012,"Pachycara brachycephalum",1.1
-"481",2012,"Pagetopsis macropterus",0.4
-"481",2012,"Pagothenia hansoni",6.6
-"481",2012,"Parachaenichthys charcoti",2
-"481",2012,"Paradiplospinus gracilis",0.3
-"481",2012,"Paraliparis spp",0.2
-"481",2012,"Pleuragramma antarcticum",32.5
-"481",2012,"Pogonophryne marmorata",0.2
-"481",2012,"Pogonophryne scotti",0.5
-"481",2012,"Pogonophryne spp",0.7
-"481",2012,"Pseudochaenichthys georgianus",41.7
-"481",2012,"Racovitzia glacialis",0.6
-"481",2012,"Trematomus bernacchii",6.8
-"481",2012,"Trematomus eulepidotus",52.4
-"481",2012,"Trematomus newnesi",1.7
-"482",1977,"Dissostichus eleginoides",5000
-"482",1977,"Osteichthyes",11000
-"482",1977,"Pseudochaenichthys georgianus",10000
-"482",1978,"Chaenocephalus aceratus",211000
-"482",1978,"Champsocephalus gunnari",138895000
-"482",1978,"Dissostichus eleginoides",90000
-"482",1978,"Notothenia gibberifrons",75000
-"482",1978,"Notothenia squamifrons",9000
-"482",1978,"Osteichthyes",217000
-"482",1978,"Pseudochaenichthys georgianus",649000
-"482",1978,"Rajiformes",4000
-"482",1979,"Champsocephalus gunnari",21439000
-"482",1979,"Channichthyidae",243000
-"482",1979,"Dissostichus eleginoides",37000
-"482",1979,"Notothenia gibberifrons",2598000
-"482",1979,"Osteichthyes",133000
-"482",1979,"Pseudochaenichthys georgianus",599000
-"482",1980,"Champsocephalus gunnari",5234000
-"482",1980,"Channichthyidae",1668000
-"482",1980,"Dissostichus eleginoides",4000
-"482",1980,"Micromesistius australis",36000
-"482",1980,"Myctophidae",33000
-"482",1980,"Notothenia gibberifrons",1416000
-"482",1980,"Osteichthyes",501000
-"482",1980,"Pseudochaenichthys georgianus",2388000
-"482",1980,"Rajiformes",6000
-"482",1981,"Champsocephalus gunnari",1858000
-"482",1981,"Dissostichus eleginoides",83000
-"482",1981,"Notothenia gibberifrons",178000
-"482",1981,"Notothenia squamifrons",41000
-"482",1981,"Osteichthyes",2770000
-"482",1981,"Pseudochaenichthys georgianus",30000
-"482",1982,"Champsocephalus gunnari",557000
-"482",1982,"Dissostichus eleginoides",30000
-"482",1982,"Myctophidae",317000
-"482",1982,"Notothenia gibberifrons",589000
-"482",1982,"Osteichthyes",2181000
-"482",1983,"Champsocephalus gunnari",5948000
-"482",1983,"Notothenia gibberifrons",7001000
-"482",1983,"Notothenia squamifrons",4000
-"482",1983,"Osteichthyes",13233000
-"482",1983,"Pleuragramma antarcticum",110000
-"482",1984,"Champsocephalus gunnari",4499000
-"482",1984,"Notothenia gibberifrons",2499000
-"482",1984,"Osteichthyes",505000
-"482",1985,"Champsocephalus gunnari",2361000
-"482",1985,"Dissostichus eleginoides",9000
-"482",1985,"Notothenia gibberifrons",5383000
-"482",1985,"Notothenia squamifrons",194000
-"482",1985,"Osteichthyes",622000
-"482",1986,"Champsocephalus gunnari",2711000
-"482",1986,"Notothenia gibberifrons",341000
-"482",1987,"Channichthyidae",1000
-"482",1987,"Notothenia gibberifrons",3000
-"482",1987,"Osteichthyes",1000
-"482",1988,"Champsocephalus gunnari",1336000
-"482",1988,"Notothenia gibberifrons",4511000
-"482",1989,"Champsocephalus gunnari",659000
-"482",1989,"Notothenia gibberifrons",586000
-"482",1990,"Champsocephalus gunnari",2401000
-"482",1990,"Notothenia gibberifrons",313000
-"482",1991,"Chaenocephalus aceratus",4505
-"482",1991,"Champsocephalus gunnari",13871
-"482",1991,"Channichthyidae",13
-"482",1991,"Dissostichus eleginoides",4
-"482",1991,"Myctophidae",240
-"482",1991,"Notothenia gibberifrons",9103
-"482",1991,"Notothenia neglecta",309
-"482",1991,"Osteichthyes",55
-"482",1991,"Pleuragramma antarcticum",3
-"482",1991,"Pseudochaenichthys georgianus",5392
-"482",1991,"Rajiformes",50
-"482",1992,"Euphausia superba",117802000
-"482",1993,"Euphausia superba",12670000
-"482",1994,"Chaenocephalus aceratus",31
-"482",1994,"Champsocephalus gunnari",1
-"482",1994,"Euphausia superba",19259000
-"482",1994,"Notothenia gibberifrons",37
-"482",1994,"Pseudochaenichthys georgianus",1
-"482",1995,"Euphausia superba",48833400
-"482",1996,"Euphausia superba",2734000
-"482",1997,"Euphausia superba",98500
-"482",1998,"Dissostichus eleginoides",32
-"482",1998,"Euphausia superba",6673000
-"482",1998,"Osteichthyes",4
-"482",1998,"Rajiformes",77
-"482",1999,"Chaenocephalus aceratus",1454
-"482",1999,"Champsocephalus gunnari",502
-"482",1999,"Channichthyidae",279
-"482",1999,"Dissostichus mawsoni",2
-"482",1999,"Euphausia superba",62076767
-"482",1999,"Myctophidae",42
-"482",1999,"Notothenia gibberifrons",5062
-"482",1999,"Notothenia neglecta",44
-"482",1999,"Notothenia squamifrons",5023
-"482",1999,"Osteichthyes",59
-"482",1999,"Pseudochaenichthys georgianus",2583
-"482",1999,"Rajiformes",75
-"482",1999,"Trematomus spp",90
-"482",2000,"Dissostichus eleginoides",36000
-"482",2000,"Euphausia superba",16891000
-"482",2001,"Euphausia superba",4980800
-"482",2002,"Euphausia superba",72059557
-"482",2003,"Euphausia superba",15426786
-"482",2004,"Euphausia superba",46455659
-"482",2005,"Champsocephalus gunnari",510
-"482",2005,"Euphausia superba",73494049.5
-"482",2008,"Champsocephalus gunnari",2.1
-"482",2009,"Pseudochaenichthys georgianus",600
-"482",2010,"Chaenocephalus aceratus",0.101
-"482",2010,"Dissostichus mawsoni",19
-"482",2010,"Pseudochaenichthys georgianus",0.14
-"482",2011,"Chaenocephalus aceratus",0.0248
-"482",2011,"Champsocephalus gunnari",8.57
-"482",2011,"Channichthyidae",0.18
-"482",2011,"Dissostichus mawsoni",2.0682
-"482",2011,"Notolepis coatsi",309
-"482",2011,"Protomyctophum bolini",152
-"482",2011,"Salpidae",2
-"482",2012,"Channichthyidae",8
-"482",2012,"Gymnoscopelus nicholsi",0.02
-"483",1971,"Champsocephalus gunnari",10701000
-"483",1971,"Osteichthyes",1454000
-"483",1972,"Champsocephalus gunnari",551000
-"483",1972,"Notothenia squamifrons",35000
-"483",1972,"Osteichthyes",27000
-"483",1973,"Champsocephalus gunnari",1830000
-"483",1973,"Notothenia squamifrons",765000
-"483",1974,"Champsocephalus gunnari",254000
-"483",1974,"Osteichthyes",493000
-"483",1975,"Champsocephalus gunnari",746000
-"483",1975,"Notothenia squamifrons",1900000
-"483",1975,"Osteichthyes",1407000
-"483",1976,"Champsocephalus gunnari",12290000
-"483",1976,"Notothenia gibberifrons",4999000
-"483",1976,"Notothenia rossii",10753000
-"483",1976,"Notothenia squamifrons",5e+05
-"483",1976,"Osteichthyes",190000
-"483",1977,"Chaenocephalus aceratus",494000
-"483",1977,"Champsocephalus gunnari",93595000
-"483",1977,"Dissostichus eleginoides",497000
-"483",1977,"Notothenia gibberifrons",4386000
-"483",1977,"Notothenia rossii",8574000
-"483",1977,"Notothenia squamifrons",2937000
-"483",1977,"Osteichthyes",15522000
-"483",1977,"Pseudochaenichthys georgianus",2775000
-"483",1978,"Chaenocephalus aceratus",2307000
-"483",1978,"Champsocephalus gunnari",7472000
-"483",1978,"Dissostichus eleginoides",649000
-"483",1978,"Notothenia gibberifrons",13353000
-"483",1978,"Notothenia rossii",4097000
-"483",1978,"Osteichthyes",302000
-"483",1978,"Pseudochaenichthys georgianus",12743000
-"483",1978,"Rajiformes",4000
-"483",1979,"Chaenocephalus aceratus",828000
-"483",1979,"Champsocephalus gunnari",809000
-"483",1979,"Dissostichus eleginoides",219000
-"483",1979,"Notothenia gibberifrons",6150000
-"483",1979,"Notothenia rossii",972000
-"483",1979,"Osteichthyes",481000
-"483",1979,"Pseudochaenichthys georgianus",758000
-"483",1979,"Rajiformes",156000
-"483",1980,"Chaenocephalus aceratus",1247000
-"483",1980,"Champsocephalus gunnari",8795000
-"483",1980,"Channichthyidae",917000
-"483",1980,"Dissostichus eleginoides",1e+05
-"483",1980,"Myctophidae",505000
-"483",1980,"Notothenia gibberifrons",6855000
-"483",1980,"Notothenia rossii",24621000
-"483",1980,"Notothenia squamifrons",272000
-"483",1980,"Osteichthyes",5064000
-"483",1980,"Pseudochaenichthys georgianus",1289000
-"483",1980,"Rajiformes",127000
-"483",1981,"Chaenocephalus aceratus",303000
-"483",1981,"Champsocephalus gunnari",27903000
-"483",1981,"Channichthyidae",3637000
-"483",1981,"Dissostichus eleginoides",175000
-"483",1981,"Notothenia gibberifrons",3395000
-"483",1981,"Notothenia rossii",978000
-"483",1981,"Notothenia squamifrons",544000
-"483",1981,"Osteichthyes",7233000
-"483",1981,"Pseudochaenichthys georgianus",488000
-"483",1981,"Rajiformes",55000
-"483",1982,"Chaenocephalus aceratus",676000
-"483",1982,"Champsocephalus gunnari",54040000
-"483",1982,"Dissostichus eleginoides",324000
-"483",1982,"Notothenia gibberifrons",2605000
-"483",1982,"Notothenia rossii",1100000
-"483",1982,"Notothenia squamifrons",812000
-"483",1982,"Osteichthyes",5336000
-"483",1982,"Pseudochaenichthys georgianus",956000
-"483",1982,"Rajiformes",1000
-"483",1983,"Chaenocephalus aceratus",3000
-"483",1983,"Champsocephalus gunnari",178824000
-"483",1983,"Dissostichus eleginoides",218000
-"483",1983,"Myctophidae",1767000
-"483",1983,"Notothenia gibberifrons",419000
-"483",1983,"Notothenia rossii",1220000
-"483",1983,"Osteichthyes",14519900
-"483",1983,"Pseudochaenichthys georgianus",16000
-"483",1984,"Chaenocephalus aceratus",1196000
-"483",1984,"Champsocephalus gunnari",35743000
-"483",1984,"Channichthyidae",54000
-"483",1984,"Dissostichus eleginoides",268000
-"483",1984,"Myctophidae",1158000
-"483",1984,"Notothenia gibberifrons",4652000
-"483",1984,"Notothenia rossii",4124000
-"483",1984,"Notothenia squamifrons",1264000
-"483",1984,"Osteichthyes",3820900
-"483",1984,"Pseudochaenichthys georgianus",1967000
-"483",1984,"Rajiformes",47000
-"483",1985,"Chaenocephalus aceratus",105000
-"483",1985,"Champsocephalus gunnari",628000
-"483",1985,"Dissostichus eleginoides",521000
-"483",1985,"Myctophidae",1021000
-"483",1985,"Notothenia gibberifrons",1115000
-"483",1985,"Notothenia rossii",446000
-"483",1985,"Notothenia squamifrons",66000
-"483",1985,"Osteichthyes",1020000
-"483",1985,"Pseudochaenichthys georgianus",23000
-"483",1985,"Rajiformes",13000
-"483",1986,"Chaenocephalus aceratus",412000
-"483",1986,"Champsocephalus gunnari",21007617
-"483",1986,"Dissostichus eleginoides",733077
-"483",1986,"Myctophidae",1789000
-"483",1986,"Notothenia gibberifrons",2848159
-"483",1986,"Notothenia rossii",264400
-"483",1986,"Notothenia squamifrons",153012
-"483",1986,"Osteichthyes",1149003
-"483",1986,"Pseudochaenichthys georgianus",135000
-"483",1986,"Rajiformes",7814
-"483",1987,"Chaenocephalus aceratus",489244
-"483",1987,"Champsocephalus gunnari",80585989
-"483",1987,"Dissostichus eleginoides",1953717
-"483",1987,"Myctophidae",8997005
-"483",1987,"Notothenia gibberifrons",5058284
-"483",1987,"Notothenia rossii",65410
-"483",1987,"Notothenia squamifrons",1362808
-"483",1987,"Osteichthyes",1642535
-"483",1987,"Pseudochaenichthys georgianus",305286
-"483",1987,"Rajiformes",224
-"483",1988,"Chaenocephalus aceratus",154987
-"483",1988,"Champsocephalus gunnari",36054192
-"483",1988,"Dissostichus eleginoides",876196
-"483",1988,"Myctophidae",29016000
-"483",1988,"Notothenia gibberifrons",1875146
-"483",1988,"Notothenia rossii",295309
-"483",1988,"Notothenia squamifrons",718050
-"483",1988,"Osteichthyes",783341
-"483",1988,"Pseudochaenichthys georgianus",214623
-"483",1988,"Rajiformes",297
-"483",1989,"Chaenocephalus aceratus",730
-"483",1989,"Champsocephalus gunnari",2640
-"483",1989,"Dissostichus eleginoides",7060060
-"483",1989,"Martialia hyadesi",8230
-"483",1989,"Myctophidae",6530000
-"483",1989,"Notothenia gibberifrons",1210
-"483",1989,"Notothenia rossii",240
-"483",1989,"Notothenia squamifrons",440030
-"483",1989,"Osteichthyes",44590
-"483",1989,"Pseudochaenichthys georgianus",1250
-"483",1990,"Chaenocephalus aceratus",1510
-"483",1990,"Champsocephalus gunnari",8134660
-"483",1990,"Dissostichus eleginoides",6784550
-"483",1990,"Myctophidae",130
-"483",1990,"Notothenia gibberifrons",11490
-"483",1990,"Notothenia rossii",2140
-"483",1990,"Notothenia squamifrons",24140
-"483",1990,"Osteichthyes",2090
-"483",1990,"Pseudochaenichthys georgianus",680
-"483",1990,"Rajiformes",130
-"483",1991,"Chaenocephalus aceratus",1520
-"483",1991,"Champsocephalus gunnari",44390
-"483",1991,"Dissostichus eleginoides",1756400
-"483",1991,"Notothenia gibberifrons",3260
-"483",1991,"Notothenia rossii",520
-"483",1991,"Notothenia squamifrons",200
-"483",1991,"Osteichthyes",250
-"483",1991,"Pseudochaenichthys georgianus",1600
-"483",1991,"Rajiformes",160
-"483",1992,"Chaenocephalus aceratus",1530
-"483",1992,"Champsocephalus gunnari",5270
-"483",1992,"Dissostichus eleginoides",3808968
-"483",1992,"Notothenia gibberifrons",3570
-"483",1992,"Notothenia squamifrons",130
-"483",1992,"Osteichthyes",530
-"483",1992,"Paralomis spinosissima",299343
-"483",1992,"Pseudochaenichthys georgianus",1700
-"483",1992,"Rajiformes",1572
-"483",1993,"Dissostichus eleginoides",3019936
-"483",1993,"Myctophidae",114000
-"483",1994,"Chaenocephalus aceratus",1949
-"483",1994,"Champsocephalus gunnari",12905
-"483",1994,"Dissostichus eleginoides",657833
-"483",1994,"Mancopsetta maculata",2
-"483",1994,"Muraenolepis microps",14
-"483",1994,"Myctophidae",6
-"483",1994,"Notothenia gibberifrons",3990
-"483",1994,"Notothenia squamifrons",196
-"483",1994,"Osteichthyes",13
-"483",1994,"Parachaenichthys georgianus",21
-"483",1994,"Paralithodes spp",79
-"483",1994,"Pseudochaenichthys georgianus",949
-"483",1994,"Raja georgiana",53
-"483",1994,"Rajiformes",11975
-"483",1994,"Scorpaenidae",2
-"483",1995,"Antimora rostrata",826
-"483",1995,"Chaenocephalus aceratus",302
-"483",1995,"Champsocephalus gunnari",9870
-"483",1995,"Dissostichus eleginoides",3370828
-"483",1995,"Notothenia gibberifrons",501
-"483",1995,"Osteichthyes",9566
-"483",1995,"Paralomis spinosissima",283000
-"483",1995,"Rajiformes",90336
-"483",1996,"Antimora rostrata",200
-"483",1996,"Dissostichus eleginoides",3601504
-"483",1996,"Martialia hyadesi",52000
-"483",1996,"Paralomis spinosissima",213629
-"483",1996,"Rajiformes",44933
-"483",1997,"Antimora rostrata",1725
-"483",1997,"Dissostichus eleginoides",3812124
-"483",1997,"Martialia hyadesi",81075
-"483",1997,"Paralomis spinosissima",433
-"483",1997,"Rajiformes",31900
-"483",1998,"Antimora rostrata",605
-"483",1998,"Champsocephalus gunnari",6170
-"483",1998,"Dissostichus eleginoides",3201169
-"483",1998,"Lithodidae",129
-"483",1998,"Osteichthyes",6693
-"483",1998,"Rajiformes",8943
-"483",1999,"Antimora rostrata",26
-"483",1999,"Chaenocephalus aceratus",41
-"483",1999,"Champsocephalus gunnari",264942
-"483",1999,"Dissostichus eleginoides",3626802
-"483",1999,"Elasmobranchii",133
-"483",1999,"Lithodes spp",11
-"483",1999,"Lithodidae",80
-"483",1999,"Muraenolepis spp",15
-"483",1999,"Myctophidae",5120
-"483",1999,"Notothenia gibberifrons",33
-"483",1999,"Paralithodes spp",73
-"483",1999,"Paralomis aculeata",12
-"483",1999,"Paralomis spinosissima",196
-"483",1999,"Pseudochaenichthys georgianus",134
-"483",1999,"Rajiformes",17433
-"483",2000,"Bathyraja meridionalis",173
-"483",2000,"Bothidae",1
-"483",2000,"Chaenocephalus aceratus",407
-"483",2000,"Champsocephalus gunnari",4113584
-"483",2000,"Dissostichus eleginoides",4904322
-"483",2000,"Gymnoscopelus nicholsi",189
-"483",2000,"Lithodidae",6
-"483",2000,"Mancopsetta maculata",2
-"483",2000,"Medusae",4639
-"483",2000,"Muraenolepis microps",7
-"483",2000,"Muraenolepis spp",13
-"483",2000,"Myctophidae",67485
-"483",2000,"Notothenia gibberifrons",668
-"483",2000,"Notothenia squamifrons",4936
-"483",2000,"Nototheniops larseni",18
-"483",2000,"Parachaenichthys georgianus",9
-"483",2000,"Paralomis spinosissima",294
-"483",2000,"Pareledone spp",6
-"483",2000,"Pseudochaenichthys georgianus",376
-"483",2000,"Raja georgiana",226
-"483",2000,"Rajiformes",488
-"483",2001,"Antimora rostrata",49
-"483",2001,"Bathyraja eatonii",284
-"483",2001,"Champsocephalus gunnari",959620
-"483",2001,"Channichthyidae",193
-"483",2001,"Dissostichus eleginoides",4046807
-"483",2001,"Illex argentinus",17800
-"483",2001,"Martialia hyadesi",2151
-"483",2001,"Notothenia gibberifrons",101
-"483",2001,"Paralomis spinosissima",3541
-"483",2001,"Pseudochaenichthys georgianus",6041
-"483",2001,"Rajiformes",13367
-"483",2002,"Chaenocephalus aceratus",5063
-"483",2002,"Champsocephalus gunnari",2667058
-"483",2002,"Channichthyidae",366
-"483",2002,"Coryphaenoides rupestris",9100
-"483",2002,"Dissostichus eleginoides",5742461
-"483",2002,"Gymnoscopelus nicholsi",57
-"483",2002,"Halaelurus canescens",19
-"483",2002,"Illex argentinus",48600
-"483",2002,"Medusae",120
-"483",2002,"Muraenolepis microps",29
-"483",2002,"Notothenia gibberifrons",1283
-"483",2002,"Notothenia rossii",5693
-"483",2002,"Notothenia squamifrons",64
-"483",2002,"Nototheniops larseni",16
-"483",2002,"Osteichthyes",1360
-"483",2002,"Paralomis spinosissima",55524
-"483",2002,"Pseudochaenichthys georgianus",6083
-"483",2003,"Antimora rostrata",3702
-"483",2003,"Asteroidea",1
-"483",2003,"Bathyraja meridionalis",20
-"483",2003,"Chaenocephalus aceratus",1000
-"483",2003,"Champsocephalus gunnari",1986160
-"483",2003,"Dissostichus eleginoides",7528442
-"483",2003,"Invertebrata",134
-"483",2003,"Lithodidae",713
-"483",2003,"Macrourus holotrachys",12
-"483",2003,"Muraenolepis microps",1
-"483",2003,"Muraenolepis spp",4
-"483",2003,"Paralomis aculeata",216
-"483",2003,"Paralomis spinosissima",59
-"483",2003,"Porifera",2
-"483",2003,"Pseudochaenichthys georgianus",5000
-"483",2003,"Raja georgiana",663
-"483",2003,"Rajiformes",16561
-"483",2004,"Antimora rostrata",9028
-"483",2004,"Callorhinchidae",5960
-"483",2004,"Chaenocephalus aceratus",188
-"483",2004,"Champsocephalus gunnari",2683406
-"483",2004,"Dissostichus eleginoides",4497151
-"483",2004,"Elasmobranchii",36
-"483",2004,"Lithodidae",258
-"483",2004,"Paralomis aculeata",4
-"483",2004,"Pseudochaenichthys georgianus",1552
-"483",2004,"Rajiformes",35061
-"483",2005,"Antimora rostrata",18743
-"483",2005,"Asteroidea",1
-"483",2005,"Chaenocephalus aceratus",1800.48
-"483",2005,"Champsocephalus gunnari",200272.5
-"483",2005,"Channichthyidae",6
-"483",2005,"Dissostichus eleginoides",3034148
-"483",2005,"Lithodidae",285
-"483",2005,"Medusae",53
-"483",2005,"Muraenolepis marmoratus",47.385
-"483",2005,"Muraenolepis spp",2
-"483",2005,"Myctophidae",1145
-"483",2005,"Notothenia rossii",108
-"483",2005,"Nototheniops larseni",235
-"483",2005,"Parachaenichthys georgianus",0.1
-"483",2005,"Paralomis spinosissima",22
-"483",2005,"Pseudochaenichthys georgianus",25045.445
-"483",2005,"Raja georgiana",182.39
-"483",2005,"Rajiformes",8399
-"483",2006,"Antimora rostrata",33241.49
-"483",2006,"Chaenocephalus aceratus",63
-"483",2006,"Champsocephalus gunnari",2169061
-"483",2006,"Channichthyidae",503.05
-"483",2006,"Dissostichus eleginoides",3535181.2
-"483",2006,"Invertebrata",10.5
-"483",2006,"Lithodidae",1200.46
-"483",2006,"Notothenia rossii",1197
-"483",2006,"Pseudochaenichthys georgianus",5513.9
-"483",2006,"Rajiformes",7255.64
-"483",2007,"Adelieledone polymorpha",6.554999985
-"483",2007,"Antimora rostrata",26374.42
-"483",2007,"Artedidraco mirus",0.236999999
-"483",2007,"Chaenocephalus aceratus",381.4560023
-"483",2007,"Champsocephalus gunnari",4345157.323873
-"483",2007,"Dissostichus eleginoides",3538948.96299863
-"483",2007,"Gymnoscopelus nicholsi",1.649999958
-"483",2007,"Invertebrata",97.5
-"483",2007,"Lamna nasus",100
-"483",2007,"Lithodidae",314.05
-"483",2007,"Mancopsetta maculata",23.440999684
-"483",2007,"Medusae",529.4800002
-"483",2007,"Mollusca",0.5
-"483",2007,"Muraenolepis microps",23.40800014
-"483",2007,"Notothenia gibberifrons",40
-"483",2007,"Notothenia rossii",1151.657983
-"483",2007,"Notothenia squamifrons",1396.244945867
-"483",2007,"Nototheniops larseni",5.273999892
-"483",2007,"Parachaenichthys georgianus",33.83600046
-"483",2007,"Paralomis spinosissima",131.87099955
-"483",2007,"Pareledone turqueti",257.206999979
-"483",2007,"Pseudochaenichthys georgianus",866.2900011
-"483",2007,"Psilodraco breviceps",1.670000043
-"483",2007,"Raja georgiana",319.46000057
-"483",2007,"Rajiformes",3853.28
-"483",2007,"Thymops birsteini",0.016000001
-"483",2008,"Adelieledone polymorpha",2.753000004
-"483",2008,"Antimora rostrata",35734.5
-"483",2008,"Artedidraco mirus",0.209000004
-"483",2008,"Asteroidea",5.2
-"483",2008,"Chaenocephalus aceratus",1039.3619997
-"483",2008,"Champsocephalus gunnari",2491025.79198
-"483",2008,"Channichthyidae",304.98
-"483",2008,"Dissostichus eleginoides",3864239.699978
-"483",2008,"Gymnoscopelus bolini",0.149000004
-"483",2008,"Gymnoscopelus fraseri",40
-"483",2008,"Gymnoscopelus nicholsi",1.047000021
-"483",2008,"Invertebrata",28.7
-"483",2008,"Lamna nasus",810
-"483",2008,"Lithodidae",487
-"483",2008,"Mancopsetta maculata",15.97400015
-"483",2008,"Martialia hyadesi",10
-"483",2008,"Medusae",50
-"483",2008,"Melanostigma spp",0.162
-"483",2008,"Muraenolepis microps",62.672
-"483",2008,"Muraenolepis spp",3
-"483",2008,"Notothenia angustifrons",0.030999999
-"483",2008,"Notothenia gibberifrons",5.3
-"483",2008,"Notothenia kempi",3.5
-"483",2008,"Notothenia rossii",2638.645961
-"483",2008,"Notothenia squamifrons",467.6850033
-"483",2008,"Nototheniops larseni",55.64899966
-"483",2008,"Pagothenia hansoni",238.9110006
-"483",2008,"Parachaenichthys georgianus",17.92620013
-"483",2008,"Paradiplospinus gracilis",0.029999999
-"483",2008,"Paralomis spinosissima",935.832999
-"483",2008,"Pareledone turqueti",10.98900001
-"483",2008,"Protomyctophum choriodon",0.027000001
-"483",2008,"Pseudochaenichthys georgianus",890.1880038
-"483",2008,"Psilodraco breviceps",2.601999989
-"483",2008,"Raja georgiana",223.9080005
-"483",2008,"Rajiformes",12321.28
-"483",2009,"Aethotaxis mitopteryx",0.035999998
-"483",2009,"Antimora rostrata",32991.96
-"483",2009,"Artedidraco mirus",0.078000002
-"483",2009,"Asteroidea",0.6
-"483",2009,"Chaenocephalus aceratus",487.5009992
-"483",2009,"Champsocephalus gunnari",1833624.278013
-"483",2009,"Channichthyidae",18
-"483",2009,"Dissostichus eleginoides",3381655.0589997
-"483",2009,"Dissostichus mawsoni",32
-"483",2009,"Gymnoscopelus nicholsi",316.0850009
-"483",2009,"Invertebrata",15.481
-"483",2009,"Lithodidae",526.2
-"483",2009,"Mancopsetta maculata",2.528999969
-"483",2009,"Medusae",22
-"483",2009,"Muraenolepis microps",41.45200006
-"483",2009,"Muraenolepis spp",0.9
-"483",2009,"Myctophidae",218
-"483",2009,"Notothenia gibberifrons",696.5380034
-"483",2009,"Notothenia rossii",2485.209976
-"483",2009,"Notothenia squamifrons",22.75499996
-"483",2009,"Nototheniops larseni",19.90699992
-"483",2009,"Nototheniops nudifrons",4.309000006
-"483",2009,"Pagothenia hansoni",41.03099985
-"483",2009,"Parachaenichthys georgianus",7.075999999
-"483",2009,"Paradiplospinus gracilis",0.896000005
-"483",2009,"Paralomis spinosissima",36.53279995
-"483",2009,"Pareledone turqueti",4.162000043
-"483",2009,"Pseudochaenichthys georgianus",1076.5570025
-"483",2009,"Psilodraco breviceps",16.08600011
-"483",2009,"Psychroteuthis glacialis",0.123
-"483",2009,"Raja georgiana",141.8409989
-"483",2009,"Rajiformes",22188.85
-"483",2009,"Trematomus vicarius",0.101999998
-"483",2010,"Adelieledone polymorpha",0.125
-"483",2010,"Antimora rostrata",15743.39
-"483",2010,"Artedidraco mirus",0.259999998
-"483",2010,"Chaenocephalus aceratus",1228.335
-"483",2010,"Champsocephalus gunnari",12018.85498
-"483",2010,"Dissostichus eleginoides",2518617.5020005
-"483",2010,"Gymnoscopelus nicholsi",100.8359988
-"483",2010,"Invertebrata",0.96
-"483",2010,"Liparididae",0.01
-"483",2010,"Lithodidae",148.24
-"483",2010,"Magnisudis prionosa",0.524999976
-"483",2010,"Mancopsetta maculata",11.41499996
-"483",2010,"Muraenolepis microps",18.34000029
-"483",2010,"Myctophidae",0.115
-"483",2010,"Notothenia gibberifrons",1731.784996
-"483",2010,"Notothenia rossii",16150.18015
-"483",2010,"Notothenia squamifrons",285.7850068
-"483",2010,"Nototheniops nudifrons",11.53800013
-"483",2010,"Pagothenia hansoni",96.28299796
-"483",2010,"Parachaenichthys georgianus",10.85900014
-"483",2010,"Paradiplospinus gracilis",0.029999999
-"483",2010,"Paralomis spinosissima",52843.61299995
-"483",2010,"Pareledone turqueti",7.447000035
-"483",2010,"Pseudochaenichthys georgianus",1891.046
-"483",2010,"Psilodraco breviceps",1.754999951
-"483",2010,"Raja georgiana",273.3469973
-"483",2010,"Rajiformes",6778.33
-"483",2011,"Antimora rostrata",8856.55
-"483",2011,"Artedidraco mirus",0.152
-"483",2011,"Borostomias antarcticus",0.213
-"483",2011,"Chaenocephalus aceratus",892.8340025
-"483",2011,"Champsocephalus gunnari",11694.294993
-"483",2011,"Dissostichus eleginoides",1762854.4240518
-"483",2011,"Dissostichus mawsoni",62
-"483",2011,"Gymnoscopelus nicholsi",33.024000508
-"483",2011,"Lamna nasus",80
-"483",2011,"Lithodidae",170.7
-"483",2011,"Mancopsetta maculata",13.330000102
-"483",2011,"Muraenolepis microps",32.15299996
-"483",2011,"Muraenolepis spp",2.8
-"483",2011,"Myctophidae",9
-"483",2011,"Notothenia angustifrons",0.115000002
-"483",2011,"Notothenia gibberifrons",2291.5350159
-"483",2011,"Notothenia rossii",3654.9850262
-"483",2011,"Notothenia squamifrons",4897.87401132
-"483",2011,"Nototheniops larseni",90.90199935
-"483",2011,"Nototheniops nudifrons",20.817999986
-"483",2011,"Osteichthyes",162.738000026
-"483",2011,"Pagothenia hansoni",48.74000112
-"483",2011,"Parachaenichthys georgianus",49.22900003
-"483",2011,"Paradiplospinus gracilis",0.403000003
-"483",2011,"Paralomis spinosissima",41.03499999
-"483",2011,"Penaeus spp",3.461999987
-"483",2011,"Pseudochaenichthys georgianus",682.4269983
-"483",2011,"Psilodraco breviceps",1.453000039
-"483",2011,"Raja georgiana",383.3999969
-"483",2011,"Rajiformes",4456.7
-"483",2012,"Antimora rostrata",9458.1
-"483",2012,"Artedidraco mirus",0.1
-"483",2012,"Chaenocephalus aceratus",117.1
-"483",2012,"Champsocephalus gunnari",999068
-"483",2012,"Dissostichus eleginoides",1805685.2
-"483",2012,"Gymnoscopelus nicholsi",0.2
-"483",2012,"Lithodidae",26.1
-"483",2012,"Mancopsetta maculata",3.2
-"483",2012,"Muraenolepis microps",1.7
-"483",2012,"Muraenolepis spp",8.9
-"483",2012,"Myctophidae",283.5
-"483",2012,"Notothenia gibberifrons",208.6
-"483",2012,"Notothenia rossii",99.8
-"483",2012,"Notothenia squamifrons",24227.7
-"483",2012,"Nototheniops larseni",2.1
-"483",2012,"Osteichthyes",0.4
-"483",2012,"Parachaenichthys georgianus",0.2
-"483",2012,"Paradiplospinus gracilis",0.1
-"483",2012,"Paralomis spinosissima",8.9
-"483",2012,"Pareledone turqueti",0.8
-"483",2012,"Pseudochaenichthys georgianus",153.4
-"483",2012,"Raja georgiana",94.2
-"483",2012,"Rajiformes",1750.4
-"483",2012,"Teuthoidea",0.2
-"484",1992,"Dissostichus eleginoides",29799
-"484",1993,"Dissostichus eleginoides",9540
-"484",2005,"Antimora rostrata",383
-"484",2005,"Dissostichus eleginoides",26884
-"484",2006,"Antimora rostrata",64.62
-"484",2006,"Dissostichus eleginoides",18345.98
-"484",2006,"Dissostichus mawsoni",433.3
-"484",2006,"Lithodidae",8.8
-"484",2006,"Muraenolepis spp",0.64
-"484",2006,"Notothenia rossii",29.2
-"484",2006,"Rajiformes",1193.12
-"484",2007,"Antimora rostrata",243.95
-"484",2007,"Dissostichus eleginoides",54035.8
-"484",2007,"Dissostichus mawsoni",179.9
-"484",2007,"Lithodidae",3.6
-"484",2007,"Muraenolepis spp",27.42
-"484",2007,"Rajiformes",1747.7
-"484",2008,"Antimora rostrata",392.4
-"484",2008,"Bathyraja maccaini",52.6
-"484",2008,"Channichthyidae",1
-"484",2008,"Dissostichus eleginoides",97633.26
-"484",2008,"Dissostichus mawsoni",314.4
-"484",2008,"Muraenolepis spp",40.41
-"484",2008,"Rajiformes",3453
-"484",2009,"Antimora rostrata",593.71
-"484",2009,"Asteroidea",75.43
-"484",2009,"Channichthyidae",5.5
-"484",2009,"Dissostichus eleginoides",74396.05
-"484",2009,"Dissostichus mawsoni",59092.37
-"484",2009,"Lithodidae",2
-"484",2009,"Muraenolepis spp",521.87
-"484",2009,"Raja georgiana",1008.3
-"484",2009,"Rajiformes",662.3
-"484",2010,"Antimora rostrata",699.08
-"484",2010,"Channichthyidae",1.7
-"484",2010,"Dissostichus eleginoides",57467.49
-"484",2010,"Dissostichus mawsoni",56311.24
-"484",2010,"Lithodidae",1
-"484",2010,"Muraenolepis spp",347.97
-"484",2010,"Rajiformes",2268.9
-"484",2011,"Antimora rostrata",59.42
-"484",2011,"Channichthyidae",0.5
-"484",2011,"Dissostichus eleginoides",38649.37
-"484",2011,"Dissostichus mawsoni",15158.51
-"484",2011,"Muraenolepis spp",41.43
-"484",2011,"Rajiformes",619.4
-"484",2012,"Antimora rostrata",99.8
-"484",2012,"Dissostichus eleginoides",55411.4
-"484",2012,"Dissostichus mawsoni",22236.9
-"484",2012,"Muraenolepis spp",90.4
-"484",2012,"Rajiformes",726.6
-"486",1988,"Myctophidae",304000
-"486",2004,"Dissostichus eleginoides",6780
-"486",2005,"Antimora rostrata",43
-"486",2005,"Bathyraja eatonii",26
-"486",2005,"Dissostichus eleginoides",48710
-"486",2005,"Dissostichus mawsoni",2262
-"486",2006,"Antimora rostrata",2727.9
-"486",2006,"Dissostichus eleginoides",99668.4
-"486",2006,"Dissostichus mawsoni",63049.1
-"486",2006,"Lithodidae",133
-"486",2006,"Muraenolepis spp",2
-"486",2007,"Antimora rostrata",1239.55
-"486",2007,"Bathyraja eatonii",20.5
-"486",2007,"Chaenocephalus aceratus",22.8
-"486",2007,"Channichthyidae",316.2
-"486",2007,"Chionobathyscus dewitti",11.9
-"486",2007,"Dissostichus eleginoides",77703.85
-"486",2007,"Dissostichus mawsoni",34409.7
-"486",2007,"Lithodidae",59
-"486",2007,"Muraenolepis marmoratus",17.95
-"486",2007,"Muraenolepis spp",101.65
-"486",2007,"Paralomis spp",1.1
-"486",2008,"Antimora rostrata",466.15
-"486",2008,"Dissostichus eleginoides",12472.91
-"486",2008,"Dissostichus mawsoni",11117.77
-"486",2008,"Lithodidae",47.7
-"486",2008,"Muraenolepis spp",0.7
-"486",2009,"Antimora rostrata",1100.6
-"486",2009,"Channichthyidae",139.8
-"486",2009,"Chionobathyscus dewitti",281.3
-"486",2009,"Dissostichus eleginoides",17123.09
-"486",2009,"Dissostichus mawsoni",265360.98
-"486",2009,"Lithodidae",242.8
-"486",2009,"Muraenolepis spp",5.6
-"486",2009,"Raja spp",8
-"486",2010,"Actiniaria",1.4
-"486",2010,"Alcyonacea",0.1
-"486",2010,"Antimora rostrata",822.46
-"486",2010,"Channichthyidae",40.1
-"486",2010,"Dissostichus eleginoides",49687.23
-"486",2010,"Dissostichus mawsoni",342320.55
-"486",2010,"Lithodes spp",2.7
-"486",2010,"Muraenolepis microps",2.3
-"486",2010,"Muraenolepis spp",9.7
-"486",2010,"Octopodidae",1.1
-"486",2010,"Paralomis spp",3
-"486",2010,"Porifera",3.2
-"486",2011,"Actiniaria",0.21
-"486",2011,"Antimora rostrata",706.5
-"486",2011,"Channichthyidae",371.09
-"486",2011,"Dissostichus eleginoides",32481.49
-"486",2011,"Dissostichus mawsoni",359210.28
-"486",2011,"Muraenolepis spp",17.35
-"486",2011,"Pennatulacea",0.43
-"486",2012,"Antimora rostrata",820
-"486",2012,"Channichthyidae",49.7
-"486",2012,"Dissostichus eleginoides",6178.1
-"486",2012,"Dissostichus mawsoni",377186.4
-"486",2012,"Muraenolepis spp",15.6
-"58",1971,"Notothenia rossii",63636000
-"58",1971,"Notothenia squamifrons",24545000
-"58",1971,"Osteichthyes",679000
-"58",1972,"Notothenia rossii",104588000
-"58",1972,"Notothenia squamifrons",52912000
-"58",1972,"Osteichthyes",8195000
-"58",1973,"Notothenia rossii",20361000
-"58",1973,"Notothenia squamifrons",2368000
-"58",1973,"Osteichthyes",3444000
-"58",1974,"Notothenia rossii",20906000
-"58",1974,"Notothenia squamifrons",19977000
-"58",1974,"Osteichthyes",1759000
-"58",1975,"Notothenia rossii",10248000
-"58",1975,"Notothenia squamifrons",10198000
-"58",1975,"Osteichthyes",575000
-"58",1976,"Notothenia rossii",6061000
-"58",1976,"Notothenia squamifrons",12200000
-"58",1976,"Osteichthyes",548000
-"58",1977,"Notothenia rossii",97000
-"58",1977,"Notothenia squamifrons",308000
-"58",1977,"Osteichthyes",11000
-"58",1978,"Champsocephalus gunnari",101000
-"58",1978,"Dissostichus eleginoides",192000
-"58",1978,"Notothenia rossii",46093000
-"58",1978,"Notothenia squamifrons",25559000
-"58",1978,"Osteichthyes",1375000
-"58",1979,"Osteichthyes",104000
-"584",1980,"Osteichthyes",239000
-"5841",1983,"Pleuragramma antarcticum",95300
-"5841",1984,"Pleuragramma antarcticum",243986
-"5841",1999,"Antimora rostrata",5
-"5841",2005,"Antimora rostrata",27.68
-"5841",2005,"Asteroidea",5.74
-"5841",2005,"Chaenocephalus aceratus",901.5
-"5841",2005,"Channichthyidae",417.13
-"5841",2005,"Cnidaria",0.17
-"5841",2005,"Dissostichus eleginoides",662.4
-"5841",2005,"Dissostichus mawsoni",479014.4
-"5841",2005,"Lycodichthys antarcticus",0.3
-"5841",2005,"Muraenolepis microps",32.69
-"5841",2005,"Muraenolepis spp",14.8
-"5841",2005,"Notothenia rossii",40
-"5841",2005,"Pogonophryne permitini",3.34
-"5841",2005,"Pogonophryne spp",1.6
-"5841",2005,"Rajiformes",50
-"5841",2006,"Antimora rostrata",6
-"5841",2006,"Artedidraco spp",25.1
-"5841",2006,"Asteroidea",4.2
-"5841",2006,"Bathyraja spp",8
-"5841",2006,"Cephalopoda",0.5
-"5841",2006,"Chaenocephalus aceratus",259.4
-"5841",2006,"Channichthyidae",115.4
-"5841",2006,"Dissostichus mawsoni",421096
-"5841",2006,"Liparididae",1
-"5841",2006,"Muraenolepis spp",111.9
-"5841",2006,"Ophiuroidea",1.17
-"5841",2006,"Rajiformes",7.4
-"5841",2007,"Antimora rostrata",31.5
-"5841",2007,"Bathyraja eatonii",100.1
-"5841",2007,"Chaenocephalus aceratus",613.46
-"5841",2007,"Channichthyidae",709
-"5841",2007,"Dissostichus eleginoides",93867
-"5841",2007,"Dissostichus mawsoni",540389.818
-"5841",2007,"Lampris immaculatus",32.5
-"5841",2007,"Muraenolepis spp",152.4
-"5841",2007,"Octopodidae",14
-"5841",2007,"Pogonophryne permitini",31.5
-"5841",2007,"Rajiformes",5.5
-"5841",2007,"Salilota australis",12
-"5841",2008,"Antimora rostrata",25.3
-"5841",2008,"Bathyraja eatonii",91.7
-"5841",2008,"Chaenocephalus aceratus",237
-"5841",2008,"Channichthyidae",151.9
-"5841",2008,"Chionobathyscus dewitti",764.9
-"5841",2008,"Dissostichus eleginoides",552
-"5841",2008,"Dissostichus mawsoni",409733.386
-"5841",2008,"Lampris guttatus",30
-"5841",2008,"Macrouridae",1315.1
-"5841",2008,"Muraenolepis microps",183.2
-"5841",2008,"Muraenolepis spp",19
-"5841",2008,"Octopodidae",5.6
-"5841",2008,"Pogonophryne spp",12.75
-"5841",2009,"Antimora rostrata",10.53
-"5841",2009,"Chaenocephalus aceratus",10.26
-"5841",2009,"Channichthyidae",167.53
-"5841",2009,"Dissostichus mawsoni",221907
-"5841",2009,"Muraenolepis spp",162.5
-"5841",2009,"Octopodidae",3.8
-"5841",2009,"Pachycara brachycephalum",8.98
-"5841",2009,"Pogonophryne spp",25.96
-"5841",2009,"Rajiformes",8.8
-"5841",2010,"Actiniaria",0.55
-"5841",2010,"Antimora rostrata",62.8
-"5841",2010,"Ascidiacea",0.2
-"5841",2010,"Channichthyidae",221.9
-"5841",2010,"Dissostichus eleginoides",2229.73
-"5841",2010,"Dissostichus mawsoni",194009.97
-"5841",2010,"Muraenolepis spp",44.95
-"5841",2010,"Pennatulacea",0.55
-"5841",2010,"Pogonophryne spp",1.5
-"5841",2011,"Antimora rostrata",12.85
-"5841",2011,"Chionobathyscus dewitti",56.1
-"5841",2011,"Dissostichus eleginoides",27
-"5841",2011,"Dissostichus mawsoni",214218
-"5841",2011,"Muraenolepis microps",10.7
-"5841",2011,"Muraenolepis spp",33.52
-"5841",2011,"Octopodidae",28.76
-"5841",2011,"Pogonophryne spp",1.1
-"5841",2012,"Artedidraco spp",3
-"5841",2012,"Dissostichus mawsoni",157334
-"5841",2012,"Muraenolepis spp",74.3
-"5842",1978,"Pleuragramma antarcticum",286050
-"5842",1979,"Pleuragramma antarcticum",35300
-"5842",1980,"Pleuragramma antarcticum",30600
-"5842",1982,"Pleuragramma antarcticum",46000
-"5842",1983,"Pleuragramma antarcticum",306691
-"5842",1984,"Pleuragramma antarcticum",904599
-"5842",1985,"Chionodraco hamatus",432
-"5842",1985,"Dissostichus mawsoni",103
-"5842",1985,"Pagothenia hansoni",155
-"5842",1985,"Pleuragramma antarcticum",984280
-"5842",1985,"Trematomus eulepidotus",562
-"5842",1986,"Chionodraco hamatus",2343
-"5842",1986,"Dissostichus mawsoni",254
-"5842",1986,"Pagothenia hansoni",2400
-"5842",1986,"Pleuragramma antarcticum",595800
-"5842",1986,"Trematomus eulepidotus",538
-"5842",1987,"Pleuragramma antarcticum",29500
-"5842",1988,"Pleuragramma antarcticum",67272
-"5842",1989,"Chionodraco hamatus",1736
-"5842",1989,"Dissostichus mawsoni",304
-"5842",1989,"Pagothenia hansoni",2163
-"5842",1989,"Pleuragramma antarcticum",29222
-"5842",1989,"Trematomus eulepidotus",224011
-"5842",1990,"Chionodraco hamatus",2818
-"5842",1990,"Dissostichus mawsoni",1106
-"5842",1990,"Pagothenia hansoni",1874
-"5842",1991,"Dissostichus mawsoni",10
-"5842",1991,"Myctophidae",30
-"5842",1991,"Pleuragramma antarcticum",399
-"5842",1991,"Rajiformes",1
-"5842",1991,"Trematomus spp",243
-"5842",2001,"Dissostichus eleginoides",38
-"5842",2003,"Bathyraja spp",216
-"5842",2003,"Chionodraco myersi",17
-"5842",2003,"Dissostichus eleginoides",205
-"5842",2003,"Dissostichus mawsoni",117228
-"5842",2003,"Muraenolepis marmoratus",14
-"5842",2003,"Muraenolepis spp",320
-"5842",2003,"Rajiformes",103
-"5842",2004,"Antimora rostrata",2
-"5842",2004,"Artedidraconidae",12
-"5842",2004,"Chaenocephalus aceratus",45
-"5842",2004,"Dissostichus eleginoides",129
-"5842",2004,"Dissostichus mawsoni",19652
-"5842",2004,"Loliginidae, Ommastrephidae",15
-"5842",2004,"Muraenolepis microps",4
-"5842",2004,"Octopodidae",1
-"5842",2004,"Rajiformes",40
-"5842",2005,"Antimora rostrata",575.22
-"5842",2005,"Asteroidea",26.98
-"5842",2005,"Bathyraja eatonii",1133
-"5842",2005,"Chionobathyscus dewitti",26.4
-"5842",2005,"Dissostichus eleginoides",1355.4
-"5842",2005,"Dissostichus mawsoni",125141.84
-"5842",2005,"Lampris immaculatus",64
-"5842",2005,"Muraenolepis marmoratus",94.2
-"5842",2005,"Muraenolepis spp",723.77
-"5842",2005,"Notothenia squamifrons",21.5
-"5842",2005,"Pogonophryne permitini",8.18
-"5842",2005,"Pogonophryne spp",3
-"5842",2005,"Raja georgiana",2
-"5842",2005,"Rajiformes",1610
-"5842",2006,"Artedidraco spp",51.3
-"5842",2006,"Asteroidea",4.25
-"5842",2006,"Cephalopoda",7.5
-"5842",2006,"Chaenocephalus aceratus",292.3
-"5842",2006,"Cnidaria",0.5
-"5842",2006,"Dissostichus eleginoides",16.5
-"5842",2006,"Dissostichus mawsoni",163486.6
-"5842",2006,"Lampris immaculatus",25
-"5842",2006,"Muraenolepis spp",347
-"5842",2006,"Octopodidae",4.5
-"5842",2006,"Ophiuroidea",0.12
-"5842",2006,"Rajiformes",8.5
-"5842",2007,"Antimora rostrata",68.8
-"5842",2007,"Bathyraja eatonii",318.25
-"5842",2007,"Chaenocephalus aceratus",20.5
-"5842",2007,"Chionobathyscus dewitti",107.15
-"5842",2007,"Dissostichus eleginoides",107.5
-"5842",2007,"Dissostichus mawsoni",123534.5
-"5842",2007,"Muraenolepis marmoratus",38.15
-"5842",2007,"Muraenolepis spp",101.4
-"5842",2007,"Pogonophryne permitini",0.2
-"5842",2008,"Antimora rostrata",85.2
-"5842",2008,"Bathyraja eatonii",391.5
-"5842",2008,"Chaenocephalus aceratus",352
-"5842",2008,"Dissostichus eleginoides",208
-"5842",2008,"Dissostichus mawsoni",216308
-"5842",2008,"Muraenolepis spp",120.1
-"5842",2008,"Raja spp",83
-"5842",2009,"Antimora rostrata",10.15
-"5842",2009,"Dissostichus mawsoni",66255.06
-"5842",2009,"Muraenolepis spp",28.8
-"5842",2009,"Pogonophryne spp",16.3
-"5842",2010,"Antimora rostrata",10.5
-"5842",2010,"Dissostichus mawsoni",92781
-"5842",2010,"Muraenolepis spp",76.6
-"5842",2010,"Pogonophryne spp",5
-"5842",2011,"Dissostichus mawsoni",135757
-"5842",2011,"Muraenolepis spp",7.05
-"5842",2011,"Pogonophryne spp",1.01
-"5842",2012,"Antimora rostrata",6
-"5842",2012,"Artedidraco spp",2.3
-"5842",2012,"Dissostichus mawsoni",53891.9
-"5842",2012,"Muraenolepis spp",11.9
-"5843",1997,"Antimora rostrata",8
-"5843",1997,"Cephalopoda",3
-"5843",1997,"Dissostichus eleginoides",7
-"5843",1997,"Lithodidae",2
-"5843",1997,"Macrourus holotrachys",78
-"5843",1997,"Medusae",1500
-"5843",1997,"Rajiformes",19
-"5843",1999,"Antimora rostrata",11
-"5843",1999,"Dissostichus eleginoides",18
-"5843a",2005,"Antimora rostrata",2050.1
-"5843a",2005,"Asteroidea",26
-"5843a",2005,"Dissostichus eleginoides",96781.58
-"5843a",2005,"Dissostichus mawsoni",8527
-"5843a",2005,"Raja georgiana",15066
-"5843a",2005,"Raja taaf",356.7
-"5843a",2005,"Rajiformes",1295.9
-"5843a",2006,"Antimora rostrata",1188.4
-"5843a",2006,"Dissostichus eleginoides",88086.25
-"5843a",2006,"Dissostichus mawsoni",598.04
-"5843a",2006,"Rajiformes",7144.5
-"5843a",2007,"Antimora rostrata",888.22
-"5843a",2007,"Dissostichus eleginoides",3218.91
-"5843a",2007,"Dissostichus mawsoni",1188.22
-"5843a",2007,"Lithodidae",32
-"5843a",2007,"Macrourus spp",144.6
-"5843a",2007,"Rajiformes",23
-"5843a",2008,"Antimora rostrata",1
-"5843a",2008,"Dissostichus eleginoides",8730
-"5843a",2008,"Dissostichus mawsoni",26
-"5843a",2008,"Macrourus spp",92.5
-"5843a",2008,"Raja taaf",1534
-"5843a",2009,"Antimora rostrata",2471.8
-"5843a",2009,"Dissostichus eleginoides",30854.25
-"5843a",2009,"Dissostichus mawsoni",65
-"5843a",2009,"Lithodidae",1.5
-"5843a",2009,"Macrourus spp",1536.3
-"5843a",2009,"Rajiformes",1858.85
-"5843a",2011,"Antimora rostrata",346.5
-"5843a",2011,"Dissostichus eleginoides",3593.13
-"5843a",2011,"Macrourus spp",170
-"5843a",2011,"Rajiformes",55.4
-"5843a",2012,"Antimora rostrata",3018.7
-"5843a",2012,"Dissostichus eleginoides",36803.8
-"5843a",2012,"Macrourus spp",3614.8
-"5843a",2012,"Raja taaf",32153.3
-"5843b",2004,"Dissostichus eleginoides",531
-"5843b",2004,"Dissostichus mawsoni",6268
-"5843b",2004,"Macrourus spp",131
-"5843b",2005,"Antimora rostrata",156.5
-"5843b",2005,"Bathyraja maccaini",809.9
-"5843b",2005,"Dissostichus eleginoides",225
-"5843b",2005,"Dissostichus mawsoni",297248.5
-"5843b",2005,"Lampris immaculatus",15
-"5843b",2005,"Macrourus spp",7803.22
-"5843b",2005,"Muraenolepis spp",4.3
-"5843b",2005,"Raja georgiana",4327.6
-"5843b",2006,"Antimora rostrata",54.5
-"5843b",2006,"Asteroidea",0.35
-"5843b",2006,"Bathyraja murrayi",109.5
-"5843b",2006,"Channichthyidae",1.7
-"5843b",2006,"Dissostichus eleginoides",43894.71
-"5843b",2006,"Dissostichus mawsoni",316667.99
-"5843b",2006,"Macrourus spp",8115.05
-"5843b",2006,"Raja georgiana",0.8
-"5843b",2006,"Raja spp",24
-"5843b",2007,"Antimora rostrata",573.85
-"5843b",2007,"Bathyraja spp",1395
-"5843b",2007,"Channichthyidae",4
-"5843b",2007,"Dissostichus eleginoides",74272.6
-"5843b",2007,"Dissostichus mawsoni",176253.15
-"5843b",2007,"Lithodes spp",27
-"5843b",2007,"Macrourus spp",8409.9
-"5843b",2007,"Muraenolepis spp",68
-"5843b",2007,"Notothenia squamifrons",251.3
-"5843b",2007,"Salilota australis",35.2
-"5843b",2008,"Antimora rostrata",1146.88
-"5843b",2008,"Asteroidea",16.82
-"5843b",2008,"Bathydraconidae",0.1
-"5843b",2008,"Chionobathyscus dewitti",1
-"5843b",2008,"Dissostichus eleginoides",41627.11
-"5843b",2008,"Dissostichus mawsoni",100547.66
-"5843b",2008,"Macrouridae",212
-"5843b",2008,"Macrourus spp",6521
-"5843b",2008,"Muraenolepis orangiensis",1.5
-"5843b",2008,"Muraenolepis spp",34.69
-"5843b",2008,"Raja spp",340
-"5843b",2008,"Raja taaf",888.34
-"5843b",2009,"Antimora rostrata",112.05
-"5843b",2009,"Dissostichus eleginoides",15064.3
-"5843b",2009,"Dissostichus mawsoni",89218.76
-"5843b",2009,"Lithodidae",4.65
-"5843b",2009,"Macrourus spp",3688.4
-"5843b",2009,"Muraenolepis spp",25.65
-"5843b",2009,"Notothenia squamifrons",225
-"5843b",2010,"Antimora rostrata",67.4
-"5843b",2010,"Dissostichus eleginoides",1662.58
-"5843b",2010,"Dissostichus mawsoni",12149.93
-"5843b",2010,"Macrourus spp",1876.3
-"5843b",2010,"Muraenolepis spp",2.3
-"5843b",2010,"Pennatulacea",0.02
-"5843b",2011,"Actiniaria",1.35
-"5843b",2011,"Antimora rostrata",15.85
-"5843b",2011,"Dissostichus eleginoides",2269.82
-"5843b",2011,"Dissostichus mawsoni",8465.1
-"5843b",2011,"Hexactinellida",0.05
-"5843b",2011,"Macrourus spp",1237.2
-"5843b",2011,"Muraenolepis spp",0.8
-"5843b",2011,"Rajiformes",49.6
-"5843b",2012,"Actiniaria",1.2
-"5843b",2012,"Antimora rostrata",21.5
-"5843b",2012,"Dissostichus eleginoides",5295.4
-"5843b",2012,"Dissostichus mawsoni",3726.4
-"5843b",2012,"Macrourus spp",964.7
-"5843b",2012,"Muraenolepis spp",2.8
-"5843b",2012,"Porifera",0.2
-"5843b",2012,"Rajiformes",58.9
-"5844",1978,"Dissostichus eleginoides",3700
-"5844",1978,"Notothenia rossii",1800
-"5844",1978,"Notothenia squamifrons",167800
-"5844",1979,"Dissostichus eleginoides",22200
-"5844",1979,"Notothenia rossii",23500
-"5844a",1977,"Notothenia squamifrons",580000
-"5844a",1978,"Notothenia rossii",62000
-"5844a",1978,"Notothenia squamifrons",5883000
-"5844a",1979,"Notothenia squamifrons",234000
-"5844a",1980,"Notothenia rossii",34000
-"5844a",1980,"Notothenia squamifrons",4181000
-"5844a",1981,"Notothenia rossii",4000
-"5844a",1981,"Notothenia squamifrons",139000
-"5844a",1982,"Notothenia squamifrons",56000
-"5844a",1983,"Notothenia squamifrons",333000
-"5844a",1984,"Dissostichus eleginoides",1000
-"5844a",1984,"Notothenia squamifrons",295000
-"5844a",1985,"Notothenia squamifrons",1023000
-"5844a",1986,"Dissostichus eleginoides",18000
-"5844a",1986,"Notothenia rossii",1500
-"5844a",1986,"Notothenia squamifrons",4966000
-"5844a",1987,"Dissostichus eleginoides",11000
-"5844a",1987,"Notothenia rossii",4000
-"5844a",1987,"Notothenia squamifrons",2114000
-"5844a",1988,"Dissostichus eleginoides",2000
-"5844a",1988,"Notothenia squamifrons",2085000
-"5844a",1989,"Dissostichus eleginoides",10000
-"5844a",1989,"Notothenia squamifrons",846000
-"5844a",1990,"Dissostichus eleginoides",2000
-"5844a",1990,"Notothenia rossii",6000
-"5844a",1990,"Notothenia squamifrons",867000
-"5844a",1996,"Euphausia spp",2
-"5844a",1996,"Lampanyctus achirus",2
-"5844a",1996,"Loliginidae, Ommastrephidae",5
-"5844a",1996,"Medusae",35
-"5844a",1996,"Myctophidae",2
-"5844a",1996,"Salpidae",6739
-"5844a",2000,"Bathyraja spp",62.5
-"5844a",2000,"Dissostichus eleginoides",88852.6
-"5844a",2000,"Macrourus spp",1776.3
-"5844a",2000,"Muraenolepis spp",0.9
-"5844a",2001,"Dissostichus eleginoides",4039
-"5844a",2001,"Muraenolepis spp",0.1
-"5844a",2008,"Antimora rostrata",409.3
-"5844a",2008,"Cnidaria",2.969
-"5844a",2008,"Dissostichus eleginoides",18448.1
-"5844a",2008,"Lithodidae",45.6
-"5844a",2008,"Macrourus spp",440.6
-"5844a",2008,"Ophiuroidea",0.752
-"5844a",2008,"Rajiformes",3.8
-"5844a",2010,"Antimora rostrata",118.3
-"5844a",2010,"Channichthyidae",1.85
-"5844a",2010,"Dissostichus eleginoides",9239.79
-"5844a",2010,"Macrourus spp",112.5
-"5844a",2010,"Rajiformes",5.5
-"5844b",1978,"Dissostichus eleginoides",2000
-"5844b",1980,"Dissostichus eleginoides",2000
-"5844b",1981,"Dissostichus eleginoides",79000
-"5844b",1981,"Notothenia rossii",32000
-"5844b",1982,"Dissostichus eleginoides",3500
-"5844b",1983,"Dissostichus eleginoides",2000
-"5844b",1983,"Notothenia rossii",50000
-"5844b",1984,"Dissostichus eleginoides",5000
-"5844b",1986,"Dissostichus eleginoides",9000
-"5844b",1986,"Notothenia rossii",500
-"5844b",1988,"Dissostichus eleginoides",2000
-"5844b",1989,"Dissostichus eleginoides",27000
-"5844b",1990,"Dissostichus eleginoides",4000
-"5844b",1991,"Dissostichus eleginoides",29000
-"5844b",2000,"Antimora rostrata",0.8
-"5844b",2000,"Dissostichus eleginoides",66533.7
-"5844b",2000,"Macrourus spp",12074.7
-"5844b",2000,"Muraenolepis spp",0.4
-"5844b",2001,"Antimora rostrata",1
-"5844b",2001,"Dissostichus eleginoides",4494
-"5844b",2001,"Macrourus spp",1
-"5844b",2001,"Muraenolepis spp",2
-"5844b",2008,"Antimora rostrata",1327.6
-"5844b",2008,"Asteroidea",0.366
-"5844b",2008,"Cnidaria",11.383
-"5844b",2008,"Dissostichus mawsoni",50.8
-"5844b",2008,"Halargyreus johnsonii",0.35
-"5844b",2008,"Lepidion spp",0.35
-"5844b",2008,"Lithodidae",74.15
-"5844b",2008,"Macrourus spp",3463.4
-"5844b",2008,"Mollusca",0.043
-"5844b",2008,"Muraenolepis spp",40.95
-"5844b",2008,"Ophiuroidea",1.218
-"5844b",2008,"Porifera",0.9
-"5844b",2008,"Rajiformes",15.55
-"5844b",2010,"Actiniaria",0.55
-"5844b",2010,"Antimora rostrata",644.99
-"5844b",2010,"Channichthyidae",1.5
-"5844b",2010,"Dissostichus eleginoides",49801.86
-"5844b",2010,"Macrourus spp",1071.4
-"5844b",2010,"Muraenolepis spp",39.5
-"5844b",2010,"Pennatulacea",0.6
-"5844b",2010,"Porifera",0.6
-"5844b",2010,"Rajiformes",421.5
-"5844b",2011,"Actiniaria",6
-"5844b",2011,"Antimora rostrata",734
-"5844b",2011,"Dissostichus eleginoides",35399
-"5844b",2011,"Macrourus spp",1629
-"5844b",2011,"Muraenolepis spp",22
-"5844b",2011,"Pennatulacea",1
-"5844b",2011,"Rajiformes",45
-"5844b",2011,"Stylasteridae",2
-"5844b",2012,"Actiniaria",5.7
-"5844b",2012,"Antimora rostrata",703.7
-"5844b",2012,"Dissostichus eleginoides",28301.8
-"5844b",2012,"Macrourus spp",1832.8
-"5844b",2012,"Muraenolepis spp",7.1
-"5844b",2012,"Porifera",0.4
-"5844b",2012,"Rajiformes",29.3
-"585",1977,"Champsocephalus gunnari",332100
-"585",1977,"Channichthys rhinoceratus",97700
-"585",1977,"Dissostichus eleginoides",14800
-"585",1977,"Notothenia rossii",144500
-"585",1978,"Champsocephalus gunnari",228000
-"585",1978,"Channichthys rhinoceratus",128800
-"585",1978,"Dissostichus eleginoides",59500
-"585",1978,"Notothenia rossii",638000
-"585",1979,"Champsocephalus gunnari",212000
-"585",1979,"Channichthys rhinoceratus",4000
-"585",1979,"Dissostichus eleginoides",6000
-"585",1979,"Notothenia rossii",19000
-"585",1980,"Champsocephalus gunnari",1419000
-"585",1980,"Channichthys rhinoceratus",4000
-"585",1980,"Dissostichus eleginoides",132000
-"585",1980,"Notothenia rossii",1723000
-"585",1981,"Champsocephalus gunnari",1126000
-"585",1981,"Channichthys rhinoceratus",2000
-"585",1981,"Dissostichus eleginoides",41000
-"585",1981,"Notothenia rossii",10865000
-"585",1982,"Champsocephalus gunnari",23582000
-"585",1982,"Dissostichus eleginoides",130000
-"585",1982,"Notothenia rossii",8193000
-"585",1983,"Champsocephalus gunnari",19899000
-"585",1983,"Dissostichus eleginoides",145000
-"585",1983,"Notothenia rossii",949000
-"585",1983,"Rajiformes",1000
-"585",1984,"Champsocephalus gunnari",5724000
-"585",1984,"Dissostichus eleginoides",4732000
-"585",1984,"Notothenia rossii",1495000
-"585",1984,"Rajiformes",17000
-"585",1985,"Champsocephalus gunnari",19610000
-"585",1985,"Dissostichus eleginoides",2455000
-"585",1985,"Notothenia rossii",664000
-"585",1985,"Rajiformes",7000
-"585",1986,"Champsocephalus gunnari",7697000
-"585",1986,"Dissostichus eleginoides",2445000
-"585",1986,"Notothenia rossii",723000
-"585",1987,"Champsocephalus gunnari",636000
-"585",1987,"Dissostichus eleginoides",1320000
-"585",1987,"Notothenia rossii",429000
-"585",1988,"Champsocephalus gunnari",84000
-"585",1988,"Notothenia rossii",2000
-"5851",1970,"Champsocephalus gunnari",5000
-"5851",1971,"Champsocephalus gunnari",17958000
-"5851",1972,"Champsocephalus gunnari",18031000
-"5851",1973,"Champsocephalus gunnari",4000
-"5851",1974,"Champsocephalus gunnari",816000
-"5851",1975,"Champsocephalus gunnari",984000
-"5851",1976,"Champsocephalus gunnari",11566000
-"5851",1977,"Champsocephalus gunnari",38654000
-"5851",1978,"Champsocephalus gunnari",11039000
-"5851",1988,"Champsocephalus gunnari",14492000
-"5851",1988,"Dissostichus eleginoides",892000
-"5851",1988,"Notothenia rossii",72000
-"5851",1989,"Champsocephalus gunnari",9259000
-"5851",1989,"Dissostichus eleginoides",1311000
-"5851",1989,"Notothenia rossii",315000
-"5851",1990,"Champsocephalus gunnari",104000
-"5851",1990,"Dissostichus eleginoides",1243000
-"5851",1990,"Notothenia rossii",13000
-"5851",1991,"Champsocephalus gunnari",13308100
-"5851",1991,"Dissostichus eleginoides",3008000
-"5851",1991,"Notothenia rossii",287000
-"5851",1991,"Rajiformes",200
-"5851",1992,"Champsocephalus gunnari",31000
-"5851",1992,"Dissostichus eleginoides",7758000
-"5851",1992,"Rajiformes",200
-"5851",1993,"Champsocephalus gunnari",12000
-"5851",1993,"Dissostichus eleginoides",3597000
-"5851",1993,"Notothenia rossii",2000
-"5851",1994,"Champsocephalus gunnari",1228000
-"5851",1994,"Dissostichus eleginoides",5381000
-"5851",1994,"Notothenia rossii",200
-"5851",1994,"Rajiformes",2000
-"5851",1995,"Champsocephalus gunnari",2708000
-"5851",1995,"Channichthys rhinoceratus",1000
-"5851",1995,"Dissostichus eleginoides",5596000
-"5851",1995,"Rajiformes",294
-"5851",1996,"Champsocephalus gunnari",5000
-"5851",1996,"Dissostichus eleginoides",4710425
-"5851",1996,"Rajiformes",218
-"5851",1997,"Champsocephalus gunnari",300
-"5851",1997,"Channichthys rhinoceratus",4500
-"5851",1997,"Dissostichus eleginoides",5059222
-"5851",1997,"Notothenia rossii",700
-"5851",1997,"Rajiformes",2000
-"5851",1998,"Channichthys rhinoceratus",1000
-"5851",1998,"Dissostichus eleginoides",4713900
-"5851",1998,"Macrourus spp",12000
-"5851",1998,"Rajiformes",20400
-"5851",1999,"Channichthys rhinoceratus",700
-"5851",1999,"Dissostichus eleginoides",4730310
-"5851",1999,"Macrourus spp",30950
-"5851",1999,"Notothenia rossii",1400
-"5851",1999,"Rajiformes",29130
-"5851",2000,"Dissostichus eleginoides",6139279
-"5851",2000,"Rajiformes",78031
-"5851",2001,"Dissostichus eleginoides",4746662
-"5851",2001,"Macrourus spp",89331
-"5851",2001,"Rajiformes",106293
-"5851",2002,"Dissostichus eleginoides",4153950
-"5851",2002,"Macrourus spp",449008
-"5851",2002,"Rajiformes",558077
-"5851",2003,"Dissostichus eleginoides",5290980
-"5851",2003,"Macrourus spp",676640
-"5851",2003,"Rajiformes",775970
-"5851",2004,"Dissostichus eleginoides",5171079
-"5851",2004,"Rajiformes",427825
-"5851",2005,"Antimora rostrata",14381.7
-"5851",2005,"Dissostichus eleginoides",5073382.2147
-"5851",2005,"Macrourus spp",429580.220621
-"5851",2005,"Rajiformes",525322.950343
-"5851",2006,"Antimora rostrata",30382.9
-"5851",2006,"Dissostichus eleginoides",5155950.57011
-"5851",2006,"Macrourus spp",521000.5974112
-"5851",2006,"Rajiformes",328615.5554484
-"5851",2007,"Dissostichus eleginoides",5201153.97903
-"5851",2007,"Rajiformes",372436.3670299
-"5851",2008,"Antimora rostrata",67983
-"5851",2008,"Dissostichus eleginoides",4849623.466
-"5851",2008,"Macrourus carinatus",816249.518066
-"5851",2008,"Raja spp",352810.5495357
-"5851",2008,"Raja taaf",22782.693245
-"5851",2009,"Antimora rostrata",45196
-"5851",2009,"Dissostichus eleginoides",5237741.6073
-"5851",2009,"Macrourus carinatus",973618.325647
-"5851",2009,"Raja spp",272998.83640196
-"5851",2009,"Raja taaf",141964
-"5851",2010,"Antimora rostrata",58583.79
-"5851",2010,"Champsocephalus gunnari",1233.99462
-"5851",2010,"Dissostichus eleginoides",5150877.97254
-"5851",2010,"Macrourus carinatus",884478.377553
-"5851",2010,"Raja spp",454987.0358042
-"5851",2011,"Antimora rostrata",52099.31
-"5851",2011,"Dissostichus eleginoides",5235292.32955
-"5851",2011,"Macrourus carinatus",860612.178784
-"5851",2011,"Raja spp",437852.9639213
-"5851",2012,"Antimora rostrata",26082.0897
-"5851",2012,"Dissostichus eleginoides",4898840
-"5851",2012,"Macrourus carinatus",687774.5
-"5851",2012,"Raja spp",431822.5
-"5852",1972,"Champsocephalus gunnari",5860000
-"5852",1974,"Champsocephalus gunnari",7525000
-"5852",1975,"Champsocephalus gunnari",9710000
-"5852",1977,"Champsocephalus gunnari",15201000
-"5852",1978,"Champsocephalus gunnari",5166000
-"5852",1990,"Champsocephalus gunnari",1868
-"5852",1990,"Channichthys rhinoceratus",110
-"5852",1990,"Dissostichus eleginoides",1308
-"5852",1990,"Myctophidae",4
-"5852",1990,"Notothenia rossii",9
-"5852",1990,"Nototheniops mizops",3
-"5852",1990,"Rajiformes",223
-"5852",1992,"Champsocephalus gunnari",4514
-"5852",1992,"Channichthys rhinoceratus",332
-"5852",1992,"Dissostichus eleginoides",430
-"5852",1992,"Myctophidae",29
-"5852",1992,"Notothenia rossii",19
-"5852",1992,"Rajiformes",609
-"5852",1993,"Champsocephalus gunnari",2898
-"5852",1993,"Channichthys rhinoceratus",509
-"5852",1993,"Myctophidae",12
-"5852",1993,"Nototheniops mizops",2
-"5852",1993,"Rajiformes",114
-"5852",1997,"Antimora rostrata",23
-"5852",1997,"Cephalopoda",534
-"5852",1997,"Champsocephalus gunnari",226636
-"5852",1997,"Channichthys rhinoceratus",3891
-"5852",1997,"Elasmobranchii",2025
-"5852",1997,"Lamna nasus",1600
-"5852",1997,"Macrourus holotrachys",713
-"5852",1997,"Medusae",8594
-"5852",1997,"Notothenia rossii",1
-"5852",1997,"Rajiformes",3178
-"5852",1998,"Champsocephalus gunnari",115470
-"5852",1998,"Channichthys rhinoceratus",4572
-"5852",1998,"Medusae",1941
-"5852",1998,"Nototheniidae",3045
-"5852",1998,"Porifera",443
-"5852",1998,"Rajiformes",3346
-"5852",1999,"Champsocephalus gunnari",1648
-"5852",1999,"Channichthys rhinoceratus",875
-"5852",1999,"Notothenia rossii",16
-"5852",1999,"Rajiformes",1701
-"5852",1999,"Somniosus pacificus",1000
-"5852",2000,"Champsocephalus gunnari",137364
-"5852",2000,"Channichthys rhinoceratus",2493
-"5852",2001,"Champsocephalus gunnari",1136131
-"5852",2001,"Channichthys rhinoceratus",1031
-"5852",2002,"Champsocephalus gunnari",865265
-"5852",2002,"Channichthys rhinoceratus",2930
-"5852",2002,"Lampris immaculatus",96
-"5852",2002,"Notothenia rossii",64
-"5852",2002,"Somniosus pacificus",2800
-"5852",2003,"Antimora rostrata",71
-"5852",2003,"Ascidiacea",18
-"5852",2003,"Asteroidea",761
-"5852",2003,"Bathyraja irrasa",2243
-"5852",2003,"Bathyraja maccaini",241
-"5852",2003,"Bathyraja murrayi",817
-"5852",2003,"Champsocephalus gunnari",2345094
-"5852",2003,"Channichthys rhinoceratus",20897.29
-"5852",2003,"Cynomacrurus piriei",220.4
-"5852",2003,"Loliginidae, Ommastrephidae",42.33
-"5852",2003,"Macrouridae",97
-"5852",2003,"Macrourus carinatus",525
-"5852",2003,"Macrourus holotrachys",667
-"5852",2003,"Mancopsetta maculata",0.57
-"5852",2003,"Medusae",1772
-"5852",2003,"Muraenolepis spp",4.17
-"5852",2003,"Notothenia rossii",95
-"5852",2003,"Nototheniops mizops",3
-"5852",2003,"Octopodidae",25
-"5852",2003,"Ophiuroidea",22
-"5852",2003,"Porifera",1739.64
-"5852",2003,"Somniosus pacificus",2610
-"5852",2004,"Actiniaria",594.51
-"5852",2004,"Antimora rostrata",1404.4
-"5852",2004,"Asteroidea",1776.91
-"5852",2004,"Bathydraconidae",0.06
-"5852",2004,"Bathylagus spp",0.1
-"5852",2004,"Bathyraja irrasa",1853.78
-"5852",2004,"Bathyraja maccaini",2
-"5852",2004,"Bathyraja murrayi",408.12
-"5852",2004,"Bivalvia",0.1
-"5852",2004,"Borostomias antarcticus",0.16
-"5852",2004,"Cephalopoda",0.01
-"5852",2004,"Champsocephalus gunnari",78234.06597
-"5852",2004,"Channichthys rhinoceratus",13540.371567189
-"5852",2004,"Cnidaria",49.06
-"5852",2004,"Cynomacrurus piriei",134
-"5852",2004,"Etmopterus spp",10
-"5852",2004,"Gymnoscopelus spp",1.3
-"5852",2004,"Halargyreus johnsonii",1
-"5852",2004,"Loliginidae, Ommastrephidae",63.05
-"5852",2004,"Macrourus carinatus",14617
-"5852",2004,"Macrourus holotrachys",2001.55
-"5852",2004,"Medusae",1412.59
-"5852",2004,"Mollusca",2
-"5852",2004,"Muraenolepis spp",0.14
-"5852",2004,"Myctophidae",0.62
-"5852",2004,"Notothenia rossii",31
-"5852",2004,"Nototheniops mizops",200
-"5852",2004,"Octopodidae",74.43
-"5852",2004,"Ophiuroidea",45.49
-"5852",2004,"Paradiplospinus gracilis",0.17
-"5852",2004,"Pseudochaenichthys georgianus",6
-"5852",2004,"Rajiformes",58741
-"5852",2004,"Salpidae",1132.49
-"5852",2004,"Somniosus pacificus",8352
-"5852",2005,"Actiniaria",162
-"5852",2005,"Alepocephalus spp",0.5
-"5852",2005,"Antimora rostrata",1546.56
-"5852",2005,"Ascidiacea",6.2
-"5852",2005,"Asteroidea",2134.32
-"5852",2005,"Bathylagus antarcticus",0.17
-"5852",2005,"Bathyraja irrasa",531
-"5852",2005,"Bathyraja murrayi",2173.71
-"5852",2005,"Benthalbella elongata",1
-"5852",2005,"Bothidae",1
-"5852",2005,"Cephalopoda",7
-"5852",2005,"Champsocephalus gunnari",1851165
-"5852",2005,"Channichthys rhinoceratus",34463.1
-"5852",2005,"Chionodraco myersi",0.4
-"5852",2005,"Cynomacrurus piriei",1459
-"5852",2005,"Dissostichus mawsoni",20
-"5852",2005,"Elasmobranchii",520
-"5852",2005,"Halargyreus johnsonii",1
-"5852",2005,"Lampris immaculatus",107
-"5852",2005,"Loligo spp",58.44
-"5852",2005,"Macrouridae",0.5
-"5852",2005,"Macrourus carinatus",12.07
-"5852",2005,"Macrourus holotrachys",720
-"5852",2005,"Mancopsetta maculata",3.07
-"5852",2005,"Medusae",2374
-"5852",2005,"Moroteuthis ingens",13
-"5852",2005,"Myctophidae",9
-"5852",2005,"Notothenia rossii",28
-"5852",2005,"Nototheniops mizops",75.6
-"5852",2005,"Octopodidae",70
-"5852",2005,"Ophiuroidea",15.139
-"5852",2005,"Porifera",1584.19
-"5852",2005,"Rajiformes",69697.52
-"5852",2005,"Salpidae",3
-"5852",2005,"Somniosus pacificus",2082
-"5852",2006,"Antimora rostrata",354.29
-"5852",2006,"Asteroidea",3497.11
-"5852",2006,"Bathyraja irrasa",7803.93
-"5852",2006,"Champsocephalus gunnari",659882.305694829
-"5852",2006,"Channichthyidae",0.5
-"5852",2006,"Channichthys rhinoceratus",32544.919994137
-"5852",2006,"Dissostichus mawsoni",58.72
-"5852",2006,"Macrourus carinatus",17380.38
-"5852",2006,"Macrourus holotrachys",17.89
-"5852",2006,"Medusae",980.51
-"5852",2006,"Muraenolepis spp",1.38
-"5852",2006,"Nototheniidae",71.74
-"5852",2006,"Octopodidae",52.24
-"5852",2006,"Paralomis aculeata",6.67
-"5852",2006,"Rajiformes",8293.85
-"5852",2006,"Somniosus pacificus",1.11
-"5852",2007,"Actiniaria",21.56
-"5852",2007,"Antimora rostrata",258.71
-"5852",2007,"Asteroidea",1116.25
-"5852",2007,"Bathyraja irrasa",2027.55999985
-"5852",2007,"Bathyraja murrayi",935.93999979
-"5852",2007,"Bothidae",3.200000048
-"5852",2007,"Champsocephalus gunnari",837.39
-"5852",2007,"Channichthys rhinoceratus",15340.420000004
-"5852",2007,"Medusae",857.28
-"5852",2007,"Mollusca",0.25
-"5852",2007,"Muraenolepis spp",4.36
-"5852",2007,"Nototheniidae",36.3
-"5852",2007,"Octopodidae",65.409999982
-"5852",2007,"Porifera",295.33
-"5852",2007,"Raja georgiana",4520.57
-"5852",2007,"Rajiformes",3625.14
-"5852",2007,"Somniosus pacificus",1842
-"5852",2008,"Actiniaria",180.4
-"5852",2008,"Antimora rostrata",667.67
-"5852",2008,"Asteroidea",2887.15
-"5852",2008,"Bathyraja irrasa",9812.37
-"5852",2008,"Bathyraja murrayi",936.31
-"5852",2008,"Champsocephalus gunnari",198646.96
-"5852",2008,"Channichthyidae",25.5
-"5852",2008,"Channichthys rhinoceratus",37390.498
-"5852",2008,"Macrourus carinatus",198.28
-"5852",2008,"Macrourus holotrachys",2481.28
-"5852",2008,"Muraenolepis spp",2.66
-"5852",2008,"Nototheniidae",10.85
-"5852",2008,"Octopodidae",32
-"5852",2008,"Porifera",2302.45
-"5852",2008,"Rajiformes",3403.23
-"5852",2008,"Salpidae",20
-"5852",2009,"Actiniaria",101.616
-"5852",2009,"Alepocephalus spp",1.31
-"5852",2009,"Antimora rostrata",4835.56
-"5852",2009,"Ascidiacea",72.597
-"5852",2009,"Asteroidea",2845.257
-"5852",2009,"Bathydraconidae",0.08
-"5852",2009,"Bathylagus antarcticus",1.74
-"5852",2009,"Bathylagus spp",0.12
-"5852",2009,"Bathyraja irrasa",1413.668
-"5852",2009,"Bothidae",9.074
-"5852",2009,"Champsocephalus gunnari",82637.91
-"5852",2009,"Channichthyidae",3.222
-"5852",2009,"Channichthys rhinoceratus",50764.969
-"5852",2009,"Cynomacrurus piriei",0.14
-"5852",2009,"Etmopterus spp",50.91
-"5852",2009,"Genypterus spp",21
-"5852",2009,"Halargyreus johnsonii",0.26
-"5852",2009,"Icichthys australis",5.029
-"5852",2009,"Lampris immaculatus",92
-"5852",2009,"Lithodidae",7.46
-"5852",2009,"Melanostigma spp",0.12
-"5852",2009,"Muraenolepis spp",18.16
-"5852",2009,"Myctophidae",1.476
-"5852",2009,"Nototheniops mizops",22.012
-"5852",2009,"Octopodidae",108.515
-"5852",2009,"Ophiuroidea",14.85
-"5852",2009,"Paradiplospinus gracilis",3.177
-"5852",2009,"Porifera",1386.764
-"5852",2009,"Rajiformes",16472.988
-"5852",2009,"Somniosus pacificus",1014.27
-"5852",2009,"Stomias boa boa",0.22
-"5852",2009,"Teuthoidea",29.402
-"5852",2010,"Actiniaria",2713
-"5852",2010,"Antimora rostrata",1328.4
-"5852",2010,"Asteroidea",5188
-"5852",2010,"Bathyraja irrasa",308.23
-"5852",2010,"Bathyraja murrayi",906.35
-"5852",2010,"Champsocephalus gunnari",352461.37
-"5852",2010,"Channichthys rhinoceratus",80098.2
-"5852",2010,"Etmopterus spp",2.33
-"5852",2010,"Invertebrata",9.88
-"5852",2010,"Lamna nasus",520
-"5852",2010,"Octopodidae",220.45
-"5852",2010,"Paralomis spp",4.83
-"5852",2010,"Porifera",8835.67
-"5852",2010,"Rajiformes",11461.41
-"5852",2010,"Somniosus pacificus",1336
-"5852",2011,"Actiniaria",1247.81
-"5852",2011,"Antimora rostrata",4357.04
-"5852",2011,"Ascidiacea",831
-"5852",2011,"Asteroidea",7685.17
-"5852",2011,"Bathyraja irrasa",16495.45
-"5852",2011,"Champsocephalus gunnari",602.71
-"5852",2011,"Channichthys rhinoceratus",26054.57
-"5852",2011,"Dissostichus mawsoni",36.6
-"5852",2011,"Euryalida",125.12
-"5852",2011,"Invertebrata",4296.7
-"5852",2011,"Lampris immaculatus",36
-"5852",2011,"Lithodidae",258
-"5852",2011,"Loliginidae, Ommastrephidae",7
-"5852",2011,"Nototheniops mizops",8.19
-"5852",2011,"Octopodidae",176.5
-"5852",2011,"Porifera",739.45
-"5852",2011,"Rajiformes",2494
-"5852",2011,"Somniosus pacificus",2224
-"5852",2011,"Teuthoidea",78.24
-"5852",2012,"Actiniaria",914.1
-"5852",2012,"Anotopterus pharao",0.5
-"5852",2012,"Antimora rostrata",3649.1
-"5852",2012,"Ascidiacea",30
-"5852",2012,"Asteroidea",3926
-"5852",2012,"Bathyraja irrasa",198.4
-"5852",2012,"Borostomias antarcticus",0.1
-"5852",2012,"Bothidae",3.1
-"5852",2012,"Champsocephalus gunnari",4428
-"5852",2012,"Channichthys rhinoceratus",41723
-"5852",2012,"Cynomacrurus piriei",3.4
-"5852",2012,"Euryalida",141
-"5852",2012,"Icichthys australis",0.3
-"5852",2012,"Invertebrata",1134.1
-"5852",2012,"Lithodidae",0.5
-"5852",2012,"Muraenolepis microps",75
-"5852",2012,"Muraenolepis spp",2.3
-"5852",2012,"Myctophidae",14
-"5852",2012,"Nototheniidae",3.9
-"5852",2012,"Nototheniops mizops",18
-"5852",2012,"Octopodidae",154.6
-"5852",2012,"Ophiuroidea",5.8
-"5852",2012,"Porifera",1075.7
-"5852",2012,"Rajiformes",7926
-"5852",2012,"Teuthoidea",56.3
-"586",1977,"Notothenia rossii",800
-"586",1978,"Notothenia rossii",9600
-"586",1983,"Dissostichus eleginoides",17000
-"586",1987,"Dissostichus eleginoides",488000
-"586",1988,"Dissostichus eleginoides",21000
-"586",1994,"Dissostichus eleginoides",56000
-"586",1995,"Dissostichus eleginoides",115000
-"586",1996,"Dissostichus eleginoides",75987
-"586",1997,"Dissostichus eleginoides",465956
-"586",1997,"Rajiformes",2000
-"586",1998,"Antimora rostrata",2870
-"586",1998,"Dissostichus eleginoides",1053097
-"586",1998,"Rajiformes",2160
-"586",1999,"Antimora rostrata",5960
-"586",1999,"Dissostichus eleginoides",1151500
-"586",1999,"Elasmobranchii",830
-"586",1999,"Lithodidae",100
-"586",1999,"Rajiformes",3640
-"586",2000,"Antimora rostrata",7152
-"586",2000,"Bathyraja murrayi",250
-"586",2000,"Dissostichus eleginoides",1096107
-"586",2000,"Lithodidae",3
-"586",2000,"Rajiformes",11229
-"586",2001,"Antimora rostrata",1037
-"586",2001,"Brama brama",3
-"586",2001,"Dissostichus eleginoides",1127123
-"586",2001,"Lithodidae",4
-"586",2001,"Muraenolepis spp",10
-"586",2001,"Paralomis aculeata",7
-"586",2001,"Rajiformes",13666
-"586",2002,"Antimora rostrata",1126
-"586",2002,"Dissostichus eleginoides",1224641
-"586",2002,"Rajiformes",40812
-"586",2003,"Antimora rostrata",7
-"586",2003,"Dissostichus eleginoides",570660
-"586",2003,"Muraenolepis spp",4
-"586",2003,"Paralomis aculeata",4
-"586",2003,"Rajiformes",79810
-"586",2004,"Bathyraja spp",178
-"586",2004,"Dissostichus eleginoides",607386
-"586",2004,"Lithodidae",14
-"586",2004,"Martialia hyadesi",1
-"586",2004,"Muraenolepis microps",80
-"586",2004,"Paralomis spp",6
-"586",2004,"Raja spp",52
-"586",2004,"Rajiformes",66550
-"586",2005,"Antimora rostrata",85549.7
-"586",2005,"Dissostichus eleginoides",638740.15659
-"586",2005,"Lithodidae",10389
-"586",2005,"Muraenolepis microps",279.5
-"586",2005,"Muraenolepis spp",0.5
-"586",2005,"Paralomis spp",130.57
-"586",2005,"Rajiformes",12726.3399795
-"586",2006,"Antimora rostrata",77750.5
-"586",2006,"Dissostichus eleginoides",801223.39628
-"586",2006,"Rajiformes",31553.9551713
-"586",2007,"Antimora rostrata",1485
-"586",2007,"Dissostichus eleginoides",436253.593546
-"586",2007,"Rajiformes",3274.9082526
-"586",2008,"Antimora rostrata",67661
-"586",2008,"Macrourus carinatus",134587.66019
-"586",2008,"Raja spp",15690.689529
-"586",2008,"Raja taaf",30700.565207
-"586",2009,"Antimora rostrata",77757
-"586",2009,"Macrourus carinatus",193147.687127
-"586",2009,"Raja taaf",45189.45179
-"586",2009,"Rajiformes",25.2
-"586",2010,"Antimora rostrata",78840.38
-"586",2010,"Lithodidae",33.7
-"586",2010,"Macrourus carinatus",113497.2227178
-"586",2010,"Raja taaf",55864.501051
-"586",2011,"Antimora rostrata",23743.64
-"586",2011,"Macrourus carinatus",93090.641246
-"586",2011,"Raja taaf",28868.7316104
-"586",2011,"Rajiformes",123.1
-"586",2012,"Antimora rostrata",21421.8
-"586",2012,"Lithodidae",2
-"586",2012,"Macrourus carinatus",96442.7
-"586",2012,"Raja taaf",74630.7
-"586",2012,"Rajiformes",109
-"587",1996,"Dissostichus eleginoides",868786
-"587",1997,"Antimora rostrata",60
-"587",1997,"Dissostichus eleginoides",1192544
-"587",1997,"Lithodidae",17
-"587",1997,"Rajiformes",4
-"587",1998,"Antimora rostrata",4542
-"587",1998,"Dissostichus eleginoides",636747
-"587",1998,"Lithodidae",51
-"587",1998,"Rajiformes",1459
-"587",1999,"Antimora rostrata",1130
-"587",1999,"Dissostichus eleginoides",301070
-"587",1999,"Lithodidae",80
-"587",1999,"Rajiformes",1130
-"587",2000,"Antimora rostrata",16927
-"587",2000,"Bathyraja murrayi",177
-"587",2000,"Bathyraja spp",492
-"587",2000,"Dissostichus eleginoides",1014887
-"587",2000,"Lithodidae",2789
-"587",2000,"Paralomis aculeata",87
-"587",2000,"Rajiformes",7033
-"587",2001,"Antimora rostrata",2015
-"587",2001,"Brama brama",8
-"587",2001,"Dissostichus eleginoides",235048
-"587",2001,"Lithodidae",80
-"587",2001,"Muraenolepis microps",2
-"587",2001,"Paralomis aculeata",10
-"587",2001,"Rajiformes",632
-"587",2002,"Antimora rostrata",431
-"587",2002,"Brama brama",2
-"587",2002,"Dissostichus eleginoides",98083
-"587",2002,"Lithodidae",1
-"587",2002,"Octopodidae",15
-"587",2002,"Raja georgiana",65
-"587",2002,"Rajiformes",29
-"587",2003,"Antimora rostrata",32
-"587",2003,"Dissostichus eleginoides",219240
-"587",2003,"Paralomis aculeata",40
-"587",2003,"Paralomis spp",100
-"587",2003,"Rajiformes",1784
-"587",2004,"Antimora rostrata",151
-"587",2004,"Bathyraja spp",30
-"587",2004,"Dissostichus eleginoides",132753
-"587",2004,"Lithodidae",4541
-"587",2004,"Muraenolepis microps",2
-"587",2004,"Octopodidae",42
-"587",2004,"Paralomis aculeata",1
-"587",2004,"Paralomis spinosissima",661
-"587",2004,"Paralomis spp",3
-"587",2004,"Raja spp",106
-"587",2004,"Rajiformes",1524
-"587",2005,"Antimora rostrata",403
-"587",2005,"Dissostichus eleginoides",141735.86
-"587",2005,"Lithodes murrayi",3266.42
-"587",2005,"Lithodidae",5773.8
-"587",2005,"Paralomis spp",14558.03
-"587",2006,"Antimora rostrata",405
-"587",2006,"Dissostichus eleginoides",123702.9
-"587",2007,"Antimora rostrata",2474
-"587",2007,"Dissostichus eleginoides",148444.18
-"587",2008,"Antimora rostrata",1559
-"587",2008,"Dissostichus eleginoides",69462.2
-"587",2009,"Antimora rostrata",152
-"587",2009,"Dissostichus eleginoides",20173.7
-"587",2010,"Antimora rostrata",397
-"587",2011,"Antimora rostrata",1002.9
-"587",2011,"Dissostichus eleginoides",91933.24
-"587",2011,"Rajiformes",45
-"587",2012,"Antimora rostrata",943.3
-"587",2012,"Holocephali",4
-"587",2012,"Lithodidae",8
-"587",2012,"Rajiformes",688.3
-"88",1978,"Pleuragramma antarcticum",21000
-"88",1981,"Pleuragramma antarcticum",1517000
-"88",1982,"Champsocephalus gunnari",15000
-"88",1982,"Pleuragramma antarcticum",90000
-"88",1984,"Myctophidae",129000
-"88",1986,"Euphausia superba",1884000
-"881",1976,"Euphausia superba",1000
-"881",1977,"Euphausia superba",10000
-"881",1978,"Euphausia superba",508000
-"881",1979,"Euphausia superba",2262000
-"881",1980,"Euphausia superba",1770000
-"881",1981,"Euphausia superba",593000
-"881",1982,"Euphausia superba",2544000
-"881",1983,"Euphausia superba",4718000
-"881",1984,"Euphausia superba",149000
-"881",1985,"Euphausia superba",4595000
-"881",1986,"Euphausia superba",1931000
-"881",1987,"Euphausia superba",363000
-"881",1990,"Euphausia superba",658000
-"881",1991,"Euphausia superba",3000
-"881",1998,"Antimora rostrata",161
-"881",1998,"Calamus spp",2
-"881",1998,"Channichthyidae",87
-"881",1998,"Dissostichus eleginoides",516
-"881",1998,"Dissostichus mawsoni",41002
-"881",1998,"Lithodidae",5
-"881",1998,"Muraenolepis spp",273
-"881",1998,"Nototheniidae",131
-"881",1998,"Paralomis aculeata",1
-"881",1998,"Rajiformes",4804
-"881",1999,"Antimora rostrata",20
-"881",1999,"Bathyraja spp",820
-"881",1999,"Channichthyidae",180
-"881",1999,"Dissostichus mawsoni",296050
-"881",1999,"Macrourus carinatus",19550
-"881",1999,"Muraenolepis microps",3650
-"881",1999,"Muraenolepis spp",740
-"881",1999,"Nototheniidae",220
-"881",1999,"Raja georgiana",11300
-"881",1999,"Raja spp",5640
-"881",2000,"Antimora rostrata",281
-"881",2000,"Chaenocephalus aceratus",10
-"881",2000,"Channichthyidae",310
-"881",2000,"Dissostichus eleginoides",260
-"881",2000,"Dissostichus mawsoni",750580
-"881",2000,"Macrourus carinatus",65260
-"881",2000,"Muraenolepis microps",4788
-"881",2000,"Muraenolepis spp",1740
-"881",2000,"Nototheniidae",10
-"881",2000,"Pogonophryne permitini",10
-"881",2000,"Raja georgiana",36070
-"881",2000,"Rajiformes",30
-"881",2001,"Antimora rostrata",4039
-"881",2001,"Asteroidea",2389
-"881",2001,"Channichthyidae",2596
-"881",2001,"Dissostichus eleginoides",34085
-"881",2001,"Dissostichus mawsoni",625661
-"881",2001,"Muraenolepis microps",41
-"881",2001,"Muraenolepis spp",3238
-"881",2001,"Nototheniidae",1106
-"881",2001,"Pogonophryne permitini",40
-"881",2001,"Raja georgiana",6970
-"881",2002,"Antimora rostrata",3180
-"881",2002,"Asteroidea",20
-"881",2002,"Channichthyidae",1680
-"881",2002,"Dissostichus eleginoides",12080
-"881",2002,"Dissostichus mawsoni",1312644
-"881",2002,"Lithodes murrayi",10
-"881",2002,"Macrourus carinatus",90
-"881",2002,"Muraenolepis microps",500
-"881",2002,"Muraenolepis spp",4810
-"881",2002,"Nototheniidae",40
-"881",2002,"Octopodidae",40
-"881",2002,"Pogonophryne permitini",20
-"881",2002,"Raja georgiana",23900
-"881",2003,"Antimora rostrata",6131
-"881",2003,"Asteroidea",72
-"881",2003,"Channichthyidae",3117
-"881",2003,"Dissostichus eleginoides",26038
-"881",2003,"Dissostichus mawsoni",1805425
-"881",2003,"Lithodidae",10.58
-"881",2003,"Muraenolepis microps",931
-"881",2003,"Muraenolepis spp",795
-"881",2003,"Nototheniidae",636
-"881",2003,"Octopodidae",146
-"881",2003,"Pogonophryne permitini",6
-"881",2003,"Raja georgiana",17196
-"881",2004,"Antimora rostrata",10447
-"881",2004,"Ascidiacea",1
-"881",2004,"Asteroidea",11.2
-"881",2004,"Bathyraja irrasa",2040
-"881",2004,"Bathyraja maccaini",20
-"881",2004,"Bathyraja murrayi",18
-"881",2004,"Caelorinchus marinii",210
-"881",2004,"Chaenocephalus aceratus",24
-"881",2004,"Channichthyidae",3896
-"881",2004,"Chionobathyscus dewitti",199
-"881",2004,"Chionodraco hamatus",1
-"881",2004,"Chionodraco myersi",187
-"881",2004,"Dissostichus eleginoides",12757
-"881",2004,"Dissostichus mawsoni",2184068
-"881",2004,"Invertebrata",182
-"881",2004,"Lampris immaculatus",32
-"881",2004,"Lithodes murrayi",2.2
-"881",2004,"Lithodidae",9
-"881",2004,"Macrourus carinatus",103
-"881",2004,"Moridae",8
-"881",2004,"Muraenolepis marmoratus",17
-"881",2004,"Muraenolepis microps",3533
-"881",2004,"Muraenolepis spp",10008
-"881",2004,"Nototheniidae",384
-"881",2004,"Octopodidae",38
-"881",2004,"Ophiuroidea",2
-"881",2004,"Pogonophryne permitini",15
-"881",2004,"Pogonophryne spp",14
-"881",2004,"Porifera",8
-"881",2004,"Raja georgiana",12707
-"881",2004,"Raja georgiana var.",251
-"881",2004,"Raja taaf",55
-"881",2004,"Rajiformes",10595
-"881",2005,"Actiniaria",33.3
-"881",2005,"Antimora rostrata",9414.54
-"881",2005,"Artedidraco spp",5.9
-"881",2005,"Asteroidea",171.46
-"881",2005,"Bathyraja spp",2990
-"881",2005,"Cephalopoda",29.3
-"881",2005,"Channichthyidae",2165.48
-"881",2005,"Dissostichus eleginoides",6978.26
-"881",2005,"Dissostichus mawsoni",3097983.4385
-"881",2005,"Invertebrata",2068.01
-"881",2005,"Lampris immaculatus",27.5
-"881",2005,"Lithodidae",7.1
-"881",2005,"Muraenolepis microps",822.95
-"881",2005,"Muraenolepis spp",6358.16
-"881",2005,"Nototheniidae",169.13
-"881",2005,"Octopodidae",15.84
-"881",2005,"Ophiuroidea",53.9
-"881",2005,"Pleuragramma antarcticum",150
-"881",2005,"Pogonophryne permitini",2.6
-"881",2005,"Porifera",0.63
-"881",2005,"Pseudochaenichthys georgianus",60
-"881",2005,"Raja georgiana",35016.84
-"881",2005,"Raja spp",1484.4
-"881",2005,"Rajiformes",22107.75
-"881",2006,"Actiniaria",4.95
-"881",2006,"Anthozoa",0.2
-"881",2006,"Antimora rostrata",1523.5
-"881",2006,"Artedidraconidae",0.51
-"881",2006,"Ascidiacea",0.25
-"881",2006,"Asteroidea",429.45
-"881",2006,"Bathyraja spp",46.5
-"881",2006,"Champsocephalus gunnari",121.5
-"881",2006,"Channichthyidae",3306.645
-"881",2006,"Dissostichus eleginoides",1293.72
-"881",2006,"Dissostichus mawsoni",2968190.287
-"881",2006,"Invertebrata",33.44
-"881",2006,"Isopoda",0.03
-"881",2006,"Lepidion spp",22.5
-"881",2006,"Lithodidae",5.01
-"881",2006,"Macrourus holotrachys",18.5
-"881",2006,"Moridae",29
-"881",2006,"Muraenolepis microps",214.47
-"881",2006,"Muraenolepis spp",4836.689
-"881",2006,"Nototheniidae",98.26
-"881",2006,"Octopodidae",7.85
-"881",2006,"Pogonophryne permitini",3.15
-"881",2006,"Porifera",1.39
-"881",2006,"Pycnogonida",0.01
-"881",2006,"Raja georgiana",878.164
-"881",2006,"Raja spp",50
-"881",2006,"Rajiformes",3209.01
-"881",2007,"Antimora rostrata",4203.39
-"881",2007,"Asteroidea",861.7
-"881",2007,"Bathyraja eatonii",334.06
-"881",2007,"Bathyraja maccaini",7
-"881",2007,"Bathyraja meridionalis",2.8
-"881",2007,"Bathyraja spp",1.34
-"881",2007,"Channichthyidae",14846.54
-"881",2007,"Chionobathyscus dewitti",1119.47
-"881",2007,"Coryphaenoides armatus",2.33
-"881",2007,"Dissostichus eleginoides",11956.72
-"881",2007,"Dissostichus mawsoni",3078743.1422
-"881",2007,"Invertebrata",389.6
-"881",2007,"Lepidion spp",11.7
-"881",2007,"Liparididae",0.4
-"881",2007,"Lithodes murrayi",1.6
-"881",2007,"Lithodidae",25.48
-"881",2007,"Macrourus holotrachys",36.74
-"881",2007,"Muraenolepis marmoratus",86.52
-"881",2007,"Muraenolepis microps",248.96
-"881",2007,"Muraenolepis spp",20110.59
-"881",2007,"Nototheniidae",170.26
-"881",2007,"Octopodidae",24.22
-"881",2007,"Ommastrephes, Illex",19.4
-"881",2007,"Ophiuroidea",19
-"881",2007,"Pachycara brachycephalum",0.33
-"881",2007,"Paralomis spp",0.26
-"881",2007,"Pareledone turqueti",5.39
-"881",2007,"Pogonophryne permitini",7.98
-"881",2007,"Pogonophryne spp",18.7
-"881",2007,"Porifera",1
-"881",2007,"Pycnogonida",7.3
-"881",2007,"Raja georgiana",11073.59
-"881",2007,"Raja spp",25814.91
-"881",2007,"Rajiformes",1066.87
-"881",2007,"Teuthoidea",450
-"881",2007,"Trematomus spp",248.89
-"881",2008,"Actiniaria",4.6
-"881",2008,"Antimora rostrata",2907.03
-"881",2008,"Asteroidea",1322.3
-"881",2008,"Bathyraja eatonii",100.9
-"881",2008,"Bathyraja maccaini",2
-"881",2008,"Channichthyidae",5700.53
-"881",2008,"Chionobathyscus dewitti",664.66
-"881",2008,"Dissostichus eleginoides",8667.51
-"881",2008,"Dissostichus mawsoni",2250529.81
-"881",2008,"Euphausia superba",13.7
-"881",2008,"Invertebrata",423.765
-"881",2008,"Lithodes murrayi",1.45
-"881",2008,"Lithodidae",4.7
-"881",2008,"Mollusca",1.1
-"881",2008,"Muraenolepis marmoratus",1.75
-"881",2008,"Muraenolepis microps",191.6
-"881",2008,"Muraenolepis spp",6937.55
-"881",2008,"Nototheniidae",1443.61
-"881",2008,"Octopodidae",0.3
-"881",2008,"Paralomis aculeata",1.5
-"881",2008,"Pleuragramma antarcticum",592
-"881",2008,"Pogonophryne permitini",5.8
-"881",2008,"Pogonophryne scotti",13
-"881",2008,"Pogonophryne spp",11.57
-"881",2008,"Porifera",116.5
-"881",2008,"Raja georgiana",3703.98
-"881",2008,"Rajiformes",75.03
-"881",2008,"Teuthoidea",242
-"881",2009,"Antimora rostrata",1693.89
-"881",2009,"Asteroidea",110.23
-"881",2009,"Bathyraja eatonii",1783.79
-"881",2009,"Bathyraja maccaini",9
-"881",2009,"Chaenocephalus aceratus",145.4
-"881",2009,"Channichthyidae",4798.07
-"881",2009,"Chionobathyscus dewitti",391.8
-"881",2009,"Dissostichus eleginoides",16801.14
-"881",2009,"Dissostichus mawsoni",2431517.78
-"881",2009,"Invertebrata",290.901
-"881",2009,"Lampris immaculatus",141
-"881",2009,"Lithodidae",0.59
-"881",2009,"Muraenolepis microps",105.2
-"881",2009,"Muraenolepis spp",7814.29
-"881",2009,"Nototheniidae",0.5
-"881",2009,"Octopodidae",10.96
-"881",2009,"Pachycara brachycephalum",44.7
-"881",2009,"Pogonophryne permitini",2.95
-"881",2009,"Pogonophryne scotti",3.3
-"881",2009,"Pogonophryne spp",0.7
-"881",2009,"Raja georgiana",5017.03
-"881",2009,"Rajiformes",340.9
-"881",2010,"Antimora rostrata",1682.004
-"881",2010,"Asteroidea",149.78
-"881",2010,"Bathyraja eatonii",1084.77
-"881",2010,"Channichthyidae",3898.1
-"881",2010,"Chionobathyscus dewitti",1083.1
-"881",2010,"Dissostichus eleginoides",451.89
-"881",2010,"Dissostichus mawsoni",2868429.22
-"881",2010,"Invertebrata",66.8
-"881",2010,"Lampris immaculatus",97
-"881",2010,"Lithodidae",8.21
-"881",2010,"Macrourus carinatus",1196.4
-"881",2010,"Muraenolepis marmoratus",99.2
-"881",2010,"Muraenolepis microps",1550.88
-"881",2010,"Muraenolepis spp",6530.19
-"881",2010,"Nototheniidae",60.44
-"881",2010,"Octopodidae",83.02
-"881",2010,"Pagothenia hansoni",3.7
-"881",2010,"Pogonophryne permitini",1
-"881",2010,"Pogonophryne scotti",2.2
-"881",2010,"Pogonophryne spp",25.49
-"881",2010,"Raja georgiana",5447.22
-"881",2010,"Raja spp",675.26
-"881",2010,"Rajiformes",924.45
-"881",2010,"Trematomus loennbergii",1
-"881",2011,"Actiniaria",29.3
-"881",2011,"Antimora rostrata",815.04
-"881",2011,"Asteroidea",8.93
-"881",2011,"Bathyraja eatonii",533.3
-"881",2011,"Bathyraja maccaini",151.3
-"881",2011,"Channichthyidae",1099.54
-"881",2011,"Chionobathyscus dewitti",179.82
-"881",2011,"Dissostichus eleginoides",2625.44
-"881",2011,"Dissostichus mawsoni",2836465.17
-"881",2011,"Invertebrata",47.499
-"881",2011,"Lampris guttatus",22.1
-"881",2011,"Lampris immaculatus",66
-"881",2011,"Lepidion spp",3
-"881",2011,"Lithodidae",0.6
-"881",2011,"Macrourus carinatus",1875
-"881",2011,"Muraenolepis microps",101.91
-"881",2011,"Muraenolepis spp",5470.16
-"881",2011,"Nototheniidae",140.38
-"881",2011,"Octopodidae",2.685
-"881",2011,"Pennatulacea",0.65
-"881",2011,"Pogonophryne permitini",0.93
-"881",2011,"Pogonophryne spp",4.89
-"881",2011,"Porifera",2
-"881",2011,"Raja georgiana",2187.9
-"881",2011,"Rajiformes",1348.92
-"881",2011,"Stylasteridae",21
-"881",2012,"Antimora rostrata",706.9
-"881",2012,"Asteroidea",0.8
-"881",2012,"Bathydraco antarcticus",0.1
-"881",2012,"Bathyraja eatonii",179.5
-"881",2012,"Bathyraja maccaini",159.3
-"881",2012,"Channichthyidae",1236.6
-"881",2012,"Chionobathyscus dewitti",67.2
-"881",2012,"Dissostichus eleginoides",4893.3
-"881",2012,"Dissostichus mawsoni",3173044.2
-"881",2012,"Lepidion spp",21.9
-"881",2012,"Lithodidae",1.3
-"881",2012,"Macrourus carinatus",6.4
-"881",2012,"Moridae",10
-"881",2012,"Muraenolepis marmoratus",5.6
-"881",2012,"Muraenolepis microps",1.2
-"881",2012,"Muraenolepis orangiensis",13
-"881",2012,"Muraenolepis spp",1754.5
-"881",2012,"Nototheniidae",192.6
-"881",2012,"Octopodidae",104.4
-"881",2012,"Paralomis aculeata",0.2
-"881",2012,"Pogonophryne permitini",34.3
-"881",2012,"Pogonophryne scotti",4.9
-"881",2012,"Pogonophryne spp",3.9
-"881",2012,"Raja georgiana",57
-"881",2012,"Rajiformes",1092.9
-"882",1980,"Euphausia superba",47000
-"882",1991,"Euphausia superba",746000
-"882",2002,"Antimora rostrata",10
-"882",2002,"Dissostichus eleginoides",80
-"882",2002,"Dissostichus mawsoni",41200
-"882",2002,"Muraenolepis spp",50
-"882",2002,"Raja georgiana",270
-"882",2003,"Antimora rostrata",1708
-"882",2003,"Channichthyidae",5824
-"882",2003,"Dissostichus mawsoni",106380
-"882",2003,"Muraenolepis spp",122
-"882",2004,"Antimora rostrata",5752
-"882",2004,"Asteroidea",0.3
-"882",2004,"Bathyraja eatonii",5
-"882",2004,"Bathyraja maccaini",86
-"882",2004,"Channichthyidae",2451
-"882",2004,"Dissostichus eleginoides",18
-"882",2004,"Dissostichus mawsoni",374491
-"882",2004,"Lithodes murrayi",0.305
-"882",2004,"Muraenolepis spp",41.205
-"882",2004,"Nototheniidae",130
-"882",2004,"Octopodidae",2
-"882",2005,"Antimora rostrata",1899.8
-"882",2005,"Bathyraja eatonii",3.46
-"882",2005,"Channichthyidae",1532.2
-"882",2005,"Dissostichus eleginoides",15.03
-"882",2005,"Dissostichus mawsoni",410504.17
-"882",2005,"Lithodidae",0.1
-"882",2005,"Muraenolepis microps",42.6
-"882",2005,"Muraenolepis spp",8.8
-"882",2005,"Pleuragramma antarcticum",30
-"882",2006,"Antimora rostrata",1044.93
-"882",2006,"Asteroidea",0.39
-"882",2006,"Bathyraja eatonii",8
-"882",2006,"Channichthyidae",1110.98
-"882",2006,"Dissostichus mawsoni",513639.8
-"882",2006,"Lithodidae",12.63
-"882",2006,"Muraenolepis spp",765.15
-"882",2006,"Nototheniidae",67.8
-"882",2006,"Raja georgiana",49.47
-"882",2007,"Antimora rostrata",6277.34
-"882",2007,"Asteroidea",0.6
-"882",2007,"Channichthyidae",5078.96
-"882",2007,"Dissostichus mawsoni",346693.03
-"882",2007,"Lithodidae",0.2
-"882",2007,"Muraenolepis microps",30.1
-"882",2007,"Muraenolepis spp",1163.26
-"882",2007,"Raja georgiana",20
-"882",2007,"Raja spp",104.17
-"882",2008,"Antimora rostrata",1994.2
-"882",2008,"Channichthyidae",1936.28
-"882",2008,"Chionobathyscus dewitti",14.6
-"882",2008,"Dissostichus eleginoides",65
-"882",2008,"Dissostichus mawsoni",415731.78
-"882",2008,"Moroteuthis ingens",10
-"882",2008,"Muraenolepis microps",26
-"882",2008,"Muraenolepis spp",437.82
-"882",2009,"Antimora rostrata",6786.14
-"882",2009,"Asteroidea",741.25
-"882",2009,"Bathyraja eatonii",58.08
-"882",2009,"Channichthyidae",5218.2
-"882",2009,"Chionobathyscus dewitti",228.5
-"882",2009,"Dissostichus eleginoides",16
-"882",2009,"Dissostichus mawsoni",483653.62
-"882",2009,"Invertebrata",6.88
-"882",2009,"Lithodidae",0.94
-"882",2009,"Muraenolepis microps",7.5
-"882",2009,"Muraenolepis spp",1159.93
-"882",2009,"Nototheniidae",28.45
-"882",2009,"Octopodidae",21.72
-"882",2009,"Rajiformes",17.7
-"882",2009,"Trematomus spp",0.4
-"882",2010,"Aethotaxis mitopteryx",1
-"882",2010,"Antimora rostrata",4918.45
-"882",2010,"Channichthyidae",7017.58
-"882",2010,"Chionobathyscus dewitti",2095.2
-"882",2010,"Dissostichus mawsoni",314272.63
-"882",2010,"Muraenolepis microps",78.8
-"882",2010,"Muraenolepis spp",764.4
-"882",2010,"Paralomis spp",6
-"882",2010,"Pogonophryne spp",11
-"882",2010,"Trematomus lepidorhinus",0.5
-"882",2011,"Actiniaria",17
-"882",2011,"Antimora rostrata",4967.94
-"882",2011,"Asteroidea",1.16
-"882",2011,"Channichthyidae",5981.43
-"882",2011,"Chionobathyscus dewitti",1237.22
-"882",2011,"Dissostichus mawsoni",589607.73
-"882",2011,"Invertebrata",269.774
-"882",2011,"Lithodidae",1.83
-"882",2011,"Macrourus carinatus",628.19
-"882",2011,"Muraenolepis marmoratus",0.2
-"882",2011,"Muraenolepis microps",120.05
-"882",2011,"Muraenolepis spp",502.38
-"882",2011,"Nototheniidae",1.57
-"882",2011,"Octopodidae",0.62
-"882",2011,"Raja georgiana",106
-"882",2011,"Rajiformes",16.75
-"882",2011,"Stylasteridae",5
-"882",2012,"Antimora rostrata",3529.4
-"882",2012,"Asteroidea",4.3
-"882",2012,"Bathyraja spp",196
-"882",2012,"Channichthyidae",6070.4
-"882",2012,"Chionobathyscus dewitti",503.2
-"882",2012,"Dissostichus eleginoides",69.8
-"882",2012,"Dissostichus mawsoni",424464.6
-"882",2012,"Lithodidae",9.2
-"882",2012,"Macrourus holotrachys",27.5
-"882",2012,"Muraenolepis orangiensis",10.7
-"882",2012,"Muraenolepis spp",1217.7
-"882",2012,"Raja spp",83
-"883",1980,"Euphausia superba",1380000
-"883",1981,"Euphausia superba",545000
-"883",1983,"Euphausia superba",41000
-"883",1984,"Euphausia superba",436000
-"883",1985,"Euphausia superba",203000
-"883",1987,"Euphausia superba",31000
-"883",1988,"Myctophidae",1110000
-"883",1992,"Euphausia superba",50000
-"883",1998,"Dissostichus eleginoides",13
-"883",1998,"Dissostichus mawsoni",288
-"883",1998,"Nototheniidae",65
-"883",1998,"Rajiformes",22
-"883",2005,"Chionodraco myersi",38.4
-"883",2005,"Dissostichus eleginoides",42.8
-"883",2005,"Dissostichus mawsoni",1629.8
-"883",2005,"Lepidion spp",0.2
-"883",2005,"Lithodidae",0.1
-"883",2005,"Macrourus holotrachys",218.1
-"883",2005,"Muraenolepis microps",1
-"883",2011,"Chionobathyscus dewitti",99.4
-"883",2011,"Dissostichus mawsoni",5230
-"883",2011,"Lithodidae",4.6
-"883",2011,"Pogonophryne spp",0.4
-"883",2012,"Chionobathyscus dewitti",160.4
-"883",2012,"Dissostichus eleginoides",144
-"883",2012,"Dissostichus mawsoni",4066
-"883",2012,"Muraenolepis spp",9.9
-"883",2012,"Nototheniidae",0.6
-"883",2012,"Pogonophryne spp",0.2
-"883",2012,"Raja georgiana",19.3
+"41",2010,"Cryodraco antarcticus",1.35e-05
+"41",2010,"Euphausia superba",10
+"4132",1989,"Euphausia superba",801
+"4132",1989,"Illex argentinus",1036
+"4132",1989,"Macruronus magellanicus",610
+"4132",1992,"Euphausia superba",824
+"4132",1993,"Euphausia superba",1681.6
+"4132",1998,"Euphausia superba",74
+"4132",2006,"Euphausia superba",42.535
+"48",1974,"Euphausia superba",19139
+"48",1975,"Euphausia superba",41352
+"48",1976,"Euphausia superba",609
+"48",1977,"Euphausia superba",68301
+"48",1978,"Dissostichus eleginoides",1407
+"48",1978,"Euphausia superba",83255
+"48",1978,"Notothenia gibberifrons",8294
+"48",1978,"Notothenia rossii",5468
+"48",1978,"Notothenia squamifrons",2473
+"48",1978,"Osteichthyes",15052
+"48",1979,"Dissostichus eleginoides",7
+"48",1979,"Euphausia superba",261968
+"48",1979,"Notothenia gibberifrons",1600
+"48",1979,"Notothenia squamifrons",134
+"48",1986,"Notothenia squamifrons",10
+"48",1993,"Euphausia superba",71
+"481",1976,"Euphausia superba",389
+"481",1978,"Champsocephalus gunnari",5573
+"481",1978,"Notothenia gibberifrons",68
+"481",1978,"Pseudochaenichthys georgianus",13
+"481",1979,"Chaenocephalus aceratus",1388
+"481",1979,"Channichthyidae",26
+"481",1979,"Chionodraco rastrospinosus",370
+"481",1979,"Loliginidae, Ommastrephidae",2
+"481",1979,"Notothenia gibberifrons",3212
+"481",1979,"Notothenia rossii",470
+"481",1979,"Nototheniidae",21
+"481",1979,"Osteichthyes",79
+"481",1979,"Pseudochaenichthys georgianus",384
+"481",1980,"Chaenodraco wilsoni",4320
+"481",1980,"Champsocephalus gunnari",1087
+"481",1980,"Chionodraco rastrospinosus",390
+"481",1980,"Dissostichus eleginoides",2
+"481",1980,"Euphausia superba",49508
+"481",1980,"Notothenia rossii",18763
+"481",1980,"Osteichthyes",551
+"481",1980,"Pseudochaenichthys georgianus",72
+"481",1981,"Cephalopoda",0.006
+"481",1981,"Chaenocephalus aceratus",0.038
+"481",1981,"Champsocephalus gunnari",1700.039
+"481",1981,"Channichthyidae",0.016
+"481",1981,"Euphausia superba",93717
+"481",1981,"Myctophidae",0.001
+"481",1981,"Notothenia rossii",0.001
+"481",1981,"Nototheniidae",0.015
+"481",1981,"Osteichthyes",4230.035
+"481",1981,"Pseudochaenichthys georgianus",0.056
+"481",1981,"Rajiformes",0.154
+"481",1981,"Trematomus spp",0.003
+"481",1982,"Chaenocephalus aceratus",0.221
+"481",1982,"Chaenodraco wilsoni",0.054
+"481",1982,"Champsocephalus gunnari",0.023
+"481",1982,"Channichthyidae",0.044
+"481",1982,"Chionodraco rastrospinosus",0.175
+"481",1982,"Dissostichus mawsoni",0.009
+"481",1982,"Euphausia superba",68192
+"481",1982,"Myctophidae",0.038
+"481",1982,"Notothenia gibberifrons",3.671
+"481",1982,"Notothenia rossii",0.019
+"481",1982,"Nototheniidae",0.136
+"481",1982,"Nototheniops nudifrons",0.023
+"481",1982,"Pleuragramma antarcticum",0.004
+"481",1982,"Rajiformes",0.013
+"481",1982,"Trematomus spp",0.102
+"481",1983,"Euphausia superba",2333
+"481",1984,"Euphausia superba",30230
+"481",1985,"Chaenodraco wilsoni",0.5
+"481",1985,"Champsocephalus gunnari",17.3
+"481",1985,"Channichthyidae",0.1
+"481",1985,"Channichthys rhinoceratus",19.5
+"481",1985,"Euphausia superba",12933
+"481",1985,"Notothenia rossii",4.8
+"481",1985,"Nototheniidae",0.4
+"481",1985,"Pseudochaenichthys georgianus",0.6
+"481",1986,"Champsocephalus gunnari",60
+"481",1986,"Notothenia gibberifrons",54
+"481",1987,"Chaenocephalus aceratus",1.774
+"481",1987,"Champsocephalus gunnari",15.44
+"481",1987,"Euphausia superba",70269
+"481",1987,"Nototheniidae",1
+"481",1987,"Osteichthyes",1.094
+"481",1987,"Pleuragramma antarcticum",4
+"481",1987,"Pseudochaenichthys georgianus",0.027
+"481",1987,"Rajiformes",0.293
+"481",1988,"Chaenocephalus aceratus",2.316
+"481",1988,"Champsocephalus gunnari",0.499
+"481",1988,"Chionodraco rastrospinosus",0.098
+"481",1988,"Euphausia superba",78918
+"481",1988,"Notothenia gibberifrons",4.443
+"481",1988,"Notothenia neglecta",1.309
+"481",1988,"Nototheniops nudifrons",0.009
+"481",1988,"Osteichthyes",0.197
+"481",1988,"Rajiformes",0.032
+"481",1989,"Chaenocephalus aceratus",1
+"481",1989,"Champsocephalus gunnari",141
+"481",1989,"Euphausia superba",105554
+"481",1989,"Myctophidae",17
+"481",1989,"Notothenia gibberifrons",667
+"481",1990,"Euphausia superba",44752.24
+"481",1991,"Euphausia superba",69634.51
+"481",1991,"Myctophidae",50
+"481",1992,"Euphausia superba",75564.8
+"481",1993,"Euphausia superba",33267
+"481",1994,"Euphausia superba",45085
+"481",1995,"Euphausia superba",38165
+"481",1997,"Euphausia superba",48843.404
+"481",1998,"Dissostichus eleginoides",0.033
+"481",1998,"Dissostichus mawsoni",1.156
+"481",1998,"Euphausia superba",56574.709
+"481",1998,"Macrourus spp",0.324
+"481",1998,"Nototheniidae",0.026
+"481",1998,"Osteichthyes",0.512
+"481",1998,"Rajiformes",0.028
+"481",1999,"Euphausia superba",38895.033
+"481",2000,"Euphausia superba",71977.2
+"481",2001,"Chaenocephalus aceratus",0.738
+"481",2001,"Chaenodraco wilsoni",0.001
+"481",2001,"Champsocephalus gunnari",0.788
+"481",2001,"Channichthyidae",0.048
+"481",2001,"Chionodraco rastrospinosus",0.503
+"481",2001,"Dissostichus mawsoni",0.04
+"481",2001,"Euphausia superba",46777.9
+"481",2001,"Notothenia gibberifrons",2.128
+"481",2001,"Notothenia neglecta",2.296
+"481",2001,"Notothenia rossii",0.124
+"481",2001,"Notothenia squamifrons",0.132
+"481",2001,"Nototheniidae",0.039
+"481",2001,"Osteichthyes",0.142
+"481",2001,"Pleuragramma antarcticum",0.001
+"481",2001,"Pseudochaenichthys georgianus",0.142
+"481",2001,"Rajiformes",0.08
+"481",2001,"Trematomus spp",0.12
+"481",2002,"Euphausia superba",10645.9
+"481",2003,"Euphausia superba",35377.405
+"481",2004,"Euphausia superba",13881.5
+"481",2005,"Chaenocephalus aceratus",0.001
+"481",2005,"Champsocephalus gunnari",0.005
+"481",2005,"Cryodraco antarcticus",0.001
+"481",2005,"Euphausia superba",7095.409
+"481",2005,"Pleuragramma antarcticum",0.004
+"481",2005,"Pseudochaenichthys georgianus",0.003
+"481",2006,"Aethotaxis mitopteryx",0.00021
+"481",2006,"Artedidraco skottsbergi",2.8e-05
+"481",2006,"Bathylagus antarcticus",2.9e-05
+"481",2006,"Bathyraja eatonii",0.015925
+"481",2006,"Bathyraja maccaini",0.089299
+"481",2006,"Chaenocephalus aceratus",2.618844
+"481",2006,"Chaenodraco wilsoni",0.078421
+"481",2006,"Champsocephalus gunnari",15.964613
+"481",2006,"Chionodraco rastrospinosus",0.290116
+"481",2006,"Cryodraco antarcticus",0.078125
+"481",2006,"Euphausia superba",88833.554
+"481",2006,"Gerlachea australis",8.3e-05
+"481",2006,"Gymnodraco acuticeps",0.009863
+"481",2006,"Gymnoscopelus braueri",0.000107
+"481",2006,"Gymnoscopelus nicholsi",0.009523
+"481",2006,"Gymnoscopelus opisthopterus",3.8e-05
+"481",2006,"Krefftichthys anderssoni",3e-06
+"481",2006,"Magnisudis prionosa",0.00121
+"481",2006,"Neopagetopsis ionah",0.007054
+"481",2006,"Notolepis spp",0.97
+"481",2006,"Notothenia coriiceps",0.125576
+"481",2006,"Notothenia gibberifrons",0.718803
+"481",2006,"Notothenia rossii",1.104966
+"481",2006,"Notothenia squamifrons",0.043295
+"481",2006,"Nototheniops larseni",0.009391
+"481",2006,"Nototheniops nudifrons",0.008663
+"481",2006,"Nototheniops nybelini",7.61
+"481",2006,"Ophthalmolycus amberensis",0.001951
+"481",2006,"Pachycara brachycephalum",0.003813
+"481",2006,"Pagetopsis macropterus",0.005944
+"481",2006,"Pagothenia hansoni",0.005587
+"481",2006,"Parachaenichthys charcoti",0.010103
+"481",2006,"Platax spp",0.002239
+"481",2006,"Pleuragramma antarcticum",14.200298
+"481",2006,"Pogonophryne marmorata",0.000587
+"481",2006,"Pseudochaenichthys georgianus",3.4
+"481",2006,"Racovitzia glacialis",0.000198
+"481",2006,"Trematomus eulepidotus",0.156647
+"481",2006,"Trematomus newnesi",0.159544
+"481",2006,"Trematomus pennellii",0.004413
+"481",2006,"Trematomus scotti",0.000493
+"481",2006,"Trematomus tokarevi",0.004211
+"481",2007,"Aethotaxis mitopteryx",0.00143
+"481",2007,"Akarotaxis nudiceps",2e-06
+"481",2007,"Anotopterus pharao",0.000607
+"481",2007,"Artedidraco skottsbergi",0.000299
+"481",2007,"Bathyraja maccaini",0.095843
+"481",2007,"Bathyraja spp",0.021254
+"481",2007,"Chaenocephalus aceratus",0.242163
+"481",2007,"Chaenodraco wilsoni",0.046812
+"481",2007,"Champsocephalus gunnari",0.758015
+"481",2007,"Chionodraco myersi",0.00019
+"481",2007,"Chionodraco rastrospinosus",0.281653
+"481",2007,"Cryodraco antarcticus",0.051579
+"481",2007,"Dissostichus mawsoni",0.033934
+"481",2007,"Electrona antarctica",0.001795
+"481",2007,"Euphausia superba",18418.647
+"481",2007,"Gerlachea australis",0.000243
+"481",2007,"Gymnodraco acuticeps",0.00768
+"481",2007,"Gymnoscopelus braueri",9.6e-05
+"481",2007,"Gymnoscopelus nicholsi",0.01076
+"481",2007,"Harpagifer antarcticus",3.2e-05
+"481",2007,"Krefftichthys anderssoni",3e-06
+"481",2007,"Lycodichthys antarcticus",5e-05
+"481",2007,"Macrourus holotrachys",6.2e-05
+"481",2007,"Muraenolepis microps",0.005874
+"481",2007,"Neopagetopsis ionah",0.005852
+"481",2007,"Notolepis coatsi",9.6e-05
+"481",2007,"Notothenia gibberifrons",3.226235
+"481",2007,"Notothenia squamifrons",0.03255
+"481",2007,"Nototheniops larseni",0.07836
+"481",2007,"Nototheniops nudifrons",0.015665
+"481",2007,"Ophthalmolycus amberensis",0.008664
+"481",2007,"Pachycara brachycephalum",0.001059
+"481",2007,"Pagetopsis macropterus",0.004641
+"481",2007,"Pagothenia hansoni",0.01785
+"481",2007,"Paradiplospinus gracilis",0.000166
+"481",2007,"Paraliparis spp",2e-06
+"481",2007,"Pleuragramma antarcticum",0.004049
+"481",2007,"Pogonophryne phyllopogon",1.1e-05
+"481",2007,"Pogonophryne spp",5.3e-05
+"481",2007,"Prionodraco evansii",2.2e-05
+"481",2007,"Protomyctophum spp",1.3e-05
+"481",2007,"Racovitzia glacialis",0.00022
+"481",2007,"Trematomus bernacchii",0.004358
+"481",2007,"Trematomus eulepidotus",0.06657
+"481",2007,"Trematomus loennbergii",9e-06
+"481",2007,"Trematomus newnesi",0.01773
+"481",2007,"Trematomus nicolai",0.002928
+"481",2008,"Euphausia superba",2884.209
+"481",2009,"Euphausia superba",33969.955
+"481",2010,"Dissostichus mawsoni",7.9e-06
+"481",2010,"Protomyctophum spp",2e-06
+"481",2011,"Anotopterus pharao",0.000704
+"481",2011,"Champsocephalus gunnari",0.019
+"481",2011,"Electrona carlsbergi",0.0329332
+"481",2011,"Euphausia superba",9214.742
+"481",2011,"Notothenia gibberifrons",0.225
+"481",2011,"Notothenia rossii",0.1
+"481",2011,"Pleuragramma antarcticum",0.028
+"481",2012,"Aethotaxis mitopteryx",3e-04
+"481",2012,"Anotopterus pharao",0.047
+"481",2012,"Artedidraco skottsbergi",1e-04
+"481",2012,"Bathyraja eatonii",0.0088
+"481",2012,"Bathyraja maccaini",0.0545
+"481",2012,"Bathyraja spp",0.0097
+"481",2012,"Chaenocephalus aceratus",0.53823
+"481",2012,"Chaenodraco wilsoni",0.026
+"481",2012,"Champsocephalus gunnari",8.0813
+"481",2012,"Chionodraco rastrospinosus",0.377
+"481",2012,"Cryodraco antarcticus",0.2074
+"481",2012,"Dolloidraco longedorsalis",2e-04
+"481",2012,"Electrona spp",1e-04
+"481",2012,"Euphausia superba",75630.039
+"481",2012,"Gerlachea australis",2e-04
+"481",2012,"Gymnodraco acuticeps",0.0015
+"481",2012,"Gymnoscopelus braueri",1e-04
+"481",2012,"Harpagifer antarcticus",1e-04
+"481",2012,"Lycodichthys antarcticus",3e-04
+"481",2012,"Notothenia gibberifrons",1.6555
+"481",2012,"Notothenia squamifrons",0.106
+"481",2012,"Nototheniidae",3e-04
+"481",2012,"Nototheniops larseni",0.2198
+"481",2012,"Ophthalmolycus amberensis",0.005
+"481",2012,"Osteichthyes",5e-06
+"481",2012,"Pachycara brachycephalum",0.0011
+"481",2012,"Paradiplospinus gracilis",3e-04
+"481",2012,"Paraliparis spp",2e-04
+"481",2012,"Pleuragramma antarcticum",0.0325
+"481",2012,"Pogonophryne marmorata",2e-04
+"481",2012,"Pogonophryne scotti",5e-04
+"481",2012,"Pogonophryne spp",7e-04
+"481",2012,"Pseudochaenichthys georgianus",0.0417
+"481",2012,"Racovitzia glacialis",6e-04
+"481",2012,"Trematomus bernacchii",0.0068
+"481",2012,"Trematomus eulepidotus",0.0524
+"481",2012,"Trematomus newnesi",0.0017
+"481",2012,"Trematomus scotti",3e-04
+"482",1977,"Dissostichus eleginoides",5
+"482",1977,"Pseudochaenichthys georgianus",10
+"482",1978,"Chaenocephalus aceratus",211
+"482",1978,"Champsocephalus gunnari",138895
+"482",1978,"Dissostichus eleginoides",90
+"482",1978,"Notothenia gibberifrons",75
+"482",1978,"Notothenia rossii",85
+"482",1978,"Nototheniidae",50
+"482",1978,"Osteichthyes",217
+"482",1978,"Pseudochaenichthys georgianus",649
+"482",1978,"Rajiformes",4
+"482",1979,"Chaenocephalus aceratus",2161
+"482",1979,"Champsocephalus gunnari",21439
+"482",1979,"Dissostichus eleginoides",37
+"482",1979,"Euphausia superba",1018
+"482",1979,"Notothenia gibberifrons",2598
+"482",1979,"Notothenia rossii",237
+"482",1979,"Nototheniidae",77
+"482",1979,"Pseudochaenichthys georgianus",599
+"482",1980,"Champsocephalus gunnari",5234
+"482",1980,"Channichthyidae",1668
+"482",1980,"Dissostichus eleginoides",4
+"482",1980,"Euphausia superba",173765
+"482",1980,"Micromesistius australis",36
+"482",1980,"Notothenia gibberifrons",1416
+"482",1980,"Notothenia rossii",1722
+"482",1980,"Nototheniidae",1367
+"482",1980,"Rajiformes",6
+"482",1981,"Champsocephalus gunnari",1858
+"482",1981,"Euphausia superba",60540
+"482",1981,"Notothenia gibberifrons",178
+"482",1981,"Notothenia rossii",72
+"482",1981,"Osteichthyes",2770
+"482",1982,"Champsocephalus gunnari",557
+"482",1982,"Euphausia superba",258596
+"482",1982,"Osteichthyes",2181
+"482",1983,"Champsocephalus gunnari",5948
+"482",1983,"Euphausia superba",124704
+"482",1983,"Notothenia gibberifrons",7001
+"482",1983,"Osteichthyes",13233
+"482",1983,"Pleuragramma antarcticum",110
+"482",1984,"Champsocephalus gunnari",4499
+"482",1984,"Euphausia superba",64112
+"482",1984,"Notothenia gibberifrons",2499
+"482",1984,"Notothenia rossii",725
+"482",1985,"Champsocephalus gunnari",2361
+"482",1985,"Dissostichus eleginoides",9
+"482",1985,"Euphausia superba",140208
+"482",1985,"Notothenia gibberifrons",5383
+"482",1985,"Notothenia rossii",47
+"482",1985,"Notothenia squamifrons",194
+"482",1985,"Osteichthyes",622
+"482",1986,"Champsocephalus gunnari",2711
+"482",1986,"Euphausia superba",227095
+"482",1986,"Notothenia gibberifrons",341
+"482",1987,"Euphausia superba",18427
+"482",1987,"Notothenia gibberifrons",3
+"482",1987,"Nototheniidae",1
+"482",1987,"Osteichthyes",1
+"482",1988,"Champsocephalus gunnari",1336
+"482",1988,"Euphausia superba",98281
+"482",1989,"Champsocephalus gunnari",659
+"482",1989,"Euphausia superba",88101
+"482",1990,"Champsocephalus gunnari",2401
+"482",1990,"Euphausia superba",223533
+"482",1991,"Chaenocephalus aceratus",4.505
+"482",1991,"Champsocephalus gunnari",13.871
+"482",1991,"Channichthyidae",0.013
+"482",1991,"Chionodraco rastrospinosus",2.896
+"482",1991,"Euphausia superba",159984
+"482",1991,"Notothenia gibberifrons",9.103
+"482",1991,"Notothenia neglecta",0.309
+"482",1991,"Nototheniidae",4.937
+"482",1991,"Osteichthyes",0.055
+"482",1991,"Pleuragramma antarcticum",0.003
+"482",1991,"Pseudochaenichthys georgianus",5.392
+"482",1991,"Rajiformes",0.05
+"482",1992,"Euphausia superba",117802
+"482",1993,"Euphausia superba",12670
+"482",1994,"Chaenocephalus aceratus",0.031
+"482",1994,"Champsocephalus gunnari",0.001
+"482",1994,"Notothenia gibberifrons",0.037
+"482",1994,"Pseudochaenichthys georgianus",0.001
+"482",1995,"Euphausia superba",48833.4
+"482",1997,"Euphausia superba",98.5
+"482",1998,"Dissostichus eleginoides",0.032
+"482",1998,"Macrourus spp",0.075
+"482",1998,"Osteichthyes",0.004
+"482",1998,"Rajiformes",0.077
+"482",1999,"Chaenodraco wilsoni",0.001
+"482",1999,"Champsocephalus gunnari",0.502
+"482",1999,"Chionodraco rastrospinosus",0.924
+"482",1999,"Euphausia superba",62076.767
+"482",1999,"Myctophidae",0.042
+"482",1999,"Notothenia gibberifrons",5.062
+"482",1999,"Notothenia rossii",0.273
+"482",1999,"Notothenia squamifrons",5.023
+"482",1999,"Pseudochaenichthys georgianus",2.583
+"482",1999,"Trematomus spp",0.09
+"482",2000,"Dissostichus eleginoides",36
+"482",2000,"Euphausia superba",16891
+"482",2002,"Euphausia superba",72059.557
+"482",2004,"Euphausia superba",46455.659
+"482",2005,"Champsocephalus gunnari",0.51
+"482",2005,"Euphausia superba",73494.0495
+"482",2008,"Champsocephalus gunnari",0.0021
+"482",2008,"Euphausia superba",93384.109
+"482",2009,"Euphausia superba",91855.116
+"482",2009,"Pseudochaenichthys georgianus",0.6
+"482",2010,"Chaenocephalus aceratus",0.000101
+"482",2010,"Dissostichus mawsoni",0.019
+"482",2010,"Euphausia superba",49999.22733
+"482",2010,"Pseudochaenichthys georgianus",0.00014
+"482",2011,"Chaenocephalus aceratus",2.48e-05
+"482",2011,"Channichthyidae",0.00018
+"482",2011,"Electrona carlsbergi",0.0003818
+"482",2011,"Euphausia superba",115994.834
+"482",2011,"Notolepis coatsi",0.309
+"482",2012,"Channichthyidae",0.008
+"482",2012,"Electrona carlsbergi",1e-04
+"482",2012,"Gymnoscopelus nicholsi",2e-05
+"483",1971,"Champsocephalus gunnari",10697.34147
+"483",1971,"Notothenia rossii",101456.6944
+"483",1971,"Osteichthyes",1454
+"483",1972,"Notothenia rossii",2735.26881
+"483",1972,"Notothenia squamifrons",35
+"483",1972,"Osteichthyes",27
+"483",1973,"Champsocephalus gunnari",1829.37435
+"483",1975,"Champsocephalus gunnari",745.26921
+"483",1975,"Notothenia squamifrons",1900
+"483",1975,"Osteichthyes",1407
+"483",1976,"Champsocephalus gunnari",12277.96049
+"483",1976,"Notothenia rossii",10742.27373
+"483",1976,"Notothenia squamifrons",500
+"483",1976,"Osteichthyes",190
+"483",1977,"Chaenocephalus aceratus",492.645
+"483",1977,"Champsocephalus gunnari",93503.25283
+"483",1977,"Notothenia gibberifrons",4386
+"483",1977,"Notothenia rossii",8568.88313
+"483",1977,"Notothenia squamifrons",2937
+"483",1977,"Nototheniidae",0.99901
+"483",1978,"Chaenocephalus aceratus",2305.56572
+"483",1978,"Champsocephalus gunnari",7462.00075
+"483",1978,"Dissostichus eleginoides",648.40657
+"483",1978,"Euphausia superba",87.52565
+"483",1978,"Osteichthyes",302
+"483",1978,"Pseudochaenichthys georgianus",12733.99451
+"483",1978,"Rajiformes",3.99552
+"483",1979,"Champsocephalus gunnari",807.59935
+"483",1979,"Dissostichus eleginoides",218.77117
+"483",1979,"Notothenia rossii",970.45149
+"483",1979,"Nototheniidae",2386.16694
+"483",1979,"Osteichthyes",481
+"483",1979,"Patagonotothen brevicauda",15011
+"483",1980,"Chaenocephalus aceratus",1245.742
+"483",1980,"Champsocephalus gunnari",8788.46935
+"483",1980,"Channichthyidae",915.80664
+"483",1980,"Dissostichus eleginoides",99.92278
+"483",1980,"Euphausia superba",133642.0956
+"483",1980,"Myctophidae",504.58674
+"483",1980,"Notothenia gibberifrons",6855
+"483",1980,"Notothenia squamifrons",272
+"483",1980,"Nototheniidae",560.71239
+"483",1980,"Patagonotothen brevicauda",7381
+"483",1981,"Champsocephalus gunnari",27889.96998
+"483",1981,"Channichthyidae",3633.60109
+"483",1981,"Dissostichus eleginoides",174.88736
+"483",1981,"Euphausia superba",135133.5293
+"483",1981,"Notothenia gibberifrons",3395
+"483",1981,"Notothenia squamifrons",544
+"483",1981,"Nototheniidae",134.89501
+"483",1981,"Patagonotothen brevicauda",36758
+"483",1981,"Pseudochaenichthys georgianus",487.448
+"483",1982,"Champsocephalus gunnari",54014.25935
+"483",1982,"Dissostichus eleginoides",323.80073
+"483",1982,"Euphausia superba",46796.21882
+"483",1982,"Notothenia gibberifrons",2605
+"483",1982,"Notothenia rossii",1099.5611
+"483",1982,"Notothenia squamifrons",812
+"483",1982,"Nototheniidae",50.96201
+"483",1982,"Osteichthyes",5336
+"483",1982,"Patagonotothen brevicauda",31351
+"483",1982,"Pseudochaenichthys georgianus",955.255
+"483",1983,"Chaenocephalus aceratus",2.867
+"483",1983,"Champsocephalus gunnari",178757.9727
+"483",1983,"Dissostichus eleginoides",217.86421
+"483",1983,"Euphausia superba",16898.24229
+"483",1983,"Myctophidae",1764.75668
+"483",1983,"Notothenia rossii",1218.41953
+"483",1983,"Nototheniidae",2.96101
+"483",1983,"Osteichthyes",14519.9
+"483",1983,"Pseudochaenichthys georgianus",15.182
+"483",1984,"Chaenocephalus aceratus",1194.93
+"483",1984,"Channichthyidae",53.94674
+"483",1984,"Euphausia superba",3045.9246
+"483",1984,"Myctophidae",1158
+"483",1984,"Notothenia gibberifrons",4652
+"483",1984,"Notothenia squamifrons",1264
+"483",1984,"Nototheniidae",397.63401
+"483",1984,"Osteichthyes",3820.9
+"483",1984,"Pseudochaenichthys georgianus",1965.833
+"483",1984,"Rajiformes",46.96137
+"483",1985,"Champsocephalus gunnari",626.16436
+"483",1985,"Dissostichus eleginoides",520.66673
+"483",1985,"Euphausia superba",105887.2472
+"483",1985,"Myctophidae",1019.65743
+"483",1985,"Notothenia gibberifrons",1115
+"483",1985,"Notothenia squamifrons",66
+"483",1985,"Osteichthyes",1020
+"483",1985,"Patagonotothen brevicauda",6836
+"483",1985,"Pseudochaenichthys georgianus",22.906
+"483",1985,"Rajiformes",12.98595
+"483",1986,"Dissostichus eleginoides",732.4349
+"483",1986,"Euphausia superba",110481.192
+"483",1986,"Myctophidae",1788.05422
+"483",1986,"Notothenia gibberifrons",2848.159
+"483",1986,"Notothenia rossii",264.30469
+"483",1986,"Notothenia squamifrons",153.012
+"483",1986,"Nototheniidae",56.55102
+"483",1986,"Nototheniops nudifrons",0.001
+"483",1986,"Patagonotothen brevicauda",14868.05
+"483",1986,"Rajiformes",7.81309
+"483",1987,"Champsocephalus gunnari",80559.43795
+"483",1987,"Euphausia superba",311876.9255
+"483",1987,"Myctophidae",8987.07236
+"483",1987,"Notothenia gibberifrons",5058.284
+"483",1987,"Notothenia squamifrons",1362.808
+"483",1987,"Nototheniidae",0.38689
+"483",1987,"Nototheniops nudifrons",0.114
+"483",1987,"Osteichthyes",1642.535
+"483",1987,"Pseudochaenichthys georgianus",304.84295
+"483",1987,"Rajiformes",0.22385
+"483",1988,"Chaenocephalus aceratus",154.90885
+"483",1988,"Champsocephalus gunnari",36042.53932
+"483",1988,"Euphausia superba",211459.9779
+"483",1988,"Myctophidae",28993.28357
+"483",1988,"Notothenia gibberifrons",1875.146
+"483",1988,"Notothenia squamifrons",718.05
+"483",1988,"Nototheniops nudifrons",0.13
+"483",1988,"Patagonotothen brevicauda",15952.048
+"483",1988,"Pseudochaenichthys georgianus",214.59804
+"483",1989,"Champsocephalus gunnari",2.59807
+"483",1989,"Dissostichus eleginoides",7055.0948
+"483",1989,"Electrona carlsbergi",23438
+"483",1989,"Euphausia superba",158472.4427
+"483",1989,"Martialia hyadesi",8.22198
+"483",1989,"Osteichthyes",44.59
+"483",1989,"Patagonotothen brevicauda",10420
+"483",1989,"Pseudochaenichthys georgianus",1.24875
+"483",1990,"Chaenocephalus aceratus",1.50849
+"483",1990,"Champsocephalus gunnari",8131.4542
+"483",1990,"Dissostichus eleginoides",6780.8497
+"483",1990,"Euphausia superba",107699.7219
+"483",1990,"Notothenia gibberifrons",11.49
+"483",1990,"Notothenia rossii",2.13917
+"483",1990,"Notothenia squamifrons",24.14
+"483",1990,"Pseudochaenichthys georgianus",0.67932
+"483",1990,"Rajiformes",0.12989
+"483",1991,"Chaenocephalus aceratus",1.51848
+"483",1991,"Dissostichus eleginoides",1755.54569
+"483",1991,"Electrona carlsbergi",58568
+"483",1991,"Euphausia superba",101561.9459
+"483",1991,"Notothenia rossii",0.51949
+"483",1991,"Notothenia squamifrons",0.2
+"483",1991,"Nototheniidae",0.14986
+"483",1991,"Osteichthyes",0.25
+"483",1991,"Pseudochaenichthys georgianus",1.5984
+"483",1991,"Rajiformes",0.15944
+"483",1992,"Chaenocephalus aceratus",1.52847
+"483",1992,"Champsocephalus gunnari",5.26484
+"483",1992,"Dissostichus eleginoides",3806.65483
+"483",1992,"Euphausia superba",64176.39635
+"483",1992,"Notothenia gibberifrons",3.57
+"483",1992,"Notothenia rossii",0.63937
+"483",1992,"Notothenia squamifrons",0.13
+"483",1992,"Osteichthyes",0.53
+"483",1992,"Paralomis spinosissima",299.04366
+"483",1992,"Pseudochaenichthys georgianus",1.6983
+"483",1992,"Rajiformes",1.57104
+"483",1993,"Dissostichus eleginoides",3019.03377
+"483",1994,"Chaenocephalus aceratus",1.94706
+"483",1994,"Champsocephalus gunnari",12.90226
+"483",1994,"Euphausia superba",20282.86251
+"483",1994,"Macrourus spp",0.393
+"483",1994,"Muraenolepis microps",0.013994619
+"483",1994,"Myctophidae",0.005995563
+"483",1994,"Notothenia gibberifrons",3.99
+"483",1994,"Notothenia squamifrons",0.196
+"483",1994,"Nototheniidae",0.005994
+"483",1994,"Nototheniops larseni",0.016
+"483",1994,"Nototheniops nudifrons",0.004
+"483",1994,"Osteichthyes",0.013
+"483",1994,"Pagothenia hansoni",0.003
+"483",1994,"Paralithodes spp",0.079
+"483",1994,"Patagonotothen brevicauda",1.018
+"483",1994,"Pseudochaenichthys georgianus",0.94806
+"483",1994,"Raja georgiana",0.053
+"483",1994,"Rajiformes",11.96604
+"483",1994,"Scorpaenidae",0.002
+"483",1995,"Antimora rostrata",0.82552
+"483",1995,"Chaenocephalus aceratus",0.3017
+"483",1995,"Champsocephalus gunnari",9.87
+"483",1995,"Euphausia superba",47382.06712
+"483",1995,"Macrourus spp",10.554
+"483",1995,"Notothenia gibberifrons",0.501
+"483",1995,"Nototheniidae",2.27773
+"483",1995,"Osteichthyes",9.566
+"483",1995,"Paralomis spinosissima",282.59751
+"483",1995,"Patagonotothen brevicauda",0.59
+"483",1995,"Rajiformes",90.28157
+"483",1996,"Dissostichus eleginoides",3599.82784
+"483",1996,"Macrourus spp",24.834
+"483",1996,"Martialia hyadesi",52
+"483",1996,"Paralomis spinosissima",213.53488
+"483",1996,"Rajiformes",44.90455
+"483",1997,"Antimora rostrata",1.72391
+"483",1997,"Dissostichus eleginoides",3809.88302
+"483",1997,"Euphausia superba",26690.70124
+"483",1997,"Lithodidae",0.54046
+"483",1997,"Rajiformes",31.86273
+"483",1998,"Antimora rostrata",0.60465
+"483",1998,"Champsocephalus gunnari",6.17
+"483",1998,"Dissostichus eleginoides",3199.41919
+"483",1998,"Lithodidae",0.12897
+"483",1998,"Nototheniidae",0.549
+"483",1998,"Rajiformes",8.93943
+"483",1999,"Chaenocephalus aceratus",0.04096
+"483",1999,"Champsocephalus gunnari",263.01354
+"483",1999,"Dissostichus eleginoides",3624.60628
+"483",1999,"Elasmobranchii",0.13296
+"483",1999,"Lithodes murrayi",0.042
+"483",1999,"Lithodes spp",0.011
+"483",1999,"Lithodidae",0.07985
+"483",1999,"Macrourus spp",13.256
+"483",1999,"Notothenia gibberifrons",0.033
+"483",1999,"Paralomis aculeata",0.011995975
+"483",1999,"Paralomis formosa",1.963
+"483",1999,"Paralomis spinosissima",0.19385
+"483",1999,"Patagonotothen brevicauda",3.137
+"483",1999,"Rajiformes",17.41619
+"483",2000,"Bothidae",0.001
+"483",2000,"Chaenocephalus aceratus",0.4066
+"483",2000,"Champsocephalus gunnari",4111.84545
+"483",2000,"Dissostichus eleginoides",4901.31285
+"483",2000,"Euphausia superba",25535.5782
+"483",2000,"Gymnoscopelus nicholsi",0.189
+"483",2000,"Lithodidae",0.005994
+"483",2000,"Macrourus spp",1.888
+"483",2000,"Mancopsetta maculata",0.002
+"483",2000,"Muraenolepis microps",0.006993155
+"483",2000,"Muraenolepis spp",0.013
+"483",2000,"Myctophidae",67.42058
+"483",2000,"Notothenia gibberifrons",0.668
+"483",2000,"Notothenia rossii",0.45655
+"483",2000,"Notothenia squamifrons",4.936
+"483",2000,"Nototheniops larseni",0.018
+"483",2000,"Nototheniops nudifrons",0.005
+"483",2000,"Pagothenia hansoni",0.004
+"483",2000,"Parachaenichthys georgianus",0.009
+"483",2000,"Paralomis formosa",1.524
+"483",2000,"Paralomis spinosissima",0.29219
+"483",2000,"Patagonotothen brevicauda",0.604
+"483",2000,"Pseudochaenichthys georgianus",0.37547
+"483",2000,"Raja georgiana",0.226
+"483",2000,"Rajiformes",0.48758
+"483",2001,"Antimora rostrata",0.04897
+"483",2001,"Bathyraja eatonii",0.28372
+"483",2001,"Champsocephalus gunnari",958.86623
+"483",2001,"Channichthyidae",0.19293
+"483",2001,"Dissostichus eleginoides",4044.14746
+"483",2001,"Euphausia superba",52382.32993
+"483",2001,"Illex argentinus",17.8
+"483",2001,"Macrourus whitsoni",0.207
+"483",2001,"Martialia hyadesi",2.151
+"483",2001,"Notothenia gibberifrons",0.101
+"483",2001,"Paralomis formosa",10.626
+"483",2001,"Pseudochaenichthys georgianus",6.03405
+"483",2001,"Rajiformes",13.35272
+"483",2002,"Chaenocephalus aceratus",5.05794
+"483",2002,"Champsocephalus gunnari",2664.91263
+"483",2002,"Coryphaenoides rupestris",9.1
+"483",2002,"Dissostichus eleginoides",5738.51928
+"483",2002,"Euphausia superba",43239.22011
+"483",2002,"Gymnoscopelus nicholsi",0.057
+"483",2002,"Halaelurus canescens",0.019
+"483",2002,"Illex argentinus",48.6
+"483",2002,"Muraenolepis microps",0.02898
+"483",2002,"Notothenia gibberifrons",1.283
+"483",2002,"Notothenia rossii",5.68757
+"483",2002,"Nototheniidae",10
+"483",2002,"Nototheniops larseni",0.016
+"483",2002,"Osteichthyes",1.36
+"483",2002,"Paralomis formosa",56.452
+"483",2002,"Paralomis spinosissima",55.52397
+"483",2002,"Patagonotothen brevicauda",0.39
+"483",2002,"Pseudochaenichthys georgianus",6.07799
+"483",2003,"Antimora rostrata",3.69976
+"483",2003,"Chaenocephalus aceratus",0.999
+"483",2003,"Dissostichus eleginoides",7523.68102
+"483",2003,"Lithodidae",0.71231
+"483",2003,"Macrourus holotrachys",0.01199
+"483",2003,"Macrourus spp",58.801
+"483",2003,"Muraenolepis microps",0.000999616
+"483",2003,"Muraenolepis spp",0.004
+"483",2003,"Nototheniidae",0.01199
+"483",2003,"Paralomis formosa",0.185
+"483",2003,"Paralomis spinosissima",0.05876
+"483",2003,"Pseudochaenichthys georgianus",4.995
+"483",2003,"Raja georgiana",0.663
+"483",2004,"Antimora rostrata",9.02224
+"483",2004,"Callorhinchidae",5.96
+"483",2004,"Chaenocephalus aceratus",0.18728
+"483",2004,"Champsocephalus gunnari",2682.72276
+"483",2004,"Dissostichus eleginoides",4494.16381
+"483",2004,"Elasmobranchii",0.036
+"483",2004,"Euphausia superba",57780.01608
+"483",2004,"Lithodidae",0.25775
+"483",2004,"Paralomis aculeata",0.003996136
+"483",2004,"Paralomis formosa",0.274
+"483",2004,"Pseudochaenichthys georgianus",1.5411
+"483",2004,"Rajiformes",35.03185
+"483",2005,"Antimora rostrata",18.73072
+"483",2005,"Chaenocephalus aceratus",1.79921
+"483",2005,"Channichthyidae",0.006
+"483",2005,"Dissostichus eleginoides",3031.79788
+"483",2005,"Macrourus spp",125.076
+"483",2005,"Muraenolepis marmoratus",0.047385
+"483",2005,"Muraenolepis spp",0.002
+"483",2005,"Myctophidae",1.14416
+"483",2005,"Neolithodes diomedeae",0.443
+"483",2005,"Notothenia rossii",0.108
+"483",2005,"Nototheniidae",0.05745
+"483",2005,"Nototheniops larseni",0.235
+"483",2005,"Parachaenichthys georgianus",1e-04
+"483",2005,"Paralomis spinosissima",0.02154
+"483",2005,"Pseudochaenichthys georgianus",25.029335
+"483",2005,"Rajiformes",8.39164
+"483",2006,"Antimora rostrata",33.22014
+"483",2006,"Chaenocephalus aceratus",0.06296
+"483",2006,"Champsocephalus gunnari",2168.73632
+"483",2006,"Channichthyidae",0.50305
+"483",2006,"Euphausia superba",14601.9317
+"483",2006,"Lithodidae",1.19972
+"483",2006,"Macrourus spp",131.93995
+"483",2006,"Notothenia rossii",1.19578
+"483",2006,"Pseudochaenichthys georgianus",5.50882
+"483",2006,"Rajiformes",7.25094
+"483",2007,"Adelieledone polymorpha",0.006555
+"483",2007,"Antimora rostrata",26.36327
+"483",2007,"Artedidraco mirus",0.000237
+"483",2007,"Cephalopoda",0.00036
+"483",2007,"Chaenocephalus aceratus",0.381456002
+"483",2007,"Champsocephalus gunnari",4344.510363873
+"483",2007,"Dissostichus eleginoides",3536.861732999
+"483",2007,"Euphausia superba",20565.96882
+"483",2007,"Gymnoscopelus nicholsi",0.00165
+"483",2007,"Lamna nasus",0.1
+"483",2007,"Mancopsetta maculata",0.023441
+"483",2007,"Muraenolepis microps",0.023408
+"483",2007,"Neolithodes diomedeae",0.01865
+"483",2007,"Notolepis annulata",3.6e-05
+"483",2007,"Notothenia gibberifrons",0.718639011
+"483",2007,"Notothenia rossii",1.151657983
+"483",2007,"Notothenia squamifrons",1.396244946
+"483",2007,"Nototheniops nudifrons",0.0072653
+"483",2007,"Pagothenia hansoni",0.209012
+"483",2007,"Parachaenichthys georgianus",0.033836
+"483",2007,"Paralomis formosa",0.270383
+"483",2007,"Pareledone turqueti",0.257207
+"483",2007,"Patagonotothen brevicauda",0.089892
+"483",2007,"Psilodraco breviceps",0.00167
+"483",2007,"Raja georgiana",0.319460001
+"483",2007,"Rajiformes",3.85052
+"483",2008,"Adelieledone polymorpha",0.002753
+"483",2008,"Artedidraco mirus",0.000209
+"483",2008,"Channichthyidae",0.30498
+"483",2008,"Dissostichus eleginoides",3861.980809978
+"483",2008,"Euphausia superba",60237.92023
+"483",2008,"Gymnoscopelus bolini",0.000149
+"483",2008,"Gymnoscopelus nicholsi",0.001047
+"483",2008,"Lithodidae",0.48616
+"483",2008,"Macrourus spp",161.53234
+"483",2008,"Mancopsetta maculata",0.015974
+"483",2008,"Melanostigma spp",0.000162
+"483",2008,"Muraenolepis microps",0.062672
+"483",2008,"Muraenolepis spp",0.003
+"483",2008,"Notothenia angustifrons",3.1e-05
+"483",2008,"Notothenia gibberifrons",0.899155006
+"483",2008,"Notothenia kempi",0.0035
+"483",2008,"Notothenia rossii",2.713585961
+"483",2008,"Notothenia squamifrons",0.467685003
+"483",2008,"Nototheniidae",0.05152
+"483",2008,"Nototheniops nudifrons",0.008862
+"483",2008,"Pagothenia hansoni",0.238911001
+"483",2008,"Parachaenichthys georgianus",0.0179262
+"483",2008,"Paradiplospinus gracilis",3e-05
+"483",2008,"Patagonotothen brevicauda",0.323950003
+"483",2008,"Protomyctophum choriodon",2.7e-05
+"483",2008,"Psilodraco breviceps",0.002602
+"483",2008,"Raja georgiana",0.223908001
+"483",2009,"Artedidraco mirus",7.8e-05
+"483",2009,"Cephalopoda",0.001298
+"483",2009,"Chaenocephalus aceratus",0.487500999
+"483",2009,"Gymnoscopelus nicholsi",0.316085001
+"483",2009,"Macrourus spp",109.92969
+"483",2009,"Mancopsetta maculata",0.002529
+"483",2009,"Moroteuthis knipovitchi",0.003001
+"483",2009,"Muraenolepis microps",0.041452
+"483",2009,"Myctophidae",0.218
+"483",2009,"Notothenia rossii",2.484909976
+"483",2009,"Nototheniidae",0.00125
+"483",2009,"Paradiplospinus gracilis",0.000896
+"483",2009,"Patagonotothen brevicauda",0.730789997
+"483",2009,"Rajiformes",22.17827
+"483",2009,"Trematomus vicarius",0.000102
+"483",2010,"Adelieledone polymorpha",0.000125
+"483",2010,"Antimora rostrata",15.73702
+"483",2010,"Chaenocephalus aceratus",1.228335
+"483",2010,"Champsocephalus gunnari",12.01707498
+"483",2010,"Liparididae",1e-05
+"483",2010,"Lithodes murrayi",0.1095
+"483",2010,"Magnisudis prionosa",0.000525
+"483",2010,"Muraenolepis microps",0.01834
+"483",2010,"Myctophidae",0.000115
+"483",2010,"Notothenia gibberifrons",1.731784996
+"483",2010,"Nototheniidae",0.001835
+"483",2010,"Nototheniops larseni",0.037968
+"483",2010,"Nototheniops nudifrons",0.011538
+"483",2010,"Pagothenia hansoni",0.096282998
+"483",2010,"Parachaenichthys georgianus",0.010859
+"483",2010,"Paradiplospinus gracilis",3e-05
+"483",2010,"Paralomis formosa",9.151895
+"483",2010,"Paralomis spinosissima",52.843613
+"483",2010,"Patagonotothen brevicauda",1.164779983
+"483",2010,"Pseudochaenichthys georgianus",1.889856
+"483",2010,"Psilodraco breviceps",0.001755
+"483",2011,"Antimora rostrata",8.85257
+"483",2011,"Artedidraco mirus",0.000152
+"483",2011,"Borostomias antarcticus",0.000213
+"483",2011,"Chaenocephalus aceratus",0.892834003
+"483",2011,"Champsocephalus gunnari",11.692514993
+"483",2011,"Dissostichus mawsoni",0.062
+"483",2011,"Electrona antarctica",0.000206
+"483",2011,"Lamna nasus",0.08
+"483",2011,"Lithodes murrayi",0.0015
+"483",2011,"Lithodidae",0.1707
+"483",2011,"Moroteuthis knipovitchi",6e-04
+"483",2011,"Muraenolepis spp",0.0028
+"483",2011,"Notothenia rossii",3.654525026
+"483",2011,"Nototheniops nudifrons",0.020818
+"483",2011,"Osteichthyes",0.162738
+"483",2011,"Parachaenichthys georgianus",0.049229
+"483",2011,"Paradiplospinus gracilis",0.000403
+"483",2011,"Paralomis formosa",0.000625
+"483",2011,"Paralomis spinosissima",0.041035
+"483",2011,"Rajiformes",4.4544
+"483",2012,"Artedidraco mirus",1e-04
+"483",2012,"Champsocephalus gunnari",999.068
+"483",2012,"Dissostichus eleginoides",1805.6852
+"483",2012,"Euphausia superba",56414.636
+"483",2012,"Gempylidae",8e-04
+"483",2012,"Gymnoscopelus nicholsi",2e-04
+"483",2012,"Lithodidae",0.0261
+"483",2012,"Mancopsetta maculata",0.0032
+"483",2012,"Muraenolepis microps",0.0017
+"483",2012,"Notothenia rossii",0.0998
+"483",2012,"Nototheniidae",6e-04
+"483",2012,"Nototheniops larseni",0.0021
+"483",2012,"Nototheniops nudifrons",9e-04
+"483",2012,"Osteichthyes",4e-04
+"483",2012,"Paradiplospinus gracilis",1e-04
+"483",2012,"Paralomis formosa",3e-04
+"483",2012,"Patagonotothen brevicauda",76.5272
+"483",2012,"Pseudochaenichthys georgianus",0.1534
+"483",2012,"Raja georgiana",0.0942
+"483",2012,"Teuthoidea",2e-04
+"484",1986,"Euphausia superba",1
+"484",1992,"Dissostichus eleginoides",29.799
+"484",1992,"Euphausia superba",50
+"484",1993,"Dissostichus eleginoides",9.54
+"484",2005,"Macrourus spp",3.444
+"484",2006,"Dissostichus mawsoni",0.4333
+"484",2006,"Lithodidae",0.0088
+"484",2006,"Muraenolepis spp",0.00064
+"484",2006,"Nototheniidae",0.00979
+"484",2007,"Lithodidae",0.0036
+"484",2007,"Macrourus spp",13.94906
+"484",2007,"Muraenolepis spp",0.02742
+"484",2007,"Nototheniidae",0.0355
+"484",2007,"Rajiformes",1.7477
+"484",2008,"Antimora rostrata",0.3924
+"484",2008,"Dissostichus eleginoides",97.63326
+"484",2008,"Dissostichus mawsoni",0.3144
+"484",2008,"Rajiformes",3.453
+"484",2009,"Antimora rostrata",0.59371
+"484",2009,"Dissostichus mawsoni",59.09237
+"484",2009,"Macrourus spp",26.10988
+"484",2009,"Muraenolepis spp",0.52187
+"484",2009,"Rajiformes",0.6623
+"484",2010,"Antimora rostrata",0.69908
+"484",2010,"Channichthyidae",0.0017
+"484",2010,"Dissostichus mawsoni",56.31124
+"484",2010,"Lithodidae",0.001
+"484",2010,"Macrourus spp",15.8271
+"484",2010,"Muraenolepis spp",0.34797
+"484",2010,"Nototheniidae",0.0033
+"484",2010,"Rajiformes",2.2689
+"484",2011,"Channichthyidae",5e-04
+"484",2011,"Dissostichus eleginoides",38.64937
+"484",2011,"Macrourus spp",5.39202
+"484",2012,"Antimora rostrata",0.0998
+"484",2012,"Macrourus spp",6.21
+"484",2012,"Macrourus whitsoni",0.5675
+"484",2012,"Muraenolepis spp",0.0904
+"484",2012,"Nototheniidae",0.003
+"485",1991,"Euphausia superba",30
+"486",1981,"Euphausia superba",216.99868
+"486",1983,"Euphausia superba",734.9955
+"486",1987,"Euphausia superba",5
+"486",2004,"Dissostichus eleginoides",6.78
+"486",2005,"Antimora rostrata",0.042996829
+"486",2005,"Bathyraja eatonii",0.026
+"486",2005,"Macrourus spp",5.79
+"486",2006,"Antimora rostrata",2.7277
+"486",2006,"Dissostichus mawsoni",63.0491
+"486",2006,"Lithodidae",0.133
+"486",2006,"Notothenia kempi",0.00264
+"486",2007,"Chaenocephalus aceratus",0.0228
+"486",2007,"Channichthyidae",0.3162
+"486",2007,"Dissostichus mawsoni",34.4097
+"486",2007,"Lithodes murrayi",0.007
+"486",2007,"Lithodidae",0.059
+"486",2007,"Macrourus spp",12.67405
+"486",2007,"Macrourus whitsoni",0.1694
+"486",2007,"Muraenolepis marmoratus",0.01795
+"486",2007,"Muraenolepis spp",0.10165
+"486",2007,"Notothenia kempi",0.0451
+"486",2007,"Paralomis spp",0.0011
+"486",2008,"Antimora rostrata",0.46602
+"486",2008,"Dissostichus mawsoni",11.11777
+"486",2008,"Lithodidae",0.0477
+"486",2008,"Macrourus spp",1.29256
+"486",2008,"Muraenolepis spp",7e-04
+"486",2009,"Antimora rostrata",1.10048
+"486",2009,"Channichthyidae",0.1398
+"486",2009,"Chionobathyscus dewitti",0.2813
+"486",2009,"Dissostichus eleginoides",17.12309
+"486",2009,"Dissostichus mawsoni",265.36098
+"486",2009,"Lithodidae",0.2428
+"486",2009,"Macrourus spp",4.5932
+"486",2009,"Muraenolepis spp",0.0056
+"486",2009,"Raja spp",0.008
+"486",2010,"Antimora rostrata",0.8224
+"486",2010,"Channichthyidae",0.0401
+"486",2010,"Dissostichus eleginoides",49.68723
+"486",2010,"Lithodes spp",0.0027
+"486",2010,"Muraenolepis microps",0.0023
+"486",2010,"Muraenolepis spp",0.0097
+"486",2010,"Nototheniidae",0.0015
+"486",2010,"Octopodidae",0.0011
+"486",2010,"Paralomis spp",0.003
+"486",2011,"Antimora rostrata",0.70647
+"486",2011,"Channichthyidae",0.37109
+"486",2011,"Dissostichus eleginoides",32.48149
+"486",2011,"Dissostichus mawsoni",359.21028
+"486",2011,"Macrourus spp",8.27038
+"486",2011,"Muraenolepis spp",0.01735
+"486",2012,"Antimora rostrata",0.82
+"58",1971,"Notothenia squamifrons",24545
+"58",1971,"Osteichthyes",679
+"58",1972,"Notothenia squamifrons",52912
+"58",1973,"Notothenia rossii",20361
+"58",1973,"Notothenia squamifrons",2368
+"58",1975,"Notothenia squamifrons",10198
+"58",1975,"Osteichthyes",575
+"58",1976,"Osteichthyes",548
+"58",1977,"Notothenia rossii",97
+"58",1977,"Notothenia squamifrons",308
+"58",1977,"Osteichthyes",11
+"58",1978,"Dissostichus eleginoides",192
+"58",1978,"Euphausia superba",28154
+"58",1978,"Notothenia squamifrons",25559
+"58",1979,"Euphausia superba",28522
+"58",1979,"Osteichthyes",104
+"584",1979,"Euphausia superba",517
+"584",1980,"Euphausia superba",83764
+"584",1980,"Osteichthyes",239
+"584",1981,"Osteichthyes",375
+"584",1982,"Osteichthyes",368
+"584",1983,"Euphausia superba",47579
+"584",1985,"Euphausia superba",4167
+"584",1986,"Euphausia superba",10164
+"584",1987,"Chaenodraco wilsoni",1099
+"584",1987,"Osteichthyes",22
+"5841",1976,"Euphausia superba",446
+"5841",1980,"Euphausia superba",22151
+"5841",1983,"Euphausia superba",27756
+"5841",1984,"Euphausia superba",8195
+"5841",1984,"Pleuragramma antarcticum",243.986
+"5841",1985,"Euphausia superba",2249
+"5841",1986,"Euphausia superba",5283
+"5841",1987,"Euphausia superba",3953
+"5841",1994,"Euphausia superba",899
+"5841",1995,"Euphausia superba",1266
+"5841",1999,"Antimora rostrata",0.005
+"5841",1999,"Macrourus spp",0.103
+"5841",2005,"Antimora rostrata",0.02768
+"5841",2005,"Careproctus spp",0.0014
+"5841",2005,"Chaenocephalus aceratus",0.9015
+"5841",2005,"Channichthyidae",0.41713
+"5841",2005,"Dissostichus mawsoni",479.0144
+"5841",2005,"Lycodichthys antarcticus",3e-04
+"5841",2005,"Macrourus spp",12.9787
+"5841",2005,"Nototheniidae",0.00274
+"5841",2005,"Pogonophryne permitini",0.00334
+"5841",2005,"Pogonophryne spp",0.0016
+"5841",2005,"Rajiformes",0.05
+"5841",2006,"Bathyraja spp",0.008
+"5841",2006,"Cephalopoda",5e-04
+"5841",2006,"Muraenolepis spp",0.1119
+"5841",2007,"Antimora rostrata",0.0315
+"5841",2007,"Bathyraja eatonii",0.1001
+"5841",2007,"Chaenocephalus aceratus",0.61346
+"5841",2007,"Dissostichus mawsoni",540.389818
+"5841",2007,"Macrourus whitsoni",0.558
+"5841",2007,"Nototheniidae",0.133
+"5841",2007,"Octopodidae",0.014
+"5841",2007,"Pogonophryne permitini",0.0315
+"5841",2008,"Antimora rostrata",0.0253
+"5841",2008,"Chaenocephalus aceratus",0.237
+"5841",2008,"Channichthyidae",0.1519
+"5841",2008,"Chionobathyscus dewitti",0.7649
+"5841",2008,"Cryodraco antarcticus",0.0132
+"5841",2008,"Dissostichus mawsoni",409.733386
+"5841",2008,"Lampris guttatus",0.03
+"5841",2008,"Macrouridae",1.3151
+"5841",2008,"Muraenolepis microps",0.1832
+"5841",2008,"Muraenolepis spp",0.019
+"5841",2009,"Antimora rostrata",0.01053
+"5841",2009,"Channichthyidae",0.16753
+"5841",2009,"Macrourus spp",7.59949
+"5841",2009,"Muraenolepis spp",0.1625
+"5841",2009,"Octopodidae",0.0038
+"5841",2009,"Pachycara brachycephalum",0.00898
+"5841",2009,"Pogonophryne spp",0.02596
+"5841",2009,"Rajiformes",0.0088
+"5841",2010,"Antimora rostrata",0.0628
+"5841",2010,"Channichthyidae",0.2219
+"5841",2010,"Dissostichus eleginoides",2.22973
+"5841",2010,"Dissostichus mawsoni",194.00997
+"5841",2010,"Macrourus spp",6.1903
+"5841",2011,"Careproctus spp",0.00063
+"5841",2011,"Chionobathyscus dewitti",0.0561
+"5841",2011,"Dissostichus eleginoides",0.027
+"5841",2011,"Dissostichus mawsoni",214.218
+"5841",2011,"Muraenolepis microps",0.0107
+"5841",2011,"Muraenolepis spp",0.03352
+"5841",2011,"Notothenia kempi",0.0013
+"5841",2011,"Octopodidae",0.02876
+"5841",2012,"Dissostichus mawsoni",157.334
+"5841",2012,"Macrourus spp",1.5569
+"5841",2012,"Muraenolepis spp",0.0743
+"5841",2012,"Patagonotothen brevicauda",0.0118
+"5842",1974,"Euphausia superba",283
+"5842",1978,"Pleuragramma antarcticum",286.05
+"5842",1979,"Euphausia superba",14135
+"5842",1979,"Pleuragramma antarcticum",35.3
+"5842",1980,"Pleuragramma antarcticum",30.6
+"5842",1983,"Chaenodraco wilsoni",73.916
+"5842",1983,"Euphausia superba",4250
+"5842",1985,"Chionodraco hamatus",0.432
+"5842",1985,"Dissostichus mawsoni",0.103
+"5842",1985,"Osteichthyes",0.038
+"5842",1985,"Pleuragramma antarcticum",984.28
+"5842",1985,"Trematomus eulepidotus",0.562
+"5842",1986,"Chionodraco hamatus",2.343
+"5842",1986,"Osteichthyes",0.485
+"5842",1986,"Trematomus eulepidotus",0.538
+"5842",1988,"Chaenodraco wilsoni",1862.4
+"5842",1988,"Euphausia superba",6490
+"5842",1988,"Pleuragramma antarcticum",67.272
+"5842",1989,"Chionodraco hamatus",1.736
+"5842",1989,"Dissostichus mawsoni",0.304
+"5842",1989,"Osteichthyes",2.922
+"5842",1989,"Pagothenia hansoni",2.163
+"5842",1989,"Pleuragramma antarcticum",29.222
+"5842",1990,"Chaenodraco wilsoni",3519.295
+"5842",1990,"Chionodraco hamatus",2.818
+"5842",1990,"Macrourus whitsoni",0.034
+"5842",1990,"Notothenia kempi",0.598
+"5842",1990,"Osteichthyes",2.803
+"5842",1991,"Chaenodraco wilsoni",0.022
+"5842",1991,"Dissostichus mawsoni",0.01
+"5842",1991,"Pleuragramma antarcticum",0.399
+"5842",1991,"Rajiformes",0.001
+"5842",2000,"Macrourus spp",0.015
+"5842",2000,"Macrourus whitsoni",0.3
+"5842",2000,"Osteichthyes",0.067
+"5842",2001,"Chaenodraco wilsoni",11.46
+"5842",2001,"Dissostichus eleginoides",0.038
+"5842",2003,"Bathyraja spp",0.216
+"5842",2003,"Channichthyidae",0.104
+"5842",2003,"Chionodraco myersi",0.017
+"5842",2003,"Dissostichus eleginoides",0.205
+"5842",2003,"Dissostichus mawsoni",117.228
+"5842",2003,"Macrourus spp",11.866
+"5842",2003,"Muraenolepis marmoratus",0.014
+"5842",2003,"Muraenolepis spp",0.32
+"5842",2003,"Notothenia kempi",0.002
+"5842",2003,"Nototheniidae",0.141
+"5842",2003,"Rajiformes",0.103
+"5842",2004,"Antimora rostrata",0.002
+"5842",2004,"Artedidraconidae",0.012
+"5842",2004,"Chaenocephalus aceratus",0.045
+"5842",2004,"Dissostichus eleginoides",0.129
+"5842",2004,"Dissostichus mawsoni",19.652
+"5842",2004,"Loliginidae, Ommastrephidae",0.015
+"5842",2004,"Macrourus spp",0.629
+"5842",2004,"Muraenolepis microps",0.004
+"5842",2004,"Octopodidae",0.001
+"5842",2004,"Rajiformes",0.04
+"5842",2005,"Antimora rostrata",0.57522
+"5842",2005,"Bathyraja eatonii",1.133
+"5842",2005,"Channichthyidae",0.69241
+"5842",2005,"Chionobathyscus dewitti",0.0264
+"5842",2005,"Cryodraco antarcticus",0.0012
+"5842",2005,"Dissostichus eleginoides",1.3554
+"5842",2005,"Dissostichus mawsoni",125.14184
+"5842",2005,"Lampris immaculatus",0.064
+"5842",2005,"Macrourus spp",26.61346
+"5842",2005,"Muraenolepis marmoratus",0.0942
+"5842",2005,"Muraenolepis spp",0.72377
+"5842",2005,"Notothenia squamifrons",0.0215
+"5842",2006,"Cephalopoda",0.0075
+"5842",2006,"Channichthyidae",0.0601
+"5842",2006,"Macrourus spp",4.4909
+"5842",2006,"Octopodidae",0.0045
+"5842",2006,"Rajiformes",0.0085
+"5842",2007,"Chaenocephalus aceratus",0.0205
+"5842",2007,"Channichthyidae",0.128
+"5842",2007,"Chionobathyscus dewitti",0.10715
+"5842",2007,"Dissostichus eleginoides",0.1075
+"5842",2007,"Dissostichus mawsoni",123.5345
+"5842",2007,"Macrourus spp",6.31294
+"5842",2007,"Macrourus whitsoni",0.745
+"5842",2007,"Muraenolepis marmoratus",0.03815
+"5842",2007,"Muraenolepis spp",0.1014
+"5842",2007,"Pogonophryne permitini",2e-04
+"5842",2008,"Antimora rostrata",0.0852
+"5842",2008,"Bathyraja eatonii",0.3915
+"5842",2008,"Chaenocephalus aceratus",0.352
+"5842",2008,"Chionobathyscus dewitti",0.461
+"5842",2008,"Dissostichus eleginoides",0.208
+"5842",2008,"Dissostichus mawsoni",216.308
+"5842",2008,"Macrourus spp",8.45
+"5842",2008,"Macrourus whitsoni",3.069
+"5842",2008,"Muraenolepis spp",0.1201
+"5842",2008,"Raja spp",0.083
+"5842",2009,"Antimora rostrata",0.01015
+"5842",2009,"Channichthyidae",0.01365
+"5842",2009,"Chionobathyscus dewitti",0.09285
+"5842",2009,"Dissostichus mawsoni",66.25506
+"5842",2009,"Macrourus spp",1.39795
+"5842",2009,"Muraenolepis spp",0.0288
+"5842",2009,"Pogonophryne spp",0.0163
+"5842",2010,"Antimora rostrata",0.0105
+"5842",2010,"Channichthyidae",0.1336
+"5842",2010,"Macrourus spp",3.5321
+"5842",2010,"Muraenolepis spp",0.0766
+"5842",2011,"Channichthyidae",0.07036
+"5842",2011,"Muraenolepis spp",0.00705
+"5842",2011,"Pogonophryne spp",0.00101
+"5842",2012,"Channichthyidae",0.1087
+"5842",2012,"Macrourus spp",0.9325
+"5842",2012,"Muraenolepis spp",0.0119
+"5843",1979,"Euphausia superba",25
+"5843",1997,"Macrourus holotrachys",0.078
+"5843",1997,"Osteichthyes",0.001
+"5843",1997,"Rajiformes",0.019
+"5843a",2005,"Antimora rostrata",2.0501
+"5843a",2005,"Raja georgiana",15.066
+"5843a",2005,"Raja taaf",0.3567
+"5843a",2006,"Macrourus spp",0.7469
+"5843a",2006,"Rajiformes",7.1445
+"5843a",2007,"Dissostichus mawsoni",1.18822
+"5843a",2007,"Lithodidae",0.032
+"5843a",2007,"Macrourus whitsoni",0.34465
+"5843a",2007,"Rajiformes",0.023
+"5843a",2008,"Antimora rostrata",0.001
+"5843a",2008,"Dissostichus mawsoni",0.026
+"5843a",2008,"Macrourus spp",0.0925
+"5843a",2008,"Raja taaf",1.534
+"5843a",2009,"Antimora rostrata",2.4718
+"5843a",2009,"Dissostichus eleginoides",30.85425
+"5843a",2009,"Dissostichus mawsoni",0.065
+"5843a",2009,"Lithodidae",0.0015
+"5843a",2009,"Macrourus spp",1.5363
+"5843a",2009,"Rajiformes",1.85885
+"5843a",2011,"Antimora rostrata",0.3465
+"5843a",2011,"Dissostichus eleginoides",3.59313
+"5843a",2011,"Macrourus spp",0.17
+"5843a",2011,"Rajiformes",0.0554
+"5843a",2012,"Antimora rostrata",3.0187
+"5843a",2012,"Dissostichus eleginoides",36.8038
+"5843a",2012,"Macrourus spp",3.6148
+"5843a",2012,"Raja taaf",32.1533
+"5843b",2004,"Dissostichus eleginoides",0.531
+"5843b",2004,"Dissostichus mawsoni",6.268
+"5843b",2004,"Macrourus spp",0.131
+"5843b",2005,"Antimora rostrata",0.1565
+"5843b",2005,"Bathyraja maccaini",0.8099
+"5843b",2005,"Dissostichus eleginoides",0.225
+"5843b",2005,"Dissostichus mawsoni",297.2485
+"5843b",2005,"Lampris immaculatus",0.015
+"5843b",2005,"Muraenolepis spp",0.0043
+"5843b",2005,"Raja georgiana",4.3276
+"5843b",2005,"Somniosus microcephalus",0.3
+"5843b",2006,"Bathyraja murrayi",0.1095
+"5843b",2006,"Dissostichus eleginoides",43.89471
+"5843b",2006,"Dissostichus mawsoni",316.66799
+"5843b",2006,"Lithodidae",0.001
+"5843b",2006,"Macrourus spp",8.11505
+"5843b",2006,"Raja spp",0.024
+"5843b",2006,"Rajiformes",0.9288
+"5843b",2007,"Antimora rostrata",0.57385
+"5843b",2007,"Channichthyidae",0.004
+"5843b",2007,"Dissostichus eleginoides",74.2726
+"5843b",2007,"Dissostichus mawsoni",176.25315
+"5843b",2007,"Lithodes spp",0.027
+"5843b",2007,"Lithodidae",0.0329
+"5843b",2007,"Macrourus spp",8.4099
+"5843b",2007,"Macrourus whitsoni",8.4353
+"5843b",2007,"Muraenolepis spp",0.068
+"5843b",2007,"Notothenia squamifrons",0.2513
+"5843b",2007,"Rajiformes",1.6017
+"5843b",2007,"Salilota australis",0.0352
+"5843b",2008,"Antimora rostrata",1.14688
+"5843b",2008,"Bathydraconidae",1e-04
+"5843b",2008,"Chionobathyscus dewitti",0.001
+"5843b",2008,"Dissostichus mawsoni",100.54766
+"5843b",2008,"Lithodidae",0.03315
+"5843b",2008,"Macrouridae",0.212
+"5843b",2008,"Macrourus spp",6.521
+"5843b",2008,"Macrourus whitsoni",2.97563
+"5843b",2008,"Muraenolepis orangiensis",0.0015
+"5843b",2008,"Muraenolepis spp",0.03469
+"5843b",2008,"Notothenia kempi",0.31985
+"5843b",2008,"Nototheniidae",0.08923
+"5843b",2008,"Raja spp",0.34
+"5843b",2008,"Raja taaf",0.88834
+"5843b",2008,"Rajiformes",0.0327
+"5843b",2009,"Antimora rostrata",0.11205
+"5843b",2009,"Dissostichus eleginoides",15.0643
+"5843b",2009,"Dissostichus mawsoni",89.21876
+"5843b",2009,"Lithodidae",0.00465
+"5843b",2009,"Macrourus spp",3.6884
+"5843b",2009,"Muraenolepis spp",0.02565
+"5843b",2009,"Notothenia squamifrons",0.225
+"5843b",2009,"Rajiformes",1.47745
+"5843b",2010,"Antimora rostrata",0.0674
+"5843b",2010,"Dissostichus eleginoides",1.66258
+"5843b",2010,"Muraenolepis spp",0.0023
+"5843b",2010,"Rajiformes",0.1434
+"5843b",2011,"Dissostichus eleginoides",2.26982
+"5843b",2011,"Dissostichus mawsoni",8.4651
+"5843b",2011,"Macrourus spp",1.2372
+"5843b",2011,"Muraenolepis spp",8e-04
+"5843b",2012,"Antimora rostrata",0.0215
+"5843b",2012,"Dissostichus eleginoides",5.2954
+"5843b",2012,"Dissostichus mawsoni",3.7264
+"5843b",2012,"Muraenolepis spp",0.0028
+"5843b",2012,"Rajiformes",0.0589
+"5844",1975,"Euphausia superba",96
+"5844",1977,"Euphausia superba",640
+"5844",1977,"Osteichthyes",821.2
+"5844",1978,"Dissostichus eleginoides",3.7
+"5844",1978,"Notothenia rossii",1.8
+"5844",1979,"Euphausia superba",23
+"5844",1979,"Notothenia rossii",23.5
+"5844",1979,"Nototheniidae",594.8
+"5844a",1977,"Notothenia squamifrons",580
+"5844a",1978,"Notothenia squamifrons",5883
+"5844a",1979,"Notothenia squamifrons",234
+"5844a",1980,"Notothenia rossii",34
+"5844a",1980,"Notothenia squamifrons",4181
+"5844a",1981,"Notothenia rossii",4
+"5844a",1982,"Notothenia squamifrons",56
+"5844a",1984,"Notothenia squamifrons",295
+"5844a",1986,"Notothenia rossii",1.5
+"5844a",1987,"Notothenia rossii",4
+"5844a",1988,"Dissostichus eleginoides",2
+"5844a",1988,"Notothenia squamifrons",2085
+"5844a",1990,"Notothenia rossii",6
+"5844a",1990,"Notothenia squamifrons",867
+"5844a",1996,"Euphausia spp",0.002
+"5844a",1996,"Loliginidae, Ommastrephidae",0.005
+"5844a",1996,"Osteichthyes",0.028
+"5844a",2000,"Bathyraja spp",0.0625
+"5844a",2000,"Dissostichus eleginoides",88.8526
+"5844a",2000,"Muraenolepis spp",9e-04
+"5844a",2000,"Notothenia squamifrons",0.1277
+"5844a",2001,"Bathyraja spp",0.006
+"5844a",2001,"Dissostichus eleginoides",4.039
+"5844a",2001,"Notothenia squamifrons",0.015
+"5844a",2008,"Antimora rostrata",0.4093
+"5844a",2008,"Dissostichus eleginoides",18.4481
+"5844a",2008,"Lithodidae",0.0456
+"5844a",2008,"Macrourus spp",0.4406
+"5844a",2008,"Nototheniidae",0.0477
+"5844a",2010,"Antimora rostrata",0.1183
+"5844a",2010,"Lithodes spp",0.00195
+"5844a",2010,"Macrourus spp",0.1125
+"5844a",2010,"Nototheniidae",0.004
+"5844a",2010,"Rajiformes",0.0055
+"5844b",1977,"Notothenia squamifrons",112
+"5844b",1978,"Dissostichus eleginoides",2
+"5844b",1978,"Notothenia squamifrons",1481
+"5844b",1979,"Notothenia squamifrons",63
+"5844b",1980,"Dissostichus eleginoides",2
+"5844b",1980,"Notothenia squamifrons",2050
+"5844b",1981,"Dissostichus eleginoides",79
+"5844b",1981,"Notothenia rossii",32
+"5844b",1983,"Dissostichus eleginoides",2
+"5844b",1983,"Notothenia rossii",50
+"5844b",1983,"Notothenia squamifrons",793
+"5844b",1984,"Notothenia squamifrons",444
+"5844b",1985,"Notothenia squamifrons",87
+"5844b",1986,"Dissostichus eleginoides",9
+"5844b",1986,"Notothenia rossii",0.5
+"5844b",1988,"Dissostichus eleginoides",2
+"5844b",1989,"Notothenia squamifrons",3353
+"5844b",1990,"Dissostichus eleginoides",4
+"5844b",1990,"Notothenia squamifrons",286
+"5844b",1991,"Dissostichus eleginoides",29
+"5844b",2000,"Macrourus spp",12.0747
+"5844b",2000,"Muraenolepis spp",4e-04
+"5844b",2000,"Notothenia squamifrons",0.0202
+"5844b",2001,"Antimora rostrata",0.001
+"5844b",2001,"Bathyraja spp",0.026
+"5844b",2001,"Dissostichus eleginoides",4.494
+"5844b",2001,"Macrourus spp",0.001
+"5844b",2001,"Notothenia squamifrons",0.022
+"5844b",2008,"Antimora rostrata",1.3276
+"5844b",2008,"Dissostichus eleginoides",58.3671
+"5844b",2008,"Dissostichus mawsoni",0.0508
+"5844b",2008,"Halargyreus johnsonii",0.00035
+"5844b",2008,"Lepidion spp",0.00035
+"5844b",2008,"Lithodidae",0.07415
+"5844b",2008,"Rajiformes",0.01555
+"5844b",2010,"Dissostichus eleginoides",49.80186
+"5844b",2010,"Lithodes spp",0.0051
+"5844b",2010,"Macrourus spp",1.0714
+"5844b",2010,"Rajiformes",0.4215
+"5844b",2011,"Macrourus spp",1.629
+"5844b",2011,"Muraenolepis spp",0.022
+"5844b",2011,"Nototheniidae",0.069
+"5844b",2011,"Rajiformes",0.045
+"5844b",2012,"Antimora rostrata",0.7037
+"5844b",2012,"Dissostichus eleginoides",28.3018
+"5844b",2012,"Macrourus spp",1.8328
+"5844b",2012,"Nototheniidae",0.1054
+"585",1977,"Champsocephalus gunnari",332.1
+"585",1977,"Channichthys rhinoceratus",97.7
+"585",1977,"Dissostichus eleginoides",14.8
+"585",1977,"Notothenia rossii",144.5
+"585",1977,"Notothenia squamifrons",14.2
+"585",1977,"Osteichthyes",246.4
+"585",1978,"Champsocephalus gunnari",228
+"585",1978,"Channichthys rhinoceratus",128.8
+"585",1978,"Dissostichus eleginoides",59.5
+"585",1978,"Notothenia rossii",638
+"585",1978,"Notothenia squamifrons",356.7
+"585",1978,"Osteichthyes",20.3
+"585",1979,"Champsocephalus gunnari",212
+"585",1979,"Channichthys rhinoceratus",4
+"585",1979,"Notothenia rossii",19
+"585",1979,"Notothenia squamifrons",36
+"585",1980,"Champsocephalus gunnari",1419
+"585",1980,"Channichthys rhinoceratus",4
+"585",1980,"Dissostichus eleginoides",132
+"585",1980,"Notothenia rossii",1723
+"585",1981,"Champsocephalus gunnari",1126
+"585",1981,"Channichthys rhinoceratus",2
+"585",1981,"Dissostichus eleginoides",41
+"585",1981,"Notothenia rossii",10865
+"585",1981,"Osteichthyes",21
+"585",1982,"Champsocephalus gunnari",23582
+"585",1982,"Dissostichus eleginoides",130
+"585",1982,"Notothenia rossii",8193
+"585",1982,"Osteichthyes",7
+"585",1983,"Champsocephalus gunnari",19899
+"585",1983,"Dissostichus eleginoides",145
+"585",1983,"Notothenia rossii",949
+"585",1983,"Notothenia squamifrons",1418
+"585",1983,"Rajiformes",1
+"585",1984,"Champsocephalus gunnari",5724
+"585",1984,"Dissostichus eleginoides",4732
+"585",1984,"Osteichthyes",618
+"585",1984,"Rajiformes",17
+"585",1985,"Dissostichus eleginoides",2455
+"585",1985,"Notothenia squamifrons",5478
+"585",1986,"Champsocephalus gunnari",7697
+"585",1986,"Notothenia rossii",723
+"585",1986,"Notothenia squamifrons",2457
+"585",1987,"Dissostichus eleginoides",1320
+"585",1987,"Notothenia rossii",429
+"585",1987,"Notothenia squamifrons",1674
+"585",1988,"Champsocephalus gunnari",84
+"585",1988,"Notothenia rossii",2
+"5851",1970,"Champsocephalus gunnari",4.98201
+"5851",1972,"Champsocephalus gunnari",18023.6264
+"5851",1974,"Champsocephalus gunnari",813.51524
+"5851",1975,"Champsocephalus gunnari",980.95659
+"5851",1977,"Champsocephalus gunnari",38612.89704
+"5851",1978,"Champsocephalus gunnari",11027.91732
+"5851",1988,"Champsocephalus gunnari",14473.88847
+"5851",1988,"Dissostichus eleginoides",890.97063
+"5851",1988,"Notothenia rossii",72
+"5851",1988,"Notothenia squamifrons",7
+"5851",1989,"Champsocephalus gunnari",9253.34101
+"5851",1989,"Notothenia squamifrons",1549
+"5851",1990,"Champsocephalus gunnari",103.90775
+"5851",1990,"Dissostichus eleginoides",1241.77876
+"5851",1990,"Notothenia squamifrons",1259
+"5851",1991,"Champsocephalus gunnari",13294.79191
+"5851",1991,"Dissostichus eleginoides",3003.47547
+"5851",1991,"Notothenia rossii",286.71301
+"5851",1991,"Notothenia squamifrons",101
+"5851",1991,"Rajiformes",0.19982
+"5851",1992,"Champsocephalus gunnari",30.96838
+"5851",1992,"Notothenia squamifrons",1
+"5851",1992,"Osteichthyes",10
+"5851",1992,"Rajiformes",0.19979
+"5851",1993,"Dissostichus eleginoides",3593.40667
+"5851",1993,"Osteichthyes",14
+"5851",1994,"Champsocephalus gunnari",1225.45801
+"5851",1994,"Dissostichus eleginoides",5375.51773
+"5851",1994,"Notothenia rossii",0.19981
+"5851",1994,"Osteichthyes",0.02
+"5851",1994,"Rajiformes",1.99819
+"5851",1995,"Champsocephalus gunnari",2706.60601
+"5851",1995,"Channichthys rhinoceratus",0.999
+"5851",1995,"Dissostichus eleginoides",5590.76317
+"5851",1995,"Rajiformes",0.29387
+"5851",1996,"Champsocephalus gunnari",4.99501
+"5851",1996,"Rajiformes",0.21794
+"5851",1997,"Champsocephalus gunnari",0.26854
+"5851",1997,"Dissostichus eleginoides",5054.1986
+"5851",1997,"Notothenia rossii",0.6993
+"5851",1997,"Rajiformes",1.98714
+"5851",1998,"Channichthys rhinoceratus",0.99755
+"5851",1998,"Dissostichus eleginoides",4708.96189
+"5851",1998,"Macrourus spp",12
+"5851",1998,"Rajiformes",20.3922
+"5851",1999,"Channichthys rhinoceratus",0.69916
+"5851",1999,"Dissostichus eleginoides",4725.16677
+"5851",1999,"Macrourus spp",30.95
+"5851",2000,"Rajiformes",77.96702
+"5851",2001,"Macrourus spp",89.331
+"5851",2001,"Rajiformes",106.16818
+"5851",2002,"Dissostichus eleginoides",4149.55444
+"5851",2002,"Macrourus spp",449.008
+"5851",2002,"Rajiformes",557.47492
+"5851",2003,"Dissostichus eleginoides",5285.11722
+"5851",2003,"Macrourus spp",676.64
+"5851",2003,"Rajiformes",775.34315
+"5851",2004,"Macrourus spp",741.498
+"5851",2004,"Rajiformes",427.46473
+"5851",2005,"Dissostichus eleginoides",5068.079875
+"5851",2005,"Macrourus spp",429.5802206
+"5851",2005,"Rajiformes",524.8518703
+"5851",2006,"Macrourus spp",521.0005974
+"5851",2007,"Macrourus spp",552.0284406
+"5851",2007,"Rajiformes",372.154087
+"5851",2008,"Antimora rostrata",67.95059
+"5851",2008,"Dissostichus eleginoides",4844.710066
+"5851",2008,"Macrourus carinatus",816.2495181
+"5851",2008,"Raja spp",352.8105495
+"5851",2008,"Raja taaf",22.78269325
+"5851",2009,"Dissostichus eleginoides",5232.546157
+"5851",2009,"Raja spp",272.9988364
+"5851",2010,"Antimora rostrata",58.55161
+"5851",2010,"Dissostichus eleginoides",5145.796293
+"5851",2010,"Notothenia squamifrons",2.21556985
+"5851",2011,"Dissostichus eleginoides",5230.10167
+"5851",2011,"Raja spp",437.8529639
+"5851",2012,"Dissostichus eleginoides",4898.84
+"5851",2012,"Macrourus carinatus",687.7745
+"5851",2012,"Raja spp",431.8225
+"5852",1972,"Champsocephalus gunnari",5854.59662
+"5852",1974,"Champsocephalus gunnari",7518.23165
+"5852",1975,"Champsocephalus gunnari",9701.27033
+"5852",1978,"Champsocephalus gunnari",5150.51691
+"5852",1990,"Channichthys rhinoceratus",0.10989
+"5852",1990,"Macrourus spp",0.151
+"5852",1990,"Myctophidae",0.003996007
+"5852",1990,"Notothenia acuta",0.004
+"5852",1990,"Notothenia rossii",0.008991
+"5852",1990,"Notothenia squamifrons",0.463
+"5852",1990,"Nototheniops mizops",0.003
+"5852",1990,"Osteichthyes",0.022
+"5852",1990,"Rajiformes",0.22278
+"5852",1992,"Champsocephalus gunnari",4.50876
+"5852",1992,"Channichthys rhinoceratus",0.33167
+"5852",1992,"Dissostichus eleginoides",0
+"5852",1992,"Macrourus spp",0.09
+"5852",1992,"Notothenia squamifrons",2.049
+"5852",1992,"Osteichthyes",0.012
+"5852",1993,"Champsocephalus gunnari",2.89485
+"5852",1993,"Channichthys rhinoceratus",0.5085
+"5852",1993,"Dissostichus eleginoides",0
+"5852",1993,"Macrourus spp",0.012
+"5852",1993,"Myctophidae",0.01199
+"5852",1993,"Notothenia acuta",0.001
+"5852",1993,"Notothenia squamifrons",0.022
+"5852",1993,"Osteichthyes",0.028
+"5852",1993,"Rajiformes",0.11389
+"5852",1997,"Antimora rostrata",0.02298
+"5852",1997,"Cephalopoda",0.53326
+"5852",1997,"Chionodraco rastrospinosus",0.57
+"5852",1997,"Dissostichus eleginoides",1925.14644
+"5852",1997,"Elasmobranchii",2.02326
+"5852",1997,"Lamna nasus",1.6
+"5852",1997,"Macrourus holotrachys",0.713
+"5852",1997,"Macrourus spp",0.489
+"5852",1997,"Notothenia rossii",0.000999
+"5852",1997,"Notothenia squamifrons",3.994
+"5852",1997,"Osteichthyes",1.045
+"5852",1997,"Rajiformes",3.17481
+"5852",1997,"Zanclorhynchus spinifer",0.05095
+"5852",1998,"Champsocephalus gunnari",115.35581
+"5852",1998,"Channichthys rhinoceratus",4.567
+"5852",1998,"Dissostichus eleginoides",3759.94651
+"5852",1998,"Nototheniidae",3.04196
+"5852",1998,"Osteichthyes",0.331
+"5852",1999,"Channichthys rhinoceratus",0.87451
+"5852",1999,"Macrourus spp",0.645
+"5852",1999,"Notothenia squamifrons",9.523
+"5852",1999,"Rajiformes",1.69905
+"5852",1999,"Somniosus pacificus",1
+"5852",2000,"Champsocephalus gunnari",137.22846
+"5852",2000,"Channichthys rhinoceratus",2.49056
+"5852",2000,"Dissostichus eleginoides",3563.25361
+"5852",2000,"Notothenia squamifrons",0.177
+"5852",2000,"Osteichthyes",0.13
+"5852",2001,"Champsocephalus gunnari",1134.69578
+"5852",2001,"Dissostichus eleginoides",2977.15942
+"5852",2001,"Notothenia squamifrons",0.012
+"5852",2002,"Champsocephalus gunnari",864.7252
+"5852",2002,"Channichthys rhinoceratus",2.92883
+"5852",2002,"Dissostichus eleginoides",2753.48599
+"5852",2002,"Lampris immaculatus",0.096
+"5852",2002,"Notothenia rossii",0.06394
+"5852",2002,"Notothenia squamifrons",0.545
+"5852",2002,"Somniosus pacificus",2.8
+"5852",2003,"Bathyraja eatonii",23.64286
+"5852",2003,"Bathyraja maccaini",0.241
+"5852",2003,"Bathyraja murrayi",0.81618
+"5852",2003,"Cynomacrurus piriei",0.2204
+"5852",2003,"Etmopterus granulosus",0.000999013
+"5852",2003,"Loliginidae, Ommastrephidae",0.04233
+"5852",2003,"Macrouridae",0.09692
+"5852",2003,"Macrourus spp",3.09
+"5852",2003,"Mancopsetta maculata",0.00057
+"5852",2003,"Notothenia acuta",0.20897
+"5852",2003,"Notothenia squamifrons",0.4155
+"5852",2003,"Octopodidae",0.025
+"5852",2004,"Alepocephalus spp",0.002
+"5852",2004,"Antimora rostrata",1.40305
+"5852",2004,"Bathydraconidae",6e-05
+"5852",2004,"Bathyraja irrasa",1.85198
+"5852",2004,"Bathyraja maccaini",0.002
+"5852",2004,"Bathyraja murrayi",0.40773
+"5852",2004,"Borostomias antarcticus",0.000159844
+"5852",2004,"Centrolophus niger",0.005
+"5852",2004,"Channichthys rhinoceratus",13.52683157
+"5852",2004,"Cynomacrurus piriei",0.134
+"5852",2004,"Etmopterus spp",0.01
+"5852",2004,"Loliginidae, Ommastrephidae",0.06305
+"5852",2004,"Macrourus holotrachys",2.00155
+"5852",2004,"Notothenia acuta",0.201
+"5852",2004,"Notothenia squamifrons",2.9021
+"5852",2004,"Nototheniops mizops",0.2
+"5852",2004,"Octopodidae",0.07443
+"5852",2004,"Paradiplospinus gracilis",0.00017
+"5852",2005,"Alepocephalus spp",5e-04
+"5852",2005,"Bathyraja eatonii",6.28471
+"5852",2005,"Benthalbella elongata",0.000999
+"5852",2005,"Centrolophidae",0.001
+"5852",2005,"Cephalopoda",0.00697
+"5852",2005,"Champsocephalus gunnari",1849.33823
+"5852",2005,"Channichthys rhinoceratus",34.42864
+"5852",2005,"Chionodraco myersi",4e-04
+"5852",2005,"Cynomacrurus piriei",1.459
+"5852",2005,"Dissostichus eleginoides",2741.033473
+"5852",2005,"Elasmobranchii",0.51956
+"5852",2005,"Halargyreus johnsonii",0.000999041
+"5852",2005,"Lampris immaculatus",0.107
+"5852",2005,"Loligo spp",0.05844
+"5852",2005,"Macrouridae",0.000499551
+"5852",2005,"Macrourus carinatus",0.01207
+"5852",2005,"Macrourus whitsoni",36.4686
+"5852",2005,"Myctophidae",0.008991153
+"5852",2005,"Notothenia acuta",1e-04
+"5852",2005,"Notothenia rossii",0.02798
+"5852",2005,"Notothenia squamifrons",2.2497
+"5852",2005,"Nototheniops mizops",0.0756
+"5852",2005,"Octopodidae",0.07
+"5852",2005,"Rajiformes",69.6257
+"5852",2006,"Antimora rostrata",0.35358
+"5852",2006,"Bathyraja eatonii",0.47063
+"5852",2006,"Bathyraja irrasa",7.79613
+"5852",2006,"Channichthyidae",0.0004995
+"5852",2006,"Dissostichus eleginoides",2525.67978
+"5852",2006,"Muraenolepis spp",0.00138
+"5852",2006,"Notothenia squamifrons",4.95789
+"5852",2006,"Paralomis aculeata",0.006663338
+"5852",2006,"Rajiformes",8.28211
+"5852",2006,"Somniosus pacificus",0.00111
+"5852",2007,"Bathyraja irrasa",2.02656
+"5852",2007,"Bathyraja murrayi",0.93594
+"5852",2007,"Bothidae",0.0032
+"5852",2007,"Champsocephalus gunnari",0.83652
+"5852",2007,"Channichthys rhinoceratus",15.3288
+"5852",2007,"Dissostichus eleginoides",2385.14524
+"5852",2007,"Etmopterus granulosus",0.07142
+"5852",2007,"Macrourus whitsoni",3.240059999
+"5852",2007,"Muraenolepis spp",0.00436
+"5852",2007,"Nototheniidae",0.0363
+"5852",2007,"Octopodidae",0.06541
+"5852",2007,"Rajiformes",3.61398
+"5852",2007,"Somniosus pacificus",1.842
+"5852",2008,"Bathyraja eatonii",8.46098
+"5852",2008,"Bathyraja murrayi",0.93631
+"5852",2008,"Champsocephalus gunnari",198.47241
+"5852",2008,"Channichthyidae",0.025497742
+"5852",2008,"Channichthys rhinoceratus",37.361828
+"5852",2008,"Muraenolepis spp",0.00266
+"5852",2008,"Notothenia squamifrons",20.07029
+"5852",2008,"Octopodidae",0.032
+"5852",2008,"Rajiformes",3.39234
+"5852",2009,"Antimora rostrata",4.83472
+"5852",2009,"Bathylagus antarcticus",0.00174
+"5852",2009,"Bathyraja irrasa",1.413168
+"5852",2009,"Bathyraja murrayi",1.589977
+"5852",2009,"Champsocephalus gunnari",82.56511
+"5852",2009,"Channichthys rhinoceratus",50.725449
+"5852",2009,"Cynomacrurus piriei",0.00014
+"5852",2009,"Dissostichus eleginoides",2462.044713
+"5852",2009,"Etmopterus spp",0.05091
+"5852",2009,"Genypterus spp",0.021
+"5852",2009,"Halargyreus johnsonii",0.00026
+"5852",2009,"Icichthys australis",0.005029
+"5852",2009,"Lampris immaculatus",0.092
+"5852",2009,"Lithodidae",0.00746
+"5852",2009,"Macrourus spp",118.63852
+"5852",2009,"Myctophidae",0.001476
+"5852",2009,"Notothenia acuta",0.084116
+"5852",2009,"Notothenia squamifrons",25.827447
+"5852",2009,"Octopodidae",0.108515
+"5852",2009,"Paradiplospinus gracilis",0.003177
+"5852",2009,"Rajiformes",16.464438
+"5852",2010,"Bathyraja eatonii",13.16486
+"5852",2010,"Bathyraja murrayi",0.90635
+"5852",2010,"Champsocephalus gunnari",352.15173
+"5852",2010,"Channichthys rhinoceratus",80.03621
+"5852",2010,"Dissostichus eleginoides",2456.21061
+"5852",2010,"Macrourus spp",102.30162
+"5852",2010,"Macrourus whitsoni",0.842
+"5852",2010,"Rajiformes",11.44773
+"5852",2010,"Somniosus pacificus",1.336
+"5852",2011,"Bathyraja irrasa",16.48745
+"5852",2011,"Bathyraja murrayi",0.745
+"5852",2011,"Channichthys rhinoceratus",26.03443
+"5852",2011,"Dissostichus eleginoides",2561.90238
+"5852",2011,"Lampris immaculatus",0.036
+"5852",2011,"Loliginidae, Ommastrephidae",0.007
+"5852",2011,"Macrourus whitsoni",8.98718
+"5852",2011,"Notothenia acuta",0.001
+"5852",2011,"Notothenia squamifrons",27.75754
+"5852",2011,"Nototheniops mizops",0.00819
+"5852",2011,"Osteichthyes",0.343
+"5852",2011,"Teuthoidea",0.07824
+"5852",2012,"Antimora rostrata",3.6491
+"5852",2012,"Bathyraja eatonii",1.97
+"5852",2012,"Bathyraja irrasa",0.1984
+"5852",2012,"Bathyraja murrayi",0.448
+"5852",2012,"Borostomias antarcticus",1e-04
+"5852",2012,"Bothidae",0.0031
+"5852",2012,"Champsocephalus gunnari",4.428
+"5852",2012,"Channichthys rhinoceratus",41.723
+"5852",2012,"Cynomacrurus piriei",0.0034
+"5852",2012,"Dissostichus eleginoides",2716.61606
+"5852",2012,"Etmopterus granulosus",0.0147
+"5852",2012,"Lithodidae",5e-04
+"5852",2012,"Macrourus whitsoni",0.3241
+"5852",2012,"Muraenolepis microps",0.075
+"5852",2012,"Muraenolepis spp",0.0023
+"5852",2012,"Myctophidae",0.014
+"5852",2012,"Notothenia kempi",0.007
+"5852",2012,"Notothenia squamifrons",35.979
+"5852",2012,"Nototheniidae",0.0039
+"5852",2012,"Rajiformes",7.926
+"586",1977,"Dissostichus eleginoides",6.29933
+"586",1977,"Notothenia rossii",0.79994
+"586",1977,"Notothenia squamifrons",0.8
+"586",1978,"Dissostichus eleginoides",369.77253
+"586",1978,"Osteichthyes",848.5
+"586",1994,"Dissostichus eleginoides",55.95843
+"586",1995,"Dissostichus eleginoides",114.91463
+"586",1996,"Dissostichus eleginoides",75.97704
+"586",1997,"Dissostichus eleginoides",465.873
+"586",1997,"Macrourus spp",11
+"586",1997,"Rajiformes",1.99745
+"586",1998,"Antimora rostrata",2.86968
+"586",1998,"Dissostichus eleginoides",1052.36299
+"586",1998,"Lithodes murrayi",0.07
+"586",1998,"Macrourus spp",18.63
+"586",1998,"Rajiformes",2.1599
+"586",1999,"Antimora rostrata",5.9595
+"586",1999,"Dissostichus eleginoides",1150.97465
+"586",1999,"Macrourus spp",66.26
+"586",1999,"Rajiformes",3.63911
+"586",2000,"Antimora rostrata",7.15134
+"586",2000,"Bathyraja spp",0.04
+"586",2000,"Dissostichus eleginoides",1095.18621
+"586",2000,"Lithodidae",0.003
+"586",2000,"Macrourus spp",71.976
+"586",2001,"Antimora rostrata",1.03691
+"586",2001,"Brama brama",0.003
+"586",2001,"Macrourus spp",76.74
+"586",2001,"Muraenolepis spp",0.01
+"586",2001,"Paralomis aculeata",0.007
+"586",2001,"Rajiformes",13.65424
+"586",2002,"Antimora rostrata",1.1259
+"586",2002,"Dissostichus eleginoides",1223.74947
+"586",2002,"Lithodes murrayi",0.006
+"586",2002,"Macrourus spp",191.034
+"586",2002,"Notothenia kempi",5e-04
+"586",2002,"Rajiformes",40.77009
+"586",2002,"Somniosus microcephalus",0.945
+"586",2003,"Macrourus spp",144.11
+"586",2004,"Bathyraja spp",0.178
+"586",2004,"Lithodes spp",0.007
+"586",2004,"Macrourus spp",95.907
+"586",2004,"Macrourus whitsoni",0.038
+"586",2004,"Martialia hyadesi",0.001
+"586",2004,"Paralomis spp",0.006
+"586",2004,"Rajiformes",66.49938
+"586",2005,"Antimora rostrata",85.48351
+"586",2005,"Bathyraja murrayi",0.301
+"586",2005,"Lithodes murrayi",0.0335
+"586",2005,"Lithodidae",10.389
+"586",2005,"Macrourus spp",91.23949069
+"586",2005,"Rajiformes",12.71548998
+"586",2006,"Antimora rostrata",77.69925
+"586",2007,"Antimora rostrata",1.48222
+"586",2007,"Dissostichus eleginoides",435.7352435
+"586",2008,"Dissostichus eleginoides",877.2296911
+"586",2008,"Macrourus carinatus",134.5876602
+"586",2008,"Macrourus spp",3.063
+"586",2008,"Raja spp",15.69068953
+"586",2009,"Antimora rostrata",77.69621
+"586",2009,"Dissostichus eleginoides",907.2292253
+"586",2009,"Macrourus spp",1.694
+"586",2009,"Raja taaf",45.18945179
+"586",2009,"Rajiformes",0.0056
+"586",2010,"Antimora rostrata",78.77541
+"586",2010,"Macrourus carinatus",113.4972227
+"586",2011,"Macrourus carinatus",93.09064125
+"586",2011,"Macrourus spp",1.5323
+"586",2011,"Rajiformes",0.09356
+"586",2012,"Antimora rostrata",21.4218
+"586",2012,"Macrourus carinatus",96.4427
+"586",2012,"Raja taaf",74.6307
+"587",1996,"Dissostichus eleginoides",867.40353
+"587",1997,"Dissostichus eleginoides",1191.55452
+"587",1997,"Lithodidae",0.01699
+"587",1997,"Macrourus spp",1.393
+"587",1998,"Antimora rostrata",4.5374
+"587",1998,"Dissostichus eleginoides",635.91066
+"587",1998,"Lithodidae",0.05096
+"587",1998,"Macrourus spp",36.59
+"587",1998,"Osteichthyes",0.022
+"587",1998,"Rajiformes",1.45753
+"587",1999,"Dissostichus eleginoides",300.47491
+"587",1999,"Rajiformes",1.12776
+"587",2000,"Bathyraja murrayi",0.177
+"587",2000,"Bathyraja spp",0.492
+"587",2000,"Dissostichus eleginoides",1013.6704
+"587",2000,"Lithodes murrayi",0.154
+"587",2000,"Lithodidae",2.78619
+"587",2000,"Macrourus whitsoni",3.14
+"587",2000,"Rajiformes",7.02583
+"587",2001,"Antimora rostrata",2.01318
+"587",2001,"Dissostichus eleginoides",234.75102
+"587",2001,"Lithodes murrayi",0.015
+"587",2001,"Lithodidae",0.07995
+"587",2001,"Macrourus spp",36.57
+"587",2001,"Paralomis aculeata",0.01
+"587",2001,"Rajiformes",0.63091
+"587",2002,"Brama brama",0.002
+"587",2002,"Dissostichus eleginoides",97.8095
+"587",2002,"Lithodes murrayi",0.014
+"587",2002,"Macrourus spp",9.192
+"587",2002,"Notothenia kempi",0.005
+"587",2002,"Raja georgiana",0.065
+"587",2002,"Rajiformes",0.02789
+"587",2003,"Antimora rostrata",0.03198
+"587",2003,"Macrourus spp",16.94
+"587",2003,"Paralomis aculeata",0.04
+"587",2003,"Paralomis spp",0.1
+"587",2004,"Antimora rostrata",0.15088
+"587",2004,"Bathyraja spp",0.03
+"587",2004,"Dissostichus eleginoides",132.51182
+"587",2004,"Lithodidae",4.53584
+"587",2004,"Macrourus spp",13.515
+"587",2004,"Macrourus whitsoni",0.725
+"587",2004,"Notothenia kempi",0.0035
+"587",2004,"Paralomis aculeata",0.001
+"587",2004,"Paralomis spp",0.003
+"587",2004,"Raja spp",0.106
+"587",2004,"Rajiformes",1.52133
+"587",2005,"Antimora rostrata",0.3978
+"587",2005,"Lithodes murrayi",3.26642
+"587",2005,"Lithodes spp",0.055
+"587",2005,"Lithodidae",5.76859
+"587",2005,"Macrourus spp",4.9043
+"587",2006,"Antimora rostrata",0.40188
+"587",2006,"Macrourus spp",8.191
+"587",2007,"Antimora rostrata",2.47383
+"587",2007,"Macrourus spp",10.722
+"587",2008,"Antimora rostrata",1.55501
+"587",2008,"Dissostichus eleginoides",69.26354
+"587",2009,"Macrourus spp",1.207
+"587",2010,"Antimora rostrata",0.39304
+"587",2010,"Dissostichus eleginoides",71.99304
+"587",2010,"Macrourus spp",1.693
+"587",2011,"Antimora rostrata",1.00058
+"587",2011,"Dissostichus eleginoides",91.72337
+"587",2011,"Macrourus spp",3.2455
+"587",2011,"Rajiformes",0.04424
+"587",2012,"Antimora rostrata",0.9433
+"587",2012,"Lithodidae",0.008
+"587",2012,"Rajiformes",0.6883
+"88",1977,"Euphausia superba",3355
+"88",1978,"Euphausia superba",36
+"88",1979,"Euphausia superba",600
+"88",1979,"Osteichthyes",200
+"88",1981,"Euphausia superba",3080
+"88",1982,"Champsocephalus gunnari",15
+"88",1982,"Euphausia superba",4093
+"88",1984,"Euphausia superba",15
+"88",1984,"Myctophidae",129
+"88",1984,"Osteichthyes",2
+"88",1986,"Euphausia superba",1884
+"881",1976,"Euphausia superba",1
+"881",1977,"Euphausia superba",10
+"881",1979,"Euphausia superba",2262
+"881",1980,"Euphausia superba",1770
+"881",1981,"Euphausia superba",593
+"881",1982,"Euphausia superba",2544
+"881",1983,"Euphausia superba",4718
+"881",1986,"Euphausia superba",1931
+"881",1987,"Euphausia superba",363
+"881",1990,"Euphausia superba",658
+"881",1991,"Euphausia superba",3
+"881",1997,"Dissostichus eleginoides",0.128
+"881",1998,"Calamus spp",0.002
+"881",1998,"Dissostichus mawsoni",41.002
+"881",1998,"Lithodidae",0.005
+"881",1998,"Macrourus spp",9.483
+"881",1998,"Muraenolepis spp",0.273
+"881",1998,"Nototheniidae",0.131
+"881",1998,"Rajiformes",4.804
+"881",1999,"Bathyraja eatonii",1.04
+"881",1999,"Channichthyidae",0.18
+"881",1999,"Dissostichus eleginoides",0.55
+"881",1999,"Macrourus carinatus",19.55
+"881",1999,"Macrourus spp",0.78
+"881",1999,"Macrourus whitsoni",1.35
+"881",1999,"Muraenolepis microps",3.65
+"881",1999,"Muraenolepis spp",0.74
+"881",2000,"Antimora rostrata",0.281
+"881",2000,"Bathyraja eatonii",4.88
+"881",2000,"Chaenocephalus aceratus",0.01
+"881",2000,"Macrourus carinatus",65.26
+"881",2000,"Macrourus whitsoni",4.6
+"881",2000,"Nototheniidae",0.01
+"881",2000,"Pogonophryne permitini",0.01
+"881",2000,"Raja georgiana",36.07
+"881",2000,"Rajiformes",0.03
+"881",2001,"Bathyraja eatonii",0.459
+"881",2001,"Channichthyidae",2.596
+"881",2001,"Dissostichus mawsoni",625.661
+"881",2001,"Macrourus spp",6.1
+"881",2001,"Muraenolepis microps",0.041
+"881",2001,"Muraenolepis spp",3.238
+"881",2001,"Nototheniidae",1.106
+"881",2002,"Bathyraja eatonii",0.84
+"881",2002,"Coryphaenoides spp",0.06
+"881",2002,"Dissostichus mawsoni",1312.644
+"881",2002,"Lithodes murrayi",0.01
+"881",2002,"Macrourus carinatus",0.09
+"881",2002,"Muraenolepis microps",0.5
+"881",2002,"Muraenolepis spp",4.81
+"881",2002,"Osteichthyes",6e-04
+"881",2002,"Pogonophryne permitini",0.02
+"881",2003,"Antimora rostrata",6.131
+"881",2003,"Bathyraja eatonii",0.428
+"881",2003,"Channichthyidae",3.117
+"881",2003,"Dissostichus mawsoni",1805.425
+"881",2003,"Macrourus spp",3
+"881",2003,"Macrourus whitsoni",54.207
+"881",2003,"Muraenolepis spp",0.795
+"881",2003,"Nototheniidae",0.636
+"881",2003,"Osteichthyes",2
+"881",2003,"Pogonophryne permitini",0.006
+"881",2004,"Antimora rostrata",10.447
+"881",2004,"Bathyraja maccaini",0.02
+"881",2004,"Bathyraja murrayi",0.018
+"881",2004,"Chionobathyscus dewitti",0.199
+"881",2004,"Chionodraco hamatus",0.001
+"881",2004,"Dissostichus mawsoni",2184.068
+"881",2004,"Lampris immaculatus",0.032
+"881",2004,"Lithodes murrayi",0.0022
+"881",2004,"Lithodidae",0.009
+"881",2004,"Macrourus spp",218.729
+"881",2004,"Muraenolepis marmoratus",0.017
+"881",2004,"Notothenia kempi",0.0953
+"881",2004,"Notothenia squamifrons",0.014
+"881",2004,"Nototheniidae",0.384
+"881",2004,"Octopodidae",0.038
+"881",2004,"Osteichthyes",1.753
+"881",2004,"Pogonophryne permitini",0.015
+"881",2004,"Pogonophryne spp",0.014
+"881",2004,"Raja georgiana",12.707
+"881",2004,"Raja georgiana var.",0.251
+"881",2004,"Raja taaf",0.055
+"881",2005,"Artedidraco spp",0.0059
+"881",2005,"Bathyraja eatonii",0.17269
+"881",2005,"Bathyraja spp",2.99
+"881",2005,"Cephalopoda",0.0293
+"881",2005,"Channichthyidae",2.16548
+"881",2005,"Dissostichus eleginoides",6.97826
+"881",2005,"Dissostichus mawsoni",3097.983439
+"881",2005,"Lampris immaculatus",0.0275
+"881",2005,"Macrourus spp",214.76649
+"881",2005,"Macrourus whitsoni",176.88731
+"881",2005,"Muraenolepis microps",0.82295
+"881",2005,"Muraenolepis spp",6.35816
+"881",2005,"Nototheniidae",0.16913
+"881",2005,"Octopodidae",0.01584
+"881",2005,"Osteichthyes",0.07
+"881",2005,"Pogonophryne permitini",0.0026
+"881",2005,"Pseudochaenichthys georgianus",0.06
+"881",2005,"Raja georgiana",35.01684
+"881",2005,"Raja spp",1.4844
+"881",2005,"Rajiformes",22.10775
+"881",2005,"Zoarcidae",0.00098
+"881",2006,"Antimora rostrata",1.5235
+"881",2006,"Bathyraja spp",0.0465
+"881",2006,"Champsocephalus gunnari",0.1215
+"881",2006,"Channichthyidae",3.306645
+"881",2006,"Cryodraco spp",0.4105
+"881",2006,"Dissostichus eleginoides",1.29372
+"881",2006,"Dissostichus mawsoni",2968.190287
+"881",2006,"Lithodidae",0.00501
+"881",2006,"Macrourus holotrachys",0.0185
+"881",2006,"Macrourus whitsoni",66.2407
+"881",2006,"Muraenolepis microps",0.21447
+"881",2006,"Muraenolepis spp",4.836689
+"881",2006,"Nototheniidae",0.09826
+"881",2006,"Octopodidae",0.00785
+"881",2006,"Osteichthyes",0.18
+"881",2006,"Raja georgiana",0.878164
+"881",2006,"Raja spp",0.05
+"881",2006,"Rajiformes",3.20901
+"881",2007,"Antimora rostrata",4.20339
+"881",2007,"Bathyraja eatonii",0.33406
+"881",2007,"Channichthyidae",14.84654
+"881",2007,"Chionobathyscus dewitti",1.11947
+"881",2007,"Coryphaenoides armatus",0.00233
+"881",2007,"Dacodraco hunteri",0.00032
+"881",2007,"Dissostichus mawsoni",3078.743142
+"881",2007,"Lepidion spp",0.0117
+"881",2007,"Liparididae",4e-04
+"881",2007,"Lithodes spp",0.00142
+"881",2007,"Lithodidae",0.02548
+"881",2007,"Macrourus holotrachys",0.03674
+"881",2007,"Macrourus whitsoni",62.05135
+"881",2007,"Muraenolepis marmoratus",0.08652
+"881",2007,"Muraenolepis spp",20.11059
+"881",2007,"Notothenia squamifrons",0.00123
+"881",2007,"Nototheniidae",0.17026
+"881",2007,"Octopodidae",0.02422
+"881",2007,"Ommastrephes, Illex",0.0194
+"881",2007,"Pareledone turqueti",0.00539
+"881",2007,"Pogonophryne permitini",0.00798
+"881",2007,"Pogonophryne spp",0.0187
+"881",2007,"Raja georgiana",11.07359
+"881",2007,"Raja spp",25.81491
+"881",2007,"Trematomus spp",0.24889
+"881",2008,"Antimora rostrata",2.90703
+"881",2008,"Bathyraja eatonii",0.1009
+"881",2008,"Bathyraja maccaini",0.002
+"881",2008,"Chionobathyscus dewitti",0.66466
+"881",2008,"Coryphaenoides spp",0.0102
+"881",2008,"Dissostichus eleginoides",8.66751
+"881",2008,"Dissostichus mawsoni",2250.52981
+"881",2008,"Euphausia superba",0.0137
+"881",2008,"Lithodes murrayi",0.00145
+"881",2008,"Lithodidae",0.0047
+"881",2008,"Macrourus spp",53.3748
+"881",2008,"Muraenolepis spp",6.93755
+"881",2008,"Notothenia kempi",0.2744
+"881",2008,"Nototheniidae",1.44361
+"881",2008,"Octopodidae",3e-04
+"881",2008,"Paralomis aculeata",0.0015
+"881",2008,"Paralomis anamerae",2e-05
+"881",2008,"Pleuragramma antarcticum",0.592
+"881",2008,"Pogonophryne permitini",0.0058
+"881",2008,"Pogonophryne scotti",0.013
+"881",2008,"Pogonophryne spp",0.01157
+"881",2008,"Raja georgiana",3.70398
+"881",2008,"Rajiformes",0.07503
+"881",2009,"Antimora rostrata",1.69389
+"881",2009,"Bathyraja eatonii",1.78379
+"881",2009,"Bathyraja maccaini",0.009
+"881",2009,"Channichthyidae",4.79807
+"881",2009,"Dissostichus eleginoides",16.80114
+"881",2009,"Dissostichus mawsoni",2431.51778
+"881",2009,"Macrourus spp",114.04234
+"881",2009,"Macrourus whitsoni",68.94983
+"881",2009,"Octopodidae",0.01096
+"881",2009,"Pachycara brachycephalum",0.0447
+"881",2009,"Pogonophryne permitini",0.00295
+"881",2009,"Pogonophryne scotti",0.0033
+"881",2009,"Pogonophryne spp",7e-04
+"881",2009,"Rajiformes",0.3409
+"881",2010,"Antimora rostrata",1.682004
+"881",2010,"Channichthyidae",3.8981
+"881",2010,"Chionobathyscus dewitti",1.0831
+"881",2010,"Dissostichus eleginoides",0.45189
+"881",2010,"Dissostichus mawsoni",2868.42922
+"881",2010,"Lithodidae",0.00821
+"881",2010,"Macrourus carinatus",1.1964
+"881",2010,"Macrourus whitsoni",80.15805
+"881",2010,"Muraenolepis marmoratus",0.0992
+"881",2010,"Muraenolepis microps",1.55088
+"881",2010,"Muraenolepis spp",6.53019
+"881",2010,"Nototheniidae",0.06044
+"881",2010,"Octopodidae",0.08302
+"881",2010,"Pagothenia hansoni",0.0037
+"881",2010,"Pogonophryne permitini",0.001
+"881",2010,"Pogonophryne scotti",0.0022
+"881",2010,"Pogonophryne spp",0.02549
+"881",2010,"Raja georgiana",5.44722
+"881",2010,"Raja spp",0.67526
+"881",2010,"Rajiformes",0.92445
+"881",2011,"Antimora rostrata",0.81504
+"881",2011,"Bathyraja eatonii",0.5333
+"881",2011,"Bathyraja maccaini",0.1513
+"881",2011,"Channichthyidae",1.09954
+"881",2011,"Chionobathyscus dewitti",0.17982
+"881",2011,"Dissostichus eleginoides",2.62544
+"881",2011,"Dissostichus mawsoni",2836.46517
+"881",2011,"Lampris guttatus",0.0221
+"881",2011,"Lampris immaculatus",0.066
+"881",2011,"Lepidion spp",0.003
+"881",2011,"Lithodidae",6e-04
+"881",2011,"Macrourus carinatus",1.875
+"881",2011,"Macrourus spp",168.915275
+"881",2011,"Macrourus whitsoni",18.05057
+"881",2011,"Muraenolepis microps",0.10191
+"881",2011,"Notothenia squamifrons",5e-04
+"881",2011,"Nototheniidae",0.14038
+"881",2011,"Octopodidae",0.002685
+"881",2011,"Pogonophryne permitini",0.00093
+"881",2011,"Pogonophryne spp",0.00489
+"881",2011,"Raja georgiana",2.1879
+"881",2011,"Rajiformes",1.34892
+"881",2012,"Antimora rostrata",0.7069
+"881",2012,"Bathydraco antarcticus",1e-04
+"881",2012,"Bathyraja eatonii",0.1795
+"881",2012,"Bathyraja maccaini",0.1593
+"881",2012,"Careproctus spp",1e-04
+"881",2012,"Channichthyidae",1.2366
+"881",2012,"Chionobathyscus dewitti",0.0672
+"881",2012,"Dissostichus eleginoides",4.8933
+"881",2012,"Dissostichus mawsoni",3173.0442
+"881",2012,"Lampris immaculatus",0.1186
+"881",2012,"Lepidion spp",0.0219
+"881",2012,"Lithodidae",0.0013
+"881",2012,"Macrourus carinatus",0.0064
+"881",2012,"Macrourus spp",127.7962
+"881",2012,"Macrourus whitsoni",14.8805
+"881",2012,"Moridae",0.01
+"881",2012,"Muraenolepis marmoratus",0.0056
+"881",2012,"Muraenolepis microps",0.0012
+"881",2012,"Muraenolepis spp",1.7545
+"881",2012,"Neopagetopsis ionah",4e-04
+"881",2012,"Notothenia kempi",0.012
+"881",2012,"Nototheniidae",0.1926
+"881",2012,"Octopodidae",0.1044
+"881",2012,"Osteichthyes",0.085
+"881",2012,"Paralomis aculeata",2e-04
+"881",2012,"Pogonophryne permitini",0.0343
+"881",2012,"Pogonophryne scotti",0.0049
+"881",2012,"Pogonophryne spp",0.0039
+"881",2012,"Raja georgiana",0.057
+"881",2012,"Rajiformes",1.0929
+"881",2012,"Vomeridens infuscipinnis",1e-04
+"882",1980,"Euphausia superba",47
+"882",1991,"Euphausia superba",746
+"882",2002,"Antimora rostrata",0.01
+"882",2002,"Dissostichus eleginoides",0.08
+"882",2002,"Dissostichus mawsoni",41.2
+"882",2002,"Macrourus whitsoni",4.07
+"882",2002,"Muraenolepis spp",0.05
+"882",2002,"Raja georgiana",0.27
+"882",2003,"Antimora rostrata",1.708
+"882",2003,"Channichthyidae",5.824
+"882",2003,"Dissostichus mawsoni",106.38
+"882",2003,"Macrourus whitsoni",17.656
+"882",2003,"Muraenolepis spp",0.122
+"882",2004,"Antimora rostrata",5.752
+"882",2004,"Bathyraja maccaini",0.086
+"882",2004,"Dissostichus eleginoides",0.018
+"882",2004,"Dissostichus mawsoni",374.491
+"882",2004,"Macrourus whitsoni",36.55
+"882",2004,"Muraenolepis spp",0.041205
+"882",2004,"Nototheniidae",0.13
+"882",2004,"Octopodidae",0.002
+"882",2005,"Antimora rostrata",1.8998
+"882",2005,"Bathyraja eatonii",0.00346
+"882",2005,"Channichthyidae",1.5322
+"882",2005,"Dissostichus eleginoides",0.01503
+"882",2005,"Lithodidae",1e-04
+"882",2005,"Macrourus spp",0.4125
+"882",2005,"Macrourus whitsoni",20.1563
+"882",2005,"Muraenolepis microps",0.0426
+"882",2005,"Muraenolepis spp",0.0088
+"882",2005,"Pleuragramma antarcticum",0.03
+"882",2006,"Antimora rostrata",1.04493
+"882",2006,"Bathyraja eatonii",0.008
+"882",2006,"Channichthyidae",1.11098
+"882",2006,"Dissostichus mawsoni",513.6398
+"882",2006,"Lithodidae",0.01263
+"882",2006,"Macrourus spp",18.4271
+"882",2006,"Macrourus whitsoni",15.0891
+"882",2006,"Muraenolepis spp",0.76515
+"882",2006,"Nototheniidae",0.0678
+"882",2006,"Raja georgiana",0.04947
+"882",2007,"Antimora rostrata",6.27734
+"882",2007,"Channichthyidae",5.07896
+"882",2007,"Lithodidae",2e-04
+"882",2007,"Macrourus spp",48.21031
+"882",2007,"Macrourus whitsoni",5.9
+"882",2007,"Muraenolepis spp",1.16326
+"882",2007,"Raja georgiana",0.02
+"882",2007,"Raja spp",0.10417
+"882",2008,"Antimora rostrata",1.9942
+"882",2008,"Channichthyidae",1.93628
+"882",2008,"Dissostichus eleginoides",0.065
+"882",2008,"Dissostichus mawsoni",415.73178
+"882",2008,"Macrourus spp",2.595
+"882",2008,"Macrourus whitsoni",14.8373
+"882",2008,"Moroteuthis ingens",0.01
+"882",2008,"Muraenolepis microps",0.026
+"882",2008,"Muraenolepis spp",0.43782
+"882",2009,"Antimora rostrata",6.78614
+"882",2009,"Channichthyidae",5.2182
+"882",2009,"Chionobathyscus dewitti",0.2285
+"882",2009,"Dissostichus eleginoides",0.016
+"882",2009,"Dissostichus mawsoni",483.65362
+"882",2009,"Lithodidae",0.00094
+"882",2009,"Macrourus spp",53.77511
+"882",2009,"Muraenolepis microps",0.0075
+"882",2009,"Muraenolepis spp",1.15993
+"882",2009,"Octopodidae",0.02172
+"882",2009,"Rajiformes",0.0177
+"882",2009,"Trematomus spp",4e-04
+"882",2010,"Antimora rostrata",4.91845
+"882",2010,"Channichthyidae",7.01758
+"882",2010,"Chionobathyscus dewitti",2.0952
+"882",2010,"Cryodraco antarcticus",0.005
+"882",2010,"Dissostichus mawsoni",314.27263
+"882",2010,"Macrourus spp",49.29455
+"882",2010,"Muraenolepis microps",0.0788
+"882",2010,"Muraenolepis spp",0.7644
+"882",2010,"Notothenia kempi",0.1105
+"882",2010,"Paralomis spp",0.006
+"882",2010,"Pogonophryne spp",0.011
+"882",2011,"Antimora rostrata",4.96794
+"882",2011,"Chionobathyscus dewitti",1.23722
+"882",2011,"Dissostichus mawsoni",589.60773
+"882",2011,"Lithodidae",0.00183
+"882",2011,"Macrourus carinatus",0.62819
+"882",2011,"Macrourus spp",44.29399
+"882",2011,"Muraenolepis spp",0.50238
+"882",2011,"Nototheniidae",0.00157
+"882",2011,"Octopodidae",0.00062
+"882",2011,"Paralomis spinosissima",0.00184
+"882",2011,"Raja georgiana",0.106
+"882",2012,"Antimora rostrata",3.5294
+"882",2012,"Bathyraja spp",0.196
+"882",2012,"Channichthyidae",6.0704
+"882",2012,"Dissostichus eleginoides",0.0698
+"882",2012,"Lithodidae",0.0092
+"882",2012,"Macrourus holotrachys",0.0275
+"882",2012,"Macrourus spp",26.9564
+"882",2012,"Macrourus whitsoni",2.2923
+"882",2012,"Muraenolepis orangiensis",0.0107
+"883",1981,"Euphausia superba",545
+"883",1983,"Euphausia superba",41
+"883",1985,"Euphausia superba",203
+"883",1987,"Euphausia superba",31
+"883",1988,"Myctophidae",1110
+"883",1998,"Dissostichus eleginoides",0.013
+"883",1998,"Dissostichus mawsoni",0.288
+"883",1998,"Macrourus spp",0.334
+"883",1998,"Nototheniidae",0.065
+"883",1998,"Osteichthyes",0.042
+"883",1998,"Rajiformes",0.022
+"883",2005,"Antimora rostrata",0.1828
+"883",2005,"Chionodraco myersi",0.0384
+"883",2005,"Dissostichus mawsoni",1.6298
+"883",2005,"Macrourus holotrachys",0.2181
+"883",2005,"Macrourus whitsoni",1.341
+"883",2005,"Muraenolepis microps",0.001
+"883",2011,"Antimora rostrata",0.008
+"883",2011,"Chionobathyscus dewitti",0.0994
+"883",2011,"Dissostichus mawsoni",5.23
+"883",2011,"Lithodidae",0.0046
+"883",2011,"Pogonophryne spp",4e-04
+"883",2012,"Dissostichus mawsoni",4.066
+"883",2012,"Macrourus spp",0.3769
+"883",2012,"Muraenolepis spp",0.0099
+"883",2012,"Nototheniidae",6e-04
+"883",2012,"Pogonophryne spp",2e-04
+"883",2012,"Raja georgiana",0.0193
