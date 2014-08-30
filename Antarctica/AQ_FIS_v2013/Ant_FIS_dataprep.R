@@ -52,6 +52,6 @@ CCAMLR_cs<-CCAMLR_c[CCAMLR_y$Tax_Lev==6,]
 
 # the ccamlr region names have duplicates due to trailing spaces
 CCAMLR_cs <- CCAMLR_cs %>% ungroup() %>% mutate( ASD = gsub(' ', '', ASD) )
-CCAMLR_t <- CCAMLR_cs %>% rename (c('season.year' = 'yr')) %>% group_by(ASD, yr, ScientificName) %>% summarise (ct = sum (totC, na.rm =T) )
+CCAMLR_t <- CCAMLR_cs %>% rename (c('season.year' = 'yr', 'Tax_Lev' = 'TL')) %>% group_by(ASD, yr, ScientificName, TL) %>% summarise (ct = sum (totC, na.rm =T) )
 
 write.csv(CCAMLR_t, file.path(dir_AQ ,"tmp/CCAMLR_ct_rgn_Aug29_2014.csv"),row.names = F)
