@@ -54,4 +54,4 @@ CCAMLR_cs<-CCAMLR_c[CCAMLR_y$Tax_Lev==6,]
 CCAMLR_cs <- CCAMLR_cs %>% ungroup() %>% mutate( ASD = gsub(' ', '', ASD) )
 CCAMLR_t <- CCAMLR_cs %>% rename (c('season.year' = 'yr')) %>% group_by(ASD, yr, ScientificName) %>% summarise (ct = sum (totC, na.rm =T) )
 
-write.csv(CCAMLR_t, file.path(dir_AQ ,"data/CCAMLR_ct_rgn_Aug29_2014.csv"),row.names = F)
+write.csv(CCAMLR_t, file.path(dir_AQ ,"tmp/CCAMLR_ct_rgn_Aug29_2014.csv"),row.names = F)
