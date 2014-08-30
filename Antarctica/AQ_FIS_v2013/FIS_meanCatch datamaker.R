@@ -7,12 +7,12 @@ source('~/ohiprep/src/R/common.R')
 library(reshape2)
 library(stringr)
 
-data_files <- "Global/GL-AQ-FIS_v2013"
+data_files <- "Antarctica/AQ_FIS_v2013"
 
 #---------------------------------------------------------
 ## CMSY data: 3 additional taxa (these have c/cmsy data) ----
 #---------------------------------------------------------
-cmsy <- read.csv("raw/Ant_C_Cmsy .csv")
+cmsy <- read.csv(file.path(data_files, "raw/Ant_C_Cmsy .csv"))
 cmsy <- cmsy %.%
   select(taxon_name=ScientificName, fao_id=area, year=season.year, C_msy_assmt) %.%
   group_by(taxon_name, fao_id, year) %.%
@@ -34,38 +34,31 @@ new <- data.frame(taxon_name="Champsocephalus gunnari", fao_id=c(483, 5852), yea
 cmsy <- rbind(cmsy, new)
 
 
-write.csv(cmsy, file.path(data_files, "data\\fnk_fis_ccmsy.csv"), row.names=FALSE)
+write.csv(cmsy, file.path(data_files, "data/fnk_fis_ccmsy.csv"), row.names=FALSE)
 
 #---------------------------------------------------------
 ## Mean catch data ----
 #---------------------------------------------------------
 
-catchData <- read.csv("Global/GL-AQ-FIS_v2013/raw/CCAMLR_w_update_v2.csv") # N=3236
+catchData <- read.csv(file.path(data_files, "tmp/CCAMLR_ct_rgn_Aug29_2014.csv")) # N=3236
 
-catchData[catchData$ASD==481 & catchData$ScientificName == "Champsocephalus gunnari", ]
-table(catchData$ASD)
-table(catchData$ASD2)
 # organize/clean data
-catchData2  <- catchData %>%
-  filter(!(ASD %in% c(41, 48, 58, 88, 584, 585, 4132, 5843, 5844))) %>% #N=3059
+catchData  <- catchData %>%
+  filter(!(ASD %in% c(41, 48, 58, 88, 584, 585, 4132, 5843, 5844))) %>% #N=3059 
   mutate(ASD = gsub("a", "1", ASD)) %>%
   mutate(ASD = as.numeric(gsub("b", "2", ASD)),
         fao_saup_id = paste(ASD, 0, sep="_"), 
-        taxon_name_key = paste(ScientificName, Tax_Lev, sep="_")) %>%
-  select(fao_saup_id, taxon_name_key, year=season.year, catch=corr.Catch2) %>%
+        taxon_name_key = paste(ScientificName, TL, sep="_")) %>%
+  select(fao_saup_id, taxon_name_key, year=yr, catch=ct) %>%
   arrange(fao_saup_id, taxon_name_key, year)
-catchData2[catchData2$fao_saup_id=='481_0' & catchData2$taxon_name_key == "Champsocephalus gunnari_6", ]  
 
 # Calculate mean catch over all years per taxon and saup_id/fao_id
 MeanCatch <- catchData %.%
  group_by(fao_saup_id, taxon_name_key) %>% 
   filter(year>=1980) %>%
  summarize(mean_catch=mean(catch, na.rm=TRUE))
-MeanCatch[MeanCatch$fao_saup_id=='481_0' & MeanCatch$taxon_name_key == "Champsocephalus gunnari_6", ]
 
 country.level.data <- merge(catchData, MeanCatch, by=c("fao_saup_id", "taxon_name_key"))
-
-country.level.data[country.level.data$fao_saup_id=='481_0' & country.level.data$taxon_name_key == "Champsocephalus gunnari_6", ]
 
 country.level.data <- country.level.data %>%
   filter(mean_catch != 0) %>% #cut catch with zero values
