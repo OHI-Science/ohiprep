@@ -50,20 +50,43 @@ catchData  <- catchData %>%
         fao_saup_id = paste(ASD, 0, sep="_"), 
         taxon_name_key = paste(ScientificName, TL, sep="_")) %>%
   select(fao_saup_id, taxon_name_key, year=yr, catch=ct) %>%
-  arrange(fao_saup_id, taxon_name_key, year)
+  arrange(fao_saup_id, taxon_name_key, year) %>%
+  filter(year>=1980)
 
-# Calculate mean catch over all years per taxon and saup_id/fao_id
+
+# Calculate mean catch over all years >=1980 per taxon and saup_id/fao_id
 MeanCatch <- catchData %.%
  group_by(fao_saup_id, taxon_name_key) %>% 
-  filter(year>=1980) %>%
- summarize(mean_catch=mean(catch, na.rm=TRUE))
-
-country.level.data <- merge(catchData, MeanCatch, by=c("fao_saup_id", "taxon_name_key"))
-
-country.level.data <- country.level.data %>%
+ mutate(mean_catch=mean(catch, na.rm=TRUE)) %>%
   filter(mean_catch != 0) %>% #cut catch with zero values
   filter(year>2005) %>%
   arrange(fao_saup_id, taxon_name_key, year)
 
-write.csv(country.level.data, file.path(data_files, "data/cnk_fis_meancatch.csv"), row.names=FALSE)
+# # The following code adds the mean catch to years with no catch record after catch is documented for a region.
+# # This changes the results for some regions pretty dramatically.  We will want to explore this in future versions 
+# # of the data.
+# MeanCatch_zero <- catchData %>%
+#          mutate(id=paste(taxon_name_key, fao_saup_id, sep="_")) 
+# MeanCatch_minYear  <- MeanCatch_zero %>%
+#         group_by(id) %>%
+#          summarize(minYear=min(year))
+# 
+# MeanCatch_zero2 <- expand.grid(id=unique(MeanCatch_zero$id), year=1980:2012) %>%
+#   mutate(fao_saup_id = paste(sapply(strsplit(as.character(id), "_"), function(x)x[3]), 0, sep="_"),
+#          taxon_name_key = paste(sapply(strsplit(as.character(id), "_"), function(x)x[1]), 
+#                                 sapply(strsplit(as.character(id), "_"), function(x)x[2]), sep="_"),
+#          id=as.character(id)) %>%
+#   left_join(MeanCatch_zero, by=c("id", "year", "fao_saup_id", "taxon_name_key")) %>%
+#   left_join(MeanCatch_minYear) %>%
+#   group_by(fao_saup_id, taxon_name_key) %>%
+#   mutate(mean_catch=(mean(catch, na.rm=TRUE))) %>%
+#   mutate(delete = ifelse(year<minYear, "yes", "no")) %>%
+#   filter(delete=="no") %>%
+#   select(fao_saup_id, taxon_name_key, year, catch, mean_catch) %>%
+#   filter(mean_catch != 0) %>% #cut catch with zero values
+#   filter(year>2005) %>%
+#   arrange(fao_saup_id, taxon_name_key, year)
+
+
+  write.csv(MeanCatch, file.path(data_files, "data/cnk_fis_meancatch.csv"), row.names=FALSE)
 

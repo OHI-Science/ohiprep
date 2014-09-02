@@ -26,63 +26,53 @@ rm(list = ls())
 # There needs to be >=7 years of data to run cmsy- however, the data 
 # is subset to include 10 years of data with no zero or NA values.
 
-######################################
-# Antarctica zeroes included-----
-cdat <- read.csv("Antarctica/AQ_FIS_2014a/data/CCAMLR_with0s_w_resil_Aug132014.csv")
-cdat <- cdat %>%
-  select(stock_id, ct, yr) %>%
-  arrange(stock_id, yr)
-cdat <- unique(cdat)
-
- #get ID's of taxa with >= 10 years of non-zero data:
-cdat_years <- cdat %>%
-  filter(ct!=0) %>%
-  group_by(stock_id) %>%
-  summarise(years=length(yr))
-
-cdat10plus <- cdat_years$stock_id[cdat_years$years>=10]
-
-# subset original data to include only the species with 10+ years
-cdat <- cdat[cdat$stock_id %in% cdat10plus, ]
-
-## Run bbmsy script
-source('Global/FIS_Bbmsy/cmsy_constrained.R')
-
-get_b_bmsy <- function(i){  
-  test <- runCMSY(stockNumber=i, cdat=cdat)
-  new <- data.frame(taxon_name=test[[1]],
-                    b_bmsy=test[[2]],
-                    year=test[[7]])
-  return(new)
-}
-
-print(system.time({    
-  r = mclapply(1:length(cdat10plus), get_b_bmsy, mc.cores=detectCores(), mc.preschedule=F) 
-}))
-
-r <- ldply(r)
-
-write.csv(r, "Global/GL-AQ-FIS_v2013/tmp/b_bmsy_AQ_with_zeros_constrained.csv", row.names=FALSE)
-
-## compared with old data and R2 was 1 - feel confident everything went well
-# ## compare with old data (should be the same):
-# old <- read.csv("Global/GL-AQ-FIS_v2013/tmp/fnk_fis_b_bmsy.csv")
-# old <- old %>%
-#   select(taxon_name, old_b_bmsy=b_bmsy, year) %>%
-#   join(r, by=c("taxon_name", "year"))
+# ######################################
+# # Antarctica zeroes included-----
+# # Explored this, but are not doing:
+# cdat <- read.csv("Antarctica/AQ_FIS_v2013/tmp/CCAMLR_with0s_w_resil_Aug132014.csv")
+# cdat <- cdat %>%
+#   select(stock_id, ct, yr) %>%
+#   arrange(stock_id, yr)
+# cdat <- unique(cdat)
 # 
-# plot(old_b_bmsy~b_bmsy, data=old)
-# abline(0, 1)
-# mod <- lm(old_b_bmsy~b_bmsy, data=old)
-# summary(mod)
+#  #get ID's of taxa with >= 10 years of non-zero data:
+# cdat_years <- cdat %>%
+#   filter(ct!=0) %>%
+#   group_by(stock_id) %>%
+#   summarise(years=length(yr))
+# 
+# cdat10plus <- cdat_years$stock_id[cdat_years$years>=10]
+# 
+# # subset original data to include only the species with 10+ years
+# cdat <- cdat[cdat$stock_id %in% cdat10plus, ]
+# 
+# ## Run bbmsy script
+# source('Global/FIS_Bbmsy/cmsy_constrained.R')
+# 
+# get_b_bmsy <- function(i){  
+#   test <- runCMSY(stockNumber=i, cdat=cdat)
+#   new <- data.frame(taxon_name=test[[1]],
+#                     b_bmsy=test[[2]],
+#                     year=test[[7]])
+#   return(new)
+# }
+# 
+# print(system.time({    
+#   r = mclapply(1:length(cdat10plus), get_b_bmsy, mc.cores=detectCores(), mc.preschedule=F) 
+# }))
+# 
+# r <- ldply(r)
+# 
+# write.csv(r, "Antarctica/AQ_FIS_v2013/tmp/b_bmsy_AQ_with_zeros_constrained.csv", row.names=FALSE)
+# 
 ######################################
 # Antarctica zeroes excluded-----
 
-cdat <- read.csv("Antarctica/AQ_FIS_2014a/data/CCAMLR_no0s_w_resil.csv")
+cdat <- read.csv("Antarctica/AQ_FIS_v2013/tmp/CCAMLR_no0s_w_resil.csv")
 cdat <- cdat %>%
   select(stock_id, ct, yr) %>%
   arrange(stock_id, yr)
-cdat <- unique(cdat)
+cdat_unique <- unique(subset(cdat, select=c(stock_id, yr))) #check to make sure all the stock/yr are unique (they are)
 
 #get ID's of taxa with >= 10 years of non-zero data:
 cdat_years <- cdat %>%
