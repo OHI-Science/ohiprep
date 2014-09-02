@@ -10,8 +10,7 @@ library(reshape2)
 
 data_files <- "Antarctica/AQ_FIS_v2013"
 
-regions <- read.csv(file.path(dir_neptune_data, 
-                              "git-annex/Global/NCEAS-Antarctica-Other_v2014/rgn_labels_ccamlr.csv"))
+regions <- read.csv(file.path("Antarctica/Other_v2013/rgn_labels_ccamlr.csv"))
 c <- read.csv(file.path(data_files, "data/cnk_fis_meancatch.csv"))
 b <- read.csv(file.path(data_files, "data/fnk_fis_b_bmsy.csv"))
 extra_ccmsy <- read.csv(file.path(data_files, "data/fnk_fis_ccmsy.csv"))
