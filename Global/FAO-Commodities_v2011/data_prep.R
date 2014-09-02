@@ -1,5 +1,7 @@
 # data_prep.R
 
+### NOTES: MRF Sep 2 2014: check on how usd_rel is used and cut from functions.R file as a layer read in.
+
 # Prepare FAO commodities data for Natural Products goal. 
 # By JSLowndes/bbest Jun2014; File was originally clean_FAOcommodities.r:(by JStewart Apr2013)
 
