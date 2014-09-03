@@ -44,11 +44,9 @@ write.csv(bmsy_scores, file.path(data_dir, 'data/fnk_fis_b_bmsy.csv'), row.names
 #---------------------------------------------------------
 ## Catch data
 #---------------------------------------------------------
-source('../ohiprep/src/R/ohi_clean_fxns.R') # name-to-region functions (but need to add new saup names files)
 
 # load species names lookup table 
 tax <- read.csv('../ohiprep/Global/NCEAS-Fisheries_2014a/tmp/TaxonLookup.csv') ; head(tax)
-
 
 # source(file.path(dir_d,'tmp/CMSY data prep.R'))  
 ## Step 1. ## get files ex novo
@@ -56,14 +54,19 @@ tax <- read.csv('../ohiprep/Global/NCEAS-Fisheries_2014a/tmp/TaxonLookup.csv') ;
 country.level.data <- read.delim(file.path(dir_neptune_data,'git-annex/Global/SAUP-Fisheries_v2011/raw/Extended catch data 1950-2011_18 July 2014.txt'))
 
 # select only the EEZ values equal zero (Katie: "When the EEZ field is "0" it indicates open ocean) and
-# merge with species names and calculate mean catch
+# merge with species names and get rid of duplicates
 country.level.data <- country.level.data %>%
   filter(EEZ==0 & IYear>=1980) %>%
   left_join(tax[,1:2]) %>%
 #  mutate(stock_id = paste(TaxonName, FAO, sep="_")) %>% # create a unique stock id name for every species/FAO region pair
   mutate(NewTaxonKey = ifelse(is.na(TLevel), Taxonkey, 100000*TLevel)) %>% # Recode TaxonKey such that the FAO TaxonKey takes precedence over the Sea Around Us TaxonKey to give credit to those who report at higher level than was ultimately reported in the SAUP data. 
   select(year=IYear, saup_id=EEZ, fao_id=FAO, TaxonName, Taxonkey, NewTaxonKey, Catch) %>%
-  group_by(saup_id, fao_id, Taxonkey, TaxonName) %>%
+  group_by(year, saup_id, fao_id, NewTaxonKey, TaxonName) %>%
+  summarize(Catch=sum(Catch)) %>%
+  ungroup()
+
+country.level.data <- country.level.data %>%
+  group_by(saup_id, fao_id, NewTaxonKey, TaxonName) %>%
   mutate(mean_catch=mean(Catch)) %>%
   ungroup()
   
@@ -76,4 +79,6 @@ country.level.data  <- country.level.data %>%
   select(fao_saup_id, taxon_name_key, year, mean_catch)
 
 write.csv(country.level.data, "HighSeas/HS_FIS_v2013/data/cnk_fis_meancatch.csv", row.names=FALSE)
-
+tmp <- read.csv("HighSeas/HS_FIS_v2013/data/cnk_fis_meancatch.csv")
+id <- paste(tmp$fao_saup_id, tmp$taxon_name_key, tmp$year, sep='_')
+sum(duplicated(id))
