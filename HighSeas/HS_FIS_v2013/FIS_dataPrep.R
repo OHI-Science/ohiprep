@@ -16,10 +16,8 @@ source('../ohiprep/src/R/common.R') # set dir_neptune_data
 ## method of calculating b/bmsy to use.
 data_dir <- "HighSeas/HS_FIS_v2013"
 
-labels <- read.csv('HighSeas/HS_other_v2013/FAOregions_lyr.csv')
-res <- read.csv('HighSeas/HS_Resilience_v2013/RFMO/data/rfmo_2013.csv') %>%
-  left_join(labels, by="rgn_id") %>%
-  select(fao_id, resilience.score)
+# resilience scores to select the appropriate b/bmsy 
+res <- read.csv("Global/FIS_Bbmsy/stock_resil_06cutoff_ALL.csv")
 
 bmsy.uniform <- read.csv("Global/NCEAS-Fisheries_2014a/tmp/fnk_fis_b_bmsy_lyr_uniform_no0_runningMean.csv")
 bmsy.uniform <- bmsy.uniform %>%
@@ -31,10 +29,14 @@ bmsy.constrained <- read.csv("Global/NCEAS-Fisheries_2014a/tmp/fnk_fis_b_bmsy_ly
 bmsy <- bmsy.constrained %>%
   select(stock_id, year=yr, b_bmsy_constrained=b_bmsy) %>%
   left_join(bmsy.uniform, by=c("stock_id", "year")) %>%
-  left_join(res, by="fao_id")
+  left_join(res, by="stock_id") #45 stock (N=744 catch records) do not have b/bmsy data, 
+                                #these are data poor stock and this is fine
+
+unique(bmsy$stock_id[is.na(bmsy$unif_prior)])
 
 bmsy_scores <- bmsy %>%
-   mutate(b_bmsy=ifelse(resilience.score>=0.6, b_bmsy_uniform, b_bmsy_constrained)) %>%
+   mutate(b_bmsy=ifelse(unif_prior==1, b_bmsy_uniform, b_bmsy_constrained)) %>%
+   filter(!(is.na(unif_prior))) %>%
    select(fao_id, taxon_name, year, b_bmsy)
 
 write.csv(bmsy_scores, file.path(data_dir, 'data/fnk_fis_b_bmsy.csv'), row.names=FALSE)

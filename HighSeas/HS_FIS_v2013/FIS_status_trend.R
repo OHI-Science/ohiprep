@@ -17,13 +17,13 @@ rm(list=ls())
 library(plyr)
 library(reshape2)
 
-setwd("N:\\model\\GL-HS-AQ-Fisheries_v2013\\HighSeas")
+data_dir <- "HighSeas/HS_FIS_v2013/data"
 
-c <- read.csv("data\\cnk_fis_meancatch.csv")
-b <- read.csv("raw\\fnk_fis_b_bmsy.csv")
+c <- read.csv(file.path(data_dir, "cnk_fis_meancatch.csv"))
+b <- read.csv(file.path(data_dir, "fnk_fis_b_bmsy.csv"))
 
-status.year <- 2011
-trend.years <- (status.year-4):status.year
+status_year <- 2011
+trend_years <- (status_year-5):status_year
  
 # catch data
 c$fao_id <- as.numeric(sapply(strsplit(as.character(c$fao_saup_id), "_"), function(x)x[1]))
@@ -107,7 +107,8 @@ UnAssessedCatches$TaxonPenaltyCode <- substring(UnAssessedCatches$TaxonKey,1,1)
 #  species level.
 #  ***********************************************
 penaltyTable <- data.frame(TaxonPenaltyCode=1:6, 
-                           penalty=c(0.01, 0.1, 0.25, 0.5, 0.75, 1))
+                           penalty=c(0.01, 0.25, 0.5, 0.8, 0.9, 1))
+
 # 2d.Merge with data
 UnAssessedCatches <- join(UnAssessedCatches, penaltyTable, by="TaxonPenaltyCode")
 
@@ -176,11 +177,11 @@ StatusData <- ddply(.data = scores, .(fao_id, year), summarize, Status = prod(sc
 # STEP 5. Status  
 # -----------------------------------------------------------------------
 # 2013 status is based on 2011 data (most recent data)
-Status <- StatusData[StatusData$year==status.year, ]
+Status <- StatusData[StatusData$year==status_year, ]
 Status$Status <- round(Status$Status*100, 2)
 Status <- subset(Status, select=c("fao_id", "Status"))
 
-#write.csv(Status, "data\\status.csv", row.names=F, na="")
+#write.csv(Status, file.path(data_dir, "status.csv"), row.names=FALSE, na="")
 
 
 # ------------------------------------------------------------------------
@@ -188,12 +189,14 @@ Status <- subset(Status, select=c("fao_id", "Status"))
 # -----------------------------------------------------------------------
 # NOTE: Status is rounded to 2 digits before trend is 
 # calculated in order to match OHI 2013 results (is this what we want to do?)
-Trend = ddply(
-  StatusData, .(fao_id), summarize,
-  Trend = lm(round(Status, 2) ~ year)$coefficients[['year']] * 5
-)
+trend = ddply(StatusData, .(fao_id), function(x){
+  mdl = lm(Status ~ year, data=x)
+  data.frame(
+    score     = round(coef(mdl)[['year']] * 5, 2),
+    dimension = 'trend')}) %.%
+  select(region_id=rgn_id, dimension, score)
 
-#write.csv(Trend, "data\\trend.csv", row.names=F, na='')
+write.csv(Trend, file.path(data_dir, "trend.csv"), row.names=FALSE, na='')
 
 # For quick view;
 ids <- read.csv("C:\\Users\\Melanie\\Desktop\\GL-NCEAS-Regions_v2014\\FAOregions.csv")
