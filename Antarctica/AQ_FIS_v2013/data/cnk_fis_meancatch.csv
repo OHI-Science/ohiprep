@@ -1,952 +1,952 @@
-"fao_saup_id","taxon_name_key","year","catch","mean_catch"
-"481_0","Aethotaxis mitopteryx_6",2006,0.00021,0.000646666666666667
-"481_0","Aethotaxis mitopteryx_6",2007,0.00143,0.000646666666666667
-"481_0","Aethotaxis mitopteryx_6",2012,3e-04,0.000646666666666667
-"481_0","Akarotaxis nudiceps_6",2007,2e-06,2e-06
-"481_0","Anotopterus pharao_6",2007,0.000607,0.0161036666666667
-"481_0","Anotopterus pharao_6",2011,0.000704,0.0161036666666667
-"481_0","Anotopterus pharao_6",2012,0.047,0.0161036666666667
-"481_0","Artedidraco skottsbergi_6",2006,2.8e-05,0.000142333333333333
-"481_0","Artedidraco skottsbergi_6",2007,0.000299,0.000142333333333333
-"481_0","Artedidraco skottsbergi_6",2012,1e-04,0.000142333333333333
-"481_0","Bathylagus antarcticus_6",2006,2.9e-05,2.9e-05
-"481_0","Bathyraja eatonii_6",2006,0.015925,0.0123625
-"481_0","Bathyraja eatonii_6",2012,0.0088,0.0123625
-"481_0","Bathyraja maccaini_6",2006,0.089299,0.0798806666666667
-"481_0","Bathyraja maccaini_6",2007,0.095843,0.0798806666666667
-"481_0","Bathyraja maccaini_6",2012,0.0545,0.0798806666666667
-"481_0","Bathyraja spp_5",2007,0.021254,0.015477
-"481_0","Bathyraja spp_5",2012,0.0097,0.015477
-"481_0","Chaenocephalus aceratus_6",2006,2.618844,0.9487237
-"481_0","Chaenocephalus aceratus_6",2007,0.242163,0.9487237
-"481_0","Chaenocephalus aceratus_6",2012,0.53823,0.9487237
-"481_0","Chaenodraco wilsoni_6",2006,0.078421,617.243747571429
-"481_0","Chaenodraco wilsoni_6",2007,0.046812,617.243747571429
-"481_0","Chaenodraco wilsoni_6",2012,0.026,617.243747571429
-"481_0","Champsocephalus gunnari_6",2006,15.964613,217.636923428571
-"481_0","Champsocephalus gunnari_6",2007,0.758015,217.636923428571
-"481_0","Champsocephalus gunnari_6",2011,0.019,217.636923428571
-"481_0","Champsocephalus gunnari_6",2012,8.0813,217.636923428571
-"481_0","Chionodraco myersi_6",2007,0.00019,0.00019
-"481_0","Chionodraco rastrospinosus_6",2006,0.290116,55.9606812857143
-"481_0","Chionodraco rastrospinosus_6",2007,0.281653,55.9606812857143
-"481_0","Chionodraco rastrospinosus_6",2012,0.377,55.9606812857143
-"481_0","Cryodraco antarcticus_6",2006,0.078125,0.084526
-"481_0","Cryodraco antarcticus_6",2007,0.051579,0.084526
-"481_0","Cryodraco antarcticus_6",2012,0.2074,0.084526
-"481_0","Dissostichus mawsoni_6",2007,0.033934,0.24778838
-"481_0","Dissostichus mawsoni_6",2010,7.9e-06,0.24778838
-"481_0","Dolloidraco longedorsalis_6",2012,2e-04,2e-04
-"481_0","Electrona antarctica_6",2007,0.001795,0.001795
-"481_0","Electrona carlsbergi_6",2011,0.0329332,0.0329332
-"481_0","Electrona spp_5",2012,1e-04,1e-04
-"481_0","Euphausia superba_6",2006,88833.554,45904.7385333333
-"481_0","Euphausia superba_6",2007,18418.647,45904.7385333333
-"481_0","Euphausia superba_6",2008,2884.209,45904.7385333333
-"481_0","Euphausia superba_6",2009,33969.955,45904.7385333333
-"481_0","Euphausia superba_6",2011,9214.742,45904.7385333333
-"481_0","Euphausia superba_6",2012,75630.039,45904.7385333333
-"481_0","Gerlachea australis_6",2006,8.3e-05,0.000175333333333333
-"481_0","Gerlachea australis_6",2007,0.000243,0.000175333333333333
-"481_0","Gerlachea australis_6",2012,2e-04,0.000175333333333333
-"481_0","Gymnodraco acuticeps_6",2006,0.009863,0.00634766666666667
-"481_0","Gymnodraco acuticeps_6",2007,0.00768,0.00634766666666667
-"481_0","Gymnodraco acuticeps_6",2012,0.0015,0.00634766666666667
-"481_0","Gymnoscopelus braueri_6",2006,0.000107,0.000101
-"481_0","Gymnoscopelus braueri_6",2007,9.6e-05,0.000101
-"481_0","Gymnoscopelus braueri_6",2012,1e-04,0.000101
-"481_0","Gymnoscopelus nicholsi_6",2006,0.009523,0.0101415
-"481_0","Gymnoscopelus nicholsi_6",2007,0.01076,0.0101415
-"481_0","Gymnoscopelus opisthopterus_6",2006,3.8e-05,3.8e-05
-"481_0","Harpagifer antarcticus_6",2007,3.2e-05,6.6e-05
-"481_0","Harpagifer antarcticus_6",2012,1e-04,6.6e-05
-"481_0","Krefftichthys anderssoni_6",2006,3e-06,3e-06
-"481_0","Krefftichthys anderssoni_6",2007,3e-06,3e-06
-"481_0","Lycodichthys antarcticus_6",2007,5e-05,0.000175
-"481_0","Lycodichthys antarcticus_6",2012,3e-04,0.000175
-"481_0","Macrourus holotrachys_6",2007,6.2e-05,6.2e-05
-"481_0","Magnisudis prionosa_6",2006,0.00121,0.00121
-"481_0","Muraenolepis microps_6",2007,0.005874,0.005874
-"481_0","Neopagetopsis ionah_6",2006,0.007054,0.006453
-"481_0","Neopagetopsis ionah_6",2007,0.005852,0.006453
-"481_0","Notolepis coatsi_6",2007,9.6e-05,9.6e-05
-"481_0","Notolepis spp_5",2006,0.97,0.97
-"481_0","Notothenia coriiceps_6",2006,0.125576,0.125576
-"481_0","Notothenia gibberifrons_6",2006,0.718803,81.8963931111111
-"481_0","Notothenia gibberifrons_6",2007,3.226235,81.8963931111111
-"481_0","Notothenia gibberifrons_6",2011,0.225,81.8963931111111
-"481_0","Notothenia gibberifrons_6",2012,1.6555,81.8963931111111
-"481_0","Notothenia rossii_6",2006,1.104966,2681.30699514286
-"481_0","Notothenia rossii_6",2011,0.1,2681.30699514286
-"481_0","Notothenia squamifrons_6",2006,0.043295,0.07846125
-"481_0","Notothenia squamifrons_6",2007,0.03255,0.07846125
-"481_0","Notothenia squamifrons_6",2012,0.106,0.07846125
-"481_0","Nototheniidae_4",2012,3e-04,0.2309
-"481_0","Nototheniops larseni_6",2006,0.009391,0.102517
-"481_0","Nototheniops larseni_6",2007,0.07836,0.102517
-"481_0","Nototheniops larseni_6",2012,0.2198,0.102517
-"481_0","Nototheniops nudifrons_6",2006,0.008663,0.014082
-"481_0","Nototheniops nudifrons_6",2007,0.015665,0.014082
-"481_0","Nototheniops nybelini_6",2006,7.61,7.61
-"481_0","Ophthalmolycus amberensis_6",2006,0.001951,0.005205
-"481_0","Ophthalmolycus amberensis_6",2007,0.008664,0.005205
-"481_0","Ophthalmolycus amberensis_6",2012,0.005,0.005205
-"481_0","Osteichthyes_2",2012,5e-06,683.282857857143
-"481_0","Pachycara brachycephalum_6",2006,0.003813,0.00199066666666667
-"481_0","Pachycara brachycephalum_6",2007,0.001059,0.00199066666666667
-"481_0","Pachycara brachycephalum_6",2012,0.0011,0.00199066666666667
-"481_0","Pagetopsis macropterus_6",2006,0.005944,0.0052925
-"481_0","Pagetopsis macropterus_6",2007,0.004641,0.0052925
-"481_0","Pagothenia hansoni_6",2006,0.005587,0.0117185
-"481_0","Pagothenia hansoni_6",2007,0.01785,0.0117185
-"481_0","Parachaenichthys charcoti_6",2006,0.010103,0.010103
-"481_0","Paradiplospinus gracilis_6",2007,0.000166,0.000233
-"481_0","Paradiplospinus gracilis_6",2012,3e-04,0.000233
-"481_0","Paraliparis spp_5",2007,2e-06,0.000101
-"481_0","Paraliparis spp_5",2012,2e-04,0.000101
-"481_0","Platax spp_5",2006,0.002239,0.002239
-"481_0","Pleuragramma antarcticum_6",2006,14.200298,2.284230875
-"481_0","Pleuragramma antarcticum_6",2007,0.004049,2.284230875
-"481_0","Pleuragramma antarcticum_6",2011,0.028,2.284230875
-"481_0","Pleuragramma antarcticum_6",2012,0.0325,2.284230875
-"481_0","Pogonophryne marmorata_6",2006,0.000587,0.0003935
-"481_0","Pogonophryne marmorata_6",2012,2e-04,0.0003935
-"481_0","Pogonophryne phyllopogon_6",2007,1.1e-05,1.1e-05
-"481_0","Pogonophryne scotti_6",2012,5e-04,5e-04
-"481_0","Pogonophryne spp_5",2007,5.3e-05,0.0003765
-"481_0","Pogonophryne spp_5",2012,7e-04,0.0003765
-"481_0","Prionodraco evansii_6",2007,2.2e-05,2.2e-05
-"481_0","Protomyctophum spp_5",2007,1.3e-05,7.5e-06
-"481_0","Protomyctophum spp_5",2010,2e-06,7.5e-06
-"481_0","Pseudochaenichthys georgianus_6",2006,3.4,9.5337125
-"481_0","Pseudochaenichthys georgianus_6",2012,0.0417,9.5337125
-"481_0","Racovitzia glacialis_6",2006,0.000198,0.000339333333333333
-"481_0","Racovitzia glacialis_6",2007,0.00022,0.000339333333333333
-"481_0","Racovitzia glacialis_6",2012,6e-04,0.000339333333333333
-"481_0","Trematomus bernacchii_6",2007,0.004358,0.005579
-"481_0","Trematomus bernacchii_6",2012,0.0068,0.005579
-"481_0","Trematomus eulepidotus_6",2006,0.156647,0.0918723333333333
-"481_0","Trematomus eulepidotus_6",2007,0.06657,0.0918723333333333
-"481_0","Trematomus eulepidotus_6",2012,0.0524,0.0918723333333333
-"481_0","Trematomus loennbergii_6",2007,9e-06,9e-06
-"481_0","Trematomus newnesi_6",2006,0.159544,0.059658
-"481_0","Trematomus newnesi_6",2007,0.01773,0.059658
-"481_0","Trematomus newnesi_6",2012,0.0017,0.059658
-"481_0","Trematomus nicolai_6",2007,0.002928,0.002928
-"481_0","Trematomus pennellii_6",2006,0.004413,0.004413
-"481_0","Trematomus scotti_6",2006,0.000493,0.0003965
-"481_0","Trematomus scotti_6",2012,3e-04,0.0003965
-"481_0","Trematomus tokarevi_6",2006,0.004211,0.004211
-"482_0","Chaenocephalus aceratus_6",2010,0.000101,1.13403145
-"482_0","Chaenocephalus aceratus_6",2011,2.48e-05,1.13403145
-"482_0","Champsocephalus gunnari_6",2008,0.0021,1838.59240666667
-"482_0","Channichthyidae_4",2011,0.00018,417.005295
-"482_0","Channichthyidae_4",2012,0.008,417.005295
-"482_0","Dissostichus mawsoni_6",2010,0.019,0.019
-"482_0","Electrona carlsbergi_6",2011,0.0003818,0.0002409
-"482_0","Electrona carlsbergi_6",2012,1e-04,0.0002409
-"482_0","Euphausia superba_6",2008,93384.109,97558.4087532
-"482_0","Euphausia superba_6",2009,91855.116,97558.4087532
-"482_0","Euphausia superba_6",2010,49999.22733,97558.4087532
-"482_0","Euphausia superba_6",2011,115994.834,97558.4087532
-"482_0","Gymnoscopelus nicholsi_6",2012,2e-05,2e-05
-"482_0","Notolepis coatsi_6",2011,0.309,0.309
-"482_0","Pseudochaenichthys georgianus_6",2009,0.6,1.715228
-"482_0","Pseudochaenichthys georgianus_6",2010,0.00014,1.715228
-"483_0","Adelieledone polymorpha_6",2007,0.006555,0.00314433333333333
-"483_0","Adelieledone polymorpha_6",2008,0.002753,0.00314433333333333
-"483_0","Adelieledone polymorpha_6",2010,0.000125,0.00314433333333333
-"483_0","Antimora rostrata_6",2006,33.22014,10.8026154545455
-"483_0","Antimora rostrata_6",2007,26.36327,10.8026154545455
-"483_0","Antimora rostrata_6",2010,15.73702,10.8026154545455
-"483_0","Antimora rostrata_6",2011,8.85257,10.8026154545455
-"483_0","Artedidraco mirus_6",2007,0.000237,0.0001552
-"483_0","Artedidraco mirus_6",2008,0.000209,0.0001552
-"483_0","Artedidraco mirus_6",2009,7.8e-05,0.0001552
-"483_0","Artedidraco mirus_6",2011,0.000152,0.0001552
-"483_0","Artedidraco mirus_6",2012,1e-04,0.0001552
-"483_0","Borostomias antarcticus_6",2011,0.000213,0.000213
-"483_0","Cephalopoda_2",2007,0.00036,0.000829
-"483_0","Cephalopoda_2",2009,0.001298,0.000829
-"483_0","Chaenocephalus aceratus_6",2006,0.06296,130.8398063002
-"483_0","Chaenocephalus aceratus_6",2007,0.381456002,130.8398063002
-"483_0","Chaenocephalus aceratus_6",2009,0.487500999,130.8398063002
-"483_0","Chaenocephalus aceratus_6",2010,1.228335,130.8398063002
-"483_0","Chaenocephalus aceratus_6",2011,0.892834003,130.8398063002
-"483_0","Champsocephalus gunnari_6",2006,2168.73632,17959.3242288629
-"483_0","Champsocephalus gunnari_6",2007,4344.510363873,17959.3242288629
-"483_0","Champsocephalus gunnari_6",2010,12.01707498,17959.3242288629
-"483_0","Champsocephalus gunnari_6",2011,11.692514993,17959.3242288629
-"483_0","Champsocephalus gunnari_6",2012,999.068,17959.3242288629
-"483_0","Channichthyidae_4",2006,0.50305,657.765918571429
-"483_0","Channichthyidae_4",2008,0.30498,657.765918571429
-"483_0","Dissostichus eleginoides_6",2007,3536.861732999,3235.77674470738
-"483_0","Dissostichus eleginoides_6",2008,3861.980809978,3235.77674470738
-"483_0","Dissostichus eleginoides_6",2012,1805.6852,3235.77674470738
-"483_0","Dissostichus mawsoni_6",2011,0.062,0.062
-"483_0","Electrona antarctica_6",2011,0.000206,0.000206
-"483_0","Euphausia superba_6",2006,14601.9317,80510.2121666667
-"483_0","Euphausia superba_6",2007,20565.96882,80510.2121666667
-"483_0","Euphausia superba_6",2008,60237.92023,80510.2121666667
-"483_0","Euphausia superba_6",2012,56414.636,80510.2121666667
-"483_0","Gempylidae_4",2012,8e-04,8e-04
-"483_0","Gymnoscopelus bolini_6",2008,0.000149,0.000149
-"483_0","Gymnoscopelus nicholsi_6",2007,0.00165,0.0941636668333333
-"483_0","Gymnoscopelus nicholsi_6",2008,0.001047,0.0941636668333333
-"483_0","Gymnoscopelus nicholsi_6",2009,0.316085001,0.0941636668333333
-"483_0","Gymnoscopelus nicholsi_6",2012,2e-04,0.0941636668333333
-"483_0","Lamna nasus_6",2007,0.1,0.09
-"483_0","Lamna nasus_6",2011,0.08,0.09
-"483_0","Liparididae_4",2010,1e-05,1e-05
-"483_0","Lithodes murrayi_6",2010,0.1095,0.051
-"483_0","Lithodes murrayi_6",2011,0.0015,0.051
-"483_0","Lithodidae_4",2006,1.19972,0.3608014
-"483_0","Lithodidae_4",2008,0.48616,0.3608014
-"483_0","Lithodidae_4",2011,0.1707,0.3608014
-"483_0","Lithodidae_4",2012,0.0261,0.3608014
-"483_0","Macrourus spp_5",2006,131.93995,63.820398
-"483_0","Macrourus spp_5",2008,161.53234,63.820398
-"483_0","Macrourus spp_5",2009,109.92969,63.820398
-"483_0","Magnisudis prionosa_6",2010,0.000525,0.000525
-"483_0","Mancopsetta maculata_6",2007,0.023441,0.0094288
-"483_0","Mancopsetta maculata_6",2008,0.015974,0.0094288
-"483_0","Mancopsetta maculata_6",2009,0.002529,0.0094288
-"483_0","Mancopsetta maculata_6",2012,0.0032,0.0094288
-"483_0","Melanostigma spp_5",2008,0.000162,0.000162
-"483_0","Moroteuthis knipovitchi_6",2009,0.003001,0.0018005
-"483_0","Moroteuthis knipovitchi_6",2011,6e-04,0.0018005
-"483_0","Muraenolepis microps_6",2007,0.023408,0.0220599322222222
-"483_0","Muraenolepis microps_6",2008,0.062672,0.0220599322222222
-"483_0","Muraenolepis microps_6",2009,0.041452,0.0220599322222222
-"483_0","Muraenolepis microps_6",2010,0.01834,0.0220599322222222
-"483_0","Muraenolepis microps_6",2012,0.0017,0.0220599322222222
-"483_0","Muraenolepis spp_5",2008,0.003,0.00496
-"483_0","Muraenolepis spp_5",2011,0.0028,0.00496
-"483_0","Myctophidae_4",2009,0.218,3690.34998754692
-"483_0","Myctophidae_4",2010,0.000115,3690.34998754692
-"483_0","Neolithodes diomedeae_6",2007,0.01865,0.230825
-"483_0","Notolepis annulata_6",2007,3.6e-05,3.6e-05
-"483_0","Notothenia angustifrons_6",2008,3.1e-05,3.1e-05
-"483_0","Notothenia gibberifrons_6",2007,0.718639011,1496.24076731647
-"483_0","Notothenia gibberifrons_6",2008,0.899155006,1496.24076731647
-"483_0","Notothenia gibberifrons_6",2010,1.731784996,1496.24076731647
-"483_0","Notothenia kempi_6",2008,0.0035,0.0035
-"483_0","Notothenia rossii_6",2006,1.19578,173.542381929733
-"483_0","Notothenia rossii_6",2007,1.151657983,173.542381929733
-"483_0","Notothenia rossii_6",2008,2.713585961,173.542381929733
-"483_0","Notothenia rossii_6",2009,2.484909976,173.542381929733
-"483_0","Notothenia rossii_6",2011,3.654525026,173.542381929733
-"483_0","Notothenia rossii_6",2012,0.0998,173.542381929733
-"483_0","Notothenia squamifrons_6",2007,1.396244946,348.222395329933
-"483_0","Notothenia squamifrons_6",2008,0.467685003,348.222395329933
-"483_0","Nototheniidae_4",2008,0.05152,67.6227538333333
-"483_0","Nototheniidae_4",2009,0.00125,67.6227538333333
-"483_0","Nototheniidae_4",2010,0.001835,67.6227538333333
-"483_0","Nototheniidae_4",2012,6e-04,67.6227538333333
-"483_0","Nototheniops larseni_6",2010,0.037968,0.054178
-"483_0","Nototheniops larseni_6",2012,0.0021,0.054178
-"483_0","Nototheniops nudifrons_6",2007,0.0072653,0.03033833
-"483_0","Nototheniops nudifrons_6",2008,0.008862,0.03033833
-"483_0","Nototheniops nudifrons_6",2010,0.011538,0.03033833
-"483_0","Nototheniops nudifrons_6",2011,0.020818,0.03033833
-"483_0","Nototheniops nudifrons_6",2012,9e-04,0.03033833
-"483_0","Osteichthyes_2",2011,0.162738,2030.44670292308
-"483_0","Osteichthyes_2",2012,4e-04,2030.44670292308
-"483_0","Pagothenia hansoni_6",2007,0.209012,0.1102411998
-"483_0","Pagothenia hansoni_6",2008,0.238911001,0.1102411998
-"483_0","Pagothenia hansoni_6",2010,0.096282998,0.1102411998
-"483_0","Parachaenichthys georgianus_6",2007,0.033836,0.0201583666666667
-"483_0","Parachaenichthys georgianus_6",2008,0.0179262,0.0201583666666667
-"483_0","Parachaenichthys georgianus_6",2010,0.010859,0.0201583666666667
-"483_0","Parachaenichthys georgianus_6",2011,0.049229,0.0201583666666667
-"483_0","Paradiplospinus gracilis_6",2008,3e-05,0.0002918
-"483_0","Paradiplospinus gracilis_6",2009,0.000896,0.0002918
-"483_0","Paradiplospinus gracilis_6",2010,3e-05,0.0002918
-"483_0","Paradiplospinus gracilis_6",2011,0.000403,0.0002918
-"483_0","Paradiplospinus gracilis_6",2012,1e-04,0.0002918
-"483_0","Paralomis formosa_6",2007,0.270383,8.0447203
-"483_0","Paralomis formosa_6",2010,9.151895,8.0447203
-"483_0","Paralomis formosa_6",2011,0.000625,8.0447203
-"483_0","Paralomis formosa_6",2012,3e-04,8.0447203
-"483_0","Paralomis spinosissima_6",2010,52.843613,90.4151008
-"483_0","Paralomis spinosissima_6",2011,0.041035,90.4151008
-"483_0","Pareledone turqueti_6",2007,0.257207,0.257207
-"483_0","Patagonotothen brevicauda_6",2007,0.089892,7273.569035999
-"483_0","Patagonotothen brevicauda_6",2008,0.323950003,7273.569035999
-"483_0","Patagonotothen brevicauda_6",2009,0.730789997,7273.569035999
-"483_0","Patagonotothen brevicauda_6",2010,1.164779983,7273.569035999
-"483_0","Patagonotothen brevicauda_6",2012,76.5272,7273.569035999
-"483_0","Protomyctophum choriodon_6",2008,2.7e-05,2.7e-05
-"483_0","Pseudochaenichthys georgianus_6",2006,5.50882,191.611563857143
-"483_0","Pseudochaenichthys georgianus_6",2010,1.889856,191.611563857143
-"483_0","Pseudochaenichthys georgianus_6",2012,0.1534,191.611563857143
-"483_0","Psilodraco breviceps_6",2007,0.00167,0.002009
-"483_0","Psilodraco breviceps_6",2008,0.002602,0.002009
-"483_0","Psilodraco breviceps_6",2010,0.001755,0.002009
-"483_0","Raja georgiana_6",2007,0.319460001,0.263261333666667
-"483_0","Raja georgiana_6",2008,0.223908001,0.263261333666667
-"483_0","Raja georgiana_6",2012,0.0942,0.263261333666667
-"483_0","Rajiformes_3",2006,7.25094,17.6291933333333
-"483_0","Rajiformes_3",2007,3.85052,17.6291933333333
-"483_0","Rajiformes_3",2009,22.17827,17.6291933333333
-"483_0","Rajiformes_3",2011,4.4544,17.6291933333333
-"483_0","Teuthoidea_4",2012,2e-04,2e-04
-"483_0","Trematomus vicarius_6",2009,0.000102,0.000102
-"484_0","Antimora rostrata_6",2008,0.3924,0.4462475
-"484_0","Antimora rostrata_6",2009,0.59371,0.4462475
-"484_0","Antimora rostrata_6",2010,0.69908,0.4462475
-"484_0","Antimora rostrata_6",2012,0.0998,0.4462475
-"484_0","Channichthyidae_4",2010,0.0017,0.0011
-"484_0","Channichthyidae_4",2011,5e-04,0.0011
-"484_0","Dissostichus eleginoides_6",2008,97.63326,43.9054075
-"484_0","Dissostichus eleginoides_6",2011,38.64937,43.9054075
-"484_0","Dissostichus mawsoni_6",2006,0.4333,29.0378275
-"484_0","Dissostichus mawsoni_6",2008,0.3144,29.0378275
-"484_0","Dissostichus mawsoni_6",2009,59.09237,29.0378275
-"484_0","Dissostichus mawsoni_6",2010,56.31124,29.0378275
-"484_0","Lithodidae_4",2006,0.0088,0.00446666666666667
-"484_0","Lithodidae_4",2007,0.0036,0.00446666666666667
-"484_0","Lithodidae_4",2010,0.001,0.00446666666666667
-"484_0","Macrourus spp_5",2007,13.94906,11.82201
-"484_0","Macrourus spp_5",2009,26.10988,11.82201
-"484_0","Macrourus spp_5",2010,15.8271,11.82201
-"484_0","Macrourus spp_5",2011,5.39202,11.82201
-"484_0","Macrourus spp_5",2012,6.21,11.82201
-"484_0","Macrourus whitsoni_6",2012,0.5675,0.5675
-"484_0","Muraenolepis spp_5",2006,0.00064,0.19766
-"484_0","Muraenolepis spp_5",2007,0.02742,0.19766
-"484_0","Muraenolepis spp_5",2009,0.52187,0.19766
-"484_0","Muraenolepis spp_5",2010,0.34797,0.19766
-"484_0","Muraenolepis spp_5",2012,0.0904,0.19766
-"484_0","Nototheniidae_4",2006,0.00979,0.0128975
-"484_0","Nototheniidae_4",2007,0.0355,0.0128975
-"484_0","Nototheniidae_4",2010,0.0033,0.0128975
-"484_0","Nototheniidae_4",2012,0.003,0.0128975
-"484_0","Rajiformes_3",2007,1.7477,2.032975
-"484_0","Rajiformes_3",2008,3.453,2.032975
-"484_0","Rajiformes_3",2009,0.6623,2.032975
-"484_0","Rajiformes_3",2010,2.2689,2.032975
-"486_0","Antimora rostrata_6",2006,2.7277,0.955152404142857
-"486_0","Antimora rostrata_6",2008,0.46602,0.955152404142857
-"486_0","Antimora rostrata_6",2009,1.10048,0.955152404142857
-"486_0","Antimora rostrata_6",2010,0.8224,0.955152404142857
-"486_0","Antimora rostrata_6",2011,0.70647,0.955152404142857
-"486_0","Antimora rostrata_6",2012,0.82,0.955152404142857
-"486_0","Chaenocephalus aceratus_6",2007,0.0228,0.0228
-"486_0","Channichthyidae_4",2007,0.3162,0.2167975
-"486_0","Channichthyidae_4",2009,0.1398,0.2167975
-"486_0","Channichthyidae_4",2010,0.0401,0.2167975
-"486_0","Channichthyidae_4",2011,0.37109,0.2167975
-"486_0","Chionobathyscus dewitti_6",2009,0.2813,0.2813
-"486_0","Dissostichus eleginoides_6",2009,17.12309,26.5179525
-"486_0","Dissostichus eleginoides_6",2010,49.68723,26.5179525
-"486_0","Dissostichus eleginoides_6",2011,32.48149,26.5179525
-"486_0","Dissostichus mawsoni_6",2006,63.0491,146.629566
-"486_0","Dissostichus mawsoni_6",2007,34.4097,146.629566
-"486_0","Dissostichus mawsoni_6",2008,11.11777,146.629566
-"486_0","Dissostichus mawsoni_6",2009,265.36098,146.629566
-"486_0","Dissostichus mawsoni_6",2011,359.21028,146.629566
-"486_0","Lithodes murrayi_6",2007,0.007,0.007
-"486_0","Lithodes spp_5",2010,0.0027,0.0027
-"486_0","Lithodidae_4",2006,0.133,0.120625
-"486_0","Lithodidae_4",2007,0.059,0.120625
-"486_0","Lithodidae_4",2008,0.0477,0.120625
-"486_0","Lithodidae_4",2009,0.2428,0.120625
-"486_0","Macrourus spp_5",2007,12.67405,6.524038
-"486_0","Macrourus spp_5",2008,1.29256,6.524038
-"486_0","Macrourus spp_5",2009,4.5932,6.524038
-"486_0","Macrourus spp_5",2011,8.27038,6.524038
-"486_0","Macrourus whitsoni_6",2007,0.1694,0.1694
-"486_0","Muraenolepis marmoratus_6",2007,0.01795,0.01795
-"486_0","Muraenolepis microps_6",2010,0.0023,0.0023
-"486_0","Muraenolepis spp_5",2007,0.10165,0.027
-"486_0","Muraenolepis spp_5",2008,7e-04,0.027
-"486_0","Muraenolepis spp_5",2009,0.0056,0.027
-"486_0","Muraenolepis spp_5",2010,0.0097,0.027
-"486_0","Muraenolepis spp_5",2011,0.01735,0.027
-"486_0","Notothenia kempi_6",2006,0.00264,0.02387
-"486_0","Notothenia kempi_6",2007,0.0451,0.02387
-"486_0","Nototheniidae_4",2010,0.0015,0.0015
-"486_0","Octopodidae_4",2010,0.0011,0.0011
-"486_0","Paralomis spp_5",2007,0.0011,0.00205
-"486_0","Paralomis spp_5",2010,0.003,0.00205
-"486_0","Raja spp_5",2009,0.008,0.008
-"5841_0","Antimora rostrata_6",2007,0.0315,0.027135
-"5841_0","Antimora rostrata_6",2008,0.0253,0.027135
-"5841_0","Antimora rostrata_6",2009,0.01053,0.027135
-"5841_0","Antimora rostrata_6",2010,0.0628,0.027135
-"5841_0","Bathyraja eatonii_6",2007,0.1001,0.1001
-"5841_0","Bathyraja spp_5",2006,0.008,0.008
-"5841_0","Careproctus spp_5",2011,0.00063,0.001015
-"5841_0","Cephalopoda_2",2006,5e-04,5e-04
-"5841_0","Chaenocephalus aceratus_6",2007,0.61346,0.583986666666667
-"5841_0","Chaenocephalus aceratus_6",2008,0.237,0.583986666666667
-"5841_0","Channichthyidae_4",2008,0.1519,0.239615
-"5841_0","Channichthyidae_4",2009,0.16753,0.239615
-"5841_0","Channichthyidae_4",2010,0.2219,0.239615
-"5841_0","Chionobathyscus dewitti_6",2008,0.7649,0.4105
-"5841_0","Chionobathyscus dewitti_6",2011,0.0561,0.4105
-"5841_0","Cryodraco antarcticus_6",2008,0.0132,0.0132
-"5841_0","Dissostichus eleginoides_6",2010,2.22973,1.128365
-"5841_0","Dissostichus eleginoides_6",2011,0.027,1.128365
-"5841_0","Dissostichus mawsoni_6",2007,540.389818,332.449929
-"5841_0","Dissostichus mawsoni_6",2008,409.733386,332.449929
-"5841_0","Dissostichus mawsoni_6",2010,194.00997,332.449929
-"5841_0","Dissostichus mawsoni_6",2011,214.218,332.449929
-"5841_0","Dissostichus mawsoni_6",2012,157.334,332.449929
-"5841_0","Lampris guttatus_6",2008,0.03,0.03
-"5841_0","Macrouridae_4",2008,1.3151,1.3151
-"5841_0","Macrourus spp_5",2009,7.59949,5.685678
-"5841_0","Macrourus spp_5",2010,6.1903,5.685678
-"5841_0","Macrourus spp_5",2012,1.5569,5.685678
-"5841_0","Macrourus whitsoni_6",2007,0.558,0.558
-"5841_0","Muraenolepis microps_6",2008,0.1832,0.09695
-"5841_0","Muraenolepis microps_6",2011,0.0107,0.09695
-"5841_0","Muraenolepis spp_5",2006,0.1119,0.080244
-"5841_0","Muraenolepis spp_5",2008,0.019,0.080244
-"5841_0","Muraenolepis spp_5",2009,0.1625,0.080244
-"5841_0","Muraenolepis spp_5",2011,0.03352,0.080244
-"5841_0","Muraenolepis spp_5",2012,0.0743,0.080244
-"5841_0","Notothenia kempi_6",2011,0.0013,0.0013
-"5841_0","Nototheniidae_4",2007,0.133,0.06787
-"5841_0","Octopodidae_4",2007,0.014,0.01552
-"5841_0","Octopodidae_4",2009,0.0038,0.01552
-"5841_0","Octopodidae_4",2011,0.02876,0.01552
-"5841_0","Pachycara brachycephalum_6",2009,0.00898,0.00898
-"5841_0","Patagonotothen brevicauda_6",2012,0.0118,0.0118
-"5841_0","Pogonophryne permitini_6",2007,0.0315,0.01742
-"5841_0","Pogonophryne spp_5",2009,0.02596,0.01378
-"5841_0","Rajiformes_3",2009,0.0088,0.0294
-"5842_0","Antimora rostrata_6",2008,0.0852,0.136614
-"5842_0","Antimora rostrata_6",2009,0.01015,0.136614
-"5842_0","Antimora rostrata_6",2010,0.0105,0.136614
-"5842_0","Bathyraja eatonii_6",2008,0.3915,0.76225
-"5842_0","Cephalopoda_2",2006,0.0075,0.0075
-"5842_0","Chaenocephalus aceratus_6",2007,0.0205,0.139166666666667
-"5842_0","Chaenocephalus aceratus_6",2008,0.352,0.139166666666667
-"5842_0","Channichthyidae_4",2006,0.0601,0.1638525
-"5842_0","Channichthyidae_4",2007,0.128,0.1638525
-"5842_0","Channichthyidae_4",2009,0.01365,0.1638525
-"5842_0","Channichthyidae_4",2010,0.1336,0.1638525
-"5842_0","Channichthyidae_4",2011,0.07036,0.1638525
-"5842_0","Channichthyidae_4",2012,0.1087,0.1638525
-"5842_0","Chionobathyscus dewitti_6",2007,0.10715,0.17185
-"5842_0","Chionobathyscus dewitti_6",2008,0.461,0.17185
-"5842_0","Chionobathyscus dewitti_6",2009,0.09285,0.17185
-"5842_0","Dissostichus eleginoides_6",2007,0.1075,0.340483333333333
-"5842_0","Dissostichus eleginoides_6",2008,0.208,0.340483333333333
-"5842_0","Dissostichus mawsoni_6",2007,123.5345,74.2818222222222
-"5842_0","Dissostichus mawsoni_6",2008,216.308,74.2818222222222
-"5842_0","Dissostichus mawsoni_6",2009,66.25506,74.2818222222222
-"5842_0","Macrourus spp_5",2006,4.4909,6.423985
-"5842_0","Macrourus spp_5",2007,6.31294,6.423985
-"5842_0","Macrourus spp_5",2008,8.45,6.423985
-"5842_0","Macrourus spp_5",2009,1.39795,6.423985
-"5842_0","Macrourus spp_5",2010,3.5321,6.423985
-"5842_0","Macrourus spp_5",2012,0.9325,6.423985
-"5842_0","Macrourus whitsoni_6",2007,0.745,1.037
-"5842_0","Macrourus whitsoni_6",2008,3.069,1.037
-"5842_0","Muraenolepis marmoratus_6",2007,0.03815,0.0487833333333333
-"5842_0","Muraenolepis spp_5",2007,0.1014,0.1737025
-"5842_0","Muraenolepis spp_5",2008,0.1201,0.1737025
-"5842_0","Muraenolepis spp_5",2009,0.0288,0.1737025
-"5842_0","Muraenolepis spp_5",2010,0.0766,0.1737025
-"5842_0","Muraenolepis spp_5",2011,0.00705,0.1737025
-"5842_0","Muraenolepis spp_5",2012,0.0119,0.1737025
-"5842_0","Octopodidae_4",2006,0.0045,0.00275
-"5842_0","Pogonophryne permitini_6",2007,2e-04,2e-04
-"5842_0","Pogonophryne spp_5",2009,0.0163,0.008655
-"5842_0","Pogonophryne spp_5",2011,0.00101,0.008655
-"5842_0","Raja spp_5",2008,0.083,0.083
-"5842_0","Rajiformes_3",2006,0.0085,0.038125
-"58431_0","Antimora rostrata_6",2008,0.001,1.57762
-"58431_0","Antimora rostrata_6",2009,2.4718,1.57762
-"58431_0","Antimora rostrata_6",2011,0.3465,1.57762
-"58431_0","Antimora rostrata_6",2012,3.0187,1.57762
-"58431_0","Dissostichus eleginoides_6",2009,30.85425,23.7503933333333
-"58431_0","Dissostichus eleginoides_6",2011,3.59313,23.7503933333333
-"58431_0","Dissostichus eleginoides_6",2012,36.8038,23.7503933333333
-"58431_0","Dissostichus mawsoni_6",2007,1.18822,0.426406666666667
-"58431_0","Dissostichus mawsoni_6",2008,0.026,0.426406666666667
-"58431_0","Dissostichus mawsoni_6",2009,0.065,0.426406666666667
-"58431_0","Lithodidae_4",2007,0.032,0.01675
-"58431_0","Lithodidae_4",2009,0.0015,0.01675
-"58431_0","Macrourus spp_5",2006,0.7469,1.2321
-"58431_0","Macrourus spp_5",2008,0.0925,1.2321
-"58431_0","Macrourus spp_5",2009,1.5363,1.2321
-"58431_0","Macrourus spp_5",2011,0.17,1.2321
-"58431_0","Macrourus spp_5",2012,3.6148,1.2321
-"58431_0","Macrourus whitsoni_6",2007,0.34465,0.34465
-"58431_0","Raja taaf_6",2008,1.534,11.348
-"58431_0","Raja taaf_6",2012,32.1533,11.348
-"58431_0","Rajiformes_3",2006,7.1445,2.2704375
-"58431_0","Rajiformes_3",2007,0.023,2.2704375
-"58431_0","Rajiformes_3",2009,1.85885,2.2704375
-"58431_0","Rajiformes_3",2011,0.0554,2.2704375
-"58432_0","Antimora rostrata_6",2007,0.57385,0.346363333333333
-"58432_0","Antimora rostrata_6",2008,1.14688,0.346363333333333
-"58432_0","Antimora rostrata_6",2009,0.11205,0.346363333333333
-"58432_0","Antimora rostrata_6",2010,0.0674,0.346363333333333
-"58432_0","Antimora rostrata_6",2012,0.0215,0.346363333333333
-"58432_0","Bathydraconidae_4",2008,1e-04,1e-04
-"58432_0","Bathyraja murrayi_6",2006,0.1095,0.1095
-"58432_0","Channichthyidae_4",2007,0.004,0.004
-"58432_0","Chionobathyscus dewitti_6",2008,0.001,0.001
-"58432_0","Dissostichus eleginoides_6",2006,43.89471,17.90192625
-"58432_0","Dissostichus eleginoides_6",2007,74.2726,17.90192625
-"58432_0","Dissostichus eleginoides_6",2009,15.0643,17.90192625
-"58432_0","Dissostichus eleginoides_6",2010,1.66258,17.90192625
-"58432_0","Dissostichus eleginoides_6",2011,2.26982,17.90192625
-"58432_0","Dissostichus eleginoides_6",2012,5.2954,17.90192625
-"58432_0","Dissostichus mawsoni_6",2006,316.66799,124.799445
-"58432_0","Dissostichus mawsoni_6",2007,176.25315,124.799445
-"58432_0","Dissostichus mawsoni_6",2008,100.54766,124.799445
-"58432_0","Dissostichus mawsoni_6",2009,89.21876,124.799445
-"58432_0","Dissostichus mawsoni_6",2011,8.4651,124.799445
-"58432_0","Dissostichus mawsoni_6",2012,3.7264,124.799445
-"58432_0","Lithodes spp_5",2007,0.027,0.027
-"58432_0","Lithodidae_4",2006,0.001,0.017925
-"58432_0","Lithodidae_4",2007,0.0329,0.017925
-"58432_0","Lithodidae_4",2008,0.03315,0.017925
-"58432_0","Lithodidae_4",2009,0.00465,0.017925
-"58432_0","Macrouridae_4",2008,0.212,0.212
-"58432_0","Macrourus spp_5",2006,8.11505,4.68375833333333
-"58432_0","Macrourus spp_5",2007,8.4099,4.68375833333333
-"58432_0","Macrourus spp_5",2008,6.521,4.68375833333333
-"58432_0","Macrourus spp_5",2009,3.6884,4.68375833333333
-"58432_0","Macrourus spp_5",2011,1.2372,4.68375833333333
-"58432_0","Macrourus whitsoni_6",2007,8.4353,5.705465
-"58432_0","Macrourus whitsoni_6",2008,2.97563,5.705465
-"58432_0","Muraenolepis orangiensis_6",2008,0.0015,0.0015
-"58432_0","Muraenolepis spp_5",2007,0.068,0.0197914285714286
-"58432_0","Muraenolepis spp_5",2008,0.03469,0.0197914285714286
-"58432_0","Muraenolepis spp_5",2009,0.02565,0.0197914285714286
-"58432_0","Muraenolepis spp_5",2010,0.0023,0.0197914285714286
-"58432_0","Muraenolepis spp_5",2011,8e-04,0.0197914285714286
-"58432_0","Muraenolepis spp_5",2012,0.0028,0.0197914285714286
-"58432_0","Notothenia kempi_6",2008,0.31985,0.31985
-"58432_0","Notothenia squamifrons_6",2007,0.2513,0.23815
-"58432_0","Notothenia squamifrons_6",2009,0.225,0.23815
-"58432_0","Nototheniidae_4",2008,0.08923,0.08923
-"58432_0","Raja spp_5",2006,0.024,0.182
-"58432_0","Raja spp_5",2008,0.34,0.182
-"58432_0","Raja taaf_6",2008,0.88834,0.88834
-"58432_0","Rajiformes_3",2006,0.9288,0.707158333333333
-"58432_0","Rajiformes_3",2007,1.6017,0.707158333333333
-"58432_0","Rajiformes_3",2008,0.0327,0.707158333333333
-"58432_0","Rajiformes_3",2009,1.47745,0.707158333333333
-"58432_0","Rajiformes_3",2010,0.1434,0.707158333333333
-"58432_0","Rajiformes_3",2012,0.0589,0.707158333333333
-"58432_0","Salilota australis_6",2007,0.0352,0.0352
-"58441_0","Antimora rostrata_6",2008,0.4093,0.2638
-"58441_0","Antimora rostrata_6",2010,0.1183,0.2638
-"58441_0","Dissostichus eleginoides_6",2008,18.4481,28.334925
-"58441_0","Lithodes spp_5",2010,0.00195,0.00195
-"58441_0","Lithodidae_4",2008,0.0456,0.0456
-"58441_0","Macrourus spp_5",2008,0.4406,0.27655
-"58441_0","Macrourus spp_5",2010,0.1125,0.27655
-"58441_0","Nototheniidae_4",2008,0.0477,0.02585
-"58441_0","Nototheniidae_4",2010,0.004,0.02585
-"58441_0","Rajiformes_3",2010,0.0055,0.0055
-"58442_0","Antimora rostrata_6",2008,1.3276,0.677433333333333
-"58442_0","Antimora rostrata_6",2012,0.7037,0.677433333333333
-"58442_0","Dissostichus eleginoides_6",2008,58.3671,24.3604327272727
-"58442_0","Dissostichus eleginoides_6",2010,49.80186,24.3604327272727
-"58442_0","Dissostichus eleginoides_6",2012,28.3018,24.3604327272727
-"58442_0","Dissostichus mawsoni_6",2008,0.0508,0.0508
-"58442_0","Halargyreus johnsonii_6",2008,0.00035,0.00035
-"58442_0","Lepidion spp_5",2008,0.00035,0.00035
-"58442_0","Lithodes spp_5",2010,0.0051,0.0051
-"58442_0","Lithodidae_4",2008,0.07415,0.07415
-"58442_0","Macrourus spp_5",2010,1.0714,3.32178
-"58442_0","Macrourus spp_5",2011,1.629,3.32178
-"58442_0","Macrourus spp_5",2012,1.8328,3.32178
-"58442_0","Muraenolepis spp_5",2011,0.022,0.0112
-"58442_0","Nototheniidae_4",2011,0.069,0.0872
-"58442_0","Nototheniidae_4",2012,0.1054,0.0872
-"58442_0","Rajiformes_3",2008,0.01555,0.160683333333333
-"58442_0","Rajiformes_3",2010,0.4215,0.160683333333333
-"58442_0","Rajiformes_3",2011,0.045,0.160683333333333
-"5851_0","Antimora rostrata_6",2008,67.95059,63.2511
-"5851_0","Antimora rostrata_6",2010,58.55161,63.2511
-"5851_0","Dissostichus eleginoides_6",2008,4844.710066,4355.23443594118
-"5851_0","Dissostichus eleginoides_6",2009,5232.546157,4355.23443594118
-"5851_0","Dissostichus eleginoides_6",2010,5145.796293,4355.23443594118
-"5851_0","Dissostichus eleginoides_6",2011,5230.10167,4355.23443594118
-"5851_0","Dissostichus eleginoides_6",2012,4898.84,4355.23443594118
-"5851_0","Macrourus carinatus_6",2008,816.2495181,752.01200905
-"5851_0","Macrourus carinatus_6",2012,687.7745,752.01200905
-"5851_0","Macrourus spp_5",2006,521.0005974,389.115139844444
-"5851_0","Macrourus spp_5",2007,552.0284406,389.115139844444
-"5851_0","Notothenia squamifrons_6",2010,2.21556985,486.535928308333
-"5851_0","Raja spp_5",2008,352.8105495,373.87121245
-"5851_0","Raja spp_5",2009,272.9988364,373.87121245
-"5851_0","Raja spp_5",2011,437.8529639,373.87121245
-"5851_0","Raja spp_5",2012,431.8225,373.87121245
-"5851_0","Raja taaf_6",2008,22.78269325,22.78269325
-"5851_0","Rajiformes_3",2007,372.154087,204.765207664286
-"5852_0","Antimora rostrata_6",2006,0.35358,2.052686
-"5852_0","Antimora rostrata_6",2009,4.83472,2.052686
-"5852_0","Antimora rostrata_6",2012,3.6491,2.052686
-"5852_0","Bathylagus antarcticus_6",2009,0.00174,0.00174
-"5852_0","Bathyraja eatonii_6",2006,0.47063,8.99900666666667
-"5852_0","Bathyraja eatonii_6",2008,8.46098,8.99900666666667
-"5852_0","Bathyraja eatonii_6",2010,13.16486,8.99900666666667
-"5852_0","Bathyraja eatonii_6",2012,1.97,8.99900666666667
-"5852_0","Bathyraja irrasa_6",2006,7.79613,4.96228133333333
-"5852_0","Bathyraja irrasa_6",2007,2.02656,4.96228133333333
-"5852_0","Bathyraja irrasa_6",2009,1.413168,4.96228133333333
-"5852_0","Bathyraja irrasa_6",2011,16.48745,4.96228133333333
-"5852_0","Bathyraja irrasa_6",2012,0.1984,4.96228133333333
-"5852_0","Bathyraja murrayi_6",2007,0.93594,0.848185875
-"5852_0","Bathyraja murrayi_6",2008,0.93631,0.848185875
-"5852_0","Bathyraja murrayi_6",2009,1.589977,0.848185875
-"5852_0","Bathyraja murrayi_6",2010,0.90635,0.848185875
-"5852_0","Bathyraja murrayi_6",2011,0.745,0.848185875
-"5852_0","Bathyraja murrayi_6",2012,0.448,0.848185875
-"5852_0","Borostomias antarcticus_6",2012,1e-04,0.000129922
-"5852_0","Bothidae_4",2007,0.0032,0.00315
-"5852_0","Bothidae_4",2012,0.0031,0.00315
-"5852_0","Champsocephalus gunnari_6",2007,0.83652,395.600071666667
-"5852_0","Champsocephalus gunnari_6",2008,198.47241,395.600071666667
-"5852_0","Champsocephalus gunnari_6",2009,82.56511,395.600071666667
-"5852_0","Champsocephalus gunnari_6",2010,352.15173,395.600071666667
-"5852_0","Champsocephalus gunnari_6",2012,4.428,395.600071666667
-"5852_0","Channichthyidae_4",2006,0.0004995,0.012998621
-"5852_0","Channichthyidae_4",2008,0.025497742,0.012998621
-"5852_0","Channichthys rhinoceratus_6",2007,15.3288,20.731743238
-"5852_0","Channichthys rhinoceratus_6",2008,37.361828,20.731743238
-"5852_0","Channichthys rhinoceratus_6",2009,50.725449,20.731743238
-"5852_0","Channichthys rhinoceratus_6",2010,80.03621,20.731743238
-"5852_0","Channichthys rhinoceratus_6",2011,26.03443,20.731743238
-"5852_0","Channichthys rhinoceratus_6",2012,41.723,20.731743238
-"5852_0","Cynomacrurus piriei_6",2009,0.00014,0.363388
-"5852_0","Cynomacrurus piriei_6",2012,0.0034,0.363388
-"5852_0","Dissostichus eleginoides_6",2006,2525.67978,2344.83030185714
-"5852_0","Dissostichus eleginoides_6",2007,2385.14524,2344.83030185714
-"5852_0","Dissostichus eleginoides_6",2009,2462.044713,2344.83030185714
-"5852_0","Dissostichus eleginoides_6",2010,2456.21061,2344.83030185714
-"5852_0","Dissostichus eleginoides_6",2011,2561.90238,2344.83030185714
-"5852_0","Dissostichus eleginoides_6",2012,2716.61606,2344.83030185714
-"5852_0","Etmopterus granulosus_6",2007,0.07142,0.029039671
-"5852_0","Etmopterus granulosus_6",2012,0.0147,0.029039671
-"5852_0","Etmopterus spp_5",2009,0.05091,0.030455
-"5852_0","Genypterus spp_5",2009,0.021,0.021
-"5852_0","Halargyreus johnsonii_6",2009,0.00026,0.0006295205
-"5852_0","Icichthys australis_6",2009,0.005029,0.005029
-"5852_0","Lampris immaculatus_6",2009,0.092,0.08275
-"5852_0","Lampris immaculatus_6",2011,0.036,0.08275
-"5852_0","Lithodidae_4",2009,0.00746,0.00398
-"5852_0","Lithodidae_4",2012,5e-04,0.00398
-"5852_0","Loliginidae, Ommastrephidae_3",2011,0.007,0.03746
-"5852_0","Macrourus spp_5",2009,118.63852,28.1771425
-"5852_0","Macrourus spp_5",2010,102.30162,28.1771425
-"5852_0","Macrourus whitsoni_6",2007,3.240059999,9.9723879998
-"5852_0","Macrourus whitsoni_6",2010,0.842,9.9723879998
-"5852_0","Macrourus whitsoni_6",2011,8.98718,9.9723879998
-"5852_0","Macrourus whitsoni_6",2012,0.3241,9.9723879998
-"5852_0","Muraenolepis microps_6",2012,0.075,0.075
-"5852_0","Muraenolepis spp_5",2006,0.00138,0.002675
-"5852_0","Muraenolepis spp_5",2007,0.00436,0.002675
-"5852_0","Muraenolepis spp_5",2008,0.00266,0.002675
-"5852_0","Muraenolepis spp_5",2012,0.0023,0.002675
-"5852_0","Myctophidae_4",2009,0.001476,0.008090632
-"5852_0","Myctophidae_4",2012,0.014,0.008090632
-"5852_0","Notothenia acuta_6",2009,0.084116,0.0714551428571429
-"5852_0","Notothenia acuta_6",2011,0.001,0.0714551428571429
-"5852_0","Notothenia kempi_6",2012,0.007,0.007
-"5852_0","Notothenia squamifrons_6",2006,4.95789,8.5590291875
-"5852_0","Notothenia squamifrons_6",2008,20.07029,8.5590291875
-"5852_0","Notothenia squamifrons_6",2009,25.827447,8.5590291875
-"5852_0","Notothenia squamifrons_6",2011,27.75754,8.5590291875
-"5852_0","Notothenia squamifrons_6",2012,35.979,8.5590291875
-"5852_0","Nototheniidae_4",2007,0.0363,1.02738666666667
-"5852_0","Nototheniidae_4",2012,0.0039,1.02738666666667
-"5852_0","Nototheniops mizops_6",2011,0.00819,0.0716975
-"5852_0","Octopodidae_4",2007,0.06541,0.0625591666666667
-"5852_0","Octopodidae_4",2008,0.032,0.0625591666666667
-"5852_0","Octopodidae_4",2009,0.108515,0.0625591666666667
-"5852_0","Osteichthyes_2",2011,0.343,0.273
-"5852_0","Paradiplospinus gracilis_6",2009,0.003177,0.0016735
-"5852_0","Paralomis aculeata_6",2006,0.006663338,0.006663338
-"5852_0","Rajiformes_3",2006,8.28211,11.4511661818182
-"5852_0","Rajiformes_3",2007,3.61398,11.4511661818182
-"5852_0","Rajiformes_3",2008,3.39234,11.4511661818182
-"5852_0","Rajiformes_3",2009,16.464438,11.4511661818182
-"5852_0","Rajiformes_3",2010,11.44773,11.4511661818182
-"5852_0","Rajiformes_3",2012,7.926,11.4511661818182
-"5852_0","Somniosus pacificus_6",2006,0.00111,1.395822
-"5852_0","Somniosus pacificus_6",2007,1.842,1.395822
-"5852_0","Somniosus pacificus_6",2010,1.336,1.395822
-"5852_0","Teuthoidea_4",2011,0.07824,0.07824
-"586_0","Antimora rostrata_6",2006,77.69925,32.7910663636364
-"586_0","Antimora rostrata_6",2007,1.48222,32.7910663636364
-"586_0","Antimora rostrata_6",2009,77.69621,32.7910663636364
-"586_0","Antimora rostrata_6",2010,78.77541,32.7910663636364
-"586_0","Antimora rostrata_6",2012,21.4218,32.7910663636364
-"586_0","Dissostichus eleginoides_6",2007,435.7352435,677.744598172727
-"586_0","Dissostichus eleginoides_6",2008,877.2296911,677.744598172727
-"586_0","Dissostichus eleginoides_6",2009,907.2292253,677.744598172727
-"586_0","Macrourus carinatus_6",2008,134.5876602,109.4045560375
-"586_0","Macrourus carinatus_6",2010,113.4972227,109.4045560375
-"586_0","Macrourus carinatus_6",2011,93.09064125,109.4045560375
-"586_0","Macrourus carinatus_6",2012,96.4427,109.4045560375
-"586_0","Macrourus spp_5",2008,3.063,64.4321492241667
-"586_0","Macrourus spp_5",2009,1.694,64.4321492241667
-"586_0","Macrourus spp_5",2011,1.5323,64.4321492241667
-"586_0","Raja spp_5",2008,15.69068953,15.69068953
-"586_0","Raja taaf_6",2009,45.18945179,59.910075895
-"586_0","Raja taaf_6",2012,74.6307,59.910075895
-"586_0","Rajiformes_3",2009,0.0056,15.7260911088889
-"586_0","Rajiformes_3",2011,0.09356,15.7260911088889
-"587_0","Antimora rostrata_6",2006,0.40188,1.26353454545455
-"587_0","Antimora rostrata_6",2007,2.47383,1.26353454545455
-"587_0","Antimora rostrata_6",2008,1.55501,1.26353454545455
-"587_0","Antimora rostrata_6",2010,0.39304,1.26353454545455
-"587_0","Antimora rostrata_6",2011,1.00058,1.26353454545455
-"587_0","Antimora rostrata_6",2012,0.9433,1.26353454545455
-"587_0","Dissostichus eleginoides_6",2008,69.26354,427.915119090909
-"587_0","Dissostichus eleginoides_6",2010,71.99304,427.915119090909
-"587_0","Dissostichus eleginoides_6",2011,91.72337,427.915119090909
-"587_0","Lithodidae_4",2012,0.008,1.89236
-"587_0","Macrourus spp_5",2006,8.191,12.0135666666667
-"587_0","Macrourus spp_5",2007,10.722,12.0135666666667
-"587_0","Macrourus spp_5",2009,1.207,12.0135666666667
-"587_0","Macrourus spp_5",2010,1.693,12.0135666666667
-"587_0","Macrourus spp_5",2011,3.2455,12.0135666666667
-"587_0","Rajiformes_3",2011,0.04424,1.56547375
-"587_0","Rajiformes_3",2012,0.6883,1.56547375
-"881_0","Antimora rostrata_6",2006,1.5235,3.0390754
-"881_0","Antimora rostrata_6",2007,4.20339,3.0390754
-"881_0","Antimora rostrata_6",2008,2.90703,3.0390754
-"881_0","Antimora rostrata_6",2009,1.69389,3.0390754
-"881_0","Antimora rostrata_6",2010,1.682004,3.0390754
-"881_0","Antimora rostrata_6",2011,0.81504,3.0390754
-"881_0","Antimora rostrata_6",2012,0.7069,3.0390754
-"881_0","Bathydraco antarcticus_6",2012,1e-04,1e-04
-"881_0","Bathyraja eatonii_6",2007,0.33406,0.977385454545455
-"881_0","Bathyraja eatonii_6",2008,0.1009,0.977385454545455
-"881_0","Bathyraja eatonii_6",2009,1.78379,0.977385454545455
-"881_0","Bathyraja eatonii_6",2011,0.5333,0.977385454545455
-"881_0","Bathyraja eatonii_6",2012,0.1795,0.977385454545455
-"881_0","Bathyraja maccaini_6",2008,0.002,0.06832
-"881_0","Bathyraja maccaini_6",2009,0.009,0.06832
-"881_0","Bathyraja maccaini_6",2011,0.1513,0.06832
-"881_0","Bathyraja maccaini_6",2012,0.1593,0.06832
-"881_0","Bathyraja spp_5",2006,0.0465,1.51825
-"881_0","Careproctus spp_5",2012,1e-04,1e-04
-"881_0","Champsocephalus gunnari_6",2006,0.1215,0.1215
-"881_0","Channichthyidae_4",2006,3.306645,3.7243975
-"881_0","Channichthyidae_4",2007,14.84654,3.7243975
-"881_0","Channichthyidae_4",2009,4.79807,3.7243975
-"881_0","Channichthyidae_4",2010,3.8981,3.7243975
-"881_0","Channichthyidae_4",2011,1.09954,3.7243975
-"881_0","Channichthyidae_4",2012,1.2366,3.7243975
-"881_0","Chionobathyscus dewitti_6",2007,1.11947,0.552208333333333
-"881_0","Chionobathyscus dewitti_6",2008,0.66466,0.552208333333333
-"881_0","Chionobathyscus dewitti_6",2010,1.0831,0.552208333333333
-"881_0","Chionobathyscus dewitti_6",2011,0.17982,0.552208333333333
-"881_0","Chionobathyscus dewitti_6",2012,0.0672,0.552208333333333
-"881_0","Coryphaenoides armatus_6",2007,0.00233,0.00233
-"881_0","Coryphaenoides spp_5",2008,0.0102,0.0351
-"881_0","Cryodraco spp_5",2006,0.4105,0.4105
-"881_0","Dacodraco hunteri_6",2007,0.00032,0.00032
-"881_0","Dissostichus eleginoides_6",2006,1.29372,4.70991777777778
-"881_0","Dissostichus eleginoides_6",2008,8.66751,4.70991777777778
-"881_0","Dissostichus eleginoides_6",2009,16.80114,4.70991777777778
-"881_0","Dissostichus eleginoides_6",2010,0.45189,4.70991777777778
-"881_0","Dissostichus eleginoides_6",2011,2.62544,4.70991777777778
-"881_0","Dissostichus eleginoides_6",2012,4.8933,4.70991777777778
-"881_0","Dissostichus mawsoni_6",2006,2968.190287,2205.66946523077
-"881_0","Dissostichus mawsoni_6",2007,3078.743142,2205.66946523077
-"881_0","Dissostichus mawsoni_6",2008,2250.52981,2205.66946523077
-"881_0","Dissostichus mawsoni_6",2009,2431.51778,2205.66946523077
-"881_0","Dissostichus mawsoni_6",2010,2868.42922,2205.66946523077
-"881_0","Dissostichus mawsoni_6",2011,2836.46517,2205.66946523077
-"881_0","Dissostichus mawsoni_6",2012,3173.0442,2205.66946523077
-"881_0","Euphausia superba_6",2008,0.0137,1397.7793
-"881_0","Lampris guttatus_6",2011,0.0221,0.0221
-"881_0","Lampris immaculatus_6",2011,0.066,0.061025
-"881_0","Lampris immaculatus_6",2012,0.1186,0.061025
-"881_0","Lepidion spp_5",2007,0.0117,0.0122
-"881_0","Lepidion spp_5",2011,0.003,0.0122
-"881_0","Lepidion spp_5",2012,0.0219,0.0122
-"881_0","Liparididae_4",2007,4e-04,4e-04
-"881_0","Lithodes murrayi_6",2008,0.00145,0.00455
-"881_0","Lithodes spp_5",2007,0.00142,0.00142
-"881_0","Lithodidae_4",2006,0.00501,0.0074125
-"881_0","Lithodidae_4",2007,0.02548,0.0074125
-"881_0","Lithodidae_4",2008,0.0047,0.0074125
-"881_0","Lithodidae_4",2010,0.00821,0.0074125
-"881_0","Lithodidae_4",2011,6e-04,0.0074125
-"881_0","Lithodidae_4",2012,0.0013,0.0074125
-"881_0","Macrourus carinatus_6",2010,1.1964,14.6629666666667
-"881_0","Macrourus carinatus_6",2011,1.875,14.6629666666667
-"881_0","Macrourus carinatus_6",2012,0.0064,14.6629666666667
-"881_0","Macrourus holotrachys_6",2006,0.0185,0.02762
-"881_0","Macrourus holotrachys_6",2007,0.03674,0.02762
-"881_0","Macrourus spp_5",2008,53.3748,91.6987105
-"881_0","Macrourus spp_5",2009,114.04234,91.6987105
-"881_0","Macrourus spp_5",2011,168.915275,91.6987105
-"881_0","Macrourus spp_5",2012,127.7962,91.6987105
-"881_0","Macrourus whitsoni_6",2006,66.2407,54.737531
-"881_0","Macrourus whitsoni_6",2007,62.05135,54.737531
-"881_0","Macrourus whitsoni_6",2009,68.94983,54.737531
-"881_0","Macrourus whitsoni_6",2010,80.15805,54.737531
-"881_0","Macrourus whitsoni_6",2011,18.05057,54.737531
-"881_0","Macrourus whitsoni_6",2012,14.8805,54.737531
-"881_0","Moridae_4",2012,0.01,0.01
-"881_0","Muraenolepis marmoratus_6",2007,0.08652,0.05208
-"881_0","Muraenolepis marmoratus_6",2010,0.0992,0.05208
-"881_0","Muraenolepis marmoratus_6",2012,0.0056,0.05208
-"881_0","Muraenolepis microps_6",2006,0.21447,0.86030125
-"881_0","Muraenolepis microps_6",2010,1.55088,0.86030125
-"881_0","Muraenolepis microps_6",2011,0.10191,0.86030125
-"881_0","Muraenolepis microps_6",2012,0.0012,0.86030125
-"881_0","Muraenolepis spp_5",2006,4.836689,5.125789
-"881_0","Muraenolepis spp_5",2007,20.11059,5.125789
-"881_0","Muraenolepis spp_5",2008,6.93755,5.125789
-"881_0","Muraenolepis spp_5",2010,6.53019,5.125789
-"881_0","Muraenolepis spp_5",2012,1.7545,5.125789
-"881_0","Neopagetopsis ionah_6",2012,4e-04,4e-04
-"881_0","Notothenia kempi_6",2008,0.2744,0.127233333333333
-"881_0","Notothenia kempi_6",2012,0.012,0.127233333333333
-"881_0","Notothenia squamifrons_6",2007,0.00123,0.00524333333333333
-"881_0","Notothenia squamifrons_6",2011,5e-04,0.00524333333333333
-"881_0","Nototheniidae_4",2006,0.09826,0.378473333333333
-"881_0","Nototheniidae_4",2007,0.17026,0.378473333333333
-"881_0","Nototheniidae_4",2008,1.44361,0.378473333333333
-"881_0","Nototheniidae_4",2010,0.06044,0.378473333333333
-"881_0","Nototheniidae_4",2011,0.14038,0.378473333333333
-"881_0","Nototheniidae_4",2012,0.1926,0.378473333333333
-"881_0","Octopodidae_4",2006,0.00785,0.0319194444444444
-"881_0","Octopodidae_4",2007,0.02422,0.0319194444444444
-"881_0","Octopodidae_4",2008,3e-04,0.0319194444444444
-"881_0","Octopodidae_4",2009,0.01096,0.0319194444444444
-"881_0","Octopodidae_4",2010,0.08302,0.0319194444444444
-"881_0","Octopodidae_4",2011,0.002685,0.0319194444444444
-"881_0","Octopodidae_4",2012,0.1044,0.0319194444444444
-"881_0","Ommastrephes, Illex_5",2007,0.0194,0.0194
-"881_0","Osteichthyes_2",2006,0.18,0.681433333333333
-"881_0","Osteichthyes_2",2012,0.085,0.681433333333333
-"881_0","Pachycara brachycephalum_6",2009,0.0447,0.0447
-"881_0","Pagothenia hansoni_6",2010,0.0037,0.0037
-"881_0","Paralomis aculeata_6",2008,0.0015,0.00085
-"881_0","Paralomis aculeata_6",2012,2e-04,0.00085
-"881_0","Paralomis anamerae_6",2008,2e-05,2e-05
-"881_0","Pareledone turqueti_6",2007,0.00539,0.00539
-"881_0","Pleuragramma antarcticum_6",2008,0.592,0.592
-"881_0","Pogonophryne permitini_6",2007,0.00798,0.00968727272727273
-"881_0","Pogonophryne permitini_6",2008,0.0058,0.00968727272727273
-"881_0","Pogonophryne permitini_6",2009,0.00295,0.00968727272727273
-"881_0","Pogonophryne permitini_6",2010,0.001,0.00968727272727273
-"881_0","Pogonophryne permitini_6",2011,0.00093,0.00968727272727273
-"881_0","Pogonophryne permitini_6",2012,0.0343,0.00968727272727273
-"881_0","Pogonophryne scotti_6",2008,0.013,0.00585
-"881_0","Pogonophryne scotti_6",2009,0.0033,0.00585
-"881_0","Pogonophryne scotti_6",2010,0.0022,0.00585
-"881_0","Pogonophryne scotti_6",2012,0.0049,0.00585
-"881_0","Pogonophryne spp_5",2007,0.0187,0.0113214285714286
-"881_0","Pogonophryne spp_5",2008,0.01157,0.0113214285714286
-"881_0","Pogonophryne spp_5",2009,7e-04,0.0113214285714286
-"881_0","Pogonophryne spp_5",2010,0.02549,0.0113214285714286
-"881_0","Pogonophryne spp_5",2011,0.00489,0.0113214285714286
-"881_0","Pogonophryne spp_5",2012,0.0039,0.0113214285714286
-"881_0","Raja georgiana_6",2006,0.878164,11.9046326666667
-"881_0","Raja georgiana_6",2007,11.07359,11.9046326666667
-"881_0","Raja georgiana_6",2008,3.70398,11.9046326666667
-"881_0","Raja georgiana_6",2010,5.44722,11.9046326666667
-"881_0","Raja georgiana_6",2011,2.1879,11.9046326666667
-"881_0","Raja georgiana_6",2012,0.057,11.9046326666667
-"881_0","Raja spp_5",2006,0.05,7.0061425
-"881_0","Raja spp_5",2007,25.81491,7.0061425
-"881_0","Raja spp_5",2010,0.67526,7.0061425
-"881_0","Rajiformes_3",2006,3.20901,3.77032888888889
-"881_0","Rajiformes_3",2008,0.07503,3.77032888888889
-"881_0","Rajiformes_3",2009,0.3409,3.77032888888889
-"881_0","Rajiformes_3",2010,0.92445,3.77032888888889
-"881_0","Rajiformes_3",2011,1.34892,3.77032888888889
-"881_0","Rajiformes_3",2012,1.0929,3.77032888888889
-"881_0","Trematomus spp_5",2007,0.24889,0.24889
-"881_0","Vomeridens infuscipinnis_6",2012,1e-04,1e-04
-"882_0","Antimora rostrata_6",2006,1.04493,3.53529090909091
-"882_0","Antimora rostrata_6",2007,6.27734,3.53529090909091
-"882_0","Antimora rostrata_6",2008,1.9942,3.53529090909091
-"882_0","Antimora rostrata_6",2009,6.78614,3.53529090909091
-"882_0","Antimora rostrata_6",2010,4.91845,3.53529090909091
-"882_0","Antimora rostrata_6",2011,4.96794,3.53529090909091
-"882_0","Antimora rostrata_6",2012,3.5294,3.53529090909091
-"882_0","Bathyraja eatonii_6",2006,0.008,0.00573
-"882_0","Bathyraja spp_5",2012,0.196,0.196
-"882_0","Channichthyidae_4",2006,1.11098,4.223575
-"882_0","Channichthyidae_4",2007,5.07896,4.223575
-"882_0","Channichthyidae_4",2008,1.93628,4.223575
-"882_0","Channichthyidae_4",2009,5.2182,4.223575
-"882_0","Channichthyidae_4",2010,7.01758,4.223575
-"882_0","Channichthyidae_4",2012,6.0704,4.223575
-"882_0","Chionobathyscus dewitti_6",2009,0.2285,1.18697333333333
-"882_0","Chionobathyscus dewitti_6",2010,2.0952,1.18697333333333
-"882_0","Chionobathyscus dewitti_6",2011,1.23722,1.18697333333333
-"882_0","Cryodraco antarcticus_6",2010,0.005,0.005
-"882_0","Dissostichus eleginoides_6",2008,0.065,0.0439716666666667
-"882_0","Dissostichus eleginoides_6",2009,0.016,0.0439716666666667
-"882_0","Dissostichus eleginoides_6",2012,0.0698,0.0439716666666667
-"882_0","Dissostichus mawsoni_6",2006,513.6398,354.87207
-"882_0","Dissostichus mawsoni_6",2008,415.73178,354.87207
-"882_0","Dissostichus mawsoni_6",2009,483.65362,354.87207
-"882_0","Dissostichus mawsoni_6",2010,314.27263,354.87207
-"882_0","Dissostichus mawsoni_6",2011,589.60773,354.87207
-"882_0","Lithodidae_4",2006,0.01263,0.00415
-"882_0","Lithodidae_4",2007,2e-04,0.00415
-"882_0","Lithodidae_4",2009,0.00094,0.00415
-"882_0","Lithodidae_4",2011,0.00183,0.00415
-"882_0","Lithodidae_4",2012,0.0092,0.00415
-"882_0","Macrourus carinatus_6",2011,0.62819,0.62819
-"882_0","Macrourus holotrachys_6",2012,0.0275,0.0275
-"882_0","Macrourus spp_5",2006,18.4271,30.49562
-"882_0","Macrourus spp_5",2007,48.21031,30.49562
-"882_0","Macrourus spp_5",2008,2.595,30.49562
-"882_0","Macrourus spp_5",2009,53.77511,30.49562
-"882_0","Macrourus spp_5",2010,49.29455,30.49562
-"882_0","Macrourus spp_5",2011,44.29399,30.49562
-"882_0","Macrourus spp_5",2012,26.9564,30.49562
-"882_0","Macrourus whitsoni_6",2006,15.0891,14.568875
-"882_0","Macrourus whitsoni_6",2007,5.9,14.568875
-"882_0","Macrourus whitsoni_6",2008,14.8373,14.568875
-"882_0","Macrourus whitsoni_6",2012,2.2923,14.568875
-"882_0","Moroteuthis ingens_6",2008,0.01,0.01
-"882_0","Muraenolepis microps_6",2008,0.026,0.038725
-"882_0","Muraenolepis microps_6",2009,0.0075,0.038725
-"882_0","Muraenolepis microps_6",2010,0.0788,0.038725
-"882_0","Muraenolepis orangiensis_6",2012,0.0107,0.0107
-"882_0","Muraenolepis spp_5",2006,0.76515,0.5014945
-"882_0","Muraenolepis spp_5",2007,1.16326,0.5014945
-"882_0","Muraenolepis spp_5",2008,0.43782,0.5014945
-"882_0","Muraenolepis spp_5",2009,1.15993,0.5014945
-"882_0","Muraenolepis spp_5",2010,0.7644,0.5014945
-"882_0","Muraenolepis spp_5",2011,0.50238,0.5014945
-"882_0","Notothenia kempi_6",2010,0.1105,0.1105
-"882_0","Nototheniidae_4",2006,0.0678,0.0664566666666667
-"882_0","Nototheniidae_4",2011,0.00157,0.0664566666666667
-"882_0","Octopodidae_4",2009,0.02172,0.00811333333333333
-"882_0","Octopodidae_4",2011,0.00062,0.00811333333333333
-"882_0","Paralomis spinosissima_6",2011,0.00184,0.00184
-"882_0","Paralomis spp_5",2010,0.006,0.006
-"882_0","Pogonophryne spp_5",2010,0.011,0.011
-"882_0","Raja georgiana_6",2006,0.04947,0.1113675
-"882_0","Raja georgiana_6",2007,0.02,0.1113675
-"882_0","Raja georgiana_6",2011,0.106,0.1113675
-"882_0","Raja spp_5",2007,0.10417,0.10417
-"882_0","Rajiformes_3",2009,0.0177,0.0177
-"882_0","Trematomus spp_5",2009,4e-04,4e-04
-"883_0","Antimora rostrata_6",2011,0.008,0.0954
-"883_0","Chionobathyscus dewitti_6",2011,0.0994,0.0994
-"883_0","Dissostichus mawsoni_6",2011,5.23,2.80345
-"883_0","Dissostichus mawsoni_6",2012,4.066,2.80345
-"883_0","Lithodidae_4",2011,0.0046,0.0046
-"883_0","Macrourus spp_5",2012,0.3769,0.35545
-"883_0","Muraenolepis spp_5",2012,0.0099,0.0099
-"883_0","Nototheniidae_4",2012,6e-04,0.0328
-"883_0","Pogonophryne spp_5",2011,4e-04,3e-04
-"883_0","Pogonophryne spp_5",2012,2e-04,3e-04
-"883_0","Raja georgiana_6",2012,0.0193,0.0193
+fao_saup_id,taxon_name_key,year,mean_catch
+481_0,Aethotaxis mitopteryx_6,2006,0.000646667
+481_0,Aethotaxis mitopteryx_6,2007,0.000646667
+481_0,Aethotaxis mitopteryx_6,2012,0.000646667
+481_0,Akarotaxis nudiceps_6,2007,2.00E-06
+481_0,Anotopterus pharao_6,2007,0.016103667
+481_0,Anotopterus pharao_6,2011,0.016103667
+481_0,Anotopterus pharao_6,2012,0.016103667
+481_0,Artedidraco skottsbergi_6,2006,0.000142333
+481_0,Artedidraco skottsbergi_6,2007,0.000142333
+481_0,Artedidraco skottsbergi_6,2012,0.000142333
+481_0,Bathylagus antarcticus_6,2006,2.90E-05
+481_0,Bathyraja eatonii_6,2006,0.0123625
+481_0,Bathyraja eatonii_6,2012,0.0123625
+481_0,Bathyraja maccaini_6,2006,0.079880667
+481_0,Bathyraja maccaini_6,2007,0.079880667
+481_0,Bathyraja maccaini_6,2012,0.079880667
+481_0,Bathyraja spp_5,2007,0.015477
+481_0,Bathyraja spp_5,2012,0.015477
+481_0,Chaenocephalus aceratus_6,2006,0.9487237
+481_0,Chaenocephalus aceratus_6,2007,0.9487237
+481_0,Chaenocephalus aceratus_6,2012,0.9487237
+481_0,Chaenodraco wilsoni_6,2006,617.2437476
+481_0,Chaenodraco wilsoni_6,2007,617.2437476
+481_0,Chaenodraco wilsoni_6,2012,617.2437476
+481_0,Champsocephalus gunnari_6,2006,217.6369234
+481_0,Champsocephalus gunnari_6,2007,217.6369234
+481_0,Champsocephalus gunnari_6,2011,217.6369234
+481_0,Champsocephalus gunnari_6,2012,217.6369234
+481_0,Chionodraco myersi_6,2007,0.00019
+481_0,Chionodraco rastrospinosus_6,2006,55.96068129
+481_0,Chionodraco rastrospinosus_6,2007,55.96068129
+481_0,Chionodraco rastrospinosus_6,2012,55.96068129
+481_0,Cryodraco antarcticus_6,2006,0.084526
+481_0,Cryodraco antarcticus_6,2007,0.084526
+481_0,Cryodraco antarcticus_6,2012,0.084526
+481_0,Dissostichus mawsoni_6,2007,0.24778838
+481_0,Dissostichus mawsoni_6,2010,0.24778838
+481_0,Dolloidraco longedorsalis_6,2012,2.00E-04
+481_0,Electrona antarctica_6,2007,0.001795
+481_0,Electrona carlsbergi_6,2011,0.0329332
+481_0,Electrona spp_5,2012,1.00E-04
+481_0,Euphausia superba_6,2006,45904.73853
+481_0,Euphausia superba_6,2007,45904.73853
+481_0,Euphausia superba_6,2008,45904.73853
+481_0,Euphausia superba_6,2009,45904.73853
+481_0,Euphausia superba_6,2011,45904.73853
+481_0,Euphausia superba_6,2012,45904.73853
+481_0,Gerlachea australis_6,2006,0.000175333
+481_0,Gerlachea australis_6,2007,0.000175333
+481_0,Gerlachea australis_6,2012,0.000175333
+481_0,Gymnodraco acuticeps_6,2006,0.006347667
+481_0,Gymnodraco acuticeps_6,2007,0.006347667
+481_0,Gymnodraco acuticeps_6,2012,0.006347667
+481_0,Gymnoscopelus braueri_6,2006,0.000101
+481_0,Gymnoscopelus braueri_6,2007,0.000101
+481_0,Gymnoscopelus braueri_6,2012,0.000101
+481_0,Gymnoscopelus nicholsi_6,2006,0.0101415
+481_0,Gymnoscopelus nicholsi_6,2007,0.0101415
+481_0,Gymnoscopelus opisthopterus_6,2006,3.80E-05
+481_0,Harpagifer antarcticus_6,2007,6.60E-05
+481_0,Harpagifer antarcticus_6,2012,6.60E-05
+481_0,Krefftichthys anderssoni_6,2006,3.00E-06
+481_0,Krefftichthys anderssoni_6,2007,3.00E-06
+481_0,Lycodichthys antarcticus_6,2007,0.000175
+481_0,Lycodichthys antarcticus_6,2012,0.000175
+481_0,Macrourus holotrachys_6,2007,6.20E-05
+481_0,Magnisudis prionosa_6,2006,0.00121
+481_0,Muraenolepis microps_6,2007,0.005874
+481_0,Neopagetopsis ionah_6,2006,0.006453
+481_0,Neopagetopsis ionah_6,2007,0.006453
+481_0,Notolepis coatsi_6,2007,9.60E-05
+481_0,Notolepis spp_5,2006,0.97
+481_0,Notothenia coriiceps_6,2006,0.125576
+481_0,Notothenia gibberifrons_6,2006,81.89639311
+481_0,Notothenia gibberifrons_6,2007,81.89639311
+481_0,Notothenia gibberifrons_6,2011,81.89639311
+481_0,Notothenia gibberifrons_6,2012,81.89639311
+481_0,Notothenia rossii_6,2006,2681.306995
+481_0,Notothenia rossii_6,2011,2681.306995
+481_0,Notothenia squamifrons_6,2006,0.07846125
+481_0,Notothenia squamifrons_6,2007,0.07846125
+481_0,Notothenia squamifrons_6,2012,0.07846125
+481_0,Nototheniidae_4,2012,0.2309
+481_0,Nototheniops larseni_6,2006,0.102517
+481_0,Nototheniops larseni_6,2007,0.102517
+481_0,Nototheniops larseni_6,2012,0.102517
+481_0,Nototheniops nudifrons_6,2006,0.014082
+481_0,Nototheniops nudifrons_6,2007,0.014082
+481_0,Nototheniops nybelini_6,2006,7.61
+481_0,Ophthalmolycus amberensis_6,2006,0.005205
+481_0,Ophthalmolycus amberensis_6,2007,0.005205
+481_0,Ophthalmolycus amberensis_6,2012,0.005205
+481_0,Osteichthyes_2,2012,683.2828579
+481_0,Pachycara brachycephalum_6,2006,0.001990667
+481_0,Pachycara brachycephalum_6,2007,0.001990667
+481_0,Pachycara brachycephalum_6,2012,0.001990667
+481_0,Pagetopsis macropterus_6,2006,0.0052925
+481_0,Pagetopsis macropterus_6,2007,0.0052925
+481_0,Pagothenia hansoni_6,2006,0.0117185
+481_0,Pagothenia hansoni_6,2007,0.0117185
+481_0,Parachaenichthys charcoti_6,2006,0.010103
+481_0,Paradiplospinus gracilis_6,2007,0.000233
+481_0,Paradiplospinus gracilis_6,2012,0.000233
+481_0,Paraliparis spp_5,2007,0.000101
+481_0,Paraliparis spp_5,2012,0.000101
+481_0,Platax spp_5,2006,0.002239
+481_0,Pleuragramma antarcticum_6,2006,2.284230875
+481_0,Pleuragramma antarcticum_6,2007,2.284230875
+481_0,Pleuragramma antarcticum_6,2011,2.284230875
+481_0,Pleuragramma antarcticum_6,2012,2.284230875
+481_0,Pogonophryne marmorata_6,2006,0.0003935
+481_0,Pogonophryne marmorata_6,2012,0.0003935
+481_0,Pogonophryne phyllopogon_6,2007,1.10E-05
+481_0,Pogonophryne scotti_6,2012,5.00E-04
+481_0,Pogonophryne spp_5,2007,0.0003765
+481_0,Pogonophryne spp_5,2012,0.0003765
+481_0,Prionodraco evansii_6,2007,2.20E-05
+481_0,Protomyctophum spp_5,2007,7.50E-06
+481_0,Protomyctophum spp_5,2010,7.50E-06
+481_0,Pseudochaenichthys georgianus_6,2006,9.5337125
+481_0,Pseudochaenichthys georgianus_6,2012,9.5337125
+481_0,Racovitzia glacialis_6,2006,0.000339333
+481_0,Racovitzia glacialis_6,2007,0.000339333
+481_0,Racovitzia glacialis_6,2012,0.000339333
+481_0,Trematomus bernacchii_6,2007,0.005579
+481_0,Trematomus bernacchii_6,2012,0.005579
+481_0,Trematomus eulepidotus_6,2006,0.091872333
+481_0,Trematomus eulepidotus_6,2007,0.091872333
+481_0,Trematomus eulepidotus_6,2012,0.091872333
+481_0,Trematomus loennbergii_6,2007,9.00E-06
+481_0,Trematomus newnesi_6,2006,0.059658
+481_0,Trematomus newnesi_6,2007,0.059658
+481_0,Trematomus newnesi_6,2012,0.059658
+481_0,Trematomus nicolai_6,2007,0.002928
+481_0,Trematomus pennellii_6,2006,0.004413
+481_0,Trematomus scotti_6,2006,0.0003965
+481_0,Trematomus scotti_6,2012,0.0003965
+481_0,Trematomus tokarevi_6,2006,0.004211
+482_0,Chaenocephalus aceratus_6,2010,1.13403145
+482_0,Chaenocephalus aceratus_6,2011,1.13403145
+482_0,Champsocephalus gunnari_6,2008,1838.592407
+482_0,Channichthyidae_4,2011,417.005295
+482_0,Channichthyidae_4,2012,417.005295
+482_0,Dissostichus mawsoni_6,2010,0.019
+482_0,Electrona carlsbergi_6,2011,0.0002409
+482_0,Electrona carlsbergi_6,2012,0.0002409
+482_0,Euphausia superba_6,2008,97558.40875
+482_0,Euphausia superba_6,2009,97558.40875
+482_0,Euphausia superba_6,2010,97558.40875
+482_0,Euphausia superba_6,2011,97558.40875
+482_0,Gymnoscopelus nicholsi_6,2012,2.00E-05
+482_0,Notolepis coatsi_6,2011,0.309
+482_0,Pseudochaenichthys georgianus_6,2009,1.715228
+482_0,Pseudochaenichthys georgianus_6,2010,1.715228
+483_0,Adelieledone polymorpha_6,2007,0.003144333
+483_0,Adelieledone polymorpha_6,2008,0.003144333
+483_0,Adelieledone polymorpha_6,2010,0.003144333
+483_0,Antimora rostrata_6,2006,10.80261545
+483_0,Antimora rostrata_6,2007,10.80261545
+483_0,Antimora rostrata_6,2010,10.80261545
+483_0,Antimora rostrata_6,2011,10.80261545
+483_0,Artedidraco mirus_6,2007,0.0001552
+483_0,Artedidraco mirus_6,2008,0.0001552
+483_0,Artedidraco mirus_6,2009,0.0001552
+483_0,Artedidraco mirus_6,2011,0.0001552
+483_0,Artedidraco mirus_6,2012,0.0001552
+483_0,Borostomias antarcticus_6,2011,0.000213
+483_0,Cephalopoda_2,2007,0.000829
+483_0,Cephalopoda_2,2009,0.000829
+483_0,Chaenocephalus aceratus_6,2006,130.8398063
+483_0,Chaenocephalus aceratus_6,2007,130.8398063
+483_0,Chaenocephalus aceratus_6,2009,130.8398063
+483_0,Chaenocephalus aceratus_6,2010,130.8398063
+483_0,Chaenocephalus aceratus_6,2011,130.8398063
+483_0,Champsocephalus gunnari_6,2006,17959.32423
+483_0,Champsocephalus gunnari_6,2007,17959.32423
+483_0,Champsocephalus gunnari_6,2010,17959.32423
+483_0,Champsocephalus gunnari_6,2011,17959.32423
+483_0,Champsocephalus gunnari_6,2012,17959.32423
+483_0,Channichthyidae_4,2006,657.7659186
+483_0,Channichthyidae_4,2008,657.7659186
+483_0,Dissostichus eleginoides_6,2007,3235.776745
+483_0,Dissostichus eleginoides_6,2008,3235.776745
+483_0,Dissostichus eleginoides_6,2012,3235.776745
+483_0,Dissostichus mawsoni_6,2011,0.062
+483_0,Electrona antarctica_6,2011,0.000206
+483_0,Euphausia superba_6,2006,80510.21217
+483_0,Euphausia superba_6,2007,80510.21217
+483_0,Euphausia superba_6,2008,80510.21217
+483_0,Euphausia superba_6,2012,80510.21217
+483_0,Gempylidae_4,2012,8.00E-04
+483_0,Gymnoscopelus bolini_6,2008,0.000149
+483_0,Gymnoscopelus nicholsi_6,2007,0.094163667
+483_0,Gymnoscopelus nicholsi_6,2008,0.094163667
+483_0,Gymnoscopelus nicholsi_6,2009,0.094163667
+483_0,Gymnoscopelus nicholsi_6,2012,0.094163667
+483_0,Lamna nasus_6,2007,0.09
+483_0,Lamna nasus_6,2011,0.09
+483_0,Liparididae_4,2010,1.00E-05
+483_0,Lithodes murrayi_6,2010,0.051
+483_0,Lithodes murrayi_6,2011,0.051
+483_0,Lithodidae_4,2006,0.3608014
+483_0,Lithodidae_4,2008,0.3608014
+483_0,Lithodidae_4,2011,0.3608014
+483_0,Lithodidae_4,2012,0.3608014
+483_0,Macrourus spp_5,2006,63.820398
+483_0,Macrourus spp_5,2008,63.820398
+483_0,Macrourus spp_5,2009,63.820398
+483_0,Magnisudis prionosa_6,2010,0.000525
+483_0,Mancopsetta maculata_6,2007,0.0094288
+483_0,Mancopsetta maculata_6,2008,0.0094288
+483_0,Mancopsetta maculata_6,2009,0.0094288
+483_0,Mancopsetta maculata_6,2012,0.0094288
+483_0,Melanostigma spp_5,2008,0.000162
+483_0,Moroteuthis knipovitchi_6,2009,0.0018005
+483_0,Moroteuthis knipovitchi_6,2011,0.0018005
+483_0,Muraenolepis microps_6,2007,0.022059932
+483_0,Muraenolepis microps_6,2008,0.022059932
+483_0,Muraenolepis microps_6,2009,0.022059932
+483_0,Muraenolepis microps_6,2010,0.022059932
+483_0,Muraenolepis microps_6,2012,0.022059932
+483_0,Muraenolepis spp_5,2008,0.00496
+483_0,Muraenolepis spp_5,2011,0.00496
+483_0,Myctophidae_4,2009,3690.349988
+483_0,Myctophidae_4,2010,3690.349988
+483_0,Neolithodes diomedeae_6,2007,0.230825
+483_0,Notolepis annulata_6,2007,3.60E-05
+483_0,Notothenia angustifrons_6,2008,3.10E-05
+483_0,Notothenia gibberifrons_6,2007,1496.240767
+483_0,Notothenia gibberifrons_6,2008,1496.240767
+483_0,Notothenia gibberifrons_6,2010,1496.240767
+483_0,Notothenia kempi_6,2008,0.0035
+483_0,Notothenia rossii_6,2006,173.5423819
+483_0,Notothenia rossii_6,2007,173.5423819
+483_0,Notothenia rossii_6,2008,173.5423819
+483_0,Notothenia rossii_6,2009,173.5423819
+483_0,Notothenia rossii_6,2011,173.5423819
+483_0,Notothenia rossii_6,2012,173.5423819
+483_0,Notothenia squamifrons_6,2007,348.2223953
+483_0,Notothenia squamifrons_6,2008,348.2223953
+483_0,Nototheniidae_4,2008,67.62275383
+483_0,Nototheniidae_4,2009,67.62275383
+483_0,Nototheniidae_4,2010,67.62275383
+483_0,Nototheniidae_4,2012,67.62275383
+483_0,Nototheniops larseni_6,2010,0.054178
+483_0,Nototheniops larseni_6,2012,0.054178
+483_0,Nototheniops nudifrons_6,2007,0.03033833
+483_0,Nototheniops nudifrons_6,2008,0.03033833
+483_0,Nototheniops nudifrons_6,2010,0.03033833
+483_0,Nototheniops nudifrons_6,2011,0.03033833
+483_0,Nototheniops nudifrons_6,2012,0.03033833
+483_0,Osteichthyes_2,2011,2030.446703
+483_0,Osteichthyes_2,2012,2030.446703
+483_0,Pagothenia hansoni_6,2007,0.1102412
+483_0,Pagothenia hansoni_6,2008,0.1102412
+483_0,Pagothenia hansoni_6,2010,0.1102412
+483_0,Parachaenichthys georgianus_6,2007,0.020158367
+483_0,Parachaenichthys georgianus_6,2008,0.020158367
+483_0,Parachaenichthys georgianus_6,2010,0.020158367
+483_0,Parachaenichthys georgianus_6,2011,0.020158367
+483_0,Paradiplospinus gracilis_6,2008,0.0002918
+483_0,Paradiplospinus gracilis_6,2009,0.0002918
+483_0,Paradiplospinus gracilis_6,2010,0.0002918
+483_0,Paradiplospinus gracilis_6,2011,0.0002918
+483_0,Paradiplospinus gracilis_6,2012,0.0002918
+483_0,Paralomis formosa_6,2007,8.0447203
+483_0,Paralomis formosa_6,2010,8.0447203
+483_0,Paralomis formosa_6,2011,8.0447203
+483_0,Paralomis formosa_6,2012,8.0447203
+483_0,Paralomis spinosissima_6,2010,90.4151008
+483_0,Paralomis spinosissima_6,2011,90.4151008
+483_0,Pareledone turqueti_6,2007,0.257207
+483_0,Patagonotothen brevicauda_6,2007,7273.569036
+483_0,Patagonotothen brevicauda_6,2008,7273.569036
+483_0,Patagonotothen brevicauda_6,2009,7273.569036
+483_0,Patagonotothen brevicauda_6,2010,7273.569036
+483_0,Patagonotothen brevicauda_6,2012,7273.569036
+483_0,Protomyctophum choriodon_6,2008,2.70E-05
+483_0,Pseudochaenichthys georgianus_6,2006,191.6115639
+483_0,Pseudochaenichthys georgianus_6,2010,191.6115639
+483_0,Pseudochaenichthys georgianus_6,2012,191.6115639
+483_0,Psilodraco breviceps_6,2007,0.002009
+483_0,Psilodraco breviceps_6,2008,0.002009
+483_0,Psilodraco breviceps_6,2010,0.002009
+483_0,Raja georgiana_6,2007,0.263261334
+483_0,Raja georgiana_6,2008,0.263261334
+483_0,Raja georgiana_6,2012,0.263261334
+483_0,Rajiformes_3,2006,17.62919333
+483_0,Rajiformes_3,2007,17.62919333
+483_0,Rajiformes_3,2009,17.62919333
+483_0,Rajiformes_3,2011,17.62919333
+483_0,Teuthoidea_4,2012,2.00E-04
+483_0,Trematomus vicarius_6,2009,0.000102
+484_0,Antimora rostrata_6,2008,0.4462475
+484_0,Antimora rostrata_6,2009,0.4462475
+484_0,Antimora rostrata_6,2010,0.4462475
+484_0,Antimora rostrata_6,2012,0.4462475
+484_0,Channichthyidae_4,2010,0.0011
+484_0,Channichthyidae_4,2011,0.0011
+484_0,Dissostichus eleginoides_6,2008,43.9054075
+484_0,Dissostichus eleginoides_6,2011,43.9054075
+484_0,Dissostichus mawsoni_6,2006,29.0378275
+484_0,Dissostichus mawsoni_6,2008,29.0378275
+484_0,Dissostichus mawsoni_6,2009,29.0378275
+484_0,Dissostichus mawsoni_6,2010,29.0378275
+484_0,Lithodidae_4,2006,0.004466667
+484_0,Lithodidae_4,2007,0.004466667
+484_0,Lithodidae_4,2010,0.004466667
+484_0,Macrourus spp_5,2007,11.82201
+484_0,Macrourus spp_5,2009,11.82201
+484_0,Macrourus spp_5,2010,11.82201
+484_0,Macrourus spp_5,2011,11.82201
+484_0,Macrourus spp_5,2012,11.82201
+484_0,Macrourus whitsoni_6,2012,0.5675
+484_0,Muraenolepis spp_5,2006,0.19766
+484_0,Muraenolepis spp_5,2007,0.19766
+484_0,Muraenolepis spp_5,2009,0.19766
+484_0,Muraenolepis spp_5,2010,0.19766
+484_0,Muraenolepis spp_5,2012,0.19766
+484_0,Nototheniidae_4,2006,0.0128975
+484_0,Nototheniidae_4,2007,0.0128975
+484_0,Nototheniidae_4,2010,0.0128975
+484_0,Nototheniidae_4,2012,0.0128975
+484_0,Rajiformes_3,2007,2.032975
+484_0,Rajiformes_3,2008,2.032975
+484_0,Rajiformes_3,2009,2.032975
+484_0,Rajiformes_3,2010,2.032975
+486_0,Antimora rostrata_6,2006,0.955152404
+486_0,Antimora rostrata_6,2008,0.955152404
+486_0,Antimora rostrata_6,2009,0.955152404
+486_0,Antimora rostrata_6,2010,0.955152404
+486_0,Antimora rostrata_6,2011,0.955152404
+486_0,Antimora rostrata_6,2012,0.955152404
+486_0,Chaenocephalus aceratus_6,2007,0.0228
+486_0,Channichthyidae_4,2007,0.2167975
+486_0,Channichthyidae_4,2009,0.2167975
+486_0,Channichthyidae_4,2010,0.2167975
+486_0,Channichthyidae_4,2011,0.2167975
+486_0,Chionobathyscus dewitti_6,2009,0.2813
+486_0,Dissostichus eleginoides_6,2009,26.5179525
+486_0,Dissostichus eleginoides_6,2010,26.5179525
+486_0,Dissostichus eleginoides_6,2011,26.5179525
+486_0,Dissostichus mawsoni_6,2006,146.629566
+486_0,Dissostichus mawsoni_6,2007,146.629566
+486_0,Dissostichus mawsoni_6,2008,146.629566
+486_0,Dissostichus mawsoni_6,2009,146.629566
+486_0,Dissostichus mawsoni_6,2011,146.629566
+486_0,Lithodes murrayi_6,2007,0.007
+486_0,Lithodes spp_5,2010,0.0027
+486_0,Lithodidae_4,2006,0.120625
+486_0,Lithodidae_4,2007,0.120625
+486_0,Lithodidae_4,2008,0.120625
+486_0,Lithodidae_4,2009,0.120625
+486_0,Macrourus spp_5,2007,6.524038
+486_0,Macrourus spp_5,2008,6.524038
+486_0,Macrourus spp_5,2009,6.524038
+486_0,Macrourus spp_5,2011,6.524038
+486_0,Macrourus whitsoni_6,2007,0.1694
+486_0,Muraenolepis marmoratus_6,2007,0.01795
+486_0,Muraenolepis microps_6,2010,0.0023
+486_0,Muraenolepis spp_5,2007,0.027
+486_0,Muraenolepis spp_5,2008,0.027
+486_0,Muraenolepis spp_5,2009,0.027
+486_0,Muraenolepis spp_5,2010,0.027
+486_0,Muraenolepis spp_5,2011,0.027
+486_0,Notothenia kempi_6,2006,0.02387
+486_0,Notothenia kempi_6,2007,0.02387
+486_0,Nototheniidae_4,2010,0.0015
+486_0,Octopodidae_4,2010,0.0011
+486_0,Paralomis spp_5,2007,0.00205
+486_0,Paralomis spp_5,2010,0.00205
+486_0,Raja spp_5,2009,0.008
+5841_0,Antimora rostrata_6,2007,0.027135
+5841_0,Antimora rostrata_6,2008,0.027135
+5841_0,Antimora rostrata_6,2009,0.027135
+5841_0,Antimora rostrata_6,2010,0.027135
+5841_0,Bathyraja eatonii_6,2007,0.1001
+5841_0,Bathyraja spp_5,2006,0.008
+5841_0,Careproctus spp_5,2011,0.001015
+5841_0,Cephalopoda_2,2006,5.00E-04
+5841_0,Chaenocephalus aceratus_6,2007,0.583986667
+5841_0,Chaenocephalus aceratus_6,2008,0.583986667
+5841_0,Channichthyidae_4,2008,0.239615
+5841_0,Channichthyidae_4,2009,0.239615
+5841_0,Channichthyidae_4,2010,0.239615
+5841_0,Chionobathyscus dewitti_6,2008,0.4105
+5841_0,Chionobathyscus dewitti_6,2011,0.4105
+5841_0,Cryodraco antarcticus_6,2008,0.0132
+5841_0,Dissostichus eleginoides_6,2010,1.128365
+5841_0,Dissostichus eleginoides_6,2011,1.128365
+5841_0,Dissostichus mawsoni_6,2007,332.449929
+5841_0,Dissostichus mawsoni_6,2008,332.449929
+5841_0,Dissostichus mawsoni_6,2010,332.449929
+5841_0,Dissostichus mawsoni_6,2011,332.449929
+5841_0,Dissostichus mawsoni_6,2012,332.449929
+5841_0,Lampris guttatus_6,2008,0.03
+5841_0,Macrouridae_4,2008,1.3151
+5841_0,Macrourus spp_5,2009,5.685678
+5841_0,Macrourus spp_5,2010,5.685678
+5841_0,Macrourus spp_5,2012,5.685678
+5841_0,Macrourus whitsoni_6,2007,0.558
+5841_0,Muraenolepis microps_6,2008,0.09695
+5841_0,Muraenolepis microps_6,2011,0.09695
+5841_0,Muraenolepis spp_5,2006,0.080244
+5841_0,Muraenolepis spp_5,2008,0.080244
+5841_0,Muraenolepis spp_5,2009,0.080244
+5841_0,Muraenolepis spp_5,2011,0.080244
+5841_0,Muraenolepis spp_5,2012,0.080244
+5841_0,Notothenia kempi_6,2011,0.0013
+5841_0,Nototheniidae_4,2007,0.06787
+5841_0,Octopodidae_4,2007,0.01552
+5841_0,Octopodidae_4,2009,0.01552
+5841_0,Octopodidae_4,2011,0.01552
+5841_0,Pachycara brachycephalum_6,2009,0.00898
+5841_0,Patagonotothen brevicauda_6,2012,0.0118
+5841_0,Pogonophryne permitini_6,2007,0.01742
+5841_0,Pogonophryne spp_5,2009,0.01378
+5841_0,Rajiformes_3,2009,0.0294
+5842_0,Antimora rostrata_6,2008,0.136614
+5842_0,Antimora rostrata_6,2009,0.136614
+5842_0,Antimora rostrata_6,2010,0.136614
+5842_0,Bathyraja eatonii_6,2008,0.76225
+5842_0,Cephalopoda_2,2006,0.0075
+5842_0,Chaenocephalus aceratus_6,2007,0.139166667
+5842_0,Chaenocephalus aceratus_6,2008,0.139166667
+5842_0,Channichthyidae_4,2006,0.1638525
+5842_0,Channichthyidae_4,2007,0.1638525
+5842_0,Channichthyidae_4,2009,0.1638525
+5842_0,Channichthyidae_4,2010,0.1638525
+5842_0,Channichthyidae_4,2011,0.1638525
+5842_0,Channichthyidae_4,2012,0.1638525
+5842_0,Chionobathyscus dewitti_6,2007,0.17185
+5842_0,Chionobathyscus dewitti_6,2008,0.17185
+5842_0,Chionobathyscus dewitti_6,2009,0.17185
+5842_0,Dissostichus eleginoides_6,2007,0.340483333
+5842_0,Dissostichus eleginoides_6,2008,0.340483333
+5842_0,Dissostichus mawsoni_6,2007,74.28182222
+5842_0,Dissostichus mawsoni_6,2008,74.28182222
+5842_0,Dissostichus mawsoni_6,2009,74.28182222
+5842_0,Macrourus spp_5,2006,6.423985
+5842_0,Macrourus spp_5,2007,6.423985
+5842_0,Macrourus spp_5,2008,6.423985
+5842_0,Macrourus spp_5,2009,6.423985
+5842_0,Macrourus spp_5,2010,6.423985
+5842_0,Macrourus spp_5,2012,6.423985
+5842_0,Macrourus whitsoni_6,2007,1.037
+5842_0,Macrourus whitsoni_6,2008,1.037
+5842_0,Muraenolepis marmoratus_6,2007,0.048783333
+5842_0,Muraenolepis spp_5,2007,0.1737025
+5842_0,Muraenolepis spp_5,2008,0.1737025
+5842_0,Muraenolepis spp_5,2009,0.1737025
+5842_0,Muraenolepis spp_5,2010,0.1737025
+5842_0,Muraenolepis spp_5,2011,0.1737025
+5842_0,Muraenolepis spp_5,2012,0.1737025
+5842_0,Octopodidae_4,2006,0.00275
+5842_0,Pogonophryne permitini_6,2007,2.00E-04
+5842_0,Pogonophryne spp_5,2009,0.008655
+5842_0,Pogonophryne spp_5,2011,0.008655
+5842_0,Raja spp_5,2008,0.083
+5842_0,Rajiformes_3,2006,0.038125
+58431_0,Antimora rostrata_6,2008,1.57762
+58431_0,Antimora rostrata_6,2009,1.57762
+58431_0,Antimora rostrata_6,2011,1.57762
+58431_0,Antimora rostrata_6,2012,1.57762
+58431_0,Dissostichus eleginoides_6,2009,23.75039333
+58431_0,Dissostichus eleginoides_6,2011,23.75039333
+58431_0,Dissostichus eleginoides_6,2012,23.75039333
+58431_0,Dissostichus mawsoni_6,2007,0.426406667
+58431_0,Dissostichus mawsoni_6,2008,0.426406667
+58431_0,Dissostichus mawsoni_6,2009,0.426406667
+58431_0,Lithodidae_4,2007,0.01675
+58431_0,Lithodidae_4,2009,0.01675
+58431_0,Macrourus spp_5,2006,1.2321
+58431_0,Macrourus spp_5,2008,1.2321
+58431_0,Macrourus spp_5,2009,1.2321
+58431_0,Macrourus spp_5,2011,1.2321
+58431_0,Macrourus spp_5,2012,1.2321
+58431_0,Macrourus whitsoni_6,2007,0.34465
+58431_0,Raja taaf_6,2008,11.348
+58431_0,Raja taaf_6,2012,11.348
+58431_0,Rajiformes_3,2006,2.2704375
+58431_0,Rajiformes_3,2007,2.2704375
+58431_0,Rajiformes_3,2009,2.2704375
+58431_0,Rajiformes_3,2011,2.2704375
+58432_0,Antimora rostrata_6,2007,0.346363333
+58432_0,Antimora rostrata_6,2008,0.346363333
+58432_0,Antimora rostrata_6,2009,0.346363333
+58432_0,Antimora rostrata_6,2010,0.346363333
+58432_0,Antimora rostrata_6,2012,0.346363333
+58432_0,Bathydraconidae_4,2008,1.00E-04
+58432_0,Bathyraja murrayi_6,2006,0.1095
+58432_0,Channichthyidae_4,2007,0.004
+58432_0,Chionobathyscus dewitti_6,2008,0.001
+58432_0,Dissostichus eleginoides_6,2006,17.90192625
+58432_0,Dissostichus eleginoides_6,2007,17.90192625
+58432_0,Dissostichus eleginoides_6,2009,17.90192625
+58432_0,Dissostichus eleginoides_6,2010,17.90192625
+58432_0,Dissostichus eleginoides_6,2011,17.90192625
+58432_0,Dissostichus eleginoides_6,2012,17.90192625
+58432_0,Dissostichus mawsoni_6,2006,124.799445
+58432_0,Dissostichus mawsoni_6,2007,124.799445
+58432_0,Dissostichus mawsoni_6,2008,124.799445
+58432_0,Dissostichus mawsoni_6,2009,124.799445
+58432_0,Dissostichus mawsoni_6,2011,124.799445
+58432_0,Dissostichus mawsoni_6,2012,124.799445
+58432_0,Lithodes spp_5,2007,0.027
+58432_0,Lithodidae_4,2006,0.017925
+58432_0,Lithodidae_4,2007,0.017925
+58432_0,Lithodidae_4,2008,0.017925
+58432_0,Lithodidae_4,2009,0.017925
+58432_0,Macrouridae_4,2008,0.212
+58432_0,Macrourus spp_5,2006,4.683758333
+58432_0,Macrourus spp_5,2007,4.683758333
+58432_0,Macrourus spp_5,2008,4.683758333
+58432_0,Macrourus spp_5,2009,4.683758333
+58432_0,Macrourus spp_5,2011,4.683758333
+58432_0,Macrourus whitsoni_6,2007,5.705465
+58432_0,Macrourus whitsoni_6,2008,5.705465
+58432_0,Muraenolepis orangiensis_6,2008,0.0015
+58432_0,Muraenolepis spp_5,2007,0.019791429
+58432_0,Muraenolepis spp_5,2008,0.019791429
+58432_0,Muraenolepis spp_5,2009,0.019791429
+58432_0,Muraenolepis spp_5,2010,0.019791429
+58432_0,Muraenolepis spp_5,2011,0.019791429
+58432_0,Muraenolepis spp_5,2012,0.019791429
+58432_0,Notothenia kempi_6,2008,0.31985
+58432_0,Notothenia squamifrons_6,2007,0.23815
+58432_0,Notothenia squamifrons_6,2009,0.23815
+58432_0,Nototheniidae_4,2008,0.08923
+58432_0,Raja spp_5,2006,0.182
+58432_0,Raja spp_5,2008,0.182
+58432_0,Raja taaf_6,2008,0.88834
+58432_0,Rajiformes_3,2006,0.707158333
+58432_0,Rajiformes_3,2007,0.707158333
+58432_0,Rajiformes_3,2008,0.707158333
+58432_0,Rajiformes_3,2009,0.707158333
+58432_0,Rajiformes_3,2010,0.707158333
+58432_0,Rajiformes_3,2012,0.707158333
+58432_0,Salilota australis_6,2007,0.0352
+58441_0,Antimora rostrata_6,2008,0.2638
+58441_0,Antimora rostrata_6,2010,0.2638
+58441_0,Dissostichus eleginoides_6,2008,28.334925
+58441_0,Lithodes spp_5,2010,0.00195
+58441_0,Lithodidae_4,2008,0.0456
+58441_0,Macrourus spp_5,2008,0.27655
+58441_0,Macrourus spp_5,2010,0.27655
+58441_0,Nototheniidae_4,2008,0.02585
+58441_0,Nototheniidae_4,2010,0.02585
+58441_0,Rajiformes_3,2010,0.0055
+58442_0,Antimora rostrata_6,2008,0.677433333
+58442_0,Antimora rostrata_6,2012,0.677433333
+58442_0,Dissostichus eleginoides_6,2008,24.36043273
+58442_0,Dissostichus eleginoides_6,2010,24.36043273
+58442_0,Dissostichus eleginoides_6,2012,24.36043273
+58442_0,Dissostichus mawsoni_6,2008,0.0508
+58442_0,Halargyreus johnsonii_6,2008,0.00035
+58442_0,Lepidion spp_5,2008,0.00035
+58442_0,Lithodes spp_5,2010,0.0051
+58442_0,Lithodidae_4,2008,0.07415
+58442_0,Macrourus spp_5,2010,3.32178
+58442_0,Macrourus spp_5,2011,3.32178
+58442_0,Macrourus spp_5,2012,3.32178
+58442_0,Muraenolepis spp_5,2011,0.0112
+58442_0,Nototheniidae_4,2011,0.0872
+58442_0,Nototheniidae_4,2012,0.0872
+58442_0,Rajiformes_3,2008,0.160683333
+58442_0,Rajiformes_3,2010,0.160683333
+58442_0,Rajiformes_3,2011,0.160683333
+5851_0,Antimora rostrata_6,2008,63.2511
+5851_0,Antimora rostrata_6,2010,63.2511
+5851_0,Dissostichus eleginoides_6,2008,4355.234436
+5851_0,Dissostichus eleginoides_6,2009,4355.234436
+5851_0,Dissostichus eleginoides_6,2010,4355.234436
+5851_0,Dissostichus eleginoides_6,2011,4355.234436
+5851_0,Dissostichus eleginoides_6,2012,4355.234436
+5851_0,Macrourus carinatus_6,2008,752.0120091
+5851_0,Macrourus carinatus_6,2012,752.0120091
+5851_0,Macrourus spp_5,2006,389.1151398
+5851_0,Macrourus spp_5,2007,389.1151398
+5851_0,Notothenia squamifrons_6,2010,486.5359283
+5851_0,Raja spp_5,2008,373.8712125
+5851_0,Raja spp_5,2009,373.8712125
+5851_0,Raja spp_5,2011,373.8712125
+5851_0,Raja spp_5,2012,373.8712125
+5851_0,Raja taaf_6,2008,22.78269325
+5851_0,Rajiformes_3,2007,204.7652077
+5852_0,Antimora rostrata_6,2006,2.052686
+5852_0,Antimora rostrata_6,2009,2.052686
+5852_0,Antimora rostrata_6,2012,2.052686
+5852_0,Bathylagus antarcticus_6,2009,0.00174
+5852_0,Bathyraja eatonii_6,2006,8.999006667
+5852_0,Bathyraja eatonii_6,2008,8.999006667
+5852_0,Bathyraja eatonii_6,2010,8.999006667
+5852_0,Bathyraja eatonii_6,2012,8.999006667
+5852_0,Bathyraja irrasa_6,2006,4.962281333
+5852_0,Bathyraja irrasa_6,2007,4.962281333
+5852_0,Bathyraja irrasa_6,2009,4.962281333
+5852_0,Bathyraja irrasa_6,2011,4.962281333
+5852_0,Bathyraja irrasa_6,2012,4.962281333
+5852_0,Bathyraja murrayi_6,2007,0.848185875
+5852_0,Bathyraja murrayi_6,2008,0.848185875
+5852_0,Bathyraja murrayi_6,2009,0.848185875
+5852_0,Bathyraja murrayi_6,2010,0.848185875
+5852_0,Bathyraja murrayi_6,2011,0.848185875
+5852_0,Bathyraja murrayi_6,2012,0.848185875
+5852_0,Borostomias antarcticus_6,2012,0.000129922
+5852_0,Bothidae_4,2007,0.00315
+5852_0,Bothidae_4,2012,0.00315
+5852_0,Champsocephalus gunnari_6,2007,395.6000717
+5852_0,Champsocephalus gunnari_6,2008,395.6000717
+5852_0,Champsocephalus gunnari_6,2009,395.6000717
+5852_0,Champsocephalus gunnari_6,2010,395.6000717
+5852_0,Champsocephalus gunnari_6,2012,395.6000717
+5852_0,Channichthyidae_4,2006,0.012998621
+5852_0,Channichthyidae_4,2008,0.012998621
+5852_0,Channichthys rhinoceratus_6,2007,20.73174324
+5852_0,Channichthys rhinoceratus_6,2008,20.73174324
+5852_0,Channichthys rhinoceratus_6,2009,20.73174324
+5852_0,Channichthys rhinoceratus_6,2010,20.73174324
+5852_0,Channichthys rhinoceratus_6,2011,20.73174324
+5852_0,Channichthys rhinoceratus_6,2012,20.73174324
+5852_0,Cynomacrurus piriei_6,2009,0.363388
+5852_0,Cynomacrurus piriei_6,2012,0.363388
+5852_0,Dissostichus eleginoides_6,2006,2344.830302
+5852_0,Dissostichus eleginoides_6,2007,2344.830302
+5852_0,Dissostichus eleginoides_6,2009,2344.830302
+5852_0,Dissostichus eleginoides_6,2010,2344.830302
+5852_0,Dissostichus eleginoides_6,2011,2344.830302
+5852_0,Dissostichus eleginoides_6,2012,2344.830302
+5852_0,Etmopterus granulosus_6,2007,0.029039671
+5852_0,Etmopterus granulosus_6,2012,0.029039671
+5852_0,Etmopterus spp_5,2009,0.030455
+5852_0,Genypterus spp_5,2009,0.021
+5852_0,Halargyreus johnsonii_6,2009,0.000629521
+5852_0,Icichthys australis_6,2009,0.005029
+5852_0,Lampris immaculatus_6,2009,0.08275
+5852_0,Lampris immaculatus_6,2011,0.08275
+5852_0,Lithodidae_4,2009,0.00398
+5852_0,Lithodidae_4,2012,0.00398
+5852_0,"Loliginidae, Ommastrephidae_3",2011,0.03746
+5852_0,Macrourus spp_5,2009,28.1771425
+5852_0,Macrourus spp_5,2010,28.1771425
+5852_0,Macrourus whitsoni_6,2007,9.972388
+5852_0,Macrourus whitsoni_6,2010,9.972388
+5852_0,Macrourus whitsoni_6,2011,9.972388
+5852_0,Macrourus whitsoni_6,2012,9.972388
+5852_0,Muraenolepis microps_6,2012,0.075
+5852_0,Muraenolepis spp_5,2006,0.002675
+5852_0,Muraenolepis spp_5,2007,0.002675
+5852_0,Muraenolepis spp_5,2008,0.002675
+5852_0,Muraenolepis spp_5,2012,0.002675
+5852_0,Myctophidae_4,2009,0.008090632
+5852_0,Myctophidae_4,2012,0.008090632
+5852_0,Notothenia acuta_6,2009,0.071455143
+5852_0,Notothenia acuta_6,2011,0.071455143
+5852_0,Notothenia kempi_6,2012,0.007
+5852_0,Notothenia squamifrons_6,2006,8.559029188
+5852_0,Notothenia squamifrons_6,2008,8.559029188
+5852_0,Notothenia squamifrons_6,2009,8.559029188
+5852_0,Notothenia squamifrons_6,2011,8.559029188
+5852_0,Notothenia squamifrons_6,2012,8.559029188
+5852_0,Nototheniidae_4,2007,1.027386667
+5852_0,Nototheniidae_4,2012,1.027386667
+5852_0,Nototheniops mizops_6,2011,0.0716975
+5852_0,Octopodidae_4,2007,0.062559167
+5852_0,Octopodidae_4,2008,0.062559167
+5852_0,Octopodidae_4,2009,0.062559167
+5852_0,Osteichthyes_2,2011,0.273
+5852_0,Paradiplospinus gracilis_6,2009,0.0016735
+5852_0,Paralomis aculeata_6,2006,0.006663338
+5852_0,Rajiformes_3,2006,11.45116618
+5852_0,Rajiformes_3,2007,11.45116618
+5852_0,Rajiformes_3,2008,11.45116618
+5852_0,Rajiformes_3,2009,11.45116618
+5852_0,Rajiformes_3,2010,11.45116618
+5852_0,Rajiformes_3,2012,11.45116618
+5852_0,Somniosus pacificus_6,2006,1.395822
+5852_0,Somniosus pacificus_6,2007,1.395822
+5852_0,Somniosus pacificus_6,2010,1.395822
+5852_0,Teuthoidea_4,2011,0.07824
+586_0,Antimora rostrata_6,2006,32.79106636
+586_0,Antimora rostrata_6,2007,32.79106636
+586_0,Antimora rostrata_6,2009,32.79106636
+586_0,Antimora rostrata_6,2010,32.79106636
+586_0,Antimora rostrata_6,2012,32.79106636
+586_0,Dissostichus eleginoides_6,2007,677.7445982
+586_0,Dissostichus eleginoides_6,2008,677.7445982
+586_0,Dissostichus eleginoides_6,2009,677.7445982
+586_0,Macrourus carinatus_6,2008,109.404556
+586_0,Macrourus carinatus_6,2010,109.404556
+586_0,Macrourus carinatus_6,2011,109.404556
+586_0,Macrourus carinatus_6,2012,109.404556
+586_0,Macrourus spp_5,2008,64.43214922
+586_0,Macrourus spp_5,2009,64.43214922
+586_0,Macrourus spp_5,2011,64.43214922
+586_0,Raja spp_5,2008,15.69068953
+586_0,Raja taaf_6,2009,59.9100759
+586_0,Raja taaf_6,2012,59.9100759
+586_0,Rajiformes_3,2009,15.72609111
+586_0,Rajiformes_3,2011,15.72609111
+587_0,Antimora rostrata_6,2006,1.263534545
+587_0,Antimora rostrata_6,2007,1.263534545
+587_0,Antimora rostrata_6,2008,1.263534545
+587_0,Antimora rostrata_6,2010,1.263534545
+587_0,Antimora rostrata_6,2011,1.263534545
+587_0,Antimora rostrata_6,2012,1.263534545
+587_0,Dissostichus eleginoides_6,2008,427.9151191
+587_0,Dissostichus eleginoides_6,2010,427.9151191
+587_0,Dissostichus eleginoides_6,2011,427.9151191
+587_0,Lithodidae_4,2012,1.89236
+587_0,Macrourus spp_5,2006,12.01356667
+587_0,Macrourus spp_5,2007,12.01356667
+587_0,Macrourus spp_5,2009,12.01356667
+587_0,Macrourus spp_5,2010,12.01356667
+587_0,Macrourus spp_5,2011,12.01356667
+587_0,Rajiformes_3,2011,1.56547375
+587_0,Rajiformes_3,2012,1.56547375
+881_0,Antimora rostrata_6,2006,3.0390754
+881_0,Antimora rostrata_6,2007,3.0390754
+881_0,Antimora rostrata_6,2008,3.0390754
+881_0,Antimora rostrata_6,2009,3.0390754
+881_0,Antimora rostrata_6,2010,3.0390754
+881_0,Antimora rostrata_6,2011,3.0390754
+881_0,Antimora rostrata_6,2012,3.0390754
+881_0,Bathydraco antarcticus_6,2012,1.00E-04
+881_0,Bathyraja eatonii_6,2007,0.977385455
+881_0,Bathyraja eatonii_6,2008,0.977385455
+881_0,Bathyraja eatonii_6,2009,0.977385455
+881_0,Bathyraja eatonii_6,2011,0.977385455
+881_0,Bathyraja eatonii_6,2012,0.977385455
+881_0,Bathyraja maccaini_6,2008,0.06832
+881_0,Bathyraja maccaini_6,2009,0.06832
+881_0,Bathyraja maccaini_6,2011,0.06832
+881_0,Bathyraja maccaini_6,2012,0.06832
+881_0,Bathyraja spp_5,2006,1.51825
+881_0,Careproctus spp_5,2012,1.00E-04
+881_0,Champsocephalus gunnari_6,2006,0.1215
+881_0,Channichthyidae_4,2006,3.7243975
+881_0,Channichthyidae_4,2007,3.7243975
+881_0,Channichthyidae_4,2009,3.7243975
+881_0,Channichthyidae_4,2010,3.7243975
+881_0,Channichthyidae_4,2011,3.7243975
+881_0,Channichthyidae_4,2012,3.7243975
+881_0,Chionobathyscus dewitti_6,2007,0.552208333
+881_0,Chionobathyscus dewitti_6,2008,0.552208333
+881_0,Chionobathyscus dewitti_6,2010,0.552208333
+881_0,Chionobathyscus dewitti_6,2011,0.552208333
+881_0,Chionobathyscus dewitti_6,2012,0.552208333
+881_0,Coryphaenoides armatus_6,2007,0.00233
+881_0,Coryphaenoides spp_5,2008,0.0351
+881_0,Cryodraco spp_5,2006,0.4105
+881_0,Dacodraco hunteri_6,2007,0.00032
+881_0,Dissostichus eleginoides_6,2006,4.709917778
+881_0,Dissostichus eleginoides_6,2008,4.709917778
+881_0,Dissostichus eleginoides_6,2009,4.709917778
+881_0,Dissostichus eleginoides_6,2010,4.709917778
+881_0,Dissostichus eleginoides_6,2011,4.709917778
+881_0,Dissostichus eleginoides_6,2012,4.709917778
+881_0,Dissostichus mawsoni_6,2006,2205.669465
+881_0,Dissostichus mawsoni_6,2007,2205.669465
+881_0,Dissostichus mawsoni_6,2008,2205.669465
+881_0,Dissostichus mawsoni_6,2009,2205.669465
+881_0,Dissostichus mawsoni_6,2010,2205.669465
+881_0,Dissostichus mawsoni_6,2011,2205.669465
+881_0,Dissostichus mawsoni_6,2012,2205.669465
+881_0,Euphausia superba_6,2008,1397.7793
+881_0,Lampris guttatus_6,2011,0.0221
+881_0,Lampris immaculatus_6,2011,0.061025
+881_0,Lampris immaculatus_6,2012,0.061025
+881_0,Lepidion spp_5,2007,0.0122
+881_0,Lepidion spp_5,2011,0.0122
+881_0,Lepidion spp_5,2012,0.0122
+881_0,Liparididae_4,2007,4.00E-04
+881_0,Lithodes murrayi_6,2008,0.00455
+881_0,Lithodes spp_5,2007,0.00142
+881_0,Lithodidae_4,2006,0.0074125
+881_0,Lithodidae_4,2007,0.0074125
+881_0,Lithodidae_4,2008,0.0074125
+881_0,Lithodidae_4,2010,0.0074125
+881_0,Lithodidae_4,2011,0.0074125
+881_0,Lithodidae_4,2012,0.0074125
+881_0,Macrourus carinatus_6,2010,14.66296667
+881_0,Macrourus carinatus_6,2011,14.66296667
+881_0,Macrourus carinatus_6,2012,14.66296667
+881_0,Macrourus holotrachys_6,2006,0.02762
+881_0,Macrourus holotrachys_6,2007,0.02762
+881_0,Macrourus spp_5,2008,91.6987105
+881_0,Macrourus spp_5,2009,91.6987105
+881_0,Macrourus spp_5,2011,91.6987105
+881_0,Macrourus spp_5,2012,91.6987105
+881_0,Macrourus whitsoni_6,2006,54.737531
+881_0,Macrourus whitsoni_6,2007,54.737531
+881_0,Macrourus whitsoni_6,2009,54.737531
+881_0,Macrourus whitsoni_6,2010,54.737531
+881_0,Macrourus whitsoni_6,2011,54.737531
+881_0,Macrourus whitsoni_6,2012,54.737531
+881_0,Moridae_4,2012,0.01
+881_0,Muraenolepis marmoratus_6,2007,0.05208
+881_0,Muraenolepis marmoratus_6,2010,0.05208
+881_0,Muraenolepis marmoratus_6,2012,0.05208
+881_0,Muraenolepis microps_6,2006,0.86030125
+881_0,Muraenolepis microps_6,2010,0.86030125
+881_0,Muraenolepis microps_6,2011,0.86030125
+881_0,Muraenolepis microps_6,2012,0.86030125
+881_0,Muraenolepis spp_5,2006,5.125789
+881_0,Muraenolepis spp_5,2007,5.125789
+881_0,Muraenolepis spp_5,2008,5.125789
+881_0,Muraenolepis spp_5,2010,5.125789
+881_0,Muraenolepis spp_5,2012,5.125789
+881_0,Neopagetopsis ionah_6,2012,4.00E-04
+881_0,Notothenia kempi_6,2008,0.127233333
+881_0,Notothenia kempi_6,2012,0.127233333
+881_0,Notothenia squamifrons_6,2007,0.005243333
+881_0,Notothenia squamifrons_6,2011,0.005243333
+881_0,Nototheniidae_4,2006,0.378473333
+881_0,Nototheniidae_4,2007,0.378473333
+881_0,Nototheniidae_4,2008,0.378473333
+881_0,Nototheniidae_4,2010,0.378473333
+881_0,Nototheniidae_4,2011,0.378473333
+881_0,Nototheniidae_4,2012,0.378473333
+881_0,Octopodidae_4,2006,0.031919444
+881_0,Octopodidae_4,2007,0.031919444
+881_0,Octopodidae_4,2008,0.031919444
+881_0,Octopodidae_4,2009,0.031919444
+881_0,Octopodidae_4,2010,0.031919444
+881_0,Octopodidae_4,2011,0.031919444
+881_0,Octopodidae_4,2012,0.031919444
+881_0,"Ommastrephes, Illex_5",2007,0.0194
+881_0,Osteichthyes_2,2006,0.681433333
+881_0,Osteichthyes_2,2012,0.681433333
+881_0,Pachycara brachycephalum_6,2009,0.0447
+881_0,Pagothenia hansoni_6,2010,0.0037
+881_0,Paralomis aculeata_6,2008,0.00085
+881_0,Paralomis aculeata_6,2012,0.00085
+881_0,Paralomis anamerae_6,2008,2.00E-05
+881_0,Pareledone turqueti_6,2007,0.00539
+881_0,Pleuragramma antarcticum_6,2008,0.592
+881_0,Pogonophryne permitini_6,2007,0.009687273
+881_0,Pogonophryne permitini_6,2008,0.009687273
+881_0,Pogonophryne permitini_6,2009,0.009687273
+881_0,Pogonophryne permitini_6,2010,0.009687273
+881_0,Pogonophryne permitini_6,2011,0.009687273
+881_0,Pogonophryne permitini_6,2012,0.009687273
+881_0,Pogonophryne scotti_6,2008,0.00585
+881_0,Pogonophryne scotti_6,2009,0.00585
+881_0,Pogonophryne scotti_6,2010,0.00585
+881_0,Pogonophryne scotti_6,2012,0.00585
+881_0,Pogonophryne spp_5,2007,0.011321429
+881_0,Pogonophryne spp_5,2008,0.011321429
+881_0,Pogonophryne spp_5,2009,0.011321429
+881_0,Pogonophryne spp_5,2010,0.011321429
+881_0,Pogonophryne spp_5,2011,0.011321429
+881_0,Pogonophryne spp_5,2012,0.011321429
+881_0,Raja georgiana_6,2006,11.90463267
+881_0,Raja georgiana_6,2007,11.90463267
+881_0,Raja georgiana_6,2008,11.90463267
+881_0,Raja georgiana_6,2010,11.90463267
+881_0,Raja georgiana_6,2011,11.90463267
+881_0,Raja georgiana_6,2012,11.90463267
+881_0,Raja spp_5,2006,7.0061425
+881_0,Raja spp_5,2007,7.0061425
+881_0,Raja spp_5,2010,7.0061425
+881_0,Rajiformes_3,2006,3.770328889
+881_0,Rajiformes_3,2008,3.770328889
+881_0,Rajiformes_3,2009,3.770328889
+881_0,Rajiformes_3,2010,3.770328889
+881_0,Rajiformes_3,2011,3.770328889
+881_0,Rajiformes_3,2012,3.770328889
+881_0,Trematomus spp_5,2007,0.24889
+881_0,Vomeridens infuscipinnis_6,2012,1.00E-04
+882_0,Antimora rostrata_6,2006,3.535290909
+882_0,Antimora rostrata_6,2007,3.535290909
+882_0,Antimora rostrata_6,2008,3.535290909
+882_0,Antimora rostrata_6,2009,3.535290909
+882_0,Antimora rostrata_6,2010,3.535290909
+882_0,Antimora rostrata_6,2011,3.535290909
+882_0,Antimora rostrata_6,2012,3.535290909
+882_0,Bathyraja eatonii_6,2006,0.00573
+882_0,Bathyraja spp_5,2012,0.196
+882_0,Channichthyidae_4,2006,4.223575
+882_0,Channichthyidae_4,2007,4.223575
+882_0,Channichthyidae_4,2008,4.223575
+882_0,Channichthyidae_4,2009,4.223575
+882_0,Channichthyidae_4,2010,4.223575
+882_0,Channichthyidae_4,2012,4.223575
+882_0,Chionobathyscus dewitti_6,2009,1.186973333
+882_0,Chionobathyscus dewitti_6,2010,1.186973333
+882_0,Chionobathyscus dewitti_6,2011,1.186973333
+882_0,Cryodraco antarcticus_6,2010,0.005
+882_0,Dissostichus eleginoides_6,2008,0.043971667
+882_0,Dissostichus eleginoides_6,2009,0.043971667
+882_0,Dissostichus eleginoides_6,2012,0.043971667
+882_0,Dissostichus mawsoni_6,2006,354.87207
+882_0,Dissostichus mawsoni_6,2008,354.87207
+882_0,Dissostichus mawsoni_6,2009,354.87207
+882_0,Dissostichus mawsoni_6,2010,354.87207
+882_0,Dissostichus mawsoni_6,2011,354.87207
+882_0,Lithodidae_4,2006,0.00415
+882_0,Lithodidae_4,2007,0.00415
+882_0,Lithodidae_4,2009,0.00415
+882_0,Lithodidae_4,2011,0.00415
+882_0,Lithodidae_4,2012,0.00415
+882_0,Macrourus carinatus_6,2011,0.62819
+882_0,Macrourus holotrachys_6,2012,0.0275
+882_0,Macrourus spp_5,2006,30.49562
+882_0,Macrourus spp_5,2007,30.49562
+882_0,Macrourus spp_5,2008,30.49562
+882_0,Macrourus spp_5,2009,30.49562
+882_0,Macrourus spp_5,2010,30.49562
+882_0,Macrourus spp_5,2011,30.49562
+882_0,Macrourus spp_5,2012,30.49562
+882_0,Macrourus whitsoni_6,2006,14.568875
+882_0,Macrourus whitsoni_6,2007,14.568875
+882_0,Macrourus whitsoni_6,2008,14.568875
+882_0,Macrourus whitsoni_6,2012,14.568875
+882_0,Moroteuthis ingens_6,2008,0.01
+882_0,Muraenolepis microps_6,2008,0.038725
+882_0,Muraenolepis microps_6,2009,0.038725
+882_0,Muraenolepis microps_6,2010,0.038725
+882_0,Muraenolepis orangiensis_6,2012,0.0107
+882_0,Muraenolepis spp_5,2006,0.5014945
+882_0,Muraenolepis spp_5,2007,0.5014945
+882_0,Muraenolepis spp_5,2008,0.5014945
+882_0,Muraenolepis spp_5,2009,0.5014945
+882_0,Muraenolepis spp_5,2010,0.5014945
+882_0,Muraenolepis spp_5,2011,0.5014945
+882_0,Notothenia kempi_6,2010,0.1105
+882_0,Nototheniidae_4,2006,0.066456667
+882_0,Nototheniidae_4,2011,0.066456667
+882_0,Octopodidae_4,2009,0.008113333
+882_0,Octopodidae_4,2011,0.008113333
+882_0,Paralomis spinosissima_6,2011,0.00184
+882_0,Paralomis spp_5,2010,0.006
+882_0,Pogonophryne spp_5,2010,0.011
+882_0,Raja georgiana_6,2006,0.1113675
+882_0,Raja georgiana_6,2007,0.1113675
+882_0,Raja georgiana_6,2011,0.1113675
+882_0,Raja spp_5,2007,0.10417
+882_0,Rajiformes_3,2009,0.0177
+882_0,Trematomus spp_5,2009,4.00E-04
+883_0,Antimora rostrata_6,2011,0.0954
+883_0,Chionobathyscus dewitti_6,2011,0.0994
+883_0,Dissostichus mawsoni_6,2011,2.80345
+883_0,Dissostichus mawsoni_6,2012,2.80345
+883_0,Lithodidae_4,2011,0.0046
+883_0,Macrourus spp_5,2012,0.35545
+883_0,Muraenolepis spp_5,2012,0.0099
+883_0,Nototheniidae_4,2012,0.0328
+883_0,Pogonophryne spp_5,2011,3.00E-04
+883_0,Pogonophryne spp_5,2012,3.00E-04
+883_0,Raja georgiana_6,2012,0.0193
