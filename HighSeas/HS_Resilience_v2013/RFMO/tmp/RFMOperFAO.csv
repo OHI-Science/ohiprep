@@ -1,0 +1,16 @@
+"rgn_id","rgn_name","ccsbt","iattc","iccat","wcpfc","iotc","ccbsp","gfcm","neafc","nasco","nafo","seafo","siofa","npafc","sprfmo","total"
+"261","Atlantic, Northwest",0,0,1,0,0,0,0,0,0.83,1,0,0,0,0,2.83
+"263","Atlantic, Western-Central",0,0,1,0,0,0,0,0,0,0,0,0,0,0,1
+"273","Pacific, Northeast",0,0.38,0,0.51,0,0,0,0,0,0,0,0,1,0,1.89
+"264","Atlantic, Eastern Central",0,0,1,0,0,0,0,0,0,0,0.07,0,0,0,1.07
+"266","Atlantic, Southwest",0.43,0,1,0,0,0,0,0,0,0,0,0,0,0,1.43
+"267","Atlantic, Southeast",0.73,0,0.92,0,0.05,0,0,0,0,0,1,0,0,0,2.7
+"274","Pacific, Western Central",0,0,0,1,0,0,0,0,0,0,0,0,0,0.36,1.36
+"275","Pacific, Eastern Central",0,0.7,0,0.34,0,0,0,0,0,0,0,0,0.11,0.3,1.45
+"276","Pacific, Southwest",0.23,0.32,0,0.86,0,0,0,0,0,0,0,0,0,1,2.41
+"277","Pacific, Southeast",0,0.89,0,0,0,0,0,0,0,0,0,0,0,0.96,1.85
+"269","Indian Ocean, Western",0.56,0,0,0,1,0,0,0,0,0,0,0.9,0,0,2.46
+"270","Indian Ocean, Eastern",0.75,0,0,0.03,1,0,0,0,0,0,0,0.53,0,0.16,2.47
+"260","Arctic Sea",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"262","Atlantic, Northeast",0,0,1,0,0,0,0,0.99,1,0,0,0,0,0,2.99
+"272","Pacific, Northwest",0,0,0,0.98,0,0.01,0,0,0,0,0,0,0.53,0,1.52
