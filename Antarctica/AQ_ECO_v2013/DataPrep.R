@@ -7,18 +7,18 @@ library(dplyr)
 library(reshape2)
 rm(list = ls())
 
-setwd("N:/model/GL-AQ-Livelihoods_v2013")
+dir_data <- "Antarctica/AQ_ECO_v2013"
 
 # region names
-rgns <- read.csv("N:/git-annex/Global/NCEAS-Antarctica-Other_v2014/rgn_labels_ccamlr.csv", stringsAsFactors=FALSE)
+rgns <- read.csv("Antarctica/Other_v2013/rgn_labels_ccamlr.csv", stringsAsFactors=FALSE)
 
 # relevant years
 status_year <- 2013 #2104 data appears incomplete
-trend_years <-  (status_year-4):status_year
+trend_years <-  (status_year-5):status_year
 
 
 ## Fishing crew ----
-f_crew<-read.csv("raw/fis_crew.csv")
+f_crew<-read.csv(file.path(dir_data, "raw/fis_crew.csv"))
 
 f_crew_melt <- melt(f_crew, id=c("FLAG_STATE", "CALL_SIGN", "SeasonAbbr", "CREW.N"))
 f_crew_melt$variable <- gsub("X","", f_crew_melt$variable)
@@ -46,8 +46,8 @@ ECOdata  <- f_crew_summary %.%
 
 
 ## Tourism crew ----
-tr_n <- read.csv('raw/TR_data_ext.csv') 
-site <- read.csv("tmp/sites_CCAMLR.csv")
+tr_n <- read.csv(file.path(dir_data, 'raw/TR_data_ext.csv')) 
+site <- read.csv(file.path(dir_data, "tmp/Sites_CCAMLR.csv"))
 setdiff(tr_n$Site_name, site$Site_name)
 setdiff(site$Site_name, tr_n$Site_name)
 # these get cut for not being in the CCAMLR region:
@@ -88,6 +88,6 @@ tourists_summary <- tourists_summary %.%
 ## Final organization and save ----
 ECOdata <- rbind(ECOdata, tourists_summary)
 
-write.csv(ECOdata, "data/ECOdata.csv", row.names=FALSE)
+write.csv(ECOdata, file.path(dir_data, "data/ECOdata.csv"), row.names=FALSE, na="")
 
  
