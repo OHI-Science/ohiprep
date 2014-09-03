@@ -1,0 +1,118 @@
+<style type="text/css">
+body, td {
+   font-size: 20px;
+}
+r.code{
+  font-size: 10px;
+}
+pre {
+  font-size: 10px
+}
+</style>
+
+RFMO regions and the High Seas
+========================================================
+Here are some figures of the FAO regions and the RFMO regions. 
+
+We are trying to determine the best way to convert the RFMO scores to regional values.  The complication is mainly when there are overlapping RFMOs.   
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, comment=FALSE, results='hide'}
+
+require(sp)
+library(raster)
+library(rgdal)
+library(maptools)
+library(fields)
+library(maps)
+#library(gpclib)
+library(animation)
+library(plyr)
+library(ncdf)
+library(rasterVis)
+library(rgeos) # gis analysis
+library(plotKML) # create kml maps to check data
+library(geosphere) #find area of polygons for unprojected data
+
+
+setwd("C:\\Users\\Melanie\\Desktop\\HighSeas OHI")
+
+## This changes the defaults to allow polygons that are slightly out of tolerance to be loaded:
+sp::set_ll_warn(FALSE)
+sp::set_ll_TOL(.02)
+
+
+#-----------------------------------------------------------
+# load relevant RFMO regions
+# ----------------------------------------------------------
+
+ccsbt <- readOGR(dsn="Resilience\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_CCSBT")
+iattc <- readOGR(dsn="Resilience\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_IATTC")
+iccat <- readOGR(dsn="Resilience\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_ICCAT")
+wcpfc <- readOGR(dsn="Resilience\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_WCPFC")
+iotc <- readOGR(dsn="Resilience\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_IOTC")
+#ccamlr <- readOGR(dsn="Resilience\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_CCAMLR") #relevant to Antarctica region only
+ccbsp <- readOGR(dsn="Resilience\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_CCBSP")
+gfcm <- readOGR(dsn="Resilience\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_GFCM")
+neafc <- readOGR(dsn="Resilience\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_NEAFC")
+nasco <- readOGR(dsn="Resilience\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_NASCO")
+nafo <- readOGR(dsn="Resilience\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_NAFO")
+seafo <- readOGR(dsn="Resilience\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_SEAFO")
+siofa <- readOGR(dsn="Resilience\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_SIOFA")
+npafc <- readOGR(dsn="Resilience\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_NPAFC")
+sprfmo <- readOGR(dsn="Resilience\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_SPRFMO")
+
+rfmoList <- c("ccsbt", 'iattc', 'iccat', 'wcpfc', 'iotc', 'ccbsp', 'gfcm',
+              'neafc', 'nasco', 'nafo', 'seafo', 'siofa', 'npafc', 'sprfmo')
+#-----------------------------------------------------------
+# load fao data (will need to update this layer)
+# ----------------------------------------------------------
+fao <- readOGR(dsn="FAO_regions", layer="FAO_rgns")
+
+```
+
+The darker red areas indicate overlapping RFMO regions:
+
+```{r fig.width=10, fig.height=7, echo=FALSE}
+plot(fao)
+plot(ccsbt, add=TRUE, col=rgb(1, 0, 0,0.2))
+plot(iattc, add=TRUE, col=rgb(1, 0, 0,0.2))
+plot(iccat, add=TRUE, col=rgb(1, 0, 0,0.2))
+plot(wcpfc, add=TRUE, col=rgb(1, 0, 0,0.2))
+plot(iotc, add=TRUE, col=rgb(1, 0, 0,0.2))
+#plot(ccamlr, add=TRUE, col=rgb(1, 0, 0,0.1))
+plot(ccbsp, add=TRUE, col=rgb(1, 0, 0,0.2))
+plot(gfcm, add=TRUE, col=rgb(1, 0, 0,0.2))
+plot(neafc, add=TRUE, col=rgb(1, 0, 0,0.2))
+plot(nasco, add=TRUE, col=rgb(1, 0, 0,0.2))
+plot(nafo, add=TRUE, col=rgb(1, 0, 0,0.2))
+plot(seafo, add=TRUE, col=rgb(1, 0, 0,0.2))
+plot(siofa, add=TRUE, col=rgb(1, 0, 0,0.2))
+plot(npafc, add=TRUE, col=rgb(1, 0, 0,0.2))
+plot(sprfmo, add=TRUE, col=rgb(1, 0, 0,0.2))
+
+```
+
+Here they are individually:
+
+```{r fig.width=7, fig.height=4, echo=FALSE}
+#par(mar=c(1,1,0.5,0.5))
+for(i in 1:length(rfmoList)){
+  #i=1 #test
+  plot(fao, main=rfmoList[i])
+  plot(get(rfmoList[i]), add=TRUE, col=rgb(1, 0, 0,0.2))
+  title(rfmoList[i])
+  
+}
+
+```
+
+When a region has only one RFMO or multiple non-overlapping RFMOs, it is easy to calculate resiliance by weighting the score by the area of the RFMO relative to the area of the FAO region.  
+
+For example, if an RFMO has a score of 0.9 and covers 40% of the FAO region, the resilience score for the FAO region would be: 0.9*0.4=0.36.
+
+The next simplest case is if a region is completely covered by multiple RFMO regions.  For example, if an FAO region is completely covered by two RFMOs, one with a score of 0.5 and the other 1.  Should the score of the region be 1.5 or 1 (I don't think 0.75, the remaining option, makes much sense)?
+
+Then, the analysis becomes fairly complicated when FAO's overlap, but don't cover the entire FAO region......
+
+Anyway, what do you think is the best bet here?
