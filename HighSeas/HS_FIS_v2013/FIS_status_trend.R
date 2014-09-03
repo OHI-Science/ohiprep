@@ -181,7 +181,7 @@ Status <- StatusData[StatusData$year==status_year, ]
 Status$Status <- round(Status$Status*100, 2)
 Status <- subset(Status, select=c("fao_id", "Status"))
 
-#write.csv(Status, file.path(data_dir, "status.csv"), row.names=FALSE, na="")
+write.csv(Status, file.path(data_dir, "status.csv"), row.names=FALSE, na="")
 
 
 # ------------------------------------------------------------------------
@@ -194,9 +194,9 @@ trend = ddply(StatusData, .(fao_id), function(x){
   data.frame(
     score     = round(coef(mdl)[['year']] * 5, 2),
     dimension = 'trend')}) %.%
-  select(region_id=rgn_id, dimension, score)
+  select(region_id=fao_id, dimension, score)
 
-write.csv(Trend, file.path(data_dir, "trend.csv"), row.names=FALSE, na='')
+write.csv(trend, file.path(data_dir, "trend.csv"), row.names=FALSE, na='')
 
 # For quick view;
 ids <- read.csv("C:\\Users\\Melanie\\Desktop\\GL-NCEAS-Regions_v2014\\FAOregions.csv")
