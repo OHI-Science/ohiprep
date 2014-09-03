@@ -3,7 +3,10 @@
 ## Data preparation 
 ####################################################################
 library(plyr)
-setwd("N:\\model\\GL-HS-AQ-Fisheries_v2013\\HighSeas")
+library(dplyr)
+
+
+source('../ohiprep/src/R/common.R') # set dir_neptune_data
 
 #---------------------------------------------------------
 ## Species estimates of b/bmsy
@@ -11,50 +14,64 @@ setwd("N:\\model\\GL-HS-AQ-Fisheries_v2013\\HighSeas")
 ## Using b_bmsy values from OHI 2013 data.
 ## Now, we are using resilience to determine which
 ## method of calculating b/bmsy to use.
+data_dir <- "HighSeas/HS_FIS_v2013"
 
-cmsy.ohi.df <- read.csv("N:\\model\\GL-NCEAS_FIS_v2013a\\RevisingFIS\\data\\fnk_fis_b_bmsy_lyr.csv")
+labels <- read.csv('HighSeas/HS_other_v2013/FAOregions_lyr.csv')
+res <- read.csv('HighSeas/HS_Resilience_v2013/RFMO/data/rfmo_2013.csv') %>%
+  left_join(labels, by="rgn_id") %>%
+  select(fao_id, resilience.score)
 
+bmsy.uniform <- read.csv("Global/NCEAS-Fisheries_2014a/tmp/fnk_fis_b_bmsy_lyr_uniform_no0_runningMean.csv")
+bmsy.uniform <- bmsy.uniform %>%
+  mutate(fao_id = as.numeric(sapply(strsplit(as.character(stock_id), "_"), function(x)x[2])),
+         taxon_name = sapply(strsplit(as.character(stock_id), "_"), function(x)x[1])) %>%
+  select(stock_id, fao_id, taxon_name, year=yr, b_bmsy_uniform=b_bmsy)
 
-head(cmsy.ohi.df)
+bmsy.constrained <- read.csv("Global/NCEAS-Fisheries_2014a/tmp/fnk_fis_b_bmsy_lyr_constrained_no0_runningMean.csv")
+bmsy <- bmsy.constrained %>%
+  select(stock_id, year=yr, b_bmsy_constrained=b_bmsy) %>%
+  left_join(bmsy.uniform, by=c("stock_id", "year")) %>%
+  left_join(res, by="fao_id")
 
+bmsy_scores <- bmsy %>%
+   mutate(b_bmsy=ifelse(resilience.score>=0.6, b_bmsy_uniform, b_bmsy_constrained)) %>%
+   select(fao_id, taxon_name, year, b_bmsy)
+
+write.csv(bmsy_scores, file.path(data_dir, 'data/fnk_fis_b_bmsy.csv'), row.names=FALSE)
 
 #---------------------------------------------------------
 ## Catch data
 #---------------------------------------------------------
+source('../ohiprep/src/R/ohi_clean_fxns.R') # name-to-region functions (but need to add new saup names files)
 
-country.level.data <- read.csv("raw\\Extension_redo_withFlag.csv")
+# load species names lookup table 
+tax <- read.csv('../ohiprep/Global/NCEAS-Fisheries_2014a/tmp/TaxonLookup.csv') ; head(tax)
 
-# select only the EEZ values equal zero (Katie: "When the EEZ field is "0" it indicates open ocean)
-country.level.data <- country.level.data[country.level.data$EEZ == 0,]
 
-# Recode TaxonKey such that the FAO TaxonKey takes precedence over the Sea 
-# Around Us TaxonKey to give credit to those who report at higher level 
-# than was ultimately reported in the SAUP data. 
-country.level.data$NewTaxonKey <- ifelse(is.na(country.level.data$TLevel),
-                                         country.level.data$Taxonkey,
-                                   100000*country.level.data$TLevel)
+# source(file.path(dir_d,'tmp/CMSY data prep.R'))  
+## Step 1. ## get files ex novo
+# load the new catch data
+country.level.data <- read.delim(file.path(dir_neptune_data,'git-annex/Global/SAUP-Fisheries_v2011/raw/Extended catch data 1950-2011_18 July 2014.txt'))
 
-country.level.data$taxon_name_key <- paste(country.level.data$TaxonName, 
-                            as.character(country.level.data$NewTaxonKey), sep="_")
-country.level.data <- rename(country.level.data, c(IYear="year", EEZ="saup_id", FAO="fao_id"))
-country.level.data <- country.level.data[country.level.data$year >= 1980,]
+# select only the EEZ values equal zero (Katie: "When the EEZ field is "0" it indicates open ocean) and
+# merge with species names and calculate mean catch
+country.level.data <- country.level.data %>%
+  filter(EEZ==0 & IYear>=1980) %>%
+  left_join(tax[,1:2]) %>%
+#  mutate(stock_id = paste(TaxonName, FAO, sep="_")) %>% # create a unique stock id name for every species/FAO region pair
+  mutate(NewTaxonKey = ifelse(is.na(TLevel), Taxonkey, 100000*TLevel)) %>% # Recode TaxonKey such that the FAO TaxonKey takes precedence over the Sea Around Us TaxonKey to give credit to those who report at higher level than was ultimately reported in the SAUP data. 
+  select(year=IYear, saup_id=EEZ, fao_id=FAO, TaxonName, Taxonkey, NewTaxonKey, Catch) %>%
+  group_by(saup_id, fao_id, Taxonkey, TaxonName) %>%
+  mutate(mean_catch=mean(Catch)) %>%
+  ungroup()
+  
+# Further clean up the data for the toolbox:
+country.level.data  <- country.level.data %>%
+  filter(mean_catch != 0,
+         year > 2005) %>%
+  mutate(fao_saup_id = paste(fao_id, saup_id, sep="_"),
+         taxon_name_key = paste(TaxonName, NewTaxonKey, sep="_")) %>%
+  select(fao_saup_id, taxon_name_key, year, mean_catch)
 
-# Calculate mean catch over all years per taxon and saup_id/fao_id
-MeanCatch <- ddply(country.level.data, .(saup_id, fao_id, Taxonkey, TaxonName), 
-                   summarize, mean_catch=mean(Catch), .progress = "text")
-
-country.level.data<-join(country.level.data, MeanCatch, by=c("saup_id","fao_id","Taxonkey","TaxonName"))
-head(country.level.data)
-
-# remove mean catch == 0
-country.level.data <- country.level.data[country.level.data$mean_catch != 0, ]
-country.level.data <- country.level.data[country.level.data$year>2005,]
-
-country.level.data$fao_saup_id <- paste(country.level.data$fao_id, 
-                            country.level.data$saup_id, sep="_")
-
-country.level.data <- subset(country.level.data, select=c("fao_saup_id", "taxon_name_key", 
-                                                          "year", "mean_catch"))
-
-#write.csv(country.level.data, "tmp\\cnk_fis_meancatch.csv", row.names=FALSE)
+write.csv(country.level.data, "HighSeas/HS_FIS_v2013/data/cnk_fis_meancatch.csv", row.names=FALSE)
 
