@@ -33,6 +33,15 @@ meanCatch <- read.csv(file.path(data_path, 'cnk_fis_meancatch.csv')) %>%
 data.frame(meanCatch[meanCatch$fao_id == 51,])
 data.frame(meanCatch[meanCatch$fao_id == 34,])
 
+bmsy.uniform <- read.csv("Global/NCEAS-Fisheries_2014a/tmp/fnk_fis_b_bmsy_lyr_uniform_no0_runningMean.csv") %>%
+  filter(stock_id %in% c("Thunnus obesus_51", "Katsuwonus pelamis_51", "Thunnus albacares_51", 
+                         "Thunnus obesus_34", "Katsuwonus pelamis_34", "Thunnus albacares_34"),
+         yr==2011)
+
+bmsy.constrained <- read.csv("Global/NCEAS-Fisheries_2014a/tmp/fnk_fis_b_bmsy_lyr_constrained_no0_runningMean.csv") %>%
+  filter(stock_id %in% c("Thunnus obesus_51", "Katsuwonus pelamis_51", "Thunnus albacares_51", 
+                         "Thunnus obesus_34", "Katsuwonus pelamis_34", "Thunnus albacares_34"),
+         yr==2011)
 
 
 status <- read.csv(file.path(data_path, "status.csv"))
