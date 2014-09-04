@@ -78,8 +78,8 @@ ch2
 #####################################################################################################################################
 ####### take stocks with highest mean catch in SUSPECT regions #####################################
 #####################################################################################################################################
-
-### create a list of suspect countries ###
+## something went wrong
+### 1 ## create a list of suspect countries ###
 W_latinoamerica <- c(222,152,153,604)
 latin_lookup <- rfmo_lookup[ rfmo_lookup$saup_id %in% W_latinoamerica, ] %>% arrange(saup_id, fao_id) %>% mutate(reg = 'W_latinoamerica') ; head(latin_lookup)
 EAsia <- c(361,362,702,608,764,460,459,626)
@@ -95,38 +95,102 @@ Alaska_lookup <- rfmo_lookup[ rfmo_lookup$saup_id %in% Alaska, ] %>% arrange(sau
 
 prob_rgn <- rbind( latin_lookup, asian_lookup, WA_lookup, Med_lookup, EA_lookup, Alaska_lookup )
 
-# based on rel_ct within each saup region/fao_id (newSAUP4) 
+## 2 # get mean catch to later select the two top mean weights per HIGH SEAS
+dir_hs <- '../ohiprep/HighSeas/HS_FIS_v2013'
+Mct <- read.csv( file.path ( dir_hs, 'data/cnk_fis_meancatch.csv') ) ; head(Mct)
+
+library(stringr)
+
+Mct <- Mct %>% 
+  mutate( fao_id = str_split_fixed ( fao_saup_id , '_', 2) [,1], 
+          saup_id = str_split_fixed ( fao_saup_id , '_', 2) [,2],
+          taxon_name = str_split_fixed ( taxon_name_key, '_', 2) [,1],
+          TL = substr( str_split_fixed ( taxon_name_key, '_', 2) [,2], 1, 1) ,
+          stock_id = paste(taxon_name, fao_id, sep = '_' ) ) ; head(Mct)
+
+### 3 # get smoothed data, no 0s, with both priors, and join with resilience data
+
+dir_d = '../ohiprep/Global/NCEAS-Fisheries_2014a' # set folder where files are saved
+
+unif_sm_no0 <- 'fnk_fis_b_bmsy_lyr_uniform_no0_runningMean.csv'
+constr_sm_no0 <- 'fnk_fis_b_bmsy_lyr_constrained_no0_runningMean.csv'
+
+usm <- read.csv( file.path(dir_d, 'tmp', unif_sm_no0) ) ; head(usm)
+usm <- usm %>% mutate ('whence' = 'u_sm_no0')
+csm <- read.csv( file.path(dir_d, 'tmp', constr_sm_no0) ) ; head(csm)
+csm <- csm %>% mutate ('whence' = 'c_sm_no0')
+
+sm <- rbind(csm, usm)
+
+### 4 # join smoothed data with resilience scores
+
+sm$stock_id <- as.character(sm$stock_id)
+cmsy.r <- left_join(sm, res_scores) # 184 excluded (no recent catch)
+
+### 5 # join mean catch
+Mct2 <- Mct %>% filter (saup_id == 0) %>% select (fao_id, mean_catch, stock_id) 
+Mct2 <- unique( Mct2 )
+Mct3 <- Mct2 %>% ungroup() %>% group_by (fao_id) %>% mutate( rel.ct = mean_catch / sum(mean_catch) ) %>% select (fao_id, mean_catch, stock_id, rel.ct) %>% arrange (fao_id, desc(rel.ct)) %>% ungroup()
+# select problem fao regions
+Mct3 <- Mct3 %>% filter (fao_id %in% prob_rgn$fao_id)
+cmsy.r.m <- left_join (Mct3, cmsy.r)
+#select top weight stocks
+Mct4 <- cmsy.r.m %>% group_by (fao_id) %>% summarise( top_stock = stock_id[which.max(rel.ct)],
+           second_stock = stock_id[ order(rel.ct)[length(rel.ct)-1] ] 
+          )
+
+Cdata <- nS5 %>% select (stock_id, ct, yr)
+Cdata2 <- left_join(cmsy.r.m, Cdata) %>% filter (whence == 'c_sm_no0') %>% select(fao_id, mean_catch, stock_id, rel.ct, yr, final_score, unif_prior, ct) %>% mutate (whence = 'catch') %>% rename (c(ct = 'b_bmsy' )) %>% select (fao_id, mean_catch, stock_id, rel.ct, yr, b_bmsy, whence, final_score, unif_prior)
+Cdata3 <- rbind(Cdata2, cmsy.r.m)
+Cdata3 <- Cdata3 %>% filter(stock_id %in% c(Mct4$top_stock, Mct4$second_stock)) %>% filter(!is.na(whence))
+
+# test <- filter(cmsy.r.m, rel.ct > 0.2)
+# length(unique(test$stock_id))
+test2 <- filter(cmsy.r.m, rel.ct > 0.1, whence != is.na(whence))
+length(unique(test2$stock_id))
+tp <- ggplot(test2, aes(x=yr,  y=b_bmsy, group=whence, color=whence)) +
+  geom_line() +
+  facet_wrap( ~ stock_id) + 
+  theme_bw()
+tp
+
+tp <- ggplot(Cdata3, aes(x=yr,  y=b_bmsy, group=stock_id, color=whence)) +
+  geom_line() +
+  facet_wrap( ~ stock_id) + 
+  theme_bw()
+tp
+
+
+## get the selected output, get the catch
 
 
 
-3) get the top 2 stocks for rel_ct per ohi_id (no replicates)
-4) merge dfs to obtain the following info all in one file
-region identifiers : fao_id mora_score rfmo_score ohi_id saup_id
-stocks: stock_id, resilience score, rel_ct in the EEZ, catch time-series
-cmsy: smoothed with unif prior, smoothed with constrained prior, flag on which was used
-5) hist: how many of the top stocks were assigned to the constrained prior in the trouble areas? 
--> top stocks (get rel catch and select top stocks by EEZ: 1-2)
-6) mora score vs stock score vs relstock catch in eez vs hs:
-  -> get rel ct within and outside EEZs per stock (used to calc resil score), and resil score
-stacked hist of rel_ct in high seas vs EEZ per stock, with resil score on x-axis:
- is resil score higher for stocks with rel ct mostly in high seas? check in each fao_id
-7) time-seriesw of b_bmsy constrained prior vs uniform (smoothed, no0s) vs catch - separate plots by which was used: 
- -> get smoothed uniform, smoothed constrained, flag of which was used, catch - only for top stocks of problem areas by fao_region/eez
-  - does constrained seem the better model when constrained was picked?
- - does uniform seem the better model when uniform was picked?
+# 3) get the top 2 stocks for rel_ct per ohi_id (no replicates)
+# 4) merge dfs to obtain the following info all in one file
+# region identifiers : fao_id mora_score rfmo_score ohi_id saup_id
+# stocks: stock_id, resilience score, rel_ct in the EEZ, catch time-series
+# cmsy: smoothed with unif prior, smoothed with constrained prior, flag on which was used
+# 5) hist: how many of the top stocks were assigned to the constrained prior in the trouble areas? 
+# -> top stocks (get rel catch and select top stocks by EEZ: 1-2)
+# 6) mora score vs stock score vs relstock catch in eez vs hs:
+#   -> get rel ct within and outside EEZs per stock (used to calc resil score), and resil score
+# stacked hist of rel_ct in high seas vs EEZ per stock, with resil score on x-axis:
+#  is resil score higher for stocks with rel ct mostly in high seas? check in each fao_id
+# 7) time-seriesw of b_bmsy constrained prior vs uniform (smoothed, no0s) vs catch - separate plots by which was used: 
+#  -> get smoothed uniform, smoothed constrained, flag of which was used, catch - only for top stocks of problem areas by fao_region/eez
+#   - does constrained seem the better model when constrained was picked?
+#  - does uniform seem the better model when uniform was picked?
 
 
-filter the top 2 stocks from the file above, plot catch
+# take the most influential stocks and plot the uniform versus constrained cmsy ##
 
-## take the most influential stocks and plot the uniform versus constrained cmsy ##
-
-then do individual plots for suspect countries
-
-then look at their resilience (already did for a few)
+# then do individual plots for suspect countries
+# 
+# then look at their resilience (already did for a few)
 
 ## 1 # get the two top mean weights per HIGH SEAS
-dir_hs <- '../ohiprep/HighSeas/GL_HS_FIS_2014'
-Mct <- read.csv( file.path ( dir_hs, 'data/fnk_fis_meancatch_lyr.csv') ) ; head(Mct)
+dir_hs <- '../ohiprep/HighSeas/HS_FIS_v2013'
+Mct <- read.csv( file.path ( dir_hs, 'data/cnk_fis_meancatch.csv') ) ; head(Mct)
 
 library(stringr)
 
