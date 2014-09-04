@@ -1,4 +1,4 @@
-##############################################################################
+head(##############################################################################
 ############### prep SAUP data to provide weights for FIS calculation ########
 ##############################################################################
 ## modified from FIS_dataPrep.R created by Mel##
@@ -163,7 +163,7 @@ Ant_rgn$total <- as.numeric(Ant_rgn$total)
 Ant_rgn$fao_id <- as.numeric(Ant_rgn$fao_id)
 r_hs <- rbind(Ant_rgn, r_hs)
 
-r_hs <- r_hs %>% mutate( relarea = proparea/total) ; head(r_hs)
+r_hs <- r_hs %>% mutate( relarea = proparea/total) ; head(r_hs) # relarea will be NaN if the RFMO doesn't overlap the FAO region
 # add in rfmo resilience scores 
 r_hs <- left_join (r_hs, rfmo_sc) # Joining by: "rfmo"
 # r_hs <-  filter( r_hs, fao_id!=18 ) # remove the Arctic
@@ -177,7 +177,9 @@ r_hs2 <- r_hs2 %>% ungroup() %>% select(fao_id, saup_id, rfmo, relarea, stock_id
 r_c <- rbind(r_hs2, r_eez) # unique(r_c$saup_id[is.na(r_c$Score)])  # check
 
 # join relative catch by fao+saup+stock_id
-newSAUP4$saup_id <- as.numeric(newSAUP4$saup_id)
+newSAUP4$saup_id <- as.numeric( newSAUP4$saup_id )
+newSAUP4$fao_id <- as.numeric( newSAUP4$fao_id )
+
 # generate a lookup that has the correct rfmo assigned to each saup id (non to eezs, but all 14 to high seas, where saup_id=0)
 rfmo_lookup <- unique(r_c[,1:4])
 newSAUP4 <- left_join(newSAUP4, rfmo_lookup) 
@@ -206,12 +208,14 @@ res_scores <- r_all %>% mutate (
 # r_all[r_all$stock_id == 'Katsuwonus pelamis_67',] # example showing that the % of rfmo in the area doesn't work: since most of the area is covered by the salmon commission, the tunas appear under managed
 # only if the final score is NA does it get turned to 0
 
+write.csv(res_scores, '../ohiprep/Global/FIS_Bbmsy/stock_resil_06cutoff_ALL_v2.csv', row.names=F)
+
+###########################################################################################################
+
+
 
 # step 5 ## pick a few stocks and plot catch, 2 cmsy versions, highlighting which one would be picked based on resilience
 
-
-
-write.csv(res_scores, '../ohiprep/Global/FIS_Bbmsy/stock_resil_06cutoff_ALL_v2.csv', row.names=F)
 
 trouble <- res_scores %>% mutate ( fao_id = str_split_fixed( stock_id, '_',2) [,2] ) %>% filter (fao_id %in% c(34, 51, 71) )
 trouble <- left_join( trouble, fao_id_nm )

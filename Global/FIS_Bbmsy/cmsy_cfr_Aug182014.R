@@ -42,7 +42,7 @@ upno0 <- upno0 %>% mutate(whence='unif_no0')
 opw0 <- opw0 %>% mutate(whence='constr_w0')
 opno0 <- opno0 %>% mutate(whence='constr_no0')
 
-cmsy.all <- rbind(upw0, upno0, opw0, opno0) %>% filter(!fao_id %in% c(48, 58, 88)) #join and  exclude fao regions overlapping with Antarctica
+cmsy.all <- rbind(upw0, upno0, opw0, opno0) # %>% filter(!fao_id %in% c(48, 58, 88)) #join and  exclude fao regions overlapping with Antarctica
 cmsy11 <- cmsy.all %>% filter( year == 2011) # only 2011
 
 # ch <- ggplot(cmsy11, aes(x=b_bmsy)) + geom_histogram(binwidth=0.1,colour="white", fill="black") 
@@ -86,7 +86,7 @@ hmc = hmc %.%
     stock_id   = sprintf('%s_%d', taxon_name, fao_id))
 
 hmcr <- select(hmc, mean_catch, stock_id, fao_id )
-hmcr <- hmcr %>% filter(!fao_id %in% c(48, 58, 88))
+# hmcr <- hmcr %>% filter(!fao_id %in% c(48, 58, 88))
 hmcr <- unique(hmcr)
 
 # histograms for high seas stocks
