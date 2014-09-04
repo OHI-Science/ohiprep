@@ -5,47 +5,55 @@
 library(dplyr)
 library(ggplot2)
 library(grid)
+library(RColorBrewer)
 
+source('../ohiprep/src/R/common.R') # set dir_neptune_data
 source("http://nceas.ucsb.edu/~frazier/myTheme.txt")
 
-setwd("N:\\model\\GL-HS-AQ-Fisheries_v2013\\HighSeas")
+data_path <- 'HighSeas/HS_FIS_v2013/data'
 
-country.level.data <- read.csv("raw\\Extension_redo_withFlag.csv")
+bmsy <- read.csv(file.path(data_path, 'fnk_fis_b_bmsy.csv')) %>%
+  filter(year==2011) %>%
+  select(fao_id, taxon_name, b_bmsy)
 
-# select only the EEZ values equal zero (Katie: "When the EEZ field is "0" it indicates open ocean)
-country.level.data <- country.level.data[country.level.data$EEZ == 0,]
+meanCatch <- read.csv(file.path(data_path, 'cnk_fis_meancatch.csv')) %>%
+  mutate(fao_id = as.numeric(sapply(strsplit(as.character(fao_saup_id), "_"), function(x)x[1])),
+         taxon_name = sapply(strsplit(as.character(taxon_name_key), "_"), function(x)x[1]),
+         taxon_key = sapply(strsplit(as.character(taxon_name_key), "_"), function(x)x[2])) %>%
+  filter(year==2011) %>%
+  select(fao_id, taxon_name, taxon_key, mean_catch) %>%
+  arrange(fao_id, mean_catch) %>%
+  group_by(fao_id) %>%
+  mutate(cumCatch=cumsum(mean_catch),
+         totalCatch=sum(mean_catch)) %>%
+  mutate(propCumCatch=round(cumCatch/totalCatch, 2)) %>%
+  left_join(bmsy, by=c("fao_id", "taxon_name")) %>%
+  ungroup()
+  
+data.frame(meanCatch[meanCatch$fao_id == 51,])
+data.frame(meanCatch[meanCatch$fao_id == 34,])
 
-# Recode TaxonKey such that the FAO TaxonKey takes precedence over the Sea 
-# Around Us TaxonKey to give credit to those who report at higher level 
-# than was ultimately reported in the SAUP data. 
-country.level.data$NewTaxonKey <- ifelse(is.na(country.level.data$TLevel),
-                                         country.level.data$Taxonkey,
-                                         100000*country.level.data$TLevel)
 
-country.level.data$taxon_name_key <- paste(country.level.data$TaxonName, 
-                                           as.character(country.level.data$NewTaxonKey), sep="_")
-country.level.data <- rename(country.level.data, c(IYear="year", EEZ="saup_id", FAO="fao_id"))
-country.level.data <- country.level.data[country.level.data$year >= 1980,]
-country.level.data$TaxonGroup <- substr(country.level.data$Taxonkey, 1,1)
 
-#############################################
-## Total catch data
-#############################################
+status <- read.csv(file.path(data_path, "status.csv"))
 
-## Total Catch per fao_id
-totalCatch_fao <- country.level.data %.%
-  filter(year==2011) %.%
-  group_by(fao_id) %.%
-  summarize(Catch_fao = sum(Catch))
+bmsy <- bmsy %>%
+  left_join(status)
 
-totalCatch_fao_taxon <- country.level.data %.%
-  filter(year==2011) %.%
-  group_by(fao_id, TaxonGroup) %.%
-  summarize(Catch_fao_taxon = sum(Catch)) %.%
-  join(totalCatch_fao) %.% 
-  filter(!(fao_id %in% c(88, 48, 58))) %.%
-  mutate(propCatch_fao_taxon = round(Catch_fao_taxon/Catch_fao, 3)) %.%
-  arrange(Catch_fao, TaxonGroup)
+col.brks = seq(0,100,length.out=11)
+myPalette = colorRampPalette(brewer.pal(11, "Spectral"), space="Lab")
+ggplot(bmsy, aes(b_bmsy)) +
+  geom_histogram(aes(fill=Status)) +
+  facet_wrap(~fao_id) +
+  scale_fill_gradientn(colours=myPalette(100))
+  
+head(meanCatch)  
+mutate(fao_id = as.numeric(sapply(strsplit(as.character(stock_id), "_"), function(x)x[2])),
+       taxon_name = sapply(strsplit(as.character(stock_id), "_"), function(x)x[1])) %>%
+
+
+
+     col=brewer.pal(10, 'RdYlBu')[cut(v, col.brks, labels=1:10, include.lowest=TRUE)])
 
 ## plot
 ggplot(totalCatch_fao_taxon, aes(x= as.factor(fao_id), y=Catch_fao_taxon, fill=TaxonGroup)) +
