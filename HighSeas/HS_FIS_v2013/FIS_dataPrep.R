@@ -2,9 +2,6 @@
 ## Fisheries (FIS) calculation (Part 1):
 ## Data preparation 
 ####################################################################
-library(plyr)
-library(dplyr)
-
 
 source('../ohiprep/src/R/common.R') # set dir_neptune_data
 
