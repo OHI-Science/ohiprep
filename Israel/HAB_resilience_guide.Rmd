@@ -8,9 +8,10 @@ The Habitats (HAB) sub-goal of Biodiversity (BD) for OHI Israel assesses some ha
 Isr_hab <- c('rocky_reef', 'sand_dunes', 'soft_bottom') ; Isr_hab 
 ``` 
 ***Layers affected:***  
-(...)  
+resilience_matrix.csv
+resilience_weights.csv (only if adding new resilience layers)   
 ***Scripts affected:***  
-(...)   
+none (but may need to create a simple code to generate modified layers)   
 ***Resilience score layers:***   
 OHI global uses the following layers to calculate resilience:
 ```{r, echo = FALSE}
