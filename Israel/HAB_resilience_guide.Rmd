@@ -42,7 +42,7 @@ hab_fis_data = c('Mora',	'Mora_s4',	'CBD_hab',	'MPA_coast',	'MPA_eez') ; hab_fis
 Where 'Mora' is a fisheries governance effectiveness indicator from the paper by Mora et al (2009), 'Mora_s4' is another indicator from the supplementary material of the same paper, figure S4, that focuses on regulations of artisanal and recreational fisheries, 'CBD_hab' is a questionnaire compiled by countries that committed to Rio's biodiversity convention (CBD) to establish their progress towards habitat biodiversity protection, 'MPA_coast' is the proportion of coastal (3nm) waters that are in a marine protected area (MPA), with the maximum being 30% of coastal waters, and 'MPA_eez' is the proportion of the whole EEZ that is in a marine protected area, with the maximum being 30% of the whole EEZ. This table shows which data-sets are used by each combo layer: 
 ```{r, echo = FALSE}
 combos = as.data.frame(cbind(
-'Layer' = c('r_fishing_v1','r_fishing_v1_eez','r_fishing_v2_eez','r_fishing_v3','r_fishing_v3_eez', 'habitat','r_habitat_combo','r_habitat_combo_eez'),
+'Layer' = c('fishing_v1','fishing_v1_eez','fishing_v2_eez','fishing_v3','fishing_v3_eez', 'habitat','habitat_combo','habitat_combo_eez'),
 'Mora' = 
 c('Mora', 'Mora','Mora', '','','','',''),
 'Mora_s4' = 
