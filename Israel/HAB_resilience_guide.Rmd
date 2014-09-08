@@ -57,10 +57,10 @@ c('','MPA_eez','MPA_eez','','MPA_eez','','','MPA_eez')
 )); combos
 
 ```  
-1) For which habitats should you use the fisheries combos, for which should you use the habitat combos?
-* fisheries regulations don't affect the conservation of sand-dunes, so this habitat shouldn't use any of the fisheries combos. Also, this is a strictly coastal habitat so it should use the coastal version: so choose the habitat layer that uses the 'MPA_coast', i.e. 'habitat combo' (and, as mentioned above choose the coastal version of biodiversity, i.e. 'species_diversity_3nm').
-* The rocky reef and soft bottom, on the other hand, should definitely include fisheries regulations. So you'll need to choose a fisheries combo for these two habitats.
-2) Which fisheries resilience combo should you use for rocky_reef and soft_bottom? The choice depends on two things:
+1) For which habitats should you use both a fishery and a habitat combo, or just use a habitat combo?
+* fisheries regulations don't affect the conservation of sand-dunes, so this habitat shouldn't use any of the fisheries combos. Also, this is a strictly coastal habitat, so choose the habitat layer that uses the 'MPA_coast'instead of the 'MPA_eez', i.e. 'habitat combo' (and, as mentioned above choose the coastal version of biodiversity, i.e. 'species_diversity_3nm').
+* The rocky reef and soft bottom, on the other hand, should definitely include fisheries regulations. So you'll need to choose a fisheries and a habitat combo for these two habitats.
+2) Which fisheries and habitat combos for rocky_reef, and soft_bottom? The choice depends on two things:
 * whether they are coastal habitats (within 3nm of the coast) or spread across the whole EEZ     
       + if coastal, use the fisheries and habitat combos with MPA_coast (fishing_v1, fishing_v3, habitat_combo), and the 'species_diversity_3nm' layer,    
       + if at the whole EEZ scale, use the fisheries and habitat combos with MPA_eez (fishing_v1_eez, fishing_v2_eez,fishing_v3_eez,habitat_combo_eez), and the 'species_diversity' layer.
@@ -72,3 +72,5 @@ c('','MPA_eez','MPA_eez','','MPA_eez','','','MPA_eez')
 * if rocky reef is mainly coastal, and it's fished by both commercial and artisanal methods, then we need a new combo, specifically, we need a combo that uses Mora, Mora_s4, CBD_hab, and MPA_coast (this is the same as fishing_v2_eez, but we use the MPA_coast layer instead of the MPA_eez). All other combinations are already present.
 4) Are there local data-sets to be used?
 * if there is local data on Marine Protected Areas (MPAs) and any areas with special regulations, this should be used to generate the MPA_cost and MPA_eez layers.   NOTE: these are the same datasets used to calculate the status of Lasting Special Places (LSP).
+5) How to update resilience_matrix.csv?
+* write the complete list of layers you want to use for each habitat. Based on the above, for example, 'soft bottom' in Israel matches the combination of layers called 'soft bottom, with corals' in the global resilience_matrix. But the rocky_reef and sand_dunes don't seem to match any existing combination, so you'll probably need to delete some of the rows in the global matrix, e.g. the 'coral only', and replace with new ad-hoc rows.
