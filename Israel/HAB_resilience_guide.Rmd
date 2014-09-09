@@ -1,0 +1,76 @@
+---
+title: "OHI Israel - HAB resilience"
+output: pdf_document
+---
+
+The Habitats (HAB) sub-goal of Biodiversity (BD) for OHI Israel assesses some habitats that were not in OHI Global. Therefore, the resilience matrix may need some revision. The habitats assessed for Israel are:
+```{r, echo = FALSE}
+Isr_hab <- c('rocky_reef', 'sand_dunes', 'soft_bottom') ; Isr_hab 
+``` 
+***Layers affected:***  
+resilience_matrix.csv
+resilience_weights.csv (only if adding new resilience layers)   
+***Scripts affected:***  
+none (but may need to create a simple code to generate modified layers)   
+***Resilience score layers:***   
+OHI global uses the following layers to calculate resilience:
+```{r, echo = FALSE}
+
+res_layer_names = c('alien_species',  'cites',	'fishing_v1',	'fishing_v1_eez',	'fishing_v2_eez',	'fishing_v3',	'fishing_v3_eez',	'habitat',	'habitat_combo',	'habitat_combo_eez',	'li_gci',	'li_sector_evenness',	'mariculture',	'msi_gov',	'species_diversity',	'species_diversity_3nm',	'tourism',	'water',	'wgi_all') ; res_layer_names  
+``` 
+Some of these layers capture general aspects of governance that apply to the protection of any habitat. These are:  
+```{r, echo = FALSE}
+all_hab <- c('alien_species',  'cites', 'msi_gov', 'water',  'wgi_all'); all_hab
+``` 
+Two layers only apply to the livelihoods and economies goal (LE), so they should be excluded from HAB resilience:
+```{r, echo = FALSE}
+le_res <- c(  'li_gci',	'li_sector_evenness') ; le_res
+``` 
+The remaining layers will apply to certain habitats, but not others. We focus on these to determine how to adapt the HAB resilience calculation for Israel OHI. They are:
+```{r, echo = FALSE}
+var_hab <- c('fishing_v1',  'fishing_v1_eez',	'fishing_v2_eez',	'fishing_v3',	'fishing_v3_eez',	'habitat',	'habitat_combo',	'habitat_combo_eez','mariculture','species_diversity',	'species_diversity_3nm',	'tourism') ;  var_hab
+``` 
+* If the habitat occurs only along the coast, we should use 'tourism' and 'species_diversity_3nm', otherwise, only use 'species_diversity'. 
+    + sand_dunes should use 'tourism' and 'species_diversity_3nm',
+    + soft_bottom should use 'species_diversity',
+    + is rocky_reef mainly coastal? if so it should use 'tourism' and 'species_diversity_3nm'.
+* If the habitats can be affected by mariculture plants (e.g. eutrophication and decreased water quality can occur if mariculture plants are close by and have poor wastewater treatment), then the 'mariculture' resilience score should be added.
+    + are there any mariculture plants in Israel? If yes, on which habitats do they occur?
+* The remaining layers are the 'fishing_v...' and 'habitat..' layers, these are composite indicators that we call 'combo' layers, obtained from different combinations of the following datasets:
+```{r, echo = FALSE}  
+hab_fis_data = c('Mora',	'Mora_s4',	'CBD_hab',	'MPA_coast',	'MPA_eez') ; hab_fis_data  
+```   
+Where 'Mora' is a fisheries governance effectiveness indicator from the paper by Mora et al (2009), 'Mora_s4' is another indicator from the supplementary material of the same paper, figure S4, that focuses on regulations of artisanal and recreational fisheries, 'CBD_hab' is a questionnaire compiled by countries that committed to Rio's biodiversity convention (CBD) to establish their progress towards habitat biodiversity protection, 'MPA_coast' is the proportion of coastal (3nm) waters that are in a marine protected area (MPA), with the maximum being 30% of coastal waters, and 'MPA_eez' is the proportion of the whole EEZ that is in a marine protected area, with the maximum being 30% of the whole EEZ. This table shows which data-sets are used by each combo layer: 
+```{r, echo = FALSE}
+combos = as.data.frame(cbind(
+'Layer' = c('fishing_v1','fishing_v1_eez','fishing_v2_eez','fishing_v3','fishing_v3_eez', 'habitat','habitat_combo','habitat_combo_eez'),
+'Mora' = 
+c('Mora', 'Mora','Mora', '','','','',''),
+'Mora_s4' = 
+c('','','Mora_s4','Mora_s4','Mora_s4','','',''),
+'CBD_hab' =
+c('CBD_hab','CBD_hab','CBD_hab','CBD_hab','CBD_hab','CBD_hab','CBD_hab','CBD_hab'),
+'MPA_coast' =
+c('MPA_coast','','','MPA_coast','','','MPA_coast',''),
+'MPA_eez' =
+c('','MPA_eez','MPA_eez','','MPA_eez','','','MPA_eez')
+)); combos
+
+```  
+1) For which habitats should you use both a fishery and a habitat combo, or just use a habitat combo?
+* fisheries regulations don't affect the conservation of sand-dunes, so this habitat shouldn't use any of the fisheries combos. Also, this is a strictly coastal habitat, so choose the habitat layer that uses the 'MPA_coast'instead of the 'MPA_eez', i.e. 'habitat combo' (and, as mentioned above choose the coastal version of biodiversity, i.e. 'species_diversity_3nm').
+* The rocky reef and soft bottom, on the other hand, should definitely include fisheries regulations. So you'll need to choose a fisheries and a habitat combo for these two habitats.
+2) Which fisheries and habitat combos for rocky_reef, and soft_bottom? The choice depends on two things:
+* whether they are coastal habitats (within 3nm of the coast) or spread across the whole EEZ     
+      + if coastal, use the fisheries and habitat combos with MPA_coast (fishing_v1, fishing_v3, habitat_combo), and the 'species_diversity_3nm' layer,    
+      + if at the whole EEZ scale, use the fisheries and habitat combos with MPA_eez (fishing_v1_eez, fishing_v2_eez,fishing_v3_eez,habitat_combo_eez), and the 'species_diversity' layer.
+* whether the fisheries occurring on that habitat are mainly artisanal, mainly commercial, or both
+    + if only commercial fisheries, use a layer that only uses the 'Mora' data (fishing_v1..)
+    + if only artisanal/small-scale fisheries, use a layer that only uses the 'Mora_s4' data (fishing_v3..)
+    + if both, use a layer that uses both 'Mora' and 'Mora_s4' data (fishing_v2..)
+3) Are the existing combo layers appropriate or do you need an ad-hoc version for any of the Israel habitats? 
+* if rocky reef is mainly coastal, and it's fished by both commercial and artisanal methods, then we need a new combo, specifically, we need a combo that uses Mora, Mora_s4, CBD_hab, and MPA_coast (this is the same as fishing_v2_eez, but we use the MPA_coast layer instead of the MPA_eez). All other combinations are already present.
+4) Are there local data-sets to be used?
+* if there is local data on Marine Protected Areas (MPAs) and any areas with special regulations, this should be used to generate the MPA_cost and MPA_eez layers.   NOTE: these are the same datasets used to calculate the status of Lasting Special Places (LSP).
+5) How to update resilience_matrix.csv?
+* write the complete list of layers you want to use for each habitat. Based on the above, for example, 'soft bottom' in Israel matches the combination of layers called 'soft bottom, with corals' in the global resilience_matrix. But the rocky_reef and sand_dunes don't seem to match any existing combination, so you'll probably need to delete some of the rows in the global matrix, e.g. the 'coral only', and replace with new ad-hoc rows.
