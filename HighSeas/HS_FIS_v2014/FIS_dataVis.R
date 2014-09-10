@@ -10,7 +10,7 @@ library(RColorBrewer)
 source('../ohiprep/src/R/common.R') # set dir_neptune_data
 source("http://nceas.ucsb.edu/~frazier/myTheme.txt")
 
-data_path <- 'HighSeas/HS_FIS_v2013/data'
+data_path <- 'HighSeas/HS_FIS_v2014/data'
 
 bmsy <- read.csv(file.path(data_path, 'fnk_fis_b_bmsy.csv')) %>%
   filter(year==2011) %>%

@@ -11,7 +11,7 @@ source('../ohiprep/src/R/common.R') # set dir_neptune_data
 ## Using b_bmsy values from OHI 2013 data.
 ## Now, we are using resilience to determine which
 ## method of calculating b/bmsy to use.
-data_dir <- "HighSeas/HS_FIS_v2013"
+data_dir <- "HighSeas/HS_FIS_v2014"
 
 # resilience scores to select the appropriate b/bmsy 
 res <- read.csv("Global/FIS_Bbmsy/stock_resil_06cutoff_ALL.csv")
@@ -75,7 +75,8 @@ country.level.data  <- country.level.data %>%
          taxon_name_key = paste(TaxonName, NewTaxonKey, sep="_")) %>%
   select(fao_saup_id, taxon_name_key, year, mean_catch)
 
-write.csv(country.level.data, "HighSeas/HS_FIS_v2013/data/cnk_fis_meancatch.csv", row.names=FALSE)
-tmp <- read.csv("HighSeas/HS_FIS_v2013/data/cnk_fis_meancatch.csv")
+write.csv(country.level.data, file.path(data_dir, "data/cnk_fis_meancatch.csv"), row.names=FALSE)
+tmp <- read.csv(file.path(data_dir, "data/cnk_fis_meancatch.csv"))
 id <- paste(tmp$fao_saup_id, tmp$taxon_name_key, tmp$year, sep='_')
 sum(duplicated(id))
+
