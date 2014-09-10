@@ -17,7 +17,7 @@ rm(list=ls())
 library(plyr)
 library(reshape2)
 
-data_dir <- "HighSeas/HS_FIS_v2013/data"
+data_dir <- "HighSeas/HS_FIS_v2014/data"
 
 c <- read.csv(file.path(data_dir, "cnk_fis_meancatch.csv"))
 b <- read.csv(file.path(data_dir, "fnk_fis_b_bmsy.csv"))
