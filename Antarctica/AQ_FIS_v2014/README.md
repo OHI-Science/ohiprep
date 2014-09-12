@@ -4,13 +4,10 @@ Generating B_bmsy data and FIS status/trend for Antarctica
 R files
 =====================
 * Ant_FIS_catch datamaker.R and Ant_FIS_dataprep.R prepare data for b/bmsy and mean catch calculations using the raw catch data (need to ask Katie what the difference is).  Outputs tmp/CCAMLR_ct_rgn_Aug29_2014.csv
-* FIS_meanCatch datamaker.R: prepares the data for the 3 cmsy taxa and the mean catch using the "tmp/CCAMLR_ct_rgn_Aug29_2014.csv" data.  Outputs: data/fnk_fis_ccmsy.csv and data/cnk_fis_meancatch.csv (which are read by the toolbox)
+* FIS_meanCatch datamaker.R: prepares the data for the 3 cmsy taxa and calcualtes the mean catch using the "tmp/CCAMLR_ct_rgn_Aug29_2014.csv" data.  Outputs: data/fnk_fis_ccmsy.csv and data/cnk_fis_meancatch.csv (which are read by the toolbox)
 * FIS_cmsy_calc.R: further prepares catch data for cmsy and runs cmsy functions.
 * FIS_draft CMSY datamaker.R: This is one of Katie's files.  I'm not sure what this does.
 
-* FIS_status_trend.R (moving to functions.R) = 
-- converts c/cmsy and b/bmsy to scores
-- calculates status and trend using scores and mean catch to weight scores.
 
 Relevant data files
 ============================
