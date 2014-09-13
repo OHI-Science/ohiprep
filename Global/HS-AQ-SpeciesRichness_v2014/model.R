@@ -59,12 +59,14 @@ scoreData$LOICZID <- as.numeric(scoreData$LOICZID)
 cells <- cells %.%
   left_join(scoreData, by="LOICZID")
 
+ 
 # calculate area-weighted regional scores ----
 regionScores <- cells %.%
   group_by(sp_id) %.%
   summarise(rgn_spp_score_2013=sum(category_linear_score*rgn_area, na.rm=TRUE)/sum(rgn_area, na.rm=TRUE),
             rgn_spp_trend_2013=sum(popn_trend_linear_avg*rgn_area, na.rm=TRUE)/sum(rgn_area, na.rm=TRUE))
 regionScores$sp_id <- as.integer(regionScores$sp_id)
+
 
 ###########################################
 # Organize and save data ----
@@ -96,6 +98,85 @@ AQ_scores  <- AQ_regions %.%
    left_join(regionScores) %.%
    select(rgn_id, score=rgn_spp_trend_2013)
  write.csv(HS_trend, file.path(dir_d, "data/rgn_spp_trend_2013_HS.csv"), row.names=FALSE, na="")
+ 
+ 
+ 
+ ####################################################### 
+ ### side:  exploring data:
+ #######################################################
+ 
+#  spp2 <- read.csv(file.path(data, "raw/spp.csv")) %>%
+#    select(sid, sciname, category, popn_trend)
+#  scoreData2 <- cells_spp %>%
+#    inner_join(spp2)
+#  
+#  #Antarctica data:
+#  AQ_regions <- read.csv("Antarctica/Other_v2014/rgn_labels_ccamlr.csv") 
+#  cells2 <- cells %>%
+#    left_join(scoreData2, by="LOICZID") %>%
+#    filter(sp_id %in% AQ_regions$sp_id)
+#  
+#  species <- cells2 %>%
+#    select(sciname, category, popn_trend) %>%
+#    filter(category != "DD")
+#  species <- unique(species)
+#  
+#  write.csv(species, file.path(dir_d, "data_explore/AQ_SPP_species_status.csv"), row.names=FALSE)
+#  
+#  # High Seas data:
+#  HS_regions <- read.csv("HighSeas/HS_other_v2014/rgn_labels_fao.csv")
+#  cells2 <- cells %>%
+#    left_join(scoreData2, by="LOICZID") %>%
+#    filter(sp_id %in% HS_regions$sp_id)
+#  
+#  species <- cells2 %>%
+#    select(sp_id, sciname, category, popn_trend) %>%
+#    filter(category != "DD") %>%
+#    left_join(HS_regions, by='sp_id') %>%
+#    select(rgn_id, label, sciname, category, popn_trend)
+#  
+#  species <- unique(species)
+#  
+#  speciesSummary <- species %>%
+#    group_by(rgn_id, label) %>%
+#    summarize(Nspecies = length(sciname),
+#              N_Extinct = sum(category == "EX", na.rm=TRUE),
+#              N_CriticallyEndangered = sum(category == "CR", na.rm=TRUE),
+#              N_Endangered = sum(category == "EN", na.rm=TRUE),
+#              N_Vulnerable = sum(category == "VU", na.rm=TRUE),
+#              N_NearThreatened = sum(category == "NT", na.rm=TRUE),
+#              N_LeastConcern = sum(category == "LC", na.rm=TRUE),
+#              N_trend_Decreasing = sum(popn_trend == "Decreasing", na.rm=TRUE),
+#              N_trend_Increasing = sum(popn_trend == "Increasing", na.rm=TRUE),
+#              N_trend_Stable = sum(popn_trend == "Stable", na.rm=TRUE))
+#  
+#  species[species$rgn_id=="261",]
+#  
+#  speciesProp <- species %>%
+#    group_by(rgn_id, label) %>%
+#    summarize(Nspecies = length(sciname),
+#              Prop_Extinct = round(sum(category == "EX", na.rm=TRUE)/Nspecies * 100, 0),
+#              Prop_CriticallyEndangered = round(sum(category == "CR", na.rm=TRUE)/Nspecies * 100, 0),
+#              Prop_Endangered = round(sum(category == "EN", na.rm=TRUE)/Nspecies * 100, 0),
+#              Prop_Vulnerable = round(sum(category == "VU", na.rm=TRUE)/Nspecies * 100, 0),
+#              Prop_NearThreatened = round(sum(category == "NT", na.rm=TRUE)/Nspecies * 100, 0),
+#              Prop_LeastConcern = round(sum(category == "LC", na.rm=TRUE)/Nspecies * 100, 0),
+#              Prop_trend_Decreasing = round(sum(popn_trend == "Decreasing", na.rm=TRUE)/Nspecies*100, 0),
+#              Prop_trend_Increasing = round(sum(popn_trend == "Increasing", na.rm=TRUE)/Nspecies*100, 0),
+#              Prop_trend_Stable = round(sum(popn_trend == "Stable", na.rm=TRUE)/Nspecies*100, 0))
+#  
+#  
+#  write.csv(species, file.path(dir_d, "data_explore/HS_SPP_species_status.csv"), row.names=FALSE)
+#  
+#  data <- read.csv("../ohi-global/global2014/scores_2014_2014-09-09.csv") %>%
+#    filter(region_type == "fao",
+#           goal == "SPP") %>%
+#    arrange(dimension, region_id) 
+
+ #########################################################
+ ## end: data explore 
+ ######################################################### 
+ 
  
  
  
