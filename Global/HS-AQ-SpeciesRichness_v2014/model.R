@@ -7,15 +7,18 @@
 library(sp)
 library(rgdal)
 library(raster)
-library(plyr)
-library(dplyr)
 rm(list = ls())
 
-setwd("/var/data/ohi/model/GL-HS-AQ-SpeciesRichness_v2013")
-cells <- read.csv("tmp/am_cells_rgn_proportions.csv")
-cells_spp <- read.csv("tmp/am_cells_spp.csv")
-spp <- read.csv("raw/spp.csv")
-am_cells <-  read.csv("/var/data/ohi/model/GL-NCEAS-SpeciesDiversity_v2013a/tmp/am_cells_data.csv")
+source('../ohiprep/src/R/common.R') # set dir_neptune_data
+ 
+dir_d = '../ohiprep/Global/HS-AQ-SpeciesRichness_v2014' # set folder where files are saved
+data = file.path(dir_neptune_data, "model/GL-HS-AQ-SpeciesRichness_v2014")
+ 
+cells <- read.csv(file.path(data, "tmp/am_cells_rgn_proportions.csv"))
+cells_spp <- read.csv(file.path(data, "tmp/am_cells_spp.csv"))
+spp <- read.csv(file.path(data, "raw/spp.csv"))
+
+am_cells <-  read.csv(file.path(dir_neptune_data, "model/GL-NCEAS-SpeciesDiversity_v2013a/tmp/am_cells_data.csv"))
 
 ### Master file of cells structured: 
 am_cells <- am_cells %.%
@@ -67,32 +70,32 @@ regionScores$sp_id <- as.integer(regionScores$sp_id)
 # Organize and save data ----
 ##########################################
 
-AQ_regions <- read.csv("/var/data/ohi/git-annex/Global/NCEAS-Antarctica-Other_v2014/rgn_labels_ccamlr.csv")
+AQ_regions <- read.csv("Antarctica/Other_v2014/rgn_labels_ccamlr.csv")
 AQ_scores  <- AQ_regions %.%
    select(sp_id) %.%
    left_join(regionScores) %.%
    select(sp_id, score=rgn_spp_score_2013)
- write.csv(AQ_scores, "data/rgn_spp_score_2013_AQ.csv", row.names=FALSE)
+ write.csv(AQ_scores, file.path(dir_d, "data/rgn_spp_score_2013_AQ.csv"), row.names=FALSE, na="")
  
  AQ_trend  <- AQ_regions %.%
    select(sp_id) %.%
    left_join(regionScores) %.%
    select(sp_id, score=rgn_spp_trend_2013)
- write.csv(AQ_trend, "data/rgn_spp_trend_2013_AQ.csv", row.names=FALSE)
+ write.csv(AQ_trend, file.path(dir_d, "data/rgn_spp_trend_2013_AQ.csv"), row.names=FALSE, na="")
  
 
- HS_regions <- read.csv("/var/data/ohi/git-annex/Global/NCEAS-HighSeas-Other_v2014/data/rgn_labels_fao.csv")
+ HS_regions <- read.csv("HighSeas/HS-other_v2014/rgn_labels_fao.csv")
  HS_scores  <- HS_regions %.%
    select(sp_id, rgn_id) %.%
    left_join(regionScores) %.%
    select(rgn_id, score=rgn_spp_score_2013)
- write.csv(HS_scores, "data/rgn_spp_score_2013_HS.csv", row.names=FALSE)
+ write.csv(HS_scores, file.path(dir_d, "data/rgn_spp_score_2013_HS.csv"), row.names=FALSE, na="")
  
  HS_trend  <- HS_regions %.%
    select(sp_id, rgn_id) %.%
    left_join(regionScores) %.%
    select(rgn_id, score=rgn_spp_trend_2013)
- write.csv(HS_trend, "data/rgn_spp_trend_2013_HS.csv", row.names=FALSE)
+ write.csv(HS_trend, file.path(dir_d, "data/rgn_spp_trend_2013_HS.csv"), row.names=FALSE, na="")
  
  
  
