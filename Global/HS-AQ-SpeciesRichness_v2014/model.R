@@ -84,7 +84,7 @@ AQ_scores  <- AQ_regions %.%
  write.csv(AQ_trend, file.path(dir_d, "data/rgn_spp_trend_2013_AQ.csv"), row.names=FALSE, na="")
  
 
- HS_regions <- read.csv("HighSeas/HS-other_v2014/rgn_labels_fao.csv")
+ HS_regions <- read.csv("HighSeas/HS_other_v2014/rgn_labels_fao.csv")
  HS_scores  <- HS_regions %.%
    select(sp_id, rgn_id) %.%
    left_join(regionScores) %.%
@@ -99,24 +99,24 @@ AQ_scores  <- AQ_regions %.%
  
  
  
-## checking against old data:
-oldScore <- read.csv("N:\\model\\GL-NCEAS-SpeciesDiversity_v2013a\\data\\rgn_spp_score_2013.csv")
-oldScore$rgn_id <- as.numeric(oldScore$rgn_id)
-oldTrend <- read.csv("N:\\model\\GL-NCEAS-SpeciesDiversity_v2013a\\data\\rgn_spp_trend_2013.csv")
-oldTrend$rgn_id <- as.numeric(oldTrend$rgn_id)
-regionScores <- left_join(regionScores, oldScore)
-plot(regionScores$rgn_spp_score_2013, regionScores$score*100)
-abline(0,1, col="red")
-sum(regionScores$rgn_spp_score_2013 -regionScores$score*100, na.rm=TRUE)
-hist(regionScores$rgn_spp_score_2013 -regionScores$score*100)
-regionScores[(regionScores$rgn_spp_score_2013 -regionScores$score*100>.2),]
-
-oldTrend <- rename(oldTrend, c(score="trend"))
-regionScores <- left_join(regionScores, oldTrend)
-plot(regionScores$rgn_spp_trend_2013, regionScores$trend)
-sum(regionScores$rgn_spp_trend_2013 -regionScores$trend, na.rm=TRUE)
-hist(regionScores$rgn_spp_trend_2013 -regionScores$trend)
-regionScores[(regionScores$rgn_spp_trend_2013 -regionScores$trend>.001),]
+# ## checking against old data:
+# oldScore <- read.csv("N:\\model\\GL-NCEAS-SpeciesDiversity_v2013a\\data\\rgn_spp_score_2013.csv")
+# oldScore$rgn_id <- as.numeric(oldScore$rgn_id)
+# oldTrend <- read.csv("N:\\model\\GL-NCEAS-SpeciesDiversity_v2013a\\data\\rgn_spp_trend_2013.csv")
+# oldTrend$rgn_id <- as.numeric(oldTrend$rgn_id)
+# regionScores <- left_join(regionScores, oldScore)
+# plot(regionScores$rgn_spp_score_2013, regionScores$score*100)
+# abline(0,1, col="red")
+# sum(regionScores$rgn_spp_score_2013 -regionScores$score*100, na.rm=TRUE)
+# hist(regionScores$rgn_spp_score_2013 -regionScores$score*100)
+# regionScores[(regionScores$rgn_spp_score_2013 -regionScores$score*100>.2),]
+# 
+# oldTrend <- rename(oldTrend, c(score="trend"))
+# regionScores <- left_join(regionScores, oldTrend)
+# plot(regionScores$rgn_spp_trend_2013, regionScores$trend)
+# sum(regionScores$rgn_spp_trend_2013 -regionScores$trend, na.rm=TRUE)
+# hist(regionScores$rgn_spp_trend_2013 -regionScores$trend)
+# regionScores[(regionScores$rgn_spp_trend_2013 -regionScores$trend>.001),]
 
 
 
