@@ -1,0 +1,508 @@
+"rgn_id","label","sciname","category","popn_trend","Ncells"
+260,"Arctic Sea","Balaena mysticetus","LC","Increasing",60
+260,"Arctic Sea","Balaenoptera acutorostrata","LC","Stable",4
+260,"Arctic Sea","Balaenoptera physalus","EN","Unknown",1
+260,"Arctic Sea","Eschrichtius robustus","LC","Stable",7
+260,"Arctic Sea","Megaptera novaeangliae","LC","Increasing",4
+260,"Arctic Sea","Ursus maritimus","VU","Decreasing",8889
+261,"Atlantic, Northwest","Alopias vulpinus","VU","Decreasing",472
+261,"Atlantic, Northwest","Balaenoptera acutorostrata","LC","Stable",1245
+261,"Atlantic, Northwest","Balaenoptera borealis","EN","Unknown",1245
+261,"Atlantic, Northwest","Balaenoptera musculus","EN","Increasing",1245
+261,"Atlantic, Northwest","Balaenoptera physalus","EN","Unknown",1245
+261,"Atlantic, Northwest","Carcharodon carcharias","VU","Unknown",818
+261,"Atlantic, Northwest","Caretta caretta","EN",NA,71
+261,"Atlantic, Northwest","Cetorhinus maximus","VU","Decreasing",1055
+261,"Atlantic, Northwest","Chelonia mydas","EN","Decreasing",931
+261,"Atlantic, Northwest","Delphinus delphis","LC","Unknown",520
+261,"Atlantic, Northwest","Dermochelys coriacea","CR","Decreasing",863
+261,"Atlantic, Northwest","Eubalaena glacialis","EN","Unknown",967
+261,"Atlantic, Northwest","Galeocerdo cuvier","NT","Unknown",3
+261,"Atlantic, Northwest","Grampus griseus","LC","Unknown",1134
+261,"Atlantic, Northwest","Isurus oxyrinchus","VU","Decreasing",54
+261,"Atlantic, Northwest","Isurus paucus","VU","Decreasing",705
+261,"Atlantic, Northwest","Lagenodelphis hosei","LC","Unknown",279
+261,"Atlantic, Northwest","Lamna nasus","VU","Decreasing",567
+261,"Atlantic, Northwest","Megaptera novaeangliae","LC","Increasing",1245
+261,"Atlantic, Northwest","Oceanites oceanicus","LC","Stable",1053
+261,"Atlantic, Northwest","Physeter macrocephalus","VU","Unknown",1245
+261,"Atlantic, Northwest","Prionace glauca","NT","Unknown",1063
+261,"Atlantic, Northwest","Rhincodon typus","VU","Decreasing",701
+261,"Atlantic, Northwest","Stenella attenuata","LC","Unknown",72
+261,"Atlantic, Northwest","Stenella coeruleoalba","LC","Unknown",903
+261,"Atlantic, Northwest","Stercorarius maccormicki","LC","Stable",343
+261,"Atlantic, Northwest","Tursiops truncatus","LC","Unknown",925
+261,"Atlantic, Northwest","Ursus maritimus","VU","Decreasing",68
+261,"Atlantic, Northwest","Ziphius cavirostris","LC","Unknown",924
+262,"Atlantic, Northeast","Alopias vulpinus","VU","Decreasing",1802
+262,"Atlantic, Northeast","Balaena mysticetus","LC","Increasing",232
+262,"Atlantic, Northeast","Balaenoptera acutorostrata","LC","Stable",2896
+262,"Atlantic, Northeast","Balaenoptera borealis","EN","Unknown",2808
+262,"Atlantic, Northeast","Balaenoptera musculus","EN","Increasing",2857
+262,"Atlantic, Northeast","Balaenoptera physalus","EN","Unknown",2891
+262,"Atlantic, Northeast","Carcharodon carcharias","VU","Unknown",1501
+262,"Atlantic, Northeast","Caretta caretta","EN",NA,184
+262,"Atlantic, Northeast","Cetorhinus maximus","VU","Decreasing",2631
+262,"Atlantic, Northeast","Chelonia mydas","EN","Decreasing",1795
+262,"Atlantic, Northeast","Delphinus delphis","LC","Unknown",1944
+262,"Atlantic, Northeast","Dermochelys coriacea","CR","Decreasing",1554
+262,"Atlantic, Northeast","Eubalaena glacialis","EN","Unknown",2574
+262,"Atlantic, Northeast","Galeocerdo cuvier","NT","Unknown",1
+262,"Atlantic, Northeast","Grampus griseus","LC","Unknown",2340
+262,"Atlantic, Northeast","Isurus oxyrinchus","VU","Decreasing",25
+262,"Atlantic, Northeast","Isurus paucus","VU","Decreasing",402
+262,"Atlantic, Northeast","Lagenodelphis hosei","LC","Unknown",161
+262,"Atlantic, Northeast","Lamna nasus","VU","Decreasing",2658
+262,"Atlantic, Northeast","Megaptera novaeangliae","LC","Increasing",2891
+262,"Atlantic, Northeast","Oceanites oceanicus","LC","Stable",1617
+262,"Atlantic, Northeast","Physeter macrocephalus","VU","Unknown",2862
+262,"Atlantic, Northeast","Prionace glauca","NT","Unknown",2532
+262,"Atlantic, Northeast","Rhincodon typus","VU","Decreasing",320
+262,"Atlantic, Northeast","Stenella coeruleoalba","LC","Unknown",1569
+262,"Atlantic, Northeast","Steno bredanensis","LC","Unknown",59
+262,"Atlantic, Northeast","Stercorarius maccormicki","LC","Stable",33
+262,"Atlantic, Northeast","Tursiops truncatus","LC","Unknown",1870
+262,"Atlantic, Northeast","Ursus maritimus","VU","Decreasing",2185
+262,"Atlantic, Northeast","Ziphius cavirostris","LC","Unknown",2141
+263,"Atlantic, Western-Central","Alopias vulpinus","VU","Decreasing",473
+263,"Atlantic, Western-Central","Balaenoptera acutorostrata","LC","Stable",2672
+263,"Atlantic, Western-Central","Balaenoptera borealis","EN","Unknown",2699
+263,"Atlantic, Western-Central","Balaenoptera musculus","EN","Increasing",2699
+263,"Atlantic, Western-Central","Balaenoptera physalus","EN","Unknown",560
+263,"Atlantic, Western-Central","Carcharodon carcharias","VU","Unknown",887
+263,"Atlantic, Western-Central","Caretta caretta","EN",NA,391
+263,"Atlantic, Western-Central","Cetorhinus maximus","VU","Decreasing",622
+263,"Atlantic, Western-Central","Chelonia mydas","EN","Decreasing",2699
+263,"Atlantic, Western-Central","Delphinus delphis","LC","Unknown",170
+263,"Atlantic, Western-Central","Dermochelys coriacea","CR","Decreasing",981
+263,"Atlantic, Western-Central","Eubalaena glacialis","EN","Unknown",166
+263,"Atlantic, Western-Central","Grampus griseus","LC","Unknown",2699
+263,"Atlantic, Western-Central","Isurus paucus","VU","Decreasing",1426
+263,"Atlantic, Western-Central","Lagenodelphis hosei","LC","Unknown",2693
+263,"Atlantic, Western-Central","Megaptera novaeangliae","LC","Increasing",2699
+263,"Atlantic, Western-Central","Oceanites oceanicus","LC","Stable",2699
+263,"Atlantic, Western-Central","Peponocephala electra","LC","Unknown",1651
+263,"Atlantic, Western-Central","Physeter macrocephalus","VU","Unknown",2699
+263,"Atlantic, Western-Central","Prionace glauca","NT","Unknown",2698
+263,"Atlantic, Western-Central","Rhincodon typus","VU","Decreasing",995
+263,"Atlantic, Western-Central","Stenella attenuata","LC","Unknown",2107
+263,"Atlantic, Western-Central","Stenella coeruleoalba","LC","Unknown",2699
+263,"Atlantic, Western-Central","Steno bredanensis","LC","Unknown",2260
+263,"Atlantic, Western-Central","Tursiops truncatus","LC","Unknown",2699
+263,"Atlantic, Western-Central","Ziphius cavirostris","LC","Unknown",2699
+264,"Atlantic, Eastern Central","Alopias vulpinus","VU","Decreasing",1493
+264,"Atlantic, Eastern Central","Balaenoptera acutorostrata","LC","Stable",3231
+264,"Atlantic, Eastern Central","Balaenoptera borealis","EN","Unknown",3231
+264,"Atlantic, Eastern Central","Balaenoptera musculus","EN","Increasing",3231
+264,"Atlantic, Eastern Central","Balaenoptera physalus","EN","Unknown",431
+264,"Atlantic, Eastern Central","Carcharodon carcharias","VU","Unknown",2456
+264,"Atlantic, Eastern Central","Caretta caretta","EN",NA,826
+264,"Atlantic, Eastern Central","Cetorhinus maximus","VU","Decreasing",1220
+264,"Atlantic, Eastern Central","Chelonia mydas","EN","Decreasing",3231
+264,"Atlantic, Eastern Central","Delphinus delphis","LC","Unknown",318
+264,"Atlantic, Eastern Central","Dermochelys coriacea","CR","Decreasing",2277
+264,"Atlantic, Eastern Central","Eretmochelys imbricata","CR","Decreasing",1
+264,"Atlantic, Eastern Central","Eubalaena glacialis","EN","Unknown",58
+264,"Atlantic, Eastern Central","Galeocerdo cuvier","NT","Unknown",5
+264,"Atlantic, Eastern Central","Grampus griseus","LC","Unknown",3231
+264,"Atlantic, Eastern Central","Isurus oxyrinchus","VU","Decreasing",15
+264,"Atlantic, Eastern Central","Isurus paucus","VU","Decreasing",2731
+264,"Atlantic, Eastern Central","Lagenodelphis hosei","LC","Unknown",3222
+264,"Atlantic, Eastern Central","Lamna nasus","VU","Decreasing",33
+264,"Atlantic, Eastern Central","Lepidochelys olivacea","VU","Decreasing",1
+264,"Atlantic, Eastern Central","Megaptera novaeangliae","LC","Increasing",3231
+264,"Atlantic, Eastern Central","Oceanites oceanicus","LC","Stable",3231
+264,"Atlantic, Eastern Central","Peponocephala electra","LC","Unknown",2368
+264,"Atlantic, Eastern Central","Physeter macrocephalus","VU","Unknown",3231
+264,"Atlantic, Eastern Central","Prionace glauca","NT","Unknown",3231
+264,"Atlantic, Eastern Central","Rhincodon typus","VU","Decreasing",2447
+264,"Atlantic, Eastern Central","Stenella attenuata","LC","Unknown",2476
+264,"Atlantic, Eastern Central","Stenella coeruleoalba","LC","Unknown",3231
+264,"Atlantic, Eastern Central","Steno bredanensis","LC","Unknown",3042
+264,"Atlantic, Eastern Central","Tursiops truncatus","LC","Unknown",3231
+264,"Atlantic, Eastern Central","Ziphius cavirostris","LC","Unknown",3231
+266,"Atlantic, Southwest","Alopias vulpinus","VU","Decreasing",2189
+266,"Atlantic, Southwest","Aptenodytes forsteri","NT","Stable",14
+266,"Atlantic, Southwest","Aptenodytes patagonicus","LC","Increasing",453
+266,"Atlantic, Southwest","Arctocephalus gazella","LC","Increasing",94
+266,"Atlantic, Southwest","Balaenoptera acutorostrata","LC","Stable",5045
+266,"Atlantic, Southwest","Balaenoptera borealis","EN","Unknown",5045
+266,"Atlantic, Southwest","Balaenoptera musculus","EN","Increasing",5045
+266,"Atlantic, Southwest","Balaenoptera physalus","EN","Unknown",3806
+266,"Atlantic, Southwest","Carcharodon carcharias","VU","Unknown",1647
+266,"Atlantic, Southwest","Caretta caretta","EN",NA,301
+266,"Atlantic, Southwest","Cetorhinus maximus","VU","Decreasing",2941
+266,"Atlantic, Southwest","Chelonia mydas","EN","Decreasing",1278
+266,"Atlantic, Southwest","Chionis albus","LC","Stable",263
+266,"Atlantic, Southwest","Daption capense","LC","Stable",3138
+266,"Atlantic, Southwest","Delphinus delphis","LC","Unknown",646
+266,"Atlantic, Southwest","Dermochelys coriacea","CR","Decreasing",1959
+266,"Atlantic, Southwest","Diomedea exulans","VU","Decreasing",3179
+266,"Atlantic, Southwest","Eretmochelys imbricata","CR","Decreasing",1
+266,"Atlantic, Southwest","Eubalaena australis","LC","Increasing",3120
+266,"Atlantic, Southwest","Eudyptes chrysolophus","VU","Decreasing",411
+266,"Atlantic, Southwest","Galeocerdo cuvier","NT","Unknown",6
+266,"Atlantic, Southwest","Grampus griseus","LC","Unknown",1751
+266,"Atlantic, Southwest","Hydrurga leptonyx","LC","Unknown",617
+266,"Atlantic, Southwest","Hyperoodon planifrons","LC","Unknown",2346
+266,"Atlantic, Southwest","Isurus oxyrinchus","VU","Decreasing",37
+266,"Atlantic, Southwest","Isurus paucus","VU","Decreasing",529
+266,"Atlantic, Southwest","Lagenodelphis hosei","LC","Unknown",2070
+266,"Atlantic, Southwest","Lagenorhynchus cruciger","LC","Unknown",1951
+266,"Atlantic, Southwest","Lamna nasus","VU","Decreasing",2403
+266,"Atlantic, Southwest","Leptonychotes weddellii","LC","Unknown",128
+266,"Atlantic, Southwest","Lobodon carcinophaga","LC","Unknown",114
+266,"Atlantic, Southwest","Macronectes giganteus","LC","Increasing",1864
+266,"Atlantic, Southwest","Megaptera novaeangliae","LC","Increasing",5045
+266,"Atlantic, Southwest","Mirounga leonina","LC","Unknown",2563
+266,"Atlantic, Southwest","Oceanites oceanicus","LC","Stable",5045
+266,"Atlantic, Southwest","Ommatophoca rossii","LC","Unknown",114
+266,"Atlantic, Southwest","Peponocephala electra","LC","Unknown",1744
+266,"Atlantic, Southwest","Physeter macrocephalus","VU","Unknown",5045
+266,"Atlantic, Southwest","Prionace glauca","NT","Unknown",4337
+266,"Atlantic, Southwest","Pygoscelis adeliae","NT","Increasing",5
+266,"Atlantic, Southwest","Pygoscelis antarcticus","LC","Increasing",337
+266,"Atlantic, Southwest","Pygoscelis papua","NT","Decreasing",463
+266,"Atlantic, Southwest","Rhincodon typus","VU","Decreasing",716
+266,"Atlantic, Southwest","Stenella attenuata","LC","Unknown",3145
+266,"Atlantic, Southwest","Stenella coeruleoalba","LC","Unknown",2506
+266,"Atlantic, Southwest","Steno bredanensis","LC","Unknown",2439
+266,"Atlantic, Southwest","Stercorarius lonnbergi","LC","Stable",2170
+266,"Atlantic, Southwest","Stercorarius maccormicki","LC","Stable",174
+266,"Atlantic, Southwest","Thalassarche melanophrys","EN","Decreasing",3147
+266,"Atlantic, Southwest","Tursiops truncatus","LC","Unknown",3930
+266,"Atlantic, Southwest","Ziphius cavirostris","LC","Unknown",4747
+267,"Atlantic, Southeast","Alopias vulpinus","VU","Decreasing",2639
+267,"Atlantic, Southeast","Arctocephalus gazella","LC","Increasing",22
+267,"Atlantic, Southeast","Balaenoptera acutorostrata","LC","Stable",5939
+267,"Atlantic, Southeast","Balaenoptera borealis","EN","Unknown",5939
+267,"Atlantic, Southeast","Balaenoptera musculus","EN","Increasing",5939
+267,"Atlantic, Southeast","Balaenoptera physalus","EN","Unknown",4529
+267,"Atlantic, Southeast","Carcharodon carcharias","VU","Unknown",2544
+267,"Atlantic, Southeast","Caretta caretta","EN",NA,442
+267,"Atlantic, Southeast","Cetorhinus maximus","VU","Decreasing",4195
+267,"Atlantic, Southeast","Chelonia mydas","EN","Decreasing",1090
+267,"Atlantic, Southeast","Daption capense","LC","Stable",3825
+267,"Atlantic, Southeast","Delphinus delphis","LC","Unknown",516
+267,"Atlantic, Southeast","Dermochelys coriacea","CR","Decreasing",2075
+267,"Atlantic, Southeast","Diomedea exulans","VU","Decreasing",3583
+267,"Atlantic, Southeast","Eretmochelys imbricata","CR","Decreasing",4
+267,"Atlantic, Southeast","Eubalaena australis","LC","Increasing",2773
+267,"Atlantic, Southeast","Eudyptes chrysolophus","VU","Decreasing",420
+267,"Atlantic, Southeast","Galeocerdo cuvier","NT","Unknown",9
+267,"Atlantic, Southeast","Grampus griseus","LC","Unknown",2346
+267,"Atlantic, Southeast","Hydrurga leptonyx","LC","Unknown",718
+267,"Atlantic, Southeast","Hyperoodon planifrons","LC","Unknown",2686
+267,"Atlantic, Southeast","Isurus oxyrinchus","VU","Decreasing",33
+267,"Atlantic, Southeast","Isurus paucus","VU","Decreasing",1157
+267,"Atlantic, Southeast","Lagenodelphis hosei","LC","Unknown",2930
+267,"Atlantic, Southeast","Lagenorhynchus cruciger","LC","Unknown",2025
+267,"Atlantic, Southeast","Lamna nasus","VU","Decreasing",2853
+267,"Atlantic, Southeast","Macronectes giganteus","LC","Increasing",2714
+267,"Atlantic, Southeast","Megaptera novaeangliae","LC","Increasing",5939
+267,"Atlantic, Southeast","Mirounga leonina","LC","Unknown",2371
+267,"Atlantic, Southeast","Oceanites oceanicus","LC","Stable",5939
+267,"Atlantic, Southeast","Peponocephala electra","LC","Unknown",1884
+267,"Atlantic, Southeast","Physeter macrocephalus","VU","Unknown",5939
+267,"Atlantic, Southeast","Prionace glauca","NT","Unknown",5300
+267,"Atlantic, Southeast","Pygoscelis antarcticus","LC","Increasing",78
+267,"Atlantic, Southeast","Rhincodon typus","VU","Decreasing",1335
+267,"Atlantic, Southeast","Stenella attenuata","LC","Unknown",3564
+267,"Atlantic, Southeast","Stenella coeruleoalba","LC","Unknown",3519
+267,"Atlantic, Southeast","Steno bredanensis","LC","Unknown",3239
+267,"Atlantic, Southeast","Stercorarius lonnbergi","LC","Stable",2886
+267,"Atlantic, Southeast","Thalassarche melanophrys","EN","Decreasing",3807
+267,"Atlantic, Southeast","Tursiops truncatus","LC","Unknown",3299
+267,"Atlantic, Southeast","Ziphius cavirostris","LC","Unknown",5461
+269,"Indian Ocean, Western","Alopias vulpinus","VU","Decreasing",3339
+269,"Indian Ocean, Western","Aptenodytes patagonicus","LC","Increasing",71
+269,"Indian Ocean, Western","Arctocephalus gazella","LC","Increasing",4
+269,"Indian Ocean, Western","Balaenoptera acutorostrata","LC","Stable",6472
+269,"Indian Ocean, Western","Balaenoptera borealis","EN","Unknown",5149
+269,"Indian Ocean, Western","Balaenoptera musculus","EN","Increasing",6472
+269,"Indian Ocean, Western","Balaenoptera physalus","EN","Unknown",3846
+269,"Indian Ocean, Western","Carcharhinus amblyrhynchos","NT","Unknown",38
+269,"Indian Ocean, Western","Carcharhinus melanopterus","NT","Decreasing",17
+269,"Indian Ocean, Western","Carcharodon carcharias","VU","Unknown",2520
+269,"Indian Ocean, Western","Caretta caretta","EN",NA,1600
+269,"Indian Ocean, Western","Cetorhinus maximus","VU","Decreasing",3253
+269,"Indian Ocean, Western","Cheilinus undulatus","EN","Decreasing",22
+269,"Indian Ocean, Western","Chelonia mydas","EN","Decreasing",1856
+269,"Indian Ocean, Western","Daption capense","LC","Stable",3833
+269,"Indian Ocean, Western","Dermochelys coriacea","CR","Decreasing",4229
+269,"Indian Ocean, Western","Diomedea exulans","VU","Decreasing",3159
+269,"Indian Ocean, Western","Eretmochelys imbricata","CR","Decreasing",24
+269,"Indian Ocean, Western","Eubalaena australis","LC","Increasing",2886
+269,"Indian Ocean, Western","Eudyptes chrysolophus","VU","Decreasing",536
+269,"Indian Ocean, Western","Galeocerdo cuvier","NT","Unknown",32
+269,"Indian Ocean, Western","Grampus griseus","LC","Unknown",4017
+269,"Indian Ocean, Western","Hyperoodon planifrons","LC","Unknown",2553
+269,"Indian Ocean, Western","Isurus oxyrinchus","VU","Decreasing",38
+269,"Indian Ocean, Western","Isurus paucus","VU","Decreasing",1041
+269,"Indian Ocean, Western","Lagenodelphis hosei","LC","Unknown",3715
+269,"Indian Ocean, Western","Lagenorhynchus cruciger","LC","Unknown",920
+269,"Indian Ocean, Western","Lamna nasus","VU","Decreasing",2236
+269,"Indian Ocean, Western","Lepidochelys olivacea","VU","Decreasing",25
+269,"Indian Ocean, Western","Macronectes giganteus","LC","Increasing",3049
+269,"Indian Ocean, Western","Megaptera novaeangliae","LC","Increasing",6472
+269,"Indian Ocean, Western","Mirounga leonina","LC","Unknown",947
+269,"Indian Ocean, Western","Oceanites oceanicus","LC","Stable",6472
+269,"Indian Ocean, Western","Peponocephala electra","LC","Unknown",2941
+269,"Indian Ocean, Western","Physeter macrocephalus","VU","Unknown",6472
+269,"Indian Ocean, Western","Prionace glauca","NT","Unknown",6471
+269,"Indian Ocean, Western","Pygoscelis papua","NT","Decreasing",20
+269,"Indian Ocean, Western","Rhincodon typus","VU","Decreasing",2584
+269,"Indian Ocean, Western","Stenella attenuata","LC","Unknown",4764
+269,"Indian Ocean, Western","Stenella coeruleoalba","LC","Unknown",5340
+269,"Indian Ocean, Western","Steno bredanensis","LC","Unknown",4788
+269,"Indian Ocean, Western","Stercorarius lonnbergi","LC","Stable",2050
+269,"Indian Ocean, Western","Thalassarche melanophrys","EN","Decreasing",3248
+269,"Indian Ocean, Western","Triaenodon obesus","NT","Unknown",23
+269,"Indian Ocean, Western","Tursiops truncatus","LC","Unknown",4988
+269,"Indian Ocean, Western","Ziphius cavirostris","LC","Unknown",6420
+270,"Indian Ocean, Eastern","Alopias vulpinus","VU","Decreasing",3652
+270,"Indian Ocean, Eastern","Aptenodytes patagonicus","LC","Increasing",1014
+270,"Indian Ocean, Eastern","Arctocephalus gazella","LC","Increasing",1053
+270,"Indian Ocean, Eastern","Balaenoptera acutorostrata","LC","Stable",9129
+270,"Indian Ocean, Eastern","Balaenoptera borealis","EN","Unknown",8540
+270,"Indian Ocean, Eastern","Balaenoptera musculus","EN","Increasing",9129
+270,"Indian Ocean, Eastern","Balaenoptera physalus","EN","Unknown",6678
+270,"Indian Ocean, Eastern","Carcharodon carcharias","VU","Unknown",2043
+270,"Indian Ocean, Eastern","Caretta caretta","EN",NA,738
+270,"Indian Ocean, Eastern","Cetorhinus maximus","VU","Decreasing",4837
+270,"Indian Ocean, Eastern","Chelonia mydas","EN","Decreasing",2615
+270,"Indian Ocean, Eastern","Daption capense","LC","Stable",6156
+270,"Indian Ocean, Eastern","Delphinus delphis","LC","Unknown",24
+270,"Indian Ocean, Eastern","Dermochelys coriacea","CR","Decreasing",2378
+270,"Indian Ocean, Eastern","Diomedea exulans","VU","Decreasing",5655
+270,"Indian Ocean, Eastern","Eubalaena australis","LC","Increasing",4805
+270,"Indian Ocean, Eastern","Grampus griseus","LC","Unknown",3146
+270,"Indian Ocean, Eastern","Hydrurga leptonyx","LC","Unknown",1158
+270,"Indian Ocean, Eastern","Hyperoodon planifrons","LC","Unknown",5892
+270,"Indian Ocean, Eastern","Isurus oxyrinchus","VU","Decreasing",1
+270,"Indian Ocean, Eastern","Isurus paucus","VU","Decreasing",759
+270,"Indian Ocean, Eastern","Lagenodelphis hosei","LC","Unknown",3473
+270,"Indian Ocean, Eastern","Lagenorhynchus cruciger","LC","Unknown",3375
+270,"Indian Ocean, Eastern","Lamna nasus","VU","Decreasing",4282
+270,"Indian Ocean, Eastern","Leptonychotes weddellii","LC","Unknown",9
+270,"Indian Ocean, Eastern","Lobodon carcinophaga","LC","Unknown",14
+270,"Indian Ocean, Eastern","Macronectes giganteus","LC","Increasing",5636
+270,"Indian Ocean, Eastern","Megaptera novaeangliae","LC","Increasing",9129
+270,"Indian Ocean, Eastern","Mirounga leonina","LC","Unknown",3707
+270,"Indian Ocean, Eastern","Oceanites oceanicus","LC","Stable",9099
+270,"Indian Ocean, Eastern","Ommatophoca rossii","LC","Unknown",14
+270,"Indian Ocean, Eastern","Peponocephala electra","LC","Unknown",2840
+270,"Indian Ocean, Eastern","Physeter macrocephalus","VU","Unknown",9129
+270,"Indian Ocean, Eastern","Prionace glauca","NT","Unknown",7880
+270,"Indian Ocean, Eastern","Pygoscelis antarcticus","LC","Increasing",85
+270,"Indian Ocean, Eastern","Pygoscelis papua","NT","Decreasing",828
+270,"Indian Ocean, Eastern","Rhincodon typus","VU","Decreasing",1404
+270,"Indian Ocean, Eastern","Stenella attenuata","LC","Unknown",4120
+270,"Indian Ocean, Eastern","Stenella coeruleoalba","LC","Unknown",5684
+270,"Indian Ocean, Eastern","Steno bredanensis","LC","Unknown",4358
+270,"Indian Ocean, Eastern","Stercorarius lonnbergi","LC","Stable",5147
+270,"Indian Ocean, Eastern","Thalassarche melanophrys","EN","Decreasing",6044
+270,"Indian Ocean, Eastern","Tursiops truncatus","LC","Unknown",4582
+270,"Indian Ocean, Eastern","Ziphius cavirostris","LC","Unknown",6525
+272,"Pacific, Northwest","Alopias vulpinus","VU","Decreasing",2626
+272,"Pacific, Northwest","Balaena mysticetus","LC","Increasing",184
+272,"Pacific, Northwest","Balaenoptera acutorostrata","LC","Stable",4393
+272,"Pacific, Northwest","Balaenoptera borealis","EN","Unknown",4326
+272,"Pacific, Northwest","Balaenoptera musculus","EN","Increasing",4191
+272,"Pacific, Northwest","Balaenoptera physalus","EN","Unknown",4390
+272,"Pacific, Northwest","Carcharhinus amblyrhynchos","NT","Unknown",7
+272,"Pacific, Northwest","Carcharodon carcharias","VU","Unknown",2248
+272,"Pacific, Northwest","Caretta caretta","EN",NA,298
+272,"Pacific, Northwest","Cetorhinus maximus","VU","Decreasing",2999
+272,"Pacific, Northwest","Chelonia mydas","EN","Decreasing",2741
+272,"Pacific, Northwest","Delphinus delphis","LC","Unknown",3405
+272,"Pacific, Northwest","Dermochelys coriacea","CR","Decreasing",2024
+272,"Pacific, Northwest","Eschrichtius robustus","LC","Stable",9
+272,"Pacific, Northwest","Galeocerdo cuvier","NT","Unknown",3
+272,"Pacific, Northwest","Grampus griseus","LC","Unknown",4182
+272,"Pacific, Northwest","Isurus oxyrinchus","VU","Decreasing",25
+272,"Pacific, Northwest","Isurus paucus","VU","Decreasing",2204
+272,"Pacific, Northwest","Lagenodelphis hosei","LC","Unknown",1159
+272,"Pacific, Northwest","Megaptera novaeangliae","LC","Increasing",4390
+272,"Pacific, Northwest","Peponocephala electra","LC","Unknown",2176
+272,"Pacific, Northwest","Physeter macrocephalus","VU","Unknown",4390
+272,"Pacific, Northwest","Prionace glauca","NT","Unknown",4168
+272,"Pacific, Northwest","Rhincodon typus","VU","Decreasing",1416
+272,"Pacific, Northwest","Stenella attenuata","LC","Unknown",2731
+272,"Pacific, Northwest","Stenella coeruleoalba","LC","Unknown",3382
+272,"Pacific, Northwest","Steno bredanensis","LC","Unknown",2693
+272,"Pacific, Northwest","Stercorarius maccormicki","LC","Stable",203
+272,"Pacific, Northwest","Tursiops truncatus","LC","Unknown",3198
+272,"Pacific, Northwest","Ursus maritimus","VU","Decreasing",27
+272,"Pacific, Northwest","Ziphius cavirostris","LC","Unknown",4380
+273,"Pacific, Northeast","Alopias vulpinus","VU","Decreasing",847
+273,"Pacific, Northeast","Balaenoptera acutorostrata","LC","Stable",2209
+273,"Pacific, Northeast","Balaenoptera borealis","EN","Unknown",2209
+273,"Pacific, Northeast","Balaenoptera musculus","EN","Increasing",2209
+273,"Pacific, Northeast","Balaenoptera physalus","EN","Unknown",2209
+273,"Pacific, Northeast","Carcharodon carcharias","VU","Unknown",634
+273,"Pacific, Northeast","Cetorhinus maximus","VU","Decreasing",2209
+273,"Pacific, Northeast","Delphinus delphis","LC","Unknown",1177
+273,"Pacific, Northeast","Dermochelys coriacea","CR","Decreasing",313
+273,"Pacific, Northeast","Grampus griseus","LC","Unknown",2209
+273,"Pacific, Northeast","Isurus oxyrinchus","VU","Decreasing",4
+273,"Pacific, Northeast","Isurus paucus","VU","Decreasing",169
+273,"Pacific, Northeast","Megaptera novaeangliae","LC","Increasing",2209
+273,"Pacific, Northeast","Physeter macrocephalus","VU","Unknown",2209
+273,"Pacific, Northeast","Prionace glauca","NT","Unknown",2209
+273,"Pacific, Northeast","Stenella coeruleoalba","LC","Unknown",481
+273,"Pacific, Northeast","Stercorarius maccormicki","LC","Stable",1904
+273,"Pacific, Northeast","Tursiops truncatus","LC","Unknown",44
+273,"Pacific, Northeast","Ziphius cavirostris","LC","Unknown",2209
+274,"Pacific, Western Central","Alopias vulpinus","VU","Decreasing",12
+274,"Pacific, Western Central","Balaenoptera acutorostrata","LC","Stable",2434
+274,"Pacific, Western Central","Balaenoptera borealis","EN","Unknown",2434
+274,"Pacific, Western Central","Balaenoptera musculus","EN","Increasing",2434
+274,"Pacific, Western Central","Balaenoptera physalus","EN","Unknown",14
+274,"Pacific, Western Central","Carcharhinus amblyrhynchos","NT","Unknown",15
+274,"Pacific, Western Central","Carcharodon carcharias","VU","Unknown",7
+274,"Pacific, Western Central","Caretta caretta","EN",NA,211
+274,"Pacific, Western Central","Cetorhinus maximus","VU","Decreasing",7
+274,"Pacific, Western Central","Cheilinus undulatus","EN","Decreasing",7
+274,"Pacific, Western Central","Chelonia mydas","EN","Decreasing",2422
+274,"Pacific, Western Central","Daption capense","LC","Stable",7
+274,"Pacific, Western Central","Dermochelys coriacea","CR","Decreasing",501
+274,"Pacific, Western Central","Diomedea exulans","VU","Decreasing",7
+274,"Pacific, Western Central","Galeocerdo cuvier","NT","Unknown",7
+274,"Pacific, Western Central","Grampus griseus","LC","Unknown",2434
+274,"Pacific, Western Central","Isurus oxyrinchus","VU","Decreasing",8
+274,"Pacific, Western Central","Isurus paucus","VU","Decreasing",14
+274,"Pacific, Western Central","Lagenodelphis hosei","LC","Unknown",2427
+274,"Pacific, Western Central","Megaptera novaeangliae","LC","Increasing",2434
+274,"Pacific, Western Central","Oceanites oceanicus","LC","Stable",665
+274,"Pacific, Western Central","Peponocephala electra","LC","Unknown",2434
+274,"Pacific, Western Central","Physeter macrocephalus","VU","Unknown",2434
+274,"Pacific, Western Central","Prionace glauca","NT","Unknown",2434
+274,"Pacific, Western Central","Rhincodon typus","VU","Decreasing",320
+274,"Pacific, Western Central","Stenella attenuata","LC","Unknown",2434
+274,"Pacific, Western Central","Stenella coeruleoalba","LC","Unknown",2434
+274,"Pacific, Western Central","Steno bredanensis","LC","Unknown",2434
+274,"Pacific, Western Central","Tursiops truncatus","LC","Unknown",2434
+274,"Pacific, Western Central","Ziphius cavirostris","LC","Unknown",2434
+275,"Pacific, Eastern Central","Alopias vulpinus","VU","Decreasing",6139
+275,"Pacific, Eastern Central","Balaenoptera acutorostrata","LC","Stable",10926
+275,"Pacific, Eastern Central","Balaenoptera borealis","EN","Unknown",10926
+275,"Pacific, Eastern Central","Balaenoptera musculus","EN","Increasing",10926
+275,"Pacific, Eastern Central","Balaenoptera physalus","EN","Unknown",3967
+275,"Pacific, Eastern Central","Carcharhinus amblyrhynchos","NT","Unknown",2
+275,"Pacific, Eastern Central","Carcharodon carcharias","VU","Unknown",3945
+275,"Pacific, Eastern Central","Caretta caretta","EN",NA,1476
+275,"Pacific, Eastern Central","Cetorhinus maximus","VU","Decreasing",3756
+275,"Pacific, Eastern Central","Chelonia mydas","EN","Decreasing",9710
+275,"Pacific, Eastern Central","Daption capense","LC","Stable",304
+275,"Pacific, Eastern Central","Delphinus delphis","LC","Unknown",5599
+275,"Pacific, Eastern Central","Dermochelys coriacea","CR","Decreasing",6802
+275,"Pacific, Eastern Central","Grampus griseus","LC","Unknown",10926
+275,"Pacific, Eastern Central","Isurus paucus","VU","Decreasing",4618
+275,"Pacific, Eastern Central","Lagenodelphis hosei","LC","Unknown",7334
+275,"Pacific, Eastern Central","Megaptera novaeangliae","LC","Increasing",10926
+275,"Pacific, Eastern Central","Oceanites oceanicus","LC","Stable",5588
+275,"Pacific, Eastern Central","Peponocephala electra","LC","Unknown",8563
+275,"Pacific, Eastern Central","Physeter macrocephalus","VU","Unknown",10926
+275,"Pacific, Eastern Central","Prionace glauca","NT","Unknown",10904
+275,"Pacific, Eastern Central","Rhincodon typus","VU","Decreasing",4971
+275,"Pacific, Eastern Central","Stenella attenuata","LC","Unknown",8824
+275,"Pacific, Eastern Central","Stenella coeruleoalba","LC","Unknown",10926
+275,"Pacific, Eastern Central","Steno bredanensis","LC","Unknown",10370
+275,"Pacific, Eastern Central","Stercorarius maccormicki","LC","Stable",363
+275,"Pacific, Eastern Central","Tursiops truncatus","LC","Unknown",10863
+275,"Pacific, Eastern Central","Ziphius cavirostris","LC","Unknown",10926
+276,"Pacific, Southwest","Alopias vulpinus","VU","Decreasing",4154
+276,"Pacific, Southwest","Aptenodytes patagonicus","LC","Increasing",450
+276,"Pacific, Southwest","Arctocephalus gazella","LC","Increasing",168
+276,"Pacific, Southwest","Balaenoptera acutorostrata","LC","Stable",9523
+276,"Pacific, Southwest","Balaenoptera borealis","EN","Unknown",9520
+276,"Pacific, Southwest","Balaenoptera musculus","EN","Increasing",9523
+276,"Pacific, Southwest","Balaenoptera physalus","EN","Unknown",9523
+276,"Pacific, Southwest","Carcharhinus amblyrhynchos","NT","Unknown",26
+276,"Pacific, Southwest","Carcharodon carcharias","VU","Unknown",2746
+276,"Pacific, Southwest","Caretta caretta","EN",NA,578
+276,"Pacific, Southwest","Cetorhinus maximus","VU","Decreasing",7180
+276,"Pacific, Southwest","Chelonia mydas","EN","Decreasing",662
+276,"Pacific, Southwest","Daption capense","LC","Stable",9504
+276,"Pacific, Southwest","Delphinus delphis","LC","Unknown",877
+276,"Pacific, Southwest","Dermochelys coriacea","CR","Decreasing",1189
+276,"Pacific, Southwest","Diomedea exulans","VU","Decreasing",7288
+276,"Pacific, Southwest","Eretmochelys imbricata","CR","Decreasing",16
+276,"Pacific, Southwest","Eubalaena australis","LC","Increasing",5817
+276,"Pacific, Southwest","Galeocerdo cuvier","NT","Unknown",20
+276,"Pacific, Southwest","Grampus griseus","LC","Unknown",2190
+276,"Pacific, Southwest","Hydrurga leptonyx","LC","Unknown",1512
+276,"Pacific, Southwest","Hyperoodon planifrons","LC","Unknown",5145
+276,"Pacific, Southwest","Isurus oxyrinchus","VU","Decreasing",68
+276,"Pacific, Southwest","Isurus paucus","VU","Decreasing",11
+276,"Pacific, Southwest","Lagenodelphis hosei","LC","Unknown",48
+276,"Pacific, Southwest","Lagenorhynchus cruciger","LC","Unknown",4907
+276,"Pacific, Southwest","Lamna nasus","VU","Decreasing",6498
+276,"Pacific, Southwest","Leptonychotes weddellii","LC","Unknown",3
+276,"Pacific, Southwest","Lobodon carcinophaga","LC","Unknown",68
+276,"Pacific, Southwest","Macronectes giganteus","LC","Increasing",6656
+276,"Pacific, Southwest","Megaptera novaeangliae","LC","Increasing",9523
+276,"Pacific, Southwest","Mirounga leonina","LC","Unknown",3446
+276,"Pacific, Southwest","Oceanites oceanicus","LC","Stable",9523
+276,"Pacific, Southwest","Ommatophoca rossii","LC","Unknown",68
+276,"Pacific, Southwest","Peponocephala electra","LC","Unknown",880
+276,"Pacific, Southwest","Physeter macrocephalus","VU","Unknown",9523
+276,"Pacific, Southwest","Prionace glauca","NT","Unknown",7755
+276,"Pacific, Southwest","Pygoscelis antarcticus","LC","Increasing",2271
+276,"Pacific, Southwest","Pygoscelis papua","NT","Decreasing",410
+276,"Pacific, Southwest","Rhincodon typus","VU","Decreasing",433
+276,"Pacific, Southwest","Stenella attenuata","LC","Unknown",2572
+276,"Pacific, Southwest","Stenella coeruleoalba","LC","Unknown",5014
+276,"Pacific, Southwest","Steno bredanensis","LC","Unknown",680
+276,"Pacific, Southwest","Stercorarius lonnbergi","LC","Stable",6782
+276,"Pacific, Southwest","Thalassarche melanophrys","EN","Decreasing",8851
+276,"Pacific, Southwest","Triaenodon obesus","NT","Unknown",14
+276,"Pacific, Southwest","Tursiops truncatus","LC","Unknown",5524
+276,"Pacific, Southwest","Ziphius cavirostris","LC","Unknown",6136
+277,"Pacific, Southeast","Alopias vulpinus","VU","Decreasing",5163
+277,"Pacific, Southeast","Balaenoptera acutorostrata","LC","Stable",9872
+277,"Pacific, Southeast","Balaenoptera borealis","EN","Unknown",9872
+277,"Pacific, Southeast","Balaenoptera musculus","EN","Increasing",9872
+277,"Pacific, Southeast","Balaenoptera physalus","EN","Unknown",6344
+277,"Pacific, Southeast","Carcharodon carcharias","VU","Unknown",4572
+277,"Pacific, Southeast","Caretta caretta","EN",NA,1904
+277,"Pacific, Southeast","Cetorhinus maximus","VU","Decreasing",6478
+277,"Pacific, Southeast","Chelonia mydas","EN","Decreasing",3953
+277,"Pacific, Southeast","Chionis albus","LC","Stable",5
+277,"Pacific, Southeast","Daption capense","LC","Stable",6916
+277,"Pacific, Southeast","Delphinus delphis","LC","Unknown",1658
+277,"Pacific, Southeast","Dermochelys coriacea","CR","Decreasing",3574
+277,"Pacific, Southeast","Diomedea exulans","VU","Decreasing",3464
+277,"Pacific, Southeast","Eretmochelys imbricata","CR","Decreasing",1
+277,"Pacific, Southeast","Eubalaena australis","LC","Increasing",2697
+277,"Pacific, Southeast","Eudyptes chrysolophus","VU","Decreasing",241
+277,"Pacific, Southeast","Galeocerdo cuvier","NT","Unknown",13
+277,"Pacific, Southeast","Grampus griseus","LC","Unknown",4971
+277,"Pacific, Southeast","Hydrurga leptonyx","LC","Unknown",586
+277,"Pacific, Southeast","Hyperoodon planifrons","LC","Unknown",2779
+277,"Pacific, Southeast","Isurus oxyrinchus","VU","Decreasing",20
+277,"Pacific, Southeast","Isurus paucus","VU","Decreasing",3650
+277,"Pacific, Southeast","Lagenodelphis hosei","LC","Unknown",3212
+277,"Pacific, Southeast","Lagenorhynchus cruciger","LC","Unknown",3391
+277,"Pacific, Southeast","Lamna nasus","VU","Decreasing",4149
+277,"Pacific, Southeast","Lobodon carcinophaga","LC","Unknown",24
+277,"Pacific, Southeast","Macronectes giganteus","LC","Increasing",2737
+277,"Pacific, Southeast","Megaptera novaeangliae","LC","Increasing",9872
+277,"Pacific, Southeast","Mirounga leonina","LC","Unknown",2537
+277,"Pacific, Southeast","Oceanites oceanicus","LC","Stable",9767
+277,"Pacific, Southeast","Ommatophoca rossii","LC","Unknown",24
+277,"Pacific, Southeast","Peponocephala electra","LC","Unknown",4635
+277,"Pacific, Southeast","Physeter macrocephalus","VU","Unknown",9872
+277,"Pacific, Southeast","Prionace glauca","NT","Unknown",8730
+277,"Pacific, Southeast","Pygoscelis antarcticus","LC","Increasing",1125
+277,"Pacific, Southeast","Pygoscelis papua","NT","Decreasing",564
+277,"Pacific, Southeast","Rhincodon typus","VU","Decreasing",3326
+277,"Pacific, Southeast","Stenella attenuata","LC","Unknown",5689
+277,"Pacific, Southeast","Stenella coeruleoalba","LC","Unknown",6411
+277,"Pacific, Southeast","Steno bredanensis","LC","Unknown",4392
+277,"Pacific, Southeast","Stercorarius lonnbergi","LC","Stable",3410
+277,"Pacific, Southeast","Stercorarius maccormicki","LC","Stable",90
+277,"Pacific, Southeast","Thalassarche melanophrys","EN","Decreasing",5384
+277,"Pacific, Southeast","Tursiops truncatus","LC","Unknown",6521
+277,"Pacific, Southeast","Ziphius cavirostris","LC","Unknown",8441
