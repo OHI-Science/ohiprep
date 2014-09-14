@@ -7,24 +7,24 @@
 library(sp)
 library(rgdal)
 library(raster)
-library(plyr)
-library(dplyr)
 library(stringr)
 rm(list = ls())
 
-setwd("N:\\model\\GL-HS-AQ-Iconics_v2013")
+source('../ohiprep/src/R/common.R')
+
+dir_curr = '../ohiprep/Global/HS-AQ-Iconics_2014'
 
 # ICO status/trend calculations:
-# Primarily uses data from N:\\model\\GL-HS-AQ-SpeciesRichness_v2013, with supplemental tables added to ID iconic species.
+# Primarily uses data from SPP calculation with supplemental tables added to ID iconic species.
 # (see R script in that file for more information about these data)
-cells <- read.csv("N:\\model\\GL-HS-AQ-SpeciesRichness_v2013\\tmp\\am_cells_rgn_proportions.csv")
-cells_spp <- read.csv("N:\\model\\GL-HS-AQ-SpeciesRichness_v2013\\tmp\\am_cells_spp.csv")
-spp <- read.csv("N:\\model\\GL-HS-AQ-SpeciesRichness_v2013\\raw\\spp.csv")
-am_cells <- read.csv("N:\\model\\GL-NCEAS-SpeciesDiversity_v2013a\\tmp\\am_cells_data.csv") #for cell areas (and other abiotic conditions)
+cells <- read.csv(file.path(dir_neptune_data, "model/GL-HS-AQ-SpeciesRichness_v2014/tmp/am_cells_rgn_proportions.csv"))
+cells_spp <- read.csv(file.path(dir_neptune_data, "model/GL-HS-AQ-SpeciesRichness_v2014/tmp/am_cells_spp.csv"))
+spp <- read.csv(file.path(dir_neptune_data, "model/GL-HS-AQ-SpeciesRichness_v2014/raw/spp.csv"))
+am_cells <- read.csv(file.path(dir_neptune_data, "model/GL-NCEAS-SpeciesDiversity_v2013a/tmp/am_cells_data.csv")) #for cell areas (and other abiotic conditions)
 
 
 # Identify Iconic species ----
-icons <- read.csv("N:\\model\\GL-NCEAS-IconicSpecies_v2013\\data\\ico_spp_extinction_status.csv")
+icons <- read.csv(file.path(dir_neptune_data, "model/GL-NCEAS-IconicSpecies_v2013/data/ico_spp_extinction_status.csv"))
 icons$sciname <- str_trim(icons$sciname)
 icons$sciname[icons$sciname=="Kogia simus"] <- "Kogia sima"
 icons$sciname[icons$sciname=="Cephalorhynchus hectori maui"] <- "Cephalorhynchus hectori"
@@ -32,18 +32,18 @@ setdiff(icons$sciname, spp$sciname)
 length(unique(icons$sciname)) #N=78 taxa
 
 # AQ: Katie sent an excel file with iconic species.  Seeing how many of those match the species in the IUCN list:
-AQ_icons <- read.csv("raw\\AQ_IconicSpecies.csv")
+AQ_icons <- read.csv(file.path(dir_curr, "raw/AQ_IconicSpecies.csv"))
 setdiff(AQ_icons$Scientific.name, icons$sciname) # N=23 that were not already on the list
 setdiff(AQ_icons$Scientific.name, spp$sciname) # only two species have no IUCN data
 length(intersect(AQ_icons$Scientific.name, spp$sciname)) #N=28 taxa with IUCN data
 
-AQ_iconSp <- AQ_icons %.%
+AQ_iconSp <- AQ_icons %>%
   select("sciname" = Scientific.name)
 
 # prepare icon species list:
-iconSp <- icons %.%
-  select(sciname) %.%
-  rbind(AQ_iconSp) %.%
+iconSp <- icons %>%
+  select(sciname) %>%
+  rbind(AQ_iconSp) %>%
   unique()
 dim(iconSp) 
 
@@ -59,8 +59,8 @@ dim(spp)
 
 ## Summarize species data for AQ and HS for data check ----
 #tmp <- readOGR(dsn="N:\\model\\GL-HS-AQ-PressuresSummary_v2013\\GL-NCEAS-Regions_v2014\\data", layer="eez_ccmlar_fao_gcs")
-AQ_regions <- read.csv("N:/git-annex/Global/NCEAS-Antarctica-Other_v2014/rgn_labels_ccamlr.csv")
-HS_regions <- read.csv("N:/git-annex/Global/NCEAS-HighSeas-Other_v2014/data/rgn_labels_fao.csv")
+AQ_regions <- read.csv("../ohiprep/Antarctica/Other_v2014/rgn_labels_ccamlr.csv")
+HS_regions <- read.csv("../ohiprep/HighSeas/HS_other_v2014/rgn_labels_fao.csv")
 
 cells_AQ <- cells[cells$sp_id %in% AQ_regions$sp_id, ]
 table(cells_AQ$sp_id)
@@ -143,24 +143,24 @@ AQ_scores  <- AQ_regions %.%
   select(sp_id) %.%
   left_join(regionScores) %.%
   select(sp_id, score=rgn_spp_score_2013)
-write.csv(AQ_scores, "data/rgn_ico_score_2013_AQ.csv", row.names=FALSE)
+write.csv(AQ_scores, file.path(dir_curr, "data/rgn_ico_score_2013_AQ.csv"), row.names=FALSE)
 
 AQ_trend  <- AQ_regions %.%
   select(sp_id) %.%
   left_join(regionScores) %.%
   select(sp_id, score=rgn_spp_trend_2013)
-write.csv(AQ_trend, "data/rgn_ico_trend_2013_AQ.csv", row.names=FALSE)
+write.csv(AQ_trend, file.path(dir_curr, "data/rgn_ico_trend_2013_AQ.csv"), row.names=FALSE)
 
 
 HS_scores  <- HS_regions %.%
   select(sp_id, rgn_id) %.%
   left_join(regionScores) %.%
   select(rgn_id, score=rgn_spp_score_2013)
-write.csv(HS_scores, "data/rgn_ico_score_2013_HS.csv", row.names=FALSE)
+write.csv(HS_scores, file.path(dir_curr, "data/rgn_ico_score_2013_HS.csv"), row.names=FALSE)
 
 HS_trend  <- HS_regions %.%
   select(sp_id, rgn_id) %.%
   left_join(regionScores) %.%
   select(rgn_id, score=rgn_spp_trend_2013)
-write.csv(HS_trend, "data/rgn_ico_trend_2013_HS.csv", row.names=FALSE)
+write.csv(HS_trend, file.path(dir_curr, "data/rgn_ico_trend_2013_HS.csv"), row.names=FALSE)
 
