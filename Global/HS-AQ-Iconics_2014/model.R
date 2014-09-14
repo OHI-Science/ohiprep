@@ -164,3 +164,51 @@ HS_trend  <- HS_regions %.%
   select(rgn_id, score=rgn_spp_trend_2013)
 write.csv(HS_trend, file.path(dir_curr, "data/rgn_ico_trend_2013_HS.csv"), row.names=FALSE)
 
+
+####################################################### 
+### side:  exploring data:
+#######################################################
+
+ spp2 <- read.csv(file.path(data, "raw/spp.csv")) %>%
+   select(sid, sciname, category, popn_trend)
+ scoreData2 <- cells_spp %>%
+   inner_join(spp2)
+ 
+ #Antarctica data:
+ AQ_regions <- read.csv("Antarctica/Other_v2014/rgn_labels_ccamlr.csv") 
+ cells2 <- cells %>%
+   left_join(scoreData2, by="LOICZID") %>%
+   filter(sp_id %in% AQ_regions$sp_id)
+ 
+ species <- cells2 %>%
+   select(sciname, category, popn_trend) %>%
+   filter(category != "DD")
+ species <- unique(species)
+ 
+ write.csv(species, file.path(dir_curr, "data_explore/AQ_ICO_species_status.csv"), row.names=FALSE)
+ 
+ # High Seas data:
+ HS_regions <- read.csv("HighSeas/HS_other_v2014/rgn_labels_fao.csv")
+ cells2 <- cells %>%
+   left_join(scoreData2, by="LOICZID") %>%
+   filter(sp_id %in% HS_regions$sp_id)
+ 
+ species <- cells2 %>%
+   select(sp_id, sciname, category, popn_trend) %>%
+   filter(category != "DD") %>%
+   left_join(HS_regions, by='sp_id') %>%
+   select(rgn_id, label, sciname, category, popn_trend)
+ 
+ speciesCells <- species %>%
+  group_by(rgn_id, label, sciname, category, popn_trend) %>%
+  summarize(Ncells = length(rgn_id))
+  
+ speciesCells[speciesCells$rgn_id==262,]
+ 
+ write.csv(speciesCells, file.path(dir_curr, "data_explore/HS_ICO_species_regions.csv"), row.names=FALSE)
+ 
+ data <- read.csv("../ohi-global/global2014/scores_2014_2014-09-09.csv") %>%
+   filter(region_type == "fao",
+          goal == "SPP") %>%
+   arrange(dimension, region_id) 
+
