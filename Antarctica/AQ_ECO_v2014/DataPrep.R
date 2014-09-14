@@ -77,7 +77,7 @@ crew_2_tour<-0.524666037013717 # median ratio of crew+staff/tourists,
 # from: ANT_TR_crew_ratio.xlsx
 
 # divide tourists by average length of stay, to get tourist numbers & multiply tourist numbers by crew/tourists ratio to get crew
-tourists_summary$crew_tr<-tourists_summary$Tourist_days_eq/avg_stay*crew_2_tour # use this to weight the contribution of TR to the LIV score in each year of the trend
+tourists_summary$crew_tr<-tourists_summary$Tourist_days_eq/avg_stay*crew_2_tour # use this to weight the contribution of TR to the ECO score in each year of the trend
 
 
 tourists_summary <- tourists_summary %.%
