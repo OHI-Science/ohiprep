@@ -131,8 +131,8 @@ cells <- cells %.%
 # calculate area-weighted regional scores ----
 regionScores <- cells %.%
   group_by(sp_id) %.%
-  summarise(rgn_spp_score_2013=sum(category_linear_score*rgn_area, na.rm=TRUE)/sum(rgn_area, na.rm=TRUE),
-            rgn_spp_trend_2013=sum(popn_trend_linear_avg*rgn_area, na.rm=TRUE)/sum(rgn_area, na.rm=TRUE))
+  summarise(rgn_spp_score_2014=sum(category_linear_score*rgn_area, na.rm=TRUE)/sum(rgn_area, na.rm=TRUE),
+            rgn_spp_trend_2014=sum(popn_trend_linear_avg*rgn_area, na.rm=TRUE)/sum(rgn_area, na.rm=TRUE))
 regionScores$sp_id <- as.integer(regionScores$sp_id)
 
 
@@ -142,27 +142,27 @@ regionScores$sp_id <- as.integer(regionScores$sp_id)
 AQ_scores  <- AQ_regions %.%
   select(sp_id) %.%
   left_join(regionScores) %.%
-  select(sp_id, score=rgn_spp_score_2013)
-write.csv(AQ_scores, file.path(dir_curr, "data/rgn_ico_score_2013_AQ.csv"), row.names=FALSE)
+  select(sp_id, score=rgn_spp_score_2014)
+write.csv(AQ_scores, file.path(dir_curr, "data/rgn_ico_score_2014_AQ.csv"), row.names=FALSE)
 
 AQ_trend  <- AQ_regions %.%
   select(sp_id) %.%
   left_join(regionScores) %.%
-  select(sp_id, score=rgn_spp_trend_2013)
-write.csv(AQ_trend, file.path(dir_curr, "data/rgn_ico_trend_2013_AQ.csv"), row.names=FALSE)
+  select(sp_id, score=rgn_spp_trend_2014)
+write.csv(AQ_trend, file.path(dir_curr, "data/rgn_ico_trend_2014_AQ.csv"), row.names=FALSE)
 
 
 HS_scores  <- HS_regions %.%
   select(sp_id, rgn_id) %.%
   left_join(regionScores) %.%
-  select(rgn_id, score=rgn_spp_score_2013)
-write.csv(HS_scores, file.path(dir_curr, "data/rgn_ico_score_2013_HS.csv"), row.names=FALSE)
+  select(rgn_id, score=rgn_spp_score_2014)
+write.csv(HS_scores, file.path(dir_curr, "data/rgn_ico_score_2014_HS.csv"), row.names=FALSE)
 
 HS_trend  <- HS_regions %.%
   select(sp_id, rgn_id) %.%
   left_join(regionScores) %.%
-  select(rgn_id, score=rgn_spp_trend_2013)
-write.csv(HS_trend, file.path(dir_curr, "data/rgn_ico_trend_2013_HS.csv"), row.names=FALSE)
+  select(rgn_id, score=rgn_spp_trend_2014)
+write.csv(HS_trend, file.path(dir_curr, "data/rgn_ico_trend_2014_HS.csv"), row.names=FALSE)
 
 
 ####################################################### 
