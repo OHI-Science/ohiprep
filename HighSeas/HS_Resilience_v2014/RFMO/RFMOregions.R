@@ -9,43 +9,42 @@ library(maptools)
 library(fields)
 library(maps)
 library(animation)
-library(plyr)
 library(ncdf)
 library(rasterVis)
 library(rgeos) # gis analysis
-library(plotKML) # create kml maps to check data
 library(geosphere) #find area of polygons for unprojected data
 
 
 rm(list = ls())
 
 
-setwd("C:\\Users\\Melanie\\Desktop\\GL-HS-Resilience")
-
 ## This changes the defaults to allow polygons that are slightly out of tolerance to be loaded:
 sp::set_ll_warn(FALSE)
 sp::set_ll_TOL(.02)
 
+source('../ohiprep/src/R/common.R')
+
+data_files <- file.path(dir_neptune_data, "model/GL-HS-Resilience/RFMO")
 
 #-----------------------------------------------------------
 # load relevant RFMO regions
 # ----------------------------------------------------------
 
-ccsbt <- readOGR(dsn="raw\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_CCSBT")
-iattc <- readOGR(dsn="raw\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_IATTC")
-iccat <- readOGR(dsn="raw\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_ICCAT")
-wcpfc <- readOGR(dsn="raw\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_WCPFC")
-iotc <- readOGR(dsn="raw\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_IOTC")
-#ccamlr <- readOGR(dsn="raw\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_CCAMLR") #relevant to Antarctica region only
-ccbsp <- readOGR(dsn="raw\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_CCBSP")
-gfcm <- readOGR(dsn="raw\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_GFCM")
-neafc <- readOGR(dsn="raw\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_NEAFC")
-nasco <- readOGR(dsn="raw\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_NASCO")
-nafo <- readOGR(dsn="raw\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_NAFO")
-seafo <- readOGR(dsn="raw\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_SEAFO")
-siofa <- readOGR(dsn="raw\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_SIOFA")
-npafc <- readOGR(dsn="raw\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_NPAFC")
-sprfmo <- readOGR(dsn="raw\\TWAP_Shapefiles - Ben\\RFB", layer="RFB_SPRFMO")
+ccsbt <- readOGR(dsn = file.path(data_files, "raw/TWAP_Shapefiles - Ben/RFB"), layer="RFB_CCSBT")
+iattc <- readOGR(dsn = file.path(data_files, "raw/TWAP_Shapefiles - Ben/RFB"), layer="RFB_IATTC")
+iccat <- readOGR(dsn = file.path(data_files, "raw/TWAP_Shapefiles - Ben/RFB"), layer="RFB_ICCAT")
+wcpfc <- readOGR(dsn = file.path(data_files, "raw/TWAP_Shapefiles - Ben/RFB"), layer="RFB_WCPFC")
+iotc <- readOGR(dsn = file.path(data_files, "raw/TWAP_Shapefiles - Ben/RFB"), layer="RFB_IOTC")
+#ccamlr <- readOGR(dsn = file.path(data_files, "raw/TWAP_Shapefiles - Ben/RFB"), layer="RFB_CCAMLR") #relevant to Antarctica region only
+ccbsp <- readOGR(dsn = file.path(data_files, "raw/TWAP_Shapefiles - Ben/RFB"), layer="RFB_CCBSP")
+gfcm <- readOGR(dsn = file.path(data_files, "raw/TWAP_Shapefiles - Ben/RFB"), layer="RFB_GFCM")
+neafc <- readOGR(dsn = file.path(data_files, "raw/TWAP_Shapefiles - Ben/RFB"), layer="RFB_NEAFC")
+nasco <- readOGR(dsn = file.path(data_files, "raw/TWAP_Shapefiles - Ben/RFB"), layer="RFB_NASCO")
+nafo <- readOGR(dsn = file.path(data_files, "raw/TWAP_Shapefiles - Ben/RFB"), layer="RFB_NAFO")
+seafo <- readOGR(dsn = file.path(data_files, "raw/TWAP_Shapefiles - Ben/RFB"), layer="RFB_SEAFO")
+siofa <- readOGR(dsn = file.path(data_files, "raw/TWAP_Shapefiles - Ben/RFB"), layer="RFB_SIOFA")
+npafc <- readOGR(dsn = file.path(data_files, "raw/TWAP_Shapefiles - Ben/RFB"), layer="RFB_NPAFC")
+sprfmo <- readOGR(dsn = file.path(data_files, "raw/TWAP_Shapefiles - Ben/RFB"), layer="RFB_SPRFMO")
 
 #clip neafc and nasco boundaries ever so slightly to be < 90 latitude:
 CP <- as(extent(-85, 75, 30, 90), "SpatialPolygons")
@@ -58,7 +57,11 @@ rfmoList <- c("ccsbt", 'iattc', 'iccat', 'wcpfc', 'iotc', 'ccbsp', 'gfcm',
 #-----------------------------------------------------------
 # load fao data
 # ----------------------------------------------------------
-fao <- readOGR(dsn="C:\\Users\\Melanie\\Desktop\\GL-NCEAS-Regions_v2014\\data", layer="eez_ccmlar_fao_gcs")
+#will want to update spatial file in future to this one: 
+#fao <- readOGR(dsn = file.path(dir_neptune_data, "git-annex/Global/NCEAS-Regions_v2014/data"), layer="sp_gcs") 
+#used this one in the past, when Ben's file wasn't available (shouldn't be any big differences):
+fao <- readOGR(dsn = file.path(data_files, "raw"), layer="eez_ccmlar_fao_gcs")
+
 #plot(fao)
 fao <- fao[fao$rgn_type=="fao", ]
 fao@data <- subset(fao@data, select=c(rgn_id, rgn_name))
@@ -85,8 +88,6 @@ for(i in 1:length(rfmoList)){
   plot(fao)
   plot(get(rfmoList[i]), add=TRUE, col=rgb(1, 0, 0,0.2))
 }
-
-
 
 #-----------------------------------------------------------
 # overlay data to determine overlap of each RFMO with each FAO region
@@ -117,5 +118,5 @@ areas <- data.frame(areas, rfmoAreas)
 area <- areaPolygon(fao) #warnings seem ok...just alerting that there is >90
 PropArea <- data.frame(areas[1:2], round(areas[3:16]/area, 2))
 PropArea$total <- apply(PropArea[3:16], 1, sum)
-write.csv(PropArea, "tmp//RFMOperFAO_Mar312014.csv", row.names=FALSE)
+write.csv(PropArea, "tmp/RFMOperFAO.csv", row.names=FALSE)
 
