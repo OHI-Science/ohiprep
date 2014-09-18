@@ -7,15 +7,12 @@ library(reshape2)
 
 rm(list = ls())
 
-setwd("C:\\Users\\Melanie\\Desktop\\GL-HS-Resilience")
-
-
 #-----------------------------------------------------------
 # load/format data
 # ----------------------------------------------------------
 
-weights <- read.csv("data\\RFMOperFAO.csv")
-scores <- read.csv("data\\RFMOscores.csv")
+weights <- read.csv("HighSeas/HS_Resilience_v2014/RFMO/tmp/RFMOperFAO.csv")
+scores <- read.csv("HighSeas/HS_Resilience_v2014/RFMO/tmp/RFMOscores.csv")
 
 #-----------------------------------------------------------
 # calculate regional score based on weighted RFMOs
@@ -37,7 +34,11 @@ FAO_RFMO_scores$RegionScore[is.na(FAO_RFMO_scores$RegionScore)] <- 0
 # save data
 # ----------------------------------------------------------
 # merge with full ID
-ids <- read.csv("C:\\Users\\Melanie\\Desktop\\GL-NCEAS-Regions_v2014\\FAOregions.csv")
+ids <- read.csv("HighSeas/HS_other_v2014/FAOregions.csv")
 FAO_RFMO_scores <- merge(ids, FAO_RFMO_scores, by=c("rgn_id_2013", "rgn_nam"))
 
-write.csv(FAO_RFMO_scores, "data\\FAO_scores.csv", row.names=FALSE)
+# for toolbox ingestion
+data <- FAO_RFMO_scores %>%
+  select(rgn_id=rgn_id_2013, resilience.score=RegionScore)
+
+write.csv(data, "HighSeas/HS_Resilience_v2014/RFMO/data/rfmo_2014.csv", row.names=FALSE)
