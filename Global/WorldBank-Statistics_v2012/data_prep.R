@@ -23,6 +23,7 @@
 # from get paths configuration based on host machine name
 source('src/R/common.R') # set dir_neptune_data; load reshape2, plyr, dplyr
 source('src/R/ohi_clean_fxns.R') # get functions
+dir_a = file.path(dir_neptune_data, 'git-annex/Global/WorldBank-Statistics_v2012')
 dir_d = 'Global/WorldBank-Statistics_v2012'
 
 # load libraries
@@ -32,11 +33,12 @@ library(stringr)
 #library(ohicore)  # for github/ohicore/R/gapfill_georegions.R # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 library(devtools)
 load_all('~/github/ohicore')
+# library(ohicore)
 
 # read in and process files ----
 if (exists('d_all')) rm(d_all)
 count = 0
-for (f in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*xls'), full.names=T)) {  # f = "Global/WorldBank-Statistics_v2012/raw/sl.tlf.totl.in_Indicator_en_excel_v2.xls"
+for (f in list.files(path = file.path(dir_a, 'raw'), pattern=glob2rx('*xls'), full.names=T)) {  # f = "Global/WorldBank-Statistics_v2012/raw/sl.tlf.totl.in_Indicator_en_excel_v2.xls"
   cat(sprintf('processing %s\n', basename(f)))
   
   count = count + 1
@@ -192,8 +194,7 @@ p = ppp %>%
               group_by(year) %>%
               summarize(max_intl_dollar = max(intl_dollar, na.rm=T)),
             by='year') %>% 
-  mutate(scaled = intl_dollar/max_intl_dollar,
-         value = 1-scaled); head(p); summary(p)
+  mutate(value = intl_dollar/max_intl_dollar); head(p); summary(p)
 
 ## save
 scenarios = list('2012a'=2011,
