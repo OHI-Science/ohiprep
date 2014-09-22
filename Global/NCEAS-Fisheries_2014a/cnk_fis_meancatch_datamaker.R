@@ -22,6 +22,12 @@ dir_FIS_data = 'git-annex/Global/SAUP-Fisheries_v2011/raw'
 file_1<- 'Extended catch data 1950-2011_18 July 2014.txt'
 nS <- read.delim(file.path(dir_neptune_data, dir_FIS_data, file_1 )) ; head(nS)
 
+# Change a few of the Saup region ID's (these were updated from our previous saup2ohiRegion and caused a bit of weirdness: 
+# email chain on 9/9/2014)
+nS$EEZ[nS$EEZ %in% c(277, 278)] <- 276
+nS$EEZ[nS$EEZ %in% c(197, 198)] <- 196
+
+
 # load species names lookup table - it is important that this be the same as CMSY data prep
 file_2<- 'TaxonLookup.csv'
 tax <- read.csv(file.path(dir_d, 'tmp', file_2 )) ; head(tax)
