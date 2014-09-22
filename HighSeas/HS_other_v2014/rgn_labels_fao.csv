@@ -1,0 +1,16 @@
+rgn_id,rgn_typ,sp_id,label
+260,fao,1018,Arctic Sea
+261,fao,1021,"Atlantic, Northwest"
+262,fao,1027,"Atlantic, Northeast"
+263,fao,1031,"Atlantic, Western-Central"
+264,fao,1034,"Atlantic, Eastern Central"
+266,fao,1041,"Atlantic, Southwest"
+267,fao,1047,"Atlantic, Southeast"
+269,fao,1051,"Indian Ocean, Western"
+270,fao,1057,"Indian Ocean, Eastern"
+272,fao,1061,"Pacific, Northwest"
+273,fao,1067,"Pacific, Northeast"
+274,fao,1071,"Pacific, Western Central"
+275,fao,1077,"Pacific, Eastern Central"
+276,fao,1081,"Pacific, Southwest"
+277,fao,1087,"Pacific, Southeast"
