@@ -62,7 +62,10 @@ for (f in list.files(path = file.path(dir_a, 'raw'), pattern=glob2rx('*xls'), fu
   if (basename(f) == 'ny.gdp.pcap.pp.cd_Indicator_en_excel_v2.xls'){
     d$layer = 'gdppcppp' 
   } 
-        
+  
+  # convert year from factor to integer
+  d$year = as.integer(as.character(d$year))
+  
   # rbind
   if (!exists('d_all')){
     d_all = d
@@ -83,11 +86,42 @@ print(table(d_all$layer))
 #  gdp   gdppcppp      tlf      uem 
 # 9936       5147     4919     3184 
 
+# remove pop from d_all
+pop   = d_all %>% 
+  filter(layer == 'pop') %>%
+  select(country, year, w_popn=value)
+write.csv(pop, file.path(dir_d, 'data', 'country_total_pop.csv'), row.names=F)
+
+d_all = d_all %>% filter(layer != 'pop')
+
+
 # add rgn_id: country to rgn_id  # source('../ohiprep/src/R/ohi_clean_fxns.R') ----
 source('src/R/ohi_clean_fxns.R') # get functions
-r = name_to_rgn(d_all, fld_name='country', flds_unique=c('country','year','layer'), fld_value='value', add_rgn_name=T) 
 
+# name_to_rgn with collapse_fxn = sum_na for all but gdppcppp and uem
+r1 = name_to_rgn(d_all %>%
+                  filter(!layer %in% c('gdppcppp', 'uem')), 
+                fld_name='country', flds_unique=c('country','year','layer'), fld_value='value', add_rgn_name=T, 
+                collapse_fxn = 'sum_na') 
 
+# name_to_rgn with collapse_fxn = sum_weight_by_pop for gdppcppp and uem
+
+pop_csv = '~/github/ohiprep/Global/WorldBank-Statistics_v2012/data/country_total_pop.csv'
+
+r2 = name_to_rgn(
+  d_all %>%
+    filter(layer %in% c('gdppcppp', 'uem')), 
+  fld_name='country', flds_unique=c('country','year','layer'), fld_value='value', add_rgn_name=T,
+  collapse_fxn='weighted.mean', collapse_csv=pop_csv)
+
+# spot check
+r2 %>% group_by(layer, year) %>%  
+  mutate(
+    rank = row_number(desc(value))) %>%
+  filter(year==2013 & rgn_name %in% c('China','Qatar','United States'))
+
+# rbind together
+r = rbind(r1, r2)
 
 # remove Antarctica[213] and DISPUTED[255]
 r = r %>%
