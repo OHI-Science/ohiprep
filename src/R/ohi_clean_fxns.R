@@ -91,17 +91,15 @@ add_rgn_id = function(uidata, uifilesave,
   
 }
 
-sum_na = function(x){
-  # sum with na.rm=T, but if all NAs return NA and not 0
-  if (sum(is.na(x)) == length(x)) return(NA)
-  return(sum(x, na.rm=T))    
-}
-
-name_to_rgn = function(d, fld_name='country', flds_unique=fld_name, fld_value='value', collapse_fxn = sum_na,
-                       dir_lookup = '../ohiprep/src/LookupTables',
-                       rgn_master.csv   = file.path(dir_lookup, 'eez_rgn_2013master.csv'),
-                       rgn_synonyms.csv = file.path(dir_lookup, 'rgn_eez_v2013a_synonyms.csv'),
-                       add_rgn_name=F, add_rgn_type=F) {
+name_to_rgn = function(
+  d, fld_name = 'country', flds_unique=fld_name, fld_value='value', 
+  collapse_fxn = c('sum_na','mean','weighted.mean')[1],
+  collapse_csv = NULL,
+  collapse_flds_join = NULL,
+  dir_lookup = '../ohiprep/src/LookupTables',
+  rgn_master.csv   = file.path(dir_lookup, 'eez_rgn_2013master.csv'),
+  rgn_synonyms.csv = file.path(dir_lookup, 'rgn_eez_v2013a_synonyms.csv'),
+  add_rgn_name=F, add_rgn_type=F) {
   # DETAIL. Return a data.frame (vs add_rgn_id which writes to a csv) and perform extra checks, including collapsing on duplicates.
   #  Note: The original fld_name lost because possible to collapse multiple countries into a single region.
   #
@@ -193,20 +191,81 @@ name_to_rgn = function(d, fld_name='country', flds_unique=fld_name, fld_value='v
   
   if (sum(i_dup) > 0){
     
-    cat('\nDUPLICATES found. Resolving by collapsing rgn_id with collapse_fxn after first removing all NAs from duplicates...\n')
-    print(collapse_fxn)
-    m_dup = m[i_dup,]
+    cat(sprintf('\nDUPLICATES found. Resolving by collapsing rgn_id with collapse_fxn: %s after first removing all NAs from duplicates...\n', collapse_fxn))
     
+    # get duplicates    
+    m_dup = m[i_dup,]    
     m_dup$tmp_value = m_dup[[fld_value]]                                    
     m_dup$fld_name  = m_dup[[fld_name]]
     m_dup =  mutate(m_dup, fld_name = factor(as.character(fld_name)) )
     print(table(select(m_dup, fld_name, rgn_id)))
+
+    sum_na = function(x){
+      # sum with na.rm=T, but if all NAs return NA and not 0
+      if (sum(is.na(x)) == length(x)) return(NA)
+      return(sum(x, na.rm=T))    
+    }
+
+    weighted_mean = function(x, collapse_csv){
+      # sum with na.rm=T, but if all NAs return NA and not 0
+      # eg weighted_avg(x, csv='~/github/ohiprep/Global/WorldBank-Statistics_v2012/data/country_total_pop.csv')
+      #print(names(list(...)))
+      browser()
+      
+      #w = read.csv(collapse_csv)
+      #  inner_join(
+      #names(intersect(
+      #w = match(x, table, nomatch=1)
+    #   %>%
+    #    left_join(p)
+      
+      #weighted.mean(x, w)
+      if (sum(is.na(x)) == length(x)) return(NA)
+      #p = read.csv()
+      #x2 = x 
+      return(sum(x, na.rm=T))    
+    }
     
-    m_dup = m_dup %.%
-      filter(!is.na(tmp_value)) %.%
-      regroup(as.list(flds_unique_rgn_id)) %.%                      
-      summarize(tmp_value = collapse_fxn(tmp_value)) %.%            
-      rename(setNames(fld_value, 'tmp_value')); head(m_dup)         
+    # handle duplicates differentially based on collapse_fxn
+    #collapse_fxn='weighted_avg', collapse_csv=pop_csv, collapse_flds_join
+    if (collapse_fxn=='sum_na'){
+      
+      m_dup = m_dup %.%
+        filter(!is.na(tmp_value)) %.%
+        regroup(as.list(flds_unique_rgn_id)) %.% 
+        summarize(tmp_value = sum_na(tmp_value)) %.%            
+        rename(setNames(fld_value, 'tmp_value')); head(m_dup)         
+
+    } else if (collapse_fxn=='mean'){
+      
+      m_dup = m_dup %.%
+        filter(!is.na(tmp_value)) %.%
+        regroup(as.list(flds_unique_rgn_id)) %.% 
+        summarize(tmp_value = mean(tmp_value, na.rm=T)) %.%            
+        rename(setNames(fld_value, 'tmp_value')); head(m_dup)               
+      
+    } else if (collapse_fxn=='weighted.mean'){
+      
+      w = read.csv(collapse_csv)
+      flds = intersect(names(w), names(m_dup))
+      fld  = setdiff(names(w), names(m_dup))
+      stopifnot(length(fld)==1)
+      stopifnot(length(flds)>1)
+      w['tmp_weight'] = w[fld]
+      w = w[, c(flds, 'tmp_weight')]
+      
+      m_dup = m_dup %.%
+        filter(!is.na(tmp_value)) %.%
+        regroup(as.list(flds_unique_rgn_id)) %.% 
+        left_join(w, by=flds) %>%
+        summarize(tmp_value = weighted.mean(tmp_value, tmp_weight, na.rm=T)) %.%            
+        rename(setNames(fld_value, 'tmp_value')); head(m_dup)               
+
+    } else {
+      stop('collapse_fxn needs to be a string of one of the following: sum_na, mean, weighted.mean.')
+    }
+
+    # bind summarized duplicates back   
     m_d = rbind_list(
       m[ !i_dup, c(flds_unique_rgn_id, fld_value) ], 
       m_dup)            
