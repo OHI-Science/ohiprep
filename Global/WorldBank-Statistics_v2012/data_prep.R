@@ -87,24 +87,21 @@ print(table(d_all$layer))
 # 9936       5147     4919     3184 
 
 # remove pop from d_all
-pop   = d_all %>% 
+pop_csv   = d_all %>% 
   filter(layer == 'pop') %>%
   select(country, year, w_popn=value)
-write.csv(pop, file.path(dir_d, 'data', 'country_total_pop.csv'), row.names=F)
+write.csv(pop_csv, file.path(dir_d, 'data', 'country_total_pop.csv'), row.names=F)
 
 d_all = d_all %>% filter(layer != 'pop')
 
 
-# add rgn_id: country to rgn_id  # source('../ohiprep/src/R/ohi_clean_fxns.R') ----
-source('src/R/ohi_clean_fxns.R') # get functions
-
-# name_to_rgn with collapse_fxn = sum_na for all but gdppcppp and uem
+# name_to_rgn with collapse_fxn = sum_na for all but gdppcppp and uem ----
 r1 = name_to_rgn(d_all %>%
                   filter(!layer %in% c('gdppcppp', 'uem')), 
                 fld_name='country', flds_unique=c('country','year','layer'), fld_value='value', add_rgn_name=T, 
                 collapse_fxn = 'sum_na') 
 
-# name_to_rgn with collapse_fxn = sum_weight_by_pop for gdppcppp and uem
+# name_to_rgn with collapse_fxn = sum_weight_by_pop for gdppcppp and uem ----
 
 pop_csv = '~/github/ohiprep/Global/WorldBank-Statistics_v2012/data/country_total_pop.csv'
 
@@ -114,13 +111,31 @@ r2 = name_to_rgn(
   fld_name='country', flds_unique=c('country','year','layer'), fld_value='value', add_rgn_name=T,
   collapse_fxn='weighted.mean', collapse_csv=pop_csv)
 
-# spot check
-r2 %>% group_by(layer, year) %>%  
-  mutate(
-    rank = row_number(desc(value))) %>%
-  filter(year==2013 & rgn_name %in% c('China','Qatar','United States'))
+# spot checks ----
 
-# rbind together
+# spot check Qatar and China
+# r2 %>% group_by(layer, year) %>%  
+#   mutate(
+#     rank = row_number(desc(value))) %>%
+#   filter(year==2013 & rgn_name %in% c('China','Qatar','United States'))
+# 
+# r2 %>%  
+#   filter(layer == 'uem', year>2008 & rgn_name %in% c('China','Qatar','United States'))
+# 
+# # spot check uem China 
+# d_all %>%  
+#   filter(layer == 'uem' & 
+#            year > 2008 & country %in% c('China', 'Hong Kong SAR, China', 'Macao SAR, China'))
+# d_all %>%  
+#   filter(layer == 'uem' & 
+#            country %in% c('Guam', 'Northern Mariana Islands'))
+# 
+# d_all %>%  
+#   filter(layer == 'uem' & 
+#            country %in% c('Taiwan'))
+
+
+# rbind together from name_to_rgn calls ----
 r = rbind(r1, r2)
 
 # remove Antarctica[213] and DISPUTED[255]
