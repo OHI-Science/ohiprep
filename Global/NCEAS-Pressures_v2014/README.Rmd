@@ -1,0 +1,12 @@
+---
+title: "pressures scaling"
+author: "Ben Best & Melanie Frazier"
+date: "October 2, 2014"
+output: html_document
+---
+
+Sequence:
+
+- extract_rasters.R: from tif to per region csv mean values
+
+- reference_scaling.R: determine min / max values for applying to regional raw extracted values

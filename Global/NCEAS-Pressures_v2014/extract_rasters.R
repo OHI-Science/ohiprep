@@ -16,4 +16,14 @@ read.dbf(dbf) %>%
   select(
     rgn_id = VALUE,
     mean   = MEAN) %>%
-  write.csv(file.path(dir_data, 'cc_acid_raw.csv'), row.names=F, na='')
+  write.csv(file.path(dir_data, 'cc_acid.csv'), row.names=F, na='')
+
+# cc_slr
+dbf = file.path(dir_neptune_data, 'model/GL-NCEAS-Pressures_v2013a/tmp/rgn_slr_oct1992_dec2012_gcs_wgs84_normalized.tif.dbf')
+read.dbf(dbf) %>% 
+  select(
+    rgn_id = VALUE,
+    mean   = MEAN) %>%
+  write.csv(file.path(dir_data, 'cc_slr_raw.csv'), row.names=F, na='')
+
+
