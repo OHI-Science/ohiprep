@@ -131,3 +131,6 @@ arcpy.CalculateField_management(fc, 'area_km2', '!shape.area@SQUAREKILOMETERS!',
 arcpy.CopyFeatures_management('%s/%s' % (gdb, fc) , '{0}/data/{1}.shp'.format(ad, fc))
 d = pandas.DataFrame(arcpy.da.TableToNumPyArray(fc, rgn_flds + ['area_km2']))
 d.to_csv('{0}/data/{1}_data.csv'.format(gd, fc), index=False)
+
+
+# TODO: create rgn_inland25km_mol.tif. then extract just country and overlay with N:\model\GL-NCEAS-CoastalPopulation_v2013\data\popdensity_2014_mol.tif.
