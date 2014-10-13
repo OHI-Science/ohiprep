@@ -7,6 +7,11 @@ import arcpy, numpy, os, sys, re, socket, pandas, time, math, re
 
 # configuration based on machine name
 conf = {
+    'bumblebee':
+    {'dir_git'    :'C:/Users/visitor/Documents/github/ohiprep',
+     'dir_neptune':'N:',
+     'dir_tmp'    :'C:/Users/visitor/bbest/tmp',
+     },
     'amphitrite':
     {'dir_git'    :'G:/ohiprep',
      'dir_neptune':'N:',
@@ -83,93 +88,95 @@ for v in ['sp_gcs','rgn_gcs']:
     d.to_csv('%s/data/%s_data.csv' % (gd, v), index=False)
 
 # loop buffers
-for buf in buffers: # buf = 'inland25km'
+for buf in buffers: 
 
-    sp_buf  = 'sp_%s_gcs' % buf
-    rgn_buf = 'rgn_%s_gcs' % buf
-    print('%s... (%s)' % (sp_buf, time.strftime('%H:%M:%S')))
+# buf = 'inland25km'
+sp_buf  = 'sp_%s_gcs' % buf
+rgn_buf = 'rgn_%s_gcs' % buf
+print('%s... (%s)' % (sp_buf, time.strftime('%H:%M:%S')))
 
+# redoing
+if not arcpy.Exists(sp_buf):
+    shp = '%s/data/%s.shp' % (ad, sp_buf)
+    arcpy.CopyFeatures_management(shp, sp_buf)
+else:
     print('  copying backup up to %s... (%s)' % ('%s_bkup' % sp_buf, time.strftime('%H:%M:%S')))
     arcpy.CopyFeatures_management(sp_buf, '%s_bkup' % sp_buf)
 
-    ### redoing
-    ##shp = '%s/data/%s.shp' % (ad, sp_buf)
-    ##arcpy.CopyFeatures_management(shp, sp_buf)
+# deal with old fields
+for fc in ['sp_gcs','sp_offshore_gcs']:
+    flds = [f.name for f in arcpy.ListFields(sp_buf)]
+    for fld_fro, fld_to in {'cntry_id12':'cntry_id'}.iteritems():
+        if fld_fro in flds: 
+            arcpy.AlterField_management(sp_buf, fld_fro, fld_to, fld_to)
+    for fld in ['rgn_id12', 'rgn_name12']:
+        if fld_fro in flds: 
+            arcpy.DeleteField_management(sp_buf, fld)
 
-    # deal with old fields
-    for fc in ['sp_gcs','sp_offshore_gcs']:
-        flds = [f.name for f in arcpy.ListFields(sp_buf)]
-        for fld_fro, fld_to in {'cntry_id12':'cntry_id'}.iteritems():
-            if fld_fro in flds: 
-                arcpy.AlterField_management(sp_buf, fld_fro, fld_to, fld_to)
-        for fld in ['rgn_id12', 'rgn_name12']:
-            if fld_fro in flds: 
-                arcpy.DeleteField_management(sp_buf, fld)
+print('  repairing (%s)' % (time.strftime('%H:%M:%S')))
+arcpy.RepairGeometry_management(sp_buf)
 
-    print('  repairing (%s)' % (time.strftime('%H:%M:%S')))
-    arcpy.RepairGeometry_management(sp_buf)
+print('  fixing Svalbard (%s)' % (time.strftime('%H:%M:%S')))
+arcpy.MakeFeatureLayer_management('%s/%s' % (gdb, sp_buf), 'lyr', '"sp_name"=\'Svalbard\'')
+arcpy.CalculateField_management('lyr', 'sp_id', '253', 'PYTHON_9.3')
+arcpy.CalculateField_management('lyr', 'sp_key', '"SVA"', 'PYTHON_9.3')
 
-    print('  fixing Svalbard (%s)' % (time.strftime('%H:%M:%S')))
-    arcpy.MakeFeatureLayer_management('%s/%s' % (gdb, sp_buf), 'lyr', '"sp_name"=\'Svalbard\'')
-    arcpy.CalculateField_management('lyr', 'sp_id', '253', 'PYTHON_9.3')
-    arcpy.CalculateField_management('lyr', 'sp_key', '"SVA"', 'PYTHON_9.3')
+print('  erasing erroneous mid-EEZ land buffer (%s)' % (time.strftime('%H:%M:%S')))
+arcpy.Erase_analysis('%s/%s' % (gdb, sp_buf), '%s/%s' % (gdb, 'sp_landfix_buf60km'), '%s/%s' % (gdb, 'sp_%s_e' % buf))
 
-    print('  erasing erroneous mid-EEZ land buffer (%s)' % (time.strftime('%H:%M:%S')))
-    arcpy.Erase_analysis('%s/%s' % (gdb, sp_buf), '%s/%s' % (gdb, 'sp_landfix_buf60km'), '%s/%s' % (gdb, 'sp_%s_e' % buf))
+# convert any NULL rows to Canada
+if arcpy.Exists('lyr'): arcpy.Delete_management('lyr')
+arcpy.MakeFeatureLayer_management('%s/sp_%s_e' % (gdb, buf), 'lyr', '"sp_name" IS NULL OR "sp_id" IS NULL')
+n = int(arcpy.GetCount_management('lyr').getOutput(0))
+if (n > 0):
+    print '  WARNING!: %s has %d rows where sp_name is NULL. Presuming Canada.' % (sp_buf, n)   
 
-    # convert any NULL rows to Canada
-    if arcpy.Exists('lyr'): arcpy.Delete_management('lyr')
-    arcpy.MakeFeatureLayer_management('%s/sp_%s_e' % (gdb, buf), 'lyr', '"sp_name" IS NULL OR "sp_id" IS NULL')
-    n = int(arcpy.GetCount_management('lyr').getOutput(0))
-    if (n > 0):
-        print '  WARNING!: %s has %d rows where sp_name is NULL. Presuming Canada.' % (sp_buf, n)   
+    arcpy.CalculateField_management('lyr',  'sp_name', "'Canada'", 'PYTHON_9.3')
+    arcpy.Delete_management('lyr')
+    arcpy.MakeFeatureLayer_management('%s/sp_%s_e' % (gdb, buf), 'lyr', '"sp_name" = \'Canada\'')
+    # update field values to Canada
+    for fld, val in dict_CAN.iteritems():
+        print '    ',fld, val
+        if type(val) is str:
+            val_str = "'%s'" % val
+        else:
+            val_str = '%g' % val
+        arcpy.CalculateField_management('lyr', fld, val_str, 'PYTHON_9.3')
 
-        arcpy.CalculateField_management('lyr',  'sp_name', "'Canada'", 'PYTHON_9.3')
-        arcpy.Delete_management('lyr')
-        arcpy.MakeFeatureLayer_management('%s/sp_%s_e' % (gdb, buf), 'lyr', '"sp_name" = \'Canada\'')
-        # update field values to Canada
-        for fld, val in dict_CAN.iteritems():
-            print '    ',fld, val
-            if type(val) is str:
-                val_str = "'%s'" % val
-            else:
-                val_str = '%g' % val
-            arcpy.CalculateField_management('lyr', fld, val_str, 'PYTHON_9.3')
+    # update {sp|rgn}_type to land or eez
+    if re.compile('.*inland.*').match(buf):
+        sp_type = 'land'
+    else: # assume offshore
+        sp_type = 'eez'
+    arcpy.CalculateField_management('lyr',  'sp_type', "'%s'" % sp_type, 'PYTHON_9.3')
+    arcpy.CalculateField_management('lyr', 'rgn_type', "'%s'" % sp_type, 'PYTHON_9.3')
 
-        # update {sp|rgn}_type to land or eez
-        if re.compile('.*inland.*').match(buf):
-            sp_type = 'land'
-        else: # assume offshore
-            sp_type = 'eez'
-        arcpy.CalculateField_management('lyr',  'sp_type', "'%s'" % sp_type, 'PYTHON_9.3')
-        arcpy.CalculateField_management('lyr', 'rgn_type', "'%s'" % sp_type, 'PYTHON_9.3')
+print('  repairing sp_%s_e (%s)' % (buf, time.strftime('%H:%M:%S')))
+arcpy.RepairGeometry_management('%s/sp_%s_e' % (gdb, buf))
 
-    print('  repairing sp_%s_e (%s)' % (buf, time.strftime('%H:%M:%S')))
-    arcpy.RepairGeometry_management('%s/sp_%s_e' % (gdb, buf))
+try:
+    print('  dissolve to sp_buf (%s)' % time.strftime('%H:%M:%S'))
+    arcpy.Dissolve_management('%s/sp_%s_e' % (gdb, buf), '%s/%s' % (gdb, sp_buf), sp_flds)
+    # TODO: check that not multiple Canadas, Alaska per sp_type
 
-    try:
-        print('  dissolve to sp_buf (%s)' % time.strftime('%H:%M:%S'))
-        arcpy.Dissolve_management('%s/sp_%s_e' % (gdb, buf), '%s/%s' % (gdb, sp_buf), sp_flds)
-        # TODO: check that not multiple Canadas, Alaska per sp_type
+    print('  dissolve to rgns (%s)' % time.strftime('%H:%M:%S'))
+    arcpy.Dissolve_management('%s/%s' % (gdb, sp_buf), '%s/%s' % (gdb, rgn_buf), ['rgn_type','rgn_id','rgn_name','rgn_key'])
 
-        print('  dissolve to rgns (%s)' % time.strftime('%H:%M:%S'))
-        arcpy.Dissolve_management('%s/%s' % (gdb, sp_buf), '%s/%s' % (gdb, rgn_buf), ['rgn_type','rgn_id','rgn_name','rgn_key'])
+    print('  calculate areas, export shp & csv (%s)' % time.strftime('%H:%M:%S'))
+    for fc in [sp_buf, rgn_buf]:
 
-        print('  calculate areas, export shp & csv (%s)' % time.strftime('%H:%M:%S'))
-        for fc in [sp_buf, rgn_buf]:
+        # calculate area
+        arcpy.AddField_management(      fc, 'area_km2', 'DOUBLE')
+        arcpy.CalculateField_management(fc, 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
 
-            # calculate area
-            arcpy.AddField_management(      fc, 'area_km2', 'DOUBLE')
-            arcpy.CalculateField_management(fc, 'area_km2', '!shape.area@SQUAREKILOMETERS!', 'PYTHON_9.3')
+        # export shp and csv
+        arcpy.CopyFeatures_management('%s/%s' % (gdb, fc) , '{0}/data/{1}.shp'.format(ad, fc))
+        d = pandas.DataFrame(arcpy.da.TableToNumPyArray(fc, sp_flds + ['area_km2']))
+        d.to_csv('{0}/data/{1}_data.csv'.format(gd, fc), index=False)
 
-            # export shp and csv
-            arcpy.CopyFeatures_management('%s/%s' % (gdb, fc) , '{0}/data/{1}.shp'.format(ad, fc))
-            d = pandas.DataFrame(arcpy.da.TableToNumPyArray(fc, sp_flds + ['area_km2']))
-            d.to_csv('{0}/data/{1}_data.csv'.format(gd, fc), index=False)
-
-     except Exception as e:
-        print e.message
-        print('  FAILED: %s / %s (%s)' % time.strftime(sp_buf, rgn_buf, '%H:%M:%S'))
+ except Exception as e:
+    print e.message
+    print('  FAILED: %s / %s (%s)' % time.strftime(sp_buf, rgn_buf, '%H:%M:%S'))
 
 print('done (%s)' % time.strftime('%H:%M:%S'))
 
