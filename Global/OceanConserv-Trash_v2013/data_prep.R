@@ -29,14 +29,16 @@
 # libraries
 library(gdata)
 library(stringr)
+library(reshape2)
 library(zoo)
 #library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 library(devtools)
 load_all('~/github/ohicore')
 
 # get paths
-source('src/R/common.R') # set dir_neptune_data
-source('src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na()
+dir_neptune_data = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
+                     'Darwin'  = '/Volumes/data_edit',
+                     'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
 dir_d = 'Global/OceanConserv-Trash_v2013' 
 dir_a = file.path(dir_neptune_data, 'git-annex/Global/OceanConserv-Trash_v2013/raw') #* mislabeling 2011 instead of 2010?
 
@@ -219,16 +221,16 @@ write.csv(t_f, file.path(dir_d, 'data', 'rgn_oc_trash_2014a_notgapfilled.csv'),
 
 
 ## georegional gapfilling with gapfill_georegions.r ----
-georegions = read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %.%
+georegions = read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %>%
   dcast(rgn_id ~ level, value.var='georgn_id')
 
-georegion_labels = read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv') %.%    
-  mutate(level_label = sprintf('%s_label', level)) %.%
-  dcast(rgn_id ~ level_label, value.var='label') %.%
+georegion_labels = read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv') %>%    
+  mutate(level_label = sprintf('%s_label', level)) %>%
+  dcast(rgn_id ~ level_label, value.var='label') %>%
   left_join(
-    read.csv('../ohi-global/eez2013/layers/rgn_labels.csv') %.%
+    read.csv('../ohi-global/eez2013/layers/rgn_labels.csv') %>%
       select(rgn_id, v_label=label),
-    by='rgn_id') %.%
+    by='rgn_id') %>%
   arrange(r0_label, r1_label, r2_label, v_label); head(georegion_labels)
 
 
@@ -238,13 +240,15 @@ attrsave  = file.path(dir_d, 'data', 'rgn_oc_trash_2014a_attr.csv')
 # library(devtools); load_all('../ohicore')
 # source('../ohicore/R/gapfill_georegions.r')
 t_g_a = gapfill_georegions(
-  data = t_f %.%
-    filter(!rgn_id %in% c(213,255)) %.%
+  data = t_f %>%
+    filter(!rgn_id %in% c(213,255)) %>%
     select(rgn_id, year, lbs_per_mi),
   fld_id = 'rgn_id',
   georegions = georegions,
   georegion_labels = georegion_labels,
   r0_to_NA = TRUE, 
+#   rgn_overwrite = 0,
+#   rgn_overwrite_csv = '../ohiprep/src/LookupTables/rgn_uninhabited_islands.csv',
   attributes_csv = attrsave) # don't chain gapfill_georegions or will lose head(attr(d_g_a, 'gapfill_georegions')) ability
 
 # investigate attribute tables
@@ -255,13 +259,25 @@ head(attr(t_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('
 
 
 # save
-t_g = t_g_a %.%
-  select(rgn_id, year, lbs_per_mi) %.%
+t_g = t_g_a %>%
+  select(rgn_id, year, lbs_per_mi) %>%
   mutate(log_lbs_per_mi = log(lbs_per_mi+1)) %>%
   arrange(rgn_id, year); head(t_g); summary(t_g)
 
 write.csv(t_g, layersave, na = '', row.names=FALSE)
+# t_g = read.csv(file.path(dir_d, 'data', 'rgn_oc_trash_2014a_unscaled.csv'))
 
+# overwrite values for uninhabited Oct 15 2014
+# *** move this to gapfill_georegions later. 
+ovr_wrt = read.csv('../ohiprep/src/LookupTables/rgn_uninhabited_islands.csv')
+t_g = 
+  rbind(t_g %>%
+          filter(!rgn_id %in% ovr_wrt$rgn_id),
+        t_g %>%
+          filter(rgn_id %in% ovr_wrt$rgn_id) %>%
+          mutate(lbs_per_mi = 0, 
+                 log_lbs_per_mi = log(lbs_per_mi+1))) %>%
+  arrange(rgn_id, year)
 
 ## model trash; finalize layer ----
 # from dir_neptune_data: model/GL-NCEAS-Pressures_v2013a/model_trash.R
