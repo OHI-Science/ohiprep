@@ -215,6 +215,8 @@ t_f = name_to_rgn(k, fld_name='country', flds_unique=c('country', 'year'), fld_v
 
 write.csv(t_f, file.path(dir_d, 'data', 'rgn_oc_trash_2014a_notgapfilled.csv'),
           na = '', row.names=FALSE)
+# t_f = read.csv(file.path('~/github/ohiprep/Global/OceanConserv-Trash_v2013/data', 'rgn_oc_trash_2014a_notgapfilled.csv')); 
+
 
 ## georegional gapfilling with gapfill_georegions.r ----
 georegions = read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %.%
