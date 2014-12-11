@@ -20,15 +20,31 @@ spp <- read.csv(file.path(data, "raw/spp.csv"))
 
 am_cells <-  read.csv(file.path(dir_neptune_data, "model/GL-NCEAS-SpeciesDiversity_v2013a/tmp/am_cells_data.csv"))
 
+### get list of spp for richness in HS (ben h request Dec 10 2014):
+ HS_regions <-read.csv("HighSeas/HS_other_v2014/rgn_labels_fao.csv")  #sp_id for high seas regions
+
+ cells_HS <- cells %>%                      # filter cells for relevant sp_id (get LOICZID)
+   filter(sp_id %in% HS_regions$sp_id)
+ 
+ cells_spp_HS  <- cells_spp %>%              # filter cells/species for relevant LOICZID
+   filter(LOICZID %in% cells_HS$LOICZID)
+ 
+ species_HS <- unique(cells_spp_HS$sid)     # find unique species ID's
+ 
+ spp_HS  <- spp %>%                         # get species list
+   filter(sid %in% species_HS)
+ 
+# write.csv(spp_HS, "Global/HS-AQ-SpeciesRichness_v2014/HS_species.csv", row.names=FALSE)
+ 
 ### Master file of cells structured: 
-am_cells <- am_cells %.%
+am_cells <- am_cells %>%
   select(LOICZID, CellArea)
 
 setdiff(cells$LOICZID, am_cells$LOICZID) # should be 0
 setdiff(am_cells$LOICZID, cells$LOICZID) # These are cells that fell outside a rgn polygon
 am_cells$LOICZID <- as.numeric(am_cells$LOICZID)
 
-cells <- cells %.%
+cells <- cells %>%
   left_join(am_cells, by="LOICZID")
 cells$rgn_area <- cells$CellArea*cells$proportionArea
 
@@ -38,11 +54,12 @@ category <- data.frame(category=c("LC", "NT", "VU", "EN", "CR", "EX"),
 popn_trend <- data.frame(popn_trend=c("Decreasing", "Stable", "Increasing"), 
                          trendScore=c(-0.5, 0, 0.5))
 
-spp <- spp %.%
-  select(sid, category, popn_trend)%.%
-  left_join(category) %.%
+spp <- spp %>%
+  select(sid, category, popn_trend)%>%
+  left_join(category) %>%
   left_join(popn_trend) 
-
+ 
+ 
 
 # calculate average weight and count for category and trend scores
 scoreData <- cells_spp %.%
