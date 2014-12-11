@@ -1,15 +1,33 @@
 Generating B_bmsy values using R script
 =====================
 
+
+Primary data
+====================
+Hex outputs > .RData.
+
+I believe these were generated using the following scripts:
+cmsy_mpi_ohi_originalPrior_added0s_Aug162014.R
+cmsy_mpi_ohi_originalPrior_no0s_Aug162014.R
+cmsy_mpi_ohi_uniformPrior_no0s_Aug162014.R
+cmsy_mpi_ohi_v0_FinalBio2CT_uniformPrior2_OHIrun.R is the script from Kristin.  Should basically be the same as ours, but her's outputs some additional variables that we do not need. I believe the other similarly named files were the scripts used to run our data and scenarios on the super computer to generate the Hex outputs.
+
+stock_resil_06cutoff.... files used to assign b/bmsy scores per stock based on regions resilience scores
+
+
+
 R files
 =====================
-* bmsyDataTest.R: includes code to run parallel processing on
+* B_bmsyDataTest.R: includes code to run parallel processing on
 Neptune to calculate b/bmsy and many different scenarios to
-test whether I could duplicate Kristin's results and to test how different versions of the model perform.
+test whether I could duplicate Kristin's results and to test how different versions of the model perform. Sources the various cmsy_... models to calculate b/bmsy (see: for description):
 
-* bmsyDataTest.R: sources the various cmsy_... models to calculate b/bmsy (see: for description)
+cmsy_constrained 
+cmsy_constrained_res 
+cmsy_relaxed 
+cmsy_uniform 
 
-* cmsy_mpi_ohi_v0_FinalBio2CT_uniformPrior2_OHIrun.R is the script from Kristin.  Should basically be the same as ours, but her's outputs some additional variables that we do not need.
+In general, this accesses data from the "raw" file and saves to the "output" file 
 
 Description
 ===========
