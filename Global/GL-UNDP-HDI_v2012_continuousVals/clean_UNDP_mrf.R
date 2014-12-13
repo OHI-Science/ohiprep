@@ -102,11 +102,12 @@ all_rgns <- read.csv("src/LookupTables/eez_rgn_2013master.csv") %>%
          rgn_id_2013 != 255) %>%
   select(rgn_id=rgn_id_2013) %>%
   unique() %>%
-  left_join(data)
+  left_join(data_gap_filled) %>%
+  arrange(rgn_id)
   
 
 
-write.csv(data_gap_filled, "Global/GL-UNDP-HDI_v2012_continuousVals/data/hdi.csv", row.names=FALSE, na="")
+write.csv(all_rgns, "Global/GL-UNDP-HDI_v2012_continuousVals/data/hdi.csv", row.names=FALSE, na="")
 
 
 
