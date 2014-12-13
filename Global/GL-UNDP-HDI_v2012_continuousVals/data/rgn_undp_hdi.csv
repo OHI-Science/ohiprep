@@ -1,0 +1,223 @@
+"rgn_id_2013","rgn_nam_2013","boolean","year"
+1,"Cocos Islands",1,2013
+2,"Christmas Island",1,2013
+3,"Norfolk Island",1,2013
+4,"Macquarie Island",1,2013
+5,"New Caledonia",1,2013
+6,"Vanuatu",0,2013
+7,"Solomon Islands",0,2013
+8,"Palau",0,2013
+9,"Micronesia Federated States of",0,2013
+10,"Nauru",0,
+11,"Marshall Islands",0,
+12,"Wake Island",1,2013
+13,"Northern Mariana Islands and Guam",1,2013
+14,"Taiwan",0,
+15,"Philippines",0,2013
+16,"Australia",1,2013
+17,"Papua New Guinea",0,2013
+18,"Fiji",0,2013
+19,"Tuvalu",0,
+20,"Korea Republic of",1,2013
+21,"North Korea",0,
+24,"Cambodia",0,2013
+25,"Thailand",0,2013
+26,"Andaman and Nicobar",0,2013
+28,"Comoros",0,2013
+29,"Mayotte",1,2013
+30,"Glorioso Islands",1,2013
+31,"Seychelles",1,2013
+32,"R_union",1,2013
+33,"Juan de Nova Island",1,2013
+34,"Bassas da India",1,2013
+35,"Ile Europa",1,2013
+36,"Ile Tromelin",1,2013
+37,"Mauritius",0,2013
+38,"British Indian Ocean Territory",1,2013
+39,"Maldives",0,2013
+40,"Sri Lanka",0,2013
+41,"Mozambique",0,2013
+42,"Madagascar",0,2013
+43,"Kenya",0,2013
+44,"Somalia",0,
+45,"Eritrea",0,2013
+46,"Djibouti",0,2013
+47,"Yemen",0,2013
+48,"Oman",0,2013
+49,"Sudan",0,2013
+50,"Saudi Arabia",0,2013
+51,"Kuwait",0,2013
+52,"Bahrain",0,2013
+53,"Pakistan",0,2013
+54,"United Arab Emirates",1,2013
+55,"Azores",1,2013
+56,"Cape Verde",0,2013
+57,"Madeira",1,2013
+58,"Canary Islands",1,2013
+59,"Belgium",1,2013
+60,"Gibraltar",1,2013
+61,"Tunisia",0,2013
+62,"Morocco",0,2013
+63,"Western Sahara",0,2013
+64,"Mauritania",0,2013
+65,"Gambia",0,2013
+66,"Senegal",0,2013
+67,"Libya",0,2013
+68,"Malta",1,2013
+69,"Latvia",1,2013
+70,"Estonia",1,2013
+71,"Bulgaria",0,2013
+72,"Romania",0,2013
+73,"Russian Federation",0,2013
+74,"Georgia",0,2013
+75,"Ukraine",0,2013
+76,"Turkey",0,2013
+77,"Syrian Arab Republic",0,2013
+78,"Lebanon",0,2013
+79,"Israel",1,2013
+80,"Greece",1,2013
+81,"Cyprus",1,2013
+82,"Albania",0,2013
+84,"Algeria",0,2013
+85,"Ascension",1,2013
+86,"Saint Helena",1,2013
+88,"Tristan da Cunha",1,2013
+89,"South Georgia and the South Sandwich Islands",1,2013
+90,"Prince Edward Islands",0,2013
+91,"Crozet Islands",1,2013
+92,"Amsterdam Island and Saint Paul Island",1,2013
+93,"Kerguelen Islands",1,2013
+94,"Heard and McDonald Islands",1,2013
+95,"Falkland Islands",1,2013
+96,"Sierra Leone",0,2013
+97,"Liberia",0,2013
+98,"Togo",0,2013
+99,"Benin",0,2013
+100,"Congo",0,2013
+101,"Namibia",0,2013
+102,"South Africa",0,2013
+103,"Sao Tome and Principe",0,2013
+104,"Equatorial Guinea",0,2013
+105,"Bouvet Island",1,2013
+106,"Ghana",0,2013
+107,"Clipperton Island",1,2013
+108,"Bermuda",1,2013
+110,"Bahamas",0,2013
+111,"Turks and Caicos Islands",1,2013
+112,"Cuba",0,2013
+113,"Cayman Islands",1,2013
+114,"Haiti",0,2013
+115,"Dominican Republic",0,2013
+116,"Puerto Rico and Virgin Islands of the United States",1,2013
+117,"British Virgin Islands",1,2013
+118,"Anguilla",1,2013
+119,"Saint Kitts and Nevis",0,2013
+120,"Antigua and Barbuda",0,2013
+121,"Montserrat",1,2013
+122,"Saint Lucia",0,2013
+123,"Dominica",0,2013
+124,"Barbados",1,2013
+125,"Grenada",0,2013
+126,"Trinidad and Tobago",0,2013
+127,"Saint Vincent and the Grenadines",0,2013
+129,"Panama",0,2013
+130,"Costa Rica",0,2013
+131,"Nicaragua",0,2013
+132,"Colombia",0,2013
+133,"Honduras",0,2013
+134,"El Salvador",0,2013
+135,"Mexico",0,2013
+136,"Guatemala",0,2013
+137,"Ecuador",0,2013
+138,"Peru",0,2013
+139,"Venezuela Bolivarian Republic of",0,2013
+140,"Guadeloupe and Martinique",1,2013
+141,"Faeroe Islands",1,2013
+143,"Iceland",1,2013
+144,"Jan Mayen",1,2013
+145,"Greenland",1,2013
+146,"Pitcairn",1,2013
+147,"French Polynesia",1,2013
+148,"Line Group",0,2013
+149,"Jarvis Island",1,2013
+150,"Palmyra Atoll",1,2013
+151,"American Samoa",1,2013
+152,"Samoa",0,2013
+153,"Cook Islands",1,2013
+154,"Niue",1,2013
+155,"Tonga",0,2013
+156,"Tokelau",1,2013
+157,"Phoenix Group",0,2013
+158,"Howland Island and Baker Island",1,2013
+159,"Johnston Atoll",1,2013
+161,"Wallis and Futuna",1,2013
+162,"New Zealand",1,2013
+163,"United States",1,2013
+164,"Belize",0,2013
+166,"Jamaica",0,2013
+167,"Guyana",0,2013
+168,"Suriname",0,2013
+169,"French Guiana",1,2013
+171,"Brazil",0,2013
+172,"Argentina",1,2013
+173,"Uruguay",0,2013
+174,"Finland",1,2013
+175,"Denmark",1,2013
+176,"Germany",1,2013
+177,"Netherlands",1,2013
+178,"Poland",1,2013
+179,"France",1,2013
+180,"United Kingdom",1,2013
+181,"Ireland",1,2013
+182,"Spain",1,2013
+183,"Portugal",1,2013
+184,"Italy",1,2013
+185,"Monaco",0,
+186,"Montenegro",0,2013
+187,"Croatia",1,2013
+188,"Slovenia",1,2013
+189,"Lithuania",1,2013
+190,"Qatar",1,2013
+191,"Iran Islamic Republic of",0,2013
+192,"Iraq",0,2013
+193,"Guinea-Bissau",0,2013
+194,"Guinea",0,2013
+195,"Ivory Coast",0,2013
+196,"Nigeria",0,2013
+197,"Cameroon",0,2013
+198,"Gabon",0,2013
+199,"Democratic Republic of the Congo",0,
+200,"Angola",0,2013
+202,"Tanzania United Republic of",0,2013
+203,"India",0,2013
+204,"Bangladesh",0,2013
+205,"Myanmar",0,2013
+206,"Malaysia",0,2013
+207,"Viet Nam",0,2013
+208,"Singapore",1,2013
+209,"Hong Kong China (SAR)",1,2013
+209,"China",0,2013
+210,"Japan",1,2013
+212,"Kiribati",0,2013
+213,"Antarctica",0,
+214,"Egypt",0,2013
+215,"Jordan",0,2013
+216,"Indonesia",0,2013
+218,"Canada",1,2013
+219,"Saint Pierre and Miquelon",1,2013
+220,"Sint Maarten",1,2013
+221,"Northern Saint-Martin",1,2013
+222,"Sweden",1,2013
+223,"Norway",1,2013
+224,"Chile",1,2013
+227,"Jersey",1,2013
+228,"Guernsey",1,2013
+231,"Timor-Leste",0,2013
+232,"Bosnia and Herzegovina",0,2013
+237,"Oecussi Ambeno",0,2013
+244,"Curaçao",1,2013
+245,"Bonaire",1,2013
+247,"Brunei Darussalam",1,2013
+248,"Saba",1,2013
+249,"Sint Eustatius",1,2013
+250,"Aruba",1,2013
