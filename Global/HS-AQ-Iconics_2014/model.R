@@ -25,6 +25,7 @@ am_cells <- read.csv(file.path(dir_neptune_data, "model/GL-NCEAS-SpeciesDiversit
 
 # Identify Iconic species ----
 icons <- read.csv(file.path(dir_neptune_data, "model/GL-NCEAS-IconicSpecies_v2013/data/ico_spp_extinction_status.csv"))
+
 icons$sciname <- str_trim(icons$sciname)
 icons$sciname[icons$sciname=="Kogia simus"] <- "Kogia sima"
 icons$sciname[icons$sciname=="Cephalorhynchus hectori maui"] <- "Cephalorhynchus hectori"
@@ -65,13 +66,13 @@ HS_regions <- read.csv("../ohiprep/HighSeas/HS_other_v2014/rgn_labels_fao.csv")
 cells_AQ <- cells[cells$sp_id %in% AQ_regions$sp_id, ]
 table(cells_AQ$sp_id)
 
-cells_HS <- cells %.%
-  filter(sp_id %in% HS_regions$sp_id) %.%
-  left_join(HS_regions) %.%
+cells_HS <- cells %>%
+  filter(sp_id %in% HS_regions$sp_id) %>%
+  left_join(HS_regions) %>%
   select(LOICZID, proportionArea, rgn_id)  
 table(cells_HS$rgn_id)
 
-cells_HS_arctic <- cells_HS %.%
+cells_HS_arctic <- cells_HS %>%
   filter(rgn_id %in% '260') 
 table(cells_HS_arctic$rgn_id)
 
