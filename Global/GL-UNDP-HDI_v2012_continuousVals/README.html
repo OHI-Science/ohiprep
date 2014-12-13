@@ -1,0 +1,51 @@
+<h1 id="gl-undp-hdi_v2012">GL-UNDP-HDI_v2012</h1>
+<p>Human Development Index: updated</p>
+<h1 id="files-produced">Files produced</h1>
+<p>FILES:</p>
+<ul>
+<li>rgn_undp_hdi.csv</li>
+</ul>
+<h1 id="description">Description</h1>
+<p>ACCESS:</p>
+<ul>
+<li>HDR_2013_EN_complete.pdf was downloaded from http://hdr.undp.org/en/reports/global/hdr2013/.</li>
+<li>Data were copied into a .txt file: HDR_Table1_Development.txt and then resaved as 2 separate files:
+<ul>
+<li>HDR_Table1_Development-Developed.txt (all countries with &quot;Very high human development&quot;)</li>
+<li>HDR_Table1_Development-Developing.txt (all others)</li>
+</ul></li>
+<li>Reformatting removed the footnote letters, replaced spaces with commas but then removed them between country names
+<ul>
+<li>replaced with </li>
+<li>([a-z]),([A-Z])  </li>
+<li>([a-z]),([a-z])  </li>
+</ul></li>
+</ul>
+<h1 id="r-scripts-involved">R scripts involved</h1>
+<p>SCRIPT:</p>
+<ul>
+<li>clean_UNDP.r</li>
+</ul>
+<p>DETAILS: cleaning</p>
+<ul>
+<li>developed countries = 1</li>
+<li>developing = 0</li>
+<li>sovereign regions get parent value</li>
+<li>all other regions get 0</li>
+</ul>
+<h1 id="gapfilling">Gapfilling</h1>
+<p>CATEGORY: SG</p>
+<p>EXCEPTIONS: NA</p>
+<p>DETAILS: Only sovereign gapfilling: no further gapfilling: missing countries should get 0 instead of 1.</p>
+<h1 id="resolutions">2014 Resolutions</h1>
+<ul>
+<li>include updated file in toolbox</li>
+<li>update methods: see below</li>
+<li>combine add_gapfill_sov.r into add_gapfill</li>
+</ul>
+<h1 id="methods">Methods</h1>
+<p>WAS:</p>
+<p>5.28. Human Development Index (HDI) Update: no update included.</p>
+<p>SHOULD HAVE BEEN:</p>
+<p>Updated HDI assessments were available for 2012 to be used as multipliers for the Livelihoods and Economies goal from the United Nations Development Programme Human Development Reports (UNDP HDR: hdr.undp.org/en/reports/global/hdr2013/). Countries were classified as developed (“very high human development” category) or developing (all others). In 2012, there were 32 countries in the &quot;Developed&quot; category. In 2013 there were 39: Added countries were Brunei, Chile, Lithuania, Latvia, Argentina, Seychelles, Croatia and Bahrain moved into the &quot;Developing&quot; category.</p>
+<h1 id="metadata">Metadata</h1>
