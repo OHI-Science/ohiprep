@@ -1,23 +1,121 @@
-
-#exploring fisheries data from 2008 and 2013
-
 library(raster)
 
+# set temporary directory to folder on neptune disk big enough to handle it
+tmpdir='~/big/R_raster_tmp'
+dir.create(tmpdir, showWarnings=F)
+rasterOptions(tmpdir=tmpdir)
+
+source('~/ohiprep/src/R/common.R')
+
+#paths:
+path_save <- file.path(dir_neptune_data, "git-annex/Global/SAUP-FishCatchByGearType_Halpern2008/tmp")
+
+
+#exploring fisheries data from 2008 and 2013
+# This was a file created by Ben B. relatively recently to make sense of these data:
 # data from 2008 standardized by productivity
-dem_d_2008_fp  = raster('N:/git-annex/Global/SAUP-FishCatchByGearType_Halpern2008/data/fishprod_dem_d_gcs.tif')
+dem_d_2008_fp  = raster(file.path(dir_neptune_data, 'git-annex/Global/SAUP-FishCatchByGearType_Halpern2008/data/fishprod_dem_d_gcs.tif'))
 
 # data from 2008 - not standardized by productivity
-dem_d_2008_catch = raster('N:/git-annex/Global/SAUP-FishCatchByGearType_Halpern2008/data/catch_dem_d_gcs.tif')
+dem_d_2008_catch = raster(file.path(dir_neptune_data, 'git-annex/Global/SAUP-FishCatchByGearType_Halpern2008/data/catch_dem_d_gcs.tif'))
+
+
+## These data are in one of the model folders:
+
+data1 <- raster(file.path(dir_neptune_data, "model/GL-NCEAS-Pressures_CommercialFisheries_v2013a/tmp/fp_com_hb_dem.tif")) # basically 0 to 1
+data2 <- raster(file.path(dir_neptune_data, "model/GL-NCEAS-Pressures_CommercialFisheries_v2013a/tmp/fp_com_hb_dem_m1000int.tif")) # times 1000
+data3 <- raster(file.path(dir_neptune_data, "model/GL-NCEAS-Pressures_CommercialFisheries_v2013a/tmp/fp_com_hb_dem_pctchg.tif")) # data1 multiplied by 1+pctchg/100 
+                                                                                                                                 # pct change is saup_pct_chg_mol.tif, corresponds to csv file
+data3b <- raster(file.path(dir_neptune_data, "model/GL-NCEAS-Pressures_CommercialFisheries_v2013a/data/fp_com_hb_dem_2013_raw.tif")) # same as data 3
+
+data4 <- raster(file.path(dir_neptune_data, "model/GL-NCEAS-Pressures_CommercialFisheries_v2013a/tmp/fp_com_hb_dem_pctchg_m1000int.tif")) #data 3 multiplied by 1000
+data5 <- raster(file.path(dir_neptune_data, "model/GL-NCEAS-Pressures_CommercialFisheries_v2013a/tmp/fp_com_hb_dem_pctchg_rescaled.tif")) # r = (cell - min) / (max - min)
+data5b <- raster(file.path(dir_neptune_data, "model/GL-NCEAS-Pressures_CommercialFisheries_v2013a/data/fp_com_hb_dem_2013_rescaled.tif")) # same as data 5
+
+data6 <- raster(file.path(dir_neptune_data, "model/GL-NCEAS-Pressures_CommercialFisheries_v2013a/tmp/fp_com_hb_dem_pctchg_rescaled_m1000int.tif")) # times 1000
+
+
+
+### Question 1: where does data1 come from?
+###  The dem_d_2008_fp data? 
+calc(dem_d_2008_fp, fun=function(x){x/cellStats(dem_d_2008_fp, stat='max')}, filename=file.path(path_save, "dem_d_2008_fp_normalized"), overwrite=TRUE, progress="text")
+dem_d_2008_fp_normalized <- raster(file.path(path_save, "dem_d_2008_fp_normalized"))
+plot(dem_d_2008_fp_normalized)
+# No
+
+## How about if it is logged?
+calc(dem_d_2008_fp, fun=function(x){log(x + 1)}, filename=file.path(path_save, "dem_d_2008_fp_log.tif"), overwrite=TRUE, progress="text")
+dem_d_2008_fp_log <- raster(file.path(path_save, "dem_d_2008_fp_log.tif"))
+plot(dem_d_2008_fp_log)
+calc(dem_d_2008_fp_log, fun=function(x){x/cellStats(dem_d_2008_fp_log, stat='max')}, filename=file.path(path_save, "dem_d_2008_fp_log_normalized.tif"), overwrite=TRUE, progress="text")
+dem_d_2008_fp_log_normalized <- raster(file.path(path_save, "dem_d_2008_fp_log_normalized.tif"))
+plot(dem_d_2008_fp_log_normalized)
+
+file.path(path_save, "dem_d_2008_fp_log")
+
+# reproject data
+projectRaster(dem_d_2008_fp_log_normalized, data1, filename=file.path(path_save, "dem_d_2008_fp_log_normalized_mol"), progress="text")
+dem_d_2008_fp_log_normalized_mol <- raster(file.path(path_save, "dem_d_2008_fp_log_normalized_mol"))
+max <- cellStats(dem_d_2008_fp_log_normalized_mol, stat="max")
+min <- cellStats(dem_d_2008_fp_log_normalized_mol, stat="min")
+calc(dem_d_2008_fp_log_normalized_mol, function(x){(x-min)/
+                                                     (max-min)},
+     filename=file.path(path_save, "dem_d_2008_fp_log_normalized_mol_norm"), progress="text")
+
+dem_d_2008_fp_log_normalized_mol_norm <- raster(file.path(path_save, "dem_d_2008_fp_log_normalized_mol_norm"))
+plot(dem_d_2008_fp_log_normalized_mol_norm)
+
+s <- stack(dem_d_2008_fp_log_normalized_mol_norm, data1)
+overlay(s, fun=function(x,y) x-y, 
+        filename=file.path(path_save, "data1_rel2_dem_d_2008_fp_log_normalized_mol_norm"),
+        progress="text", overwrite=TRUE)
+
+data1_rel2_dem_d_2008_fp_log_normalized_mol_norm <- raster(file.path(path_save, "data1_rel2_dem_d_2008_fp_log_normalized_mol_norm"))
+plot(data1_rel2_dem_d_2008_fp_log_normalized_mol_norm)
+hist(data1_rel2_dem_d_2008_fp_log_normalized_mol_norm)
+click(data1_rel2_dem_d_2008_fp_log_normalized_mol_norm)
+
+### The dem_d_2008_catch data? 
+calc(dem_d_2008_catch, fun=function(x){x/cellStats(dem_d_2008_catch, stat='max')}, filename=file.path(path_save, "dem_d_2008_catch_normalized"), overwrite=TRUE, progress="text")
+dem_d_2008_catch_normalized <- raster(file.path(path_save, "dem_d_2008_catch_normalized"))
+plot(dem_d_2008_catch_normalized)
+# No
+
+### Question 2: What data did John use for cia?
+
+## 2008 data
+dem_d_f = raster(file.path(dir_halpern2008, 
+                           'mnt/storage/marine_threats/impact_layers_2013_redo/impact_layers/final_impact_layers/threats_2008_interim/old_layers/demersal_destructive_fishing/moll_nontrans_unclipped_1km/demersal_destructive_fishing.tif'))
+# it appears that he used this file (but projected it to mollweide which messes with the numbers a bit)
+
+## 2013 data
+dem_d_f_2013 = raster(file.path(dir_halpern2008, 'mnt/storage/marine_threats/impact_layers_2013_redo/impact_layers/final_impact_layers/threats_2013_interim/new_layers/demersal_destructive_fishing/moll_nontrans_unclipped_1km/demersal_destructive_fishing.tif'))
+
+
+
+## Ignore below stuff for now
+
+
+projectRaster(dem_d_2008_fp_normalized, data1, filename=file.path(path_save, "dem_d_2008_fp_normalized_mol"), progress="text")
+dem_d_2008_fp_normalized_mol <- raster(file.path(path_save, "dem_d_2008_fp_normalized_mol"))
+
+s <- stack(dem_d_2008_fp_normalized_mol, data1)
+overlay(s, fun=function(x,y) x/y, 
+        filename=file.path(path_save, "data1_rel2_dem_d_2008_fp_normalized_mol"),
+        progress="text", overwrite=TRUE)
+
+data1_rel2_dem_d_2008_fp_normalized_mol <- raster(file.path(path_save, "data1_rel2_dem_d_2008_fp_normalized_mol"))
 
 # data from 2013 CHI - assumed to be the percent change applied to 2008 data to create final raster layer (before rescaled)
-dem_d_pctchg     = raster('N:/model/GL-NCEAS-Pressures_CommercialFisheries_v2013a/tmp/fp_com_hb_dem_pctchg.tif')
+dem_d_pctchg     = raster(file.path(dir_neptune_data, 'model/GL-NCEAS-Pressures_CommercialFisheries_v2013a/tmp/fp_com_hb_dem_pctchg.tif'))
 
 # email from John on 1/8/2015 suggests that this file is the raw file that was then updated by percent change.
 # Our theory: this is the same as the file above (actually the percent change rather than the raw data)
-dem_d_2013_raw = raster('N:/model/GL-NCEAS-Pressures_CommercialFisheries_v2013a/data/fp_com_hb_dem_2013_raw.tif') 
+dem_d_2013_raw = raster(file.path(dir_neptune_data, 'model/GL-NCEAS-Pressures_CommercialFisheries_v2013a/data/fp_com_hb_dem_2013_raw.tif')) 
+projectRaster(dem_d_2008_fp, data1, filename=file.path(path_save, "dem_d_2008_fp_mol"), progress="tex")
 
 #
-dem_d_f = raster('H:/mnt/storage/marine_threats/impact_layers_2013_redo/impact_layers/final_impact_layers/threats_2013_interim/new_layers/demersal_destructive_fishing/demersal_d')
+dem_d_f = raster(file.path(dir_halpern2008, 'mnt/storage/marine_threats/impact_layers_2013_redo/impact_layers/final_impact_layers/threats_2013_interim/new_layers/demersal_destructive_fishing/moll_nontrans_unclipped_1km/demersal_destructive_fishing.tif'))
 
 
 
