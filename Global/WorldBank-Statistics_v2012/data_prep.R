@@ -32,20 +32,20 @@ library(stringr)
 
 #library(ohicore)  # for github/ohicore/R/gapfill_georegions.R # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 library(devtools)
-load_all('~/github/ohicore')
+load_all('../ohicore')
 # library(ohicore)
 
 # read in and process files ----
 if (exists('d_all')) rm(d_all)
 count = 0
-for (f in list.files(path = file.path(dir_a, 'raw'), pattern=glob2rx('*xls'), full.names=T)) {  # f = "Global/WorldBank-Statistics_v2012/raw/sl.tlf.totl.in_Indicator_en_excel_v2.xls"
+for (f in list.files(path = file.path(dir_a, 'raw'), pattern=glob2rx('*xls'), full.names=T)) {  # f = "/var/data/ohi/git-annex/Global/WorldBank-Statistics_v2012/raw/ny.gdp.pcap.pp.cd_Indicator_en_excel_v2.xls"
   cat(sprintf('processing %s\n', basename(f)))
   
   count = count + 1
   d = read.xls(f, sheet=1, skip=1, check.names=F);  head(d) # do not add the stupid X in front of the numeric column names
   
   # remove final year column if it is completely NAs
-  if(nrow(d)[1] - sum(is.na(d[,ncol(d)])) == 0) {
+  if(nrow(d)[1] - sum(is.na(d[,ncol(d)])) == 0) {  
     d = d[,-ncol(d)]
   }
     
