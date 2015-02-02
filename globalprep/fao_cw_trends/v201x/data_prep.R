@@ -25,6 +25,7 @@ library(biglm)
 # library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 library(devtools); load_all('../ohicore')
 library(ohicore)
+library(dplyr)
 
 # get paths.  NOTE: Default path should be ohiprep root directory.
 dir_neptune_data <- c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
