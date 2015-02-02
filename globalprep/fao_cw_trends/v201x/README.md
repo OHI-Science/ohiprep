@@ -1,20 +1,22 @@
-FAO-CW-Trends_v2011
+FAO-CW-Trends/v2013
 =====================
 
-Data are in a new format since 2013a. Available from http://faostat3.fao.org/faostat-gateway/go/to/download/R/*/E
+Data are in a new format since 2013a. Available from http://faostat3.fao.org/download/R/RF/E.  Click on the down arrow next to "Inputs" to access "Fertilizers" and "Pesticides (Use)" domains.  
+For Fertilizers domain, select the following: Countries (select all), Items (select all), Years (select all), Elements (select "Consumption").  Download as CSV.
+For Pesticides (Use) domain, select all for Countries, Items, and Years, and select "Use" for Elements.
 
 Files produced
 ==============
 
-* 
+Click on the "CSV" icon at the bottom of the screen to download the selected data as a CSV file.  Rename as appropriate.
 
 Description
 ===========
-ACCESS: 
+ACCESS:
 
 PREPROCESSING NOTE:
 
-.xls data files downloaded from http://faostat3.fao.org/faostat-gateway/go/to/download/R/*/E are huge; they crash .xls unless opened from within Excel. Save as .csv files as soon as possible. 
+.xls data files downloaded from http://faostat3.fao.org/faostat-gateway/go/to/download/R/*/E are huge; they crash .xls unless opened from within Excel. Save as .csv files as soon as possible.
 
 R scripts involved
 ==================
@@ -42,6 +44,5 @@ Description: Updated pesticide consumption data were available through 2010 from
 
 
 
-Gapfilling 
+Gapfilling
 ==========
-
