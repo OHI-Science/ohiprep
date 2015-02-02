@@ -1,10 +1,12 @@
 # data_prep.R
 
 # Prepare FAO fertilizer/pesticides data for CW trends. 
-# By JSLowndes Apr2014; File was originally clean_FAOtrends.r:(by JStewart Jul2013)
+# By Casey O'Hara Jan 2015
+#   modified from JSLowndes Apr2014; 
+#   File was originally clean_FAOtrends.r:(by JStewart Jul2013)
 
-# for trends in pesticides and fertilizers. Note that for 2014a, only pesticides are updated (fertilizer 2011 data are all 0's)
-# Data are in a new format since 2013a. Available from http://faostat3.fao.org/faostat-gateway/go/to/download/R/*/E
+#### for trends in pesticides and fertilizers. Note that for 2014a, only pesticides are updated (fertilizer 2011 data are all 0's)
+# Data are in a new format since 2013a. Available from http://faostat3.fao.org/download/R/RF/E.  
 
 #   read in individual files
 #   remove Totals row
@@ -25,34 +27,47 @@ library(devtools); load_all('../ohicore')
 library(ohicore)
 
 # get paths.  NOTE: Default path should be ohiprep root directory.
-dir_neptune_data = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
+dir_neptune_data <- c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
                      'Darwin'  = '/Volumes/data_edit',
                      'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
-dir_d = file.path('../ohiprep/Global/FAO-CW-Trends_v2011')
+dir_d <- file.path('../ohiprep/globalprep/fao_cw_trends/v201x')
 
 
 ## identify how many years subtract from max year for each scenario 
-scenario = c('2012' = 2, 
-             '2013' = 1, 
-             '2014' = 0)
+scenario <- c('2012' = 2, 
+              '2013' = 1, 
+              '2014' = 0)
 
 ## read in and process files ----
 
 for (k in list.files(path = file.path(dir_d, 'raw'), pattern=glob2rx('*csv'), full.names=T)) { 
-  # k = "../ohiprep/Global/FAO-CW-Trends_v2011/raw/FAO_fertilizers_thru2011.csv"
-  # k = "../ohiprep/Global/FAO-CW-Trends_v2011/raw/FAO_pesticides_thru2011.csv" 
+  # k <- "../ohiprep/globalprep/fao_cw_trends/v201x/raw/FAO_fertilizers_thru2012.csv"
+  # k <- "../ohiprep/globalprep/fao_cw_trends/v201x/FAO_pesticides_thru2013.csv" 
   
-  d_tmp = read.csv(k, header=F); head(d_tmp)
-  v = unlist(strsplit(as.character(d_tmp[1,1]), ' '))[1] 
+  # original read.csv call:
+  #   d_tmp <- read.csv(k, header = F); head(d_tmp)
+  # PROBLEM: The raw file starts out with some garbage characters that seem to mess this up...
+
+  # SOLN 1: skip header row and just assign default column names V1 - V10
+  d_tmp <- read.csv(k, skip = 1, header = F); head(d_tmp)
   
-  # clean up data
-  d = d_tmp %>%
-    select(country = V2, 
-           category = V3, 
-           year = V5, 
-           tonnes = V6) %>%
+  # split out the name of this data set (aka "Fertilizers") from column 2
+  v <- unlist(strsplit(as.character(d_tmp[1,2]), ' '))[1] 
+
+  # clean up data; uses column numbers from new format of data file
+  d <- d_tmp %>%
+    select(country  = V4, 
+           category = V8, # what is category?
+           year     = V9, 
+           tonnes  = V10) %>%
     group_by(country, year) %>%
     summarise(tonnes = sum(tonnes)); head(d) # d[duplicated(d[, c('country', 'year')]),] 
+  # QUESTION: is summing the raw tonnes of each fertilizer type a valid means of assessing the
+  #   impact, or should there be a weighting?  CHECK with CUMULATIVE IMPACTS people
+  # QUESTION: should most of these "=" actually be "<-"?
+  
+  
+  ##########
   
   
   ## add rgn_ids with name_to_rgn ----
