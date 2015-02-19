@@ -17,15 +17,15 @@ dirs = {
      }}[socket.gethostname().lower()]
 
 # paths
-prod     = 'Global/WDPA-MPA_v2014'                     # name of product
+prod     = 'globalprep/WDPA-MPA/v2015'                 # name of product
 dir_git  = '%s/%s' % (dirs['git'], prod)               # github directory inside ohiprep
 dir_tmp  = '%s/%s' % (dirs['tmp'], prod)               # temp directory on local filesystem
 dir_anx  = '%s/git-annex/%s' % (dirs['neptune'], prod) # git annex directory on neptune
 gdb      = '%s/geodb.gdb' % dir_tmp                    # file geodatabase
 
 # inputs
-poly_wdpa = '%s/raw/WDPA_Apr2014_Public1/WDPA_Apr2014.gdb/WDPA_poly_Apr2014' % dir_anx
-dir_rgn   = '%s/Global/NCEAS-Regions_v2014/data' % dirs['tmp']
+poly_wdpa = '%s/raw/WDPA_Jan2015_Public/WDPA_Jan2015_Public.gdb/WDPA_poly_Jan2015' % dir_anx
+dir_rgn   = '%s/git-annex/Global/NCEAS-Regions_v2014/data' ' % dirs['tmp']
 
 # outputs
 ply = '%s/poly_wdpa_d' % gdb
@@ -51,8 +51,10 @@ arcpy.env.workspace = gdb; os.chdir(dir_tmp)
 arcpy.env.scratchWorkspace = dir_tmp
 
 # develop coastal raster to use as a mask
-r = Con(IsNull(Raster('%s/rgn_offshore3nm_mol.tif' % dir_rgn)), Raster('%s/rgn_inland1km_gcs.tif' % dir_rgn), Raster('%s/rgn_offshore3nm_mol.tif' % dir_rgn))
+r = Con(IsNull(Raster('%s/rgn_offshore3nm_mol.tif' % dir_rgn)), Raster('%s/rgn_inland1km_mol.tif' % dir_rgn), Raster('%s/rgn_offshore3nm_mol.tif' % dir_rgn))
 r.save(msk)
+	# changed 1 km inland raster to the rgn_inland1km_mol.tif rather than rgn_inland1km_gcs.tif
+
 arcpy.env.snapRaster = arcpy.env.cellSize = arcpy.env.outputCoordinateSystem = arcpy.env.extent = msk
 
 # select only designated
@@ -72,13 +74,14 @@ arcpy.PolygonToRaster_conversion(ply, 'STATUS_YR', tif, 'MAXIMUM_COMBINED_AREA',
 
 # tabulate 
 # note: zone raster must have an attribute table, automatically created for integer rasters
-TabulateArea('%s/rgn_offshore3nm_mol.tif' % dir_rgn, 'VALUE', tif, 'VALUE', '%s/rgn_offshore3nm_wdpa.dbf' % dir_tmp, msk)
-TabulateArea('%s/rgn_inland1km_mol.tif'   % dir_rgn, 'VALUE', tif, 'VALUE', '%s/rgn_inland1km_wdpa.dbf'   % dir_tmp, msk)
+TabulateArea('%s/rgn_offshore3nm_mol.tif' % dir_rgn, 'VALUE', tif, 'VALUE', '%s/rgn_offshore3nm_wdpa.dbf' % dir_git, msk)
+TabulateArea('%s/rgn_inland1km_mol.tif'   % dir_rgn, 'VALUE', tif, 'VALUE', '%s/rgn_inland1km_wdpa.dbf'   % dir_git, msk)
+	# final .dbfs saved into github location rather than tmp
 
 # copy tmp to neptune
-paths = [gdb, tif, msk]
-if not os.path.exists('%s/tmp' % dir_anx):
-    os.makedirs('%s/tmp' % dir_anx)
-for fro in paths:
-    arcpy.Copy_management(fro, '%s/tmp/%s' % (dir_anx, os.path.basename(fro)))
-    #arcpy.Delete_management(tmp+'/'+d)
+# paths = [gdb, tif, msk]
+# if not os.path.exists('%s/tmp' % dir_anx):
+#     os.makedirs('%s/tmp' % dir_anx)
+# for fro in paths:
+#     arcpy.Copy_management(fro, '%s/tmp/%s' % (dir_anx, os.path.basename(fro)))
+#     #arcpy.Delete_management(tmp+'/'+d)
