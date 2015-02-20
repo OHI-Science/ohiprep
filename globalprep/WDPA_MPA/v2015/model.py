@@ -55,8 +55,8 @@ arcpy.env.scratchWorkspace = dir_tmp
 
 # develop coastal raster to use as a mask
 print 'Developing coastal raster to use as a mask'
-#r = Con(IsNull(Raster('%s/rgn_offshore3nm_mol.tif' % dir_rgn)), Raster('%s/rgn_inland1km_mol.tif' % dir_rgn), Raster('%s/rgn_offshore3nm_mol.tif' % dir_rgn))
-#r.save(msk)
+r = Con(IsNull(Raster('%s/rgn_offshore3nm_mol.tif' % dir_rgn)), Raster('%s/rgn_inland1km_mol.tif' % dir_rgn), Raster('%s/rgn_offshore3nm_mol.tif' % dir_rgn))
+r.save(msk)
 	# changed 1 km inland raster to the rgn_inland1km_mol.tif rather than rgn_inland1km_gcs.tif
 
 print 'Setting environment based on msk'
