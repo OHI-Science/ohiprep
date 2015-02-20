@@ -8,7 +8,7 @@ library(sp)
 library(raster)
 library(dplyr)
 
-source('~/ohiprep/src/R/common.R')
+source('../../../ohiprep/src/R/common.R')
 
 ## read in spatial data:
 mpa <- raster((file.path(dir_neptune_data, "git-annex/Global/WDPA-MPA_v2014/tmp/wdpa_designated_mol.tif")))
