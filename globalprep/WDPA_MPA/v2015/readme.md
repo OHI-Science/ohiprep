@@ -1,9 +1,11 @@
-# The **NEW** organized Global
+# LSP notes
 
-This directory will have all the scripts and data outputs after Jan 29 2015 with a new method of organization.  
+The original data and additional tmp files are located on Neptune:
+N:\git-annex\globalprep\WDPA_MPA\v2015
 
-We realized that it would be better if each directory contained the folders with the years the data was downloaded: 
+model.py: uses ArcGIS to convert WDPA-MPA data to a raster and then extracts data for 1km inland and 3nm offshore. More information about the .py script is found in teh README_dataDescription.html (in the v2014_archive folder)
 
-globalprep/WDPA-MPA/2015
-globalprep/WDPA-MPA/2016
+digest.R: prepares the final data for the Toolbox.
+
+
 
