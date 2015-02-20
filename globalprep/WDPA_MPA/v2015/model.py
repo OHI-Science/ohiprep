@@ -1,23 +1,16 @@
-# cmd: C:\Python27\ArcGISx6410.2\python.exe G:\ohiprep\Global\WDPA-MPA_v2014\model.py
+#cmd: C:\Python27\ArcGISx6410.2\python.exe G:\ohiprep\Global\WDPA-MPA_v2014\model.py
 
 import arcpy, os, subprocess, csv, sys, socket
 from arcpy.sa import *
 
 # configuration based on machine name
-dirs = {
-    'amphitrite':
-    {'git'    :'G:/ohiprep',
-     'neptune':'N:',
-     'tmp'    :'C:/tmp',
-     },
-    'optimus':
-    {'git'    :'D:/best/docs/GitHub/ohiprep',
-     'neptune':'N:',
-     'tmp'    :'D:/best/tmp',
-     }}[socket.gethostname().lower()]
+dirs =  {'git'    :'C:/Users/visitor/My Documents/github/ohiprep', 
+         'neptune':'N:',
+         'tmp'    :'C:/Users/visitor/tmp',
+         }
 
 # paths
-prod     = 'globalprep/WDPA-MPA/v2015'                 # name of product
+prod     = 'globalprep/WDPA_MPA/v2015'                 # name of product
 dir_git  = '%s/%s' % (dirs['git'], prod)               # github directory inside ohiprep
 dir_tmp  = '%s/%s' % (dirs['tmp'], prod)               # temp directory on local filesystem
 dir_anx  = '%s/git-annex/%s' % (dirs['neptune'], prod) # git annex directory on neptune
@@ -25,7 +18,7 @@ gdb      = '%s/geodb.gdb' % dir_tmp                    # file geodatabase
 
 # inputs
 poly_wdpa = '%s/raw/WDPA_Jan2015_Public/WDPA_Jan2015_Public.gdb/WDPA_poly_Jan2015' % dir_anx
-dir_rgn   = '%s/git-annex/Global/NCEAS-Regions_v2014/data' ' % dirs['tmp']
+dir_rgn   = '%s/git-annex/Global/NCEAS-Regions_v2014/data' % dirs['neptune']
 
 # outputs
 ply = '%s/poly_wdpa_d' % gdb
