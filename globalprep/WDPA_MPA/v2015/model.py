@@ -13,8 +13,8 @@ print dirs
 
 # paths
 prod     = 'globalprep/WDPA_MPA/v2015'                 # name of product
-dir_git  = '%s/%s' % (dirs['git'], prod)               # github directory inside ohiprep
-dir_tmp  = '%s/%s' % (dirs['tmp'], prod)               # temp directory on local filesystem
+dir_git  = '%s/%s' % (dirs['git'], prod)               # local github directory inside ohiprep
+dir_tmp  = '%s/%s' % (dirs['tmp'], prod)               # local temp directory
 dir_anx  = '%s/git-annex/%s' % (dirs['neptune'], prod) # git annex directory on neptune
 gdb      = '%s/geodb.gdb' % dir_tmp                    # file geodatabase
 print 'dir_git = ' + dir_git
@@ -53,38 +53,39 @@ if not arcpy.Exists(gdb):
 arcpy.env.workspace = gdb; os.chdir(dir_tmp)
 arcpy.env.scratchWorkspace = dir_tmp
 
-# develop coastal raster to use as a mask
-print 'Developing coastal raster to use as a mask'
-r = Con(IsNull(Raster('%s/rgn_offshore3nm_mol.tif' % dir_rgn)), Raster('%s/rgn_inland1km_mol.tif' % dir_rgn), Raster('%s/rgn_offshore3nm_mol.tif' % dir_rgn))
-r.save(msk)
-	# changed 1 km inland raster to the rgn_inland1km_mol.tif rather than rgn_inland1km_gcs.tif
-
-print 'Setting environment based on msk'
-arcpy.env.snapRaster = arcpy.env.cellSize = arcpy.env.outputCoordinateSystem = arcpy.env.extent = msk
-
-# select only designated
-print 'Selecting only designated features and creating new feature class based on STATUS = Designated'
-arcpy.Select_analysis(poly_wdpa, ply, '"STATUS"=\'Designated\'')
-
-# create priority field, prioritizing DESIG_TYPE: Regional(2) > National(1) > International (0) and then the earliest STATUS_YR (inverse). Highest number gets priority.
-print 'Creating and calculating priority field'
-arcpy.AddField_management(ply, 'poly_priority', 'FLOAT')
-code_block = """
-def get_priority(typ,yr):
-    return({'International':0.0,'National':1.0,'Regional':2.0}[typ] + 1/(float(yr)+1))
-"""
-arcpy.CalculateField_management(ply, 'poly_priority', 'get_priority(typ=!DESIG_TYPE!, yr=!STATUS_YR!)', 'PYTHON_9.3', code_block)
-
-# polygon to raster
-print 'From Designated polygons, create raster .tif'
-arcpy.env.snapRaster = arcpy.env.cellSize = arcpy.env.outputCoordinateSystem = arcpy.env.extent = msk
-arcpy.PolygonToRaster_conversion(ply, 'STATUS_YR', tif, 'MAXIMUM_COMBINED_AREA', 'poly_priority', msk)
+### develop coastal raster to use as a mask
+##print 'Developing coastal raster to use as a mask'
+##r = Con(IsNull(Raster('%s/rgn_offshore3nm_mol.tif' % dir_rgn)), Raster('%s/rgn_inland1km_mol.tif' % dir_rgn), Raster('%s/rgn_offshore3nm_mol.tif' % dir_rgn))
+##r.save(msk)
+##	# changed 1 km inland raster to the rgn_inland1km_mol.tif rather than rgn_inland1km_gcs.tif
+##
+##print 'Setting environment based on msk'
+##arcpy.env.snapRaster = arcpy.env.cellSize = arcpy.env.outputCoordinateSystem = arcpy.env.extent = msk
+##
+### select only designated
+##print 'Selecting only designated features and creating new feature class based on STATUS = Designated'
+##arcpy.Select_analysis(poly_wdpa, ply, '"STATUS"=\'Designated\'')
+##
+### create priority field, prioritizing DESIG_TYPE: Regional(2) > National(1) > International (0) and then the earliest STATUS_YR (inverse). Highest number gets priority.
+##print 'Creating and calculating priority field'
+##arcpy.AddField_management(ply, 'poly_priority', 'FLOAT')
+##code_block = """
+##def get_priority(typ,yr):
+##    return({'International':0.0,'National':1.0,'Regional':2.0}[typ] + 1/(float(yr)+1))
+##"""
+##arcpy.CalculateField_management(ply, 'poly_priority', 'get_priority(typ=!DESIG_TYPE!, yr=!STATUS_YR!)', 'PYTHON_9.3', code_block)
+##
+### polygon to raster
+##print 'From Designated polygons, create raster .tif'
+##arcpy.env.snapRaster = arcpy.env.cellSize = arcpy.env.outputCoordinateSystem = arcpy.env.extent = msk
+##arcpy.PolygonToRaster_conversion(ply, 'STATUS_YR', tif, 'MAXIMUM_COMBINED_AREA', 'poly_priority', msk)
 
 # tabulate
-print 'Tabulating cell counts in Designated raster that overlap with offshore and inland regions'
 # note: zone raster must have an attribute table, automatically created for integer rasters
-TabulateArea('%s/rgn_offshore3nm_mol.tif' % dir_rgn, 'VALUE', tif, 'VALUE', '%s/rgn_offshore3nm_wdpa.dbf' % dir_git, msk)
-TabulateArea('%s/rgn_inland1km_mol.tif'   % dir_rgn, 'VALUE', tif, 'VALUE', '%s/rgn_inland1km_wdpa.dbf'   % dir_git, msk)
+print 'Tabulating cell counts in Designated raster that overlap with offshore regions'
+TabulateArea('%s/rgn_offshore3nm_mol.tif' % dir_rgn, 'VALUE', tif, 'VALUE', '%s/tmp/rgn_offshore3nm_wdpa.dbf' % dir_git, msk)
+print 'Tabulating cell counts in Designated raster that overlap with inland regions'
+TabulateArea('%s/rgn_inland1km_mol.tif'   % dir_rgn, 'VALUE', tif, 'VALUE', '%s/tmp/rgn_inland1km_wdpa.dbf'   % dir_git, msk)
 	# final .dbfs saved into github location rather than tmp
 
 # copy tmp to neptune
