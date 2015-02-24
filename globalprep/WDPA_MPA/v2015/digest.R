@@ -1,10 +1,10 @@
 library(foreign)
 library(stringr)
 library(dplyr)
+library(tidyr)
 
 source('src/R/common.R')
-dir_prod = 'Global/WDPA-MPA_v2014'
-dir_tmp  = file.path(dir_neptune_data, sprintf('git-annex/%s/tmp', dir_prod))
+dir_prod = 'globalprep/WDPA_MPA/v2015'
 
 dir.create(file.path(dir_prod, 'data'), showWarnings=F)
 
@@ -12,47 +12,47 @@ dir.create(file.path(dir_prod, 'data'), showWarnings=F)
 lyrs = c('rgn_offshore3nm_wdpa.dbf' = 'lsp_protarea_offshore3nm.csv',
          'rgn_inland1km_wdpa.dbf'   = 'lsp_protarea_inland1km.csv')
 
-for (i in 1:length(lyrs)){ # i=1
+for (i in 1:length(lyrs)){  i=2
   dbf = names(lyrs)[i]
   csv = lyrs[[i]]
-  d = read.dbf(file.path(dir_tmp,dbf))
-  m = d %.%
-    melt(id.vars='VALUE', variable.name='value_year', value.name='area_m2') %>%
-    filter(area_m2 > 0) %>%
-    mutate(
-      year     = as.integer(sub('VALUE_','', value_year)),
-      area_km2 = area_m2 / (1000 * 1000)) %>%
-    select(rgn_id=VALUE, year, area_km2) %>%
-    arrange(rgn_id, year)
+  d = read.dbf(file.path(dir_prod, 'tmp', dbf))
+
+m <- gather(d, year, area_m2, VALUE_0:VALUE_2014)
+m <- m %>%
+  mutate(year=as.integer(gsub('VALUE_', '', year))) %>%
+  mutate(area_km2 = area_m2/(1000*1000)) %>%
+  select(rgn_id=VALUE, year, area_km2) %>%
+  arrange(rgn_id, year)
 
   # fix  for  lsp_protarea_offshore3nm.csv: make any non-represented rgn_id == 0, and 2 special fixes. 
   # see https://github.com/OHI-Science/ohidev/blob/master/report/compare_scores2layers/compare_scores2layers.md#lasting-special-places
-  if (i == 1) {  
-    rgns = read.csv('../ohi-global/eez2014/layers/rgn_global.csv') %.%
-      select(rgn_id)  %.%
-      filter(rgn_id < 255) %.%
+length(table(m$rgn_id)) #not all regions had data, need to add those
+
+    rgns = read.csv('../ohi-global/eez2014/layers/rgn_global.csv') %>%
+      select(rgn_id)  %>%
+      filter(rgn_id < 255) %>%
       arrange(rgn_id)
     
+# Here we might want to add in all the year data and not just the max year - use expand.grid for this.
     m = rbind(m, 
               rgns %>%
                 anti_join(m, by = 'rgn_id') %>%
                 mutate(year = max(m$year, na.rm=T),
                        area_km2 = 0)) %>%
       arrange(rgn_id, year)
-    
+length(table(m$rgn_id)) #now the regions are there...
+
+if(i==1){
+  # I am not sure why there are special fixes for these regions...but Julie can probably tell us because she made these additions.
+  # These are only done for the 3nm file...also, this code needs to be redone because I didn't delete the zeros as was done previously.
+  # We will need to look at the 3nm data to see if this generally makes sense
+  
     m$area_km2[m$rgn_id == 78] = 1.746501543  # special fix for Lebanon[78]
     m$year[m$rgn_id ==78] = 1972
     m$area_km2[m$rgn_id == 220] = 0.873250772 # special fix for Sint Maarten[220]
     m$year[m$rgn_id == 220] = 2006
+} 
    
-      # str_replace is doing something strange: won't do both at once, only one. 
-#       mutate(area_km2 = str_replace(rgn_id, as.character(78), 1.746501543),  # special fix for Lebanon[78]
-#              year     = str_replace(rgn_id, as.character(78), 1972)) %>%
-#       mutate(area_km2 = str_replace(rgn_id, as.character(220), 0.873250772),  # special fix for Sint Maarten[220]
-#              year     = str_replace(rgn_id, as.character(220), 2006)) %>%
-#       arrange(rgn_id, year)
-  }
-  
   # save layer
   write.csv(m, file.path(dir_prod, 'data', csv), row.names=F, na='')
   
