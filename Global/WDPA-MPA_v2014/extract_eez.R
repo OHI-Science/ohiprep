@@ -8,18 +8,19 @@ library(sp)
 library(raster)
 library(dplyr)
 
-source('../../../ohiprep/src/R/common.R')
+source('~/ohiprep/src/R/common.R')
 
 ## read in spatial data:
 mpa <- raster((file.path(dir_neptune_data, "git-annex/Global/WDPA-MPA_v2014/tmp/wdpa_designated_mol.tif")))
 plot(mpa)
 
 regions <- readOGR(dsn=file.path(dir_neptune_data, "git-annex/Global/NCEAS-Regions_v2014/data/"), layer="rgn_offshore_mol") 
+plot(regions, add=TRUE)
 proj4string(regions) <- CRS(proj4string(mpa))
 regions <- regions[regions@data$rgn_type =="eez", ]
 regions <- regions[regions@data$rgn_id !=213, ]
-plot(regions, add=TRUE)
-rasterize(regions, mpa, field="rgn_id", filename=file.path(dir_neptune_data, "model/GL-WDPA-MPA_v2013/tmp/eez_clipRaster"), overwrite=TRUE, progress="text")
+rasterize(regions, mpa, field="rgn_id", filename=file.path(dir_neptune_data, "model/GL-WDPA-MPA_v2013/tmp/eez_clipRaster"), 
+          overwrite=TRUE, progress="text")
 regions_raster <- raster(file.path(dir_neptune_data, "model/GL-WDPA-MPA_v2013/tmp/eez_clipRaster"))
  
 mask(mpa, regions_raster,  
