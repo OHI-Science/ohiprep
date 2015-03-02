@@ -1,0 +1,98 @@
+---
+title: "Sea level rise pressure procedure"
+author: "Jamie Afflerbach"
+date: "3/2/2015"
+output: html_document
+---
+
+The Sea Level Rise pressure layer was updated with new data for the year 2013. Previous data went through 2012.  
+
+
+###Data
+  
+Data for mean sea level rise (in mm) between January 1993 and June 2014 was downloaded on 1/12/15 from [AVISO](http://www.aviso.altimetry.fr/en/data/products/ocean-indicators-products/mean-sea-level/products-images.html).
+
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+library(raster)
+library(rgdal)
+library(rasterVis)
+library(RColorBrewer)
+
+# set tmp directory
+
+tmpdir='~/big/R_raster_tmp'
+dir.create(tmpdir, showWarnings=F)
+rasterOptions(tmpdir=tmpdir)
+
+# paths
+
+dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
+          'Darwin'  = '/Volumes/data_edit',
+          'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
+
+setwd(file.path(dir_N,'git-annex/globalprep/AVISO-SeaLevelRise_v2015'))
+
+dir_git = file.path('../ohiprep/globlaprep/AVISO-SeaLevelRise_v2015')
+
+
+#set colors for plotting
+cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
+
+```
+
+```{r,warning=FALSE,message=FALSE}
+
+# The following 3 lines were done once to create raster from downloaded NetCDF. No longer need to run these
+
+    #library(ncdf4)
+
+    #r <- raster('raw/MSL_Map_MERGED_Global_IB_RWT_NoGIA_Adjust.nc')
+    #writeRaster(r,'tmp/MSL_Map_MERGED_Global_IB_RWT_NoGIA_Adjust.tif')
+
+
+# Read in raw data
+
+    r<-raster(file.path(dir_N,'git-annex/globalprep/AVISO-SeaLevelRise_v2015/tmp/MSL_Map_MERGED_Global_IB_RWT_NoGIA_Adjust.tif'))
+
+    r = rotate(r)
+
+    plot(r,main='Mean Annual Sea Level Rise (mm)\n1993-2014',col=cols)
+
+    cellStats(r,stat='range')
+```
+####All values less than 0 set to 0
+
+Since a decrease in sea level rise is not considered a pressure, all values less than 0 are clipped to 0.
+```{r}
+    r[r<0]<-0   
+
+    plot(r,col=cols,main='Mean Annual Sea Level Rise (mm)\n(greater than 0 mm)')
+```
+
+####Set reference point
+
+The reference point was set by looking at the distribution of values in the data and choosing an appropriate value to set as 1.
+
+```{r}
+    histogram(r)
+
+    quantile(r,probs=c(0,0.0001,0.001,0.01,0.1,0.25,0.5,0.75,0.9,0.99,0.999,0.9999))
+
+```
+
+The 99.99th percentile (24.0321697) was chosen as the reference point with a 10% buffer for an actual reference point of **26.43539**. After normalizing data by this value, all values greater than 1 were set equal to 1.
+
+```{r} 
+
+    #get reference point
+    ref = 24.0321697*1.1
+
+    #normalize by the reference point
+    r_norm <- r/ref
+
+    # since some values are still above the reference point (greater than 1) cap these to 1.
+    r_norm[r_norm>1]<-1
+
+    plot(r_norm,main='Normalized Sea Level Rise',col=cols)
+```
