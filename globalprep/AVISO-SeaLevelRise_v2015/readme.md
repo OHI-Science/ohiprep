@@ -1,10 +1,3 @@
----
-title: "Sea level rise pressure procedure"
-author: "Jamie Afflerbach"
-date: "3/2/2015"
-output: html_document
----
-
 The Sea Level Rise pressure layer was updated with new data for the year 2013. Previous data went through 2012.  
 
 
