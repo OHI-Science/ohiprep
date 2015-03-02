@@ -1,12 +1,12 @@
-library(foreign)
-library(stringr)
+## This takes the data produced by the .py script and organizes it for the Toolbox
+## Modified MRF: Feb 26 2015
+
+library(foreign) #read dbf files
 library(dplyr)
 library(tidyr)
 
-source('src/R/common.R')
+#source('src/R/common.R')
 dir_prod = 'globalprep/WDPA_MPA/v2015'
-
-#dir.create(file.path(dir_prod, 'data'), showWarnings=F)
 
 # read in tabulated areas and write out LSP layers ----
 lyrs = c('rgn_offshore3nm_wdpa.dbf' = 'lsp_protarea_offshore3nm.csv',
@@ -14,16 +14,17 @@ lyrs = c('rgn_offshore3nm_wdpa.dbf' = 'lsp_protarea_offshore3nm.csv',
 
 ## Compare different datasets:
 for (i in 1:length(lyrs)){  
-  i=2
+#  i=1
   dbf = names(lyrs)[i]
   csv = lyrs[[i]]
 
-  d = read.dbf(file.path(dir_prod, 'tmp/orig_rasters', dbf))
+  d = read.dbf(file.path(dir_prod, 'tmp/new_rasters_500mcell', dbf))
 
 m <- gather(d, year, area_m2, VALUE_0:VALUE_2014)
+
 m <- m %>%
   mutate(year=as.integer(gsub('VALUE_', '', year))) %>%
-  mutate(area_km2 = area_m2/(1000*1000)) %>%      ###change to match cell size
+  mutate(area_km2 = area_m2/(1000*1000)) %>%      
   select(rgn_id=VALUE, year, area_km2) %>%
   arrange(rgn_id, year)
 
@@ -35,13 +36,17 @@ length(table(m$rgn_id)) #not all regions had data, need to add those
       select(rgn_id)  %>%
       filter(rgn_id < 255) %>%
       arrange(rgn_id)
+
 rgns <- expand.grid(rgn_id=rgns$rgn_id, year=unique(m$year), area_km2=0)
 
 # Here we might want to add in all the year data and not just the max year - use expand.grid for this.
-    m = rbind(m, 
+    m <- rbind(m, 
             rgns %>%
-                anti_join(m, by = 'rgn_id') %>%
-      arrange(rgn_id, year))
+                anti_join(m, by = 'rgn_id')) 
+
+     m <- m %>%
+      arrange(rgn_id, year)
+
 length(table(m$rgn_id)) #now the regions are there...
 
 # if(i==1){
@@ -56,12 +61,11 @@ length(table(m$rgn_id)) #now the regions are there...
 #} 
    
   # save layer
-  write.csv(m, file.path(dir_prod, 'tmp/orig_rasters', csv), row.names=F, na='')
-#  write.csv(m, file.path(dir_prod, 'data', csv), row.names=F, na='')
+  write.csv(m, file.path(dir_prod, 'data', csv), row.names=F, na='')
   
    # get top 10 for sanity check
   cat(sprintf('%s\n',csv))
-  s = m %.%
+  s = m %>%
     group_by(rgn_id) %>%
     summarize(
       sum_area_km2 = sum(area_km2)) %>%
@@ -70,6 +74,34 @@ length(table(m$rgn_id)) #now the regions are there...
   print(head(s, 10), row.names=F)  
 }
 
+## Values for 2015 analysis:
+# lsp_protarea_offshore3nm.csv
+# rgn_id sum_area_km2
+# 163    179337.00
+# 16    103046.00
+# 73     89564.75
+# 216     81235.25
+# 145     61462.00
+# 218     33861.25
+# 223     31300.25
+# 224     29457.75
+# 171     24853.75
+# 135     24186.50
+
+# lsp_protarea_inland1km.csv
+# rgn_id sum_area_km2
+# 163     54926.00
+# 224     32964.75
+# 73     28656.25
+# 16     24052.50
+# 218     17682.25
+# 145     16940.25
+# 171     14081.50
+# 216     12391.75
+# 210     10413.75
+# 180      8464.25
+
+## Values for 2014 analysis:
 # lsp_protarea_inland1km.csv
 #  rgn_id sum_area_km2
 #     163       107914
@@ -122,81 +154,4 @@ length(table(m$rgn_id)) #now the regions are there...
 #     135     23194.41
 #     210     23171.71
 
-## Compare different rasters datasets
 
-new1  <-  read.csv(file.path(dir_prod, 'tmp/new_rasters_1kmcell/lsp_protarea_inland1km.csv'))
-old1 <-  read.csv(file.path(dir_prod, 'tmp/orig_rasters/lsp_protarea_inland1km.csv'))
-new500 <- read.csv(file.path(dir_prod, 'tmp/new_rasters_500mcell/lsp_protarea_inland1km.csv'))
-old_old <- read.csv('Global/WDPA-MPA_v2014/data/lsp_protarea_inland1km.csv')
-
-new1  <- new1 %>%
-  select(rgn_id, year, area_km2_new1km=area_km2)
-old1  <- old1 %>%
-  select(rgn_id, year, area_km2_oldnear1km=area_km2)
-new500  <- new500 %>%
-  select(rgn_id, year, area_km2_new500=area_km2)
-old_old <- old_old %>%
-  select(rgn_id, year, area_km2_oldData=area_km2)
-
-compare <- merge(new1, old1, all=TRUE)
-compare <- merge(compare, new500, all=TRUE)
-compare <- merge(compare, old_old, all=TRUE)
-
-compare <- compare %>%
-  mutate(total = rowSums(compare[, c('area_km2_new1km', 'area_km2_oldnear1km', 'area_km2_new500', 'area_km2_oldData')], na.rm=TRUE)) %>%
-  filter(total > 0) %>%
-  select(-total)
-
-
-compare$new500vs1km <- compare$area_km2_new500 - compare$area_km2_new1km
-hist(compare$new500vs1km)
-mean(compare$new500vs1km, na.rm=TRUE)
-median(compare$new500vs1km, na.rm=TRUE)
-range(compare$new500vs1km, na.rm=TRUE)
-write.csv(compare, file.path(dir_prod, "compare_data.csv"), row.names=FALSE)
-
-TotalArea <- compare %>%
-  select(rgn_id, year, area_km2_new500) %>%
-  group_by(rgn_id) %>%
-  summarize(totalArea_new500=sum(area_km2_new500, na.rm=TRUE)) %>%
-  arrange(totalArea_new500)
-write.csv(TotalArea, file.path(dir_prod, "TotalArea.csv"), row.names=FALSE)
-
-## offshore calculations:
-new1  <-  read.csv(file.path(dir_prod, 'tmp/new_rasters_1kmcell/lsp_protarea_offshore3nm.csv'))
-old1 <-  read.csv(file.path(dir_prod, 'tmp/orig_rasters/lsp_protarea_offshore3nm.csv'))
-new500 <- read.csv(file.path(dir_prod, 'tmp/new_rasters_500mcell/lsp_protarea_offshore3nm.csv'))
-old_old <- read.csv('Global/WDPA-MPA_v2014/data/lsp_protarea_offshore3nm.csv')
-
-new1  <- new1 %>%
-  select(rgn_id, year, area_km2_new1km=area_km2)
-old1  <- old1 %>%
-  select(rgn_id, year, area_km2_oldnear1km=area_km2)
-new500  <- new500 %>%
-  select(rgn_id, year, area_km2_new500=area_km2)
-old_old <- old_old %>%
-  select(rgn_id, year, area_km2_oldData=area_km2)
-
-compare <- merge(new1, old1, all=TRUE)
-compare <- merge(compare, new500, all=TRUE)
-compare <- merge(compare, old_old, all=TRUE)
-
-compare <- compare %>%
-  mutate(total = rowSums(compare[, c('area_km2_new1km', 'area_km2_oldnear1km', 'area_km2_new500', 'area_km2_oldData')], na.rm=TRUE)) %>%
-  filter(total > 0) %>%
-  select(-total)
-
-
-compare$new500vs1km <- compare$area_km2_new500 - compare$area_km2_new1km
-hist(compare$new500vs1km)
-mean(compare$new500vs1km, na.rm=TRUE)
-median(compare$new500vs1km, na.rm=TRUE)
-range(compare$new500vs1km, na.rm=TRUE)
-write.csv(compare, file.path(dir_prod, "compare_data_offshore.csv"), row.names=FALSE)
-
-TotalArea <- compare %>%
-  select(rgn_id, year, area_km2_new500) %>%
-  group_by(rgn_id) %>%
-  summarize(totalArea_new500=sum(area_km2_new500, na.rm=TRUE)) %>%
-  arrange(totalArea_new500)
-write.csv(TotalArea, file.path(dir_prod, "TotalArea_offshore.csv"), row.names=FALSE)
