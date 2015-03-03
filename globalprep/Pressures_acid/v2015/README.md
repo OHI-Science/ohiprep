@@ -6,23 +6,23 @@ Monthly aragonite saturation state data provided for years 1880-1889 and 2005-20
 
 **Procedure**
 
-1. `oa_dataprep.r` turns NetCDF raw files into .tifs and has 2 functions:
-    a. calculates average annual aragonite saturation state for each year
-    b. calculates the average decadal saturation state  
+1. `oa_dataprep.r` turns NetCDF raw files into .tifs and has 2 functions:  
+    1. calculates average annual aragonite saturation state for each year    
+    2. calculates the average decadal saturation state    
     
   Example data
   
   ![](./images/mean_arag_2014.png)
   
-2. `create_global_oa_pressures_layer.R` does the following:
+2. `create_global_oa_pressures_layer.R` does the following:  
 
-    a. Takes each of the 10 raster layers produced in step 1, and subtract the historical global mean (produced in step 1) to create 10 new raster layers (one for each year) with values equal to the change in aragonite saturation state
-     b. All values that are 0 and below are set to 0
-     c. Finds the maximum value across all 10 raster layers produced in step a
-     d. Multiply this maximum value by 110% to get the reference point
-     e. Divide all raster layers by reference point
-     f. Interpolates values to the coast (for all 10 raster layers)
-     g. Resamples to 1km for the final output raster layer (for all 10 raster layers)  
+    a. Takes each of the 10 raster layers produced in step 1, and subtract the historical global mean (produced in step 1) to create 10 new raster layers (one for each year) with values equal to the change in aragonite saturation state  
+     b. All values that are 0 and below are set to 0  
+     c. Finds the maximum value across all 10 raster layers produced in step a  
+     d. Multiply this maximum value by 110% to get the reference point  
+     e. Divide all raster layers by reference point  
+     f. Interpolates values to the coast (for all 10 raster layers)  
+     g. Resamples to 1km for the final output raster layer (for all 10 raster layers)    
      
 
     #####NOTE: reference point is 0.9259247 x 1.1 = 1.0185

@@ -59,8 +59,8 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <p><strong>Procedure</strong></p>
 <ol style="list-style-type: decimal">
 <li><code>oa_dataprep.r</code> turns NetCDF raw files into .tifs and has 2 functions:
-<ol style="list-style-type: lower-alpha">
-<li>calculates average annual aragonite saturation state for each year</li>
+<ol style="list-style-type: decimal">
+<li>calculates average annual aragonite saturation state for each year<br /></li>
 <li>calculates the average decadal saturation state</li>
 </ol></li>
 </ol>
@@ -69,12 +69,12 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <ol start="2" style="list-style-type: decimal">
 <li><p><code>create_global_oa_pressures_layer.R</code> does the following:</p>
 <ol style="list-style-type: lower-alpha">
-<li>Takes each of the 10 raster layers produced in step 1, and subtract the historical global mean (produced in step 1) to create 10 new raster layers (one for each year) with values equal to the change in aragonite saturation state</li>
-<li>All values that are 0 and below are set to 0</li>
-<li>Finds the maximum value across all 10 raster layers produced in step a</li>
-<li>Multiply this maximum value by 110% to get the reference point</li>
-<li>Divide all raster layers by reference point</li>
-<li>Interpolates values to the coast (for all 10 raster layers)</li>
+<li>Takes each of the 10 raster layers produced in step 1, and subtract the historical global mean (produced in step 1) to create 10 new raster layers (one for each year) with values equal to the change in aragonite saturation state<br /></li>
+<li>All values that are 0 and below are set to 0<br /></li>
+<li>Finds the maximum value across all 10 raster layers produced in step a<br /></li>
+<li>Multiply this maximum value by 110% to get the reference point<br /></li>
+<li>Divide all raster layers by reference point<br /></li>
+<li>Interpolates values to the coast (for all 10 raster layers)<br /></li>
 <li>Resamples to 1km for the final output raster layer (for all 10 raster layers)</li>
 </ol>
 <h5>NOTE: reference point is 0.9259247 x 1.1 = 1.0185</h5></li>
