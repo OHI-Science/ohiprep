@@ -41,6 +41,6 @@ int_cells = overlay(out,dat_na,fun=function(x,y){x*y},progress='text')
 
 r <- raster(file.path(dir_N,'git-annex/globalprep/Pressures_acid/v2015/output/interpolated_cells_clip.tif'))
 
-final = r[r==0]<-NA
+
 
 
