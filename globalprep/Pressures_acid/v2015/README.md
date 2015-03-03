@@ -23,7 +23,7 @@ Monthly aragonite saturation state data provided for years 1880-1889 and 2005-20
 
     #####NOTE: reference point is 0.9259247 x 1.1 = 1.0185
     
-3. `interpolated_cells.R` creates a raster of all interpolated cells for gapfilling purposes. The raw data comes as an irregular, curvilinear grid and therefore needs to have some interpolation. The Nearest Neighbor method was used. Interpolated cells:
+3. `interpolated_cells.R` creates a raster of all interpolated cells for gapfilling purposes. The raw data comes on an irregular, curvilinear grid and therefore needs to have some interpolation. The Nearest Neighbor method was used. Interpolated cells:
 
 ![](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/Pressures_acid/v2015/images/interpolated_cells.png)  
 
