@@ -2,7 +2,7 @@
 
 Raw data provided  by Ivan Lima from Woods Hole. This data is an updated to the work done by Feely, Doney and Cooley and published in 2009.  
 
-Monthly aragonite saturation state data provided for years 1880-1889 and 2005-2014 in NetCDF format.
+Monthly aragonite saturation state data provided for years 1880-1889 and 2005-2014 in NetCDF format with a resolution of about 1 degree.
 
 **Procedure**
 
@@ -21,16 +21,17 @@ Monthly aragonite saturation state data provided for years 1880-1889 and 2005-20
      g. Resamples to 1km for the final output raster layer (for all 10 raster layers)  
      
 
-    *NOTE: reference point is 0.9259247 x 1.1 = **1.0185**
+    #####NOTE: reference point is 0.9259247 x 1.1 = 1.0185
     
 3. `interpolated_cells.R` creates a raster of all interpolated cells for gapfilling purposes. The raw data comes as an irregular, curvilinear grid and therefore needs to have some interpolation. The Nearest Neighbor method was used. Interpolated cells:
 
-![](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/Pressures_acid/v2015/images/interpolated_cells.png)
+![](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/Pressures_acid/v2015/images/interpolated_cells.png)  
 
 
 
 
-  
+
+
 Raster data located here: N:\git-annex\globalprep\Pressures_acid\v2015\working\annual_oa_1km  
  
  
