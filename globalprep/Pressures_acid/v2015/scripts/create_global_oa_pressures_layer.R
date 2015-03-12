@@ -28,25 +28,25 @@
 
 # set tmp directory
 
-tmpdir='~/big/R_raster_tmp'
-dir.create(tmpdir, showWarnings=F)
-rasterOptions(tmpdir=tmpdir)
+    tmpdir='~/big/R_raster_tmp'
+    dir.create(tmpdir, showWarnings=F)
+    rasterOptions(tmpdir=tmpdir)
 
 # paths
 
-dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
-          'Darwin'  = '/Volumes/data_edit',
-          'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
+    dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
+              'Darwin'  = '/Volumes/data_edit',
+              'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
 
 #libraries
 
-library(raster)
-library(ncdf4)
-library(maps)
+    library(raster)
+    library(ncdf4)
+    library(maps)
 
 
-wd = file.path(dir_N,'git-annex/globalprep/Pressures_acid/v2015')
-setwd(wd)
+    wd = file.path(dir_N,'git-annex/globalprep/Pressures_acid/v2015')
+    setwd(wd)
 
 
 
@@ -61,10 +61,12 @@ setwd(wd)
 # (Step 3): function that subtracts annual mean from historical decadal mean and outputs raster to specified folder
 
     annual_change = function(file){
-  yr = substr(file,56,59)
-  out = hist_mean - raster(file) #subtract current from historical. Although this is counterintuitive, it results in the correct scaling of values (higher values = more acidification)
-  writeRaster(out,filename=paste0('working/annualchange_2005-2014/difference_from_hist_mean_',yr,sep=""),format='GTiff',overwrite=T)
-}
+    
+      yr = substr(file,56,59)
+      out = hist_mean - raster(file) #subtract current from historical. Although this is counterintuitive, it results in the correct scaling of values (higher values = more acidification)
+      writeRaster(out,filename=paste0('working/annualchange_2005-2014/difference_from_hist_mean_',yr,sep=""),format='GTiff',overwrite=T)
+
+    }
 
 
     sapply(files,annual_change) # apply function across all files using sapply
@@ -77,11 +79,13 @@ setwd(wd)
 # (Step 4): reclassify all values less than 0 to 0
 
     zero = function(file){
-  yr = substr(file,58,61)
-  r  = raster(file)
-  sub = reclassify(r,c(-Inf,0,0))
-  writeRaster(sub,filename=paste0('working/annualchange_reclassify/annualchange_reclass_',yr,sep=""),format='GTiff',overwrite=T)
-}
+      
+      yr = substr(file,58,61)
+      r  = raster(file)
+      sub = reclassify(r,c(-Inf,0,0))
+      writeRaster(sub,filename=paste0('working/annualchange_reclassify/annualchange_reclass_',yr,sep=""),format='GTiff',overwrite=T)
+
+    }
 
     sapply(newfiles,zero) #apply to all newfiles
 
@@ -109,11 +113,13 @@ setwd(wd)
 # (Step 7): Rescale rasterized values by dividing all reclassified rasters by max
 
     rescale = function(file){
-  yr = substr(file,54,57)
-  r = raster(file)
-  out = calc(r,fun=function(x){x/max})
-  writeRaster(out,file=paste0('working/annual_oa_rescaled_nonint_1deg/annual_oa_rescaled_nonint_1deg_',yr,sep=''),format='GTiff',overwrite=T)
-}
+          
+      yr = substr(file,54,57)
+      r = raster(file)
+      out = calc(r,fun=function(x){x/max})
+      writeRaster(out,file=paste0('working/annual_oa_rescaled_nonint_1deg/annual_oa_rescaled_nonint_1deg_',yr,sep=''),format='GTiff',overwrite=T)
+
+    }
 
     sapply(allfiles,rescale)
 
@@ -132,11 +138,13 @@ setwd(wd)
     t <-raster('working/annual_oa_rescaled_nonint_halfdeg/oa_halfdeg.tif') #use this layer created in arc as the structure for all raster layers to be resampled to
 
     resample = function(file){
-  yr  = substr(file,71,74)
-  r   = raster(file)
-  out = raster::resample(r,t)
-  writeRaster(out,file=paste0('working/annual_oa_rescaled_nonint_halfdeg/annual_oa_rescaled_nonint_halfdeg_',yr,sep=''),format='GTiff',overwrite=T)
-}
+      
+      yr  = substr(file,71,74)
+      r   = raster(file)
+      out = raster::resample(r,t)
+      writeRaster(out,file=paste0('working/annual_oa_rescaled_nonint_halfdeg/annual_oa_rescaled_nonint_halfdeg_',yr,sep=''),format='GTiff',overwrite=T)
+
+    }
 
     sapply(files,resample)
 
@@ -159,11 +167,13 @@ setwd(wd)
 
 
     resample_1km = function(file){
-  yr  = substr(file,43,46)
-  r   = raster(file)
-  print(yr)
-  out = raster::resample(r,samp,method='ngb',progress='text')
-  writeRaster(out,file=paste0('working/annual_oa_1km/oa_1km_',yr,sep=''),format='GTiff',overwrite=T)
-}
+     
+      yr  = substr(file,43,46)
+      r   = raster(file)
+      print(yr)
+      out = raster::resample(r,samp,method='ngb',progress='text')
+      writeRaster(out,file=paste0('working/annual_oa_1km/oa_1km_',yr,sep=''),format='GTiff',overwrite=T)
+
+    }
 
     sapply(ras_files,resample_1km)
