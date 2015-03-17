@@ -51,7 +51,8 @@ shinyServer(function(input, output) {
   quant <- reactive({
    if(input$quant>0){
       n = quantile(dataInput(),input$quant)
-      q = calc(trans(),fun=function(x){x/n})
+      q = calc(trans(),fun=function(x){ifelse(x>n,n/n,x/n)})
+      
     }
   else if(input$quant==0){
     q = trans()
