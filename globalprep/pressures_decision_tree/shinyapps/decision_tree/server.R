@@ -7,35 +7,41 @@ library(RColorBrewer)
 cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
 options(shiny.maxRequestSize=100*1024^2)
 
+carbon = raster("data/OrganicCarbon.tif")
+uv = raster("data/UV_change.tif")
+uv_null = raster('data/uv_change_null.tif')
+slr = raster("data/SLR_null.tif")
+acid = raster('data/Acid_change.tif')
+plastic_count1 = raster('data/count_density_size1.tif')
+plastic_weight1 = raster('data/weight_density_size1.tif')
+plastic_count4 = raster('data/count_density_size4.tif')
+plastic_weight4 = raster('data/weight_density_size4.tif')
+in_nitro = flip(raster('data/InorganicNitrogen.tif'),'y')
+on_nitro = raster('data/OrganicNitrogen.tif')
+sst = raster('data/sst.tif')
+
+
+
 shinyServer(function(input, output) {
   
   dataInput <- reactive({
-    if (input$layer == "carbon")
-      data <- raster("data/OrganicCarbon.tif")
-    else if (input$layer == "uv")
-      data <- raster("data/UV_change.tif")
-    else if (input$layer == 'uv_null')
-      data<-raster('data/uv_change_null.tif')
-    else if(input$layer=='slr')
-      data<-raster("data/SLR_null.tif")
-    else if(input$layer=='acid')
-      data<-raster('data/Acid_change.tif')
-    else if(input$layer=='plastic_count1')
-      data<-raster('data/count_density_size1.tif')
-    else if (input$layer=='plastic_weight1')
-      data<-raster('data/weight_density_size1.tif')
-    else if(input$layer=='plastic_count4')
-      data<-raster('data/count_density_size4.tif')
-    else if (input$layer=='plastic_weight4')
-      data<-raster('data/weight_density_size4.tif')
-    else if (input$layer=='in_nitro'){
-      d<- raster('data/InorganicNitrogen.tif')
-      data <- flip(d,'y')}
-    else if (input$layer=='on_nitro')
-      data<-raster('data/OrganicNitrogen.tif')
-    else if (input$layer=='sst')
-      data<-raster('data/sst.tif')
+    data <- switch(input$layer,
+                   'acid'=acid,
+                   'carbon'=carbon,
+                   'uv' = uv,
+                   'uv_null'=uv_null,
+                   'slr' = slr,
+                   'plastic_count1'=plastic_count1,
+                   'plastic_weight1'=plastic_weight1,
+                   'plastic_count4'=plastic_count4,
+                   'plastic_weight4'=plastic_weight4,
+                   'in_nitro' = in_nitro,
+                   'on_nitro' = on_nitro,
+                   'sst'=sst)
+    
   })
+  
+
   
   trans <- reactive({
     
@@ -50,11 +56,11 @@ shinyServer(function(input, output) {
   
   quant <- reactive({
    if(input$quant>0){
-      n = quantile(dataInput(),input$quant)
+      n = quantile(trans(),input$quant)
       q = calc(trans(),fun=function(x){ifelse(x>n,n/n,x/n)})
       
     }
-  else if(input$quant==0){
+  else{
     q = trans()
   }
   })
@@ -96,12 +102,12 @@ shinyServer(function(input, output) {
   
   output$table<-renderTable({
     
-    data.frame(quantile(dataInput(),probs=c(0.001,0.01,0.05,0.1,0.25,0.5,0.75,0.9,0.95,0.99,0.999,0.9999)))
+    data.frame(quantile(trans(),probs=c(0.001,0.01,0.05,0.1,0.25,0.5,0.75,0.9,0.95,0.99,0.999,0.9999)))
     
   })
   
   output$summary<-renderPrint({
-    summary(dataInput())
+    summary(trans())
   })  
 
 })

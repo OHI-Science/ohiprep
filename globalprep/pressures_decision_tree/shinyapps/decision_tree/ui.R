@@ -14,6 +14,7 @@ shinyUI(fluidPage(
                        'Ultraviolet_all' = 'uv',
                        'Ultraviolet_positive' = 'uv_null',
                        'Sea Level Rise'='slr',
+                       #'Sea Surface Temperature'='sst', <-too big of a file
                        'Ocean Acidification' = 'acid',
                        'Inorganic Nitrogen' = 'in_nitro',
                        'Organic Nitrogen' = 'on_nitro',
