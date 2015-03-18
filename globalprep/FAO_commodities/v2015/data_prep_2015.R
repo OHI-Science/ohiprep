@@ -46,8 +46,6 @@
 ### setup ---- libraries, pathnames, etc
 #####################################################################
 
-# debug> options(warn=2); options(error=recover) # options(warn=0); options(error=NULL)
-
 ### load libraries. Note dplyr, tidyr, stringr are loaded later in common.R
 library(zoo)  
 library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
@@ -168,11 +166,11 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
       value_prev  = lag(value, order_by=year),
       value_ext   =        is.na(value) & year==year_latest & year_prev==year-1,
       value       = ifelse(is.na(value) & year==year_latest & year_prev==year-1, value_prev, value),
-  ### extend all other NAs as zeros after year_beg
+  ### Extend all other NAs as zeros after year_beg
       year_beg    = as.integer(ifelse(is.na(value[1]), (year_latest + 1), year[1])),  
-  ### since ordered by is.na(value) before year, should pickup first non-NA year.  If no non-NA years,
-  ###   assign year_beg to be beyond the time series. The "as.integer" is there to get around an 
-  ###   "incompatible types" error.
+  ### Since ordered by is.na(value) before year, should pickup first non-NA year.  
+  ### If no non-NA years, assign year_beg to be beyond the time series. 
+  ### Note: The "as.integer" is there to get around an "incompatible types" error.
       value       = ifelse(is.na(value) & year>year_beg, 0, value)) %>%
   ### drop NAs before year_beg
     filter(!is.na(value)) %>%
@@ -191,7 +189,7 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   
   #####################################################################
   ### Special cases:
-  ### antilles: break up Netherlands Antilles into the 4 of 6 regions not already included ('Aruba','Curaçao')
+  ### Antilles: break up Netherlands Antilles into the 4 of 6 regions not already included ('Aruba','Curaçao')
   #####################################################################
 
   stopifnot( sum(c('Bonaire','Saba','Sint Maarten','Sint Eustatius') %in% m$country) == 0 )
@@ -244,7 +242,7 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   ### units: rename value field to units based on filename
   names(m_sum)[names(m_sum) == 'value'] <- units  
   
-  ### output
+  ### output to .csv
   f_out <- sprintf('%s/data/%s_%s.csv', dir_d, basename(dir_d), units)
   write.csv(m_sum, f_out, row.names=F, na='')
 }
@@ -253,6 +251,11 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
 
 
 #####################################################################
+### Process data - gap filling, running averages, etc... 
+#####################################################################
+
+
+
 # correlate, swap and smooth to generate product peaks ----
 
 harvest_peak_buffer       <- 0.35
@@ -264,51 +267,61 @@ scenarios_year_max <- c(eez2014=2011,
                         eez2013=2010, 
                         eez2012=2009)
 
+### FIX: filename convention?  This is the 2015 assessment, but 2011 or 2012 data?
 h_tonnes <- read.csv(file.path(dir_d, 'data/v2015_tonnes.csv'))
 h_usd    <- read.csv(file.path(dir_d, 'data/v2015_usd.csv'))
 
 for (scenario in c('eez2012','eez2013','eez2014'))    # scenario  = 'eez2014'{ 
   year_max <- scenarios_year_max[[scenario]]
   
-  # DEBUG: pre-filter n_years per val <= 2
-  h <- 
-    merge(
-      # require at least 2 years of data, otherwise remove product to rely 
-      # on others or use georegional avg if none left
-      h_tonnes %>%
-        filter(year <= year_max) %>%
-        group_by(rgn_id, product) %>%
-        mutate(
-          tonnes_orig = tonnes,
-          tonnes_n    = sum(tonnes>0)), 
-      h_usd %>%
-        filter(year <= year_max) %>%
-        group_by(rgn_id, product) %>%
-        mutate(
-          usd_orig = usd,
-          usd_n    = sum(usd>0)),
-      by=c('rgn_name','rgn_id','product','year'), all=T) %>%
-    select(rgn_name, rgn_id, product, year, tonnes_orig, tonnes, usd_orig, usd) %>%
-    arrange(rgn_id, product, year) %>%
-    group_by(rgn_id, product) %>%
-    mutate(
-      n_years = n())
-  csv <- sprintf('%s/tmp/%s_np_harvest_inputs_pre-nonzero-filter.csv', dir_d, scenario)
-  write.csv(h, csv, row.names=F, na='')
-  #system(sprintf('open %s', csv))
-  
+
+#####################################################################
+### Seems like these two "merge" sets are identical - with some small modifications.
+### FIX: Determine function purpose and eliminate redundancy
+#####################################################################
+# DEBUG: pre-filter n_years per val <= 2
+#   h <- 
+#     merge(
+#       # require at least 2 years of data, otherwise remove product to rely 
+#       # on others or use georegional avg if none left
+#       h_tonnes %>%
+#         filter(year <= year_max) %>%
+#         group_by(rgn_id, product) %>%
+#         mutate(
+#           tonnes_orig = tonnes,
+#           tonnes_n    = sum(tonnes>0)),   # Counts, but doesn't filter
+#       h_usd %>%
+#         filter(year <= year_max) %>%
+#         group_by(rgn_id, product) %>%
+#         mutate(
+#           usd_orig = usd,
+#           usd_n    = sum(usd>0)),
+### usd_n (and tonnes_n) calculated but not used - then selected away...
+#       by=c('rgn_name','rgn_id','product','year'), all=T) %>%
+#     select(rgn_name, rgn_id, product, year, tonnes_orig, tonnes, usd_orig, usd) %>%
+#     arrange(rgn_id, product, year) %>%
+#     group_by(rgn_id, product) %>%
+#     mutate(
+#       n_years = n()) 
+### counts number within the group? including zeroes?
+#   csv <- sprintf('%s/tmp/%s_np_harvest_inputs_pre-nonzero-filter.csv', dir_d, scenario)
+#   write.csv(h, csv, row.names=F, na='')
+#   #system(sprintf('open %s', csv))
+#   
+
   # merge harvest in tonnes and usd
   h <- 
     merge(
-      # require at least 'nonzero_harvest_years_min' years of data, otherwise remove product to rely on others or use georegional avg if none left
+  ### Require at least 'nonzero_harvest_years_min' years of data; filter out all
+  ###   groups with fewer than this, in both "tonnes" and "usd" sets.
       h_tonnes %>%
-        filter(year <= year_max) %>%
-        group_by(rgn_id, product) %>%
-        mutate(
-          tonnes_orig      = tonnes,
-          tonnes_nonzero_n = sum(tonnes>0)) %>%
-        filter(tonnes_nonzero_n >= nonzero_harvest_years_min), 
-      h_usd %>%
+        filter(year <= year_max) %>%                           # same
+        group_by(rgn_id, product) %>%                          # samw
+        mutate(                                                # same
+          tonnes_orig      = tonnes,                           # same
+          tonnes_nonzero_n = sum(tonnes>0)) %>%                # same, but diff var name
+        filter(tonnes_nonzero_n >= nonzero_harvest_years_min), # NEW
+      h_usd %>%                                                # Similar filtering to tonnes
         filter(year <= year_max) %>%
         group_by(rgn_id, product) %>%
         mutate(
@@ -316,29 +329,52 @@ for (scenario in c('eez2012','eez2013','eez2014'))    # scenario  = 'eez2014'{
           usd_nonzero_n = sum(usd>0)) %>%
         filter(usd_nonzero_n >= nonzero_harvest_years_min), 
       by=c('rgn_name','rgn_id','product','year'), all=T) %>%
+
+  #####################################################################
+  ### FIX: the following "select()" gets rid of all end-fill flags.  Turn end-fill flags into
+  ###   something that accounts for both tonnes and usd end-fills. 
+  ###   OR: should we export the end-fill flags earlier? no longer used here.
+  ### QUESTION: can we include in gap-fill flags for individual commodities, since we
+  ###   have already given up that information?!!!
     select(rgn_name, rgn_id, product, year, tonnes_orig, tonnes, usd_orig, usd) %>%
     arrange(rgn_id, product, year) %>%
     group_by(rgn_id, product) %>%
-    mutate(tonnes_na_sum = is.na(tonnes)) %>% # add this filter to remove rgn-product pairs with all NAs 
-    filter(!tonnes_na_sum) %>% 
+
+  #####################################################################
+  ### Add this filter to remove rgn-product pairs with all NAs in the tonnes set.
+  ###   These observations are before quantity was ever reported (indicated by NA, rather than 0).
+  ###   Thus these obs will not help in correlating US$ to qty, so filter them out.
+    mutate(tonnes_na_sum = is.na(tonnes)) %>%   
+    filter(!tonnes_na_sum) %>%                  # 
     select(-tonnes_na_sum) %>%
     mutate(
       n_years = n())
   
-  # show where NAs usd vs tonnes
+#####################################################################
+# show where NAs usd vs tonnes
+### These will be obs with NAs in both USD and tonnes?  Should these not already be gone?
   cat(sprintf('  nrow(h): %d, range(h$year): %s\n', nrow(h), paste(range(h$year), collapse=' to ')))
   if (nrow(filter(h, is.na(usd) | is.na(tonnes))) > 0) {
     cat('  Table of harvest NAs:\n')
     h_na <- h %>% 
       filter(is.na(usd) | is.na(tonnes)) %>% 
       mutate(var_na = ifelse(is.na(usd), 'usd', 'tonnes'))
+# seems like this finds any leftover NAs, which are gonna be in USD only.
+#   Rows with NA in both USD and tonnes would already be gone (never joined)
+
     print(table(ungroup(h_na) %>% select(var_na)))
     
     # handle NA mismatch b/n tonnes and usd with correlative model
+### QUESTION: let's say we filled in '...' with zeroes after 'year_beg' in early part
+### of script, in tonnes set.  But value in USD set is non-zero.  Implies '...' was not
+### a zero-report, but instead a NA report, and so should be back-filled.  And vice-versa?
     m_tonnes <- h  %>%
-      mutate(tonnes_nas   = sum(is.na(tonnes))) %>%
+      mutate(tonnes_nas   = sum(is.na(tonnes))) %>%  
+        ### THIS SHOULD ALWAYS BE ZERO - we eliminated all NAs in tonnes
       filter(tonnes_nas >= 0 & !is.na(usd) & !is.na(tonnes)) %>%
+        ### filter out observations within groups that have tonne NAs, that also are non-NA USD and non-USD tonnes
       do(mdl = lm(tonnes ~ usd, data=.)) %>%
+        ### ???? why "do" format?  What is purpose of "data=."
       summarize(
         rgn_id   = rgn_id,
         product  = factor(levels(h$product)[product], levels(h$product)),
@@ -355,6 +391,7 @@ for (scenario in c('eez2012','eez2013','eez2014'))    # scenario  = 'eez2014'{
         tonnes_coef = coef(mdl)['tonnes'])  
     h <- h %>%
       left_join(m_tonnes, by=c('rgn_id','product')) %>%
+  ### need a check in here to make sure we're not backfilling USD based on tonnes, based on USD?
       mutate(
         tonnes_mdl  = usd_ix0 + usd_coef * usd,
         tonnes      = ifelse(is.na(tonnes), pmax(0, tonnes_mdl), tonnes)) %>% 
