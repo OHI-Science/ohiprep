@@ -43,7 +43,7 @@
 #     save single files for each commodity 
 
 #####################################################################
-### setup ---- libraries, pathnames, 
+### setup ---- libraries, pathnames, etc
 #####################################################################
 
 # debug> options(warn=2); options(error=recover) # options(warn=0); options(error=NULL)
@@ -52,25 +52,19 @@
 library(zoo)  
 library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 
-
-### get paths
+### set dir_neptune_data and load common libraries (tidyr, dplyr, stringr) 
+source('src/R/common.R') 
 ### NOTE: The default path should already be your ohiprep root directory for the rest to work.
 ###       Otherwise, presume that scripts are always working from your default ohiprep folder
-source('src/R/common.R') # set dir_neptune_data and load common libraries (tidyr, dplyr, stringr)
 
 dir_d <- 'globalprep/FAO_Commodities/v2015'
 ### NOTE: Set output paths to here, but do not use setwd().
 ###       This way, any scripts and code in ohiprep will still work, b/c always in root ohiprep dir.
 
-##############################
-# Do we need this any more?
-# get functions
-# source('src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na()
-
 
 
 #####################################################################
-### read in and process files ----
+### read in and process files -- loops across value and quant data
 #####################################################################
 
 for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.names=T)) { 
@@ -175,19 +169,22 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
       value_ext   =        is.na(value) & year==year_latest & year_prev==year-1,
       value       = ifelse(is.na(value) & year==year_latest & year_prev==year-1, value_prev, value),
   ### extend all other NAs as zeros after year_beg
-      year_beg    = first(year),  # since ordered by is.na(value) before year, should pickup first non-NA year      
+      year_beg    = as.integer(ifelse(is.na(value[1]), (year_latest + 1), year[1])),  
+  ### since ordered by is.na(value) before year, should pickup first non-NA year.  If no non-NA years,
+  ###   assign year_beg to be beyond the time series. The "as.integer" is there to get around an 
+  ###   "incompatible types" error.
       value       = ifelse(is.na(value) & year>year_beg, 0, value)) %>%
   ### drop NAs before year_beg
     filter(!is.na(value)) %>%
     ungroup() %>%
     arrange(country, commodity, year)
   
-  ### Check: show extended values
+  ### Check: show values that have been extended forward
   cat('\nExtended values:\n')
   m_x <- filter(m, value_ext==T)
   print(m_x)  
  
-  ### eliminate temporary columns created for gap filling (year_prev, value_prev, year_latest)
+  ### clean up temporary columns created for gap filling (year_prev, value_prev, year_latest)
   m <- m %>%
     select(-year_prev, -value_prev, -year_latest, -year_beg) 
 
@@ -212,48 +209,34 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   m <- m %>%
     filter(country != 'Netherlands Antilles') %>%
     bind_rows(m_ant)    
-
-  #################################
-  ## I think this is already taken care of in the gap filling above
-  #
-  #   # cast wide to expand years
-  #   m_w <- m_a %>%
-  #     dcast(country + commodity + year_beg ~ year)
-  #     
-  #   
-  #   # melt long and apply 0's where NA since first available year
-  #   m_l <- m_w %>%
-  #     melt(id=c('country','commodity','year_beg'), variable='year') %>%
-  #     mutate(year = as.integer(as.character(year))) %>%
-  #     arrange(country, commodity, year) %>%
-  #     filter(!is.na(value))
     
   
   #####################################################################
-  ### Adds column for region ID based upon country name
+  ### Add region ID, summarize by region/product/year, save output
   #####################################################################
 
   m <- m %>% 
     name_to_rgn(fld_name='country', flds_unique=c('country', 'commodity', 'product', 'year', 'value_ext'), 
                 fld_value='value', add_rgn_name=T)
-#    arrange(rgn_name, commodity, year)  # arranges by region name, then commodity, then year... necessary?
-# FIX: name_to_rgn has some old code?  Update to dplyr/tidyr standards
+# FIX: name_to_rgn has some old code?  (%.% -> %>%, regroup -> group_by) Update to dplyr/tidyr functions: 
   
   
   ### Summarize each product per country per year, e.g. all corals in Albania in 2011
 ### FIX: consider filling the val_extent field with the proportion of data that was end-filled?
-### e.g. count(value_ext == TRUE)/count(value_ext) or something like this?
+###      e.g. count(value_ext == TRUE)/count(value_ext) or something like this?
+###      would this be applicable at the commodity level or at least product level?
   m_sum <- m %>%
     group_by(rgn_name, rgn_id, product, year) %>%
-    summarize(value = sum(value, na.rm=TRUE), val_ext = any(value_ext))
+    summarize(value = sum(value, na.rm=TRUE), value_ext = any(value_ext))
   
   ### error check for duplicates (same product, same year, same region)
-  stopifnot( sum(duplicated(m_sum[,c('rgn_id', 'product', 'year')])) == 0 )
+  stopifnot(sum(duplicated(m_sum[,c('rgn_id', 'product', 'year')])) == 0)
   
   ### check: wide with all commmodities and product subtotal for comparison with input data
-  ### FIX note: currently separates the last year for countries that have been end-filled.
+  ### FIX note: deletes the end-filled flag because it split lines when spread.
   m_x <- m %>% 
     bind_rows(mutate(m_sum, commodity='Z_TOTAL')) %>%
+    select(-value_ext) %>%
     arrange(rgn_name, product, commodity, year) %>%
     spread(year, value)
   write.csv(m_x, sprintf('%s/tmp/np_harvest_%s_wide.csv', dir_d, units), row.names=F, na='')
@@ -272,24 +255,26 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
 #####################################################################
 # correlate, swap and smooth to generate product peaks ----
 
-harvest_peak_buffer <- 0.35
+harvest_peak_buffer       <- 0.35
 nonzero_harvest_years_min <- 4
-recent_harvest_years <- 10
+recent_harvest_years      <- 10
 
+### FIX: update this to something like year_max, year_max - 1, year_max - 2, etc
 scenarios_year_max <- c(eez2014=2011, 
-                       eez2013=2010, 
-                       eez2012=2009)
+                        eez2013=2010, 
+                        eez2012=2009)
 
-h_tonnes <- read.csv(file.path(dir_d, 'data/FAO-Commodities_v2011_tonnes.csv'))
-h_usd    <- read.csv(file.path(dir_d, 'data/FAO-Commodities_v2011_usd.csv'))
+h_tonnes <- read.csv(file.path(dir_d, 'data/v2015_tonnes.csv'))
+h_usd    <- read.csv(file.path(dir_d, 'data/v2015_usd.csv'))
 
-for (scenario in c('eez2012','eez2013','eez2014'))    # scenario  = 'eez2013'{ 
+for (scenario in c('eez2012','eez2013','eez2014'))    # scenario  = 'eez2014'{ 
   year_max <- scenarios_year_max[[scenario]]
   
   # DEBUG: pre-filter n_years per val <= 2
   h <- 
     merge(
-      # require at least 2 years of data, otherwise remove product to rely on others or use georegional avg if none left
+      # require at least 2 years of data, otherwise remove product to rely 
+      # on others or use georegional avg if none left
       h_tonnes %>%
         filter(year <= year_max) %>%
         group_by(rgn_id, product) %>%
