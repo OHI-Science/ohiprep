@@ -44,7 +44,7 @@ plot(bad_regions_raster)
 regions_mol@data[regions_mol@data$sp_id %in% c(1, 86, 88, 105, 107, 159), ])
 plot(regions_mol[regions_mol@data$sp_id %in% c(1, 86, 88, 105, 107, 159), ])  
 plot(rast_example, add=TRUE)
-plot(regions_mol[regions_mol@data$sp_id %in% c(1, 86, 88, 105, 107, 159), ], add=TRUE, col="red")  
+plot(regions_mol[regions_mol@data$sp_id %in% c(1, 86, 88, 105, 107, 159), ], add=TRUE)  
 
 plot(regions_mol[regions_mol@data$sp_type=="fao", ], col="blue")
 
@@ -86,12 +86,13 @@ rasterize(regions_mol, rast_example,
           filename="/var/data/ohi/git-annex/globalprep/Pressures_acid/v2015/working/annual_oa_1km/sp_mol_raster.tif", overwrite=TRUE, 
           progress="text")
 
- 
+
 # read in region raster
 regions <- raster("/var/data/ohi/git-annex/globalprep/Pressures_acid/v2015/working/annual_oa_1km/sp_mol_raster.tif")
 plot(regions)
 freq(regions, progress="text", value=1)
 freq(regions, progress="text", value=0)
+freq(regions, progress="text", value=86)
 
 # read in acid data (should be 10 layers, with values 0 to 1)
 rasts <- paste0('/var/data/ohi/git-annex/globalprep/Pressures_acid/v2015/working/annual_oa_1km/oa_1km_', c(2005:2014), '.tif')
