@@ -1,15 +1,7 @@
 # data_prep.r
 
-## NOTE:  Data seems to have been misplaced.  
-## Current data is located here: N:\git-annex\Global\NCEAS-SpatialFishCatch_v2014\raw\fao
-## Emails on Mar 11 2015:
-# Mel, I believe what happened is that FAO_raw_captureprod_1950_2012.csv 
-# (which is a copy of the original data Jamie downloaded) was deleted, and 
-# data_prep.r wasn't updated to point to the original data in 
-# N:\git-annex\Global\NCEAS-SpatialFishCatch_v2014\raw\fao. 
-# But the script does expect the whole data set, and it uses species2group.csv 
-# to filter out the appropriate species. 
-
+## Data is located here: N:\git-annex\Global\FAO-TargetedHarvest_v2012\raw
+## NOTE: The subscript on the data has changed.
 
 # Prepare FAO fisheries data for targeted harvest pressures.
 #  based on clean_FAOtargeted.r: FAO data (by JStewart Jul2013)

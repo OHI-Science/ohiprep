@@ -5,6 +5,10 @@
 # Prepare FAO commodities data for Natural Products goal. 
 
 # Updated Mar2015 by oharac. Github ohi-science/issues/issue #370
+#   Minor recoding to get away from using reshape and plyr packages.
+#   Fixed NA fill error for commodities with no non-NA years.
+#   Tracked end-filling (carrying forward prev year's data to most recent year, if necessary) and
+#     gap-filling.
 #     (1) relative tonnes: tonnes relative to max tonnes for region with 35% buffer. The maximum 
 #         corresponds to the year with the highest $ value - but it would probably be better to 
 #         just base this off tonnes. When we redo these data lets evaluate this approach.
@@ -31,7 +35,6 @@
 #     TODO: add smoothing a la PLoS 2013 manuscript
 #     TODO: move goal function code up to np_harvest_usd-peak-product-weight_year-max-%d.csv into 
 #           ohiprep so layer ready already for calculating pressures & resilience
-# Minor recoding to get away from using reshape and plyr packages
 #
 # Previously updated by JSLowndes/bbest Jun2014; File was originally clean_FAOcommodities.r:(by JStewart Apr2013)
 #     read in quant/value files
@@ -216,13 +219,10 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   m <- m %>% 
     name_to_rgn(fld_name='country', flds_unique=c('country', 'commodity', 'product', 'year', 'value_ext'), 
                 fld_value='value', add_rgn_name=T)
-# FIX: name_to_rgn has some old code?  (%.% -> %>%, regroup -> group_by) Update to dplyr/tidyr functions: 
+# ???: name_to_rgn has some old code?  (%.% -> %>%, regroup -> group_by) Update to dplyr/tidyr functions: 
   
   
   ### Summarize each product per country per year, e.g. all corals in Albania in 2011
-### FIX: consider filling the val_extent field with the proportion of data that was end-filled?
-###      e.g. count(value_ext == TRUE)/count(value_ext) or something like this?
-###      would this be applicable at the commodity level or at least product level?
   m_sum <- m %>%
     group_by(rgn_name, rgn_id, product, year) %>%
     summarize(value = sum(value, na.rm=TRUE), value_ext = any(value_ext))
@@ -230,8 +230,8 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   ### error check for duplicates (same product, same year, same region)
   stopifnot(sum(duplicated(m_sum[,c('rgn_id', 'product', 'year')])) == 0)
   
-  ### check: wide with all commmodities and product subtotal for comparison with input data
-  ### FIX note: deletes the end-filled flag because it split lines when spread.
+  ### Check: wide with all commmodities and product subtotal for comparison with input data
+  ### Note: deletes the end-filled flag because it split lines when spread.
   m_x <- m %>% 
     bind_rows(mutate(m_sum, commodity='Z_TOTAL')) %>%
     select(-value_ext) %>%
@@ -262,22 +262,23 @@ harvest_peak_buffer       <- 0.35
 nonzero_harvest_years_min <- 4
 recent_harvest_years      <- 10
 
-### FIX: update this to something like year_max, year_max - 1, year_max - 2, etc
+### ???: update this to something like year_max, year_max - 1, year_max - 2, etc
 scenarios_year_max <- c(eez2014=2011, 
                         eez2013=2010, 
                         eez2012=2009)
 
-### FIX: filename convention?  This is the 2015 assessment, but 2011 or 2012 data?
+### ???: filename convention?  This is the 2015 assessment, but 2011 or 2012 data?
 h_tonnes <- read.csv(file.path(dir_d, 'data/v2015_tonnes.csv'))
 h_usd    <- read.csv(file.path(dir_d, 'data/v2015_usd.csv'))
 
-for (scenario in c('eez2012','eez2013','eez2014'))    # scenario  = 'eez2014'{ 
+for (scenario in c('eez2012','eez2013','eez2014')) { 
+  # scenario  = 'eez2014'
   year_max <- scenarios_year_max[[scenario]]
   
 
 #####################################################################
 ### Seems like these two "merge" sets are identical - with some small modifications.
-### FIX: Determine function purpose and eliminate redundancy
+### ???: Determine function purpose and eliminate redundancy
 #####################################################################
 # DEBUG: pre-filter n_years per val <= 2
 #   h <- 
@@ -315,13 +316,13 @@ for (scenario in c('eez2012','eez2013','eez2014'))    # scenario  = 'eez2014'{
   ### Require at least 'nonzero_harvest_years_min' years of data; filter out all
   ###   groups with fewer than this, in both "tonnes" and "usd" sets.
       h_tonnes %>%
-        filter(year <= year_max) %>%                           # same
-        group_by(rgn_id, product) %>%                          # samw
-        mutate(                                                # same
-          tonnes_orig      = tonnes,                           # same
-          tonnes_nonzero_n = sum(tonnes>0)) %>%                # same, but diff var name
-        filter(tonnes_nonzero_n >= nonzero_harvest_years_min), # NEW
-      h_usd %>%                                                # Similar filtering to tonnes
+        filter(year <= year_max) %>%
+        group_by(rgn_id, product) %>%
+        mutate(
+          tonnes_orig      = tonnes,
+          tonnes_nonzero_n = sum(tonnes>0)) %>%
+        filter(tonnes_nonzero_n >= nonzero_harvest_years_min), 
+      h_usd %>%
         filter(year <= year_max) %>%
         group_by(rgn_id, product) %>%
         mutate(
@@ -329,55 +330,58 @@ for (scenario in c('eez2012','eez2013','eez2014'))    # scenario  = 'eez2014'{
           usd_nonzero_n = sum(usd>0)) %>%
         filter(usd_nonzero_n >= nonzero_harvest_years_min), 
       by=c('rgn_name','rgn_id','product','year'), all=T) %>%
-
-  #####################################################################
-  ### FIX: the following "select()" gets rid of all end-fill flags.  Turn end-fill flags into
-  ###   something that accounts for both tonnes and usd end-fills. 
-  ###   OR: should we export the end-fill flags earlier? no longer used here.
-  ### QUESTION: can we include in gap-fill flags for individual commodities, since we
-  ###   have already given up that information?!!!
-    select(rgn_name, rgn_id, product, year, tonnes_orig, tonnes, usd_orig, usd) %>%
+    mutate(endfill = ifelse(is.na(value_ext.x | value_ext.y), FALSE, value_ext.x | value_ext.y)) %>%
+    select(rgn_name, rgn_id, product, year, tonnes_orig, tonnes, usd_orig, usd, endfill) %>%
     arrange(rgn_id, product, year) %>%
     group_by(rgn_id, product) %>%
 
   #####################################################################
   ### Add this filter to remove rgn-product pairs with all NAs in the tonnes set.
-  ###   These observations are before quantity was ever reported (indicated by NA, rather than 0).
+  ###   These observations are before quantity was ever reported (indicated by NA, otherwise they'd be 0).
+  ###   But, USD were reported for these years.  
   ###   Thus these obs will not help in correlating US$ to qty, so filter them out.
+  ###   ??? Seems like we want to keep the tonne NAs, so we can gap-fill these later.
     mutate(tonnes_na_sum = is.na(tonnes)) %>%   
-    filter(!tonnes_na_sum) %>%                  # 
+    filter(!tonnes_na_sum) %>%
     select(-tonnes_na_sum) %>%
     mutate(
       n_years = n())
   
 #####################################################################
+### Debugging here... not really necessary for process - eliminate?
+### For 2011 data, only 10 USD NAs showed up, while 1639 tonne NAs were eliminated in prior step.
+###
 # show where NAs usd vs tonnes
-### These will be obs with NAs in both USD and tonnes?  Should these not already be gone?
-  cat(sprintf('  nrow(h): %d, range(h$year): %s\n', nrow(h), paste(range(h$year), collapse=' to ')))
-  if (nrow(filter(h, is.na(usd) | is.na(tonnes))) > 0) {
-    cat('  Table of harvest NAs:\n')
-    h_na <- h %>% 
-      filter(is.na(usd) | is.na(tonnes)) %>% 
-      mutate(var_na = ifelse(is.na(usd), 'usd', 'tonnes'))
-# seems like this finds any leftover NAs, which are gonna be in USD only.
-#   Rows with NA in both USD and tonnes would already be gone (never joined)
-
-    print(table(ungroup(h_na) %>% select(var_na)))
+# ### These will be obs with NAs in both USD and tonnes?  Should these not already be gone?
+#   cat(sprintf('  nrow(h): %d, range(h$year): %s\n', nrow(h), paste(range(h$year), collapse=' to ')))
+#   if (nrow(filter(h, is.na(usd) | is.na(tonnes))) > 0) {
+#     cat('  Table of harvest NAs:\n')
+#     h_na <- h %>% 
+#       filter(is.na(usd) | is.na(tonnes)) %>% 
+#       mutate(var_na = ifelse(is.na(usd), 'usd', 'tonnes'))
+# # seems like this finds any leftover NAs, which are gonna be in USD only.
+# #   Rows with NA in both USD and tonnes would already be gone (never joined)
+# 
+#     print(table(ungroup(h_na) %>% select(var_na)))
     
+
+
     # handle NA mismatch b/n tonnes and usd with correlative model
-### QUESTION: let's say we filled in '...' with zeroes after 'year_beg' in early part
+### ???: let's say we filled in '...' with zeroes after 'year_beg' in early part
 ### of script, in tonnes set.  But value in USD set is non-zero.  Implies '...' was not
 ### a zero-report, but instead a NA report, and so should be back-filled.  And vice-versa?
     m_tonnes <- h  %>%
       mutate(tonnes_nas   = sum(is.na(tonnes))) %>%  
-        ### THIS SHOULD ALWAYS BE ZERO - we eliminated all NAs in tonnes
+        ### ???: THIS SHOULD ALWAYS BE ZERO - we eliminated all NAs in tonnes
       filter(tonnes_nas >= 0 & !is.na(usd) & !is.na(tonnes)) %>%
-        ### filter out observations within groups that have tonne NAs, that also are non-NA USD and non-USD tonnes
+        ### ???: filter out observations within groups that have tonne NAs, that also are non-NA USD and non-USD tonnes
+        ### Essentially we want to filter out USD NAs here, since they will not be good for correlation.
+        ### Can we just do the lm command with a na.rm = TRUE?
       do(mdl = lm(tonnes ~ usd, data=.)) %>%
         ### ???? why "do" format?  What is purpose of "data=."
       summarize(
         rgn_id   = rgn_id,
-        product  = factor(levels(h$product)[product], levels(h$product)),
+        product  = levels(h$product)[product], # "product" is treated as a factor here.  This line was factor(levels(h$product)[product], levels(h$product)),
         usd_ix0  = coef(mdl)['(Intercept)'],
         usd_coef = coef(mdl)['usd'])
     m_usd <- h %>%
@@ -386,12 +390,15 @@ for (scenario in c('eez2012','eez2013','eez2014'))    # scenario  = 'eez2014'{
       do(mdl = lm(usd ~ tonnes, data=.)) %>%
       summarize(
         rgn_id      = rgn_id,
-        product     = factor(levels(h$product)[product], levels(h$product)),
+        product     = levels(h$product)[product],
         tonnes_ix0  = coef(mdl)['(Intercept)'],
         tonnes_coef = coef(mdl)['tonnes'])  
     h <- h %>%
       left_join(m_tonnes, by=c('rgn_id','product')) %>%
-  ### need a check in here to make sure we're not backfilling USD based on tonnes, based on USD?
+  ### need a check in here to make sure we're not backfilling USD based on tonnes, based on USD?  Perhaps:
+  ###   before mutating the tonnes_mdl values back into tonnes, do the usd calcs, then mutate the tonnes in.
+  ###   But the modeled tonnes will only be where tonnes were NA... 
+  ### ??? Should we be gap-filling the dollar values at all?
       mutate(
         tonnes_mdl  = usd_ix0 + usd_coef * usd,
         tonnes      = ifelse(is.na(tonnes), pmax(0, tonnes_mdl), tonnes)) %>% 
