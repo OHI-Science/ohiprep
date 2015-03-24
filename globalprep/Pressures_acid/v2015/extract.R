@@ -29,16 +29,30 @@ plot(regions_mol[regions_mol@data$sp_id=="86",])
 regions_mol@data[regions_mol@data$sp_id=="86",] 
 plot(rast_example, add=TRUE)
 
+
+## explore these:
+regions_mol_bad <- regions_mol[regions_mol@data$sp_id %in% c(1, 86, 88, 105, 107, 159), ]
+regions_mol_bad <- regions_mol_bad[regions_mol_bad@data$sp_type %in% c("eez-ccamlr", "fao", "eez"), ]
+rast_example <- raster('/var/data/ohi/git-annex/globalprep/Pressures_acid/v2015/working/annual_oa_1km/oa_1km_2005.tif')
+rasterize(regions_mol_bad, rast_example, 
+          field="sp_id", 
+          filename="/var/data/ohi/git-annex/globalprep/Pressures_acid/v2015/working/annual_oa_1km/sp_mol_raster_bad_regions.tif", overwrite=TRUE, 
+          progress="text")
+bad_regions_raster <- raster("/var/data/ohi/git-annex/globalprep/Pressures_acid/v2015/working/annual_oa_1km/sp_mol_raster_bad_regions.tif")
+plot(bad_regions_raster)
+
 regions_mol@data[regions_mol@data$sp_id %in% c(1, 86, 88, 105, 107, 159), ])
 plot(regions_mol[regions_mol@data$sp_id %in% c(1, 86, 88, 105, 107, 159), ])  
 plot(rast_example, add=TRUE)
 plot(regions_mol[regions_mol@data$sp_id %in% c(1, 86, 88, 105, 107, 159), ], add=TRUE)  
 
+plot(regions_mol[regions_mol@data$sp_type=="fao", ], col="blue")
+
 #select only the eez-ccamlr, fao, and eez regions:
 regions_mol <- regions_mol[regions_mol@data$sp_type %in% c("eez-ccamlr", "fao", "eez"), ]
 
 # Giving sp_id's that that differ, but are in the same country, matching sp_id values.
-# [NOTE: maybe this is something that should be done at the level of the raster files?]
+# [NOTE: maybe this is something that should be done at the level of the original shapefiles?]
 ## find out which ones are duplicated:
 dup_regs <- regions_mol@data$rgn_id[duplicated(regions_mol@data$rgn_id)]
 regions_mol@data[regions_mol@data$rgn_id %in% dup_regs, ]
@@ -51,6 +65,8 @@ regions_mol@data$sp_id[regions_mol@data$sp_name %in% "Alaska"] <- 163
 regions_mol@data$sp_id[regions_mol@data$sp_name %in% "Easter Island"] <- 224
 regions_mol@data$sp_id[regions_mol@data$sp_name %in% "Guadeloupe"] <- 251
 regions_mol@data$sp_id[regions_mol@data$sp_name %in% "Virgin Islands of the United States"] <- 255
+
+regions_mol_bad <- regions_mol[regions_mol@data$sp_id %in% c(1, 86, 88, 105, 107, 159), ]
 
 # get the data I will need to associate with the sp_id
 region_lu <- regions_mol@data %>%
@@ -72,10 +88,11 @@ rasterize(regions_mol, rast_example,
 
 
 # read in region raster
-regions <- raster("/var/data/ohi/git-annex/globalprep/Pressures_acid/v2015/working/annual_oa_1km/sp_mol_raster")
+regions <- raster("/var/data/ohi/git-annex/globalprep/Pressures_acid/v2015/working/annual_oa_1km/sp_mol_raster.tif")
 plot(regions)
 freq(regions, progress="text", value=1)
 freq(regions, progress="text", value=0)
+freq(regions, progress="text", value=86)
 
 # read in acid data (should be 10 layers, with values 0 to 1)
 rasts <- paste0('/var/data/ohi/git-annex/globalprep/Pressures_acid/v2015/working/annual_oa_1km/oa_1km_', c(2005:2014), '.tif')
