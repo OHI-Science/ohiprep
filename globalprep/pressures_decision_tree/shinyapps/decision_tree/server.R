@@ -19,6 +19,7 @@ plastic_weight4 = raster('data/weight_density_size4.tif')
 in_nitro = flip(raster('data/InorganicNitrogen.tif'),'y')
 on_nitro = raster('data/OrganicNitrogen.tif')
 sst = raster('data/sst.tif')
+ship = raster('data/shipping.tif')
 
 
 
@@ -108,7 +109,15 @@ shinyServer(function(input, output) {
   
   output$summary<-renderPrint({
     summary(trans())
-  })  
+  })
+  
+  output$resolution <-renderPrint({
+    res(dataInput())
+  })
+  
+  output$ncells <- renderPrint({
+    ncell(dataInput())
+  })
 
 })
 

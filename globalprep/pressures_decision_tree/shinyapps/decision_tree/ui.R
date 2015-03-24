@@ -14,6 +14,7 @@ shinyUI(fluidPage(
                        'Ultraviolet_all' = 'uv',
                        'Ultraviolet_positive' = 'uv_null',
                        'Sea Level Rise'='slr',
+                       'Shipping' = 'ship',
                        #'Sea Surface Temperature'='sst', <-too big of a file
                        'Ocean Acidification' = 'acid',
                        'Inorganic Nitrogen' = 'in_nitro',
@@ -38,7 +39,14 @@ shinyUI(fluidPage(
                     'Quantile' = 'quant')),
       
       
-      verbatimTextOutput("summary")
+      h4("Summary"),
+      verbatimTextOutput("summary"),
+      
+      h4("Spatial Resolution"),
+      verbatimTextOutput("resolution"),
+      
+      h4("Number of Cells"),
+      verbatimTextOutput("ncells")
       
     ),
     
