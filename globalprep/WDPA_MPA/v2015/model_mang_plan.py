@@ -1,4 +1,4 @@
-#cmd: C:\Python27\ArcGISx6410.2\python.exe G:\ohiprep\globalprep\WDPA-MPA\v2015\model.py
+#cmd: C:\Python27\ArcGISx6410.2\python.exe G:\ohiprep\globalprep\WDPA-MPA\v2015\model_mang_plan.py
 
 import arcpy, os, subprocess, csv, sys, socket
 from arcpy.sa import *
