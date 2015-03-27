@@ -15,8 +15,10 @@ shinyUI(fluidPage(
                        'Ultraviolet_all' = 'uv',
                        'Ultraviolet_positive' = 'uv_null',
                        'Sea Level Rise'='slr',
-                       #'Shipping' = 'ship',
-                       #'Sea Surface Temperature'='sst', <-too big of a file
+                       'Shipping' = 'ship',
+                       'Fishing' = 'fish',
+                       'Pesticide' = 'pest',
+                       'Sea Surface Temperature'='sst', #big file
                        'Ocean Acidification' = 'acid',
                        'Inorganic Nitrogen' = 'in_nitro',
                        'Organic Nitrogen' = 'on_nitro',
@@ -60,10 +62,6 @@ shinyUI(fluidPage(
         tabPanel("Boxplot",plotOutput("boxPlot")),
         tabPanel("Quantiles",tableOutput("table"))
       )
-      
-      
-      
-    
     
   )
 )
