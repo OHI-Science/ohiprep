@@ -20,6 +20,8 @@ plastic_weight4 = raster('data/weight_density_size4.tif')
 in_nitro = flip(raster('data/InorganicNitrogen.tif'),'y')
 on_nitro = raster('data/OrganicNitrogen.tif')
 sst = raster('data/sst.tif')
+pest = raster('data/plumes_pest.tif')
+fish = raster('data/demersal_destructive_fishing.tif')
 
 
 
