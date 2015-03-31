@@ -11,6 +11,7 @@ carbon = raster("data/OrganicCarbon.tif")
 uv = raster("data/UV_change.tif")
 uv_null = raster('data/uv_change_null.tif')
 slr = raster("data/SLR_null.tif")
+ship = raster('data/shipping.tif')
 acid = raster('data/Acid_change.tif')
 plastic_count1 = raster('data/count_density_size1.tif')
 plastic_weight1 = raster('data/weight_density_size1.tif')
@@ -19,7 +20,8 @@ plastic_weight4 = raster('data/weight_density_size4.tif')
 in_nitro = flip(raster('data/InorganicNitrogen.tif'),'y')
 on_nitro = raster('data/OrganicNitrogen.tif')
 sst = raster('data/sst.tif')
-ship = raster('data/shipping.tif')
+pest = raster('data/plumes_pest.tif')
+fish = raster('data/demersal_destructive_fishing.tif')
 
 
 
@@ -117,6 +119,10 @@ shinyServer(function(input, output) {
   
   output$ncells <- renderPrint({
     ncell(dataInput())
+  })
+  
+  output$range <- renderPrint({
+    cellStats(dataInput(),stat='range')
   })
 
 })
