@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyapps)
 library(raster)
 library(rgdal)
 library(rasterVis)
@@ -14,7 +15,10 @@ shinyUI(fluidPage(
                        'Ultraviolet_all' = 'uv',
                        'Ultraviolet_positive' = 'uv_null',
                        'Sea Level Rise'='slr',
-                       #'Sea Surface Temperature'='sst', <-too big of a file
+                       'Shipping' = 'ship',
+                       'Fishing' = 'fish',
+                       'Pesticide' = 'pest',
+                       'Sea Surface Temperature'='sst', #big file
                        'Ocean Acidification' = 'acid',
                        'Inorganic Nitrogen' = 'in_nitro',
                        'Organic Nitrogen' = 'on_nitro',
@@ -37,8 +41,17 @@ shinyUI(fluidPage(
                     'Max value + 110%' = 'max1.1',
                     'Quantile' = 'quant')),
       
+      h4("Range"),
+      verbatimTextOutput("range"),
       
-      verbatimTextOutput("summary")
+      h4("Summary"),
+      verbatimTextOutput("summary"),
+      
+      h4("Spatial Resolution"),
+      verbatimTextOutput("resolution"),
+      
+      h4("Number of Cells"),
+      verbatimTextOutput("ncells")
       
     ),
     
@@ -49,10 +62,6 @@ shinyUI(fluidPage(
         tabPanel("Boxplot",plotOutput("boxPlot")),
         tabPanel("Quantiles",tableOutput("table"))
       )
-      
-      
-      
-    
     
   )
 )
