@@ -19,31 +19,31 @@ source(sprintf('%s/R/np_fxn.R', dir_d))
 
 
 
-####################################################3
-### Reading in new data - realized that in previous analysis I included a lot of 
-#### zeros that probably aren't legit
-#######################################################
-data <- read.csv(file.path(dir_d, "gap_fill_explore/cv_data.csv"))
-
-data <- data %>%
-  rowwise() %>%
-  mutate(NAnum= sum(c(is.na(tonnes), is.na(usd)))) %>%
-  group_by(rgn_name, commodity) %>%
-  mutate(N_reg = sum(NAnum==0)) %>%
-  mutate(N_gap = sum(NAnum==1)) %>%
-  na.omit()
-
-
-
-data <- na.omit(data)
-set.seed(227)
-randSamp <- sample(1:length(data$usd), length(data$usd)*.05)
-length(randSamp)
-
-data_test <- data[randSamp,]
-write.csv(data_test, 'globalprep/FAO_commodities/gap_fill_explore/cv_data_test.csv', row.names=FALSE)
-data_train <- data[-randSamp,]
-write.csv(data_train, 'globalprep/FAO_commodities/gap_fill_explore/cv_data_train.csv', row.names=FALSE)
+# ####################################################3
+# ### Organizing data - realized that in previous analysis I included a lot of 
+# #### zeros that probably aren't legit
+# #######################################################
+# data <- read.csv(file.path(dir_d, "gap_fill_explore/cv_data.csv"))
+# 
+# data <- data %>%
+#   rowwise() %>%
+#   mutate(NAnum= sum(c(is.na(tonnes), is.na(usd)))) %>%
+#   group_by(rgn_name, commodity) %>%
+#   mutate(N_reg = sum(NAnum==0)) %>%
+#   mutate(N_gap = sum(NAnum==1)) %>%
+#   na.omit()
+# 
+# 
+# 
+# data <- na.omit(data)
+# set.seed(227)
+# randSamp <- sample(1:length(data$usd), length(data$usd)*.05)
+# length(randSamp)
+# 
+# data_test <- data[randSamp,]
+# write.csv(data_test, 'globalprep/FAO_commodities/gap_fill_explore/cv_data_test.csv', row.names=FALSE)
+# data_train <- data[-randSamp,]
+# write.csv(data_train, 'globalprep/FAO_commodities/gap_fill_explore/cv_data_train.csv', row.names=FALSE)
 
 ############# Read in test/mod data ----
 
@@ -339,7 +339,7 @@ unique(georegion$georgn_id[georegion$level=="r2"])  # 22 levels
 georegion <- georegion %>%
   filter(level == "r2")
 
-data_zoo2  <- data_zoo %>%
+data_zoo  <- data_zoo %>%
   left_join(key) %>%
   left_join(georegion) %>%
   rowwise() %>%
