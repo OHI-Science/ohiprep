@@ -345,14 +345,13 @@ data_zoo  <- data_zoo %>%
   rowwise() %>%
   mutate(non_zero_num = sum(c(tonnes>0, usd>0))) %>%
   group_by(commodity, georgn_id) %>%
-  mutate(reg_num_geo=sum(non_zero_num>=2))
+  mutate(reg_num_geo=sum(non_zero_num>=2))  ### not sure I did my filter variable exactly like I wanted...
 
 data_mod_country_lm <- data_zoo %>%
   #   filter(country=="Philippines",
   #          commodity=="Oyster meat, prepared or preserved, nei") %>%
   group_by(georgn_id, commodity) %>%
-  mutate(sum_usd=sum(usd)) %>%  # do not include when all usd data is equal to 0
-  filter(sum_usd>0) %>%
+  filter(reg_num_geo>=4) %>%
   do({
     mod <- lm(tonnes ~ usd + year, data=.)
     tonnes_pred <- predict(mod, newdata=.[c('usd', 'year')])
@@ -381,8 +380,7 @@ data_mod_country_lm <- data_zoo %>%
   #   filter(country=="Philippines",
   #          commodity=="Oyster meat, prepared or preserved, nei") %>%
   group_by(georgn_id, commodity) %>%
-  mutate(sum_usd=sum(usd)) %>%
-  filter(sum_usd>0) %>%
+  filter(reg_num_geo>=4) %>%
   do({
     mod <- lm(tonnes ~ usd, data=.)
     tonnes_pred <- predict(mod, newdata=.[c('usd')])
