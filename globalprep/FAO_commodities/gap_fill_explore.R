@@ -14,124 +14,13 @@ library(stringr)
 library(ggplot2)
 
 
-####### Create mod and test data sets -----
-
-
-### set dir_neptune_data and load common libraries (tidyr, dplyr, stringr) 
-
-
 dir_d <- 'globalprep/FAO_Commodities'
-### NOTE: Set output paths to here, but do not use setwd().
-###       This way, any scripts and code in ohiprep will still work, b/c always in root ohiprep dir.
-
-### Load NP-specific user-defined functions
 source(sprintf('%s/R/np_fxn.R', dir_d))
-
-
-#####################################################################
-### read in and process files -- loops across value and quant data
-#####################################################################
-
-   f=list.files(file.path(dir_d, 'v2015/raw'), pattern=glob2rx('*.csv'), full.names=T)[1]
-  
-  ### data read in
-  cat(sprintf('\n\n\n====\nfile: %s\n', basename(f)))
-  d <- read.csv(f, check.names=F, strip.white=TRUE) # , stringsAsFactors=T
-  units <- c('tonnes','usd')[str_detect(f, c('quant','value'))] # using American English, lowercase
-  
-  
-  #####################################################################
-  ### gather into long format and clean up FAO-specific data foibles
-  #####################################################################
-  
-    ### warning: attributes are not identical across measure variables; they will be dropped
-    m <- d %>% 
-      rename(country   = `Country (Country)`,
-             commodity = `Commodity (Commodity)`,
-             trade     = `Trade flow (Trade flow)`) %>%
-      gather(year, value, -country, -commodity, -trade)
-  
-  
-  m <- m %>%
-    filter(!country %in% c('Totals', 'Yugoslavia SFR')) %>%
-    mutate(  
-      value = str_replace(value, fixed( ' F'),    ''),  # FAO denotes with F when they have estimated the value using best available data
-      value = str_replace(value, fixed('0 0'), '0.1'),  # FAO denotes something as '0 0' when it is > 0 but < 1/2 of a unit. 
-      value = str_replace(value, fixed(  '-'),   '0'),  # FAO's 0
-      value = str_replace(value, fixed('...'),    NA),  # FAO's NA
-      value = str_replace(value, fixed('.'),      NA),
-      value = ifelse(value =='', NA, value),  
-      value = as.numeric(as.character(value)),
-      year  = as.integer(as.character(year))) %>% 
-  # search in R_inferno.pdf for "shame on you"
-    select(country, commodity, year, tonnes=value) %>%                                  # eliminate 'trade' column
-    arrange(country, commodity, is.na(tonnes), year)
-
-
-### dollar value
-f=list.files(file.path(dir_d, 'v2015/raw'), pattern=glob2rx('*.csv'), full.names=T)[2]
-
-### data read in
-cat(sprintf('\n\n\n====\nfile: %s\n', basename(f)))
-d <- read.csv(f, check.names=F, strip.white=TRUE) # , stringsAsFactors=T
-units <- c('tonnes','usd')[str_detect(f, c('quant','value'))] # using American English, lowercase
-
-
-#####################################################################
-### gather into long format and clean up FAO-specific data foibles
-#####################################################################
-
-### warning: attributes are not identical across measure variables; they will be dropped
-m_usd <- d %>% 
-  rename(country   = `Country (Country)`,
-         commodity = `Commodity (Commodity)`,
-         trade     = `Trade flow (Trade flow)`) %>%
-  gather(year, value, -country, -commodity, -trade)
-
-
-m_usd <- m_usd %>%
-  filter(!country %in% c('Totals', 'Yugoslavia SFR')) %>%
-  mutate(  
-    value = str_replace(value, fixed( ' F'),    ''),  # FAO denotes with F when they have estimated the value using best available data
-    value = str_replace(value, fixed('0 0'), '0.1'),  # FAO denotes something as '0 0' when it is > 0 but < 1/2 of a unit. 
-    value = str_replace(value, fixed(  '-'),   '0'),  # FAO's 0
-    value = str_replace(value, fixed('...'),    NA),  # FAO's NA
-    value = str_replace(value, fixed('.'),      NA),
-    value = ifelse(value =='', NA, value),  
-    value = as.numeric(as.character(value)),
-    year  = as.integer(as.character(year))) %>% 
-  # search in R_inferno.pdf for "shame on you"
-  select(country, commodity, year, usd=value) %>%                                  # eliminate 'trade' column
-  arrange(country, commodity, is.na(usd), year)
-
-
-data <- m %>%
-  left_join(m_usd) %>%
-  rowwise() %>%
-  mutate(NAnum= sum(c(is.na(tonnes), is.na(usd)))) %>%
-  group_by(country, commodity) %>%
-  mutate(N_reg = sum(NAnum==0)) %>%
-  mutate(N_gap = sum(NAnum==1)) %>%
-  na.omit()
-
-set.seed(227)
-randSamp <- sample(1:length(data$usd), length(data$usd)*.05)
-length(randSamp)
-
-data_test <- data[randSamp,]
-write.csv(data_test, 'globalprep/FAO_commodities/gap_fill_explore/data_test.csv', row.names=FALSE)
-data_train <- data[-randSamp,]
-write.csv(data_train, 'globalprep/FAO_commodities/gap_fill_explore/data_train.csv', row.names=FALSE)
-
-############# Read in test/mod data ----
-
-data_test <- read.csv('globalprep/FAO_commodities/gap_fill_explore/data_test.csv')
-data_train <- read.csv('globalprep/FAO_commodities/gap_fill_explore/data_train.csv')
 
 
 
 ####################################################3
-### Reading in new data - realized that I included a lot of 
+### Reading in new data - realized that in previous analysis I included a lot of 
 #### zeros that probably aren't legit
 #######################################################
 data <- read.csv(file.path(dir_d, "gap_fill_explore/cv_data.csv"))
