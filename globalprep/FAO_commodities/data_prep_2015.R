@@ -59,12 +59,13 @@ source('src/R/common.R')
 ###       Otherwise, presume that scripts are always working from your default ohiprep folder
 
 
-dir_d <- 'globalprep/FAO_Commodities/v2015'
+dir_base <- 'globalprep/FAO_Commodities'
+dir_d <- sprintf('%s/v2015', dir_base)
 ### NOTE: Set output paths to here, but do not use setwd().
 ###       This way, any scripts and code in ohiprep will still work, b/c always in root ohiprep dir.
 
 ### Load NP-specific user-defined functions
-source(sprintf('%s/R/np_fxn.R', dir_d))
+source(sprintf('%s/R/np_fxn.R', dir_base))
 
 
 
@@ -156,32 +157,7 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
 #####################################################################
 ### Gap-filling
 #####################################################################
-### For each commodity within each region:
-### * Identify years with neither tonnes nor USD data (NAs for both),
-###   use this to determine first reporting year.
-### * Eliminate years before first reporting year.
-### * For reporting years with no data, assume no harvest (= 0)
-### * Filter out low-data years
-###   * This helps with the regression, since we need a certain # of 
-###     non-zero data to feel confident in the coefficients.
-###   * But it also avoids harshly penalizing regions that try an
-###     experimental harvest and then decide to stop after a few
-###     unprofitable years. (per Katie Longo's suggestion)
-###   * Determining the proper level of filter will be important,
-###     as will be the method: non-zero years, or non-NA years,
-###     or min # of paired observations.
-###   * Physical interpretation seems like a better priority to drive this
-###     decision rather than data processing requirements. Based on
-###     that, seems like non-zero years is most appropriate.
-### * Calculate regression coefficients: intercept and slope.  Use
-###   regression models to fill NAs in one column from values in the other.
-###   * NOTE: need to deal with failed regression - i.e. too few non-zero
-###     paired values to generate regression coefficients.
-###     * This could maybe be fixed through the 'low-data filter'
-###     * This could also be fixed via a smoothing fill at the
-###       commodity level, looking at just USD or tonnes.  
-###       * Does this replace, or supplement, regression? Need a
-###         decision tree for this.
+### See issue #397 for details and debate and pretty graphs.
 #####################################################################
   
 h_tonnes <- read.csv(file.path(dir_d, 'data/v2015_tonnes.csv'))
@@ -195,10 +171,11 @@ h <- h %>% np_harvest_preclip
 ### clips out years prior to first reporting year, for each commodity per region
     
 h <- h %>% np_harvest_gapflag  
-### Adds flag for required gap-filling. Does not perform any gap-filling.
+### Adds flag for required gap-filling, based upon NAs in data. 
+### NOTE: Does not perform any gap-filling.
 ### At this point, h includes: 
-### rgn_name   rgn_id   commodity   product   year   tonnes   usd   gapfill
-
+###   rgn_name   rgn_id   commodity   product   year   tonnes   usd   gapfill
+### 'gapfill' will be in (zerofill, endfill, tbd, none)
 
 data_check <- h %>% np_datacheck()
 ### for each commodity within each region, creates summary info:
@@ -210,33 +187,37 @@ data_check <- h %>% np_datacheck()
 ###   unique_pairs:     lesser of usd_unique_pairs and tns_unique_pairs
 ###   count_no_data:    number of paired NAs - years with no value reported
 
-    
-    
 h <- h %>% np_zerofill
 ### for post-reporting years with NA for both tonnes and USD, fill zero - 
 ### assumes that non-reporting indicates zero harvest to report.
-### ??? NOTE:  Including this zero-fill before the regression fill means added zeroes will be included in the regression.
- 
-h <- h %>% np_lowdata_filter(nonzero_h_yr_min = 4)
-### Exclude commodities within a region that have few non-zero data points.
-### ??? NOTE: This filter has consequences for the regression, but also has meaning in terms of 
-###           not inflicting a penalty on regions trying, and then stopping, an experimental harvest.
+### Also cross-fills zeros where one side is 0, other is NA (not flagged as gapfill)
 
-coefficients <- np_regr_coef(h)
-### Create regression model coefficients. Also creates flags for failed usd and tonnes models (coef == NA)
-### ??? NOTE:  Performing this regression after the zero-fill means the added zeroes will be included in the regression.
+h <- h %>% np_lowdata_filter()
+### Exclude commodities (within a region) that have few non-zero data points.
+### Optional parameter with default: nonzero_h_yr_min = 4
+### NOTE: This filter has consequences for the regression, but also has meaning in terms of 
+###       not inflicting a penalty on regions trying, and then stopping, an experimental harvest.
 
-h1 <- h %>% np_regr_fill(coefficients)
+h <- h %>% np_regr1_fill()
 ### Estimate missing usd and tonnes based on regression model coefficients: usd ~ tonnes, and tonnes ~ usd.
-### ??? How should this deal with model fails?
-### columns: 
-### rgn_name  rgn_id  commodity  product  year  tonnes  usd  gapfill  na_mdl_usd  na_mdl_tns  tonnes_orig  usd_orig
+### Changes 'gapfill' to 'r1_tonnes' or 'r1_usd'.
+### Optional parameters with defaults: years_back = 10, min_paired_obs = 4
+### columns returned: 
+### rgn_name  rgn_id  commodity  product  year  tonnes  usd  gapfill  #tonnes_orig  #usd_orig
 
-h1 <- h1 %>% np_end_fill
+h <- h %>% np_regr2_fill(years_back=50)
+### Estimate missing usd and tonnes based on regression model coefficients: usd ~ tonnes + year, and tonnes ~ usd + year.
+### Changes 'gapfill' to 'r2_tonnes' or 'r2_usd'.
+### Optional parameters with defaults: years_back=10, min_paired_obs=4
+### columns returned: 
+### rgn_name  rgn_id  commodity  product  year  tonnes  usd  gapfill  #tonnes_orig  #usd_orig
+
+
+h <- h %>% np_end_fill()
 ### For final year of data, if both usd and tonnes originally reported as NA, pull forward
 ### values for usd and tonnes from the previous year.  This should happen after regression fill.
 
-h_comm <- h1
+h_comm <- h
 ### Store commodity-level data, before moving on to the product-level smoothing.
 
 #####################################################################
@@ -247,13 +228,12 @@ h_gap <- h_comm %>%
 write.csv(h_gap, sprintf('%s/data/np_gapfill_report.csv', dir_d), row.names=F, na='')
 
 
-
 ### Summarize each product per country per year, e.g. all corals in Albania in 2011
 h_prod <- h_comm %>%
   group_by(rgn_name, rgn_id, product, year) %>%
   summarize(tonnes = sum(tonnes, na.rm=TRUE), 
-            usd = sum(usd, na.rm=TRUE),
-            gapfill_sum = sum(gapfill %in% c('reg_tonnes', 'reg_usd', 'endfill', 'zero_fill')))
+            usd = sum(usd, na.rm=TRUE))
+            
 
 
 
@@ -287,9 +267,6 @@ write.csv(h_x_usd, sprintf('%s/tmp/np_harvest_usd_wide.csv', dir_d, units), row.
 ### this for all given scenarios, using a for loop.
 #####################################################################
 
-recent_harvest_years      <- 10
-harvest_peak_buffer       <- 0.35
-
 ### ???: update this to something like year_max, year_max - 1, year_max - 2, etc
 scenarios_year_max <- c(eez2014=2011, 
                         eez2013=2010, 
@@ -302,54 +279,31 @@ for (scenario in c('eez2012','eez2013','eez2014')) {
   h <- h_prod %>%
     filter(year<=year_max) %>%
     group_by(rgn_id, product) %>%
+    mutate(n_years = length(year)) %>%
     arrange(rgn_id, product, year)
 
-  # smooth harvest over 4 year mean (prior and inclusive of current year)
-  h <- h %>%
-    left_join(
-      h %>%
-#        filter(n_years >= 4) %>%
-        mutate(
-          tonnes_orig = tonnes, ### prevent overwriting of reported and gapfilled values
-          usd_orig = usd,       ### prevent overwriting of reported and gapfilled values
-          # Partial rolling mean with width 4 uses the first and last 3. Note that na.rm=F since otherwise would populate prior to first year of NP harvest data.
-          tonnes_rollmean = rollapply(tonnes, width=4, FUN=mean, align='center', partial=T, na.rm=F),
-          usd_rollmean    = rollapply(   usd, width=4, FUN=mean, align='center', partial=T, na.rm=F)) %>%
-        select(rgn_id, product, year, starts_with('tonnes_roll'), usd_rollmean),
-      by=c('rgn_id', 'product','year')) %>%
-    mutate(
-      tonnes = ifelse(!is.na(tonnes_rollmean), tonnes_rollmean, tonnes),
-      usd    = ifelse(!is.na(   usd_rollmean),    usd_rollmean,    usd)) # tonnes_difDEBUG = tonnes - tonnes_orig # DEBUG
+  h <- h %>% np_harvest_smooth()
+  ### smooth harvest over 4 year mean (prior and inclusive of current year).
+  ### * Tonnes & usd values are smoothed values
+  ### * tonnes_orig & usd_orig contain pre-smoothing values
+  ### Optional parameter with default: rollwidth = 4
+      
+  h <- h %>% np_harvest_peak()
+  ### get peak harvest, in tonnes and usd, based upon smoothed values.  Also creates 
+  ### weighting values by recent USD: w[product] = usd_peak[product] / usd_peak[total for region]
+  ### Optional parameters with default: harvest_peak_buffer = 0.35, recent_harvest_years = 10
+
+  h1 <- h %>% np_harvest_status()
+  ### Determine relative status score based on harvest (tonnes & usd) relative to peaks.
+
+
   
-  ### get peak harvest, in tonnes and usd, based upon smoothed values
-  h <- h %>%
-    mutate(    
-      tonnes_peak = max(tonnes, na.rm=T)  * (1 - harvest_peak_buffer),
-      usd_peak    = max(   usd, na.rm=T)  * (1 - harvest_peak_buffer))
+  # ??? How many of these variables do we really need to keep?
   
-  ### product weighting per region: based upon dollar value, not tonnes.  
-  ### w[product] = usd_peak[product] / usd_peak[total for region]
-  w <- h %>%
-    filter(year == year_max) %>%
-    group_by(rgn_id) %>%
-    mutate(
-      usd_peak_allproducts    = sum(usd_peak, na.rm=T),
-      usd_peak_product_weight = usd_peak / usd_peak_allproducts)    
   
-  ### join product weighting proportions to h
-  h <- left_join(
-    h, 
-    w %>%
-      select(rgn_id, product, usd_peak_product_weight), 
-    by=c('rgn_id','product'))
+######################got to this point 3/31/15
   
-  h <- h %>% 
-  ### ??? Calculates relative tonnes and usd based on smoothed data proportional to peak.  Does not penalize overharvesting - 
-  ###     Should there be an upper value, say peak*(1 - 0.25)?
-  
-    mutate(tonnes_rel      = ifelse(tonnes >= tonnes_peak, 1, tonnes / tonnes_peak),
-           usd_rel         = ifelse(usd >= usd_peak, 1, usd / usd_peak)) %>% 
-    group_by(rgn_id, product, year)
+
   write.csv(h  , sprintf('%s/tmp/%s_np_harvest_smoothed_data.csv', dir_d, scenario), row.names=F, na='')
   
   # write NP weights layer also used to calculate pressures and resilience
