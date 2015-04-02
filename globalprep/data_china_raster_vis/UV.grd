@@ -1,0 +1,26 @@
+[general] 
+creator=R package 'raster' 
+created= 2015-04-02 15:20:16 
+[georeference] 
+nrows= 144 
+ncols= 288 
+xmin= -180 
+ymin= -90 
+xmax= 180 
+ymax= 90 
+projection= +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 
+[data] 
+datatype= FLT8S 
+byteorder= little 
+nbands= 1 
+bandorder= BIL 
+categorical= FALSE 
+minvalue= -10 
+maxvalue= 9 
+nodatavalue= -1.7e+308 
+[legend] 
+legendtype=  
+values=  
+color=  
+[description] 
+layername= UV_change 
