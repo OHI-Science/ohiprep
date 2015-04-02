@@ -191,256 +191,105 @@ np_lowdata_filter <- function(h, nonzero_h_yr_min = 4) {
 
 
 
-np_regr1_coef <- function(h) {
-### Outputs regression coefficients for (tonnes ~ usd) and (usd ~ tonnes)
-### at the commodity level, by country.
+
+np_regr_coef <- function(h, scope = 'rgn_id', vars = 'tdy') {
+### Outputs regression coefficients for tonnes and usd in dataframe h, based upon:
+### * scope = 'rgn_id' 'georgn_id' 'global': this determines the parameters 
+###     passed to group_by() and the full_join() to set the scope of regression.
+### * vars = 'td' for  (tonnes ~ dollars) (and vice versa), and 
+###          'tdy' for (tonnes ~ dollars + years)
   
-  h <- h %>%
-    group_by(rgn_id, commodity)
-  ### Groups by rgn_id and commodity to regress (tonnes ~ usd) and (usd ~ tonnes) within each region/country
-  
-  m_tonnes <- h  %>%
-    ### Create linear regression model for tonnes as a function of USD.
-    mutate(tonnes_nas = sum(is.na(tonnes))) %>%  
-    filter(tonnes_nas > 0 & !is.na(usd) & !is.na(tonnes)) %>%
-    ### 'tonnes_nas' filter excludes commodities with no NAs, so no need for 'tonnes' gap-fill.
-    do(mdl = lm(tonnes ~ usd, data=.)) %>%
-    summarize(
-      rgn_id     = rgn_id,
-      commodity   = commodity, 
-      usd_ix0    = coef(mdl)['(Intercept)'],
-      usd_coef   = coef(mdl)['usd'])
-  
-  m_usd <- h %>%
-    ### Create a linear regression model for USD as a function of tonnes.
-    mutate(usd_nas = sum(is.na(usd))) %>%
-    filter(usd_nas > 0 & !is.na(usd) & !is.na(tonnes)) %>%
-    do(mdl = lm(usd ~ tonnes, data=.)) %>%
-    summarize(
-      rgn_id      = rgn_id,
-      commodity   = commodity, 
-      tonnes_ix0  = coef(mdl)['(Intercept)'],
-      tonnes_coef = coef(mdl)['tonnes']) 
-  
-  regr <- full_join(m_tonnes, m_usd, by=c('rgn_id','commodity'))
-  
-  return(regr)
-}
+  h <- switch(scope,
+              rgn_id    = group_by(h, rgn_id,    commodity),
+              georgn_id = group_by(h, georgn_id, commodity),
+              global    = group_by(h,            commodity))
 
-
-
-np_regr1_fill <- function(h, years_back=10, min_paired_obs=4) {
-### Applies regression model built into np_regr1_coef to gapfill NAs for both tonnes and usd.
-### MODEL: (tonnes ~ usd) and (usd ~ tonnes) at commodity level by country.
-### Filters by most recent number of years and by a minimum number
-### of paired observations.
-  
-  lower_bound_year <- max(h$year) - years_back
-
-  h_clipped <- h %>%
-    group_by(rgn_id, commodity) %>%
-    filter(year >= lower_bound_year) %>%
-    mutate(
-      n_pairs = sum((!is.na(tonnes) & tonnes>0 & !is.na(usd) & usd>0))) %>%
-    filter(n_pairs >= min_paired_obs)
-
-  coefficients <- np_regr1_coef(h_clipped)
-  
-  h_mdl <- h %>%
-    ### Using regression models, gap-fill NAs in tonnes and USD
-    left_join(coefficients, by=c('rgn_id','commodity')) %>%
-    mutate(
-#      tonnes_orig = tonnes, 
-      tonnes_mdl  = usd_ix0 + usd_coef * usd,
-      gapfill     = ifelse(is.na(tonnes) & year >= lower_bound_year & !is.na(usd_coef), 'r1_tonnes', gapfill),
-      ### conditions: tonnes is NA (needs to be filled); year is recent; and coefficient is not NA.
-      tonnes      = ifelse(is.na(tonnes) & year >= lower_bound_year, pmax(0, tonnes_mdl), tonnes)) %>% 
-    mutate(
-#      usd_orig    = usd,
-      usd_mdl     = tonnes_ix0 + tonnes_coef * tonnes,
-      gapfill     = ifelse(is.na(usd) & year >= lower_bound_year & !is.na(tonnes_coef), 'r1_usd', gapfill),
-      ### conditions: usd is NA (needs to be filled); year is recent; and coefficient is not NA.
-      usd         = ifelse(is.na(usd) & year >= lower_bound_year, pmax(0, usd_mdl), usd)) %>%
-    select(-usd_ix0, -tonnes_ix0, -usd_coef, -tonnes_coef, -usd_mdl, -tonnes_mdl) %>%
-      ### removes internal function-specific variables
-    arrange(rgn_id, product, commodity, year)
-  
-  return(h_mdl)
-}
-
-
-np_regr2_coef <- function(h) {
-### Outputs regression coefficients for (tonnes ~ usd + year) and (usd ~ tonnes + year)
-### at the commodity level, by global prices
-
-  h <- h %>%
-    group_by(commodity)
-  ### Groups by commodity only, to regress (tonnes ~ usd) and (usd ~ tonnes) globally.
-
-  m_tonnes <- h  %>%
-    ### Create linear regression model for tonnes as a function of USD.
-    mutate(tonnes_nas = sum(is.na(tonnes))) %>%  
-    filter(tonnes_nas > 0 & !is.na(usd) & !is.na(tonnes)) %>%
-    ### 'tonnes_nas' filter excludes commodities with no NAs, so no need for 'tonnes' gap-fill.
-    do(mdl = lm(tonnes ~ usd + year, data=.)) %>%
-    summarize(
-      commodity  = commodity, 
-      ### "commodity" is treated as a string here.  Why does this work here, but not in regr1_coef?
-      usd_ix0    = coef(mdl)['(Intercept)'],
-      usd_coef   = coef(mdl)['usd'],
-      yr_tns_coef  = coef(mdl)['year'])
-  
-  m_usd <- h %>%
-    ### Create a linear regression model for USD as a function of tonnes.
-    mutate(usd_nas = sum(is.na(usd))) %>%
-    filter(usd_nas >= 0 & !is.na(usd) & !is.na(tonnes)) %>%
-    do(mdl = lm(usd ~ tonnes + year, data=.)) %>%
-    summarize(
-      commodity   = commodity, 
-      tonnes_ix0  = coef(mdl)['(Intercept)'],
-      tonnes_coef = coef(mdl)['tonnes'], 
-      yr_usd_coef = coef(mdl)['year'])
-
-  regr <- full_join(m_tonnes, m_usd, by='commodity')
-  
-  return(regr)
-}
-
-
-
-np_regr2_fill <- function(h, years_back=50, min_paired_obs=4) {
-### Applies regression model built into np_regr1_coef to gapfill NAs for both tonnes and usd.
-### MODEL: (tonnes ~ usd + year) and (usd ~ tonnes + year) at commodity level, globally.
-### Filters by most recent number of years and by a minimum number
-### of paired observations.
-
-  lower_bound_year <- max(h$year) - years_back
-
-# for each given commodity, in each given year, determine the average global price reported in USD per tonne.
-#   * group_by (commodity) to include obs across all regions.
-#   * identify and include all paired observations across the board.
-#   * create regression model for global commodity prices
-#   * append this model, and calc as before.
-
-  h_clipped <- h %>%
-    group_by(commodity) %>%
-    filter(year >= lower_bound_year) %>%
-    mutate(
-      n_pairs = sum((!is.na(tonnes) & tonnes>0 & !is.na(usd) & usd>0))) %>%
-    filter(n_pairs >= min_paired_obs)
-  
-  coefficients <- np_regr2_coef(h_clipped)
-    ### 
-    ### Note that the coefficient function does the global grouping, so no need to 
-    ### group_by at this level.
-  
-  h_mdl <- h %>%
-    ### Using regression models, gap-fill NAs in tonnes and USD
-    left_join(coefficients, by='commodity') %>%
-    mutate(
-#      tonnes_orig = tonnes, 
-      tonnes_mdl  = usd_ix0 + usd_coef * usd + yr_tns_coef * year,
-      gapfill     = ifelse(is.na(tonnes) & year >= lower_bound_year & !is.na(usd_coef), 'r2_tonnes_gl', gapfill),
-      ### conditions: tonnes is NA (needs to be filled); year is recent; and coefficient is not NA.
-      tonnes      = ifelse(is.na(tonnes) & year >= lower_bound_year, pmax(0, tonnes_mdl), tonnes)) %>% 
-    mutate(
-#      usd_orig    = usd,
-      usd_mdl     = tonnes_ix0 + tonnes_coef * tonnes + yr_usd_coef * year,
-      gapfill     = ifelse(is.na(usd) & year >= lower_bound_year & !is.na(tonnes_coef), 'r2_usd_gl', gapfill),
-      ### conditions: usd is NA (needs to be filled); year is recent; and coefficient is not NA.
-      usd         = ifelse(is.na(usd) & year >= lower_bound_year, pmax(0, usd_mdl), usd)) %>%
-    select(-usd_ix0, -tonnes_ix0, -usd_coef, -tonnes_coef, -usd_mdl, -tonnes_mdl, -yr_tns_coef, -yr_usd_coef) %>%
-      ### removes internal function-specific variables
-    arrange(rgn_id, product, commodity, year)
-  
-  return(h_mdl)
-}
-
-
-
-
-np_regr2_coef_georgn <- function(h) {
-### Outputs regression coefficients for (tonnes ~ usd + year) and (usd ~ tonnes + year)
-### at the commodity level, by global prices
-
-  
-  h <- h %>%
-    group_by(georgn_id, commodity)
-  ### Groups by commodity only, to regress (tonnes ~ usd) and (usd ~ tonnes) globally.
+  model <- switch(vars,
+              tdy       = c('tonnes ~ usd + year', 'usd ~ tonnes + year'),
+              td        = c('tonnes ~ usd',        'usd ~ tonnes'))
   
   m_tonnes <- h  %>%
-    ### Create linear regression model for tonnes as a function of USD.
     mutate(tonnes_nas = sum(is.na(tonnes))) %>%  
     filter(tonnes_nas > 0 & !is.na(usd) & !is.na(tonnes)) %>%
-    ### 'tonnes_nas' filter excludes commodities with no NAs, so no need for 'tonnes' gap-fill.
-    do(mdl = lm(tonnes ~ usd + year, data=.)) %>%
+    do(mdl = lm(as.formula(model[1]), data=.)) %>%
     summarize(
-      georgn_id   = georgn_id,
+      scope_id    = switch(scope, rgn_id = rgn_id, georgn_id = georgn_id, global = NA),
       commodity   = commodity, 
       usd_ix0     = coef(mdl)['(Intercept)'],
       usd_coef    = coef(mdl)['usd'],
-      yr_tns_coef = coef(mdl)['year'])
+      yr_tns_coef = ifelse(vars=='tdy', coef(mdl)['year'], 0))
   
   m_usd <- h %>%
-    ### Create a linear regression model for USD as a function of tonnes.
     mutate(usd_nas = sum(is.na(usd))) %>%
-    filter(usd_nas >= 0 & !is.na(usd) & !is.na(tonnes)) %>%
-    do(mdl = lm(usd ~ tonnes + year, data=.)) %>%
+    filter(usd_nas > 0 & !is.na(usd) & !is.na(tonnes)) %>%
+    do(mdl = lm(model[2], data=.)) %>%
     summarize(
-      georgn_id   = georgn_id,
+      scope_id    = switch(scope, rgn_id = rgn_id, georgn_id = georgn_id, global = NA),
       commodity   = commodity, 
       tonnes_ix0  = coef(mdl)['(Intercept)'],
-      tonnes_coef = coef(mdl)['tonnes'], 
-      yr_usd_coef = coef(mdl)['year'])
-  
-  regr <- full_join(m_tonnes, m_usd, by=c('georgn_id','commodity'))
-  
-  return(regr)
+      tonnes_coef = coef(mdl)['tonnes'],
+      yr_usd_coef = ifelse(vars=='tdy', coef(mdl)['year'], 0))
+
+  m <- full_join(m_tonnes, m_usd, by=c('scope_id','commodity'))
+  m <- switch(scope, 
+              rgn_id    = mutate(m, rgn_id = scope_id),
+              georgn_id = mutate(m, georgn_id = scope_id),
+              global    = m)
+  m <- m %>% select(-scope_id)
+  return(m)
 }
 
 
 
-
-np_regr2_fill_georgn <- function(h, years_back=50, min_paired_obs=4) {
-### Applies regression model built into np_regr1_coef to gapfill NAs for both tonnes and usd.
-### MODEL: (tonnes ~ usd + year) and (usd ~ tonnes + year) at commodity level, by georegion.
-### Filters by most recent number of years and by a minimum number
-### of paired observations.
-
+np_regr_fill <- function(h, years_back=50, min_paired_obs=4, scope = 'rgn_id', vars = 'tdy') {
+### Gap-fills NAs for tonnes and usd in dataframe h.  Regression model 
+###   and regression scope are denoted by passed parameters.
+### * years_back=50:     This determines how far back in the time series to include within the regression.
+### * min_paired_obs=4:  This determines how many paired observations are required to attempt a regression.
+### * scope = 'rgn_id' 'georgn_id' 'global': this determines the parameters to be
+###     passed to group_by() and join functions to set the scope of regression.
+### * vars = 'td'  for (tonnes ~ dollars) model (and vice versa), and 
+###          'tdy' for (tonnes ~ dollars + years) model.
   
   lower_bound_year <- max(h$year) - years_back
   
-  # for each given commodity, in each given year, determine the average global price reported in USD per tonne.
-  #   * group_by (commodity) to include obs across all regions.
-  #   * identify and include all paired observations across the board.
-  #   * create regression model for global commodity prices
-  #   * append this model, and calc as before.
-  h <- h %>% add_georegion_id()
+  h <- switch(scope,
+              rgn_id    = group_by(h, rgn_id,    commodity),
+              georgn_id = group_by(h, georgn_id, commodity),
+              global    = group_by(h,            commodity))
   
   h_clipped <- h %>%
-    group_by(georgn_id, commodity) %>%
     filter(year >= lower_bound_year) %>%
     mutate(
       n_pairs = sum((!is.na(tonnes) & tonnes>0 & !is.na(usd) & usd>0))) %>%
     filter(n_pairs >= min_paired_obs)
   
-  coefficients <- np_regr2_coef_georgn(h_clipped)
-  ### Note that the coefficient function does the georegional grouping, so no need to 
-  ### group_by at this level.
+  coefficients <- np_regr_coef(h_clipped, scope, vars)
+  
+  by_flag <- switch(scope,
+                    rgn_id    = c('rgn_id','commodity'),
+                    georgn_id = c('georgn_id','commodity'),
+                    global    =   'commodity')
+  gap_flag <- switch(scope,
+                    rgn_id    = c('r1_t_rgn','r1_u_rgn'),
+                    georgn_id = c('r2_t_gr','r2_u_gr'),
+                    global    = c('r3_t_gl','r3_u_gl'),
+                    c('rgn_id','commodity'))
   
   h_mdl <- h %>%
     ### Using regression models, gap-fill NAs in tonnes and USD
-    left_join(coefficients, by=c('georgn_id','commodity')) %>%
+    left_join(coefficients, by=by_flag) %>%
     mutate(
       #      tonnes_orig = tonnes, 
       tonnes_mdl  = usd_ix0 + usd_coef * usd + yr_tns_coef * year,
-      gapfill     = ifelse(is.na(tonnes) & year >= lower_bound_year & !is.na(usd_coef), 'r2_tonnes_gr', gapfill),
+      ### Note that if vars == 'td', then yr_tns_coef == 0, so no effect on outcome.
+      gapfill     = ifelse(is.na(tonnes) & year >= lower_bound_year & !is.na(usd_coef), gap_flag[1], gapfill),
       ### conditions: tonnes is NA (needs to be filled); year is recent; and coefficient is not NA.
       tonnes      = ifelse(is.na(tonnes) & year >= lower_bound_year, pmax(0, tonnes_mdl), tonnes)) %>% 
     mutate(
       #      usd_orig    = usd,
       usd_mdl     = tonnes_ix0 + tonnes_coef * tonnes + yr_usd_coef * year,
-      gapfill     = ifelse(is.na(usd) & year >= lower_bound_year & !is.na(tonnes_coef), 'r2_usd_gr', gapfill),
+      gapfill     = ifelse(is.na(usd) & year >= lower_bound_year & !is.na(tonnes_coef), gap_flag[2], gapfill),
       ### conditions: usd is NA (needs to be filled); year is recent; and coefficient is not NA.
       usd         = ifelse(is.na(usd) & year >= lower_bound_year, pmax(0, usd_mdl), usd)) %>%
     select(-usd_ix0, -tonnes_ix0, -usd_coef, -tonnes_coef, -usd_mdl, -tonnes_mdl, -yr_tns_coef, -yr_usd_coef) %>%
@@ -504,11 +353,11 @@ np_harvest_smooth <- function(j, rollwidth = 4) {
 ### Returns original data frame with tonnes & usd filled with rolling
 ### mean; adds tonnes_orig and usd_orig in case original values needed.
 
-  j <- j %>%
+  j1 <- j %>%
     group_by(rgn_id, product) %>%
+    filter(n_years >= rollwidth) %>%
     left_join(
       j %>%
-        filter(n_years >= rollwidth) %>%
         mutate(
           tonnes_orig = tonnes, ### prevent overwriting of reported and gapfilled values
           usd_orig = usd,       ### prevent overwriting of reported and gapfilled values
@@ -523,7 +372,8 @@ np_harvest_smooth <- function(j, rollwidth = 4) {
 }
 
 
-np_harvest_peak <- function(j, harvest_peak_buffer = 0.35, recent_harvest_years = 10) {
+
+np_harvest_peak <- function(j, buffer = 0.35, recent_years = 10) {
 ### Determines the peak harvest values for the input data frame, in
 ###   tonnes and usd.  Tonnes peak includes entire time series; usd peak
 ###   includes only the most recent harvest years.
@@ -532,24 +382,24 @@ np_harvest_peak <- function(j, harvest_peak_buffer = 0.35, recent_harvest_years 
 
   j <- j %>%
     group_by(rgn_id, product) %>%
-    mutate(tonnes_peak = max(tonnes, na.rm=T)  * (1 - harvest_peak_buffer))
+    mutate(tonnes_peak = max(tonnes, na.rm=T)  * (1 - buffer))
   
   j_recent <- j %>%
-    filter(year >= year_max - recent_harvest_years) %>%
-    mutate(usd_peak = max(   usd, na.rm=T)  * (1 - harvest_peak_buffer)) %>%
+    filter(year >= year_max - recent_years) %>%
+    mutate(usd_peak = max(   usd, na.rm=T)  * (1 - buffer)) %>%
     select(rgn_id, product, year, usd_peak) %>%
     summarize(usd_peak = max(usd_peak))
       ### ??? Without the max() it returns error 'expecting single value' ---- but usd_peak should be a single value
   j <- j %>% left_join(j_recent, by=c('rgn_id','product'))
 
-  w <- h %>%
+  w <- j %>%
     filter(year == year_max) %>%
     group_by(rgn_id) %>%
     mutate(
       usd_peak_allproducts    = sum(usd_peak, na.rm=T),
       usd_peak_product_weight = usd_peak / usd_peak_allproducts)    
   
-  ### join product weighting proportions to h
+  ### join product weighting proportions to j
   j <- j %>% 
     left_join(
       w %>%

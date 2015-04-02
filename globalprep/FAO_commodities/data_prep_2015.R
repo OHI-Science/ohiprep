@@ -157,8 +157,6 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
 h_tonnes <- read.csv(file.path(dir_d, 'data/v2015_tonnes.csv'))
 h_usd    <- read.csv(file.path(dir_d, 'data/v2015_usd.csv'))
 
-print(sprintf('class of commodity field in tns = %s, usd = %s', class(h_tonnes$commodity), class(h_usd$commodity)))
-
 h <- np_harvest_cat(h_tonnes, h_usd)
 ### concatenates h_tonnes and h_usd data
 ### h includes rgn_name, rgn_id, commodity, product, year, tonnes, usd.
@@ -196,28 +194,24 @@ h <- h %>% np_lowdata_filter()
 ### NOTE: This filter has consequences for the regression, but also has meaning in terms of 
 ###       not inflicting a penalty on regions trying, and then stopping, an experimental harvest.
 
-h <- h %>% np_regr1_fill()
-### Estimate missing usd and tonnes based on regression model coefficients: usd ~ tonnes, and tonnes ~ usd.
-### Changes 'gapfill' to 'r1_tonnes' or 'r1_usd'.
-### Optional parameters with defaults: years_back = 10, min_paired_obs = 4
-### columns returned: 
-### rgn_name  rgn_id  commodity  product  year  tonnes  usd  gapfill  #tonnes_orig  #usd_orig
+h <- h %>% add_georegion_id()
+### Melanie's script to add a georegional ID tag based on country keys and IDs.
+
+h1 <- h  %>% np_regr_fill(years_back=10, vars='td', scope='rgn_id')
+h2 <- h1 %>% np_regr_fill(vars='tdy', scope='georgn_id')
+h3 <- h2 %>% np_regr_fill(vars='tdy', scope='global')
+### np_regr_fill() is a generalized regression gapfill function.  Parameters (with defaults):
+### * years_back=50 (int):     This determines how far back in the time series to include within the regression.
+### * min_paired_obs=4 (int):  This determines how many paired observations are required to attempt a regression.
+### * scope = 'rgn_id' (str):  ('rgn_id', 'georgn_id', 'global') Determines grouping scale for regression.
+### * vars = 'tdy' (str):      ('td', 'tdy') Determines model: (tonnes ~ usd) or (tonnes ~ usd + year) [and vice versa]
 
 
-h <- h %>% np_regr2_fill_georgn()
-### Estimate missing usd and tonnes based on regression model coefficients: usd ~ tonnes + year, and tonnes ~ usd + year.
-### Changes 'gapfill' to 'r2_tonnes' or 'r2_usd'.
-### Optional parameters with defaults: years_back=50, min_paired_obs=4
-### columns returned: 
-### rgn_name  rgn_id  commodity  product  year  tonnes  usd  gapfill  #tonnes_orig  #usd_orig
-
-h <- h %>% np_regr2_fill()
-
-h <- h %>% np_end_fill()
+h3 <- h3 %>% np_end_fill()
 ### For final year of data, if both usd and tonnes originally reported as NA, pull forward
 ### values for usd and tonnes from the previous year.  This should happen after regression fill.
 
-h_comm <- h
+h_comm <- h3
 ### Store commodity-level data, before moving on to the product-level smoothing.
 
 
@@ -239,8 +233,6 @@ h_prod <- h_comm %>%
 
 ### Error-checking and table exports
 
-### error check for duplicates (same product, same year, same region)
-
 stopifnot(sum(duplicated(h_prod[,c('rgn_id', 'product', 'year')])) == 0)
 
 ### Check: wide with all commmodities and product subtotal for comparison with input data
@@ -258,7 +250,6 @@ write.csv(h_x_tonnes, sprintf('%s/tmp/np_harvest_tonnes_wide.csv', dir_d, units)
 write.csv(h_x_usd, sprintf('%s/tmp/np_harvest_usd_wide.csv', dir_d, units), row.names=F, na='NA')
 
 
-#####################################################################
 # Smoothing and scoring ---------------------------------------------------
 # --------- determine rolling averages for tonnes and USD in
 #   order to determine peak values.  This is based upon total
@@ -274,7 +265,7 @@ scenarios_year_max <- c(eez2014=2011,
                         eez2012=2009)
 
 for (scenario in c('eez2012','eez2013','eez2014')) { 
-  # scenario  = 'eez2014'
+  # scenario  = 'eez2012'
   year_max <- scenarios_year_max[[scenario]]
   
   j <- h_prod %>%
@@ -286,36 +277,35 @@ for (scenario in c('eez2012','eez2013','eez2014')) {
   j <- j %>% np_harvest_smooth()
   ### smooth harvest over 4 year mean (prior and inclusive of current year).
   ### * Tonnes & usd values are smoothed values
-  ### * tonnes_orig & usd_orig contain pre-smoothing values
+  ### * tonnes_orig & usd_orig contain post-gap-filling, pre-smoothing values
   ### Optional parameter with default: rollwidth = 4
       
-  j <- j %>% np_harvest_peak()
+  harvest_peak_buffer = 0.35
+  j <- j %>% np_harvest_peak(buffer = harvest_peak_buffer)
   ### get peak harvest, in tonnes and usd, based upon smoothed values.  Also creates 
   ### weighting values by recent USD: w[product] = usd_peak[product] / usd_peak[total for region]
-  ### Optional parameters with default: harvest_peak_buffer = 0.35, recent_harvest_years = 10
+  ### Optional parameters with default: buffer = 0.35, recent_harvest_years = 10
 
-  j1 <- j %>% np_harvest_status()
+  j <- j %>% np_harvest_status()
   ### Determine relative status score based on harvest (tonnes & usd) relative to peaks.
 
 
   
-  # ??? How many of these variables do we really need to keep?
-  
-  
-######################got to this point 3/31/15
-  
+# Write .csv files ---------------------------------------------------
+# --------- output the results to .csvs.
+# ??? How many of these variables do we really need to keep, how many to be reported to the .csv files?
 
-  write.csv(j1  , sprintf('%s/tmp/%s_np_harvest_smoothed_data.csv', dir_d, scenario), row.names=F, na='')
+  write.csv(j  , sprintf('%s/tmp/%s_np_harvest_smoothed_data.csv', dir_d, scenario), row.names=F, na='')
   
   # write NP weights layer also used to calculate pressures and resilience
   write.csv(
-    select(w, rgn_id, product, weight=usd_peak_product_weight),
+    j %>% filter(year == year_max) %>% select(rgn_id, product, weight=usd_peak_product_weight),
     sprintf('%s/data/np_harvest_%s_product-peak_%s-year-max-%d_buffer-%g.csv', dir_d, 'usd', scenario, year_max, harvest_peak_buffer), row.names=F, na='')
   
   # write NP status layers
   for (lyr in c('tonnes','tonnes_rel','usd','usd_rel')) {
     write.csv(
-      j1[,c('rgn_id', 'product', 'year', lyr)],
+      j[,c('rgn_id', 'product', 'year', lyr)],
       sprintf('%s/data/np_harvest_%s_%s-year-max-%d_buffer-%g.csv', dir_d, str_replace(lyr, '_','-'), scenario, year_max, harvest_peak_buffer), row.names=F, na='')
   }
 }
