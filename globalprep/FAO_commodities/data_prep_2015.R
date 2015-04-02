@@ -3,7 +3,12 @@
 ### NOTES: MRF Sep 2 2014: check on how usd_rel is used and cut from functions.R file as a layer read in.
 
 # Prepare FAO commodities data for Natural Products goal. 
-
+# To process new data, places to change code:
+#   * 'dir_d' (in Setup) to reflect new location for raw, tmp, and data
+#   * 'scenarios_year_max' (in Smoothing and Scoring) to include most recent data year.
+#   * 'scenario' list in 'for (scenario in...) {}' (in Smoothing and Scoring) to capture
+#     updated list of scenarios.
+#
 # Updated Apr2015 by oharac. Github ohi-science/issues/issue #370
 #   Minor recoding to get away from using reshape and plyr packages.
 #
