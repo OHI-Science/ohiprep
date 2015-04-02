@@ -1,7 +1,6 @@
 #### Figuring out fisheries data
 
 rm(list = ls())
-library(plyr)
 library(dplyr)
 library(ggplot2)
 library(grid)
@@ -18,23 +17,23 @@ source("~/ohiprep/src/R/common.R")
 
 ## selecting random fish for test b-bmsy run
 # original data from Kristin, ran with uniform prior:
-b_bmsy_kristin <- read.csv("Global/FIS_Bbmsy/cmsy.ohi.df_Jul292014.csv")
+b_bmsy_kristin <- read.csv("raw/cmsy.ohi.df_Jul292014.csv")
 
-catch <- read.csv("Global/FIS_Bbmsy/OHICatchHistoryCMSY_added0s_07_21_2014.csv", stringsAsFactors=FALSE)
+catch <- read.csv("raw/OHICatchHistoryCMSY_added0s_07_21_2014.csv", stringsAsFactors=FALSE)
 
 species_bmsy <- c('Istiophorus albicans_41', 'Sphyrna lewini_31', 'Psenopsis anomala_61',       
                   'Hippoglossus stenolepis_67', 'Parapenaeus longirostris_27', 
                   'Mallotus villosus_21', 'Epinephelus socialis_71', 'Aphanopus carbo_34',
                   'Clupea pallasii pallasii_77', 'Melanogrammus aeglefinus_21')
 
-cdat <- catch %.% 
-  filter(stock_id %in% species_bmsy) %.%
-  #filter(Year >= 1980) %.%  #I think the earlier run restricted data to >=1980, but Kristin's did not seem to do this
+cdat <- catch %>% 
+  filter(stock_id %in% species_bmsy) %>%
+  #filter(Year >= 1980) %>%  #I think the earlier run restricted data to >=1980, but Kristin's did not seem to do this
   arrange(stock_id, yr) 
 
 
 ## Run bbmsy script
-source('Global/FIS_Bbmsy/cmsy_uniform.R')
+source('cmsy_uniform.R')
 
 ### run CMSY function:
 #start the clock

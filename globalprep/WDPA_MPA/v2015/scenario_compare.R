@@ -21,8 +21,10 @@ setwd("~/ohiprep")
 file_path <- 'globalprep/WDPA_MPA/v2015/tmp/iucn_dbfs'
 
 ##########################################################
-## comparing data
+## comparing data within the latest dataset
 ##########################################################
+
+# 2014 vs 2015
 offshore_old <- read.csv(file.path(file_path, "rgn_offshore3nm_wdpa_2015des.dbf_summarized.csv"))
 ggplot(offshore_old, aes(x=area_2014, y=area_2015))+
   geom_point(size=3) +
@@ -65,6 +67,8 @@ ggplot(inland_new, aes(x=area_2014, y=area_2015))+
   labs(title="inland: new (iucn)")
   theme_bw()
 
+
+## old method vs new method
 offshore_year_compare <- offshore_new %>%
   select(rgn_id, area_2014_iucn=area_2014, area_2015_iucn=area_2015) %>%
   left_join(offshore_old)
@@ -73,7 +77,7 @@ ggplot(offshore_year_compare, aes(x=area_2015, y=area_2015_iucn))+
   scale_y_log10() +
   scale_x_log10() +
   geom_abline(slope=1, intercept=0, col="red") +
-  labs(title="offshore") +
+  labs(title="offshore", y="New method area, log", x="Old method area, log") +
   theme_bw()
 
 inland_year_compare <- inland_new %>%
@@ -84,10 +88,47 @@ ggplot(inland_year_compare, aes(x=area_2015, y=area_2015_iucn))+
   scale_y_log10() +
   scale_x_log10() +
   geom_abline(slope=1, intercept=0, col="red") +
-  labs(title = "inland") +
+  labs(title = "inland", y="New method area, log", x="Old method area, log") +
   theme_bw()
+
+##########################################################
+## comparing data with last data (year 2014 only)
+##########################################################
+old_data_2014_offshore <- read.csv("Global/WDPA-MPA_v2014/data/lsp_protarea_offshore3nm.csv")
+old_data_2014_offshore <- old_data_2014_offshore %>%
+  arrange(rgn_id, year) %>%
+  group_by(rgn_id) %>%
+  mutate(OHI2014analysis=cumsum(area_km2)) %>%
+  filter(year==max(year)) %>%
+  select(rgn_id, OHI2014analysis)
+offshore_old  <-  offshore_old %>%
+  left_join(old_data_2014_offshore)
+
+ggplot(offshore_old, aes(x=OHI2014analysis, y=area_2014))+
+  geom_point(size=3) +
+  scale_y_log10() +
+  scale_x_log10() +
+  geom_abline(slope=1, intercept=0, col="red") +
+  labs(title = "Offshore: All pa included", y="Newly analyzed 2014 data") +
+  theme_bw()
+
+offshore_new  <-  offshore_new %>%
+  left_join(old_data_2014_offshore)
+
+ggplot(offshore_new, aes(x=OHI2014analysis, y=area_2014))+
+  geom_point(size=3) +
+  scale_y_log10() +
+  scale_x_log10() +
+  geom_abline(slope=1, intercept=0, col="red") +
+  labs(title = "Offshore: IUCN categories V and VI excluded", y="Newly analyzed 2014 data") +
+  theme_bw()
+
+offshore_new[offshore_new$area_2014==0,]
+
+
 #########################################################
 ## creating data
+## probably only needs to be done once
 #########################################################
 
 #files <- list.files(file_path)
