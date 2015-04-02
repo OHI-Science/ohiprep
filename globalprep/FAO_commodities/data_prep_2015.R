@@ -36,8 +36,8 @@
 #
 
 
-# Setup -------------------------------------------------------------------
-# ------ libraries, pathnames, etc
+######## Setup ---------------------------------------------------------------
+######## ------ libraries, pathnames, etc
 
 
 ### load libraries. Note dplyr, tidyr, stringr are loaded later in common.R
@@ -61,8 +61,8 @@ source(sprintf('%s/R/np_fxn.R', dir_base))
 
 
 
-# Read and process FAO data -----------------------------------------------
-# --------  process files -- loops across value and quant data
+######## Read and process FAO data -------------------------------------------
+######## --------  process files -- loops across value and quant data
 
 
 for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.names=T)) { 
@@ -141,8 +141,8 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
 
 
   
-# Gap-filling -------------------------------------------------------------
-# ----------- See issue #397 for details and debate and pretty graphs.
+######## Gap-filling ---------------------------------------------------------
+######## ----------- See issue #397 for details and debate and pretty graphs.
   
 h_tonnes <- read.csv(file.path(dir_d, 'data/v2015_tonnes.csv'))
 h_usd    <- read.csv(file.path(dir_d, 'data/v2015_usd.csv'))
@@ -240,8 +240,8 @@ write.csv(h_x_tonnes, sprintf('%s/tmp/np_harvest_tonnes_wide.csv', dir_d, units)
 write.csv(h_x_usd, sprintf('%s/tmp/np_harvest_usd_wide.csv', dir_d, units), row.names=F, na='NA')
 
 
-# Smoothing and scoring ---------------------------------------------------
-# --------- determine rolling averages for tonnes and USD in
+######## Smoothing and scoring -----------------------------------------------
+######## --------- determine rolling averages for tonnes and USD in
 #   order to determine peak values.  This is based upon total
 #   harvests by product group, not individual commodity.  
 #   Score harvest (tonnes and usd) relative to peaks.
@@ -281,8 +281,8 @@ for (scenario in c('eez2012','eez2013','eez2014')) {
 
 
   
-# Write .csv files ---------------------------------------------------
-# --------- output the results to .csvs.
+######## Write .csv files ----------------------------------------------------
+######## --------- output the results to .csvs.
 # ??? How many of these variables do we really need to keep, how many to be reported to the .csv files?
 
   write.csv(j  , sprintf('%s/tmp/%s_np_harvest_smoothed_data.csv', dir_d, scenario), row.names=F, na='')
