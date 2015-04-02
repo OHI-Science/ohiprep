@@ -4,46 +4,31 @@
 
 # Prepare FAO commodities data for Natural Products goal. 
 
-# Updated Mar2015 by oharac. Github ohi-science/issues/issue #370
+# Updated Apr2015 by oharac. Github ohi-science/issues/issue #370
 #   Minor recoding to get away from using reshape and plyr packages.
+#
 #   Fixed NA fill error for commodities with no non-NA years.
-#   Tracked end-filling (carrying forward prev year's data to most recent year, if necessary) and
-#     gap-filling.
-#     (1) relative tonnes: tonnes relative to max tonnes for region with 35% buffer. The maximum 
-#         corresponds to the year with the highest $ value - but it would probably be better to 
-#         just base this off tonnes. When we redo these data lets evaluate this approach.
-#     (2) weighting: This weights the contribution of each product according to USD at max year 
-#         for a region. It makes sense to use $, because comparing extraction weight of sponges 
-#         vs. ornamentals doesn't make sense.
-#     (3) Exposure: For fish oil this value is the FIS score (which is a bit different than what 
-#         is described in the paper because FIS score can have penalties for underfishing). The other 
-#         values are determined by: log (harvest/habitat area + 1) / log[max(harvest/habitat area) +1].
 #
-#     The habitat area used for seaweeds: rocky reef
-#     The habitat area used for coral: coral
-#     The habitat area used for shells, ornamentals, sponges: coral plus rocky reef
+#   Carved script up into functions for flexibility in trying different approaches.
+#     The functions are in ./R/np_fxn.R
 #
-#     Calculation
-#       For each product:
-#         sustainability = 1- average(exposure, risk)
-#         Prod_score = sustainability*relative tonnes
-#       Then take a weighted average of the Prod_score using the "weighting" file.
-# 
-# Notes on modifying the function
-#     Several data layers are called that are not used: np_harvest_tonnes, np_harvest_usd, np_harvest_usd_relative
-# There are these notes that I'm not sure what they mean in function code: 
-#     TODO: add smoothing a la PLoS 2013 manuscript
-#     TODO: move goal function code up to np_harvest_usd-peak-product-weight_year-max-%d.csv into 
-#           ohiprep so layer ready already for calculating pressures & resilience
+#   Reworked gapfilling to process at commodity level rather than product level.
+#   * Zero-fill: for observations with NAs for both values (tonnes & usd), fill both as zero 
+#     Also cross-fills zeros where one value is zero, other is NA
+#   * Regression fill, first pass: Where enough non-zero paired observations exist at the country level, 
+#     use country-level data to create regression models (tonnes ~ usd and vice versa) for 
+#     gapfilling.  About 25% success. 
+#   * Regression fill, second pass: Where pass 1 failed, and enough non-zero paired observations exist at
+#     georegional level, use georegional-level data to create regression models (tonnes ~ usd + year, and
+#     vice versa) for gapfilling.  About 90% success. 
+#   * Regression fill third pass: Where passes 1 and 2 failed, use global-scale data to create 
+#     regression models (tonnes ~ usd + year, and vice versa) for gapfilling.  100% success.
+#   * End-fill:  For years where NAs still exist in final year, carry forward data from prior year
+#     (after other gapfilling techniques).
 #
-# Previously updated by JSLowndes/bbest Jun2014; File was originally clean_FAOcommodities.r:(by JStewart Apr2013)
-#     read in quant/value files
-#     remove Totals, Yugoslavia rows
-#     translate FAO data codes (F, ..., -, 0 0)
-#     carry previous year's value forward if value for max(year) is NA
-#     merge with commodities and collapse to product
-#     add rgn_id using new cbind_rgn function (@bbest updated add_rgn_id())
-#     save single files for each commodity 
+#   Script outputs gapfill report, np_gapfill_report.csv, by region/commodity/year.
+#
+#
 
 
 # Setup -------------------------------------------------------------------
@@ -118,7 +103,7 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
 
   ### load lookup for converting commodities to products
 
-  com2prod <- read.csv(file.path(dir_d, 'commodities2products.csv'), na.strings='')
+  com2prod <- read.csv(file.path(dir_base, 'commodities2products.csv'), na.strings='')
   
   #   np_commodity_lookup(m, com2prod) # in './R/np_fxn.R'
 
