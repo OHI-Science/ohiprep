@@ -1,4 +1,14 @@
-#cmd: C:\Python27\ArcGISx6410.2\python.exe G:\ohiprep\Global\WDPA-MPA_v2014\model.py
+# File: ohiprep/globalprep/WDPA_MPA/v2015/model_iucn.py
+#
+# Modified March 2015 by Casey O'Hara
+#
+# Filters by 
+# * STATUS == 'Designated' - avoids proposed protected areas.
+# * IUCN_CAT != ('V' or 'VI') - eliminates all areas of Category V or VI, due
+#   to questionable or highly variable protection granted by these categories.
+# * NO_TAKE == 'All' - includes back in, any category V or VI specifically
+#   designated as complete no-take zones, due to unambiguous protection.
+
 
 import arcpy, os, subprocess, csv, sys, socket
 from arcpy.sa import *
