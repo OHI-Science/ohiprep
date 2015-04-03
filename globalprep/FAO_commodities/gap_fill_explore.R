@@ -1,6 +1,11 @@
 ############################################################
 ## Exploring methods of gap-filling for NP commodities
+## mrf 4/2/2015
 ############################################################
+
+# This method is based on explorations from: gap_fill_explore.R and Issue #397 and this document:
+# https://www.lucidchart.com/documents/edit/20f29b5a-4a15-4128-ac40-9f14a7f1ccdc?shared=true
+
 
 #####################################################################
 ### setup ---- libraries, pathnames, etc
