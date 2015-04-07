@@ -40,14 +40,15 @@ source('src/R/common.R')
 ###       Otherwise, presume that scripts are always working from your default ohiprep folder
 
 
-dir_base <- 'globalprep/FAO_Commodities'
-dir_d <- sprintf('%s/v2014_test', dir_base)
+dir_np <- 'globalprep/FAO_Commodities'
+data_year <- 'v2014_test'
+dir_d <- sprintf('%s/%s', dir_np, data_year)
 ### NOTE: Set output paths to here, but do not use setwd().
 ###       This way, any scripts and code in ohiprep will still work, b/c always in root ohiprep dir.
 
 ### Load NP-specific user-defined functions and functions specific to FAO data (cleanup)
-source(sprintf('%s/R/np_fxn.R', dir_base))
-source(sprintf('%s/R/fao_fxn.R', dir_base))
+source(sprintf('%s/R/np_fxn.R', dir_np))
+source(sprintf('%s/R/fao_fxn.R', dir_np))
 
 
 
@@ -94,7 +95,7 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
 
   ### load lookup for converting commodities to products
 
-  com2prod <- read.csv(file.path(dir_base, 'commodities2products.csv'), na.strings='')
+  com2prod <- read.csv(file.path(dir_np, 'commodities2products.csv'), na.strings='')
   
   #   np_commodity_lookup(m, com2prod) # in './R/np_fxn.R'
 
@@ -120,7 +121,7 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   names(m)[names(m) == 'value'] <- units  
   
   ### output to .csv
-  f_out <- sprintf('%s/data/%s_%s.csv', dir_d, basename(dir_d), units)
+  f_out <- sprintf('%s/data/%s_%s.csv', dir_d, data_year, units)
   write.csv(m, f_out, row.names=F, na='')
 }
 
@@ -144,14 +145,13 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
 ###     (after other gapfilling techniques).
 
   
-h_tonnes <- read.csv(file.path(dir_d, 'data/v2015_tonnes.csv'))
-h_usd    <- read.csv(file.path(dir_d, 'data/v2015_usd.csv'))
+h_tonnes <- read.csv(file.path(dir_d, sprintf('data/%s_tonnes.csv', data_year)))
+h_usd    <- read.csv(file.path(dir_d, sprintf('data/%s_usd.csv',    data_year)))
 
 h <- np_harvest_cat(h_tonnes, h_usd)
 ### concatenates h_tonnes and h_usd data
 ### h includes rgn_name, rgn_id, commodity, product, year, tonnes, usd.
 
-print(sprintf('class of commodity = %s', class(h$commodity)))
 
 h <- h %>% np_harvest_preclip
 ### clips out years prior to first reporting year, for each commodity per region
@@ -164,7 +164,7 @@ h <- h %>% np_harvest_gapflag
 ### 'gapfill' will be in (zerofill, endfill, tbd, none)
 
 data_check <- h %>% np_datacheck()
-### for each commodity within each region, creates summary info:
+### for each commodity within each region, creates (doesn't save...) summary info:
 ###   num_years:        the length of the data series for this commodity in this region
 ###   usd_unique_nz:    (or 'tns') number of unique non-zero values for usd or tonnes 
 ###   usd_na & tns_na:  number of NA occurrences
