@@ -214,7 +214,7 @@ np_regr_coef <- function(h, scope = 'rgn_id', vars = 'tdy') {
     do(mdl = lm(as.formula(model[1]), data=.)) %>%
     summarize(
       scope_id    = switch(scope, rgn_id = rgn_id, georgn_id = georgn_id, global = NA),
-      commodity   = commodity, 
+      commodity   = as.character(commodity), 
       usd_ix0     = coef(mdl)['(Intercept)'],
       usd_coef    = coef(mdl)['usd'],
       yr_tns_coef = ifelse(vars=='tdy', coef(mdl)['year'], 0))
@@ -225,12 +225,22 @@ np_regr_coef <- function(h, scope = 'rgn_id', vars = 'tdy') {
     do(mdl = lm(model[2], data=.)) %>%
     summarize(
       scope_id    = switch(scope, rgn_id = rgn_id, georgn_id = georgn_id, global = NA),
-      commodity   = commodity, 
+      commodity   = as.character(commodity), 
       tonnes_ix0  = coef(mdl)['(Intercept)'],
       tonnes_coef = coef(mdl)['tonnes'],
       yr_usd_coef = ifelse(vars=='tdy', coef(mdl)['year'], 0))
 
-  m <- full_join(m_tonnes, m_usd, by=c('scope_id','commodity'))
+  if(dim(m_tonnes)[1]==0) {      
+    # m_tonnes = no data; can't full_join, mutate manually
+    m <- m_usd    %>% mutate(usd_ix0 = NA, usd_coef = NA, yr_tns_coef = NA)
+  } else if(dim(m_usd)[1]==0) {  
+    # m_usd = no data; can't full_join, mutate manually
+    m <- m_tonnes %>% mutate(tonnes_ix0 = NA, tonnes_coef = NA, yr_usd_coef = NA)
+  } else {
+    # OK to perform full_join
+    m <- full_join(m_tonnes, m_usd, by=c('scope_id','commodity'))
+  }
+    
   m <- switch(scope, 
               rgn_id    = mutate(m, rgn_id = scope_id),
               georgn_id = mutate(m, georgn_id = scope_id),
