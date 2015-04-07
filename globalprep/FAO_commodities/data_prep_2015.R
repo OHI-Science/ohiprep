@@ -17,27 +17,17 @@
 #   Carved script up into functions for flexibility in trying different approaches.
 #     The functions are in ./R/np_fxn.R
 #
-#   Reworked gapfilling to process at commodity level rather than product level.
-#   * Zero-fill: for observations with NAs for both values (tonnes & usd), fill both as zero 
-#     Also cross-fills zeros where one value is zero, other is NA
-#   * Regression fill, first pass: Where enough non-zero paired observations exist at the country level, 
-#     use country-level data to create regression models (tonnes ~ usd and vice versa) for 
-#     gapfilling.  About 25% success. 
-#   * Regression fill, second pass: Where pass 1 failed, and enough non-zero paired observations exist at
-#     georegional level, use georegional-level data to create regression models (tonnes ~ usd + year, and
-#     vice versa) for gapfilling.  About 90% success. 
-#   * Regression fill third pass: Where passes 1 and 2 failed, use global-scale data to create 
-#     regression models (tonnes ~ usd + year, and vice versa) for gapfilling.  100% success.
-#   * End-fill:  For years where NAs still exist in final year, carry forward data from prior year
-#     (after other gapfilling techniques).
+#   Reworked gapfilling to process at commodity level rather than product level.  See 
+#     'Gap-filling' section below for more details.
 #
 #   Script outputs gapfill report, np_gapfill_report.csv, by region/commodity/year.
 #
 #
 
 
-######## Setup ---------------------------------------------------------------
-######## ------ libraries, pathnames, etc
+##############################################################################.
+### Setup -----
+### load libraries, source function files, set pathnames, etc
 
 
 ### load libraries. Note dplyr, tidyr, stringr are loaded later in common.R
@@ -51,18 +41,19 @@ source('src/R/common.R')
 
 
 dir_base <- 'globalprep/FAO_Commodities'
-dir_d <- sprintf('%s/v2015', dir_base)
+dir_d <- sprintf('%s/v2014_test', dir_base)
 ### NOTE: Set output paths to here, but do not use setwd().
 ###       This way, any scripts and code in ohiprep will still work, b/c always in root ohiprep dir.
 
-### Load NP-specific user-defined functions
+### Load NP-specific user-defined functions and functions specific to FAO data (cleanup)
 source(sprintf('%s/R/np_fxn.R', dir_base))
+source(sprintf('%s/R/fao_fxn.R', dir_base))
 
 
 
-
-######## Read and process FAO data -------------------------------------------
-######## --------  process files -- loops across value and quant data
+##############################################################################.
+### Read and process FAO data -----
+### Process FAO data files -- loops across value and quant data
 
 
 for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.names=T)) { 
@@ -88,16 +79,11 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   
   m <- m %>%
     filter(!country %in% c('Totals', 'Yugoslavia SFR')) %>%
-    mutate(  
-      value = str_replace(value, fixed( ' F'),    ''),  # FAO denotes with F when they have estimated the value using best available data
-      value = str_replace(value, fixed('0 0'), '0.1'),  # FAO denotes something as '0 0' when it is > 0 but < 1/2 of a unit. 
-      value = str_replace(value, fixed(  '-'),   '0'),  # FAO's 0
-      value = str_replace(value, fixed('...'),    NA),  # FAO's NA
-      value = str_replace(value, fixed('.'),      NA),
-      value = ifelse(value =='', NA, value),  
-      value = as.numeric(as.character(value)),
-      year  = as.integer(as.character(year))) %>%       # search in R_inferno.pdf for "shame on you"
-    select(-trade) %>%                                  # eliminate 'trade' column
+    fao_clean_data() %>%  
+      # swaps out FAO-specific codes. NOTE: optional parameter 'lowdata_value' can be
+      # passed to control how a '0 0' code is interpreted.
+    select(-trade)   %>%                                  
+      # eliminate 'trade' column
     arrange(country, commodity, is.na(value), year)
 
   
@@ -141,8 +127,22 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
 
 
   
-######## Gap-filling ---------------------------------------------------------
-######## ----------- See issue #397 for details and debate and pretty graphs.
+##############################################################################.
+### Gap-filling -----
+### See issue #397 for details and debate and pretty graphs.
+###   * Zero-fill: for observations with NAs for both values (tonnes & usd), fill both as zero 
+###     Also cross-fills zeros where one value is zero, other is NA
+###   * Regression fill, first pass: Where enough non-zero paired observations exist at the country level, 
+###     use country-level data to create regression models (tonnes ~ usd and vice versa) for 
+###     gapfilling.  About 25% success. 
+###   * Regression fill, second pass: Where pass 1 failed, and enough non-zero paired observations exist at
+###     georegional level, use georegional-level data to create regression models (tonnes ~ usd + year, and
+###     vice versa) for gapfilling.  About 90% success. 
+###   * Regression fill third pass: Where passes 1 and 2 failed, use global-scale data to create 
+###     regression models (tonnes ~ usd + year, and vice versa) for gapfilling.  100% success.
+###   * End-fill:  For years where NAs still exist in final year, carry forward data from prior year
+###     (after other gapfilling techniques).
+
   
 h_tonnes <- read.csv(file.path(dir_d, 'data/v2015_tonnes.csv'))
 h_usd    <- read.csv(file.path(dir_d, 'data/v2015_usd.csv'))
@@ -240,13 +240,17 @@ write.csv(h_x_tonnes, sprintf('%s/tmp/np_harvest_tonnes_wide.csv', dir_d, units)
 write.csv(h_x_usd, sprintf('%s/tmp/np_harvest_usd_wide.csv', dir_d, units), row.names=F, na='NA')
 
 
-######## Smoothing and scoring -----------------------------------------------
-######## --------- determine rolling averages for tonnes and USD in
-#   order to determine peak values.  This is based upon total
-#   harvests by product group, not individual commodity.  
-#   Score harvest (tonnes and usd) relative to peaks.
-#   Output values as .csvs.
-#   Perform this for all given scenarios, using a for loop.
+##############################################################################.
+### Smoothing and scoring ------
+### Determine rolling averages for tonnes and USD in order to determine peak 
+### values.  This is based upon total harvests by product group, not 
+### individual commodity.  
+### ??? NOTE: Since we are using a right-aligned rolling average, it is
+###     likely that we can just run rolling average once over whole data
+###     set, rather than re-running for each series of years?  Not gonna
+###     save a lot of time, but more efficient...
+### Score harvest (tonnes and usd) relative to peaks. Output values as .csvs.
+### Perform this for all given scenarios, using a for loop.
 
 
 ### ???: update this to something like year_max, year_max - 1, year_max - 2, etc
@@ -281,9 +285,10 @@ for (scenario in c('eez2012','eez2013','eez2014')) {
 
 
   
-######## Write .csv files ----------------------------------------------------
-######## --------- output the results to .csvs.
-# ??? How many of these variables do we really need to keep, how many to be reported to the .csv files?
+##############################################################################.
+### Write .csv files -----
+### Output the results to .csvs for use in toolbox.
+### ??? How many of these variables do we really need to keep, how many to be reported to the .csv files?
 
   write.csv(j  , sprintf('%s/tmp/%s_np_harvest_smoothed_data.csv', dir_d, scenario), row.names=F, na='')
   

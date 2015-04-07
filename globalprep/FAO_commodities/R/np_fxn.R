@@ -54,10 +54,10 @@ np_split_antilles <- function(m) {
     select(-value, -country) %>%
     gather(country, value, -commodity, -product, -year) %>%
     mutate(country = as.character(country))  # otherwise, m_ant$country is factor; avoids warning in bind_rows bel
-  m <- m %>%
+  m1 <- m %>%
     filter(country != 'Netherlands Antilles') %>%
     bind_rows(m_ant)
-  return(m)
+  return(m1)
 }
 
 
@@ -70,18 +70,18 @@ np_harvest_cat <- function(h_tonnes, h_usd) {
 ###   mutate() and join() and such.
 
 
-  h <- merge(
+  h1 <- merge(
     h_tonnes %>%
       group_by(rgn_id, product),
     h_usd %>%
       group_by(rgn_id, product),
     by=c('rgn_name', 'rgn_id', 'commodity', 'product', 'year'), all=T) 
   
-  h <- h%>%
+  h1 <- h1 %>%
     mutate(commodity = as.character(commodity)) %>%
     arrange(rgn_id, product, commodity, year)
 
-  return(h)
+  return(h1)
 }
 
 
@@ -92,7 +92,7 @@ np_harvest_preclip <- function(h) {
 ### * Eliminate all years prior to first reporting year.
 ### * Returns cleaned data with same columns
 
-  h <- h %>%
+  h1 <- h %>%
     group_by(rgn_id, commodity) %>% 
     mutate(no_data = is.na(tonnes) & is.na(usd)) %>%
     arrange(rgn_id, commodity, no_data, year) %>%
@@ -112,7 +112,7 @@ np_harvest_preclip <- function(h) {
     
     arrange(rgn_id, product, commodity, year)
 
-  return(h)
+  return(h1)
 }
 
 
@@ -123,7 +123,7 @@ np_harvest_gapflag <- function(h) {
 ### * Adds new column 'gapfill'
 ### * NOTE: Does not actually perform any gap-filling!
 
-  h <- h %>%
+  h1 <- h %>%
     group_by(rgn_id, commodity) %>%
     mutate(
       no_data = is.na(tonnes) & is.na(usd),
@@ -144,7 +144,7 @@ np_harvest_gapflag <- function(h) {
   
     arrange(rgn_id, product, commodity, year)
 
-  return(h)
+  return(h1)
 }
 
 
@@ -154,7 +154,7 @@ np_zerofill <- function(h) {
 ### Zero-fills observations with NAs for both tonnes and USD.  Also
 ### cross-fills zeros for observations where one side is zero, other NA.
 
-  h <- h %>%
+  h1 <- h %>%
     group_by(rgn_id, commodity) %>%
     mutate(
       tonnes    = ifelse(gapfill=='zerofill', 0, tonnes),
@@ -166,7 +166,7 @@ np_zerofill <- function(h) {
       ### for years where one side is zero and the other is NA, fill NA with zero. 
     arrange(rgn_id, product, commodity, year)
   
-  return(h)
+  return(h1)
 }
 
 
@@ -174,7 +174,7 @@ np_zerofill <- function(h) {
 np_lowdata_filter <- function(h, nonzero_h_yr_min = 4) {
 ### Excludes commodities with few non-zero observations with a region.
 
-  h <- h %>%
+  h1 <- h %>%
     group_by(rgn_id, commodity) %>%
     mutate(
       nonzero_n = sum(tonnes > 0 | usd > 0)) %>%
@@ -186,7 +186,7 @@ np_lowdata_filter <- function(h, nonzero_h_yr_min = 4) {
     ### clean up temp columns
     arrange(rgn_id, product, commodity, year)
   
-  return(h)
+  return(h1)
 }
 
 
@@ -304,7 +304,7 @@ np_regr_fill <- function(h, years_back=50, min_paired_obs=4, scope = 'rgn_id', v
 np_end_fill <- function(h) {
 ### Endfill final data year for observations with neither tonnes nor USD data.
 
-  h <- h %>%
+  h1 <- h %>%
     group_by(rgn_id, commodity) %>%
     mutate(
       year_last   = max(year, na.rm=TRUE),
@@ -318,7 +318,7 @@ np_end_fill <- function(h) {
       ### clean up regression model gap-fill variables and end-fill variables.
     arrange(rgn_id, product, commodity, year)
   
-  return(h)
+  return(h1)
 }
 
 
@@ -368,7 +368,7 @@ np_harvest_smooth <- function(j, rollwidth = 4) {
       tonnes = ifelse(!is.na(tonnes_rollmean), tonnes_rollmean, tonnes),
       usd    = ifelse(!is.na(   usd_rollmean),    usd_rollmean,    usd)) %>%
     select(rgn_id, product, year, tonnes, usd, tonnes_orig, usd_orig)
-  return(j)
+  return(j1)
 }
 
 
@@ -380,19 +380,19 @@ np_harvest_peak <- function(j, buffer = 0.35, recent_years = 10) {
 ### From peak USD values, determines proportional weighting of product
 ###   within the region.
 
-  j <- j %>%
+  j1 <- j %>%
     group_by(rgn_id, product) %>%
     mutate(tonnes_peak = max(tonnes, na.rm=T)  * (1 - buffer))
   
-  j_recent <- j %>%
+  j_recent <- j1 %>%
     filter(year >= year_max - recent_years) %>%
     mutate(usd_peak = max(   usd, na.rm=T)  * (1 - buffer)) %>%
     select(rgn_id, product, year, usd_peak) %>%
     summarize(usd_peak = max(usd_peak))
       ### ??? Without the max() it returns error 'expecting single value' ---- but usd_peak should be a single value
-  j <- j %>% left_join(j_recent, by=c('rgn_id','product'))
+  j1 <- j1 %>% left_join(j_recent, by=c('rgn_id','product'))
 
-  w <- j %>%
+  w <- j1 %>%
     filter(year == year_max) %>%
     group_by(rgn_id) %>%
     mutate(
@@ -400,13 +400,13 @@ np_harvest_peak <- function(j, buffer = 0.35, recent_years = 10) {
       usd_peak_product_weight = usd_peak / usd_peak_allproducts)    
   
   ### join product weighting proportions to j
-  j <- j %>% 
+  j1 <- j1 %>% 
     left_join(
       w %>%
         select(rgn_id, product,  usd_peak_product_weight), 
       by=c('rgn_id','product'))
 
-  return(j)
+  return(j1)
 }
 
 
@@ -416,14 +416,14 @@ np_harvest_status <- function(j) {
 ###   to adjusted peak value.  Does not penalize overharvesting - 
 ### ???  Should there be an upper value, say peak*(1 - 0.25)?
 
-  j <- j %>% 
+  j1 <- j %>% 
     ungroup() %>%
       ### ungroup() necessary because of incompatible type error, 
       ###   caused by conflict among group_by(), mutate(), and ifelse() in the dplyr package.
     mutate(tonnes_rel = ifelse(tonnes >= tonnes_peak, 1, tonnes / tonnes_peak),
            usd_rel    = ifelse(usd    >= usd_peak,    1,   usd / usd_peak)) %>%
     group_by(rgn_id, product)
-  return (j)
+  return (j1)
 }
 
 
@@ -452,10 +452,10 @@ add_georegion_id <- function(k) {
   georegion <- georegion %>%
     filter(level == "r2")
   
-  k <- k %>%
+  k1 <- k %>%
     left_join(key, by = 'rgn_id') %>%
     left_join(georegion, by = 'cntry_key') %>%
     select(-cntry_key, -level)
       ### cleaning out variables
-  return(k)
+  return(k1)
 }
