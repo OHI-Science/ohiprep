@@ -1,6 +1,11 @@
-fao_clean_data <- function(m, lowdata_value = 0.1) {
-### Swaps out FAO-specific codes for analysis.  Note separate calls to mutate() might
-### not be necessary, but ensures proper sequence of flag-replacing, just in case...
+fao_clean_data <- function(m, sub_0_0 = 0.1) {
+### Swaps out FAO-specific codes for analysis:
+### * FAO_commodities (Natural Products goal)
+###
+### Note separate calls to mutate() may not be necessary, but ensures proper sequence of flag-replacing, just in case...
+###
+### Provenance:
+###   Apr2015: created by Casey O'Hara (oharac)
   
   m1 <- m %>%
     mutate(  
@@ -9,9 +14,9 @@ fao_clean_data <- function(m, lowdata_value = 0.1) {
       value = str_replace(value, fixed('...'),    NA),  
         # FAO's code for NA
       value = str_replace(value, fixed(  '.'),    NA)) %>%
-        # is this a code that shows up? This line MUST occur before replacing '0 0' with '0.1'
+        # is this an FAO code or just cleanup? This line must not occur after replacing '0 0' with '0.1'
     mutate(
-      value = str_replace(value, fixed('0 0'), lowdata_value),  
+      value = str_replace(value, fixed('0 0'), sub_0_0),  
         # FAO denotes something as '0 0' when it is > 0 but < 1/2 of a unit. 
         # Replace with lowdata_value.
       value = str_replace(value, fixed(  '-'),   '0'),  

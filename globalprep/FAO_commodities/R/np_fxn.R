@@ -1,3 +1,10 @@
+### np_fxn.R
+###
+### Functions to automate processing of FAO commodities data for Natural Products goal.
+###   Main script is at ohiprep/globalprep/FAO_commodities/data_prep.R
+###
+### Provenance:
+###  Apr2015: created by Casey O'Hara (oharac)
 
 np_commodity_lookup <- function(data, com2prod) {
 ### check for commodities in data frame m not found in lookup, per 
@@ -365,6 +372,7 @@ np_harvest_smooth <- function(j, rollwidth = 4) {
 
   j1 <- j %>%
     group_by(rgn_id, product) %>%
+    mutate(n_years = length(year)) %>%
     filter(n_years >= rollwidth) %>%
     left_join(
       j %>%
