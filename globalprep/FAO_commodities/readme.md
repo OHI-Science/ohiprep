@@ -4,7 +4,7 @@ FAO Commodities data are used to determine the Natural Products goal.
 ##Files and folders:
 * `./data_prep.R` script prepares the raw FAO commodities data based upon the most current year's report.  
 This preparation includes interpreting various FAO-specific codes and flags, eliminating NAs prior to first 'reporting' year (first non-NA report), filtering commodities by product group, gap-filling, smoothing, and processing status results based on harvest relative to buffered peak value.
-    * `ohiprep/src/R/fao_fxn.R` is sourced from data_prep.R to clean up FAO-specific flags and codes.
+    * `ohiprep/src/R/fao_fxn.R` is sourced from `data_prep.R` to clean up FAO-specific flags and codes.
 * `commodities2products.csv`: a lookup key to match certain commodities with the six NP products.
 * `./R`: contains R scripts related to data processing.
     * `./R/np_fxn.R`: functions called from within ./data_prep.R for gap-filling etc.
