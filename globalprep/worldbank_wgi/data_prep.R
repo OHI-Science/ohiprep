@@ -10,9 +10,17 @@
 
 
 # setup ----
-library(ohicore) #devtools::install_github('ohi-science/ohicore@dev')
+library(ohicore) # devtools::install_github('ohi-science/ohicore@dev')
+library(tools)
+library(dplyr)
+library(tidyr)
+devtools::install_github("hadley/lazyeval", build_vignettes = FALSE)
+devtools::install_github("rstudio/ggvis", build_vignettes = FALSE)
+library(testthat) # install.packages('testthat')
 library(WDI) # install.packages('WDI')
 
+dir_wgi = '~/github/ohiprep/globalprep/worldbank_wgi'
+setwd(dir_wgi)
 
 # check website to see what years are available: http://info.worldbank.org/governance/wgi/index.aspx#home
 yr_start = 1996
@@ -57,91 +65,128 @@ d = key_voice %>%
   left_join(key_rolaw %>% select(-iso2c), by=(c('country', 'year'))) %>%
   left_join(key_corrp %>% select(-iso2c), by=(c('country', 'year'))); head(d); summary(d); sapply(d, class)  
 
-d_wgi = d %>%
+d$country = as.factor(d$country) 
+
+# archived record of raw data used for eez2015: write.csv(d, file.path(dir_wgi, 'raw', 'worldbank_wgi_from_wdi_api.csv'), row.names=F)
+
+## wgi calculations ----
+wgi_range = c(-2.5, 2.5)
+
+d_calcs = d %>%
   group_by(country, year) %>%
-  mutate(score = sum(VA.EST, PV.EST, GE.EST, RQ.EST, RL.EST, CC.EST, na.rm=T)/6); head(d_wgi); summary(d_wgi)
-# make sure this matches last year's calculations:
-# summary(read.csv('~/github/ohiprep/Global/WorldBank-WGI_v2013/raw/GL-WorldBank-WGI_v2011-cleaned.csv'))
+  mutate(score_wgi_scale = sum(VA.EST, PV.EST, GE.EST, RQ.EST, RL.EST, CC.EST, na.rm=T)/6) %>%
+  mutate(score =  (score_wgi_scale - wgi_range[1]) / (wgi_range[2] - wgi_range[1])) %>%
+  ungroup(); head(d_calcs); summary(d_calcs)
 
-## JSL come back here Apr 1
-rng = c(-2.5, 2.5)
-d.m2 = within(d.m,{
-  score = (score - rng[1]) / (rng[2] - rng[1])}); head(d.m2); summary(d.m2)
+## error checking pre gapfill ----
+
+# the idea here is that the lowest scoring regions (score_wgi_scale) should make
+# sense compared to the lowest scoring regions by all 6 indicators. These won't
+# necessarily match perfectly because we're ordering by the different
+# indicators, but the regions in all should be familiar.
+print('compare the following to see if the lowest scoring countries make sense compared with their individual indicators')
+d_calcs %>% 
+  arrange(score_wgi_scale) %>% head(10)
+d_calcs %>% 
+  arrange(VA.EST, PV.EST, GE.EST) %>% head(10)
+d_calcs %>% 
+  arrange(PV.EST, RL.EST, VA.EST) %>% head(10)
+d_calcs %>% 
+  arrange(CC.EST, RQ.EST, PV.EST) %>% head(10)
+
+# do the same as above for the highest scoring
+print('compare the following to see if the highest scoring countries make sense compared with their individual indicators')
+d_calcs %>% 
+  arrange(desc(score_wgi_scale)) %>% head(10)
+d_calcs %>% 
+  arrange(desc(VA.EST), desc(PV.EST), desc(GE.EST)) %>% head(10)
+d_calcs %>% 
+  arrange(desc(PV.EST), desc(RL.EST), desc(VA.EST)) %>% head(10)
+d_calcs %>% 
+  arrange(desc(CC.EST), desc(RQ.EST), desc(GE.EST)) %>% head(10)
+
+
+# make sure 'score_wgi_scale' matches last year's calculations:
+print('compare the following to see if ordered countries make sense compared with data from last year')
+d_calcs %>% select(country, year, score_wgi_scale) %>%
+  arrange(score_wgi_scale) %>% head(10)
+read.csv('~/github/ohiprep/Global/WorldBank-WGI_v2013/raw/GL-WorldBank-WGI_v2011-cleaned.csv') %>%
+  arrange(score) %>% head(10)
+
+d_calcs %>% select(country, year, score_wgi_scale) %>%
+  arrange(desc(score_wgi_scale)) %>% head(10)
+read.csv('~/github/ohiprep/Global/WorldBank-WGI_v2013/raw/GL-WorldBank-WGI_v2011-cleaned.csv') %>%
+  arrange(desc(score)) %>% head(10)
+
+
+
+readline("Look through the error checking above; press return to continue") 
+
+
+# now just keep the columns of interest
+
+d_wgi = d_calcs %>%
+  select(country, year, score); head(d_wgi); summary(d_wgi)
 
     
-    
-
-##  add rgn_id using name_to_rgn ----
-m_d = name_to_rgn(d_wgi, fld_name='country', flds_unique=c('country','year'), 
-                  fld_value='score', add_rgn_name=T, collapse_fxn = mean); head(m_d); summary(m_d) 
-
-
-
-## save tmp file ----
-#so can just load this instead of running the whole thing
-tmpsave = file.path(dir_d, 'tmp', 'rgn_wb_wgi_2014a_tmp.csv')
-# write.csv(d.all, tmpsave, na = '', row.names=F)
-d.all = read.csv(tmpsave); head(d.all)
-
-# prepare to add rgn_ids: d.all2 would be final, but must combine the 6 separate indicators 
-d.all2 = d.all %.%
-  select(country,
-         score = Estimate,
-         year,
-         category = WGI); head(d.all2)
-
-# calculate average score and rescale ----
-
-d.m = d.all2 %.%
-  group_by(country, year) %.%
-  summarize(score = mean(score, na.rm=T)); head(d.m); summary(d.m)
-
-rng = c(-2.5, 2.5)
-d.m2 = within(d.m,{
-  score = (score - rng[1]) / (rng[2] - rng[1])}); head(d.m2); summary(d.m2)
+## cleanup ----
 
 # partition Netherland Antilles
-ind = d.m2$country %in% c('Netherlands Antilles (former)')
-d.m3 = rbind(d.m2[!ind,],
-             data.frame(country=c('Sint Maarten', 'Curacao', 'Bonaire', 'Saba', 'Sint Eustasius'), # Aruba reported separately
-                        score=rep(d.m2$score[ind], 5),
-                        year=rep(d.m2$year[ind], 5)))
 
-# m_d[duplicated(m_d[, c('rgn_id', 'year')]),] 
+d_ant = d_wgi %>%
+  filter(country == 'Netherlands Antilles') %>% 
+  ungroup() %>%
+  mutate(
+    'Bonaire'        = score,    # Aruba reported separately
+    'Curacao'        = score,
+    'Saba'           = score,
+    'Sint Maarten'   = score,
+    'Sint Eustatius' = score) %>%
+  select(-score, -country) %>%
+  gather(country, score, -year); head(d_ant)
+
+
+d_wgi2 = rbind(d_wgi %>%
+                 filter(country != 'Netherlands Antilles'),
+               d_ant)
+
+##  add rgn_id using name_to_rgn ----
+# if this gives an error make sure you are working with ohicore@dev
+m_d = name_to_rgn(d_wgi2, fld_name='country', flds_unique=c('country','year'), 
+                  fld_value='score', add_rgn_name=T, collapse_fxn = 'mean'); head(m_d); summary(m_d) 
 
 
 ## sovereign gapfilling with gapfill_georegions.r ----
 # use gapfill_georegions: lookup table that has sov_ids and weight the 'parent' country with 1, others with 0
 
 # read in lookups
-sovregions = read.csv('../ohiprep/src/LookupTables/eez_rgn_2013master.csv', na.strings='') %.% 
+sovregions = read.csv('~/github/ohiprep/src/LookupTables/eez_rgn_2013master.csv', na.strings='') %>% 
   select(rgn_id = rgn_id_2013,
-         r2 = sov_id) %.%     # r2 is actually rgn_ids of sovereign regions
-  group_by(rgn_id) %.%                       # remove duplicated countrys from this rgn_id list                    
-  summarize(r2 = mean(r2, na.rm=T)) %.% # duplicates always have the same sov_id (r2 value)
+         r2 = sov_id) %>%               # r2 is actually rgn_ids of sovereign regions
+  group_by(rgn_id) %>%                  # remove duplicated countries from this rgn_id list                    
+  summarize(r2 = mean(r2, na.rm=T)) %>% # duplicates always have the same sov_id (r2 value)
   mutate(r1 = r2, 
          r0 = r2,
-         fld_wt = as.integer(rgn_id == r2)) %.%  # flag the 'parent' rgn_id with 1, others with 0 
+         fld_wt = as.integer(rgn_id == r2)) %>%  # flag the 'parent' rgn_id with 1, others with 0 
   filter(rgn_id < 255, rgn_id != 213); head(sovregions)
 
 # join fld_wt weighting to m_d
-m_d = m_d %.% 
-  left_join(sovregions %.%
+m_d = m_d %>% 
+  left_join(sovregions %>%
               select(rgn_id, fld_wt),
             by = 'rgn_id'); head(m_d)
 
 # gapfill_georegions
-attrsave  = file.path(dir_d, 'data', 'rgn_wb_wgi_2014a_attr.csv')
+attrsave  = file.path(dir_wgi, 'data', 'rgn_wb_wgi_2014a_attr.csv')
 
-# library(devtools); load_all('../ohicore')
 # source('../ohicore/R/gapfill_georegions.R')
 d_g_a = gapfill_georegions(
-  data = m_d %.%
-    filter(!rgn_id %in% c(213,255)) %.%
+  data = m_d %>%
+    filter(!rgn_id %in% c(213,255)) %>%
     select(rgn_id, year, score, fld_wt),
   fld_id = c('rgn_id'),
   fld_weight = 'fld_wt',
-  georegions = sovregions %.%
+  georegions = sovregions %>%
     select(-fld_wt),
   r0_to_NA = TRUE, 
   attributes_csv = (attrsave)) 
@@ -149,15 +194,38 @@ d_g_a = gapfill_georegions(
 # investigate attribute tables
 head(attr(d_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('open %s', attrsave))
 
+# select data for layers
+d_g = d_g_a %>%
+  select(rgn_id, year, score) %>%
+  arrange(rgn_id, year); head(d_g); summary(d_g) # d_g[duplicated(d_g[, c('rgn_id', 'year')]),] 
+
+
+## error checking post gapfill----
+
+print('compare the following to see if the highest scoring countries make sense pre and post gapfilling')
+m_d %>% 
+  arrange(score) %>% head(10)
+d_g %>% 
+  arrange(score) %>% head(10)
+
+# do the same as above for the highest scoring
+m_d %>% 
+  arrange(desc(score)) %>% head(10)
+d_g %>% 
+  arrange(desc(score)) %>% head(10)
+
+readline("Look through the error checking above; press return to continue") 
+
+
 ## save for scenarios separately----
-d_g = d_g_a %.%
-  select(rgn_id, year, score) %.%
-  arrange(rgn_id, year); head(d_g) # d_g[duplicated(d_g[, c('rgn_id', 'year')]),] 
 
 # for each scenario separately
-scenarios = list('2012a'=2010,
-                 '2013a'=2011,
-                 '2014a'=2012)
+yr_max = max(d_g %>% select(year))
+
+scenarios = list('2015a' = yr_max,
+                 '2014a' = yr_max - 1,
+                 '2013a' = yr_max - 2,
+                 '2012a' = yr_max - 3)
 
 for (scen in names(scenarios)){ # scen = names(scenarios)[1]
   
@@ -169,13 +237,13 @@ for (scen in names(scenarios)){ # scen = names(scenarios)[1]
     filter(year == yr) %>% # only keep scenario year
     select(rgn_id, score); summary(d_g_yr)
   
-  layersave = file.path(dir_d, 'data', sprintf('rgn_wb_wgi_%s.csv', scen))
+  layersave = file.path(dir_wgi, 'data', sprintf('rgn_wb_wgi_%s.csv', scen))
   write.csv(d_g_yr, layersave, na = '', row.names=FALSE)
   
   
   # calculate inverse file and save ----
-  d_g_inverse = d_g_yr %.%
-    mutate(score_inverse = (1-score)) %.%
+  d_g_inverse = d_g_yr %>%
+    mutate(score_inverse = (1-score)) %>%
     select(rgn_id,
            score = score_inverse); summary(d_g_inverse)
   
@@ -184,7 +252,11 @@ for (scen in names(scenarios)){ # scen = names(scenarios)[1]
   
 }
 
+## confirm data behaving normally ----
 
+# plot prep from OHI-2014 (ie eez2014 prepared last year) with the current information
+
+# rank original data with rescaled data
 
 
 
