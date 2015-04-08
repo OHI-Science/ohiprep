@@ -1,28 +1,25 @@
-# data_prep.R
+### data_prep_2015.R
+### Prepare FAO commodities data for Natural Products goal. 
 
-### NOTES: MRF Sep 2 2014: check on how usd_rel is used and cut from functions.R file as a layer read in.
-
-# Prepare FAO commodities data for Natural Products goal. 
-# To process new data, places to change code:
-#   * 'dir_d' (in Setup) to reflect new location for raw, tmp, and data
-#   * 'scenarios_year_max' (in Smoothing and Scoring) to include most recent data year.
-#   * 'scenario' list in 'for (scenario in...) {}' (in Smoothing and Scoring) to capture
-#     updated list of scenarios.
-#
-# Updated Apr2015 by oharac. Github ohi-science/issues/issue #370
-#   Minor recoding to get away from using reshape and plyr packages.
-#
-#   Fixed NA fill error for commodities with no non-NA years.
-#
-#   Carved script up into functions for flexibility in trying different approaches.
+### Provenance:
+# Apr2015 Updated by oharac. Github ohi-science/issues/issue #370
+#   * Minor recoding to get away from using reshape and plyr packages.
+#   * Fixed NA fill error for commodities with no non-NA years.
+#   * Carved script up into functions for flexibility in trying different approaches.
 #     The functions are in ./R/np_fxn.R
-#
-#   Reworked gapfilling to process at commodity level rather than product level.  See 
+#   * Reworked gapfilling to process at commodity level rather than product level.  See 
 #     'Gap-filling' section below for more details.
+#   * Script outputs gapfill report, np_gapfill_report.csv, by region/commodity/year.
 #
-#   Script outputs gapfill report, np_gapfill_report.csv, by region/commodity/year.
+# Sep2014 NOTES: MRF: check on how usd_rel is used and cut from functions.R file as a layer read in.
 #
-#
+# Jun2014 By JSLowndes/bbest ; File was originally clean_FAOcommodities.r:(by JStewart Apr2013)
+
+
+# To process new data, places to change code:
+#   * 'dir_d' and 'data_year' (in Setup) to reflect new location for raw, tmp, and data
+#   * 'scenario' to reflect appropriate scenario for output file naming
+
 
 
 ##############################################################################.
@@ -34,21 +31,24 @@
 library(zoo)  
 library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 
-### set dir_neptune_data and load common libraries (tidyr, dplyr, stringr) 
-source('src/R/common.R') 
-### NOTE: The default path should already be your ohiprep root directory for the rest to work.
-###       Otherwise, presume that scripts are always working from your default ohiprep folder
-
-
 dir_np <- 'globalprep/FAO_Commodities'
 data_year <- 'v2014_test'
+scenario  <- 'eez2014_test'
+
 dir_d <- sprintf('%s/%s', dir_np, data_year)
 ### NOTE: Set output paths to here, but do not use setwd().
 ###       This way, any scripts and code in ohiprep will still work, b/c always in root ohiprep dir.
 
-### Load NP-specific user-defined functions and functions specific to FAO data (cleanup)
+### set dir_neptune_data and load common libraries (tidyr, dplyr, stringr) 
+source('src/R/common.R') 
+  ### NOTE: The default path should already be your ohiprep root directory for the rest to work.
+  ###       Otherwise, presume that scripts are always working from your default ohiprep folder
+
+### access functions specific to FAO data cleanup
+source('src/R/fao_fxn.R')
+
+### Load NP-specific user-defined functions
 source(sprintf('%s/R/np_fxn.R', dir_np))
-source(sprintf('%s/R/fao_fxn.R', dir_np))
 
 
 
@@ -81,7 +81,7 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   m <- m %>%
     filter(!country %in% c('Totals', 'Yugoslavia SFR')) %>%
     fao_clean_data() %>%  
-      # swaps out FAO-specific codes. NOTE: optional parameter 'lowdata_value' can be
+      # swaps out FAO-specific codes. NOTE: optional parameter 'sub_0_0' can be
       # passed to control how a '0 0' code is interpreted.
     select(-trade)   %>%                                  
       # eliminate 'trade' column
@@ -94,23 +94,23 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   ###   commodities in data vs commodities in lookup table
 
   ### load lookup for converting commodities to products
-
   com2prod <- read.csv(file.path(dir_np, 'commodities2products.csv'), na.strings='')
   
-  #   np_commodity_lookup(m, com2prod) # in './R/np_fxn.R'
+  ### examine discrepancies between loaded data and commodity-to-product lookup table
+  #   np_commodity_lookup(m, com2prod)
 
+  ### inner_join will attach product names to matching commodities according to
+  ### lookup table 'com2prod', and eliminate all commodities that do not appear in the lookup table.
   m <- m %>%
     inner_join(com2prod, by='commodity')
   
   
   ### Special case: user-defined function deals with 
   ###   breaking up Antilles into separate reported rgns
-  
-  m <- np_split_antilles(m) # in './R/np_fxn.R'
+  m <- np_split_antilles(m)
   
     
   ### Add region ID, summarize by region/product/year, save output
-
   m <- m %>% 
     name_to_rgn(fld_name='country', flds_unique=c('country', 'commodity', 'product', 'year'), 
                 fld_value='value', add_rgn_name=T)
@@ -164,7 +164,7 @@ h <- h %>% np_harvest_gapflag
 ### 'gapfill' will be in (zerofill, endfill, tbd, none)
 
 data_check <- h %>% np_datacheck()
-### for each commodity within each region, creates (doesn't save...) summary info:
+### for each commodity within each region, creates (but doesn't save...) summary info:
 ###   num_years:        the length of the data series for this commodity in this region
 ###   usd_unique_nz:    (or 'tns') number of unique non-zero values for usd or tonnes 
 ###   usd_na & tns_na:  number of NA occurrences
@@ -209,7 +209,7 @@ h_comm <- h3
 
 h_gap <- h_comm %>%
   select(rgn_id, commodity, product, year, gapfill)
-write.csv(h_gap, sprintf('%s/data/np_gapfill_report.csv', dir_d), row.names=F, na='')
+write.csv(h_gap, sprintf('%s/data/%s_np_gapfill_report.csv', dir_d, data_year), row.names=F, na='')
 
 
 ### Summarize each product per country per year, e.g. all corals in Albania in 2011
@@ -226,18 +226,18 @@ h_prod <- h_comm %>%
 stopifnot(sum(duplicated(h_prod[,c('rgn_id', 'product', 'year')])) == 0)
 
 ### Check: wide with all commmodities and product subtotal for comparison with input data
-h_x_tonnes <- h_comm %>% 
-  bind_rows(mutate(h_prod, commodity='Z_TOTAL')) %>%
-  select(rgn_name, rgn_id, commodity, product, year, tonnes) %>%
-  arrange(rgn_name, product, commodity, year) %>%
-  spread(year, tonnes)
-h_x_usd <- h_comm %>% 
-  bind_rows(mutate(h_prod, commodity='Z_TOTAL')) %>%
-  select(rgn_name, rgn_id, commodity, product, year, usd) %>%
-  arrange(rgn_name, product, commodity, year) %>%
-  spread(year, usd)
-write.csv(h_x_tonnes, sprintf('%s/tmp/np_harvest_tonnes_wide.csv', dir_d, units), row.names=F, na='NA')
-write.csv(h_x_usd, sprintf('%s/tmp/np_harvest_usd_wide.csv', dir_d, units), row.names=F, na='NA')
+# h_x_tonnes <- h_comm %>% 
+#   bind_rows(mutate(h_prod, commodity='Z_TOTAL')) %>%
+#   select(rgn_name, rgn_id, commodity, product, year, tonnes) %>%
+#   arrange(rgn_name, product, commodity, year) %>%
+#   spread(year, tonnes)
+# h_x_usd <- h_comm %>% 
+#   bind_rows(mutate(h_prod, commodity='Z_TOTAL')) %>%
+#   select(rgn_name, rgn_id, commodity, product, year, usd) %>%
+#   arrange(rgn_name, product, commodity, year) %>%
+#   spread(year, usd)
+# write.csv(h_x_tonnes, sprintf('%s/tmp/np_harvest_tonnes_wide.csv', dir_d, units), row.names=F, na='NA')
+# write.csv(h_x_usd, sprintf('%s/tmp/np_harvest_usd_wide.csv', dir_d, units), row.names=F, na='NA')
 
 
 ##############################################################################.
@@ -252,57 +252,43 @@ write.csv(h_x_usd, sprintf('%s/tmp/np_harvest_usd_wide.csv', dir_d, units), row.
 ### Score harvest (tonnes and usd) relative to peaks. Output values as .csvs.
 ### Perform this for all given scenarios, using a for loop.
 
+year_max <- max(h_prod$year)
 
-### ???: update this to something like year_max, year_max - 1, year_max - 2, etc
-scenarios_year_max <- c(eez2014=2011, 
-                        eez2013=2010, 
-                        eez2012=2009)
+j <- h_prod %>% np_harvest_smooth()
+### smooth harvest over 4 year mean (prior and inclusive of current year).
+### * Tonnes & usd values are smoothed values
+### * tonnes_orig & usd_orig contain post-gap-filling, pre-smoothing values
+### Optional parameter with default: rollwidth = 4
+    
+harvest_peak_buffer = 0.35
+j <- j %>% np_harvest_peak(buffer = harvest_peak_buffer)
+### get peak harvest, in tonnes and usd, based upon smoothed values.  Also creates 
+### weighting values by recent USD: w[product] = usd_peak[product] / usd_peak[total for region]
+### Optional parameters with default: buffer = 0.35, recent_harvest_years = 10
 
-for (scenario in c('eez2012','eez2013','eez2014')) { 
-  # scenario  = 'eez2012'
-  year_max <- scenarios_year_max[[scenario]]
-  
-  j <- h_prod %>%
-    filter(year<=year_max) %>%
-    group_by(rgn_id, product) %>%
-    mutate(n_years = length(year)) %>%
-    arrange(rgn_id, product, year)
-
-  j <- j %>% np_harvest_smooth()
-  ### smooth harvest over 4 year mean (prior and inclusive of current year).
-  ### * Tonnes & usd values are smoothed values
-  ### * tonnes_orig & usd_orig contain post-gap-filling, pre-smoothing values
-  ### Optional parameter with default: rollwidth = 4
-      
-  harvest_peak_buffer = 0.35
-  j <- j %>% np_harvest_peak(buffer = harvest_peak_buffer)
-  ### get peak harvest, in tonnes and usd, based upon smoothed values.  Also creates 
-  ### weighting values by recent USD: w[product] = usd_peak[product] / usd_peak[total for region]
-  ### Optional parameters with default: buffer = 0.35, recent_harvest_years = 10
-
-  j <- j %>% np_harvest_status()
-  ### Determine relative status score based on harvest (tonnes & usd) relative to peaks.
+j <- j %>% np_harvest_status()
+### Determine relative status score based on harvest (tonnes & usd) relative to peaks.
 
 
   
 ##############################################################################.
 ### Write .csv files -----
 ### Output the results to .csvs for use in toolbox.
-### ??? How many of these variables do we really need to keep, how many to be reported to the .csv files?
 
-  write.csv(j  , sprintf('%s/tmp/%s_np_harvest_smoothed_data.csv', dir_d, scenario), row.names=F, na='')
-  
-  # write NP weights layer also used to calculate pressures and resilience
+### Write entire data frame to .csv:
+write.csv(j  , sprintf('%s/tmp/%s_np_harvest_smoothed_data.csv', dir_d, scenario), row.names=F, na='')
+
+### Write NP weights layer also used to calculate pressures and resilience. Output file includes
+### weights for previous five years, to enable calculations for scenarios in past years:
+write.csv(
+  j %>% filter(year > (year_max-5)) %>% select(rgn_id, product, year, weight=usd_peak_product_weight),
+  sprintf('%s/data/np_harvest_%s_product-peak_%s-year-max-%d_buffer-%g.csv', dir_d, 'usd', scenario, year_max, harvest_peak_buffer), row.names=F, na='')
+
+### Write NP status layers, one for tonnes and one for tonnes_rel:
+for (lyr in c('tonnes','tonnes_rel')) {
   write.csv(
-    j %>% filter(year == year_max) %>% select(rgn_id, product, weight=usd_peak_product_weight),
-    sprintf('%s/data/np_harvest_%s_product-peak_%s-year-max-%d_buffer-%g.csv', dir_d, 'usd', scenario, year_max, harvest_peak_buffer), row.names=F, na='')
-  
-  # write NP status layers
-  for (lyr in c('tonnes','tonnes_rel','usd','usd_rel')) {
-    write.csv(
-      j[,c('rgn_id', 'product', 'year', lyr)],
-      sprintf('%s/data/np_harvest_%s_%s-year-max-%d_buffer-%g.csv', dir_d, str_replace(lyr, '_','-'), scenario, year_max, harvest_peak_buffer), row.names=F, na='')
-  }
+    j[,c('rgn_id', 'product', 'year', lyr)],
+    sprintf('%s/data/np_harvest_%s_%s-year-max-%d_buffer-%g.csv', dir_d, str_replace(lyr, '_','-'), scenario, year_max, harvest_peak_buffer), row.names=F, na='')
 }
 
 
