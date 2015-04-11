@@ -1,11 +1,16 @@
+### ohiprep/src/R/fao_fxn.R
+### Function(s) to help clean and manipulate FAO data.
+###
+### Provenance:
+###   Apr2015: created by Casey O'Hara (oharac)
+
+
 fao_clean_data <- function(m, sub_0_0 = 0.1) {
 ### Swaps out FAO-specific codes for analysis:
 ### * FAO_commodities (Natural Products goal)
 ###
 ### Note separate calls to mutate() may not be necessary, but ensures proper sequence of flag-replacing, just in case...
 ###
-### Provenance:
-###   Apr2015: created by Casey O'Hara (oharac)
   
   m1 <- m %>%
     mutate(  

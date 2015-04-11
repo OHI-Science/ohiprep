@@ -377,15 +377,16 @@ np_harvest_smooth <- function(j, rollwidth = 4) {
     left_join(
       j %>%
         mutate(
-          tonnes_orig = tonnes, ### prevent overwriting of reported and gapfilled values
-          usd_orig = usd,       ### prevent overwriting of reported and gapfilled values
           tonnes_rollmean = rollapply(tonnes, width=rollwidth, FUN=mean, align='right', partial=T, na.rm=F),
-          usd_rollmean    = rollapply(   usd, width=rollwidth, FUN=mean, align='right', partial=T, na.rm=F)),
-      by=c('rgn_id', 'product','year')) %>%
+          usd_rollmean    = rollapply(   usd, width=rollwidth, FUN=mean, align='right', partial=T, na.rm=F)) %>%
+        rename(
+          tonnes_orig = tonnes, ### prevent overwriting of reported and gapfilled values
+          usd_orig    = usd),    ### prevent overwriting of reported and gapfilled values
+      by = c('rgn_id', 'rgn_name', 'product', 'year')) %>%
     mutate(
       tonnes = ifelse(!is.na(tonnes_rollmean), tonnes_rollmean, tonnes),
       usd    = ifelse(!is.na(   usd_rollmean),    usd_rollmean,    usd)) %>%
-    select(rgn_id, product, year, tonnes, usd, tonnes_orig, usd_orig)
+    select(rgn_id, rgn_name, product, year, tonnes, usd, tonnes_orig, usd_orig)
   return(j1)
 }
 
@@ -415,14 +416,14 @@ np_harvest_peak <- function(j, buffer = 0.35, recent_years = 10) {
     group_by(rgn_id) %>%
     mutate(
       usd_peak_allproducts    = sum(usd_peak, na.rm=T),
-      usd_peak_product_weight = usd_peak / usd_peak_allproducts)    
+      prod_weight = usd_peak / usd_peak_allproducts)    
   
   ### join product weighting proportions to j
   j1 <- j1 %>% 
     left_join(
       w %>%
-        select(rgn_id, product,  usd_peak_product_weight), 
-      by=c('rgn_id','product'))
+        select(rgn_id, product,  prod_weight), 
+      by = c('rgn_id','product'))
 
   return(j1)
 }
