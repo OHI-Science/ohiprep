@@ -189,3 +189,109 @@ for (i in files){
 }
 
 
+
+###############################################
+## 4/10/2016
+## Comparing latest extraction of data
+## 2014 data from this year vs. last year
+###############################################
+
+# country names
+c_names <- read.csv("../ohi-global/eez2014/layers/rgn_labels.csv")
+
+data %>%
+  filter(total_old_off==0 & total_new_off>0)
+data %>%
+  filter(total_new_off==0 & total_old_off>0)
+
+off_changes <- c('Kerguelen Islands',   'Crozet Islands',
+                 'Amsterdam Island and Saint Paul Island',
+                 'Haiti',   'Djibouti',   'Christmas Island',
+                 'Sierra Leone', 'Tunisia', 'Sint Maarten',
+                 'Saint Vincent and the Grenadines',
+                 'Glorioso Islands',  'Micronesia',
+                 'Maldives',  'Yemen',  'Tristan da Cunha',
+                 'Palau',  'Yemen',   'New Caledonia',
+                 'Northern Saint−Martin')
+
+changes <- data.frame(label= off_changes, 
+                      off_label = off_changes)
+
+in_changes <- c('Kerguelen Islands',   'Crozet Islands',
+                 'Amsterdam Island and Saint Paul Island',
+                 'New Caledonia')
+
+changes_in <- data.frame(label= in_changes, 
+                      in_label = in_changes)
+
+
+makeData  <- function(dataSet){
+dataSet %>%
+  arrange(rgn_id, year) %>%
+  group_by(rgn_id) %>%
+  mutate(area_km2_total = cumsum(area_km2)) %>%
+  filter(year == max(year))%>%
+  select(rgn_id, area_km2_total) %>%
+  ungroup()
+}
+
+old_off <- read.csv("Global/WDPA-MPA_v2014/data/lsp_protarea_offshore3nm.csv")
+old_off <- makeData(dataSet = old_off) %>%
+  select(rgn_id, total_old_off = area_km2_total)
+
+old_in <- read.csv("Global/WDPA-MPA_v2014/data/lsp_protarea_inland1km.csv")
+old_in <- makeData(dataSet = old_in) %>%
+  select(rgn_id, total_old_in = area_km2_total)
+
+makeData_new <- function(dataSet){
+  dataSet %>%
+    arrange(rgn_id, year) %>%
+    group_by(rgn_id) %>%
+    mutate(area_km2_total = cumsum(area_km2)) %>%
+    filter(year==2014) %>%
+    select(rgn_id, area_km2_total) %>%
+    ungroup()
+}
+
+new_off <- read.csv("globalprep/WDPA_MPA/v2015/data/lsp_protarea_offshore3nm.csv")
+new_off <- makeData_new(dataSet=new_off) %>%
+  select(rgn_id, total_new_off = area_km2_total)
+
+new_in <- read.csv("globalprep/WDPA_MPA/v2015/data/lsp_protarea_inland1km.csv")
+new_in <- makeData_new(dataSet=new_in) %>%
+  select(rgn_id, total_new_in = area_km2_total)
+
+
+data <- old_off %>%
+  left_join(new_off) %>%
+  left_join(old_in) %>%
+  left_join(new_in) %>%
+  left_join(c_names) %>%
+  left_join(changes) %>%
+  left_join(changes_in)
+
+
+ggplot(data, aes(x=total_old_off+1, y=total_new_off+1))+
+  geom_point(size=3, shape=19) +
+  scale_y_log10() +
+  scale_x_log10() +
+  geom_abline(slope=1, intercept=0, col="red") +
+  labs(title = "Offshore") +
+  geom_text(aes(label=off_label), hjust=0, vjust=-1, size=2.5, angle=30) + 
+  theme_bw()
+
+ggsave("globalprep/WDPA_MPA/v2015/offshore.pdf")
+
+
+ggplot(data, aes(x=total_old_in+1, y=total_new_in+1))+
+  geom_point(size=3, shape=19) +
+  scale_y_log10() +
+  scale_x_log10() +
+  geom_abline(slope=1, intercept=0, col="red") +
+  labs(title = "Inland") +
+  geom_text(aes(label=in_label), hjust=0, vjust=-1, size=2.5, angle=30) + 
+  theme_bw()
+
+ggsave("globalprep/WDPA_MPA/v2015/inland.pdf")
+
+

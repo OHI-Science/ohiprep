@@ -12,13 +12,13 @@ dir_prod = 'globalprep/WDPA_MPA/v2015'
 lyrs = c('rgn_offshore3nm_wdpa.dbf' = 'lsp_protarea_offshore3nm.csv',
          'rgn_inland1km_wdpa.dbf'   = 'lsp_protarea_inland1km.csv')
 
-## Compare different datasets:
+
 for (i in 1:length(lyrs)){  
 #  i=1
   dbf = names(lyrs)[i]
   csv = lyrs[[i]]
 
-  d = read.dbf(file.path(dir_prod, 'tmp/new_rasters_500mcell', dbf))
+  d = read.dbf(file.path(dir_prod, 'tmp/mang_plan_dbfs', dbf))
 
 m <- gather(d, year, area_m2, VALUE_0:VALUE_2014)
 
@@ -48,17 +48,6 @@ rgns <- expand.grid(rgn_id=rgns$rgn_id, year=unique(m$year), area_km2=0)
       arrange(rgn_id, year)
 
 length(table(m$rgn_id)) #now the regions are there...
-
-# if(i==1){
-#   # I am not sure why there are special fixes for these regions...but Julie can probably tell us because she made these additions.
-#   # These are only done for the 3nm file...also, this code needs to be redone because I didn't delete the zeros as was done previously.
-#   # We will need to look at the 3nm data to see if this generally makes sense
-#   
-#     m$area_km2[m$rgn_id == 78] = 1.746501543  # special fix for Lebanon[78]
-#     m$year[m$rgn_id ==78] = 1972
-#     m$area_km2[m$rgn_id == 220] = 0.873250772 # special fix for Sint Maarten[220]
-#     m$year[m$rgn_id == 220] = 2006
-#} 
    
   # save layer
   write.csv(m, file.path(dir_prod, 'data', csv), row.names=F, na='')
@@ -77,29 +66,28 @@ length(table(m$rgn_id)) #now the regions are there...
 ## Values for 2015 analysis:
 # lsp_protarea_offshore3nm.csv
 # rgn_id sum_area_km2
-# 163    179337.00
-# 16    103046.00
-# 73     89564.75
-# 216     81235.25
-# 145     61462.00
-# 218     33861.25
-# 223     31300.25
-# 224     29457.75
-# 171     24853.75
-# 135     24186.50
-
+# 16     98434.50
+# 73     84839.75
+# 216     77544.25
+# 145     61159.25
+# 163     45747.75
+# 223     29763.50
+# 218     28656.00
+# 224     24201.50
+# 171     23044.50
+# 135     22915.25
 # lsp_protarea_inland1km.csv
 # rgn_id sum_area_km2
-# 163     54926.00
-# 224     32964.75
-# 73     28656.25
-# 16     24052.50
-# 218     17682.25
-# 145     16940.25
-# 171     14081.50
-# 216     12391.75
-# 210     10413.75
-# 180      8464.25
+# 163     32663.75
+# 73     27571.50
+# 224     27456.25
+# 16     19981.50
+# 145     16860.75
+# 218     15080.75
+# 171     12709.00
+# 216      9112.00
+# 135      7126.50
+# 210      7044.00
 
 ## Values for 2014 analysis:
 # lsp_protarea_inland1km.csv
