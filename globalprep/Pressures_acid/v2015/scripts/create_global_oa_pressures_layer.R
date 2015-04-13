@@ -4,19 +4,19 @@
 
 #-----------------------------------------
 
+#   'oa_dataprep.R' created the following:
+#     a. Calculates the historical global mean for the decade 1880-1889 (1 raster layer as output)
+#     b. Calculates the annual mean for each of the 10 years in 2005-2014 (10 raster layers as output)
+
 # This script takes prepped Ocean Acidification input raster layers (created by oa_dataprep.R) and does the following:
 
-#     1. Calculates the historical global mean for the decade 1880-1889 (1 raster layer as output)
-#     2. Calculates the annual mean for each of the 10 years in 2005-2014 (10 raster layers as output)
-#     3. Takes each of the 10 raster layers produced in step 2, and subtract the historical global mean (produced in step 1) to create 10 new raster layers (one for each year) with values equal to the change in aragonite saturation state
-#     4. All values that are 0 and below are set to 0
-#     5. Finds the maximum value across all 10 raster layers produced in step 3
-#     6. Multiply this maximum value by 110%
-#     7. Divide all raster layers produced in step 3 by value produced in step 6
-#     8. Interpolates values to the coast (for all 10 raster layers)
-#     9. Resamples to 1km for the final output raster layer (for all 10 raster layers)
+#      1. Takes each of the 10 raster layers produced in (b) above, and subtracts the historical global mean (produced in step 1) to create 10 new raster layers (one for each year) with values equal to the change in aragonite saturation state
+#      2. RESCALE: For each year between 2005 and 2014, look at the mean annual aragonite saturation state rasters (annualmean_2005-2014). All values at or below
+#         the threshold (<=1) are set to 1 (highest pressure value). All cells with aragonite saturation state values >1, will be scaled based on their change
+#         relative to historical levels (calculated in step 2 above). All cells that have a negative change (indicating a decrease in acidification) are assigned 0    
+#      3. Resamples each raster to 1km
+#      4. IN ARCGIS: Interpolates cells to coast, clips out land, replaces all NA values in step 3 with interpolated cell values
 
-# Steps 1 and 2 were done in 'oa_dataprep.R'
 
 # NOTE: Interpolation was done in ArcGIS
 
@@ -56,9 +56,13 @@
 
     files = list.files('working/annualmean_2005-2014/moll',full.names=TRUE,recursive=TRUE) # list the annual mean raster files for each year in 2005-2014
 
+#ocean is a raster with all land clipped out - at 1km with value of 1
+ocean = raster(file.path(dir_N,'model/GL-NCEAS-Halpern2008/tmp/ocean.tif')) #might not need this? 4.9.15 - JA
+
+
 #-------------------------------------------------------------------------------------------------
 
-# (Step 3): function that subtracts annual mean from historical decadal mean and outputs raster to specified folder
+# (Step 1): function that subtracts annual mean from historical decadal mean and outputs raster to specified folder
 
     annual_change = function(file){
     
@@ -74,106 +78,77 @@
 
     newfiles = list.files('working/annualchange_2005-2014',full.names=TRUE,recursive=TRUE) #list the new raster files (difference from historical mean)
 
-#-------------------------------------------------------------------------------------------------
-
-# (Step 4): reclassify all values less than 0 to 0
-
-    zero = function(file){
-      
-      yr = substr(file,58,61)
-      r  = raster(file)
-      sub = reclassify(r,c(-Inf,0,0))
-      writeRaster(sub,filename=paste0('working/annualchange_reclassify/annualchange_reclass_',yr,sep=""),format='GTiff',overwrite=T)
-
-    }
-
-    sapply(newfiles,zero) #apply to all newfiles
-
 
 #-------------------------------------------------------------------------------------------------
 
+# Step (2): Rescale values
 
-# (Step 5): find max value across all reclassified rasters
+#     For each year between 2005 and 2014, look at the mean annual aragonite saturation state rasters (annualmean_2005-2014). All values at or below
+#     the threshold (<=1) are set to 1 (highest pressure value). All cells with aragonite saturation state values >1, will be scaled based on their change
+#     relative to historical levels (calculated in step 2 above). 
 
-    allfiles = list.files('working/annualchange_reclassify',full.names=TRUE,recursive=TRUE)
-
-    s <- stack(allfiles) #put all 10 rasters into a stack
-    m = max(cellStats(s,stat='max')) #get the max value across all 10 layers
-
-
-#-------------------------------------------------------------------------------------------------
-
-# (Step 6): Multiply max by 110% to create buffered reference point
-
-    max = m*1.1
-
-
-#-------------------------------------------------------------------------------------------------
-
-# (Step 7): Rescale rasterized values by dividing all reclassified rasters by max
 
     rescale = function(file){
-          
-      yr = substr(file,54,57)
-      r = raster(file)
-      out = calc(r,fun=function(x){x/max})
-      writeRaster(out,file=paste0('working/annual_oa_rescaled_nonint_1deg/annual_oa_rescaled_nonint_1deg_',yr,sep=''),format='GTiff',overwrite=T)
+  
+        yr   = substr(file,56,59) #get year of file
+        mean = raster(file)       #get annual mean aragonite raster for given year
+        diff = raster(newfiles[substr(newfiles,58,61)==yr])  #get the change raster for same year ((current-historical)/historical)
+        mean[mean<=1]<-1    #all values at or less than 1 are given a value of 1
+        mean[mean>1] = diff[mean>1]  # all cells with values greater than 1 are swapped out with their amount of change 
+        mean[mean<0]<-0   #all values less than 0 (indicating a decrease in acidity) are capped at 0
+        writeRaster(mean,filename=paste0('working/annual_oa_rescaled/oa_rescaled_',yr,sep=""),format='GTiff',overwrite=T)
+        
+}
 
-    }
+sapply(files,rescale)
 
-    sapply(allfiles,rescale)
-
-    files = list.files('working/annual_oa_rescaled_nonint_1deg',full.names=TRUE,recursive=TRUE)
-
+  rescaled = list.files('working/annual_oa_rescaled',full.names=T)
 
 #-------------------------------------------------------------------------------------------------
 
 
-# (Step 8): Interpolate to coast. This was done manually in ArcGIS (Jamie Afflerbach)
+# (Step 3): Resample to 1km
+resample = function(file){
+  
+  yr  = substr(file,55,58)
+  r   = raster(file)
+  out = raster::resample(r,ocean,method='ngb',progress='text')
+  writeRaster(out,file=paste0('working/annual_oa_rescaled_int_1km/annual_oa_rescaled_int_1km_',yr,sep=''),format='GTiff',overwrite=T)
+  
+}
 
-#     Interpolation will be done in ArcGIS. In order to accurately turn rasters to points (to then be interpolated back to raster) the input raster needs to have square cell sizes.
-#     All files in 'annual_oa_rescaled_nonint_1deg' have rectangular cells that do not have the same height and width. Within Arc, a template raster that splits these
-#     rectangles into squares was created, labeled 't' below. Using this, resample all 10 years to half-degree (these aren't exactly half degree but close).
-
-    t <-raster('working/annual_oa_rescaled_nonint_halfdeg/oa_halfdeg.tif') #use this layer created in arc as the structure for all raster layers to be resampled to
-
-    resample = function(file){
-      
-      yr  = substr(file,71,74)
-      r   = raster(file)
-      out = raster::resample(r,t)
-      writeRaster(out,file=paste0('working/annual_oa_rescaled_nonint_halfdeg/annual_oa_rescaled_nonint_halfdeg_',yr,sep=''),format='GTiff',overwrite=T)
-
-    }
-
-    sapply(files,resample)
+sapply(rescaled,resample)
 
 
 # interpolation of the half-degree raster layers was done in ArcGIS using the natural neighbor method. 
 # The outputs for each year are saved in 'annual_oa_rescaled_int_halfdeg', and are used below.
 
 
-    ras_files = list.files('working/annual_oa_rescaled_int_halfdeg',pattern='[.]tif$',full.names=TRUE,recursive=TRUE)
+ras_files = list.files('working/annual_oa_rescaled_int_1km',full.names=TRUE,recursive=TRUE)
+
 
 
 
 #-------------------------------------------------------------------------------------------------
 
+# (Step 4): Interpolate to coast. This was done manually in ArcGIS (Jamie Afflerbach)
 
-# (Step 9) Resample these interpolated, half-degree rasters to 1 km
+#     Interpolation will be done in ArcGIS. In order to accurately turn rasters to points (to then be interpolated back to raster) the input raster needs to have square cell sizes.
+#     All files in 'annual_oa_rescaled_nonint_1deg' have rectangular cells that do not have the same height and width. Within Arc, a template raster that splits these
+#     rectangles into squares was created, labeled 't' below. Using this, resample all 10 years to half-degree (these aren't exactly half degree but close).
 
-    # create dummy 1 km raster layer in ArcGIS to use as template in function below
-    samp = raster('working/annual_oa_1km/oa_1km.tif')
+
+interp = function(file){
+  
+
+  
+}
 
 
-    resample_1km = function(file){
-     
-      yr  = substr(file,43,46)
-      r   = raster(file)
-      print(yr)
-      out = raster::resample(r,samp,method='ngb',progress='text')
-      writeRaster(out,file=paste0('working/annual_oa_1km/oa_1km_',yr,sep=''),format='GTiff',overwrite=T)
+sapply(rescaled,interp)
 
-    }
+rescaled = list.files('working/annual_oa_rescaled_int',full.names=T)
 
-    sapply(ras_files,resample_1km)
+
+
+#-------------------------------------------------------------------------------------------------
