@@ -1,9 +1,27 @@
-# sea level rise
+# Creating sea level rise pressure layer
+
+# updated with data through 2014
 
 #JAfflerbach
 
-#3/2/2014
+# 1. Create raster of original data (came as .nc)
+# 2. project to mollweide
+# 3. Calculate annual rate of sea level rise
+# 4. Clip all negative values (values that indicate decreasing sea level)
+# 5. log transform
+# 6. resample to 1km
+# 7. rescale using 99.99 percentile
+# 8. Interpolate and replace NA cells with interpolated values (use Python - arcpy for this)
+# 9. Clip out ocean using ocean raster at 1km cell size
+# 10. Create raster of just interpolated cells
 
+#libraries
+
+library(raster)
+library(rgdal)
+library(rasterVis)
+library(RColorBrewer)
+library(maptools)
 
 
 # set tmp directory
@@ -12,23 +30,23 @@ tmpdir='~/big/R_raster_tmp'
 dir.create(tmpdir, showWarnings=F)
 rasterOptions(tmpdir=tmpdir)
 
+
 # paths
 
-dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
-          'Darwin'  = '/Volumes/data_edit',
-          'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
+    dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
+              'Darwin'  = '/Volumes/data_edit',
+              'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
 
-setwd(file.path(dir_N,'git-annex/globalprep/AVISO-SeaLevelRise_v2015'))
+    dir_halpern2008 = c('Windows' = '//neptune.nceas.ucsb.edu/halpern2008_edit',
+                        'Darwin'  = '/Volumes/halpern2008_edit',
+                        'Linux'   = '/var/cache/halpern-et-al')[[ Sys.info()[['sysname']] ]]
 
-dir_git = file.path('../ohiprep/globlaprep/AVISO-SeaLevelRise_v2015')
+    setwd(file.path(dir_N,'git-annex/globalprep/AVISO-SeaLevelRise_v2015'))
+
 
 #set colors for plotting
-cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
 
-library(raster)
-library(rgdal)
-library(rasterVis)
-library(RColorBrewer)
+    cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
 
 
 # The following 3 lines were done once to create raster from downloaded NetCDF. No longer need to run these
@@ -41,58 +59,106 @@ library(RColorBrewer)
 
 # Read in raw data
 
-    r<-raster('tmp/MSL_Map_MERGED_Global_IB_RWT_NoGIA_Adjust.tif')
+    r <- raster('tmp/MSL_Map_MERGED_Global_IB_RWT_NoGIA_Adjust.tif')
 
     plot(r,col=cols,main='Mean Annual Sea Level Rise (mm)\n1993-2014')
+    
 
+#--------------------------------------------------
 
 # (1) Create raster of original data 
 
-    writeRaster(r,filename='tmp/slr_Jan1993_Jun2014_gcs_wgs84_rate_mm_per_year.tif')
+  #  writeRaster(r,filename='tmp/slr_Jan1993_Jun2014_gcs_wgs84_rate_mm_per_year.tif')
+
+
+#--------------------------------------------------
+
+# (2) Reproject raster to mollweide
+
+  r = rotate(r) #rotate raster: -180 to 180
+  
+  projection(r) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"   #define initial projection. Helps avoid errors when reprojecting to mollweide
+
+  mollCRS <- CRS('+proj=moll')
+
+  slr_moll <- projectRaster(r, crs=mollCRS, over=T,progress='text',filename='tmp/slr_moll.tif',overwrite=T)  
 
 
 
-# (2) Multiply annual rate by all years in dataset
+#--------------------------------------------------
+
+# (3) Multiply annual rate by all years in dataset
 
     # data used to create r comes from January 1993 - June 2014 (21.5 years)
     # Multiply values by 21+5/12 = 21.41667
 
-      r_years <- r*21.41667
-      plot(r_years,col=cols,main='Aggregate sea level rise (mm)\n1993-2014')
+      slr_moll <- slr_moll*21.41667
 
-      writeRaster(r_years,filename='tmp/slr_Jan1993_Jun2014_gcs_wgs84_change_mm.tif',overwrite=T)
+      plot(slr_moll,col=cols,main='Aggregate sea level rise (mm)\n1993-2014')
 
-
-
-# (3) Get reference point
-
-#   The reference point is the 99.99th percentile with a 10% buffer
-
-    quantile(r,probs=c(0,0.0001,0.001,0.01,0.1,0.25,0.5,0.75,0.9,0.99,0.999,0.9999))
-
-#     99.99th percentile is a value of 24.0321697 mm per year
+#--------------------------------------------------
 
 
+# (4) Clip all negative values to 0
 
+      slr_moll[slr_moll<0]<-0
 
-# (4) Clip all data <0 to 0 and then normalize to the reference point
-
-     r[r<0]<-0   
-
-    #get reference point
-    ref = 24.0321697*1.1
-
-    #normalize by the reference point
-    r_norm <- r/ref
-
-    # since some values are still above the reference point (greater than 1) cap these to 1.
-    r_norm[r_norm>1]<-1
-
-    #rotate so extent is -180 to 180
-    r_norm = rotate(r_norm)
-
-    plot(r_norm,main='Normalized Sea Level Rise Pressure',col=cols)
-
+#--------------------------------------------------
 
   
-writeRaster(r_norm,filename='output/slr_Jan1993_Jun2014_gcs_wgs84_rate_per_year_normalized.tif',overwrite=T)
+# (5) Log transform
+
+    slr_moll_log = calc(slr_moll,fun=function(x){log(x+1)},progress='text',filename='tmp/slr_moll_log.tif')
+
+    
+#--------------------------------------------------
+
+
+# (6) convert to 1km
+
+#sample 1 km raster
+
+    #ocean is a raster with all land clipped out - at 1km with value of 1
+    ocean = raster(file.path(dir_N,'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
+
+    slr_1km = resample(slr_moll_log,ocean,method='ngb',progress='text',filename='tmp/slr_moll_log_1km.tif')
+
+
+#--------------------------------------------------
+
+
+#(7) rescale using the reference point (99.99 quantile)
+    #get reference point
+   
+    ref = quantile(slr_1km,prob=0.9999)
+
+    #normalize by the reference point - cap all values greater than 1 to 1
+    r_resc <- calc(slr_1km,fun=function(x){ifelse(x>ref,1,x/ref)},progress='text',filename='tmp/slr_moll_log_1km_rescaled.tif',overwrite=T)
+
+    plot(r_resc,main='Rescaled Sea Level Rise Pressure',col=cols)
+
+
+#--------------------------------------------------
+
+
+# (8) Interpolation
+
+
+# need to do this in arcgis likely
+
+#   script used to do this 'scripts/SLR_interpolation.py'
+
+  r_int = raster('tmp/slr_moll_log_1km_rescaled_int.tif')
+
+#--------------------------------------------------
+
+# (9) Clip out ocean
+
+
+r_final = mask(r_int,ocean,progress='text',filename='output/slr_final.tif')
+
+#---------------------------------------------------
+
+# (10) Create interpolated cells raster
+
+interp = mask(r_final,slr_1km,progress='text',inverse=TRUE,filename='output/slr_interpolated_cells.tif')
