@@ -6,7 +6,7 @@
 
 # 1. Create raster of original data (came as .nc)
 # 2. project to mollweide
-# 3. Calculate annual rate of sea level rise
+# 3. Calculate cumulative sea level rise over all years
 # 4. Clip all negative values (values that indicate decreasing sea level)
 # 5. log transform
 # 6. resample to 1km
@@ -36,10 +36,6 @@ rasterOptions(tmpdir=tmpdir)
     dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
               'Darwin'  = '/Volumes/data_edit',
               'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
-
-    dir_halpern2008 = c('Windows' = '//neptune.nceas.ucsb.edu/halpern2008_edit',
-                        'Darwin'  = '/Volumes/halpern2008_edit',
-                        'Linux'   = '/var/cache/halpern-et-al')[[ Sys.info()[['sysname']] ]]
 
     setwd(file.path(dir_N,'git-annex/globalprep/AVISO-SeaLevelRise_v2015'))
 
@@ -130,7 +126,7 @@ rasterOptions(tmpdir=tmpdir)
 #(7) rescale using the reference point (99.99 quantile)
     #get reference point
    
-    ref = quantile(slr_1km,prob=0.9999)
+    ref = quantile(slr_1km,prob=0.9999) #6.24183381230408
 
     #normalize by the reference point - cap all values greater than 1 to 1
     r_resc <- calc(slr_1km,fun=function(x){ifelse(x>ref,1,x/ref)},progress='text',filename='tmp/slr_moll_log_1km_rescaled.tif',overwrite=T)
