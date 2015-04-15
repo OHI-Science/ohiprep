@@ -1,42 +1,44 @@
 ##Ocean Acidification Pressures Layer
 
-Raw data provided  by Ivan Lima from Woods Hole. This data is an updated to the work done by Feely, Doney and Cooley and published in 2009.  
+Raw data provided by Ivan Lima from Woods Hole on December 16, 2014. This data is an updated to the work done by [Feely et a. (2009)](http://www.tos.org/oceanography/archive/22-4_feely.pdf).  
 
 Monthly aragonite saturation state data provided for years 1880-1889 and 2005-2014 in NetCDF format with a resolution of about 1 degree.
 
-**Procedure**
+####Procedure
 
-1. `oa_dataprep.r` turns NetCDF raw files into .tifs and has 2 functions:  
+**1. `oa_dataprep.r` turns NetCDF raw files into .tifs and has 2 functions:**  
+
     1. calculates average annual aragonite saturation state for each year    
     2. calculates the average decadal saturation state    
     
-  Example data
+    
+  Mean aragonite saturation state globally for 2014
   
   ![](./images/mean_arag_2014.png)
   
-2. `create_global_oa_pressures_layer.R` does the following:  
+**2. `create_global_oa_pressures_layer.R` does the following:**  
 
-    a. Takes each of the 10 raster layers produced in step 1, and subtract the historical global mean (produced in step 1) to create 10 new raster layers (one for each year) with values equal to the change in aragonite saturation state  
-     b. All values that are 0 and below are set to 0  
-     c. Finds the maximum value across all 10 raster layers produced in step a  
-     d. Multiply this maximum value by 110% to get the reference point  
-     e. Divide all raster layers by reference point  
-     f. Interpolates values to the coast (for all 10 raster layers)  
-     g. Resamples to 1km for the final output raster layer (for all 10 raster layers)    
-     
+    1. Takes each of the 10 raster layers produced in (b) above, and subtracts the historical global mean (produced in step 1) 
+       to create 10 new raster layers (one for each year) with values equal to the change in aragonite saturation state
+    2. RESCALE: For each year between 2005 and 2014, look at the mean annual aragonite saturation state rasters (annualmean_2005-2014). 
+       All values at or below the threshold (<=1) are set to 1 (highest pressure value). All cells with aragonite saturation state values >1 
+       will be scaled based on their change relative to historical levels (calculated in step 2 above). All cells that have a negative change 
+       (indicating a decrease in acidification) are assigned 0    
+    3. Resamples each raster to 1km
+    4. Using ArcGIS through arcpy in python, NA cells are interpolated using nearest neighbor to create final output raster layer
 
-    #####NOTE: reference point is 0.9259247 x 1.1 = 1.0185
+
+**Final output layer for 2014:**
+
+  ![](./images/oa_final_2014.png)
+
     
-3. `interpolated_cells.R` creates a raster of all interpolated cells for gapfilling purposes. The raw data comes on an irregular, curvilinear grid and therefore needs to have some interpolation. The Nearest Neighbor method was used. Interpolated cells:
-
-![](./images/interpolated_cells.png)  
-
-
+**All NA cells interpolated for final layer:**
+  
+  ![](./images/interpolated_cells.png)
 
 
 
-
-Raster data located here: `N:\git-annex\globalprep\Pressures_acid\v2015\working\annual_oa_1km`  
  
  
 
