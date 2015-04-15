@@ -7,8 +7,10 @@ Monthly aragonite saturation state data provided for years 1880-1889 and 2005-20
 ####Procedure
 
 **1. `oa_dataprep.r` turns NetCDF raw files into .tifs and has 2 functions:**  
+
     1. calculates average annual aragonite saturation state for each year    
     2. calculates the average decadal saturation state    
+    
     
   Mean aragonite saturation state globally for 2014
   
@@ -26,14 +28,14 @@ Monthly aragonite saturation state data provided for years 1880-1889 and 2005-20
     4. Using ArcGIS through arcpy in python, NA cells are interpolated using nearest neighbor to create final output raster layer
 
 
-  Final output layer for 2014:
+**Final output layer for 2014:**
 
   ![](./images/oa_final_2014.png)
 
     
-  All NA cells interpolated for final layer:
+**All NA cells interpolated for final layer:**
   
-  ![./images/interpolated_cells.png]
+  ![](./images/interpolated_cells.png)
 
 
 
