@@ -1,4 +1,4 @@
-### zonal extraction and summary of acidification data
+### Create general raster that should be able to use on all 1 km2 pressures
 ### MRF: Feb 25 2015
 
 source('../ohiprep/src/R/common.R')
@@ -83,32 +83,13 @@ freq(most_regions, progress="text", value=86)# missing
 raster::cover(bad_regions_raster, most_regions, filename = file.path(save_loc, "sp_mol_raster_1km.tif"))
 
 regions <- raster(file.path(save_loc, "sp_mol_raster_1km.tif"))
-freq(regions, progress="text", value=1) # missing
+freq(regions, progress="text", value=1) # not missing
 freq(regions, progress="text", value=0) # not missing
-freq(regions, progress="text", value=86)# missing
+freq(regions, progress="text", value=86)# not missing
 
-
-# get the data to associate with the sp_id
+# save data related to regions
 region_lu <- regions_mol@data %>%
   dplyr::select(sp_id, sp_type, rgn_id, rgn_name) %>%
   unique()
 
-
-# read in acid data (should be 10 layers, with values 0 to 1)
-# currently don't have a stack
-rasts <- paste0('/var/data/ohi/git-annex/globalprep/Pressures_acid/v2015/working/annual_oa_1km/oa_1km_', c(2005:2014), '.tif')
-
-sst_stack <- stack()
-for(i in 1:length(rasts)){
-  tmp <- raster(rasts[i])
-  sst_stack <- stack(sst_stack, tmp)
-}
-
-# extract data for each region:
-regions_stats <- zonal(sst_stack,  regions, fun="mean", na.rm=TRUE, progress="text")
-regions_stats2 <- data.frame(regions_stats)
-setdiff(regions_stats2$zone, region_lu$sp_id)
-setdiff(region_lu$sp_id, regions_stats2$zone)
-
-
-data <- merge(regions_mol@data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
+write.csv(region_lu, file.path(save_loc, "regionData.csv"), row.names=FALSE)
