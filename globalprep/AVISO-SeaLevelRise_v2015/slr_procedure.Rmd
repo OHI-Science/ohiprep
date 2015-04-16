@@ -5,7 +5,8 @@ date: "4/15/2015"
 output: html_document
 ---
 
-**General Update**
+**General Update**  
+
 The Sea Level Rise pressure layer was updated with new data for the year 2013. Previous data went through 2012. In addition, the rescaling of this pressure was recalculated to use the 99.99th percentile of raw data as the maximum. All values at or above the 99.99th percentile are given a value of 1.
 
 
@@ -34,7 +35,7 @@ Data for mean sea level rise (in mm) between January 1993 and June 2014 was down
               'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
 
 
-opts_knit$set(root.dir = file.path(dir_N,'git-annex/globalprep/AVISO-SeaLevelRise_v2015'))
+knitr::opts_knit$set(root.dir = file.path(dir_N,'git-annex/globalprep/AVISO-SeaLevelRise_v2015'))
 ```
 
 
@@ -136,7 +137,7 @@ We choose to disregard these as the impact of sea level rise is focused only on 
 
 **6. Resample layer to 1km resolution**
 
-Original resolution of the data is X. To resample the data to 1km resolution, a template ocean raster that is at the desired resolution (~1km) and contains all cells included within OHI regions, is used.
+Original resolution of the data is 0.25 degrees. To resample the data to 1km resolution, a template ocean raster that is at the desired resolution (~1km) and contains all cells included within OHI regions, is used.
 ```{r,message=FALSE,warning=FALSE}
 
     #ocean is a raster with all land clipped out - at 1km with value of 1
@@ -150,7 +151,7 @@ Original resolution of the data is X. To resample the data to 1km resolution, a 
 
 **7. Rescale using the reference point (99.99 quantile)**
 
-All values at or above the 99.99th quantile are set to equal 1.
+All values at or above the 99.99th quantile (6.24183381230408) are set to equal 1.
 ```{r,warning=FALSE,message=FALSE}
 
     #get reference point
