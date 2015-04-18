@@ -282,26 +282,25 @@ write.csv(j, sprintf('%s/tmp/%s_np_harvest_smoothed_data.csv', dir_d, scenario),
 
 
 
-### Write single NP status layer, incl:
+### Write single NP output dataframe, incl:
 ###   rgn_id, rgn_name, product, year, tonnes, tonnes_rel, prod_weight for all years
-write.csv(
-  j %>% select(rgn_id, rgn_name, product, year, tonnes, tonnes_rel, prod_weight),
-  sprintf('%s/data/np_harvest-%s-year_max_%d.csv', dir_d, scenario, year_max), row.names = F, na = '')
-
-
-### old output:
-### Write NP weights layer also used to calculate pressures and resilience. Output file includes
-### weights for previous five years, to enable calculations for scenarios in past years:
 # write.csv(
-#   j %>% 
-#     filter(year > (year_max - 5)) %>% 
-#     select(rgn_id, product, year, prod_weight),
-#   sprintf('%s/data/np_harvest_%s_product-peak_%s-year-max-%d.csv', dir_d, 'usd', scenario, year_max), row.names = F, na = '')
-# 
-# for (lyr in c('tonnes','tonnes_rel')) {
-#   write.csv(
-#     j[ , c('rgn_id', 'product', 'year', lyr)],
-#     sprintf('%s/data/np_harvest_%s_%s-year_max_%d.csv', dir_d, str_replace(lyr, '_', '-'), scenario, year_max), row.names = F, na = '')
-# }
+#   j %>% select(rgn_id, rgn_name, product, year, tonnes, tonnes_rel, prod_weight),
+#   sprintf('%s/data/np_harvest-%s-year_max_%d.csv', dir_d, scenario, year_max), row.names = F, na = '')
+
+
+### Write individual data layers:
+### Write NP weights layer also used to calculate pressures and resilience:
+write.csv(
+  j %>% 
+    filter(year == year_max) %>% 
+    select(rgn_id, product, weight = prod_weight),
+  sprintf('%s/data/np_harvest_%s_product-peak_%s-year-max-%d.csv', dir_d, 'usd', scenario, year_max), row.names = F, na = '')
+
+for (lyr in c('tonnes','tonnes_rel')) {
+  write.csv(
+    j[ , c('rgn_id', 'product', 'year', lyr)],
+    sprintf('%s/data/np_harvest_%s_%s-year_max_%d.csv', dir_d, str_replace(lyr, '_', '-'), scenario, year_max), row.names = F, na = '')
+}
 
 
