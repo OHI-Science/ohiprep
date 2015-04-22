@@ -150,7 +150,11 @@ sum(final_gap$gap_filled > 0.9)
 #########################################
 
 # https://github.com/OHI-Science/issues/issues/374
-rast <- raster('/var/data/ohi/git-annex/globalprep/AVISO-SeaLevelRise_v2015/output/slr_final.tif')
+# the following raster is log transformed and then the 99.99th quantile was used to establish the standardization value.
+# The outcome was that most regions had a pressure score of around 0.7 - which seemed high for this pressure.  This 
+# suggested that we should probably avoid log transforming these particular data.
+# rast <- raster('/var/data/ohi/git-annex/globalprep/AVISO-SeaLevelRise_v2015/output/slr_final.tif')
+ rast <- raster('/var/data/ohi/git-annex/globalprep/AVISO-SeaLevelRise_v2015/output/slr_nonlog_final.tif')
 
 # extract data for each region:
 regions_stats <- zonal(rast,  zones, fun="mean", na.rm=TRUE, progress="text")
