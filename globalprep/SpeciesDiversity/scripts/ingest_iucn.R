@@ -1,40 +1,57 @@
 # Get all species from IUCN. Limit to those found in marine habitats.
+# Now using 2013.1 as of July 1st, 2013
 
-# Adapted from Ben Best script for 2013
-
-#Jamie Afflerbach
 
 # load packages
-library(ohi)
 library(RCurl)
 library(XML)
 library(parallel)
 library(plyr)
+library(dplyr)
 
-# set working directory
-wd = '/var/data/ohi/git-annex/globalprep/SpeciesDiversity' # (Mac/Linux)
-setwd(wd)
+# paths
 
-# flags & vars
+dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
+          'Darwin'  = '/Volumes/data_edit',
+          'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
+
+# working dir in local github repo
+wd = file.path(getwd(), 'globalprep/NCEAS-SpeciesDiversity_v2014')
+# data dir
+dd = file.path(dir_N, 'git-annex/globalprep/SpeciesDiversity/tmp')
+# cache dir
+cd = file.path(dd, 'cache')
+# files
+spp_iucn_all_csv      = file.path(dd, 'tmp/spp_iucn_all.csv')
+spp_iucn_habitats_csv = file.path(dd, 'tmp/spp_iucn_habitats.csv')
+# flags
 reload = F
 
-# cache dir
-if (file.exists('cache/iucn_details') & reload) unlink('cache', recursive=T)
-dir.create('cache/iucn_details', showWarnings=F, recursive=T)
+# cache dirs
+if (file.exists(file.path(cd, 'iucn_details')) & reload) unlink(file.path(cd, 'iucn_details'), recursive=T)
+dir.create(file.path(cd, 'iucn_details'), showWarnings=F, recursive=T)
 
 # get all species
-if (!file.exists('tmp/spp_iucn_all.csv') | reload){
-  spp_iucn_all = read.csv('http://api.iucnredlist.org/index/all.csv')         # nrows = 122843
-  spp_iucn_all = spp_iucn_all[!duplicated(spp_iucn_all),] # remove duplicates # nrows = 120484
-  write.csv(spp_iucn_all, 'tmp/spp_iucn_all.csv', row.names=F, na='')
+if (!file.exists(spp_iucn_all_csv) | reload){
+  spp_iucn_all = read.csv('http://api.iucnredlist.org/index/all.csv')         # 2013 nrow = 72,329; 2014 nrow = 112,455; 2015 nrow = 122,843
+  write.csv(spp_iucn_all, file.path(dd, 'spp_iucn_all_plusnonprimary.csv'), row.names=F, na='')
+  
+  # remove duplicates. The category 'Primary' indicates whether or not the Scientific.Name is the primary name (true) or a synonym (false). We only
+  # want the primary names to avoid duplicate species.
+  spp_iucn_all = filter(spp_iucn_all, Primary=='true')   # nrow(spp_iucn_all) #                     2014 nrow = 73,679 (without duplicates); 2015 nrow = 78,364
+  write.csv(spp_iucn_all, spp_iucn_all_csv, row.names=F, na='')
 } else {
-  spp_iucn_all = read.csv('tmp/spp_iucn_all.csv')
+  spp_iucn_all = read.csv(spp_iucn_all_csv)
 }
+
+#added by JA to look at the full species list with nonprimary
+spp_all_np = read.csv('tmp/spp_iucn_all_plusnonprimary.csv')
+
 
 # function to extract just habitat from the IUCN API given the Red.List.Species.ID
 getHabitats = function(sid, download.tries=10){
   url = sprintf('http://api.iucnredlist.org/details/%d/0', sid)
-  htm = sprintf('cache/iucn_details/%d.htm', sid)
+  htm = sprintf('%s/iucn_details/%d.htm', cd, sid)
   i=0
   while ( !file.exists(htm) | (file.info(htm)$size==0 & i<download.tries) ){
     download.file(url, htm, method='auto', quiet=T, mode='wb')
@@ -46,61 +63,190 @@ getHabitats = function(sid, download.tries=10){
   return(setNames(rep(sid, length(habitats)), habitats))
 }
 
-# spp_iucn_all = head(spp_iucn_all, 1000) # DEBUG
-# unlink('tmp/spp_iucn_habitats.csv')    # DEBUG
-#options(error=recover)       # 46181060 # DEBUG    
+# for (f in c('spp_iucn_habitats','spp_iucn_marine','spp_iucn_marine_global',
+#             'spp_iucn_marine_global_countries','spp_iucn_marine_subpop','spp_iucn_marine_subpop_countries')){
+#   file.rename(sprintf('%s/%s.csv', cd, f), sprintf('%s/%s_plusnonprimary.csv', cd, f))
+# }
 
-if (!file.exists('tmp/spp_iucn_habitats.csv') | reload){  
+if (!file.exists(spp_iucn_habitats_csv) | reload){  
   print(system.time({    
-    #r = lapply(spp_iucn_all$Red.List.Species.ID, getHabitats) # DEBUG
     r = mclapply(spp_iucn_all$Red.List.Species.ID, getHabitats, mc.cores=detectCores(), mc.preschedule=F) # took ~ 4 hrs on neptune
   }))
   r = unlist(r)
   spp_iucn_habitats = data.frame(sid = r, habitat = names(r))
-  write.csv(spp_iucn_habitats, 'tmp/spp_iucn_habitats.csv', row.names=F, na='')
+  write.csv(spp_iucn_habitats, spp_iucn_habitats_csv, row.names=F, na='') 
 } else {
-  spp_iucn_habitats = read.csv('tmp/spp_iucn_habitats.csv')
+  spp_iucn_habitats = read.csv(spp_iucn_habitats_csv)
+  
+  # check for number of habitats with duplicate species ids - JA (4/17/2015): why are there duplicates at all??
+  head(spp_iucn_habitats)
+  table(duplicated(spp_iucn_habitats$sid))
+  # 2014:             2015:
+  #    FALSE   TRUE     FALSE  TRUE 
+  #   73,677 11,551     78,358 12,031 
+  
+  write.csv(spp_iucn_habitats,'tmp/spp_iucn_habitats_w_duplicates.csv',row.names=F,na='')
+
+ # spp_iucn_habitats = subset(spp_iucn_habitats, !duplicated(spp_iucn_habitats$sid)) #nrow 2015: 78,358
+ 
+  #Jamie A (4/20/15): I think this is wrong. This is filtering out species that have both terrestrial and 
+  #marine habitats (i.e. seals) or marine and freshwater (some fish). By running the following, it's clear that there are no duplicate rows, just
+  #duplicate SIDs for the obvious reason (multiple habitats)
+ 
+  spp_iucn_habitats = distinct(spp_iucn_habitats) #nrow 2015: 90,389
+ 
+ #Therefore I propose we filter for 'marine' habitats rather than by duplicate species ids
+  
+  write.csv(spp_iucn_habitats, spp_iucn_habitats_csv, row.names=F, na='')
 }
 
 # check no remaining download errors. might need to manually run. should be 0:
-subset(spp_iucn_habitats, is.na(habitat))
+print(subset(spp_iucn_habitats, is.na(habitat)), row.names=F)
 
-# species without habitats assigned (n=67) - mostly birds (n=58)
-sid.miss = setdiff(spp_iucn_all$Red.List.Species.ID, spp_iucn_habitats$sid)
-print(addmargins(table(subset(spp_iucn_all, Red.List.Species.ID %in% sid.miss)$Class, useNA='ifany')))
+# species without habitats assigned (n=6)
+sid.miss = setdiff(spp_iucn_all$red.list.species.id, spp_iucn_habitats$sid)
+cat(sid.miss)
+print(addmargins(table(as.character(subset(spp_iucn_all, red.list.species.id %in% sid.miss, class, drop=T)), useNA='ifany')), row.names=F)
+# 2013
 #       AMPHIBIA           AVES CHONDRICHTHYES      CRUSTACEA     GASTROPODA  HOLOTHUROIDEA        INSECTA       MAMMALIA            Sum 
 #              1             58              1              1              2              2              1              1             67
 
+# 2014:
+#           BIVALVIA         GASTROPODA           REPTILIA                Sum
+#                  2                  2                  1                  5
+# 2014 (without duplicates):
+#           BIVALVIA GASTROPODA   REPTILIA        Sum 
+#                  1          2          1          4
+#
+# 2015:
+#         BIVALVIA    GASTROPODA MAGNOLIOPSIDA      REPTILIA           Sum 
+#                1             2             2             1             6 
+
 # get counts of species / subpopulations
-print(addmargins(table(spp_iucn_habitats$habitat, useNA='ifany')))
+print(addmargins(table(spp_iucn_habitats$habitat, useNA='ifany')), row.names=F)
 #head(spp_iucn_habitats[is.na(spp_iucn_habitats$habitat),])
+# 2013 (without duplicate removal):
+#   Freshwater      Marine  Terrestrial          Sum 
+#       25,245       8,380       50,135       83,760 
+#
+# 2014 (with duplicate removal):
+#   Freshwater      Marine  Terrestrial          Sum 
+#       15,565       6,635       51,475       73,677 
+#
+# 2014 (with duplicate removal 2):
 #  Freshwater      Marine Terrestrial         Sum 
-#       25245        8380       50135       83760 
+#       25,356        8,395      51,475       85,226
+#
+# 2015 (not sure what duplicate removal ^ is indicating??? - JA 4-17-2015)
+#
+#  Freshwater      Marine    Terrestrial         Sum 
+#       26,127        9,830       54,432       90,389 
 
 # get distinct marine species
 options('stringsAsFactors'=T)
-spp_iucn_all = read.csv('tmp/spp_iucn_all.csv')
-spp_iucn_habitats = read.csv('tmp/spp_iucn_habitats.csv')
-d = merge(spp_iucn_all, subset(spp_iucn_habitats, habitat=='Marine'), by.x='Red.List.Species.ID', by.y='sid')
-nrow(d) # 8380
-length(unique(d$Scientific.Name)) # 8178
-print(addmargins(table(d$Class, useNA='ifany')))
+spp_iucn_all      = read.csv(spp_iucn_all_csv)
+spp_iucn_habitats = read.csv(spp_iucn_habitats_csv)
+names(spp_iucn_all) = tolower(names(spp_iucn_all))
+# paste(setdiff(tolower(names(spp_iucn_all)), c('primary', 'red.list.species.id', 'scientific.name')), collapse=',')
+d = spp_iucn_habitats %>%
+  filter(habitat=='Marine') %>%
+  merge(
+    spp_iucn_all %>%
+      select(
+        sid     = red.list.species.id,
+        sciname = scientific.name,
+        class,order,family,genus,species,authority,infrarank,infrarank.type,infrarank.authority,modified.year,category,criteria),
+    by='sid')
+
+cat(sprintf('\nRows of Marine species: %d\nUnique Marine species : %d\n\n', nrow(d), length(unique(d$sciname))))
+# 2013 (without duplicate removal):
+#   Rows of Marine species:  8,380
+#   Unique Marine species :  8,178
+#
+# 2014 (before duplicate removal):
+#   Rows of Marine species: 79,382
+#   Unique Marine species : 16,315
+#
+# 2014 (after duplicate removal):
+#   Rows of Marine species:  6,635
+#   Unique Marine species :  6,556
+
+# 2014 (after duplicate removal 2):
+#   Rows of Marine species:  8,395
+#   Unique Marine species :  8,186
+
+#2015
+#   Rows of Marine species: 9,830
+#   Unique Marine species : 9,613
+
+
+print(addmargins(table(as.character(d$class))), row.names=F)
+# 2013 (without duplicate removal)::
 #     ACTINOPTERYGII           ANTHOZOA               AVES           BIVALVIA CEPHALASPIDOMORPHI        CEPHALOPODA      CHLOROPHYCEAE     CHONDRICHTHYES          CRUSTACEA         ECHINOIDEA             ENOPLA 
 #               3332                842                839                 34                  4                195                  1               1113                256                  1                  1 
 #    FLORIDEOPHYCEAE         GASTROPODA      HOLOTHUROIDEA           HYDROZOA            INSECTA         LILIOPSIDA      MAGNOLIOPSIDA           MAMMALIA        MEROSTOMATA             MYXINI       PHAEOPHYCEAE 
 #                 58                806                369                 16                  1                 78                 64                170                  4                 76                 15 
 #         POLYCHAETA     POLYPODIOPSIDA           REPTILIA      SARCOPTERYGII        ULVOPHYCEAE                Sum 
 #                  2                  3                 97                  2                  1               8380
-names(d) = tolower(names(d))
-d = rename(d, c('red.list.species.id'='sid','scientific.name'='sciname'))
-d = d[, !names(d) %in% c('primary')]
+#
+# 2014 (before duplicate removal):
+#     ACTINOPTERYGII           ANTHOZOA               AVES           BIVALVIA CEPHALASPIDOMORPHI 
+#              57836               1026               1299                552                 15 
+#        CEPHALOPODA      CHLOROPHYCEAE     CHONDRICHTHYES         ECHINOIDEA             ENOPLA 
+#                594                  1               3071                  1                  4 
+#    FLORIDEOPHYCEAE         GASTROPODA      HOLOTHUROIDEA           HYDROZOA            INSECTA 
+#                101              10614               1009                 16                  1 
+#         LILIOPSIDA      MAGNOLIOPSIDA       MALACOSTRACA           MAMMALIA        MAXILLOPODA 
+#                325                 79               1321                367                  4 
+#        MEROSTOMATA             MYXINI       PHAEOPHYCEAE         POLYCHAETA     POLYPODIOPSIDA 
+#                  7                271                 36                  5                  3 
+#           REPTILIA      SARCOPTERYGII        ULVOPHYCEAE                Sum 
+#                821                  2                  1              79382
+#
+# 2014 (after duplicate removal):
+#   ACTINOPTERYGII        ANTHOZOA            AVES        BIVALVIA     CEPHALOPODA   CHLOROPHYCEAE  CHONDRICHTHYES      ECHINOIDEA FLORIDEOPHYCEAE      GASTROPODA   HOLOTHUROIDEA        HYDROZOA      LILIOPSIDA   MAGNOLIOPSIDA 
+#             2758             842               3              10             195               1            1093               1              58             711             371              16              66               1 
+#     MALACOSTRACA        MAMMALIA     MAXILLOPODA     MEROSTOMATA          MYXINI    PHAEOPHYCEAE      POLYCHAETA        REPTILIA   SARCOPTERYGII     ULVOPHYCEAE             Sum 
+#              248             110               4               4              76              15               2              47               2               1           6,635
+#
+# 2014 (after duplicate removal 2):
+#     ACTINOPTERYGII           ANTHOZOA               AVES           BIVALVIA CEPHALASPIDOMORPHI        CEPHALOPODA      CHLOROPHYCEAE     CHONDRICHTHYES         ECHINOIDEA             ENOPLA 
+#               3332                842                840                 34                  4                195                  1               1112                  1                  1 
+#    FLORIDEOPHYCEAE         GASTROPODA      HOLOTHUROIDEA           HYDROZOA            INSECTA         LILIOPSIDA      MAGNOLIOPSIDA       MALACOSTRACA           MAMMALIA        MAXILLOPODA 
+#                 58                812                371                 16                  1                 78                 65                252                170                  4 
+#        MEROSTOMATA             MYXINI       PHAEOPHYCEAE         POLYCHAETA     POLYPODIOPSIDA           REPTILIA      SARCOPTERYGII        ULVOPHYCEAE                Sum 
+#                  4                 76                 15                  2                  3                103                  2                  1               8395
+#
+# 2015
+#     ACTINOPTERYGII           ANTHOZOA               AVES           BIVALVIA CEPHALASPIDOMORPHI        CEPHALOPODA      CHLOROPHYCEAE     CHONDRICHTHYES         CLITELLATA         ECHINOIDEA 
+#               4433                842                862                 34                  5                494                  1               1112                  1                  1 
+#     FLORIDEOPHYCEAE         GASTROPODA      HOLOTHUROIDEA           HYDROZOA            INSECTA         LILIOPSIDA      MAGNOLIOPSIDA       MALACOSTRACA           MAMMALIA        MAXILLOPODA 
+#                 58                815                371                 16                  1                 78                 70                255                170                  4 
+#         MEROSTOMATA             MYXINI       PHAEOPHYCEAE         POLYCHAETA     POLYPODIOPSIDA           REPTILIA      SARCOPTERYGII        ULVOPHYCEAE                Sum 
+#                  4                 76                 15                  2                  3                104                  2                  1               9830 
 
-# remove infraranks: 30 subspecies records ('ssp.')
+# JA (4/20/2015): It looks like there is a substantial number of new cephalopods and fishes, with a modified.year of 2014. These are absent from our 
+# previous dataset from IUCN.
+
+
+# remove infraranks: 30 subspecies records ('ssp.') #2015: 38 subspecies records
 d = subset(d, infrarank.type!='ssp.', !names(d) %in% c('infrarank','infrarank.type','infrarank.authority'))
 table(d$category)
+# 2014 (before duplicate removal):
 #    CR    DD    EN    EW    EX    LC LR/cd LR/lc LR/nt    NT    VU 
-#   147  2175   228     0    24  4557     6     5    12   518   678
-
+#   371  8450   598     0    38 63906    30    13   167  2121  2613
+# 2014 (after duplicate removal):
+#    CR    DD    EN    EW    EX    LC LR/cd LR/lc LR/nt    NT    VU 
+#    78  1983   140     0     6  3443     5     3     8   411   543 
+# 2013:
+#    CR    DD    EN    EX    LC LR/cd LR/lc LR/nt    NT    VU 
+#   147  2175   228    24  4557     6     5    12   518   678
+# 2014 (after duplicate removal 2):
+#    CR    DD    EN    EX    LC LR/cd LR/lc LR/nt    NT    VU 
+#   148  2178   231    24  4564     6     5    12   521   676 
+# 2015
+#   CR    DD    EN    EW    EX    LC LR/cd LR/lc LR/nt    NT    VU 
+#   155  2427   251     0    25  5648     5     6    12   547   716 
 # convert IUCN category from IUCN Red List Categories & Criteria v2.3 (1994-2000) to v3.1 (since 2001)
 # http://en.wikipedia.org/wiki/Wikipedia:Conservation_status
 #   LR/cd: Least Risk / Conservation Dependent -> NT
@@ -114,9 +260,25 @@ for (i in 1:length(x.cat)){ # g = c('LR/cd'='NT','LR/nt'='NT','LR/lc'='LC')[1]
 }
 d$category = factor(x=as.character(d$category), 
                                   levels=c('DD','LC','NT','VU','EN','CR','EX'), ordered=T)
-table(d$category)
+
+print(addmargins(table(d$category)), row.names=F)
+# 2013:
+#    DD    LC    NT    VU    EN    CR    EX 
+#  2175  4580   518   678   228   147    24
+# 2014:
+#    DD    LC    NT    VU    EN    CR    EX 
+#  8450 63906  2331  2613   598   371    38
+#
+# 2014 (after duplicate removal 2):
 #   DD   LC   NT   VU   EN   CR   EX 
-# 2175 4580  518  678  228  147   24
+# 2178 4564  544  676  231  148   24 
+#
+# 2015
+#  DD   LC   NT   VU   EN   CR   EX  
+#2427 5648  570  716  251  155   25 
+
+
+
 
 # categories used:
 #   EX = Extinct (if not EX in 2012)           
@@ -142,24 +304,30 @@ table(d$category)
 # subset(d, category=='EX' & sciname %in% sci.ex)
 # d = subset(d, category !='EX' | sciname %in% sci.ex)
 # table(d$category)
-#   DD   LC   NT   VU   EN   CR   EX 
-# 2175 4580  518  678  228  147    5
-
-table(d$category)
-#   DD   LC   NT   VU   EN   CR   EX 
-# 2175 4580  518  678  228  147   24
-
-nrow(subset(d, category!='DD')) # 6175
-write.csv(d, 'tmp/spp_iucn_marine.csv', row.names=F, na='')
+nrow(subset(d, category!='DD')) # 2013: 6,175; 2014: 69,857; 2014( after duplicate removal 2): 6,187 ; 2015: 7,365
+write.csv(d, file.path(dd, 'spp_iucn_marine.csv'), row.names=F, na='')
 
 # get list of unique species and their global extinction status
-d = read.csv('tmp/spp_iucn_marine.csv')
+d = read.csv(file.path(dd, 'spp_iucn_marine.csv'))
+
+table(duplicated(d$sid))
+# 2014 (before duplicate removal)
+#  FALSE    TRUE 
+#  8,365  69,942
+# 2014 (after duplicate removal 2):
+#  FALSE 
+#  8,365
+# 2015
+# FALSE 
+# 9,792
 
 # function to extract just habitat from the IUCN API given the Red.List.Species.ID
+options(stringsAsFactors=F)
 getDetails = function(sid, download.tries=10){
+  
   # example species Oncorhynchus nerka: sid=135301 # (parent) ## sid=135322 # (child)  # sid=4162
   url = sprintf('http://api.iucnredlist.org/details/%d/0', sid)
-  htm = sprintf('cache/iucn_details/%d.htm', sid) # htm = '135322.htm'
+  htm = sprintf('%s/iucn_details/%d.htm', cd, sid) # htm = '135322.htm'
   i=0
   while ( !file.exists(htm) | (file.info(htm)$size==0 & i<download.tries) ){
     download.file(url, htm, method='auto', quiet=T, mode='wb')
@@ -169,73 +337,143 @@ getDetails = function(sid, download.tries=10){
   h = htmlParse(htm)
   subpopulations.href = xpathSApply(h, '//li[@class ="subspecie"]/a', xmlGetAttr, 'href')
   subpopulations = as.integer(sub('/details/([0-9]+)/0', '\\1', subpopulations.href))  
-  countries = xpathSApply(h, '//ul[@class="country_distribution"]/li/ul/li', xmlValue)
-  popn_trend = xpathSApply(h, '//div[@id="population_trend"]', xmlValue)
+  countries      = as.character(xpathSApply(h, '//ul[@class="country_distribution"]/li/ul/li', xmlValue))
+  popn_trend     = as.character(xpathSApply(h, '//div[@id="population_trend"]', xmlValue))
   
   # NOTE greater specificity 
   #   for http://www.iucnredlist.org/details/135322/0 -- United States (Alaska) 
   #   vs  http://api.iucnredlist.org/details/135322/0 -- United States
+  # parent: http://api.iucnredlist.org/details/135301/0
   #countries = xpathSApply(h, '//td[@class="label"][strong="Countries:"]/following-sibling::td/div/text()', xmlValue)    
+
+  c = c(subpopulations,countries,popn_trend) #bring all three variables into a vector. This is a hacky
+  # solution to fix the cases where we have species with no information for these three things.
+  # an example is sid = 23149
   
-  return(list(subpopulations=subpopulations, countries=countries, popn_trend=popn_trend))
+  #with previous code, was getting the following error:
+  #Warning message:
+  #  In mclapply(d$sid, getDetails, mc.cores = detectCores(), mc.preschedule = T) :
+  #  scheduled cores 15 encountered errors in user code, all values of the jobs will be affected
+  
+  
+  
+  if (length(c)>0){
+  
+   df = rbind.fill(data.frame(subpopulations = subpopulations), 
+               data.frame(countries      = countries), 
+               data.frame(popn_trend     = popn_trend)) %>%
+        mutate(sid=sid)
+    
+  }else{
+  
+   df = rbind.fill(data.frame(subpopulations=as.integer('NA')),
+               data.frame(countries='NA'),
+               data.frame(popn_trend = 'NA'))%>%
+        mutate(sid=sid)
+  
+ }
+
+return(df)
 }
 
 # get list of all subpopulations and countries
 suppressWarnings(rm(list=c('spp_subpop','spp_countries','spp_popn_trend')))
-for (sid in d$sid){ # sid = d$sid[1] # sid
-  sp = getDetails(sid)
   
-  # subpop
-  if (length(sp$subpopulations)>0){
-    sp_subpop = data.frame(parent_sid=sid, sid=sp$subpopulations)
-    if (!exists('spp_subpop')){
-      spp_subpop = sp_subpop
-    } else{
-      spp_subpop = rbind(spp_subpop, sp_subpop)
-    }
-  }
-  
-  # countries
-  if (length(sp$countries)>0){
-    sp_countries = data.frame(sid=sid, country=sp$countries)
-    if (!exists('spp_countries')){
-      spp_countries = sp_countries
-    } else{
-      spp_countries = rbind(spp_countries, sp_countries)
-    }
-  }
-  
-  # popn_trend
-  if (length(sp$popn_trend)>0){
-    sp_popn_trend = data.frame(sid=sid, popn_trend=sp$popn_trend)
-    if (!exists('spp_popn_trend')){
-      spp_popn_trend = sp_popn_trend    
-    } else{
-      spp_popn_trend = rbind(spp_popn_trend, sp_popn_trend)
-    }
-  }  
-}
+# for (sid in d$sid){ # sid = d$sid[2] # sid
+#   sp = getDetails(sid)
+#   
+#   # subpop
+#   if (length(sp$subpopulations)>0){
+#     sp_subpop = data.frame(parent_sid=sid, sid=sp$subpopulations)
+#     if (!exists('spp_subpop')){
+#       spp_subpop = sp_subpop
+#     } else{
+#       spp_subpop = rbind(spp_subpop, sp_subpop)
+#     }
+#   }
+#   
+#   # countries
+#   if (length(sp$countries)>0){
+#     sp_countries = data.frame(sid=sid, country=sp$countries)
+#     if (!exists('spp_countries')){
+#       spp_countries = sp_countries
+#     } else{
+#       spp_countries = rbind(spp_countries, sp_countries)
+#     }
+#   }
+#   
+#   # popn_trend
+#   if (length(sp$popn_trend)>0){
+#     sp_popn_trend = data.frame(sid=sid, popn_trend=sp$popn_trend)
+#     if (!exists('spp_popn_trend')){
+#       spp_popn_trend = sp_popn_trend    
+#     } else{
+#       spp_popn_trend = rbind(spp_popn_trend, sp_popn_trend)
+#     }
+#   }  
+# }
+
+#getDetails(135301)
+#getDetails(10016)
+getDetails(23149)
+
+print(Sys.time())
+r = mclapply(d$sid, getDetails, mc.cores=detectCores(), mc.preschedule=T) # took ~ ? hrs on neptune JA (4/20/15) - really fast
+print(Sys.time())
+rd = rbind_all(r)
+print(Sys.time())
+
+spp_subpop = rd %>%
+  filter(!is.na(subpopulations)) %>%
+  select(sid, subpopulations)
+
+spp_countries = rd %>%
+  filter(!is.na(countries)) %>%
+  select(sid, countries)
+
+spp_popn_trend = rd %>%
+  filter(!is.na(popn_trend)) %>%
+  mutate(popn_trend = factor(popn_trend, c('Unknown','Decreasing','Stable','Increasing'), ordered=T)) %>%
+  select(sid, popn_trend)
 
 # assign popn_trend to d, before subsetting into subpopulations and global species and 
-d$popn_trend = NA
-d[match(spp_popn_trend$sid, d$sid),'popn_trend'] = as.character(spp_popn_trend$popn_trend)
-d$popn_trend = factor(d$popn_trend, c('Unknown','Decreasing','Stable','Increasing'), ordered=T)
-summary(d$popn_trend)
-#    Unknown Decreasing     Stable Increasing       NA's 
+
+    #JA (4/20/15) the following line wasn't working, getting the following error:
+    #Error in `$<-.data.frame`(`*tmp*`, "popn_trend", value = integer(0)) : 
+      #replacement has 0 rows, data has 9792so I rewrote it 
+
+# d$popn_trend = factor(d$popn_trend, c('Unknown','Decreasing','Stable','Increasing'), ordered=T)
+
+# So I rewrote the line as I think it is meant to be...
+d = d%>%mutate(popn_trend = spp_popn_trend$popn_trend[match(sid,spp_popn_trend$sid)])
+
+
+print(addmargins(table(spp_popn_trend$popn_trend, useNA='ifany')), row.names=F)
+# 2013:
+# Unknown Decreasing     Stable Increasing       NA's 
 #       5559       1338       1002        193        258 
+# 2014:
+#    Unknown Decreasing     Stable Increasing        Sum 
+#       5565       1341       1006        195       8107 
+#
+# 2015:
+#    Unknown Decreasing     Stable Increasing       <NA>        Sum 
+#       6560       1404       1382        202          1       9549 
 
 # manual subpopulations discovered later, somehow not listed in the IUCN details page of parent 
 # (again difference b/n API and WWW versions), after defining spp_global with the following:
 #   subset(spp_global, sciname %in% spp_global$sciname[duplicated(spp_global$sciname)])
-spp_subpop.manual = c('Pristis pectinata'        = 18175,
-                      'Centrophorus moluccensis' = 42838,
-                      'Pristis pristis'          = 18584848)
-for (i in 1:length(spp_subpop.manual)){ # i=1
-  parent_sid = spp_subpop.manual[[i]]
-  sp_subpop = data.frame(parent_sid=parent_sid, 
-                         sid=subset(d, sciname %in% names(spp_subpop.manual)[i] & sid!=parent_sid, sid, drop=T))
-  spp_subpop = rbind(spp_subpop, sp_subpop)
-}
+
+#JA (4/20/15) - I think these are incorporated already... did not run this
+#spp_subpop.manual = c('Pristis pectinata'        = 18175,
+#                      'Centrophorus moluccensis' = 42838,
+#                      'Pristis pristis'          = 18584848)
+#for (i in 1:length(spp_subpop.manual)){ # i=1
+#  parent_sid = spp_subpop.manual[[i]]
+#  sp_subpop = data.frame(parent_sid=parent_sid, 
+#                         sid=subset(d, sciname %in% names(spp_subpop.manual)[i] & sid!=parent_sid, sid, drop=T))
+#  spp_subpop = rbind(spp_subpop, sp_subpop)
+#}
 #write.csv(spp_subpop   , 'tmp/spp_iucn_marine_subpopulations.csv', row.names=F, na='')
 #write.csv(spp_countries, 'tmp/spp_iucn_marine_countries.csv', row.names=F, na='')
 
@@ -245,12 +483,16 @@ for (i in 1:length(spp_subpop.manual)){ # i=1
 #   TODO: ISSUE: can have more than one subpopulation with different categories in the same country, eg 135301 sockey salmon
 # tmp/spp_iucn_marine_subpop.csv: sid, parent_sid, sciname, category
 # tmp/spp_iucn_marine_subpop_countries.csv: sid, country
+
+#JA (4/20/15) - There is no 'parent_sid' column in spp_subpop. It seems these were created on line 387 but commented out so
+# I did not run it.... 
+
 spp_subpop = merge(spp_subpop, d[, c('sid','sciname','category','popn_trend')], by='sid')
 spp_subpop_countries = subset(spp_countries, sid %in% spp_subpop$sid)
 cat(sprintf('\nFound %d marine subpopulations for %d species in %d countries.\n', nrow(spp_subpop), length(unique(spp_subpop$parent_sid)), nrow(spp_subpop_countries)))
 # Found 177 marine subpopulations for 51 species in 736 countries.
-write.csv(spp_subpop          , 'tmp/spp_iucn_marine_subpop.csv'          , row.names=F, na='')
-write.csv(spp_subpop_countries, 'tmp/spp_iucn_marine_subpop_countries.csv', row.names=F, na='')
+write.csv(spp_subpop          , file.path(cd, 'spp_iucn_marine_subpop.csv')          , row.names=F, na='')
+write.csv(spp_subpop_countries, file.path(cd, 'spp_iucn_marine_subpop_countries.csv'), row.names=F, na='')
 
 # get list of all master species populations (ie not a subpopulation, used to extract IUCN rangemaps and apply category globally) 
 # tmp/spp_iucn_marine_global.csv: sid, sciname, category
@@ -258,49 +500,47 @@ write.csv(spp_subpop_countries, 'tmp/spp_iucn_marine_subpop_countries.csv', row.
 spp_global           = subset(d            , !sid %in% spp_subpop$sid)
 spp_global_countries = subset(spp_countries,  sid %in% spp_global$sid)
 cat(sprintf('\nFound %d marine global species in %d countries.\n', nrow(spp_global), nrow(spp_global_countries)))
-# Found 8173 marine global species in 120469 countries.
+# 2013: Found 8173 marine global species in 120469 countries.
+# 2015: Found 9724 marine global species in 132001 countries. 
 
 # check for duplicate scientific names
 subset(spp_global, sciname %in% spp_global$sciname[duplicated(spp_global$sciname)])
 
 # assign popn_trend to spp_global
 
-
 # Found 8181 marine global species in 120,563 countries.
-write.csv(spp_global          , 'tmp/spp_iucn_marine_global.csv'          , row.names=F, na='')
-write.csv(spp_global_countries, 'tmp/spp_iucn_marine_global_countries.csv', row.names=F, na='')
+write.csv(spp_global          , file.path(dd, 'spp_iucn_marine_global.csv')          , row.names=F, na='')
+write.csv(spp_global_countries, file.path(dd, 'spp_iucn_marine_global_countries.csv'), row.names=F, na='')
 
 # get distinct countries for doing an eez lookup (and later distribution for global species or catgory override for subpopulation)
-spp_countries_distinct = as.data.frame(table(subset(spp_countries, sid %in% d$sid, country)))
+spp_countries_distinct = as.data.frame(table(subset(spp_countries, sid %in% d$sid, countries)))
 spp_countries_distinct = rename(spp_countries_distinct[order(as.character(spp_countries_distinct[[1]])),],
                                 c('Var1'='country','Freq'='count'))
-write.csv(spp_countries_distinct, 'tmp/spp_iucn_marine_distinct_countries.csv', row.names=F, na='')
+write.csv(spp_countries_distinct, file.path(dd, 'spp_iucn_marine_distinct_countries.csv'), row.names=F, na='')
 
 
 # supplement with Davies & Baum (2012) ------------------------------------
 
-# clean excess white spaces
-spp_db12 = read.csv('raw/DaviesBaum2012/DaviesBaum2012.csv', stringsAsFactors=F)
-require(gdata)
-for (fld in names(spp_db12)){ # fld = names(spp_db12)[1] # fld = 'Scientific_name'
-  if (class(spp_db12[[fld]])=='character'){
-    spp_db12[[fld]] = gdata::trim(spp_db12[[fld]])
-  }
-}
-# lowercase field names
-names(spp_db12) = tolower(names(spp_db12))
-write.csv(spp_db12, 'tmp/DaviesBaum2012.csv', row.names=F, na='')
-
-# find spp not already in IUCN
-spp_db12 = read.csv('tmp/DaviesBaum2012.csv', stringsAsFactors=F)
-nrow(spp_db12) # 166 populations
-length(unique(spp_db12$scientific_name)) # 94 unique species
-spp_db12_notiucn = subset(spp_db12, !scientific_name %in% d$sciname)
-cat(sprintf('\nFound %d populations for %d species with Davies and Baum (2012) novel to IUCN species.\n', nrow(spp_db12_notiucn), length(unique(spp_db12_notiucn$scientific_name))))
-# Found 110 populations for 69 species with Davies and Baum (2012) novel to IUCN species.
-write.csv(spp_db12_notiucn, 'tmp/spp_DaviesBaum2012_notIUCN.csv', row.names=F, na='')
-
-
+# # clean excess white spaces
+# spp_db12 = read.csv('raw/DaviesBaum2012/DaviesBaum2012.csv', stringsAsFactors=F)
+# require(gdata)
+# for (fld in names(spp_db12)){ # fld = names(spp_db12)[1] # fld = 'Scientific_name'
+#   if (class(spp_db12[[fld]])=='character'){
+#     spp_db12[[fld]] = gdata::trim(spp_db12[[fld]])
+#   }
+# }
+# # lowercase field names
+# names(spp_db12) = tolower(names(spp_db12))
+# write.csv(spp_db12, 'tmp/DaviesBaum2012.csv', row.names=F, na='')
+# 
+# # find spp not already in IUCN
+# spp_db12 = read.csv('tmp/DaviesBaum2012.csv', stringsAsFactors=F)
+# nrow(spp_db12) # 166 populations
+# length(unique(spp_db12$scientific_name)) # 94 unique species
+# spp_db12_notiucn = subset(spp_db12, !scientific_name %in% d$sciname)
+# cat(sprintf('\nFound %d populations for %d species with Davies and Baum (2012) novel to IUCN species.\n', nrow(spp_db12_notiucn), length(unique(spp_db12_notiucn$scientific_name))))
+# # Found 110 populations for 69 species with Davies and Baum (2012) novel to IUCN species.
+# write.csv(spp_db12_notiucn, 'tmp/spp_DaviesBaum2012_notIUCN.csv', row.names=F, na='')
 
 # old circa 2011 code ----
 
