@@ -9,23 +9,28 @@ library(maps)
 
 # set working directory
 
-setwd('/Volumes/data_edit/git-annex/globalprep/Pressures_UV')
+setwd(file.path(dir_N,'data_edit/git-annex/globalprep/Pressures_UV'))
 
+#list all netcdf files
 nc_files = list.files('data/uv_omi_aura_2013_2014/nc',full.names=T)
 
-od = nc_open('data/uv_omi_aura_2013_2014/nc_opendap/OMI-Aura_L3-OMUVBd_2014m0101_v003-2014m0105t093001.he5.nc')
+# function to turn netcdfs into tifs
 
 nc_to_tif = function(file){
 
   nc = nc_open(file)
-  long <- as.array(ncvar_get(od,varid='lon'))
+  
+  yr = substr(file,50,58)
+  print(yr)
+  
+  long <- as.array(ncvar_get(nc,varid='lon'))
   nlon <- dim(long)
   
-  lat <- ncvar_get(od,varid='lat',verbose = F)
+  lat <- ncvar_get(nc,varid='lat',verbose = F)
   nlat <- dim(lat)
   
-  EDR <- ncvar_get(od,varid='ErythemalDoseRate')
-  fillvalue <- ncatt_get(od,'ErythemalDoseRate', "_FillValue")
+  EDR <- ncvar_get(nc,varid='ErythemalDoseRate')
+  fillvalue <- ncatt_get(nc,'ErythemalDoseRate', "_FillValue")
   
   EDR[EDR==fillvalue]<-NA 
 
@@ -56,8 +61,10 @@ nc_to_tif = function(file){
   
   projection(out) <- crs_ja#("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
   
-  projectRaster(out,crs=crs_ja) #crs("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
   
+  
+  writeRaster(out,filename=paste0('data/uv_omi_aura_2013_2014/tif_from_nc/OMI-Aura_L4-OMUVBd_',yr,sep=''),format='GTiff')
+}
 
-  p = raster('/Volumes/halpern2008_edit/mnt/storage/marine_threats/impact_layers_2013_redo/impact_layers/work/uv/uv_og/uv_omi_aura_2004_2013/tif_from_nc/OMI-Aura_L3-OMUVBd_2004m1003_v003-2012m1219t083707.tif')
-
+#create all the tifs
+sapply(nc_files,nc_to_tif)
