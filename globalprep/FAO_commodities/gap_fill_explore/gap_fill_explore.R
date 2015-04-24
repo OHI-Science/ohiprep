@@ -6,7 +6,7 @@
 # This method is based on explorations from: gap_fill_explore.R and Issue #397 and this document:
 # https://www.lucidchart.com/documents/edit/20f29b5a-4a15-4128-ac40-9f14a7f1ccdc?shared=true
 
-
+## NOTE: These data have since been updated....the data would need to be updated if reran
 #####################################################################
 ### setup ---- libraries, pathnames, etc
 #####################################################################
@@ -148,6 +148,52 @@ ggplot(data_test_pred, aes(y=log(full_model_predict), x=log(tonnes))) +
 
 mod <- lm(full_model_predict ~ tonnes, data=data_test_pred)
 summary(mod)
+
+
+############# Model 2b: only tonnes and usd
+
+coms <- unique(data_train$commodity)
+predict_tonnes <- data.frame()
+
+for(i in 1:length(coms)){ 
+  #i=241
+  data_train_sub <- data_train %>%
+    filter(commodity==coms[i]) 
+  predict_tonnes_sub <- data_test %>%
+    filter(commodity==coms[i]) %>%
+    select(country, year, commodity, usd)
+  
+  if(length(predict_tonnes_sub$usd)==0 |sum(data_train_sub$usd)==0 ){ #move to next if there are if resulting testing data is N=0
+    predict_tonnes <- predict_tonnes
+    cat(i)
+  } else {
+    mod <- lm(tonnes~ usd, data=data_train_sub)
+    
+    predict_tonnes_sub$full_model_predict <- predict(mod, newdata=predict_tonnes_sub)
+    predict_tonnes_sub$full_model_predict <- round(predict_tonnes_sub$full_model_predict, 0)
+    predict_tonnes_sub$full_model_predict <- ifelse(predict_tonnes_sub$usd==0, 
+                                                    0,
+                                                    predict_tonnes_sub$full_model_predict)
+    predict_tonnes_sub$full_model_predict <- ifelse(predict_tonnes_sub$full_model_predict<0, 
+                                                    1,
+                                                    predict_tonnes_sub$full_model_predict)
+    predict_tonnes <- rbind(predict_tonnes, predict_tonnes_sub)
+    cat(i)
+  }
+}
+
+
+data_test_pred <- data_test %>%
+  left_join(predict_tonnes)
+
+ggplot(data_test_pred, aes(y=log(full_model_predict), x=log(tonnes))) +
+  labs(x="tonnes_observed, ln", y="tonnes_predicted, ln") + 
+  geom_point(shape=19, alpha=0.2) +
+  theme_bw()
+
+mod <- lm(full_model_predict ~ tonnes, data=data_test_pred)
+summary(mod)
+
 
 ############# Model 3: country (no year)
 
@@ -291,9 +337,10 @@ data_mod_country_lm <- data_zoo %>%
   filter(N_reg>=4) %>%
   group_by(country, commodity) %>%
   mutate(sum_usd=sum(usd)) %>%
-  filter(sum_usd>0) %>%
+  filter(sum_usd>0) %>% 
+  mutate(tonnes_mod = ifelse(cat=="test", NA, tonnes)) %>%
   do({
-    mod <- lm(tonnes ~ usd, data=.)
+    mod <- lm(tonnes_mod ~ usd, data=.)
     tonnes_pred <- predict(mod, newdata=.['usd'])
     data.frame(., tonnes_pred)
   })
@@ -323,7 +370,7 @@ data_test$cat <- "test"
 
 data_zoo <- rbind(data_train, data_test)
 
-key <- read.csv("C:/Users/Melanie/github/ohi-global/eez2014/layers/cntry_rgn.csv")
+key <- read.csv("../ohi-global/eez2014/layers/cntry_rgn.csv")
 dups <- key$rgn_id[duplicated(key$rgn_id)]
 key[key$rgn_id %in% dups, ]
 
@@ -336,7 +383,7 @@ key  <- key %>%
 
 
 
-georegion <- read.csv("C:/Users/Melanie/github/ohi-global/eez2014/layers/cntry_georegions.csv")
+georegion <- read.csv("../ohi-global/eez2014/layers/cntry_georegions.csv")
 unique(georegion$georgn_id[georegion$level=="r0"])  # 1 level
 unique(georegion$georgn_id[georegion$level=="r1"])  # 7 levels
 unique(georegion$georgn_id[georegion$level=="r2"])  # 22 levels
@@ -356,9 +403,10 @@ data_mod_country_lm <- data_zoo %>%
   #   filter(country=="Philippines",
   #          commodity=="Oyster meat, prepared or preserved, nei") %>%
   group_by(georgn_id, commodity) %>%
+  mutate(tonnes_mod = ifelse(cat=="test", NA, tonnes)) %>%
   filter(reg_num_geo>=4) %>%
   do({
-    mod <- lm(tonnes ~ usd + year, data=.)
+    mod <- lm(tonnes_mod ~ usd + year, data=.)
     tonnes_pred <- predict(mod, newdata=.[c('usd', 'year')])
     data.frame(., tonnes_pred)
   })
@@ -385,9 +433,10 @@ data_mod_country_lm <- data_zoo %>%
   #   filter(country=="Philippines",
   #          commodity=="Oyster meat, prepared or preserved, nei") %>%
   group_by(georgn_id, commodity) %>%
+  mutate(tonnes_mod = ifelse(cat=="test", NA, tonnes)) %>%
   filter(reg_num_geo>=4) %>%
   do({
-    mod <- lm(tonnes ~ usd, data=.)
+    mod <- lm(tonnes_mod ~ usd, data=.)
     tonnes_pred <- predict(mod, newdata=.[c('usd')])
     data.frame(., tonnes_pred)
   })
@@ -410,6 +459,34 @@ mod <- lm(tonnes_pred ~ tonnes, data=data_mod_country_lm)
 summary(mod)
 
 
+
+############# Model 9: Most general model
+
+data_mod_country_lm <- data_zoo %>%
+  mutate(tonnes_mod = ifelse(cat=="test", NA, tonnes)) %>%
+  group_by(commodity) %>%
+  do({
+    mod <- lm(tonnes_mod ~ usd, data=.)
+    tonnes_pred <- predict(mod, newdata=.[c('usd')])
+    data.frame(., tonnes_pred)
+  })
+
+
+data_mod_country_lm  <- data_mod_country_lm %>%
+  filter(cat=="test") %>%
+  mutate(tonnes_pred = round(tonnes_pred, 0)) %>%
+  mutate(tonnes_pred = ifelse(usd==0, 0, tonnes_pred)) %>%
+  mutate(tonnes_pred = ifelse(tonnes_pred<0, 1, tonnes_pred))         
+
+
+ggplot(data_mod_country_lm, aes(y=log(tonnes_pred), x=log(tonnes))) +
+  geom_point(shape=19, alpha=0.2) +
+  labs(x="tonnes_observed, ln", y="tonnes_predicted, ln") + 
+  theme_bw()
+
+
+mod <- lm(tonnes_pred ~ tonnes, data=data_mod_country_lm)
+summary(mod)
 
 
 
