@@ -80,27 +80,124 @@ mean(data$exposure)
 data <- read.csv(file.path(dir_np, "ExposureExplore/exp_explore.csv"))
 library(ggplot2)
 
-ggplot(data, aes(x=x_99)) +
- geom_histogram(color="black", fill="gray") +
-  theme_bw() +
-  labs(title="NP: Exposure 99th quantile", x="Exposure Score", y="Number of observations")
+### histograms for each product separately
+for (prod in (unique(data$product))) {
+  data_prod <- data %>% 
+    filter(product == prod)
+  ggplot(data_prod, aes(x=exposure)) +
+    geom_histogram(color="black", fill="gray") +
+    theme_bw() +
+    labs(title=paste("NP Exposure:", prod), x="Exposure Score", y="Number of observations")
+  ggsave(file.path(dir_np, paste("ExposureExplore/", prod, "_exp.jpg", sep = '')))
+}
 
-ggplot(data, aes(x=x_95)) +
-  geom_histogram(color="black", fill="gray") +
+### quantiles for each product individually
+for (prod in (unique(data$product))) {
+  data_prod <- data %>% 
+    filter(product == prod)
+  print(sprintf('Quantiles for exposure product == %s based on max value', prod))
+  print(round(quantile(data_prod$exposure, na.rm = TRUE), 5))
+  if(prod != 'fish_oil') {
+    print(sprintf('Quantiles for exposure product == %s based on 99th quantile', prod))
+    print(round(quantile(data_prod$x_99, na.rm = TRUE), 5))
+    print(sprintf('Quantiles for exposure product == %s based on 95th quantile', prod))
+    print(round(quantile(data_prod$x_95, na.rm = TRUE), 5))
+  }
+}
+
+
+### histogram combining all products except fish oil
+all_but_fish <- data %>% filter(product != 'fish_oil')
+ggplot(all_but_fish, aes(x=exposure, fill = product)) +
+  geom_histogram() +
   theme_bw() +
-  labs(title="NP: Exposure 95th quantile", x="Exposure Score", y="Number of observations")
+  labs(title="NP: Exposure all but fish oil", x="Exposure Score", y="Number of observations")
+ggsave(file.path(dir_np, "ExposureExplore/all_but_fish_oil_exp.jpg"))
+
+### facet wrapped histograms for all products at current exposure
+ggplot(data, aes(x=exposure, fill = product)) +
+  geom_histogram() +
+  facet_wrap(~product, nrow=2) +
+  theme_bw() +
+  labs(title="NP: Exposure by product, calculated from maximum by product", x="Exposure Score", y="Number of observations")
+ggsave(file.path(dir_np, "ExposureExplore/hist_all_100_facet.jpg"))
+
+### facet wrapped histograms for all products at exposure normalized to 99th quantile
+ggplot(all_but_fish, aes(x=x_99, fill = product)) +
+  geom_histogram() +
+  facet_wrap(~product, nrow=2) +
+  theme_bw() +
+  labs(title="NP: Exposure by product, calculated from 99th quantile", x="Exposure Score", y="Number of observations")
+ggsave(file.path(dir_np, "ExposureExplore/hist_all_99_facet.jpg"))
+
+### facet wrapped histograms for all products at exposure normalized to 95th quantile
+ggplot(all_but_fish, aes(x=x_95, fill = product)) +
+  geom_histogram() +
+  facet_wrap(~product, nrow=2) +
+  theme_bw() +
+  labs(title="NP: Exposure by product, calculated from 95th quantile", x="Exposure Score", y="Number of observations")
+ggsave(file.path(dir_np, "ExposureExplore/hist_all_95_facet.jpg"))
+
+ggplot(all_but_fish, aes(x=exposure, y=x_99, color=product)) +
+  geom_point(size=3) +
+  geom_abline(slope=1, intercept=0) +
+  labs(title="NP: Comparing exposure calculated from max vs 99th quantile",
+       x = 'exposure 100th quantile', y = 'exposure 99th quantile') +
+  theme_bw()
+ggsave(file.path(dir_np, "ExposureExplore/scatter_100vs99.jpg"))
+
+ggplot(all_but_fish, aes(x=exposure, y=x_95, color=product)) +
+  geom_point(size=3) +
+  geom_abline(slope=1, intercept=0) +
+  labs(title="NP: Comparing exposure calculated from max vs 95th quantile",
+       x = 'exposure 100th quantile', y = 'exposure 95th quantile') +
+  theme_bw()
+ggsave(file.path(dir_np, "ExposureExplore/scatter_100vs95.jpg"))
 
 
 ggplot(data, aes(x=exposure, fill=product)) +
   geom_histogram() +
   theme_bw() 
 
-ggplot(data, aes(x=exposure, y=x_95, color=product, shape=product)) +
-  geom_point(size=3) +
-  geom_abline(slope=1, intercept=0) +
-  labs(title="Comparing exposure calculated from max vs 95th quantile") +
+### Examining specific cases - looking at max harvest intensity for each product
+### Corals: max intensity in Singapore 1990, and close second S. Africa in 1998.
+data_trim <- data %>%
+  select(rgn_name, rgn_id, product, year, tonnes, km2, expos_raw)
+
+co_peak1 <- data_trim %>% 
+  filter(product == 'corals' & rgn_name == 'South Africa') %>%
+  mutate(product = 'corals_zaf')
+
+co_peak2 <- data_trim %>% 
+  filter(product == 'corals' & rgn_name == 'Singapore') %>%
+  mutate(product = 'corals_sgp')
+
+### Seaweeds: max intensity in Chile 2010
+sw_peak <- data_trim %>% 
+  filter(product == 'seaweeds' & rgn_name == 'Chile') %>%
+  mutate(product = 'seaweeds_chl')
+
+### Ornamentals: max intensity in Spain, 2010
+or_peak <- data_trim %>% 
+  filter(product == 'ornamentals' & rgn_name == 'Spain' & year >= 1990) %>%
+  mutate(product = 'ornamentals_esp')
+
+### Sponges: max intensity in Spain, 2010
+sp_peak <- data_trim %>% 
+  filter(product == 'sponges' & rgn_name == 'Spain') %>%
+  mutate(product = 'sponges_esp')
+
+### Shells: max intensity in Faeroe Islands, 2003
+sh_peak <- data_trim %>% 
+  filter(product == 'shells' & rgn_name == 'Faeroe Islands') %>%
+  mutate(product = 'shells_fro')
+
+maxima <- bind_rows(list(co_peak1, co_peak2, sw_peak, or_peak, sp_peak, sh_peak))
+
+ggplot(maxima, aes(x=year, y=expos_raw, color=product)) +
+  geom_line(size=3) +
+  labs(title="NP: product trends for region with max harvest intensity",
+       x = 'year', y = 'harvest intensity (tonnes/km^2') +
   theme_bw()
+ggsave(file.path(dir_np, "ExposureExplore/peak_exp.jpg"))
 
-
-ggsave(file.path(dir_np, "ExposureExplore/oldExpvs99Exp.png"))
-  
