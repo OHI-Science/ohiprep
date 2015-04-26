@@ -117,8 +117,9 @@ rasterOptions(tmpdir=tmpdir)
     #ocean is a raster with all land clipped out - at 1km with value of 1
     ocean = raster(file.path(dir_N,'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
 
-    slr_1km = resample(slr_moll_log,ocean,method='ngb',progress='text',filename='tmp/slr_moll_log_1km.tif')
-
+    slr_1km = resample(slr_moll_log,ocean,method='ngb',progress='text',filename='tmp/slr_moll_log_1km.tif') 
+    #slr_1km = resample(slr_moll,ocean,method='ngb',progress='text',filename='tmp/slr_moll_nonlog_1km_rate.tif',overwrite=T)
+    #^second one is for rate of change in slr per year
 
 #--------------------------------------------------
 
@@ -130,10 +131,12 @@ rasterOptions(tmpdir=tmpdir)
 
     #normalize by the reference point - cap all values greater than 1 to 1
     r_resc <- calc(slr_1km,fun=function(x){ifelse(x>ref,1,x/ref)},progress='text',filename='tmp/slr_moll_log_1km_rescaled.tif',overwrite=T)
+    #r_resc <- calc(slr_1km,fun=function(x){ifelse(x>ref,1,x/ref)},progress='text',filename='tmp/slr_moll_nonlog_1km_rescaled_rate.tif',overwrite=T)
+    #^use for the rate (mm/year) data
 
     plot(r_resc,main='Rescaled Sea Level Rise Pressure',col=cols)
 
-
+    histogram(r_resc)
 #--------------------------------------------------
 
 
