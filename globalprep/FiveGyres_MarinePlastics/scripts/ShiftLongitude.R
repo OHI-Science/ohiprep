@@ -2,7 +2,18 @@
 
 
 library(raster)
-x <- raster('N:/git-annex/globalprep/FiveGyres_MarinePlastics_CW/v2015/globalplastic_wd-cd_rasters/count_density_size1.tif')
+
+dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
+          'Darwin'  = '/Volumes/data_edit',
+          'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
+
+data_wd = file.path(dir_N,'git-annex/globalprep/FiveGyres_MarinePlastics_CW/v2015')
+
+setwd(data_wd)
+
+x <- raster('globalplastic_wd-cd_rasters/count_density_size1.tif')
+
+trim <- trim(x,values=0.2309009)
 
 #set extent for cropping raster 
 ext1 <- c(20, 360, -90, 90)
