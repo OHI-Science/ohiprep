@@ -61,7 +61,7 @@ acid  <- data %>%
   arrange(rgn_id)
 }
 
-write.csv(acid, file.path(save_loc, sprintf('data/acid_%s_%s', regionType, newYear)), row.names=FALSE)
+write.csv(acid, file.path(save_loc, sprintf('data/acid_%s_%s.csv', regionType, newYear)), row.names=FALSE)
 }
 
 
