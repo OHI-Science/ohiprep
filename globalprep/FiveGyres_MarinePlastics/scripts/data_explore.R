@@ -44,7 +44,6 @@ unlog = function(file){
 
   name = unlist(strsplit(file,'/','.'))[2] #split filename, grab second string to use in naming tif
   r = raster(file)
-  r = shift(r,x=-20,y=0) #need to shift each raster, came in on a scale 20 to 380 (not 0 to 360)
   out = 10^r
   writeRaster(out,file=paste0('tmp/','unlog_',name,sep=''),overwrite=T)
   
@@ -64,20 +63,44 @@ count  = stack(list.files('tmp','unlog_count_*',full.names=T))
 w_sum = calc(weight,fun=sum)
 c_sum = calc(count,fun=sum)
 
+#shift and rotate the raster so that it is -180 to 180
+
+shift_rot <- function(x){
+  
+  ext1 <- c(20, 360, -90, 90)
+  r1 <- crop(x, ext1)
+  #for some reason this crops to extent of 20,360.0111,-90,90 which gives a weird line. Need to reassign extent
+  #extent(r1)<-extent(20,360,-90,90)
+  r1 <- shift(r1, x=(360-extent(r1)[2])) #this is 0?
+  
+  #set extent for piece of original raster that goes from 360-380. this is going to be chopped off, then moved to the correct side of the raster
+  ext2 <- c(360, 380, -90, 90)
+  r2 <- crop(x, ext2)
+  #extent(r2)<-extent(360,380,-90,90)
+  r2 <- shift(r2, x=-extent(r2)[1])
+  out <- merge(r2, r1,overlap=FALSE)
+  
+  out2 <- rotate(out)  #weird line...not sure where that is coming from.
+  return(out2)
+}
+#set extent for cropping raster 
+
+w_rot = shift_rot(w_sum)
+c_rot = shift_rot(c_sum)
+
+
+
 #reproject
 
-w_sum = rotate(w_sum)
-c_sum = rotate(c_sum)
-
-projection(w_sum) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"    #define initial projection. Helps avoid errors when reprojecting to mollweide
-projection(c_sum) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"  
+projection(w_rot) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"    #define initial projection. Helps avoid errors when reprojecting to mollweide
+projection(c_rot) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"  
 mollCRS <- CRS('+proj=moll')
 
 
-w_moll <- projectRaster(w_sum, crs=mollCRS,over=T,progress='text',filename='tmp/weight_sum_moll.tif',overwrite=T)
+w_moll <- projectRaster(w_rot, crs=mollCRS,over=T,progress='text',filename='tmp/weight_sum_moll.tif',overwrite=T)
 resamp   <- resample(w_moll,ocean,progress='text',filename='tmp/weight_sum_moll_1km.tif',overwrite=T,method='ngb')
 
-c_moll <- projectRaster(c_sum, crs=mollCRS,over=T,progress='text',filename='tmp/count_sum_moll.tif',overwrite=T)
+c_moll <- projectRaster(c_rot, crs=mollCRS,over=T,progress='text',filename='tmp/count_sum_moll.tif',overwrite=T)
 resamp   <- resample(c_moll,ocean,progress='text',filename='tmp/count_sum_moll_1km.tif',overwrite=T,method='ngb')
 
 # read in mollweide rasters
