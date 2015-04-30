@@ -32,22 +32,26 @@ The `model.py` script imports a polygon layer denoting global protected areas ac
 
 ###Changes in scores between 2014 and 2015
 Between the Apr2014 WDPA_MPA database and the Jan2015 WDPA_MPA database, a few regions changed dramatically in scores, when examining the scores from 2013.
-region_id  | region_name  | old 2013 score | new 2013 score
-------------- | ----------------- | ------------------- | ---------------------
-91             | Crozet Islands                      | 100                   | 0
-92             | Amsterdam Island and Saint Paul Island                      | 100                   | 0
-93             |    Kerguelen Islands                   | 100                   | 0
-232           |    Bosnia and Herzegovina                   | 98                     | 27
-108           | Bermuda                      | 97                     | 43
-113           |  Cayman Islands                     | 80                     | 35
-90             |     Prince Edward Islands                  | 100                   | 55
-82             |      Albania                 | 60                     | 18
-32             |      Reunion                 | 77                     | 42
-79             |     Israel                  | 36                     | 8
-48             |     Oman                  | 44                     | 20
-18             |     Fiji                  | 96                     | 72
-187           |      Croatia                 | 56                     | 33
-163           |       US                | 100                   | 79
+
+```
+  region_id |       region_name       | old 2013 score  | new 2013 score
+  --------- | ----------------------- | --------------- | ---------------
+     91     | Crozet Islands          |     100         |      0
+     92     | Amsterdam/St Paul Is.   |     100         |      0
+     93     | Kerguelen Islands       |     100         |      0
+    232     | Bosnia and Herz.        |      98         |     27
+    108     | Bermuda                 |      97         |     43
+    113     | Cayman Islands          |      80         |     35
+     90     | Prince Edward Is.       |     100         |     55
+     82     | Albania                 |      60         |     18
+     32     | Reunion                 |      77         |     42
+     79     | Israel                  |      36         |      8
+     48     | Oman                    |      44         |     20
+     18     | Fiji                    |      96         |     72
+    187     | Croatia                 |      56         |     33
+    163     | US                      |     100         |     79
+```
+
 * Due to the change in raster resolution, from 1 km to 500 m cells, many regions experienced a small decrease in score due to "edge effects" around protected area polygons.  The 1 km cells systematically overestimated protected area.  In some cases, particularly small countries with small coastal parks, this edge effect appears significant.
     * e.g. Israel, Bosnia, Bermuda, Reunion, Fiji, Cayman Islands
 * In some cases, new protected areas overlapped/superceded older protected areas, and the older protected areas seem to have been removed from the database.  This may skew trend upward, as it will interpret this as creation of a new protected area rather than continuation of an existing protected area.
