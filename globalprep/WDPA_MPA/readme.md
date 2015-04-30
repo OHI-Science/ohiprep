@@ -32,6 +32,7 @@ The `model.py` script imports a polygon layer denoting global protected areas ac
 
 ###Changes in scores between 2014 and 2015
 Between the Apr2014 WDPA_MPA database and the Jan2015 WDPA_MPA database, a few regions changed dramatically in scores, when examining the scores from 2013.
+region_id  | region_name  | old 2013 score | new 2013 score
 ------------- | ----------------- | ------------------- | ---------------------
 91             | Crozet Islands                      | 100                   | 0
 92             | Amsterdam Island and Saint Paul Island                      | 100                   | 0
