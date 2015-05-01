@@ -1,93 +1,77 @@
 
-dir_github <- getwd()
-  # should be ~/github/ohiprep if just started
+dir_git <- '~/github/ohiprep'
+setwd(dir_git)
+
+source('src/R/common.R') # set pathnames, load common libraries
+library(rPython) # to call Python functions and scripts within R
+
 goal       <- 'globalprep/SpeciesDiversity'
-dir_local  <- file.path(dir_git, goal, 'v2015_sandbox')
-
-source('src/R/common.R')
-  # assume starting in ~/github/ohiprep
-
+prod       <- 'v2015_sandbox'
+dir_loc    <- file.path(dir_git, goal, prod)
+dir_anx    <- file.path(dir_neptune_data, 'git-annex', goal, prod)
+dir_mdl    <- file.path(dir_neptune_data, 'model')
+dir_tmp    <- file.path(dir_anx, 'tmp')
 
 
 # order of operations:
 
 #   setup.sh -----
-  # ??? can this be done in R?  Looks like it's just copying (linking) files to a new location for easy reference?
-    setup_sh <- function() {
+  # ??? Is this critical? Looks like it's just copying (linking) files to a new location for easy reference?
+    setup <- function(dir_tmp, dir_anx, dir_mdl) {
       # mkdirs data tmp
-        dir_anx <- '/Volumes/data_edit/git-annex/globalprep/SpeciesDiversity/v2015_sandbox'
-          # ??? where do we want these files if we want to keep them at all?
-          # ??? store in git-annex rather than model...
-        dir_mdl <- '/Volumes/data_edit/model' # ??? for Mac...? Make generic for Neptune drive?
-        dir_tmp <- file.path(dir_anx, 'tmp')
-        if(!file.exists(dir_tmp)) 
-          dir.create(dir_tmp)
-        if(!file.exists(file.path(dir_anx, 'data'))) 
-          dir.create(file.path(dir_anx, 'data')) # ??? create this later, when we need it? otherwise risk orphaning a folder. Ugh!
+        if(!dir.exists(dir_tmp)) dir.create(dir_tmp)
         # # link regions shapefile in geographic coordinate system
         # ??? why link, not copy?  Will we be changing these files, if so, should we be 
         # modifying the original version?  or is original likely to be changed elsewhere?  if not, copy rather than link? or:
         # ??? do we need all those bits and pieces, or just the .shp and .tif?
-        # ??? can we just read these in directly?
-      # ln -sf $OHI_MODELDIR/GL-NCEAS-OceanRegions_v2013a/data/rgn_fao_gcs.{shp,dbf,shx,prj,sbn,sbx,shp.xml} tmp
-      # ln -sf $OHI_MODELDIR/GL-NCEAS-OceanRegions_v2013a/data/land_gcs.{shp,dbf,shx,prj,sbn,sbx,shp.xml} tmp
-      # ln -sf $OHI_MODELDIR/GL-NCEAS-OceanRegions_v2013a/data/rgn_offshore_3nm_mol.t* tmp
-        dbf_ext      <- 'shp' # to link/copy all files, use: dbf_ext <- c('shp','dbf','shx','prj','sbn','sbx','shp.xml')
-        fao_dbf      <- paste('GL-NCEAS-OceanRegions_v2013a/data/rgn_fao_gcs.', dbf_ext, sep = '')
-        fao_gcs      <- file.path(dir_mdl, fao_dbf)
-        land_dbf     <- paste('GL-NCEAS-OceanRegions_v2013a/data/land_gcs.',    dbf_ext, sep = '')
-        land_gcs     <- file.path(dir_mdl, land_dbf)
-        offshore_mol <- file.path(dir_mdl, 'GL-NCEAS-OceanRegions_v2013a/data/rgn_offshore_3nm_mol.tif')
-        if(!file.exists(fao_gcs)) 
-           file.symlink(fao_gcs,      dir_tmp) # ??? file.copy to copy; file.link or file.symlink to create links
-        if(!file.exists(land_gcs)) 
-           file.symlink(land_gcs,     dir_tmp)
+        # ??? can we just read these in directly into memory when we need 'em?
+        dbf_ext      <- 'shp' # to link/copy *all* files, use: dbf_ext <- c('shp','dbf','shx','prj','sbn','sbx','shp.xml')
+        data_loc     <- 'GL-NCEAS-OceanRegions_v2013a/data'
+        fao_gcs      <- paste('rgn_fao_gcs.', dbf_ext,  sep = '')
+        land_gcs     <- paste('land_gcs.',    dbf_ext,  sep = '')
+        offshore_mol <- 'rgn_offshore_3nm_mol.tif'
+        if(!file.exists(file.path(dir_tmp, fao_gcs))) 
+           file.symlink(file.path(dir_mdl, data_loc, fao_gcs),  dir_tmp) # ??? file.copy to copy; file.link or file.symlink to create links
+        if(!file.exists(file.path(dir_tmp, land_gcs))) 
+           file.symlink(file.path(dir_mdl, data_loc, land_gcs), dir_tmp)
         if(!file.exists(offshore_mol)) 
            file.symlink(offshore_mol, dir_tmp)
 
-      # 
-      # # get last year's species to check for change in status (especially for those that have gone EXtinct)
-      # ln -sf $OHI_MODELDIR/GL-NCEAS-SpeciesDiversity/data/spp.csv tmp/spp_2012.csv
-        spp_old <- file.path(dir_anx, 'GL-NCEAS-SpeciesDiversity/ohi_spp/data/spp.csv')
+      # get last year's species to check for change in status (especially for those that have gone EXtinct)
+        spp_old <- file.path(dir_mdl, 'GL-NCEAS-SpeciesDiversity/ohi_spp/data/spp.csv')
         spp_old_rename <- 'spp_2012.csv'
         if(!file.exists(file.path(dir_tmp, 'spp_2012.csv'))) 
            file.symlink(spp_old, file.path(dir_tmp, 'spp_2012.csv'))
-      # 
+       
       # # spp for 2012
       # for f in cells spp cells cells_spp; do
       # echo $OHI_MODELDIR/GL-NCEAS-SpeciesDiversity_v2012/data/${f}.csv tmp/${f}_2012.csv
       # done
-        # ??? echo in this context outputs the values of these variables to the screen.
-        # If we want to do this in R, great, otherwise delete.
+        # ??? do we need? echo in this context outputs the values of these variables to the screen.
     }
-    setup_sh()
+    setup(dir_tmp, dir_mdl, dir_anx)
 
 
 #   setup_tmp.py -----
-  # ??? Do this in R?  Copy data from remote to local
-      # # move remote databases to local
-      # import os, shutil
+    setup_tmp <- function(dir_loc, dir_mdl) {
+  # ??? Do we really need this?  Working from local is likely faster, and these are huge files, so maybe.
+  # ??? This copies huge files from network to local - 3 GB and 12 GB respectively.
+      # # move remote databases to local (removing from remote? depends on file.move (original python script) vs file.copy (as currently coded here))
       # 
-      # local = r'D:\best\tmp\GL-NCEAS-SpeciesDiversity_v2013a'
-        ### ??? data location at Ben's local computer
-      # remote = r'N:\model\GL-NCEAS-SpeciesDiversity_v2013a\tmp'
-        ### ??? data location at Neptune
-      # 
-      # if not os.path.exists(local):
-      #   os.makedirs(local)
-        ### ??? if the local directory doesn't exist, create it.
-      # 
-      # for path in ('spp.db', 'geodb.gdb'):
-      #   l = os.path.join(local, path)   # ??? create local pathname for one of the two databases
-      #   r = os.path.join(remote, path)  # ??? create remote pathname
-      #   if os.path.exists(r):           # ??? if remote database exists,
-      #     if os.path.exists(l):         # ???   and local path exists,
-      #       if os.path.isdir(l):        # ???     and local path is a directory?
-      #         shutil.rmtree(l)          # ???       delete the entire local directory tree (directory clean up)
-      #       else:                       # ???     otherwise, (i.e. local path is not a directory)
-      #         os.unlink(l)              # ???       unlink (delete the local file - doesn't work for directories) (file cleanup)
-      #     shutil.move(r, l)             # ???   then (remote exists, local didn't exist or has been removed) copy remote -> local
-
+      data_loc <- file.path(dir_loc, 'GL-NCEAS-SpeciesDiversity_v2013a/tmp')
+      data_mdl <- file.path(dir_mdl, 'GL-NCEAS-SpeciesDiversity_v2013a/tmp')
+      if(!dir.exists(data_loc)) dir.create(data_loc, recursive = TRUE)
+      
+      for (path in c('spp.db', 'geodb.gdb')) { # path <- 'spp.db'
+        l = file.path(data_loc, path)         # ??? create local pathname for one of the two databases
+        r = file.path(data_mdl, path)         # ??? create remote pathname
+        if (file.exists(r))                   # ??? if remote database exists,
+          if (file.exists(l))                 # ???   and local database exists,
+            unlink(l)                         # ???       delete the entire local directory tree (directory clean up)
+          #file.copy(r, l, recursive = TRUE)   # ???   then (remote exists, local didn't exist or has been removed) copy remote -> local
+      }
+    }
+    setup_tmp(dir_loc, dir_mdl)
 
 
 #   ingest_aquamaps.R -----
@@ -140,24 +124,26 @@ source('src/R/common.R')
       
       return(TRUE)
     }
+
     ingest_aquamaps()
     
 
 
 #   ingest_iucn.R -----
   # ??? convert into functions to be called from this script?
-  #     wrap script in function and source/call it from here, or just source?
+  #     wrap script in function and source/call it from here, or just source it?
 
 
 
 #   ingest.py -----
 # call the ingest.py Python script from within this R script, using rPython: 
 #   http://www.r-bloggers.com/calling-python-from-r-with-rpython/
-    
+    python.load('ingest.py')
 
 
 #   ingest_intersections.R -----
   # ??? convert into functions to be called from this script
+    ingest_intersections <- function() {
       # # "C:\Program Files\R\R-3.0.1\bin\x64\Rscript.exe" N:\model\GL-NCEAS-SpeciesDiversity_v2013a\ingest_intersections.R
       # 
       # library(foreign)
@@ -219,7 +205,9 @@ source('src/R/common.R')
       # 
       # write.csv(cells_spp, file.path(dir_mdl_tmp,'cells_spp_iucn.csv'), row.names=F, na='')
       # write.csv(spp,       file.path(dir_mdl_tmp,'spp_iucn.csv'),       row.names=F, na='')
-    
+    }
+
+    ingest_intersections()
 
 
 #   model.R -----
