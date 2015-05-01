@@ -10,7 +10,6 @@ prod       <- 'v2015_sandbox'
 dir_loc    <- file.path(dir_git, goal, prod)
 dir_anx    <- file.path(dir_neptune_data, 'git-annex', goal, prod)
 dir_mdl    <- file.path(dir_neptune_data, 'model')
-dir_tmp    <- file.path(dir_anx, 'tmp')
 
 
 # order of operations:
@@ -62,13 +61,14 @@ dir_tmp    <- file.path(dir_anx, 'tmp')
       data_mdl <- file.path(dir_mdl, 'GL-NCEAS-SpeciesDiversity_v2013a/tmp')
       if(!dir.exists(data_loc)) dir.create(data_loc, recursive = TRUE)
       
-      for (path in c('spp.db', 'geodb.gdb')) { # path <- 'spp.db'
+      for (path in c('dummy_spp.txt', 'dummy_geodb.gdb')) {
+        # path <- 'spp.db' # path <- 'geodb.gbd' # path <- 'dummy_spp.txt' # path <- 'dummy_geodb.gdb'
         l = file.path(data_loc, path)         # ??? create local pathname for one of the two databases
         r = file.path(data_mdl, path)         # ??? create remote pathname
         if (file.exists(r))                   # ??? if remote database exists,
           if (file.exists(l))                 # ???   and local database exists,
             unlink(l)                         # ???       delete the entire local directory tree (directory clean up)
-          #file.copy(r, l, recursive = TRUE)   # ???   then (remote exists, local didn't exist or has been removed) copy remote -> local
+          file.copy(r, data_loc, recursive = TRUE)   # ???   then (remote exists, local didn't exist or has been removed) copy remote -> local
       }
     }
     setup_tmp(dir_loc, dir_mdl)
@@ -142,104 +142,95 @@ dir_tmp    <- file.path(dir_anx, 'tmp')
 
 
 #   ingest_intersections.R -----
-  # ??? convert into functions to be called from this script
     ingest_intersections <- function() {
-      # # "C:\Program Files\R\R-3.0.1\bin\x64\Rscript.exe" N:\model\GL-NCEAS-SpeciesDiversity_v2013a\ingest_intersections.R
-      # 
-      # library(foreign)
-      # library(plyr)
-      # 
-       dir_mdl <- '/Volumes/data_edit/model/GL-NCEAS-SpeciesDiversity_v2013a' # ???
-       dir_mdl_tmp <- file.path(dir_mdl, 'tmp')
-       dir_mdl_cache <- file.path(dir_mdl, 'cache')
-       dir_mdl_intsx <- file.path(dir_mdl_cache, 'iucn_intersections')
-       dir_anx <- '/Volumes/data_edit/git-annex/globalprep/SpeciesDiversity/v2015_sandbox'
-      # setwd(wd) # ??? stay put in ohiprep?
-      # 
-      # # read in spp
-      spp <- read.csv(file.path(dir_mdl_tmp, 'spp_iucn_marine_global.csv'))
-        # include not as factors? use read_csv?
-      # 
-      # # show extinction risk category and population trend
-      spp1 <- spp %>%
-        mutate(category = as.character(category)) # de-factorize in read.csv?
-#       spp$category <- factor(as.character(spp$category),
-#                              levels=c('DD','LC','NT','VU','EN','CR','EX'), ordered=T)
-      # table(spp$category)
-      # #   DD   LC   NT   VU   EN   CR   EX 
-      # # 2138 4512  530  653  200  122   18
-      # table(spp$popn_trend)
-      # #            Decreasing Increasing     Stable    Unknown 
-      # #        250       1261        164        983       5515
-      # 
-      # 
-      # # get list of dbf files
-       dbfs <- list.files(dir_mdl_intsx, glob2rx('range_*_mar_sid*_pts.dbf')) # 2553 before corals
-      # 
-      # # extract sid and group from dbf path, and assign info
-       sids = as.integer(gsub('range_([a-z]+)_mar_sid([0-9]+)_pts.dbf','\\2', dbfs))
-       grps =            gsub('range_([a-z]+)_mar_sid([0-9]+)_pts.dbf','\\1', dbfs)
-      # spp$shp_dbf = NA # path to dbf
-      # spp$shp_grp = NA # group like birds or seacucumbers
-      # spp$shp_cnt = NA # number of points counted with intersection of rgn_fao_am_cells_pts_gcs
-      # idx = match(sids, spp$sid)
-      # spp$shp_dbf[idx] = dbfs
-      # spp$shp_grp[idx] = grps
-      # 
-      # # compile monster table of species per cell
-      # cells_spp = data.frame(cid=integer(0), sid=integer(0))
-      # for (i in 1:length(dbfs)){ # i=1
-      #   
-      #   # read data
-      #   d = foreign::read.dbf(dbfs[i])
-      #   if ('ORIG_FID' %in% names(d)){
-      #     d = rename(d, c('ORIG_FID'='cid'))
-      #   }
-      #   
-      #   # log dbf path, group, and count of points to species record
-      #   spp$shp_cnt[spp$sid==sids[i]] = nrow(d) # spp[spp$sid==sids[i], ]
-      #   
-      #   # merge with cells_spp
-      #   cells_spp = rbind(cells_spp, d[,c('cid','sid')]) # ??? rbind is deprecated - bind_rows()
-      # }
-      # 
-      # write.csv(cells_spp, file.path(dir_mdl_tmp,'cells_spp_iucn.csv'), row.names=F, na='')
-      # write.csv(spp,       file.path(dir_mdl_tmp,'spp_iucn.csv'),       row.names=F, na='')
+
+      dir_mdl_tmp <- file.path(dir_mdl, 'GL-NCEAS-SpeciesDiversity_v2013a/tmp')
+      dir_mdl_cache <- file.path(dir_mdl, 'GL-NCEAS-SpeciesDiversity_v2013a/cache')
+      dir_mdl_intsx <- file.path(dir_mdl_cache, 'iucn_intersections')
+
+      ### read in spp
+      spp <- read.csv(file.path(dir_mdl_tmp, 'spp_iucn_marine_global.csv'), stringsAsFactors = FALSE)
+
+      ### get list of dbf files
+      dbfs <- list.files(dir_mdl_intsx, glob2rx('range_*_mar_sid*_pts.dbf')) # 2553 before corals
+
+      ### extract sid and group from dbf path name, and assign info into spp data.frame
+      sids = as.integer(gsub('range_([a-z]+)_mar_sid([0-9]+)_pts.dbf','\\2', dbfs))
+      grps =            gsub('range_([a-z]+)_mar_sid([0-9]+)_pts.dbf','\\1', dbfs)
+      
+      spp <- spp %>% mutate(
+        shp_dbf = NA, # path to dbf
+        shp_grp = NA, # group like birds or seacucumbers
+        shp_cnt = NA) # number of points counted with intersection of rgn_fao_am_cells_pts_gcs
+      idx = match(sids, spp$sid)
+      # ??? do this with mutate?
+      spp$shp_dbf[idx] = dbfs
+      spp$shp_grp[idx] = grps
+
+      ### compile monster table of species per cell. 
+      cells_spp = data.frame(cid=integer(0), sid=integer(0)) 
+        ### initialize cells_spp
+      
+      for (i in 1:length(dbfs)){ # i=1
+        ### For loop:
+        ### * Read in .dbf info for one species
+        ### * rename ORIG_FID to cid
+        ### * for all rows where the spp$sid matches this index of sids, set count = number of rows in dbf
+        ### * to cells_spp, add the cid and sid for this species
+        ### ??? This loop is very slow - file reading is slow. Use as.is = TRUE? use readr?
+        
+        # use 'ptm <- proc.time()' and 'proc.time() - ptm' around code to time execution.
+        
+        # read dbf data for one species
+        dbf_data <- foreign::read.dbf(file.path(dir_mdl_intsx, dbfs[i]))
+        if ('ORIG_FID' %in% names(d)){
+          dbf_data <- dbf_data %>% rename(cid = ORIG_FID)
+        }
+        
+        # log dbf path, group, and count of points to species record
+        # ??? do this with mutate?
+        spp$shp_cnt[spp$sid==sids[i]] = nrow(dbf_data) # spp[spp$sid==sids[i], ]
+        
+        # merge with cells_spp
+        cells_spp <- cells_spp %>%
+          bind_rows(dbf_data[ , c('cid','sid')])
+
+
+      }
+      
+      write.csv(cells_spp, file.path(dir_mdl_tmp,'cells_spp_iucn.csv'), row.names=F, na='')
+      write.csv(spp,       file.path(dir_mdl_tmp,'spp_iucn.csv'),       row.names=F, na='')
     }
 
     ingest_intersections()
 
 
 #   model.R -----
-# wrap in function and call from this script? or just source?
+source(file.path(dir_loc, 'model.R'))
 
 
+finish_tmp <- function(dir_loc, dir_mdl) {
+  # ??? This copies huge files from local to network - 3 GB and 12 GB respectively.
+  # move local databases to remote  
+  # ??? do we want to overwrite the data on Neptune? are we actually changing anything?
+  
+  data_loc <- file.path(dir_loc, 'GL-NCEAS-SpeciesDiversity_v2013a/tmp')
+  data_mdl <- file.path(dir_mdl, 'GL-NCEAS-SpeciesDiversity_v2013a/tmp')
+  if(!dir.exists(data_mdl)) dir.create(data_loc, recursive = TRUE)
+  
+  for (path in c('dummy_spp.txt', 'dummy_geodb.gdb')) { 
+    # path <- 'spp.db' # path <- 'geodb.gbd'
+    l = file.path(data_loc, path)         # ??? create local pathname for one of the two databases
+    r = file.path(data_mdl, path)         # ??? create remote pathname
+    if (file.exists(l))                   # ??? if remote database exists,
+      if (file.exists(r))                 # ???   and local database exists,
+        unlink(r)                         # ???       delete the entire local directory tree (directory clean up)
+    file.copy(l, data_mdl, recursive = TRUE)   # ???   then (remote exists, local didn't exist or has been removed) copy remote -> local
+    unlink(l)                             # ??? remove the file from the local drive
+  }
+}
+finish_tmp(dir_loc, dir_mdl)
 
-#   finish_tmp.py -----
-#     # move local databases to remote
-#     ??? basically the reverse of setup_tmp.py?
-#     import os, shutil
-#     
-#     local = r'D:\best\tmp\GL-NCEAS-SpeciesDiversity_v2013a'
-#     remote = r'N:\model\GL-NCEAS-SpeciesDiversity_v2013a\tmp'
-#     
-#     for path in ('spp.db', 'geodb.gdb'):
-#       l = os.path.join(local, path)
-#       r = os.path.join(remote, path)
-#       if os.path.exists(l):
-#         if os.path.exists(r):
-#           if os.path.isdir(r):
-#             shutil.rmtree(r)
-#           else:
-#             os.unlink(r)
-#         shutil.move(l, r)
-#     #shutil.rmtree(local)
-#     
-    
-
-source('ingest_intersections.R')
-    
-source('model.R')
 
 # TODO: move 'D:/best/tmp/GL-NCEAS-SpeciesDiversity_v2013a/spp.db'
 #           r'D:\best\tmp\GL-NCEAS-SpeciesDiversity_v2013a\tmp\geodb.gdb'
