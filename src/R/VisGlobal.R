@@ -28,13 +28,13 @@ changePlot <- function(repo="~/ohi-global", scenario="eez2013", commit="previous
     mutate(change = score-old_score) 
   
   ggplot(data_new, aes(x=goal, y=change, color=dimension)) +
-    geom_point(shape=19) +
+    #geom_point(shape=19, size=1) +
     theme_bw() + 
     labs(title=paste(scenario, commit, sep=" "), y="Change in score", x="") +
     scale_x_discrete(limits = c("Index", "AO", "SPP", "BD", "HAB", "CP", "CS", "CW", "FIS", "FP", 
                               "MAR", "ECO", "LE", "LIV", "NP", "LSP", "SP", "ICO", "TR")) +
     scale_colour_brewer(palette="Dark2") +
-    geom_jitter(position = position_jitter(width=0.2, height=0))
+    geom_jitter(position = position_jitter(width=0.2, height=0), shape=19, size=1)
   
   ggsave(file.path(repo, 'figures/DataCheck', paste0(fileSave, "_changePlot_", Sys.Date(), '.png')), width=8, height=5)
   write.csv(data_new, file.path(repo, 'figures/DataCheck', paste0(fileSave, "_diff_data_", Sys.Date(), '.csv')), row.names=FALSE)
