@@ -2,12 +2,11 @@
 Data for 2014 is now available, MRF downloaded these data on May 6 2015.
 
 Data extends past 2014, but these are "predicted" data:
-
+![](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/WTTC_tourism/v2015/images/WTTC_dataPlot.png)
 
 To get the data: 
-
-
-
+![](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/WTTC_tourism/v2015/images/WTTC_gettingData1.png)
+![](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/WTTC_tourism/v2015/images/WTTC_getting%20data2.png)
 
 We have selected the following data (easiest to select each one individually):
 * gn_wttc_empd_2013.csv : Direct Contribution To Employment: The number of direct jobs within travel and tourism
@@ -29,3 +28,4 @@ Currently these data are not gapfilled and are as rgn_id. To see what happened t
 	+ See model/GL-NCEAS-Livelihoods_v2013a/README.md for further handling
 
 Some definitions that might help with gdp data:
+![](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/WTTC_tourism/v2015/images/GDPdefinitions.png)
