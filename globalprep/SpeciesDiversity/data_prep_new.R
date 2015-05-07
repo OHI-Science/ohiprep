@@ -1,87 +1,30 @@
 
-dir_git <- '~/github/ohiprep'
-setwd(dir_git)
 
-source('src/R/common.R') # set pathnames, load common libraries
+source('~/github/ohiprep/src/R/common.R') # set pathnames, load common libraries
+
 library(rPython) # to call Python functions and scripts within R
 
 goal       <- 'globalprep/SpeciesDiversity'
 prod       <- 'v2015'
 
 ### Set paths for local, git-annex, model(?), and git-annex/tmp
-dir_loc    <- file.path(dir_git, goal)                        ### local:  ~/github/ohiprep/globalprep/SpeciesDiversity
+dir_git <- '~/github/ohiprep'
+dir_lcl    <- file.path(dir_git, goal)                        ### local:  ~/github/ohiprep/globalprep/SpeciesDiversity
 dir_anx    <- file.path(dir_neptune_data, 'git-annex', goal)  ### Neptune: /git-annex/github/ohiprep/globalprep/SpeciesDiversity
 dir_mdl    <- file.path(dir_neptune_data, 'model')            ### Neptune: /model
 
+setwd(dir_lcl)
 
 # order of operations:
 
-#   setup.sh -----
-  # ??? Is this critical? Looks like it's just copying (linking) files to a new location for easy reference?
-    setup_tmp_rgn <- function(dir_anx, dir_mdl) {
-      # mkdirs data tmp
-      dir_tmp <- file.path(dir_anx, 'tmp_rgn')
-      
-      if(!dir.exists(dir_tmp)) 
-        dir.create(dir_tmp)
-      # # link regions shapefile in geographic coordinate system
-      # ??? why link, not copy?  Will we be changing these files, if so, should we be 
-      # modifying the original version?  or is original likely to be changed elsewhere?  if not, copy rather than link? or:
-      # ??? do we need all those bits and pieces, or just the .shp and .tif?
-      # ??? can we just read these in directly into memory when we need 'em?
-      dbf_ext      <- 'shp' # to link/copy *all* files, use: dbf_ext <- c('shp','dbf','shx','prj','sbn','sbx','shp.xml')
-      data_loc     <- 'GL-NCEAS-OceanRegions_v2013a/data'
-        # ??? why v2013a? nothing more recent?
-      fao_gcs      <- paste('rgn_fao_gcs.', dbf_ext,  sep = '')
-      land_gcs     <- paste('land_gcs.',    dbf_ext,  sep = '')
-      offshore_mol <- 'rgn_offshore_3nm_mol.tif'
-
-      if(!file.exists(file.path(dir_tmp, fao_gcs))) 
-         file.symlink(file.path(dir_mdl, data_loc, fao_gcs),  dir_tmp) # ??? file.copy to copy; file.link or file.symlink to create hard or symbolic links
-      if(!file.exists(file.path(dir_tmp, land_gcs))) 
-         file.symlink(file.path(dir_mdl, data_loc, land_gcs), dir_tmp)
-      if(!file.exists(offshore_mol)) 
-         file.symlink(offshore_mol, dir_tmp)
-
-      # get last year's species to check for change in status (especially for those that have gone EXtinct)
-        spp_old <- file.path(dir_mdl, 'GL-NCEAS-SpeciesDiversity/ohi_spp/data/spp.csv')
-        spp_old_rename <- 'spp_2012.csv'
-        if(!file.exists(file.path(dir_tmp, 'spp_2012.csv'))) 
-           file.symlink(spp_old, file.path(dir_tmp, 'spp_2012.csv'))
-       
-      # # spp for 2012
-      # for f in cells spp cells cells_spp; do
-      # echo $OHI_MODELDIR/GL-NCEAS-SpeciesDiversity_v2012/data/${f}.csv tmp/${f}_2012.csv
-      # done
-        # ??? do we need? echo in this context outputs the values of these variables to the screen.
-    }
-    setup_tmp_rgn(dir_anx, dir_mdl)
-
-
-#   setup_tmp.py -----
-    setup_tmp <- function(dir_loc, dir_mdl) {
-  # ??? Do we really need this?  Working from local is likely faster, and these are huge files, so maybe.
-  # ??? This copies huge files from network to local - 3 GB and 12 GB respectively.
-      # # move remote databases to local (removing from remote? depends on file.move (original python script) vs file.copy (as currently coded here))
-      # 
-      data_loc <- file.path(dir_loc, 'GL-NCEAS-SpeciesDiversity_v2013a/tmp')
-      data_mdl <- file.path(dir_mdl, 'GL-NCEAS-SpeciesDiversity_v2013a/tmp')
-      if(!dir.exists(data_loc)) dir.create(data_loc, recursive = TRUE)
-        for (path in c('dummy_spp.txt', 'dummy_geodb.gdb')) {
-        # path <- 'spp.db' # path <- 'geodb.gbd' # path <- 'dummy_spp.txt' # path <- 'dummy_geodb.gdb'
-          # replace dummy with non-dummy when testing is done
-        l = file.path(data_loc, path)         # ??? create local pathname for one of the two databases
-        r = file.path(data_mdl, path)         # ??? create remote pathname
-        if (file.exists(r))                   # ??? if remote database exists,
-          if (file.exists(l))                 # ???   and local database exists,
-            unlink(l)                         # ???       delete the entire local directory tree (directory clean up)
-          file.copy(r, data_loc, recursive = TRUE)   # ???   then (remote exists, local didn't exist or has been removed) copy remote -> local
-      }
-    }
-    setup_tmp(dir_loc, dir_mdl)
 
 
 #   ingest_aquamaps.R -----
+# ??? updated aquamaps data?  incorporate export.sql into R code?
+# ??? This is probably just reading database and assigning variable names,
+# ??? there may be better ways of doing this.  
+# ??? In future, consider doing this using rodbc.
+
   # ??? convert into functions to be called from this script?
   #     wrap script in function and source/call it from here
     ingest_aquamaps <- function() {
@@ -91,13 +34,13 @@ dir_mdl    <- file.path(dir_neptune_data, 'model')            ### Neptune: /mode
       #   See raw\AquaMaps_OHI_082013\README.txt on a running instance of AquaMaps MySQL
       
       # set working directory
-      old_wd <- getwd()
+      orig_wd <- getwd()
       wd = 'N:/model/GL-NCEAS-SpeciesDiversity_v2013a' # ??? is this the right place to be?
       setwd(file.path(wd, 'raw/AquaMaps_OHI_082013'))  # ??? set up a variable for it rather than moving?
       
       # setup logging
       basicConfig()
-      addHandler(writeToFile, logger='', file=file.path(wd,'cache','ingest_aquamaps.log')) # ??? what does this do?
+      addHandler(writeToFile, logger='', file=file.path(wd,'cache','ingest_aquamaps.log'))
       
       # read in aquamaps header column names (hdr_*.csv) # ??? are these headers separate from the data? weird.
       loginfo('read in aquamaps header column names (hdr_*.csv)')
@@ -127,7 +70,7 @@ dir_mdl    <- file.path(dir_neptune_data, 'model')            ### Neptune: /mode
       write.csv(spp      , 'am_spp_data.csv'      , row.names=F, na='')
       loginfo('finished!')
       
-      setwd(old_wd)
+      setwd(orig_wd)
       
       return(TRUE)
     }
@@ -139,7 +82,6 @@ dir_mdl    <- file.path(dir_neptune_data, 'model')            ### Neptune: /mode
 #   ingest_iucn.R -----
   # ??? convert into functions to be called from this script?
   source('ingest_iucn.R')
-
 
 
 #   ingest.py -----
@@ -213,30 +155,13 @@ dir_mdl    <- file.path(dir_neptune_data, 'model')            ### Neptune: /mode
 
 
 #   model.R -----
-source(file.path(dir_loc, 'model.R'))
+# ??? compare BB and MF versions - BB version involves 3nm regions? MF version is for AQ and HS
+# Averages IUCN score per cell for all species in that cell; then takes area-weighted average of those scores for each region
+# .csv of score and trend output.
+# ??? calculate this for both SPP and ICO - SPP is area-weighted (so rare species don't count as much), but ICO is not (rare species count just as much as common)
+source('model.R')
 
 
-finish_tmp <- function(dir_loc, dir_mdl) {
-  # ??? This copies huge files from local to network - 3 GB and 12 GB respectively.
-  # move local databases to remote  
-  # ??? do we want to overwrite the data on Neptune? are we actually changing anything?
-  
-  data_loc <- file.path(dir_loc, 'GL-NCEAS-SpeciesDiversity_v2013a/tmp')
-  data_mdl <- file.path(dir_mdl, 'GL-NCEAS-SpeciesDiversity_v2013a/tmp')
-  if(!dir.exists(data_mdl)) dir.create(data_loc, recursive = TRUE)
-  
-  for (path in c('dummy_spp.txt', 'dummy_geodb.gdb')) { 
-    # path <- 'spp.db' # path <- 'geodb.gbd'
-    l = file.path(data_loc, path)         # ??? create local pathname for one of the two databases
-    r = file.path(data_mdl, path)         # ??? create remote pathname
-    if (file.exists(l))                   # ??? if remote database exists,
-      if (file.exists(r))                 # ???   and local database exists,
-        unlink(r)                         # ???       delete the entire local directory tree (directory clean up)
-    file.copy(l, data_mdl, recursive = TRUE)   # ???   then (remote exists, local didn't exist or has been removed) copy remote -> local
-    unlink(l)                             # ??? remove the file from the local drive
-  }
-}
-finish_tmp(dir_loc, dir_mdl)
 
 
 # TODO: move 'D:/best/tmp/GL-NCEAS-SpeciesDiversity_v2013a/spp.db'
