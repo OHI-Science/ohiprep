@@ -1,9 +1,42 @@
+# File locations:
+# See file storage notes in git-annex/globalprep/SpeciesDiversity/notes-cco.txt
+# data:
+# On Neptune - git-annex:
+#   SPP git-annex:    <Neptune>/git-annex/globalprep/SpeciesDiversity
+# Data:
+#   Aqua Maps:        <SPP git-annex>/raw/AquaMaps_*/
+#   IUCN shapefiles:  <SPP git-annex>/raw/iucn_shp/
+# Cached data files (scraped data and intersections):
+#   IUCN details:     <SPP git-annex>/cache/iucn_details/
+#   IUCN intersects:  <SPP git-annex>/cache/iucn_intersections/
+# Region files: * note, these are currently symbolic links (shortcuts) to the original files
+#   FAO regions:      <SPP git-annex>/regions/rgn_fao_gcs.shp
+#   land shapefile:   <SPP git-annex>/regions/land_gcs.shp
+# Script output files (only large files and collections of files here!)
+#   work in progress: <SPP git-annex>/v201x/intermediate   * files to save for archive/reference (e.g. am_cells_data.csv, spp_iucn_marine.csv)
+#                     <SPP git-annex>/tmp                  * not in year folder! temporary = don't archive
+#   
+#
+# On GitHub:
+#   SPP github: ~github/ohiprep/globalprep/SpeciesDiversity
+# Scripts:
+#   main script(s):   <SPP github>/  
+#   functions etc:    <SPP github>/R
+# Script output files: (only SMALL outputs and collections of outputs in GitHub)
+#   work in progress: <SPP github>/v201x/intermediate   * files to save for archive/reference (e.g. am_cells_data.csv, spp_iucn_marine.csv)
+#                     <SPP github>/tmp                  * not in year folder! temporary = don't archive
+#   final outputs:    <SPP github>/v201x/data
+# 
+#
+
 # Process summary:
-# * Create empty fishnet
+# * Create empty fishnet (GCS, half degree cells)
+#     * GCS coord system, long -180:180, lat -90:90, resolution .5
 # * Associate Aquamaps attributes with fishnet polygons
 #     Create point layer based on Aquamaps cell centers
 #     Attach Aquamaps attributes to these points
 #     Attach attributes of these points to fishnet polygon features
+#       This seems to have been a slow step ~ 1.5 hours
 # * Associate Aquamaps fishnet with FAO marine regions: divide the AM fishnet by FAO regions, and assign a centroid to each divided polygon
 #     Subtract the land polygons from the AM fishnet polygons
 #     Intersect the land-removed AM fishnet polygons with FAO marine region polygons
