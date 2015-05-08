@@ -1,0 +1,2 @@
+Only put actually temporary files here!  If you can't afford to see it deleted, don't put it here!
+For files that you'd like to keep around (archived etc) put in v201x/intermediate (for intermediate output files)
