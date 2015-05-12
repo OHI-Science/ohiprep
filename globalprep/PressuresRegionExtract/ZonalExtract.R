@@ -236,3 +236,62 @@ ggplot(final_gap, aes(gap_filled)) +
 
 sum(final_gap$gap_filled > 0.5)
 
+
+#########################################
+## Trash ----
+#########################################
+# some issues dealing with the preparation of these data: 
+# https://github.com/OHI-Science/issues/issues/306#issuecomment-72252954
+# also want to apply ice mask so as to eliminate these regions
+
+
+
+## creating data with ice mask
+# trash <- raster('/var/data/ohi/git-annex/globalprep/FiveGyres_MarinePlastics_CW/v2015/output/weight_rescale.tif')
+# ice_mask_resampled <- raster("/var/data/ohi/git-annex/Global/NCEAS-Pressures-Summaries_frazier2013/ice_mask_resampled")
+# s <- stack(ice_mask_resampled, trash)
+# overlay(s, fun=function(x,y) x*y,
+#         filename="/var/data/ohi/git-annex/globalprep/FiveGyres_MarinePlastics_CW/v2015/output/weight_rescale_icemask.tif",
+#         progress="text", overwrite=TRUE)
+
+rast <- raster("/var/data/ohi/git-annex/globalprep/FiveGyres_MarinePlastics_CW/v2015/output/weight_rescale_icemask.tif")
+# extract data for each region:
+regions_stats <- zonal(rast,  zones, fun="mean", na.rm=TRUE, progress="text")
+regions_stats2 <- data.frame(regions_stats)
+setdiff(regions_stats2$zone, rgn_data$sp_id) #should be none
+setdiff(rgn_data$sp_id, regions_stats2$zone) #should be none
+
+data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone")
+
+## save data for toolbox
+eez <- data %>%
+  filter(sp_type=="eez") %>%
+  dplyr::select(rgn_id, pressure_score=mean)
+
+#write.csv(eez, file.path(save_loc, 'data/trash_eez_2015.csv'), row.names=FALSE)
+eez <- read.csv(file.path(save_loc, 'data/trash_eez_2015.csv'))
+
+fao <- data %>%  ## probably not a pressure in high seas
+  filter(sp_type=="fao") %>%
+  dplyr::select(rgn_id, pressure_score=mean)
+
+# write.csv(fao, file.path(save_loc, 'data/trash_fao_2015.csv'), row.names=FALSE)
+
+antarctica <- data %>%
+  filter(sp_type=="eez-ccamlr") %>%
+  dplyr::select(rgn_id = sp_id, pressure_score=mean)
+
+#write.csv(antarctica, file.path(save_loc, 'data/trash_ccamlr_2015.csv'), row.names=FALSE)
+
+
+## plot the data to make sure range of values for regions is reasonable
+library(ggplot2)
+ggplot(eez, aes(pressure_score)) +
+  geom_histogram(fill="gray", color="black") + 
+  theme_bw() + 
+  labs(title="Region scores for trash")
+quantile(eez$pressure_score)
+
+data %>%
+  filter(sp_type=="eez") %>%
+arrange(mean)
