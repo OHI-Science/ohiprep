@@ -5,15 +5,14 @@
 #JAfflerbach
 
 # 1. Create raster of original data (came as .nc)
-# 2. project to mollweide
+# 2. Reproject to mollweide
 # 3. Calculate cumulative sea level rise over all years
 # 4. Clip all negative values (values that indicate decreasing sea level)
-# 5. log transform
-# 6. resample to 1km
-# 7. rescale using 99.99 percentile
-# 8. Interpolate and replace NA cells with interpolated values (use Python - arcpy for this)
-# 9. Clip out ocean using ocean raster at 1km cell size
-# 10. Create raster of just interpolated cells
+# 5. resample to 1km
+# 6. rescale using 99.99 percentile
+# 7. Interpolate and replace NA cells with interpolated values (use Python - arcpy for this)
+# 8. Clip out ocean using ocean raster at 1km cell size
+# 9. Create raster of just the interpolated cells
 
 #libraries
 
@@ -80,7 +79,6 @@ rasterOptions(tmpdir=tmpdir)
   slr_moll <- projectRaster(r, crs=mollCRS, over=T,progress='text',filename='tmp/slr_moll.tif',overwrite=T)  
 
 
-
 #--------------------------------------------------
 
 # (3) Multiply annual rate by all years in dataset
@@ -101,36 +99,28 @@ rasterOptions(tmpdir=tmpdir)
 
 #--------------------------------------------------
 
-  
-# (5) Log transform
 
-    slr_moll_log = calc(slr_moll,fun=function(x){log(x+1)},progress='text',filename='tmp/slr_moll_log.tif')
-
-    
-#--------------------------------------------------
-
-
-# (6) convert to 1km
+# (5) convert to 1km
 
 #sample 1 km raster
 
     #ocean is a raster with all land clipped out - at 1km with value of 1
     ocean = raster(file.path(dir_N,'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
 
-    slr_1km = resample(slr_moll_log,ocean,method='ngb',progress='text',filename='tmp/slr_moll_log_1km.tif') 
+    slr_1km = resample(slr_moll,ocean,method='ngb',progress='text',filename='tmp/slr_moll_1km.tif') 
     #slr_1km = resample(slr_moll,ocean,method='ngb',progress='text',filename='tmp/slr_moll_nonlog_1km_rate.tif',overwrite=T)
     #^second one is for rate of change in slr per year
 
 #--------------------------------------------------
 
 
-#(7) rescale using the reference point (99.99 quantile)
+#(6) rescale using the reference point (99.99 quantile)
     #get reference point
    
-    ref = quantile(slr_1km,prob=0.9999) #6.24183381230408
+    ref = quantile(slr_1km,prob=0.9999) #512.7999
 
     #normalize by the reference point - cap all values greater than 1 to 1
-    r_resc <- calc(slr_1km,fun=function(x){ifelse(x>ref,1,x/ref)},progress='text',filename='tmp/slr_moll_log_1km_rescaled.tif',overwrite=T)
+    r_resc <- calc(slr_1km,fun=function(x){ifelse(x>ref,1,x/ref)},progress='text',filename='tmp/slr_moll_nonlog_1km_resc.tif',overwrite=T)
     #r_resc <- calc(slr_1km,fun=function(x){ifelse(x>ref,1,x/ref)},progress='text',filename='tmp/slr_moll_nonlog_1km_rescaled_rate.tif',overwrite=T)
     #^use for the rate (mm/year) data
 
@@ -140,21 +130,21 @@ rasterOptions(tmpdir=tmpdir)
 #--------------------------------------------------
 
 
-# (8) Interpolation
+# (7) Interpolation
 
 
 # need to do this in arcgis likely
 
 #   script used to do this 'scripts/SLR_interpolation.py'
 
-  r_int = raster('tmp/slr_moll_log_1km_rescaled_int.tif')
+  r_int = raster('tmp/slr_moll_nonlog_1km_resc_int.tif')
 
 #--------------------------------------------------
 
 # (9) Clip out ocean
 
 
-r_final = mask(r_int,ocean,progress='text',filename='output/slr_final.tif')
+r_final = mask(r_int,ocean,progress='text',filename='output/slr_nonlog_final.tif')
 
 #---------------------------------------------------
 
