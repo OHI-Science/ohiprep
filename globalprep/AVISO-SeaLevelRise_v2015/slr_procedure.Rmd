@@ -11,16 +11,15 @@ The Sea Level Rise pressure layer was updated with new data for the year 2013. P
 
 
 ## Procedure
-1. Create raster of original data (came as .nc)
-2. project to mollweide
-3. Calculate cumulative sea level rise over all years
-4. Clip all negative values (values that indicate decreasing sea level)
-5. log transform
-6. resample to 1km
-7. rescale using 99.99 percentile
-8. Interpolate and replace NA cells with interpolated values (use Python - arcpy for this)
-9. Clip out ocean using ocean raster at 1km cell size
-10. Create raster of just interpolated cells
+ 1. Create raster of original data (came as .nc)
+ 2. Reproject to mollweide
+ 3. Calculate cumulative sea level rise over all years
+ 4. Clip all negative values (values that indicate decreasing sea level)
+ 5. resample to 1km
+ 6. rescale using 99.99 percentile
+ 7. Interpolate and replace NA cells with interpolated values (use Python - arcpy for this)
+ 8. Clip out ocean using ocean raster at 1km cell size
+ 9. Create raster of just the interpolated cells
 
 
 
@@ -125,17 +124,7 @@ We choose to disregard these as the impact of sea level rise is focused only on 
       histogram(slr_moll,main ='Distribution of data after removing negative values')
 ```
 
-**5. Log transform the layer**
-```{r,message=FALSE,warning=FALSE}
-
-    slr_moll_log = calc(slr_moll,fun=function(x){log(x+1)})
-
-    plot(slr_moll_log,main='Sea level rise \nLog Transformed',col=cols)
-
-    histogram(slr_moll_log,main='Distribution of data after log transform')
-```
-
-**6. Resample layer to 1km resolution**
+**5. Resample layer to 1km resolution**
 
 Original resolution of the data is 0.25 degrees. To resample the data to 1km resolution, a template ocean raster that is at the desired resolution (~1km) and contains all cells included within OHI regions, is used.
 ```{r,message=FALSE,warning=FALSE}
@@ -144,14 +133,14 @@ Original resolution of the data is 0.25 degrees. To resample the data to 1km res
     ocean = raster(file.path(dir_N,'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
     plot(ocean,main='Ocean Raster at 1km resolution \nUsed for resampling and clipping')
 
-    slr_1km = resample(slr_moll_log,ocean,method='ngb')
+    slr_1km = resample(slr_moll,ocean,method='ngb')
 
     plot(slr_1km,main='SLR resampled to 1km' ,col=cols)
 ```
 
-**7. Rescale using the reference point (99.99 quantile)**
+**6. Rescale using the reference point (99.99 quantile)**
 
-All values at or above the 99.99th quantile (6.24183381230408) are set to equal 1.
+All values at or above the 99.99th quantile (512.8) are set to equal 1.
 ```{r,warning=FALSE,message=FALSE}
 
     #get reference point
@@ -164,17 +153,17 @@ All values at or above the 99.99th quantile (6.24183381230408) are set to equal 
     plot(r_resc,main='Rescaled Sea Level Rise Pressure',col=cols)
 ```
 
-**8. Interpolation**  
+**7. Interpolation**  
 
 Interpolating the data was done using ArcGIS. All NA cells were interpolated using nearest neighbor. The python script can be found [here](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/AVISO-SeaLevelRise_v2015/scripts/SLR_interpolation.py)  
 ```{r,message=FALSE,warning=FALSE}
 
-  r_int = raster('tmp/slr_moll_log_1km_rescaled_int.tif')
+  r_int = raster('tmp/slr_moll_nonlog_1km_resc_int.tif')
   plot(r_int,main='Sea level rise interpolation with nearest neighbor',col=cols)
 ```
 
 
-**9. Clip out ocean & Finalize layer**
+**8. Clip out ocean & Finalize layer**
 
 Using the same ocean template raster as in step 6, all land is clipped out after interpolation.
 ```{r,message=FALSE,warning=FALSE}
@@ -184,11 +173,12 @@ Using the same ocean template raster as in step 6, all land is clipped out after
   plot(r_final,main='Sea Level Rise \n Final layer',col=cols)
 ```
 
-**10. Create interpolated cells raster**
+**9. Create interpolated cells raster**
 
 The cells that were filled in using the nearest neighbor interpolation are identified in a single raster.
 ```{r,message=FALSE,warning=FALSE}
 
 interp = mask(r_final,slr_1km,inverse=TRUE)
+
 plot(interp,col=cols,main='1km cells interpolated using Nearest Neighbor')
 ```
