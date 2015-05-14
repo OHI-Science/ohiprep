@@ -17,19 +17,17 @@ output: html_document
 
 `create_global_oa_pressures_layer` takes prepped Ocean Acidification input raster layers (created by oa_dataprep.R) and does the following:
 
-     1. Takes each of the 10 raster layers produced in (b) above, and subtracts the historical global mean (produced in step 1) 
-        to create 10 new raster layers (one for each year) with values equal to the change in aragonite saturation state
-     2. RESCALE: For each year between 2005 and 2014, look at the mean annual aragonite saturation state rasters (annualmean_2005-2014). 
-        All values at or below the threshold (<=1) are set to 1 (highest pressure value). All cells with aragonite saturation state values >1 
-        will be scaled based on their change relative to historical levels (calculated in step 2 above). All cells that have a negative change 
-        (indicating a decrease in acidification) are assigned 0    
-     3. Resamples each raster to 1km
-     4. Using ArcGIS through arcpy in python, NA cells are interpolated using nearest neighbor to create final output raster layer
+  1. Takes each of the 10 raster layers produced in (b) above, and subtracts the historical global mean (produced in step 1) 
+     to create 10 new raster layers (one for each year) with values equal to the change in aragonite saturation state
+  2. RESCALE: For each year between 2005 and 2014, look at the mean annual aragonite saturation state rasters (annualmean_2005-2014). 
+     All values at or below the threshold (<=1) are set to 1 (highest pressure value). All cells with aragonite saturation state values    less than or equal to 1 will be scaled based on their change relative to historical levels (calculated in step 2 above). All cells that have a negative change (indicating a decrease in acidification) are assigned 0    
+  3. Resamples each raster to 1km
+  4. Using ArcGIS through arcpy in python, NA cells are interpolated using nearest neighbor to create final output raster layer
 
 
 *NOTE: Interpolation was done in ArcGIS using OA_interpolation.py*
 
-#------------------------------------------
+***
 
 ```{r setup,echo=FALSE}
 
@@ -57,12 +55,12 @@ output: html_document
 
 #set root directory
 
-    opts_knit$set(root.dir = file.path(dir_N,'git-annex/globalprep/Pressures_acid/v2015'),warning=FALSE, message=FALSE)
+   knitr::opts_knit$set(root.dir = file.path(dir_N,'git-annex/globalprep/Pressures_acid/v2015'))
 
 
 # read in data
 
-    hist_mean = raster('working/global_oa_1880_1889_arag_mean_moll.tif') # historical decadal mean of aragonite saturation state from 1880-1889
+ #  hist_mean = raster('working/global_oa_1880_1889_arag_mean_moll.tif') # historical decadal mean of aragonite saturation state from 1880-1889
 
     files = list.files('working/annualmean_2005-2014/moll',full.names=TRUE,recursive=TRUE) # list the annual mean raster files for each year in 2005-2014
 
@@ -74,7 +72,7 @@ output: html_document
 ***
 
 **(Step 1): Create function that subtracts annual mean from historical decadal mean and outputs raster to specified folder**
-```{r}
+```{r,warning=FALSE,message=FALSE}
     annual_change = function(file){
     
       yr = substr(file,56,59)         #use substr to grab the year out of the filename
@@ -133,7 +131,7 @@ For each year between 2005 and 2014, look at the mean annual aragonite saturatio
 
  # sapply(rescaled,resample)
 
-  plot(raster('working/annual_oa_rescaled_1km_2014.tif'),col=cols,main='Rescaled to 1km (2014)')
+  plot(raster('working/annual_oa_rescaled_1km/annual_oa_rescaled_1km_2014.tif'),col=cols,main='Rescaled to 1km (2014)')
 
 
 ```
@@ -145,7 +143,7 @@ Interpolation to fill in NA cells with values of the nearest neighbor is done wi
 ```{r}
 interpolated = list.files('working/annual_oa_rescaled_1km_int',full.names=T)
 
-plot(raster('working/annual_oa_rescaled_1km_int_2014.tif'),col=cols,main='Interpolation to fill in NAs')
+plot(raster('working/annual_oa_rescaled_1km_int/annual_oa_rescaled_1km_2014_int.tif'),col=cols,main='Interpolation to fill in NAs')
 ```
 ***
 
@@ -182,7 +180,7 @@ All ten output OA rasters have the same cells interpolated
       r_c = raster('output/annual_oa_rescaled_1km_int_clip_2014.tif')
 
 
-    interp_cells = mask(r_c,r_1km,progress='text',inverse=TRUE)
+    interp_cells = mask(r_c,r_1km,inverse=TRUE)
   
     plot(raster('output/oa_interpolated_cells.tif'),col=cols,main='Interpolated cells')
 
