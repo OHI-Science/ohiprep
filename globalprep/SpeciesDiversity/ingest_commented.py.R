@@ -1,5 +1,5 @@
 # File locations:
-# See file storage notes in git-annex/globalprep/SpeciesDiversity/notes-cco.txt
+# See file storage notes in github/ohiprep/globalprep/SpeciesDiversity/cco-data_org.md
 # data:
 # On Neptune - git-annex:
 #   SPP git-annex:    <Neptune>/git-annex/globalprep/SpeciesDiversity
@@ -46,7 +46,13 @@
 #         this is where a single AM cell can end up divided between multiple regions
 #         and a single AM cell would then require multiple cell identifiers (one for each region?)
 # * Bring in IUCN rangemaps, and for each species (within each group), intersect it with the AM regional centroids
-#     for each species, within each IUCN group:
+#     suggestion: Auto-create a list of the shapefiles, rather than manually writing it out: 
+#       * maybe something like this to create a list of the shapefiles for every represented group:
+#           grp_names <- list.files(<git-annex>/SpeciesDiversity/raw/iucn_shp) %>%
+#                          str_split('.') %>%
+#                          unique()
+#           paste(grp_names, '.shp', sep = '')
+#     Looping across such a list - for each species, within each IUCN group:
 #       Create a single polygon feature for entire range
 #       Intersect the species range polygon with the AM regional centroids
 #         including all attributes from both IUCN and AM features?  Looks like it?
