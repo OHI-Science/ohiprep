@@ -42,11 +42,12 @@ setwd(dir_lcl)
       basicConfig()
       addHandler(writeToFile, logger='', file=file.path(wd,'cache','ingest_aquamaps.log'))
       
+      # ??? Jamie's script combining_files.R already combined the headers and data for 2014 data - either use that, or combine it here, figure it out.
       # read in aquamaps header column names (hdr_*.csv) # ??? are these headers separate from the data? weird.
       loginfo('read in aquamaps header column names (hdr_*.csv)')
       cells.hdr     = read.csv('hdr_hcaf.csv'               , stringsAsFactors=F, header=F)[ , 1]
       cells_spp.hdr = read.csv('hdr_hcaf_species_native.csv', stringsAsFactors=F, header=F)[ , 1]
-      spp.hdr       = read.csv('hdr_speciesoccursum.csv'    , stringsAsFactors=F, header=F)[ , 1]
+      spp.hdr       = read.csv('hdr_speciesoccursum.csv'    , stringsAsFactors=F, header=F)[ , 1] # use readr::read_csv() or data.table::fread()
       
       # read in aquamaps data (tbl_*.csv)
       loginfo('read in aquamaps data (tbl_*.csv)\n  cells')

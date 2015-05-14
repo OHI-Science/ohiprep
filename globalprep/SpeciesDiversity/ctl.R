@@ -5,9 +5,10 @@ setwd(wd)
 #   setup.sh
 #   setup_tmp.py
 #   ingest_aquamaps.R
+    # ??? export.sql -> in ingest_aquamaps.R
 #   ingest_iucn.R
 #   ingest.py
-#   ingest_intserctions.R
+#   ingest_intersections.R
 #   model.R
 #   finish_tmp.py
 
@@ -15,7 +16,6 @@ source('ingest_intersections.R')
 source('model.R')
 
 # ??? export_layers.R
-# ??? export.sql -> in ingest_aquamaps.R
 # ??? plot_sp_probability.R
 # ??? report.R
 # ??? compiling_data_testing.R

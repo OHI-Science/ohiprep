@@ -27,3 +27,4 @@ if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
 library(dplyr)
 library(tidyr)
 library(stringr)
+rm(packages)
