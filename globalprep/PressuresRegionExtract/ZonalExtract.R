@@ -295,3 +295,92 @@ quantile(eez$pressure_score)
 data %>%
   filter(sp_type=="eez") %>%
 arrange(mean)
+
+
+#########################################
+#### UV ----
+#########################################
+# https://github.com/OHI-Science/issues/issues/377
+# 2 raster choices: logged and non-logged.  Going with the logged version mainly out of tradition
+rast <- raster('/var/data/ohi/git-annex/globalprep/Pressures_UV/output/uv_anomaly_diff_moll_1km_log_resc.tif')
+
+# extract data for each region:
+regions_stats <- zonal(rast,  zones, fun="mean", na.rm=TRUE, progress="text")
+regions_stats2 <- data.frame(regions_stats)
+setdiff(regions_stats2$zone, rgn_data$sp_id) #should be none
+setdiff(rgn_data$sp_id, regions_stats2$zone) #should be none
+
+data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone")
+
+## save data for toolbox
+eez <- data %>%
+  filter(sp_type=="eez") %>%
+  dplyr::select(rgn_id, pressure_score=mean)
+
+write.csv(eez, file.path(save_loc, 'data/slr_eez_2015.csv'), row.names=FALSE)
+eez <- read.csv(file.path(save_loc, 'data/slr_eez_2015.csv'))
+
+# fao <- data %>%  ## probably not a pressure in high seas
+#   filter(sp_type=="fao") %>%
+#   dplyr::select(rgn_id, pressure_score=mean)
+
+# write.csv(fao, file.path(save_loc, 'data/slr_fao_2015.csv'), row.names=FALSE)
+
+## should go through and eliminate the regions that do not have land
+antarctica <- data %>%
+  filter(sp_type=="eez-ccamlr") %>%
+  dplyr::select(rgn_id = sp_id, pressure_score=mean)
+
+write.csv(antarctica, file.path(save_loc, 'data/slr_ccamlr_2015.csv'), row.names=FALSE)
+
+
+## plot the data to make sure range of values for regions is reasonable
+library(ggplot2)
+ggplot(eez, aes(pressure_score)) +
+  geom_histogram(fill="gray", color="black") + 
+  theme_bw() + 
+  labs(title="Region scores for SLR")
+quantile(eez$pressure_score)
+
+
+## extract data to show proportion of gap-filling
+# rasts <- raster('/var/data/ohi/git-annex/globalprep/AVISO-SeaLevelRise_v2015/output/slr_interpolated_cells.tif')
+# reclassify(rasts, c(-Inf, Inf, 1), filename='/var/data/ohi/git-annex/globalprep/AVISO-SeaLevelRise_v2015/output/slr_interpolated_cells_yes_no.tif', progress="text")
+interp <- raster('/var/data/ohi/git-annex/globalprep/AVISO-SeaLevelRise_v2015/output/slr_interpolated_cells_yes_no.tif')
+
+# extract data for each region:
+regions_stats <- zonal(interp,  zones, fun="sum", na.rm=TRUE, progress="text")
+regions_stats2 <- data.frame(regions_stats)
+setdiff(regions_stats2$zone, rgn_data$sp_id) #should be none
+setdiff(rgn_data$sp_id, regions_stats2$zone) #should be none
+
+data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") %>%
+  dplyr::select(sp_id, rgn_id, sp_type, rgn_name, interpolated=sum) 
+
+write.csv(data, file.path(save_loc, "tmp/slr_interpolated_cells.csv"), row.names=FALSE)
+
+
+rc_count2  <- read.csv(file.path(save_loc, "sp_id_areas.csv")) %>%
+  dplyr::select(sp_id=value, cellNum=count) %>%
+  left_join(data, by='sp_id') %>%
+  filter(!is.na(sp_id)) %>%
+  mutate(prop_gap_filled = interpolated/cellNum)
+write.csv(rc_count2, file.path(save_loc, "tmp/slr_prop_interpolated.csv"), row.names=FALSE)
+
+final_gap <- rc_count2 %>%
+  dplyr::filter(sp_type == "eez") %>%
+  dplyr::select(rgn_id, gap_filled = prop_gap_filled) %>%
+  mutate(gap_filled = round(gap_filled, 2)) %>%
+  arrange(rgn_id)
+
+write.csv(final_gap, file.path(save_loc, "data/slr_gap_fill_attr.csv"), row.names=FALSE)
+final_gap <- read.csv(file.path(save_loc, "data/slr_gap_fill_attr.csv"))
+#library(ggplot2)
+
+ggplot(final_gap, aes(gap_filled)) +
+  geom_histogram() +
+  theme_bw() +
+  labs(title="SLR: Proportion area gap-filled")
+
+sum(final_gap$gap_filled > 0.5)
+
