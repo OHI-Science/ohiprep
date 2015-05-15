@@ -17,7 +17,7 @@
 
 
 # To process new data, places to change code:
-#   * 'dir_d' and 'data_year' (in Setup) to reflect new location for raw, tmp, and data
+#   * 'data_year' (in Setup) to reflect new locations for raw, intermediate, and data
 #   * 'scenario' to reflect appropriate scenario for output file naming
 
 
@@ -31,34 +31,34 @@
 library(zoo)  
 library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 
-dir_np <- 'globalprep/FAO_Commodities'
-data_year <- 'v2014_test'
-scenario  <- 'eez2014_test'
-
-dir_d <- sprintf('%s/%s', dir_np, data_year)
-### NOTE: Set output paths to here, but do not use setwd().
-###       This way, any scripts and code in ohiprep will still work, b/c always in root ohiprep dir.
+setwd('~/github/ohiprep')
 
 ### set dir_neptune_data and load common libraries (tidyr, dplyr, stringr) 
 source('src/R/common.R') 
-  ### NOTE: The default path should already be your ohiprep root directory for the rest to work.
-  ###       Otherwise, presume that scripts are always working from your default ohiprep folder
+### NOTE: The default path should already be your ohiprep root directory for the rest to work.
 
 ### access functions specific to FAO data cleanup
 source('src/R/fao_fxn.R')
 
-### Load NP-specific user-defined functions
-source(sprintf('%s/R/np_fxn.R', dir_np))
+dir_np    <- 'globalprep/FAO_Commodities'
+data_year <- 'v2014_test'
+scenario  <- 'eez2014_test'
 
+dir_git   <- file.path('~/github/ohiprep', dir_np)
+dir_anx   <- file.path(dir_neptune_data, 'git-annex', dir_np)
+
+### Load NP-specific user-defined functions
+source(file.path(dir_np, 'R/np_fxn.R'))
 
 
 ##############################################################################.
 ### Read and process FAO data -----
 ### Process FAO data files -- loops across value and quant data
 
+dir_fao_data <- file.path(dir_anx, data_year, 'raw')
 
-for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.names=T)) { 
-  # f=list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.names=T)[1]
+for (f in list.files(dir_fao_data, pattern=glob2rx('*.csv'), full.names=T)) { 
+  # f = list.files(dir_fao_data, pattern=glob2rx('*.csv'), full.names=T)[1]
   
   ### data read in
   cat(sprintf('\n\n\n====\nfile: %s\n', basename(f)))
@@ -121,8 +121,8 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
   names(m)[names(m) == 'value'] <- units  
   
   ### output to .csv
-  f_out <- sprintf('%s/data/%s_%s.csv', dir_d, data_year, units)
-  write.csv(m, f_out, row.names=F, na='')
+  harvest_out <- sprintf('%s/%s/intermediate/%s.csv', dir_git, data_year, units)
+  write.csv(m, harvest_out, row.names = FALSE, na = '')
 }
 
 
@@ -145,8 +145,8 @@ for (f in list.files(file.path(dir_d, 'raw'), pattern=glob2rx('*.csv'), full.nam
 ###     (after other gapfilling techniques).
 
   
-h_tonnes <- read.csv(file.path(dir_d, sprintf('data/%s_tonnes.csv', data_year)))
-h_usd    <- read.csv(file.path(dir_d, sprintf('data/%s_usd.csv',    data_year)))
+h_tonnes <- read.csv(file.path(dir_git, data_year, 'intermediate/tonnes.csv'))
+h_usd    <- read.csv(file.path(dir_git, data_year, 'intermediate/usd.csv'))
 
 h <- np_harvest_cat(h_tonnes, h_usd)
 ### concatenates h_tonnes and h_usd data
@@ -187,7 +187,7 @@ h <- h %>% np_lowdata_filter()
 h <- h %>% add_georegion_id()
 ### Melanie's script to add a georegional ID tag based on country keys and IDs.
 
-h <- h  %>% np_regr_fill(years_back = 10, vars = 'td', scope = 'rgn_id')
+h <- h %>% np_regr_fill(years_back = 10, vars = 'td', scope = 'rgn_id')
 h <- h %>% np_regr_fill(vars = 'tdy', scope = 'georgn_id')
 h <- h %>% np_regr_fill(vars = 'tdy', scope = 'global')
 ### np_regr_fill() is a generalized regression gapfill function.  Parameters (with defaults):
@@ -209,7 +209,8 @@ h_comm <- h
 
 h_gap <- h_comm %>%
   select(rgn_id, commodity, product, year, gapfill)
-write.csv(h_gap, sprintf('%s/data/%s_np_gapfill_report.csv', dir_d, data_year), row.names = F, na = '')
+file_loc <- file.path(dir_git, data_year, 'data/np_gapfill_report.csv')
+write.csv(h_gap, file_loc, row.names = F, na = '')
 
 
 ### Summarize each product per country per year, e.g. all corals in Albania in 2011
@@ -236,8 +237,9 @@ h_x_usd <- h_comm %>%
   select(rgn_name, rgn_id, commodity, product, year, usd) %>%
   arrange(rgn_name, product, commodity, year) %>%
   spread(year, usd)
-write.csv(h_x_tonnes, sprintf('%s/tmp/np_harvest_tonnes_wide.csv', dir_d, units), row.names=F, na='NA')
-write.csv(h_x_usd, sprintf('%s/tmp/np_harvest_usd_wide.csv', dir_d, units), row.names=F, na='NA')
+
+write.csv(h_x_tonnes, file.path(dir_git, data_year, 'intermediate/np_harvest_tonnes_wide.csv'), row.names = F, na = 'NA')
+write.csv(h_x_usd,    file.path(dir_git, data_year, 'intermediate/np_harvest_usd_wide.csv'),    row.names = F, na = 'NA')
 
 
 ##############################################################################.
@@ -278,7 +280,7 @@ j <- j %>% np_harvest_status()
 ### Output the results to .csvs for use in toolbox.
 
 ### Write entire data frame to .csv:
-write.csv(j, sprintf('%s/tmp/%s_np_harvest_smoothed_data.csv', dir_d, scenario), row.names=F, na='')
+write.csv(j, file.path(dir_git, data_year, 'intermediate/np_harvest_smoothed_data.csv'), row.names = F, na = '')
 
 
 
@@ -286,7 +288,7 @@ write.csv(j, sprintf('%s/tmp/%s_np_harvest_smoothed_data.csv', dir_d, scenario),
 ###   rgn_id, rgn_name, product, year, tonnes, tonnes_rel, prod_weight for all years
 # write.csv(
 #   j %>% select(rgn_id, rgn_name, product, year, tonnes, tonnes_rel, prod_weight),
-#   sprintf('%s/data/np_harvest-%s-year_max_%d.csv', dir_d, scenario, year_max), row.names = F, na = '')
+#   sprintf('%s/data/np_harvest-%s-year_max_%d.csv', dir_git, scenario, year_max), row.names = F, na = '')
 
 
 ### Write individual data layers:
@@ -295,12 +297,12 @@ write.csv(
   j %>% 
     filter(year == year_max) %>% 
     select(rgn_id, product, weight = prod_weight),
-  sprintf('%s/data/np_harvest_%s_product-peak_%s-year-max-%d.csv', dir_d, 'usd', scenario, year_max), row.names = F, na = '')
+  sprintf('%s/%s/data/np_harvest_usd_product-peak-year-max-%d.csv', dir_git, data_year, year_max), row.names = F, na = '')
 
 for (lyr in c('tonnes','tonnes_rel')) {
   write.csv(
     j[ , c('rgn_id', 'product', 'year', lyr)],
-    sprintf('%s/data/np_harvest_%s_%s-year_max_%d.csv', dir_d, str_replace(lyr, '_', '-'), scenario, year_max), row.names = F, na = '')
+    sprintf('%s/%s/data/np_harvest_%s-year_max_%d.csv', dir_git, data_year, str_replace(lyr, '_', '-'), year_max), row.names = F, na = '')
 }
 
 
