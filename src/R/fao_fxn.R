@@ -14,22 +14,19 @@ fao_clean_data <- function(m, sub_0_0 = 0.1) {
   
   m1 <- m %>%
     mutate(  
-      value = str_replace(value, fixed( ' F'),    ''),  
-        # FAO denotes with F when they have estimated the value using best available data
-      value = str_replace(value, fixed('...'),    NA),  
-        # FAO's code for NA
-      value = str_replace(value, fixed(  '.'),    NA)) %>%
-        # is this an FAO code or just cleanup? This line must not occur after replacing '0 0' with '0.1'
-    mutate(
+      value = str_replace(value, fixed( ' F'),    ''),
+      # FAO denotes with F when they have estimated the value using best available data
+      value = ifelse(value == '...', NA, value), 
+      # FAO's code for NA
       value = str_replace(value, fixed('0 0'), sub_0_0),  
-        # FAO denotes something as '0 0' when it is > 0 but < 1/2 of a unit. 
-        # Replace with lowdata_value.
+      # FAO denotes something as '0 0' when it is > 0 but < 1/2 of a unit. 
+      # Replace with lowdata_value.
       value = str_replace(value, fixed(  '-'),   '0'),  
       # FAO's code for true 0
       value = ifelse(value =='', NA, value)) %>%
     mutate(
       value = as.numeric(as.character(value)),
       year  = as.integer(as.character(year)))       # search in R_inferno.pdf for "shame on you"
-
+  
   return(m1)
 }
