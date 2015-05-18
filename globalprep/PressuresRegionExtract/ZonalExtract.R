@@ -295,3 +295,53 @@ quantile(eez$pressure_score)
 data %>%
   filter(sp_type=="eez") %>%
 arrange(mean)
+
+
+#########################################
+#### UV ----
+#########################################
+# https://github.com/OHI-Science/issues/issues/377
+# 2 raster choices: logged and non-logged.  Going with the logged version mainly out of tradition
+rast <- raster('/var/data/ohi/git-annex/globalprep/Pressures_UV/output/uv_anomaly_diff_moll_1km_log_resc.tif')
+
+# extract data for each region:
+regions_stats <- zonal(rast,  zones, fun="mean", na.rm=TRUE, progress="text")
+regions_stats2 <- data.frame(regions_stats)
+setdiff(regions_stats2$zone, rgn_data$sp_id) #should be none
+setdiff(rgn_data$sp_id, regions_stats2$zone) #should be none
+
+data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone")
+
+## save data for toolbox
+eez <- data %>%
+  filter(sp_type=="eez") %>%
+  dplyr::select(rgn_id, pressure_score=mean)
+
+#write.csv(eez, file.path(save_loc, 'data/uv_eez_2015.csv'), row.names=FALSE)
+eez <- read.csv(file.path(save_loc, 'data/uv_eez_2015.csv'))
+
+fao <- data %>% 
+  filter(sp_type=="fao") %>%
+  dplyr::select(rgn_id, pressure_score=mean)
+
+# write.csv(fao, file.path(save_loc, 'data/uv_fao_2015.csv'), row.names=FALSE)
+
+antarctica <- data %>%
+  filter(sp_type=="eez-ccamlr") %>%
+  dplyr::select(rgn_id = sp_id, pressure_score=mean)
+
+#write.csv(antarctica, file.path(save_loc, 'data/uv_ccamlr_2015.csv'), row.names=FALSE)
+
+
+## plot the data to make sure range of values for regions is reasonable
+library(ggplot2)
+ggplot(eez, aes(pressure_score)) +
+  geom_histogram(fill="gray", color="black") + 
+  theme_bw() + 
+  labs(title="Region scores for UV")
+quantile(eez$pressure_score)
+
+
+data %>%
+  filter(sp_type=="eez") %>%
+  arrange(mean)
