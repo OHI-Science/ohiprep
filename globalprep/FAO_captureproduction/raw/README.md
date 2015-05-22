@@ -1,3 +1,3 @@
 # README
 
-# Accessed by @jafflerbach May 22, 2015 with FishStatJ
+Raw raw data accessed by @jafflerbach May 22, 2015 with FishStatJ
