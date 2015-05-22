@@ -1,3 +1,7 @@
+#### NOTE:  If Sea Ice (or any other habitat data) is updated
+#### be sure to update the scripts in globalprep/hab_combined to 
+#### merge the new data with the other habitat data!
+
 ## Sea ice: Series of scripts to obtain sea ice data
 ## Feb 27 2014
 ## Update: Mar 6 2014: removed countries with small sea ice areas
