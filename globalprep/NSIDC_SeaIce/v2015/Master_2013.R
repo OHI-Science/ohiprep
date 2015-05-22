@@ -62,34 +62,35 @@ source(file.path(github, "ObtainingData.R"))
 ## status and trend for shoreline ice and ice edge habitat.
 ## Data is saved in tmp folder: Habitat: n_IceEdgeHabitat.csv, s_IceEdgeHabitat.csv 
 ## Coastal Protection: n_IceShoreProtection.csv, s_IceShoreProtection.csv  
+ref.years <- 1979:2000
 source(file.path(github, "Status_Trend.R"))
 
 # Final calculations and organization: ----
 
-n_edge <- read.csv(file.path(github, "tmp/n_IceEdgeHabitat.csv"))
-s_edge <- read.csv(file.path(github, "tmp/s_IceEdgeHabitat.csv"))
+n_edge <- read.csv(file.path(github, "tmp/n_IceEdgeHabitat_ref1979to2000.csv"))
+s_edge <- read.csv(file.path(github, "tmp/s_IceEdgeHabitat_ref1979to2000.csv"))
 edge <- rbind(n_edge, s_edge)
 edge  <- edge %>%
-  filter(Reference_avg1979to2014monthlypixels != 0) %>%
+  filter(Reference_avg1979to2000monthlypixels != 0) %>%
   filter(!(rgn_id %in% c(59, 141, 219, 4, 172, 94))) %>%  #anomolous eez regions with very little ice cover
   filter(!(rgn_id %in% c("248300", "258510", "258520", "258600", "258700"))) %>% # ccamlr: cut some regions due to minimal ice (<200 km2 per year - average of months)
   filter(rgn_nam != "DISPUTED") %>%
   mutate(habitat="seaice_edge")
 
-n_shore <- read.csv(file.path(github, "tmp/n_IceShoreProtection.csv"))
-s_shore <- read.csv(file.path(github, "tmp/s_IceShoreProtection.csv"))
+n_shore <- read.csv(file.path(github, "tmp/n_IceShoreProtection_ref1979to2000.csv"))
+s_shore <- read.csv(file.path(github, "tmp/s_IceShoreProtection_ref1979to2000.csv"))
 shore <- rbind(n_shore, s_shore)
 shore <- shore %>%
-filter(Reference_avg1979to2014monthlypixels != 0) %>%
+filter(Reference_avg1979to2000monthlypixels != 0) %>%
   filter(!(rgn_id %in% c(59, 89, 177, 178))) %>%  #anomolous eez regions with very little ice cover
   filter(rgn_nam != "DISPUTED") %>%
   mutate(habitat="seaice_shoreline")
 
 data <- rbind(edge, shore)
 data  <- data %>%
-  mutate(km2 = Reference_avg1979to2014monthlypixels/12 * (pixel/1000)^2)
+  mutate(km2 = Reference_avg1979to2000monthlypixels/12 * (pixel/1000)^2)
 
-#write.csv(data, file.path(github, "tmp/sea_ice.csv"), row.names=FALSE)
+write.csv(data, file.path(github, "tmp/sea_ice.csv"), row.names=FALSE)
 
 ## ice health data subset/format/save
 

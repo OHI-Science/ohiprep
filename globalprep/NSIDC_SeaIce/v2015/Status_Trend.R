@@ -79,9 +79,11 @@ for (p in poles){
   # calculate Reference as average of total annual sea ice
   # sum sea ice of all months and divide by total number of years
   yrs.s = as.factor(substr(names(s),2,5))  # get reference to years by column
-  rih.R = sum(sih)/length(levels(yrs.s)) # raster of ice habitat for Reference
-  rip.R = sum(sip)/length(levels(yrs.s)) # raster of ice protection for Reference
-  
+  ref.year.locs <- which(yrs.s %in% ref.years)
+  rih.R = sum(sih[[ref.year.locs]])/length(ref.years) # raster of ice habitat for Reference
+  rip.R = sum(sip[[ref.year.locs]])/length(ref.years) # raster of ice protection for Reference
+    
+    
   # summarize Reference by region
   z.h.R = zonal(rih.R, r.rgn, sum)
   z.p.R = zonal(rip.R, r.rgn, sum)    
@@ -183,8 +185,8 @@ for (i in 1:nrow(z.p.T)){ # i = 14
 # Doesn't seem like the status is needed...just use the pctdevR_ values for relevant year
 #   z.h.T[[sprintf('Status_%s_pctdevR', final.year)]] = z.h.T[[sprintf('pctdevR_%s', final.year)]] 
 #   z.p.T[[sprintf('Status_%s_pctdevR', final.year)]] = z.p.T[[sprintf('pctdevR_%s', final.year)]]   
-  names(z.h.T)[names(z.h.T)=='value'] = sprintf('Reference_avg1979to%smonthlypixels', final.year)
-  names(z.p.T)[names(z.p.T)=='value'] = sprintf('Reference_avg1979to%smonthlypixels', final.year)
+  names(z.h.T)[names(z.h.T)=='value'] = sprintf('Reference_avg%sto%smonthlypixels', min(ref.years), max(ref.years))
+  names(z.p.T)[names(z.p.T)=='value'] = sprintf('Reference_avg%sto%smonthlypixels', min(ref.years), max(ref.years))
   z.h.T[['pole']] = p
   z.p.T[['pole']] = p
   
@@ -199,7 +201,7 @@ for (i in 1:nrow(z.p.T)){ # i = 14
 #   z.p.T <- z.p.T[!is.na(z.p.T$Status_2011_pctdevR), ]  
   
   #  save.image(file=sprintf('tmp\\%s_image.rdata',p))    
-  write.csv(z.h.T, file.path(github, sprintf('tmp/%s_IceEdgeHabitat.csv',p)), row.names=FALSE)
-  write.csv(z.p.T, file.path(github, sprintf('tmp/%s_IceShoreProtection.csv',p)), row.names=FALSE) 
+  write.csv(z.h.T, file.path(github, sprintf('tmp/%s_IceEdgeHabitat_ref%sto%s.csv', p, min(ref.years), max(ref.years))), row.names=FALSE)
+  write.csv(z.p.T, file.path(github, sprintf('tmp/%s_IceShoreProtection_ref%sto%s.csv', p, min(ref.years), max(ref.years))), row.names=FALSE) 
   
 }
