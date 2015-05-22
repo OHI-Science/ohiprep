@@ -41,8 +41,16 @@ ocean = raster(file.path(dir_N,'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
 
 
 # plastics data
-count  = list.files(path='v2015',pattern='count_*',full.names=T)
-weight = list.files(path='v2015',pattern='weight_*',full.names=T)
+count  = list.files(path='v2015/globalplastic_wd_cd_rasters_180',pattern='count_*',full.names=T)
+weight = list.files(path='v2015/globalplastic_wd_cd_rasters_180',pattern='weight_*',full.names=T)
+
+# There are 3 extra weight files from the data source. For sizes 2-4, there is a file with a '2' at the end of it. These are the rasters
+# that work, while the other three do not. As an example:
+
+raster('v2015/globalplastic_wd_cd_rasters_180/weight_density_size2_180.tif') #gives an error
+#but
+raster('v2015/globalplastic_wd_cd_rasters_180/weight_density_size2_180_2.tif') #works! These are the ones we will use, along with weight size 1
+# which appears to work
 
 #--------------------------------------------------------------------------------------
 
@@ -52,10 +60,10 @@ weight = list.files(path='v2015',pattern='weight_*',full.names=T)
 
     unlog = function(file){
 
-  name = unlist(strsplit(file,'/','.'))[2] #split filename, grab second string to use in naming tif
+  name = unlist(strsplit(file,'/','.'))[3] #split filename, grab second string to use in naming tif
   r = raster(file)
   out = 10^r
-  writeRaster(out,file=paste0('v2015/tmp/unlog','unlog_',name,sep=''),overwrite=T)
+  writeRaster(out,filename=paste0('v2015/tmp/unlog/unlog_',name,sep=''),overwrite=T,format='GTiff')
   
 }
 
@@ -85,9 +93,9 @@ weight = list.files(path='v2015',pattern='weight_*',full.names=T)
     mollCRS <- CRS('+proj=moll') #set mollweide CRS
 
 
-    w_moll <- projectRaster(w_sum, crs=mollCRS,over=T,progress='text',filename='v2015/tmp/weight_sum_moll.tif',overwrite=T)
+    w_moll <- projectRaster(w_sum, crs=mollCRS,over=T,progress='text')#,filename='v2015/tmp/weight_sum_moll.tif',overwrite=T)
 
-    c_moll <- projectRaster(c_sum, crs=mollCRS,over=T,progress='text',filename='v2015/tmp/count_sum_moll.tif',overwrite=T)
+    c_moll <- projectRaster(c_sum, crs=mollCRS,over=T,progress='text')#,filename='v2015/tmp/count_sum_moll.tif',overwrite=T)
 
 
 #--------------------------------------------------------------------------------------
