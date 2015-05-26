@@ -29,7 +29,7 @@
 
 ### load libraries. Note dplyr, tidyr, stringr are loaded later in common.R
 library(zoo)  
-library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
+library(ohicore) # devtools::install_github('ohi-science/ohicore@dev') # may require uninstall and reinstall
 
 setwd('~/github/ohiprep')
 
