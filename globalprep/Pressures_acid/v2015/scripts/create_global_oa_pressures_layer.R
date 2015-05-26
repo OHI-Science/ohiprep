@@ -1,7 +1,5 @@
 # Creating global ocean acidification pressure layers
 
-# 4/15/2015
-
 # Jamie Afflerbach
 
 #-----------------------------------------
