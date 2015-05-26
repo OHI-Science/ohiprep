@@ -1,32 +1,35 @@
+#### NOTE:  If Sea Ice (or any other habitat data) is updated
+#### be sure to update the scripts in globalprep/hab_combined to 
+#### merge the new data with the other habitat data!
+
 ## Sea ice: Series of scripts to obtain sea ice data
 ## Feb 27 2014
-## Update: Mar 6 2013: removed countries with small sea ice areas
+## Update: Mar 6 2014: removed countries with small sea ice areas
 ##        These areas are stochastic and are being unfairly penalized
+## Update: Updating script for 2015 analysis
 
 # relevant libraries:
-require(sp)
+library(sp)
 library(raster)
 library(rgdal)
-library(maptools)
-library(fields)
-library(maps)
-library(gpclib)
-library(animation)
-library(plyr)
-library(reshape2)
-rm(list = ls())
+#library(maptools)
+library(fields) #colors in Status_Trend.R
+#library(maps)
+#library(gpclib)
+#library(plyr)
+#library(reshape2)
+
+source("src/R/common.R")
 
 # Description ----
-## arcGIS processes:
-## transformed this file: N:\model\GL-NCEAS-OceanRegions_v2013a\data\rgn_fao_gcs
-## to the coordinate systems used in the shp files located in the "Testing old data" 
-## folder: n_type_rgns_pts and s_type_rgns_pts  (used these as the basemaps to ensure that
-## the transformation was correct.)
+## Check out PreparingSpatialFiles.R if spatial files change or to understand origination of spatial data files used here.
 
-setwd('N:\\model\\GL-NCEAS-SeaIce_v2013')
+neptune <- file.path(dir_neptune_data, "git-annex/globalprep/NSIDC_SeaIce/v2015")
+github <- "globalprep/NSIDC_SeaIce/v2015"
+
 
 # final year of data:
-final.year <- 2012
+final.year <- 2014
 
 # Establish: CRS, website to collect data, data selection parameters
 pixel = 25000    # pixel dimension in meters for both x and y 
@@ -41,11 +44,14 @@ ub.n = 'ftp://sidads.colorado.edu/pub/DATASETS/nsidc0051_gsfc_nasateam_seaice/fi
 ub.s = 'ftp://sidads.colorado.edu/pub/DATASETS/nsidc0051_gsfc_nasateam_seaice/final-gsfc/south/monthly'
 
 poles = c('n','s')
-years = c(1979:2012)  #Full range of data
+years = c(1979:final.year)  #Full range of data
 months = 1:12
 n.pym=length(poles)*length(years)*length(months)
 i.pym = 0
 t0 = Sys.time()
+
+### NOTE: walk through the ObtainingData.R script if any of the spatial files have been modified.
+### This will save the files as spatial points.
 
 
 #Function 1: ----
@@ -53,101 +59,96 @@ t0 = Sys.time()
 ## and add to raster stack that is saved in tmp folder as: n_rasters_points.rdata  or s_rasters_points.rdata
 ## And, if it doesn't already exist, it converts the region shapefile into a raster points file
 
-source("ObtainingData.R")
+source(file.path(github, "ObtainingData.R"))
 
 #Function 2: ----
 ## Using the data from the .rdata files created above calculates
 ## status and trend for shoreline ice and ice edge habitat.
 ## Data is saved in tmp folder: Habitat: n_IceEdgeHabitat.csv, s_IceEdgeHabitat.csv 
 ## Coastal Protection: n_IceShoreProtection.csv, s_IceShoreProtection.csv  
-source("Status_Trend.R")
+ref.years <- 1979:2000
+source(file.path(github, "Status_Trend.R"))
 
 # Final calculations and organization: ----
 
-## health calculations:
-n_edge <- read.csv("tmp\\n_IceEdgeHabitat.csv")
-s_edge <- read.csv("tmp\\s_IceEdgeHabitat.csv")
+n_edge <- read.csv(file.path(github, "tmp/n_IceEdgeHabitat_ref1979to2000.csv"))
+s_edge <- read.csv(file.path(github, "tmp/s_IceEdgeHabitat_ref1979to2000.csv"))
 edge <- rbind(n_edge, s_edge)
-edge <- subset(edge, rgn_typ=="eez")
-edge_condition <- subset(edge, select=c(OHIregion_2013, pctdevR_2011))
-edge_condition$habitat  <- "seaice_edge"
-edge_condition$health  <- ifelse(edge_condition$pctdevR_2011 >1, 1, edge_condition$pctdevR_2011)
-edge_condition <- subset(edge_condition, select=c(OHIregion_2013, habitat, health))
-edge_condition <- rename(edge_condition, c("OHIregion_2013"="rgn_id"))
+edge  <- edge %>%
+  filter(Reference_avg1979to2000monthlypixels != 0) %>%
+  filter(!(rgn_id %in% c(59, 141, 219, 4, 172, 94))) %>%  #anomolous eez regions with very little ice cover
+  filter(!(rgn_id %in% c("248300", "258510", "258520", "258600", "258700"))) %>% # ccamlr: cut some regions due to minimal ice (<200 km2 per year - average of months)
+  filter(rgn_nam != "DISPUTED") %>%
+  mutate(habitat="seaice_edge")
 
-n_shore <- read.csv("tmp\\n_IceShoreProtection.csv")
-s_shore <- read.csv("tmp\\s_IceShoreProtection.csv")
+n_shore <- read.csv(file.path(github, "tmp/n_IceShoreProtection_ref1979to2000.csv"))
+s_shore <- read.csv(file.path(github, "tmp/s_IceShoreProtection_ref1979to2000.csv"))
 shore <- rbind(n_shore, s_shore)
-shore <- subset(shore, rgn_typ=="eez")
-shore_condition <- subset(shore, select=c(OHIregion_2013, pctdevR_2011))
-shore_condition$habitat  <- "seaice_shoreline"
-shore_condition$health  <- ifelse(shore_condition$pctdevR_2011 >1, 1, shore_condition$pctdevR_2011)
-shore_condition <- subset(shore_condition, select=c(OHIregion_2013, habitat, health))
-shore_condition <- rename(shore_condition, c("OHIregion_2013"="rgn_id"))
-health <- rbind(edge_condition, shore_condition)
-# remove a few anomolous regions:
-health <- health[!(health$rgn_id %in% c(59, 141, 219, 4, 172, 94) & 
-                   health$habitat=="seaice_edge"), ]
-health <- health[!(health$rgn_id %in% c(59, 89, 177, 178) & 
-                     health$habitat=="seaice_shoreline"), ]
+shore <- shore %>%
+filter(Reference_avg1979to2000monthlypixels != 0) %>%
+  filter(!(rgn_id %in% c(59, 89, 177, 178))) %>%  #anomolous eez regions with very little ice cover
+  filter(rgn_nam != "DISPUTED") %>%
+  mutate(habitat="seaice_shoreline")
 
-write.csv(health, "data\\hab_seaice_health.csv", row.names=FALSE)
+data <- rbind(edge, shore)
+data  <- data %>%
+  mutate(km2 = Reference_avg1979to2000monthlypixels/12 * (pixel/1000)^2)
+
+write.csv(data, file.path(github, "tmp/sea_ice.csv"), row.names=FALSE)
+
+## ice health data subset/format/save
+
+iceHealth <- function(type ="eez", year=final.year){ 
+  criteria1 <- ~rgn_typ == type
+  dataYear <- paste("pctdevR", year, sep="_")
+  filterdata <- data %>%
+    filter_(criteria1) 
+  
+  filterdata <- subset(filterdata, select=c(rgn_id, habitat, get(dataYear)))
+  names(filterdata) <- c('rgn_id', 'habitat', 'health')
+  filterdata$health <- ifelse(filterdata$health>1, 1, filterdata$health)
+  write.csv(filterdata, sprintf("globalprep/NSIDC_SeaIce/v2015/data/hab_ice_health_%s_%s.csv", type, year), row.names=FALSE)
+}
+
+## can also do fao and ccamlr by changing type (not sure if we will need this)
+iceHealth(type="eez", year='2014') # 2015 analysis
+iceHealth(type="eez", year='2013') # 2014 analysis
+iceHealth(type="eez", year='2012') # 2013 analysis
+iceHealth(type="eez", year='2011') # 2013 analysis
 
 
-## extent calculations:
-edge_extent <- subset(edge, select=c(OHIregion_2013, Reference_avg1979to2012monthlypixels))
-edge_extent$km2 <-  edge_extent$Reference_avg1979to2012monthlypixels/12*(pixel/1000)^2
-edge_extent$habitat <- "seaice_edge"
-edge_extent <- subset(edge_extent, select=c(OHIregion_2013, habitat, km2))
-edge_extent <- rename(edge_extent, c(OHIregion_2013="rgn_id"))
+## ice trend data subset/format/save
+iceTrend <- function(type ="eez", year=final.year){ 
+  criteria1 <- ~rgn_typ == type
+  dataYear <- sprintf("Trend_%sto%s_pctdevRperyr", year-4, year)
+  filterdata <- data %>%
+    filter_(criteria1) 
+  
+  filterdata <- subset(filterdata, select=c(rgn_id, habitat, get(dataYear)))
+  names(filterdata) <- c('rgn_id', 'habitat', 'trend')
+  filterdata$trend <- filterdata$trend*5
+   filterdata$trend <- ifelse(filterdata$trend>1, 1, filterdata$trend)
+   filterdata$trend <- ifelse(filterdata$trend<(-1), -1, filterdata$trend)
+  write.csv(filterdata, sprintf("globalprep/NSIDC_SeaIce/v2015/data/hab_ice_trend_%s_%s.csv", type, year), row.names=FALSE)
+}
 
-shore_extent <- subset(shore, select=c(OHIregion_2013, Reference_avg1979to2012monthlypixels))
-shore_extent$km2 <-  shore_extent$Reference_avg1979to2012monthlypixels/12*(pixel/1000)^2
-shore_extent$habitat <- "seaice_shoreline"
-shore_extent <- subset(shore_extent, select=c(OHIregion_2013, habitat, km2))
-shore_extent <- rename(shore_extent, c(OHIregion_2013="rgn_id"))
-extent <- rbind(edge_extent, shore_extent)
+## can also do fao and ccamlr by changing type (not sure if we will need this)
+iceTrend(type="eez", year=2014) # 2015 analysis
+iceTrend(type="eez", year=2013) # 2014 analysis
+iceTrend(type="eez", year=2012) # 2013 analysis
+iceTrend(type="eez", year=2011) # 2013 analysis
 
-# remove a few anomolous regions:
-extent <- extent[!(extent$rgn_id %in% c(59, 141, 219, 4, 172, 94) & 
-                     extent$habitat=="seaice_edge"), ]
-extent <- extent[!(extent$rgn_id %in% c(59, 89, 177, 178) & 
-                     extent$habitat=="seaice_shoreline"), ]
-write.csv(extent, "data\\hab_seaice_extent.csv", row.names=FALSE) 
+## ice extent data subset/format/save
+iceExtent <- function(type ="eez"){ 
+  criteria1 <- ~rgn_typ == type
 
-## trend calculations:
-edge_trend <- subset(edge, select=c(OHIregion_2013, Trend_2006to2011_pctdevRperyr))
-edge_trend$habitat <- "seaice_edge"
-edge_trend <- rename(edge_trend, c(Trend_2006to2011_pctdevRperyr="trend", OHIregion_2013="rgn_id"))
-edge_trend <- subset(edge_trend, select=c(rgn_id, habitat, trend))
+  filterdata <- data %>%
+    filter_(criteria1) 
+  
+  filterdata <- subset(filterdata, select=c(rgn_id, habitat, km2))
+  write.csv(filterdata, sprintf("globalprep/NSIDC_SeaIce/v2015/data/hab_ice_extent_%s.csv", type), row.names=FALSE)
+}
 
-shore_trend <- subset(shore, select=c(OHIregion_2013, Trend_2006to2011_pctdevRperyr))
-shore_trend$habitat <- "seaice_shoreline"
-shore_trend <- rename(shore_trend, c(Trend_2006to2011_pctdevRperyr="trend", OHIregion_2013="rgn_id"))
-shore_trend <- subset(shore_trend, select=c(rgn_id, habitat, trend))
-trend <- rbind(edge_trend, shore_trend)
-# remove a few anomolous regions:
-trend <- trend[!(trend$rgn_id %in% c(59, 141, 219, 4, 172, 94) & 
-                     trend$habitat=="seaice_edge"), ]
-trend <- trend[!(trend$rgn_id %in% c(59, 89, 177, 178) & 
-                     trend$habitat=="seaice_shoreline"), ]
-write.csv(trend, "data\\hab_seaice_trend.csv", row.names=FALSE)
+## can also do fao and ccamlr by changing type (not sure if we will need this)
+iceExtent(type="eez") # all years
 
-# Reviewing data: ----
-extent <- read.csv("data\\hab_seaice_extent.csv")
-health <- read.csv("data\\hab_seaice_health.csv")
-trend <- read.csv("data\\hab_seaice_trend.csv")
-names <- read.csv("C:\\Users\\Melanie\\Desktop\\NCEAS\\data\\rgn_2013master.csv")
-names <- subset(names, select=c("rgn_id_2013", "rgn_nam_2013"))
-
-full <- merge(extent, health, by=c("rgn_id", "habitat"))
-full <- merge(full, trend, by=c("rgn_id", "habitat"))
-full_melt <- melt(full, id.vars=c("rgn_id", "habitat"))
-full_melt$value <- round(full_melt$value, 2)
-full_cast <- dcast(full_melt, rgn_id ~ habitat + variable, mean)
-names(full_cast) <- gsub("seaice_", "", names(full_cast))
-
-full_cast <- merge(full_cast, names, by.x="rgn_id", by.y="rgn_id_2013")
-full_cast <- subset(full_cast, rgn_id != 255, select=c(rgn_id, rgn_nam_2013, edge_km2, edge_health, edge_trend,
-                                                       shoreline_km2, shoreline_health, shoreline_trend))
-write.csv(full_cast, "data\\seaice_summary.csv", row.names=FALSE)

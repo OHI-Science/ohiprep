@@ -1,5 +1,5 @@
 for (p in poles){ 
-#  p='s'#testing
+#  p='n'#testing
   
   ########################################################### 
   ### This section is mostly for visualization, but the 
@@ -18,7 +18,7 @@ for (p in poles){
   # load the .rdata file created in the above function.
   # s = raster stack of the ice data for all years/months
   # pts = points data of OHI regions, NSIDC type of land cover, and data extracted from each NSIDC ice layer
-  load(file=sprintf('tmp\\%s_rasters_points.rdata',p))
+  load(file=file.path(neptune, sprintf('tmp/%s_rasters_points.rdata',p)))
   
   # using the reference rasters ("l") for the north and south pole 
   r = raster(s,l) #select the "l" (i.e., reference) raster layer from the stack
@@ -35,7 +35,7 @@ for (p in poles){
   r.rgn = setValues(r, pts@data[['rgn_id']]) #create a new raster with the regions 
   r.rgn[r.typ < 2] = NA # exclude: land(0), coast(1) from the regions
   #plot data
-  png(sprintf('%s_IceEdgeHabitat_overview.png',p), width=w, height=h)
+  png(file.path(neptune, sprintf('%s_IceEdgeHabitat_overview.png',p)), width=w, height=h)
   par(mfcol=c(2,2))
   plot(r.typ, col=rev(topo.colors(length(unique(r.typ)))), main='Pixel Type\n(0=land,1=coast,2=shore,3=water,4=hole)')
   plot(r.ice, col=tim.colors(64), main=sprintf('Ice Concentration (%s)',l))
@@ -79,9 +79,11 @@ for (p in poles){
   # calculate Reference as average of total annual sea ice
   # sum sea ice of all months and divide by total number of years
   yrs.s = as.factor(substr(names(s),2,5))  # get reference to years by column
-  rih.R = sum(sih)/length(levels(yrs.s)) # raster of ice habitat for Reference
-  rip.R = sum(sip)/length(levels(yrs.s)) # raster of ice protection for Reference
-  
+  ref.year.locs <- which(yrs.s %in% ref.years)
+  rih.R = sum(sih[[ref.year.locs]])/length(ref.years) # raster of ice habitat for Reference
+  rip.R = sum(sip[[ref.year.locs]])/length(ref.years) # raster of ice protection for Reference
+    
+    
   # summarize Reference by region
   z.h.R = zonal(rih.R, r.rgn, sum)
   z.p.R = zonal(rip.R, r.rgn, sum)    
@@ -102,11 +104,13 @@ for (p in poles){
   # (output is a raster with the average of 3 years of data)
   ################################################################
   
-  range.years <- (final.year-6):(final.year-1) #because a sliding 3-year average is used, the final data is one year less than final year
+  range.years <- (final.year-10):(final.year) 
+#   sih.avg3yr <- stack()
+#   sip.avg3yr <- stack()
   
   for (yr in range.years){ 
-    #yr=2006  ## testing
-    ir = which(names(sih.yr) %in% sprintf('X%d',(yr-1):(yr+1))) # collect the layers that include year of interest as well as previous and subsequent year
+    #yr=2011  ## testing
+    ir = which(names(sih.yr) %in% sprintf('X%d',(yr-2):(yr))) # collect the layers that include year of interest as well as 2 previous years
     lyr = sprintf('avg3yr_%d', yr)
     if (yr==min(range.years)){    
       sih.avg3yr = mean(sih.yr[[ir]])
@@ -118,7 +122,7 @@ for (p in poles){
       sip.avg3yr = stack(sip.avg3yr, mean(sip.yr[[ir]]))
       names(sih.avg3yr) = c(lyrs, lyr)      
       names(sip.avg3yr) = c(lyrs, lyr)
-    }
+   }
     lyrs = names(sih.avg3yr)
   }
   
@@ -149,31 +153,40 @@ for (p in poles){
   ### Calculate trend
   ################################################################
   ### Regression model for each region for the selected years and save the slope and R2 to the z.h.T dataframe
+for (j in (final.year-4):final.year){
+  # j=2012 #testing
+  trend.years = (j-4):j
+
   for (i in 1:nrow(z.h.T)){ 
     #i = 14 #testing
     if (z.h.T$value[i]>0){
-      mdl = lm(y~x, data.frame(x=range.years, y=as.numeric(z.h.T[i,sprintf('pctdevR_%d',range.years)])))
-      z.h.T[i,'Trend_2006to2011_pctdevRperyr'] = mdl$coefficients[['x']]
-      z.h.T[i,'Trend_2006to2011_rsquared'] = summary(mdl)$r.squared
+      mdl = lm(y~x, data.frame(x=trend.years, y=as.numeric(z.h.T[i,sprintf('pctdevR_%d', trend.years)])))
+      z.h.T[i, sprintf('Trend_%sto%s_pctdevRperyr', min(trend.years), max(trend.years))] = mdl$coefficients[['x']]
+      #z.h.T[i, sprintf('Trend_%sto%s_rsquared', min(trend.years), max(trend.years))] = summary(mdl)$r.squared
     }
   }
+}
   
   ### Regression model for each region for the selected years and save the slope and R2 to the z.p.T dataframe
-  for (i in 1:nrow(z.p.T)){ # i = 14
+for (j in (final.year-4):final.year){
+  trend.years = (j-4):j
+  
+for (i in 1:nrow(z.p.T)){ # i = 14
     if (z.p.T$value[i]>0){
-      mdl = lm(y~x, data.frame(x=range.years, y=as.numeric(z.p.T[i,sprintf('pctdevR_%d',range.years)])))
-      z.p.T[i,'Trend_2006to2011_pctdevRperyr'] = mdl$coefficients[['x']]
-      z.p.T[i,'Trend_2006to2011_rsquared'] = summary(mdl)$r.squared
+      mdl = lm(y~x, data.frame(x=trend.years, y=as.numeric(z.p.T[i, sprintf('pctdevR_%d', trend.years)])))
+      z.p.T[i, sprintf('Trend_%sto%s_pctdevRperyr', min(trend.years), max(trend.years))] = mdl$coefficients[['x']]
+ #     z.p.T[i, sprintf('Trend_%sto%s_rsquared', min(trend.years), max(trend.years))] = summary(mdl)$r.squared
     }
   }
-  
+}
   ################################################################ 
   ### Calculate status and add to z.h.T data and z.p.T data
   ################################################################
-  z.h.T[['Status_2011_pctdevR']] = z.h.T[['pctdevR_2011']] #change to 2011
-  z.p.T[['Status_2011_pctdevR']] = z.p.T[['pctdevR_2011']]  #change to 2011  
-  names(z.h.T)[names(z.h.T)=='value'] = 'Reference_avg1979to2012monthlypixels'
-  names(z.p.T)[names(z.p.T)=='value'] = 'Reference_avg1979to2012monthlypixels'
+# Doesn't seem like the status is needed...just use the pctdevR_ values for relevant year
+#   z.h.T[[sprintf('Status_%s_pctdevR', final.year)]] = z.h.T[[sprintf('pctdevR_%s', final.year)]] 
+#   z.p.T[[sprintf('Status_%s_pctdevR', final.year)]] = z.p.T[[sprintf('pctdevR_%s', final.year)]]   
+  names(z.h.T)[names(z.h.T)=='value'] = sprintf('Reference_avg%sto%smonthlypixels', min(ref.years), max(ref.years))
+  names(z.p.T)[names(z.p.T)=='value'] = sprintf('Reference_avg%sto%smonthlypixels', min(ref.years), max(ref.years))
   z.h.T[['pole']] = p
   z.p.T[['pole']] = p
   
@@ -181,15 +194,14 @@ for (p in poles){
   z.h.T <- merge(z.h.T, labels, by.x="zone", by.y="rgn_id")
   z.p.T <- merge(z.p.T, labels, by.x="zone", by.y="rgn_id")
   
-  names(z.h.T)[names(z.h.T)=='zone'] = 'OHIregion_2013'    
-  names(z.p.T)[names(z.p.T)=='zone'] = 'OHIregion_2013' 
+  names(z.h.T)[names(z.h.T)=='zone'] = 'rgn_id'    
+  names(z.p.T)[names(z.p.T)=='zone'] = 'rgn_id' 
   
-  z.h.T <- z.h.T[!is.na(z.h.T$Status_2011_pctdevR), ]
-  z.p.T <- z.p.T[!is.na(z.p.T$Status_2011_pctdevR), ]
-  
+#   z.h.T <- z.h.T[!is.na(z.h.T$Status_2011_pctdevR), ]
+#   z.p.T <- z.p.T[!is.na(z.p.T$Status_2011_pctdevR), ]  
   
   #  save.image(file=sprintf('tmp\\%s_image.rdata',p))    
-  write.csv(z.h.T, sprintf('tmp\\%s_IceEdgeHabitat.csv',p), row.names=FALSE)
-  write.csv(z.p.T, sprintf('tmp\\%s_IceShoreProtection.csv',p), row.names=FALSE) 
+  write.csv(z.h.T, file.path(github, sprintf('tmp/%s_IceEdgeHabitat_ref%sto%s.csv', p, min(ref.years), max(ref.years))), row.names=FALSE)
+  write.csv(z.p.T, file.path(github, sprintf('tmp/%s_IceShoreProtection_ref%sto%s.csv', p, min(ref.years), max(ref.years))), row.names=FALSE) 
   
 }

@@ -100,7 +100,7 @@ For each year between 2005 and 2014, look at the mean annual aragonite saturatio
   
         yr   = substr(file,56,59) #get year of file
         mean = raster(file)       #get annual mean aragonite raster for given year
-        diff = raster(newfiles[substr(newfiles,58,61)==yr])  #get the change raster for same year ((current-historical)/historical)
+        diff = raster(newfiles[substr(newfiles,58,61)==yr])  #get the change raster for same year (historical-current)
         mean[mean<=1]<-1    #all values at or less than 1 are given a value of 1
         mean[mean>1] = diff[mean>1]  # all cells with values greater than 1 are swapped out with their amount of change 
         mean[mean<0]<-0   #all values less than 0 (indicating a decrease in acidity) are capped at 0
