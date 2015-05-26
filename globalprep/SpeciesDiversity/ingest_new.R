@@ -50,12 +50,12 @@
 # 
 
 ##############################################################################=
-library(shapefiles)
-library(data.table)
+library(foreign)    # or: library(shapefiles) for read.dbf()
+library(data.table) # for fread()
 library(sp)
 library(rgdal)
 library(raster)
-library(readr)
+library(readr)      # for read_csv()
 
 setwd('~/github/ohiprep') # if not already there!  Should this be a standard practice - always 
   # just keep your working directory set to the base github repository location?
@@ -92,196 +92,115 @@ am_cells <- am_cells_raw %>%
 
 ### Create raster of .5 degree cells, each identified by LOICZID.  
 ###   LOICZID and CsquareCode match 1:1?
-create_loiczid_raster(am_cells, dir_anx)
+create_loiczid_raster(am_cells, dir_anx, reload = TRUE)
+# saves raster to git-annex/globalprep/SpeciesDiversity/rgns/loiczid_raster.grd and .gri
 
 ### Overlay region shapefile on LOICZID raster to create lookup table
 ### of region IDs to LOICZID
 ###   TO DO:  currently as sp_id; update to translate sp_id to rgn_id
 ###   TO DO:  Also include csq, since the AM species lookup uses csq not LOICZID.
 ogr_location <- file.path(dir_neptune_data, 'git-annex/Global/NCEAS-Regions_v2014/data')
-rgn_cell_lookup <- extract_loiczid_per_region(dir_anx, ogr_location)
-# ??? no returns from these; create the lookup file and move on
+rgn_cell_lookup <- extract_loiczid_per_region(dir_anx, ogr_location, reload = TRUE)
+# saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/region_prop_df.csv
+
 
 ##############################################################################=
-### Generate lookup - species ID to pop status/trend and spatial source ----
-###   [am_sid, iucn_sid] to [popn_status, popn_trend, spatial_source]
-##############################################################################=
-
-##############################################################################=
-create_spp_master_lookup <- function(scenario = 'v2015') {
 ### Create lookup: species <-> popn_status/popn_trend and spatial_source.
-### Output is data frame with these fields:
-### * sciname  iucn_sid  am_sid  popnstatus  popn_trend info_source  spatial_source
-### Aquamaps data is 'ohi_speciesoccursum.csv' with: 
-### * SPECIESID   SpecCode   sciname   am_status
-### IUCN input is 'spp_iucn_marine_global.csv' with:
-### * sid(Red.List.Species.ID)  sciname  iucn_status  popn_trend
-### Output details:
-### * popn_status: IUCN category. Prioritize iucn_status then am_status; otherwise NA
-### * popn_trend: for species with IUCN popn_trend info: 'Increasing', 'Decreasing', 'Stable'
-### * info_source: source of IUCN category info (and popn trend if applicable): am, iucn, NA
-### * spatial_source: prioritize IUCN range maps, then AquaMaps: iucn, am, NA
-### * Filter out anything with spatial_source NA, and with status NA? or leave in for future filtering?
-###   - ??? test how many get filtered out and how big is the file.
+### * Join Aquamaps species list and the IUCN marine species list by sciname
+### * determine IUCN red list popn_status and popn_trend
+### * determine which species have IUCN range maps available
 ##############################################################################=
+
+spp_all <- create_spp_master_lookup(dir_anx, scenario = 'v2015', reload = FALSE)
+### Output is data frame with these fields:
+### am_sid | SpecCode | sciname | am_status | iucn_sid | iucn_status | popn_trend | popn_status | info_source | spp_group | id_no | objectid | spatial_source
+### ??? do we need SpecCode, objectid? id_no?
+### Outputs saved to:
+### * v201X/intermediate/spp_iucn_maps_all.csv 
+###     (list of all species represented in the IUCN shape files)
+### * v201X/intermediate/spp_all.csv (complete data frame)
   
-  scenario = 'v2015'
-  
-  spp_am <- fread(file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_speciesoccursum.csv')) %>%
-    select(am_sid = SPECIESID, SpecCode, Genus, Species, am_status = iucn_code) %>%
-    unite(sciname, Genus, Species, sep = ' ') %>%
-    mutate(am_status = ifelse(am_status ==  'N.E.',   NA, am_status),
-           am_status = ifelse(am_status == 'LR/nt', 'NT', am_status),
-           am_status = ifelse(am_status == 'LR/lc', 'LC', am_status),
-           am_status = ifelse(am_status ==   '\\N',   NA, am_status))
-  
-  # pull the IUCN data from the git-annex file for this year - output from ingest.iucn.R
-  iucn_list_file <- file.path(dir_anx, scenario, 'intermediate/spp_iucn_marine_global.csv')
-  
-  spp_iucn_marine = read.csv(iucn_list_file) %>%
-    select(sciname, iucn_sid = sid, iucn_status = category, popn_trend) %>% 
-    filter(iucn_status != 'DD')
-  
-  spp_all <- spp_am %>%
-    mutate(sciname = str_trim(sciname)) %>% # ??? this fixed one record - based on spaces, or shifting to caps?
-    as.data.frame() %>%
-    full_join(spp_iucn_marine, by = 'sciname')
-    
-  spp_all <- spp_all %>%
-    # create single 'status' field, and flag 'info_source' to indicate iucn or am
-    mutate(iucn_status = as.character(iucn_status),
-           am_status   = as.character(am_status),
-           popn_status = ifelse(!is.na(iucn_status), iucn_status, am_status),
-           info_source = ifelse(!is.na(iucn_status), 'iucn',
-                           ifelse(!is.na(am_status), 'am',   NA)))
-  
-  iucn_maps <- 1# 
-  # * from IUCN shapefiles:
-  dir_iucn_shp <- file.path(dir_anx, 'raw/iucn_shp')
-  groups_list <- as.data.frame(list.files(dir_iucn_shp)) %>%
-    rename(shp_fn = `list.files(dir_iucn_shp)`) %>%
-    filter(tools::file_ext(shp_fn) == 'shp') %>%
-    mutate(shp_fn = str_replace(shp_fn, '.shp', ''))
-  
-  spp_iucn_shp_list <- data.frame()
-  
-  for (spp_group in groups_list$shp_fn) { 
-    # spp_group = 'AMPHANURA'        150 MB - also large .dbf
-    # spp_group = 'BONEFISH_TARPONS'  36 MB - id_no and binomial
-    # spp_group = 'DAMSELFISH'        43 MB - id_no and binomial
-    # spp_group = 'CORAL3'            43 MB - OBJECTID, ID_NO, and BINOMIAL
-    # spp_group = 'hagfishes'          8 MB - no sid, but BINOMIAL
-    # spp_group = 'non-homalopsids'   78 MB - no sid, but BINOMIAL
-    cat(sprintf('Processing species group: %s... \n', tolower(spp_group)))
-    spp_dbf <- read.dbf(file.path(dir_iucn_shp, sprintf('%s.dbf', spp_group)))
-    cat('file read successfully...\n')
-    spp_dbf <- as.data.frame(spp_dbf)
-    cat('converted to data frame...\n')
-    spp_dbf <- data.frame(spp_group, spp_dbf)
-    if('dbf.ID_NO' %in% names(spp_dbf)) {
-      spp_dbf <- spp_dbf %>% 
-        rename(dbf.id_no = dbf.ID_NO)
-      cat('changed dbf.ID_NO to dbf.id_no... ')
-    }
-    if('dbf.OBJECTID' %in% names(spp_dbf)) {
-      spp_dbf <- spp_dbf %>% rename(dbf.objectid = dbf.OBJECTID)
-      cat('changed dbf.OBJECTID to dbf.objectid... ')
-    }
-    if('dbf.BINOMIAL' %in% names(spp_dbf)) {
-      spp_dbf <- spp_dbf %>% rename(dbf.binomial = dbf.BINOMIAL)
-      cat('changed dbf.BINOMIAL to dbf.binomial... ')
-    }
-    if('dbf.id_no' %in% names(spp_dbf)) {
-      spp_dbf <- spp_dbf %>% 
-        mutate(dbf.id_no = as.integer(dbf.id_no))
-    }
-    spp_iucn_shp_list <- bind_rows(spp_iucn_shp_list, spp_dbf)
-    cat('\nbound it to some shit\n')
-  }
-  spp_iucn_shp_list <- spp_iucn_shp_list %>%
-    select(id_no = dbf.id_no, objectid = dbf.objectid, binomial = dbf.binomial) # other fields?
-  
-  write.csv(spp_iucn_shp_list, file.path(dir_anx, scenario, 'intermediate/spp_iucn_shp_list.csv'), row.names = FALSE)
-  # do an if(!file.exists | reload == TRUE) clause
-  
-  # - check that OBJECTID matches iucn_sid
-  # ex: AMPHICAUDATA  - ??? No matches with these two examples.
-  #     OBJECTID ID_NO BINOMIAL ....
-  #     95639     NULL Ambystoma altamirani
-  #     95638     NULL Ambystoma amblycephalum
-  # ex: PUFFERFISH - these three match up in name and iucn_sid.
-  #     id_no        binomial
-  #     193632.00000 Sphoeroides greeleyi
-  #     193686.00000 Marilyna pleurosticta
-  #   47407760.00000 Canthigaster criobe
-  
-  
-  spp_all <- spp_all %>% 
-    left_join(iucn_maps) %>%
-    mutate(spatial_source = ifelse(is.na(spatial_source) & !is.na(am_sid)), 'am', spatial_source)
-      # is.na(spatial_source) means it wasn't assigned to IUCN;
-      # !is.na(am_sid) means it is an aquamaps species.
-  
-  write.csv(spp_all, <somewhere>)
-}
+
 
 ##############################################################################=
 ### Generate lookup - IUCN species ID to cell ID ----
 ###   iucn_sid <-> LOICZID
 ##############################################################################=
-extract_loiczid_per_spp <- function(???)
-iucn_sid_loiczid_file <- file.path(dir_anx, 'intermediate/iucn_sid_loiczid_file.csv')
 
-if(!file.exists(iucn_sid_loiczid_file) | reload == TRUE) {
-  shp_list <- list.files(file.path(dir_anx, 'raw/iucn_shp')) %>%
-    filter(length(<filename variable>) == str_locate('.shp')[ , 2)] # the end of .shp is the same as the end of the string
+# Determine intersections of IUCN maps with Aquamaps half-degree cells
+#
+# * from the spp_all.csv, extract the species with IUCN range maps.  Use this file
+#   rather than the spp_iucn_maps_all because it is truncated to just species on spp_iucn_marine_global.csv list.
+# * for each species group (spp_group), open parent shape file
+#   * select by attribute - binomial == sciname in the list
+#   * use union to join multiple polygons with identical sciname. ??? needed?
+#   * use raster::extract, lay the selected polygons over the LOICZID raster.
+#     * NOTE: this takes a long time - 15-20 minutes for the region shapefile, with ~200 polygons.
+#       We're looking at ~ 4000 polygons, on the order of five hours? probably much more?
+# * when finished with each spp_group, save a file of iucn_sid | LOICZID | proportionArea for that group.
+
+
+extract_loiczid_per_spp <- function(dir_anx, scenario = 'v2015', reload = FALSE) {
+
+  # create list of all marine species with IUCN maps.
+  spp_all_file <- file.path(dir_anx, scenario, 'intermediate/spp_all.csv')
+  cat(sprintf('Reading full species lookup table from: \n  %s\n', spp_all_file))
+  spp_all <- read.csv(spp_all_file, stringsAsFactors = FALSE)
+  iucn_range_maps <- spp_all %>%
+    filter(spatial_source == 'iucn') %>%
+    select(sciname, iucn_sid, id_no, spp_group)
+  
+  # Import LOICZID raster
+  loiczid_raster <- raster(file.path(dir_anx, 'rgns/loiczid_raster'))
+
+  # create list of groups (i.e. shape files) to be analyzed
+  spp_gp_list <- unique(iucn_range_maps$spp_group)
+  ogr_location <- file.path(dir_anx, 'raw/iucn_shp')
+  
+  for(spp_gp in spp_gp_list) { # spp_gp <- 'LOBSTERS' # spp_gp <- 'CORAL3'
+    maps_in_group <- iucn_range_maps %>%
+      filter(spp_group == spp_gp)
+
+    ptm <- proc.time()
+    fsize <- round(file.size(file.path(ogr_location, sprintf('%s.shp', spp_gp)))/1e6, 2)
+    cat(sprintf('Reading species group shapefile %s, %.2f MB\n  %s/%s\n', spp_gp, fsize, ogr_location, spp_gp))
+    spp_shp <- readOGR(dsn = ogr_location, layer= spp_gp)
+    ptm <- proc.time() - ptm
+    cat(sprintf('Elapsed read time: %.2f seconds', ptm[3]))
+
+    # Filter shape file to polygons with species names that match our list of
+    # marine species with IUCN maps.  Shape files seem to contain a 'binomial' 
+    # field but case varies from file to file.
+    cat(colnames(spp_shp@data))
+    # find binomial name in here; test in tolower, find the index number, and use that instead?
+    binom_index <- which(colnames(spp_shp@data) %in% c('binomial', 'BINOMIAL'))
+    if(binom_index < 0) {
+      cat(sprintf('Operating on %s field in %s.\n', colnames(spp_shp@data)[binom_index], spp_gp))
+      spp_shp <- spp_shp[spp_shp@data[ , binom_index] %in% maps_in_group$sciname, ]
+    } else {
+      cat(sprintf('Couldn\'t find binomial field for species group %s.\n', spp_gp))
+    }
     
-  for i in shp_list { # i = shp_list[1]
-    cat(sprintf('Reading species shapefile %s - come back in about 4 minutes.\n  %s\n', i, ogr_location))
-    spp <- readOGR(dsn = ogr_location, layer= ???) # need any layer specifics?
-    # slow command... time it?
-    
-    #spp1 <- spp[spp@data$rgn_type %in% c('eez', 'fao', 'eez_ccamlr', 'eez-disputed', 'eez-inland'), ]
-    # any filtering necessary on the shapefiles?
-    
-    cat('Extracting proportional area of LOICZID cells per species polygon.  Come back in 15-20 minutes.')
-    loiczid_raster <- raster(file.path(dir_anx, 'rgns/loiczid_raster'))
-    spp_prop <- raster::extract(loiczid_raster,  regions, weights = TRUE, normalizeWeights = FALSE, progress = 'text') 
-    # small = TRUE returns 1 for sp_id 232, not what we want.
-    # slow command... ~15 minutes (even with the small = TRUE)
-    
-    ### assign sp_id identifiers (from `regions`) to region_prop, convert to data.frame
-    names(region_prop) <- regions@data$sp_id
-    region_prop_df     <- plyr::ldply(region_prop, rbind) # ??? still a plyr function.  can we get out of plyr? put into function, does library just stay in function?
-    # length(unique(region_prop_df$.id)) 
-    #   WAS: less than 254 due to repeats of Canada and one small region (232: Bosnia/Herzegovina) with no rasters identified
-    #   IS:  278, including a cell for #232.
-    
-    # ??? consider converting sp_id into rgn_id code from Melanie
-    region_prop_df <- region_prop_df %>%
-      rename(sp_id = .id, 
+    # Extract the proportions of each species polygon within each LOICZID cell
+    ptm <- proc.time()
+    spp_shp_prop <- raster::extract(loiczid_raster,  spp_shp, weights = TRUE, normalizeWeights = FALSE, progress = 'text')
+    ptm <- proc.time() - ptm
+    cat(sprintf('Elapsed process time: %.2f minutes', ptm[3]/60))
+
+    # attach scientific name, convert to data frame.
+    names(spp_shp_prop) <- spp_shp@data[ , binom_index]
+    spp_shp_prop_df     <- plyr::ldply(spp_shp_prop, rbind)
+    spp_shp_prop_df <- spp_shp_prop_df %>%
+      rename(sciname = .id, 
              LOICZID = value, 
-             proportionArea = weight)
-    # confusion between dplyr and plyr... this needs dplyr version.
+             prop_area = weight)
     
-    ### ??? add in this region -  Bosnia/Herzegovina (BIH), which appears to be too small to catch using this method (<1% of area)
-    ### ??? SKIPPING THIS FOR NOW!!!
-    # cells_2013[cells_2013$rgn_id==232, ]
-    # cells_2013[cells_2013$csq=='1401:227:4', ]
-    # am_cells[am_cells$CsquareCode == '1401:227:4', ]
-    # 6.034664/2269.83
-    # bih <- data.frame(sp_id=232, LOICZID=68076, proportionArea=0.002658641)
-    # region_prop_df <- rbind(region_prop_df, bih)
-    
-    cat(sprintf('Writing LOICZID cell proportions by region to: \n  %s', rgn_prop_file))
-    write.csv(region_prop_df, rgn_prop_file, row.names = FALSE)
-  } else {
-    cat(sprintf('Reading LOICZID cell proportions by region from: \n  %s', rgn_prop_file))
-    region_prop_df <- read.csv(rgn_prop_file)
+    # save
+    cache_file <- file.path(dir_anx, 'iucn_intersections', sprintf('%s.csv', spp_gp))
+    cat(sprintf('Writing IUCN<->LOICZID intersection file for %s to:\n  %s\n', spp_gp, cache_file))
+    write.csv(spp_shp_prop_df, cache_file, row.names = FALSE)
   }
-
-return(invisible(region_prop_df))
-
+  
   
 
 ##############################################################################=
