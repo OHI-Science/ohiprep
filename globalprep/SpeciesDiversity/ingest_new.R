@@ -40,6 +40,9 @@
 # Create lookup: iucn_species <-> cell_id
 # * Desired lookup table to include:
 #   - IUCN_speciesID  cellID (LOICZID or csq? does it matter?)
+# * for each species in iucn_maps list (see the create_spp_master_lookup function),
+#   basically do the same process as the region_id <-> cell_id, except this time
+#   it's iucn_sid <-> cell_id.
 #
 # Aquamaps list (already created)
 #   AM_speciesID  CsquareCode  prob
@@ -47,13 +50,15 @@
 # 
 
 ##############################################################################=
+library(shapefiles)
 library(data.table)
 library(sp)
 library(rgdal)
 library(raster)
 library(readr)
 
-setwd('~/github/ohiprep') # if not already there!
+setwd('~/github/ohiprep') # if not already there!  Should this be a standard practice - always 
+  # just keep your working directory set to the base github repository location?
 source('src/R/common.R')
 
 # Note the following masked package:raster functions
@@ -61,13 +66,18 @@ source('src/R/common.R')
 # due to calling library(raster) before source('src/R/common.R').
 
 goal <- 'globalprep/SpeciesDiversity'
-dir_anx <- file.path(dir_neptune_data, 'git-annex', goal)
+dir_anx <- file.path(dir_neptune_data, 'git-annex', goal) 
+  # ??? use global variable for ease of passing file location into functions?
 dir_git <- file.path('~/github/ohiprep', goal)
-setwd(dir_git)
 
+source(file.path(dir_git, 'R/spp_fxn.R'))
+# SPP-specific functions
 
 ##############################################################################=
-# generate raster of LOICZID values ----
+### Generate lookup - region ID to spatial raster cell IDs ----
+### * generate half-degree LOICZID raster using Aquamaps cell information
+### * Get percent of each raster cell in the region polygons
+### * create .csv associating raster cell, LOICZID, and CsquareCode
 ##############################################################################=
 if(!exists('am_cells_raw')) {
   file_loc <- file.path(dir_anx, 'raw/aquamaps_2014/tables/hcaf.csv')
@@ -80,72 +90,180 @@ am_cells <- am_cells_raw %>%
   select(csq = CsquareCode, LOICZID, CenterLat, CenterLong, CellArea, OceanArea)
 #rm(am_cells_raw) # remove it if memory is an issue.
 
-create_loiczid_raster <- function(am_cells, dir_anx, reload = FALSE) {
-### Generate half-degree raster using am_cells to assign LOICZID to CenterLong x CenterLat.
-### * Template and output in <dir_anx>/rgns
-### * rasterize takes about 10 seconds...
-  stopifnot(sum(duplicated(am_cells$LOICZID)) == 0) #key numeric ID for raster generation.... check for dups
+### Create raster of .5 degree cells, each identified by LOICZID.  
+###   LOICZID and CsquareCode match 1:1?
+create_loiczid_raster(am_cells, dir_anx)
 
-  loiczid_raster_file  <- file.path(dir_anx, 'rgns/loiczid_raster.grd')
-  raster_template_file <- file.path(dir_anx, 'rgns/am_cells_template.tif')
+### Overlay region shapefile on LOICZID raster to create lookup table
+### of region IDs to LOICZID
+###   TO DO:  currently as sp_id; update to translate sp_id to rgn_id
+###   TO DO:  Also include csq, since the AM species lookup uses csq not LOICZID.
+ogr_location <- file.path(dir_neptune_data, 'git-annex/Global/NCEAS-Regions_v2014/data')
+rgn_cell_lookup <- extract_loiczid_per_region(dir_anx, ogr_location)
+# ??? no returns from these; create the lookup file and move on
+
+##############################################################################=
+### Generate lookup - species ID to pop status/trend and spatial source ----
+###   [am_sid, iucn_sid] to [popn_status, popn_trend, spatial_source]
+##############################################################################=
+
+##############################################################################=
+create_spp_master_lookup <- function(scenario = 'v2015') {
+### Create lookup: species <-> popn_status/popn_trend and spatial_source.
+### Output is data frame with these fields:
+### * sciname  iucn_sid  am_sid  popnstatus  popn_trend info_source  spatial_source
+### Aquamaps data is 'ohi_speciesoccursum.csv' with: 
+### * SPECIESID   SpecCode   sciname   am_status
+### IUCN input is 'spp_iucn_marine_global.csv' with:
+### * sid(Red.List.Species.ID)  sciname  iucn_status  popn_trend
+### Output details:
+### * popn_status: IUCN category. Prioritize iucn_status then am_status; otherwise NA
+### * popn_trend: for species with IUCN popn_trend info: 'Increasing', 'Decreasing', 'Stable'
+### * info_source: source of IUCN category info (and popn trend if applicable): am, iucn, NA
+### * spatial_source: prioritize IUCN range maps, then AquaMaps: iucn, am, NA
+### * Filter out anything with spatial_source NA, and with status NA? or leave in for future filtering?
+###   - ??? test how many get filtered out and how big is the file.
+##############################################################################=
   
-  if(!file.exists(loiczid_raster_file) | reload == TRUE) {
-    template_raster <- raster(raster_template_file)
+  scenario = 'v2015'
+  
+  spp_am <- fread(file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_speciesoccursum.csv')) %>%
+    select(am_sid = SPECIESID, SpecCode, Genus, Species, am_status = iucn_code) %>%
+    unite(sciname, Genus, Species, sep = ' ') %>%
+    mutate(am_status = ifelse(am_status ==  'N.E.',   NA, am_status),
+           am_status = ifelse(am_status == 'LR/nt', 'NT', am_status),
+           am_status = ifelse(am_status == 'LR/lc', 'LC', am_status),
+           am_status = ifelse(am_status ==   '\\N',   NA, am_status))
+  
+  # pull the IUCN data from the git-annex file for this year - output from ingest.iucn.R
+  iucn_list_file <- file.path(dir_anx, scenario, 'intermediate/spp_iucn_marine_global.csv')
+  
+  spp_iucn_marine = read.csv(iucn_list_file) %>%
+    select(sciname, iucn_sid = sid, iucn_status = category, popn_trend) %>% 
+    filter(iucn_status != 'DD')
+  
+  spp_all <- spp_am %>%
+    mutate(sciname = str_trim(sciname)) %>% # ??? this fixed one record - based on spaces, or shifting to caps?
+    as.data.frame() %>%
+    full_join(spp_iucn_marine, by = 'sciname')
     
-    coordinates(am_cells) <- ~ CenterLong + CenterLat
-    proj4string(am_cells) <- CRS(projection(template_raster))
-    
-    cat(sprintf('Writing LOICZID 0.5° raster to: \n  %s', rgn_prop_file))
-    rasterize(am_cells, template_raster, field = 'LOICZID', progress = 'text', 
-              filename = loiczid_raster_file,
-              overwrite = TRUE)
-  } else {
-    cat(sprintf('Reading LOICZID 0.5° raster from: \n  %s', loiczid_raster_file))
+  spp_all <- spp_all %>%
+    # create single 'status' field, and flag 'info_source' to indicate iucn or am
+    mutate(iucn_status = as.character(iucn_status),
+           am_status   = as.character(am_status),
+           popn_status = ifelse(!is.na(iucn_status), iucn_status, am_status),
+           info_source = ifelse(!is.na(iucn_status), 'iucn',
+                           ifelse(!is.na(am_status), 'am',   NA)))
+  
+  iucn_maps <- 1# 
+  # * from IUCN shapefiles:
+  dir_iucn_shp <- file.path(dir_anx, 'raw/iucn_shp')
+  groups_list <- as.data.frame(list.files(dir_iucn_shp)) %>%
+    rename(shp_fn = `list.files(dir_iucn_shp)`) %>%
+    filter(tools::file_ext(shp_fn) == 'shp') %>%
+    mutate(shp_fn = str_replace(shp_fn, '.shp', ''))
+  
+  spp_iucn_shp_list <- data.frame()
+  
+  for (spp_group in groups_list$shp_fn) { 
+    # spp_group = 'AMPHANURA'        150 MB - also large .dbf
+    # spp_group = 'BONEFISH_TARPONS'  36 MB - id_no and binomial
+    # spp_group = 'DAMSELFISH'        43 MB - id_no and binomial
+    # spp_group = 'CORAL3'            43 MB - OBJECTID, ID_NO, and BINOMIAL
+    # spp_group = 'hagfishes'          8 MB - no sid, but BINOMIAL
+    # spp_group = 'non-homalopsids'   78 MB - no sid, but BINOMIAL
+    cat(sprintf('Processing species group: %s... \n', tolower(spp_group)))
+    spp_dbf <- read.dbf(file.path(dir_iucn_shp, sprintf('%s.dbf', spp_group)))
+    cat('file read successfully...\n')
+    spp_dbf <- as.data.frame(spp_dbf)
+    cat('converted to data frame...\n')
+    spp_dbf <- data.frame(spp_group, spp_dbf)
+    if('dbf.ID_NO' %in% names(spp_dbf)) {
+      spp_dbf <- spp_dbf %>% 
+        rename(dbf.id_no = dbf.ID_NO)
+      cat('changed dbf.ID_NO to dbf.id_no... ')
+    }
+    if('dbf.OBJECTID' %in% names(spp_dbf)) {
+      spp_dbf <- spp_dbf %>% rename(dbf.objectid = dbf.OBJECTID)
+      cat('changed dbf.OBJECTID to dbf.objectid... ')
+    }
+    if('dbf.BINOMIAL' %in% names(spp_dbf)) {
+      spp_dbf <- spp_dbf %>% rename(dbf.binomial = dbf.BINOMIAL)
+      cat('changed dbf.BINOMIAL to dbf.binomial... ')
+    }
+    if('dbf.id_no' %in% names(spp_dbf)) {
+      spp_dbf <- spp_dbf %>% 
+        mutate(dbf.id_no = as.integer(dbf.id_no))
+    }
+    spp_iucn_shp_list <- bind_rows(spp_iucn_shp_list, spp_dbf)
+    cat('\nbound it to some shit\n')
   }
-  loiczid_raster <- raster(loiczid_raster_file)
-  return(invisible(loiczid_raster))
+  spp_iucn_shp_list <- spp_iucn_shp_list %>%
+    select(id_no = dbf.id_no, objectid = dbf.objectid, binomial = dbf.binomial) # other fields?
+  
+  write.csv(spp_iucn_shp_list, file.path(dir_anx, scenario, 'intermediate/spp_iucn_shp_list.csv'), row.names = FALSE)
+  # do an if(!file.exists | reload == TRUE) clause
+  
+  # - check that OBJECTID matches iucn_sid
+  # ex: AMPHICAUDATA  - ??? No matches with these two examples.
+  #     OBJECTID ID_NO BINOMIAL ....
+  #     95639     NULL Ambystoma altamirani
+  #     95638     NULL Ambystoma amblycephalum
+  # ex: PUFFERFISH - these three match up in name and iucn_sid.
+  #     id_no        binomial
+  #     193632.00000 Sphoeroides greeleyi
+  #     193686.00000 Marilyna pleurosticta
+  #   47407760.00000 Canthigaster criobe
+  
+  
+  spp_all <- spp_all %>% 
+    left_join(iucn_maps) %>%
+    mutate(spatial_source = ifelse(is.na(spatial_source) & !is.na(am_sid)), 'am', spatial_source)
+      # is.na(spatial_source) means it wasn't assigned to IUCN;
+      # !is.na(am_sid) means it is an aquamaps species.
+  
+  write.csv(spp_all, <somewhere>)
 }
 
 ##############################################################################=
-### Get percent of each raster cell in the region polygons ----
+### Generate lookup - IUCN species ID to cell ID ----
+###   iucn_sid <-> LOICZID
 ##############################################################################=
+extract_loiczid_per_spp <- function(???)
+iucn_sid_loiczid_file <- file.path(dir_anx, 'intermediate/iucn_sid_loiczid_file.csv')
 
-extract_loiczid_per_region <- function(dir_anx, ogr_location = file.path(dir_neptune_data, 'git-annex/Global/NCEAS-Regions_v2014/data'), reload = FALSE) {
-### Determines proportional area of each cell covered by region polygons.  Returns data frame
-### of sp_id, LOICZID, and proportional area of LOICZID cell covered by the sp_id region.
-### Should not be year-specific, so leave files in SpeciesDiversity/rgns.
-### ??? TO DO: compare LOICZID regions <-> CenterLong and CenterLat to last year's table, to make sure consistent from year to year.
-### TO DO: update to translate sp_id directly into rgn_id using Melanie's code.
-  
-  rgn_prop_file <- file.path(dir_anx, 'rgns/region_prop_df.csv')
-  
-  if(!file.exists(rgn_prop_file) | reload == TRUE) {
-
-    cat(sprintf('Reading OGR data source - come back in about 4 minutes.\n  %s\n', ogr_location))
-    regions <- readOGR(dsn = ogr_location, layer='sp_gcs')
-      # slow command... ~ 4 minutes
-    regions <- regions[regions@data$rgn_type %in% c('eez', 'fao', 'eez_ccamlr', 'eez-disputed', 'eez-inland'), ]
-
-    cat('Extracting proportional area of LOICZID cells per region polygon.  Come back in 15-20 minutes.')
+if(!file.exists(iucn_sid_loiczid_file) | reload == TRUE) {
+  shp_list <- list.files(file.path(dir_anx, 'raw/iucn_shp')) %>%
+    filter(length(<filename variable>) == str_locate('.shp')[ , 2)] # the end of .shp is the same as the end of the string
+    
+  for i in shp_list { # i = shp_list[1]
+    cat(sprintf('Reading species shapefile %s - come back in about 4 minutes.\n  %s\n', i, ogr_location))
+    spp <- readOGR(dsn = ogr_location, layer= ???) # need any layer specifics?
+    # slow command... time it?
+    
+    #spp1 <- spp[spp@data$rgn_type %in% c('eez', 'fao', 'eez_ccamlr', 'eez-disputed', 'eez-inland'), ]
+    # any filtering necessary on the shapefiles?
+    
+    cat('Extracting proportional area of LOICZID cells per species polygon.  Come back in 15-20 minutes.')
     loiczid_raster <- raster(file.path(dir_anx, 'rgns/loiczid_raster'))
-    region_prop <- raster::extract(loiczid_raster,  regions, weights = TRUE, normalizeWeights = FALSE, progress = 'text') 
-      # small = TRUE returns 1 for sp_id 232, not what we want.
-      # slow command... ~15 minutes (even with the small = TRUE)
-
+    spp_prop <- raster::extract(loiczid_raster,  regions, weights = TRUE, normalizeWeights = FALSE, progress = 'text') 
+    # small = TRUE returns 1 for sp_id 232, not what we want.
+    # slow command... ~15 minutes (even with the small = TRUE)
+    
     ### assign sp_id identifiers (from `regions`) to region_prop, convert to data.frame
     names(region_prop) <- regions@data$sp_id
     region_prop_df     <- plyr::ldply(region_prop, rbind) # ??? still a plyr function.  can we get out of plyr? put into function, does library just stay in function?
-      # length(unique(region_prop_df$.id)) 
-      #   WAS: less than 254 due to repeats of Canada and one small region (232: Bosnia/Herzegovina) with no rasters identified
-      #   IS:  278, including a cell for #232.
-
+    # length(unique(region_prop_df$.id)) 
+    #   WAS: less than 254 due to repeats of Canada and one small region (232: Bosnia/Herzegovina) with no rasters identified
+    #   IS:  278, including a cell for #232.
+    
     # ??? consider converting sp_id into rgn_id code from Melanie
     region_prop_df <- region_prop_df %>%
       rename(sp_id = .id, 
              LOICZID = value, 
              proportionArea = weight)
-      # confusion between dplyr and plyr... this needs dplyr version.
-
+    # confusion between dplyr and plyr... this needs dplyr version.
+    
     ### ??? add in this region -  Bosnia/Herzegovina (BIH), which appears to be too small to catch using this method (<1% of area)
     ### ??? SKIPPING THIS FOR NOW!!!
     # cells_2013[cells_2013$rgn_id==232, ]
@@ -162,84 +280,9 @@ extract_loiczid_per_region <- function(dir_anx, ogr_location = file.path(dir_nep
     region_prop_df <- read.csv(rgn_prop_file)
   }
 
-  return(invisible(region_prop_df))
-}
+return(invisible(region_prop_df))
 
-### Create raster of .5 degree cells, each identified by LOICZID.  
-###   LOICZID and CsquareCode match 1:1?
-create_loiczid_raster(am_cells, dir_anx)
-
-### Create lookup table of region IDs to LOICZID 
-###   TO DO:  currently as sp_id; update to translate sp_id to rgn_id
-###   TO DO:  Also include csq, since the AM species lookup uses csq not LOICZID.
-ogr_location <- file.path(dir_neptune_data, 'git-annex/Global/NCEAS-Regions_v2014/data')
-rgn_cell_lookup <- extract_loiczid_per_region(dir_anx, ogr_location)
-# ??? no returns from these; they create files we can read later if needed?
-
-##############################################################################=
-### Generating master file with raster ID's ----
-##############################################################################=
-
-
-##############################################################################=
-### Match AquaMaps species with IUCN sid ----
-##############################################################################=
-# AquaMaps species list includes AM species ID, AM species code, Genus, Species,
-# and AM IUCN code.
-# To this list, attach IUCN species ID (sid), IUCN category (overrides the AM version)
-# by joining via scientific name.
-# This results in: species ID (IUCN), species ID (AM), scientific name, and IUCN category.
-am_spp_raw <- fread(file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_speciesoccursum.csv'))
-
-am_spp <- am_spp_raw %>%
-  select(SPECIESID, SpecCode, Genus, Species, iucn_code)
-
-am_spp <- am_spp %>%
-  unite(sciname, Genus, Species, sep = ' ')
-
-# pull the IUCN data from the github file for this year, or else from web.
-scenario <- 'v2015'
-iucn_list_file <- file.path(dir_anx, scenario, 'intermediate/spp_iucn_marine_global.csv')
-# ??? currently includes 'DD' species... 
-
-if (!file.exists(iucn_list_file) ){ #| reload == TRUE){
-  spp_iucn_marine = read.csv('http://api.iucnredlist.org/index/all.csv')         # nrows = 122843
-  spp_iucn_marine = spp_iucn_marine[!duplicated(spp_iucn_marine),] # remove duplicates # nrows = 120484
-  write.csv(spp_iucn_marine, iucn_list_file, row.names = FALSE, na = '')
-} else {
-  spp_iucn_marine = read.csv(iucn_list_file)
-}
-
-spp_iucn_tmp <- spp_iucn_marine %>%
-  select(sciname = Scientific.Name, sid = Red.List.Species.ID, year = Modified.Year, category = Category, criteria = Criteria) %>%
-  mutate(sciname = toupper(str_trim(sciname)))
-# ??? NOte: this list has category, but not population trend info.  Will have to pull those from the scraped .htms later.
-
-am_spp_tmp <- am_spp %>%
-  mutate(sciname = toupper(str_trim(sciname))) %>%
-  as.data.frame() %>%
-  left_join(spp_iucn_tmp, by = 'sciname')
-am_spp_tmp1 <- am_spp %>%
-  mutate(sciname = toupper(str_trim(sciname))) %>%
-  as.data.frame() %>%
-  inner_join(spp_iucn_tmp, by = 'sciname')
-x <- unique(am_spp_tmp1$sciname)
-z <- am_spp_tmp %>% filter(is.na(sid))
-
-# ??? This join procedure does not match most of the rows, as is.
-#     Out of 17348 AM species:
-#       4948 match up with IUCN by scientific name
-#       4586 of these are unique.
-#       12762 do not have a match.
-# TO DO: eliminate leading and trailing spaces, coerce to all caps, and try again?
-#     This fixed exactly 1 instance.
-# ??? Do some of these (AM or IUCN) have subspecies that are messing it up?
-#     Probably not, because in IUCN subspecies have a separate column.
-# ??? Drop aquamaps data with no IUCN match?  Loses nearly 13000 records of good data.
-#     * many of these, we could use the AquaMaps redlist category? (what's N.E.?)
-#     * but no popn_trend information will be available.
-#     * Some of the matched species will use the IUCN range data instead; but none
-#       of the unmatched species.  This makes it worse.
+  
 
 ##############################################################################=
 ### load Aquamaps data on cell IDs and species per cell
