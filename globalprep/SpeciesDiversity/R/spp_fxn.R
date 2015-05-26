@@ -1,5 +1,6 @@
 # spp_fxn.R
 
+##############################################################################=
 create_loiczid_raster <- function(am_cells, dir_anx, reload = FALSE) {
 ### Generate half-degree raster using am_cells to assign LOICZID to CenterLong x CenterLat.
 ### * Template and output in <dir_anx>/rgns
@@ -29,6 +30,7 @@ create_loiczid_raster <- function(am_cells, dir_anx, reload = FALSE) {
 
 
 
+##############################################################################=
 extract_loiczid_per_region <- function(dir_anx, ogr_location = file.path(dir_neptune_data, 'git-annex/Global/NCEAS-Regions_v2014/data'), reload = FALSE) {
 ### Determines proportional area of each cell covered by region polygons.  Returns data frame
 ### of sp_id, LOICZID, and proportional area of LOICZID cell covered by the sp_id region.
@@ -54,7 +56,7 @@ extract_loiczid_per_region <- function(dir_anx, ogr_location = file.path(dir_nep
     
     ### assign sp_id identifiers (from `regions`) to region_prop, convert to data.frame
     names(region_prop) <- regions@data$sp_id
-    region_prop_df     <- plyr::ldply(region_prop, rbind) # ??? still a plyr function.  can we get out of plyr? put into function, does library just stay in function?
+    region_prop_df     <- plyr::ldply(region_prop, rbind) # ??? still a plyr function.
     # length(unique(region_prop_df$.id)) 
     #   WAS: less than 254 due to repeats of Canada and one small region (232: Bosnia/Herzegovina) with no rasters identified
     #   IS:  278, including a cell for #232.
@@ -83,4 +85,137 @@ extract_loiczid_per_region <- function(dir_anx, ogr_location = file.path(dir_nep
   }
   
   return(invisible(region_prop_df))
+}
+
+
+##############################################################################=
+create_spp_master_lookup <- function(dir_anx, scenario = 'v2015', reload = FALSE) {
+### Create lookup: species <-> popn_status/popn_trend and spatial_source.
+### Output is data frame with these fields:
+### * sciname  iucn_sid  am_sid  popnstatus  popn_trend info_source  spatial_source
+### Aquamaps data is 'ohi_speciesoccursum.csv' with: 
+### * SPECIESID   SpecCode   sciname   am_status
+### IUCN input is 'spp_iucn_marine_global.csv' with:
+### * sid(Red.List.Species.ID)  sciname  iucn_status  popn_trend
+### Output details:
+### * popn_status: IUCN category. Prioritize iucn_status then am_status; otherwise NA
+### * popn_trend: for species with IUCN popn_trend info: 'Increasing', 'Decreasing', 'Stable'
+### * info_source: source of IUCN category info (and popn trend if applicable): am, iucn, NA
+### * spatial_source: prioritize IUCN range maps, then AquaMaps: iucn, am, NA
+### * Filter out anything with spatial_source NA, and anything with status NA? 
+###   Or leave in for future filtering?
+###   - ??? test how many get filtered out and how big is the file.
+##############################################################################=
+  spp_am_file <- file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_speciesoccursum.csv')
+  cat(sprintf('Reading AquaMaps species list from: \n  %s\n', spp_am_file))
+  
+  spp_am <- fread(spp_am_file) %>%
+    select(am_sid = SPECIESID, SpecCode, Genus, Species, am_status = iucn_code) %>%
+    unite(sciname, Genus, Species, sep = ' ') %>%
+    mutate(am_status = ifelse(am_status ==  'N.E.',   NA, am_status), # not evaluated -> NA
+           am_status = ifelse(am_status == 'LR/nt', 'NT', am_status), # update 1994 category
+           am_status = ifelse(am_status == 'LR/lc', 'LC', am_status), # update 1994 category
+           am_status = ifelse(am_status ==   '\\N',   NA, am_status)) # what's this?
+  
+  # pull the IUCN data from the git-annex file for this year - output from ingest_iucn.R
+  iucn_list_file <- file.path(dir_anx, scenario, 'intermediate/spp_iucn_marine_global.csv')
+  
+  cat(sprintf('Reading IUCN marine species list from: \n  %s\n', iucn_list_file))
+  spp_iucn_marine = read.csv(iucn_list_file) %>%
+    select(sciname, iucn_sid = sid, iucn_status = category, popn_trend) %>% 
+    filter(iucn_status != 'DD')
+  
+  spp_all <- spp_am %>%
+    mutate(sciname = str_trim(sciname)) %>% # ??? this fixed one record - based on spaces, or shifting to caps?
+    as.data.frame() %>%
+    full_join(spp_iucn_marine, by = 'sciname')
+  
+  spp_all <- spp_all %>%
+    # create single 'status' field, and flag 'info_source' to indicate iucn or am
+    mutate(iucn_status = as.character(iucn_status),
+           am_status   = as.character(am_status),
+           popn_status = ifelse(!is.na(iucn_status), iucn_status, am_status),
+           info_source = ifelse(!is.na(iucn_status), 'iucn',
+                                ifelse(!is.na(am_status), 'am',   NA)))
+
+  iucn_map_list_file <- file.path(dir_anx, scenario, 'intermediate/spp_iucn_maps_all.csv')
+  if(!file.exists(iucn_map_list_file) | reload == TRUE) {
+    if(!file.exists(iucn_map_list_file)) cat('No file found for list of available IUCN range maps.  ')
+    cat('Generating new list of available IUCN range maps.\n')
+
+    dir_iucn_shp <- file.path(dir_anx, 'raw/iucn_shp')
+    groups_list <- as.data.frame(list.files(dir_iucn_shp)) %>%
+      rename(shp_fn = `list.files(dir_iucn_shp)`) %>%
+      filter(tools::file_ext(shp_fn) == 'shp') %>%
+      mutate(shp_fn = str_replace(shp_fn, '.shp', ''))
+    
+    spp_iucn_maps <- data.frame()
+    
+    for (spp_group in groups_list$shp_fn) { 
+      # spp_group = 'AMPHANURA'        150 MB - also large .dbf
+      # spp_group = 'BONEFISH_TARPONS'  36 MB - id_no and binomial
+      # spp_group = 'DAMSELFISH'        43 MB - id_no and binomial
+      # spp_group = 'CORAL3'            43 MB - OBJECTID, ID_NO, and BINOMIAL
+      # spp_group = 'hagfishes'          8 MB - no sid, but BINOMIAL
+      # spp_group = 'non-homalopsids'   78 MB - no sid, but BINOMIAL
+      cat(sprintf('Processing species group: %s... \n', tolower(spp_group)))
+      spp_dbf <- read.dbf(file.path(dir_iucn_shp, sprintf('%s.dbf', spp_group)))
+      cat('file read successfully... ')
+      spp_dbf <- as.data.frame(spp_dbf)
+      cat('converted to data frame... ')
+      spp_dbf <- data.frame(spp_group, spp_dbf)
+      if('dbf.ID_NO' %in% names(spp_dbf)) {
+        spp_dbf <- spp_dbf %>% 
+          rename(dbf.id_no = dbf.ID_NO)
+      }
+      if('dbf.OBJECTID' %in% names(spp_dbf)) {
+        spp_dbf <- spp_dbf %>% rename(dbf.objectid = dbf.OBJECTID)
+      }
+      if('dbf.BINOMIAL' %in% names(spp_dbf)) {
+        spp_dbf <- spp_dbf %>% rename(dbf.binomial = dbf.BINOMIAL)
+      }
+      if('dbf.id_no' %in% names(spp_dbf)) {
+        spp_dbf <- spp_dbf %>% 
+          mutate(dbf.id_no = as.integer(dbf.id_no))
+      }
+      spp_iucn_maps <- bind_rows(spp_iucn_maps, spp_dbf)
+      cat('binding to list...\n')
+    }
+    spp_iucn_maps <- spp_iucn_maps %>%
+      select(spp_group, id_no = dbf.id_no, objectid = dbf.objectid, binomial = dbf.binomial) %>% # other fields?
+      mutate(spatial_source = as.character('iucn'))%>%
+      unique()
+    
+    cat(sprintf('Writing list of available IUCN range maps to: \n  %s\n', iucn_map_list_file))
+    write.csv(spp_iucn_maps, iucn_map_list_file, row.names = FALSE)
+  } else {
+    cat(sprintf('Reading list of available IUCN range maps from: \n  %s\n', iucn_map_list_file))
+    spp_iucn_maps <- read.csv(iucn_map_list_file, stringsAsFactors = FALSE)
+  }
+  
+  # - check that OBJECTID matches iucn_sid
+  # ex: AMPHICAUDATA  - ??? No matches with these two examples.
+  #     OBJECTID ID_NO BINOMIAL ....
+  #     95639     NULL Ambystoma altamirani
+  #     95638     NULL Ambystoma amblycephalum
+  # ex: PUFFERFISH - these three match up in name and iucn_sid.
+  #     id_no        binomial
+  #     193632.00000 Sphoeroides greeleyi
+  #     193686.00000 Marilyna pleurosticta
+  #   47407760.00000 Canthigaster criobe
+  
+  
+  spp_all <- spp_all %>% 
+    left_join(spp_iucn_maps, by = c('sciname' = 'binomial')) %>% # join by what? binomial?
+    mutate(spatial_source = ifelse((is.na(spatial_source) & !is.na(am_sid)), 'am', spatial_source))
+  # is.na(spatial_source) means it wasn't in the IUCN maps list;
+  # !is.na(am_sid) means it is an aquamaps species.
+  # In left_joining, we go from 31429 available species maps to only 21116 in the spp_all.  The omitted
+  # maps are not in the spp_iucn_marine_global list then?
+  
+  spp_all_file <- file.path(dir_anx, scenario, 'intermediate/spp_all.csv')
+  cat(sprintf('Writing full species lookup table to: \n  %s\n', iucn_map_list_file))
+  write.csv(spp_all, spp_all_file, row.names = FALSE)
+  
+  return(invisible(spp_all))
 }
