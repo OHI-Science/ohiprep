@@ -142,65 +142,6 @@ spp_all <- create_spp_master_lookup(dir_anx, scenario = 'v2015', reload = FALSE)
 
 extract_loiczid_per_spp <- function(dir_anx, scenario = 'v2015', reload = FALSE) {
 
-  # create list of all marine species with IUCN maps.
-  spp_all_file <- file.path(dir_anx, scenario, 'intermediate/spp_all.csv')
-  cat(sprintf('Reading full species lookup table from: \n  %s\n', spp_all_file))
-  spp_all <- read.csv(spp_all_file, stringsAsFactors = FALSE)
-  iucn_range_maps <- spp_all %>%
-    filter(spatial_source == 'iucn') %>%
-    select(sciname, iucn_sid, id_no, spp_group)
-  
-  # Import LOICZID raster
-  loiczid_raster <- raster(file.path(dir_anx, 'rgns/loiczid_raster'))
-
-  # create list of groups (i.e. shape files) to be analyzed
-  spp_gp_list <- unique(iucn_range_maps$spp_group)
-  ogr_location <- file.path(dir_anx, 'raw/iucn_shp')
-  
-  for(spp_gp in spp_gp_list) { # spp_gp <- 'LOBSTERS' # spp_gp <- 'CORAL3'
-    maps_in_group <- iucn_range_maps %>%
-      filter(spp_group == spp_gp)
-
-    ptm <- proc.time()
-    fsize <- round(file.size(file.path(ogr_location, sprintf('%s.shp', spp_gp)))/1e6, 2)
-    cat(sprintf('Reading species group shapefile %s, %.2f MB\n  %s/%s\n', spp_gp, fsize, ogr_location, spp_gp))
-    spp_shp <- readOGR(dsn = ogr_location, layer= spp_gp)
-    ptm <- proc.time() - ptm
-    cat(sprintf('Elapsed read time: %.2f seconds', ptm[3]))
-
-    # Filter shape file to polygons with species names that match our list of
-    # marine species with IUCN maps.  Shape files seem to contain a 'binomial' 
-    # field but case varies from file to file.
-    cat(colnames(spp_shp@data))
-    # find binomial name in here; test in tolower, find the index number, and use that instead?
-    binom_index <- which(colnames(spp_shp@data) %in% c('binomial', 'BINOMIAL'))
-    if(binom_index < 0) {
-      cat(sprintf('Operating on %s field in %s.\n', colnames(spp_shp@data)[binom_index], spp_gp))
-      spp_shp <- spp_shp[spp_shp@data[ , binom_index] %in% maps_in_group$sciname, ]
-    } else {
-      cat(sprintf('Couldn\'t find binomial field for species group %s.\n', spp_gp))
-    }
-    
-    # Extract the proportions of each species polygon within each LOICZID cell
-    ptm <- proc.time()
-    spp_shp_prop <- raster::extract(loiczid_raster,  spp_shp, weights = TRUE, normalizeWeights = FALSE, progress = 'text')
-    ptm <- proc.time() - ptm
-    cat(sprintf('Elapsed process time: %.2f minutes', ptm[3]/60))
-
-    # attach scientific name, convert to data frame.
-    names(spp_shp_prop) <- spp_shp@data[ , binom_index]
-    spp_shp_prop_df     <- plyr::ldply(spp_shp_prop, rbind)
-    spp_shp_prop_df <- spp_shp_prop_df %>%
-      rename(sciname = .id, 
-             LOICZID = value, 
-             prop_area = weight)
-    
-    # save
-    cache_file <- file.path(dir_anx, 'iucn_intersections', sprintf('%s.csv', spp_gp))
-    cat(sprintf('Writing IUCN<->LOICZID intersection file for %s to:\n  %s\n', spp_gp, cache_file))
-    write.csv(spp_shp_prop_df, cache_file, row.names = FALSE)
-  }
-  
   
 
 ##############################################################################=
