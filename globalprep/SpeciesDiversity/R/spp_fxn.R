@@ -272,63 +272,69 @@ extract_loiczid_per_spp <- function(dir_anx, groups_override = NULL, scenario = 
     maps_in_group <- iucn_range_maps %>%
       filter(spp_group == spp_gp)
     
-        
-    ptm <- proc.time()
-    fsize <- round(file.size(file.path(ogr_location, sprintf('%s.shp', spp_gp)))/1e6, 2)
-    cat(sprintf('Reading species group shapefile %s, %.2f MB\n  %s/%s\n', spp_gp, fsize, ogr_location, spp_gp))
-    spp_shp <- readOGR(dsn = ogr_location, layer= spp_gp)
-    ptm <- proc.time() - ptm
-    cat(sprintf('Elapsed read time: %.2f seconds\n', ptm[3]))
-    
-    # Filter shape file to polygons with species names that match our list of
-    # marine species with IUCN maps.  Shape files seem to contain a 'binomial' 
-    # field but case varies from file to file.
-    cat(colnames(spp_shp@data)); cat('\n')
-    # find binomial name in here; test in tolower, find the index number, and use that instead?
-    binom_index <- which(colnames(spp_shp@data) %in% c('binomial', 'BINOMIAL'))
-    if(binom_index > 0) {
-      cat(sprintf('Filtering features by %s field in %s.\n', colnames(spp_shp@data)[binom_index], spp_gp))
-      spp_shp <- spp_shp[spp_shp@data[ , binom_index] %in% maps_in_group$sciname, ]
-    } else {
-      cat(sprintf('Couldn\'t find binomial field for species group %s.\n', spp_gp))
-    }
-    
-    # Print out projection of this shapefile.  Should be +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0
-    cat(sprintf('projection for species group %s:   %s \n', spp_gp, projection(spp_shp)))
-    
-    # Extract the proportions of each species polygon within each LOICZID cell
-    ptm <- proc.time()
-    spp_shp_prop <- raster::extract(loiczid_raster,  spp_shp, weights = TRUE, normalizeWeights = FALSE, progress = 'text')
-    ptm <- proc.time() - ptm
-    cat(sprintf('Elapsed process time: %.2f minutes\n', ptm[3]/60))
-    
-    
-    # find id_no in the shapefile, and if it exists, use it to create id_field for dataframe column names.
-    # If the field doesn't exist, assign it NAs so at least the column will be created.
-    id_no_index <- which(colnames(spp_shp@data) %in% c('id_no', 'ID_NO'))
-    if(length(id_no_index) == 0) {
-      cat(sprintf('No id_no field found in species group %s.\n', spp_gp))
-      id_field <- NA
-    } else id_field <- spp_shp@data[ , id_no_index]
-    
-    # combines sciname and id_no for unique identifier
-    sciname_sid <- data.frame(spp_shp@data[ , binom_index], id_field)
-    names(sciname_sid) <- c('sciname', 'id_no')
-    sciname_sid <- sciname_sid %>%
-      unite(name_id, sciname, id_no, sep = '_')
-    
-    # uses unique identifier to name the list; converts list to data frame.
-    names(spp_shp_prop) <- sciname_sid$name_id
-    spp_shp_prop_df     <- plyr::ldply(spp_shp_prop, rbind)
-    spp_shp_prop_df <- spp_shp_prop_df %>%
-      rename(name_id = .id,
-             LOICZID = value, 
-             prop_area = weight) %>%
-      separate(name_id, c('sciname', 'id_no'), sep = '_')
-    
-    # save .csv for this species group
+    # set file path for output file from this species group.
     cache_file <- file.path(dir_anx, 'iucn_intersections', sprintf('%s.csv', spp_gp))
-    cat(sprintf('Writing IUCN<->LOICZID intersection file for %s to:\n  %s\n', spp_gp, cache_file))
-    write.csv(spp_shp_prop_df, cache_file, row.names = FALSE)
+
+    # if reload == FALSE, and the file exists, don't waste your friggin' time here, move on to next group.
+    if(file.exists(cache_file) & reload == FALSE) {   
+      cat(sprintf('\nIUCN <-< LOICZID lookup file already exists for species group %s; file location:\n  %s\n', spp_gp, cache_file))
+    } else {
+      ptm <- proc.time()
+      fsize <- round(file.size(file.path(ogr_location, sprintf('%s.shp', spp_gp)))/1e6, 2)
+      cat(sprintf('\nReading species group shapefile %s, %.2f MB\n  %s/%s\n', spp_gp, fsize, ogr_location, spp_gp))
+      spp_shp <- readOGR(dsn = ogr_location, layer= spp_gp)
+      ptm <- proc.time() - ptm
+      cat(sprintf('Elapsed read time: %.2f seconds\n', ptm[3]))
+      
+      # Filter shape file to polygons with species names that match our list of
+      # marine species with IUCN maps.  Shape files seem to contain a 'binomial' 
+      # field but case varies from file to file.
+      cat(colnames(spp_shp@data)); cat('\n')
+      # find binomial name in here; test in tolower, find the index number, and use that instead?
+      binom_index <- which(colnames(spp_shp@data) %in% c('binomial', 'BINOMIAL'))
+      if(binom_index > 0) {
+        cat(sprintf('Filtering features by %s field in %s.\n', colnames(spp_shp@data)[binom_index], spp_gp))
+        spp_shp <- spp_shp[spp_shp@data[ , binom_index] %in% maps_in_group$sciname, ]
+      } else {
+        cat(sprintf('Couldn\'t find binomial field for species group %s.\n', spp_gp))
+      }
+      
+      # Print out projection of this shapefile.  Should be +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0
+      cat(sprintf('Projection for species group %s:   %s \n', spp_gp, projection(spp_shp)))
+      
+      # Extract the proportions of each species polygon within each LOICZID cell
+      ptm <- proc.time()
+      spp_shp_prop <- raster::extract(loiczid_raster,  spp_shp, weights = TRUE, normalizeWeights = FALSE, progress = 'text')
+      ptm <- proc.time() - ptm
+      cat(sprintf('Elapsed process time: %.2f minutes\n', ptm[3]/60))
+      
+      
+      # find id_no in the shapefile, and if it exists, use it to create id_field for dataframe column names.
+      # If the field doesn't exist, assign it NAs so at least the column will be created.
+      id_no_index <- which(colnames(spp_shp@data) %in% c('id_no', 'ID_NO'))
+      if(length(id_no_index) == 0) {
+        cat(sprintf('No id_no field found in species group %s.\n', spp_gp))
+        id_field <- NA
+      } else id_field <- spp_shp@data[ , id_no_index]
+      
+      # combines sciname and id_no for unique identifier
+      sciname_sid <- data.frame(spp_shp@data[ , binom_index], id_field)
+      names(sciname_sid) <- c('sciname', 'id_no')
+      sciname_sid <- sciname_sid %>%
+        unite(name_id, sciname, id_no, sep = '_')
+      
+      # uses unique identifier to name the list; converts list to data frame.
+      names(spp_shp_prop) <- sciname_sid$name_id
+      spp_shp_prop_df     <- plyr::ldply(spp_shp_prop, rbind)
+      spp_shp_prop_df <- spp_shp_prop_df %>%
+        rename(name_id = .id,
+               LOICZID = value, 
+               prop_area = weight) %>%
+        separate(name_id, c('sciname', 'id_no'), sep = '_')
+      
+      # save .csv for this species group
+      cat(sprintf('Writing IUCN<->LOICZID intersection file for %s to:\n  %s\n', spp_gp, cache_file))
+      write.csv(spp_shp_prop_df, cache_file, row.names = FALSE)
+    }
   }
 }
