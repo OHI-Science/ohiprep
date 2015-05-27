@@ -264,7 +264,8 @@ extract_loiczid_per_spp <- function(dir_anx, groups_override = NULL, scenario = 
   loiczid_raster <- raster(file.path(dir_anx, 'rgns/loiczid_raster'))
   
   # create list of groups (i.e. shape files) to be analyzed
-  spp_gp_list <- ifelse(is.null(groups_override), unique(iucn_range_maps$spp_group), groups_override)
+  if(is.null(groups_override)) spp_gp_list <- unique(iucn_range_maps$spp_group)
+  else spp_gp_list <- groups_override
   
   ogr_location <- file.path(dir_anx, 'raw/iucn_shp')
   
