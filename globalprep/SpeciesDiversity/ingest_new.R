@@ -139,8 +139,8 @@ spp_all <- create_spp_master_lookup(dir_anx, scenario = 'v2015', reload = FALSE)
 #       We're looking at ~ 4000 polygons, on the order of five hours? probably much more?
 # * when finished with each spp_group, save a file of iucn_sid | LOICZID | proportionArea for that group.
 
-
-extract_loiczid_per_spp <- function(dir_anx, scenario = 'v2015', reload = FALSE) {
+extract_loiczid_per_spp(dir_anx, scenario = 'v2015', reload = TRUE)
+# use groups_override argument to run function on partial list of species groups.
 
   
 
