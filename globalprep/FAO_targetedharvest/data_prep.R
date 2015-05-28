@@ -1,7 +1,7 @@
 # data_prep.r
 
 
-# updated for eez2015 by @jules32, based on ohiprep/Global/FAO-TargetedHarvest_v2012/data_prep.r
+# updated for eez2015 by @jules32, based on ohiprep/Global/FAO-TargetedHarvest_v2012/data_prep.r; removes old commenting
 # updates include using @oharac's code for cleaning FAO data codes
 
 
@@ -28,22 +28,26 @@ source('src/R/common.R') # set dir_neptune_data
 source('src/R/fao_fxn.R') # by @oharac
 
 # directory where data are stored
-dir_d = '~/github/ohiprep/globalprep/FAO_captureproduction' 
+dir_in = '~/github/ohiprep/globalprep/FAO_captureproduction' 
+dir_out = '~/github/ohiprep/globalprep/FAO_targetedharvest'
 dir_old = '~/github/ohiprep/Global/FAO-TargetedHarvest_v2012' 
 
+# raw FAO data
+fis_fao_csv = file.path(dir_in, 'raw/FAO_captureproduction_1950_2013.csv')
 
-fis_fao = file.path(dir_d, 'raw/FAO_captureproduction_1950_2013.csv')
 
-sp2grp = read.csv(file.path(dir_old, 'species2group.csv'), na.strings='') %>%
+# species list 
+sp2grp_csv = file.path(dir_out, 'species2group.csv')
+# file.copy(file.path(dir_old, 'species2group.csv'), sp2grp_csv) # copied over from eez2014 assessment (one-time only)
+sp2grp = read.csv(sp2grp_csv, na.strings='') %>%
   filter(incl_excl == 'include') %>%
   select(target, species); head(sp2grp)
 
 
-
 ## data read in and clean ----
 
-d = read.csv(fis_fao, check.names=F, strip.white=F); head(d)
-# units <- c('tonnes','usd')[str_detect(fis_fao, c('quant','value'))] # using American English, lowercase
+d = read.csv(fis_fao_csv, check.names=F, strip.white=F); head(d)
+# units <- c('tonnes','usd')[str_detect(fis_fao_csv, c('quant','value'))] # using American English, lowercase
 
 # rename and gather
 suppressWarnings({ # warning: attributes are not identical across measure variables; they will be dropped
@@ -67,11 +71,6 @@ m <- m %>%
   filter(!country %in% c('Totals', 'Yugoslavia SFR')) %>%
   fao_clean_data() # NOTE: optional parameter 'sub_0_0' can be passed to control how a '0 0' code is interpreted.
 
-# # show extended values
-# cat('\nExtended values:\n')
-# m_x = filter(m, value_ext==T)
-# print(m_x)  
-
 # check for commodities in data not found in lookup, per product by keyword
 spgroups = sort(as.character(unique(m$species)))
 keywords = c(
@@ -87,14 +86,14 @@ for (i in 1:length(keywords)){ # i=1
     subset(sp2grp, species==spp, target, drop=T))
   if (length(d_missing_l)>0){
     cat(sprintf("\nMISSING in the lookup the following species in target='%s' having keyword='%s' in data file %s:\n    %s\n", 
-                spp, keyword, basename(fis_fao), paste(d_missing_l, collapse='\n    ')))
+                spp, keyword, basename(fis_fao_csv), paste(d_missing_l, collapse='\n    ')))
   }
 }
 
 # check for species in lookup not found in data
 l_missing_d = anti_join(sp2grp, m, by='species')
 if (length(l_missing_d)>0){
-  cat(sprintf('\nMISSING: These species in the lookup are not found in the data %s:\n    ', basename(fis_fao)))
+  cat(sprintf('\nMISSING: These species in the lookup are not found in the data %s:\n    ', basename(fis_fao_csv)))
   print(l_missing_d)
 }
 # MISSING: These species in the lookup are not found in FAO_captureproduction_1950_2013.csv or FAO_raw_captureprod_1950_2012.csv:
@@ -136,7 +135,7 @@ m_l = m_w %>%
 m_l %>% 
   group_by(country, target, year) %>%
   summarize(value = sum(value)) %>% 
-  filter(country == 'Japan', target == 'cetacean', year >= 2005) 
+  filter(country == 'Japan', target == 'cetacean', year >= 2000) 
 
 # summarize across target for totals per region per year
 m_sum = m_l %>%
@@ -146,23 +145,21 @@ m_sum = m_l %>%
 
 
 ## add rgn_ids: name_to_rgn ----
-# source('src/R/ohi_clean_fxns.R')
 m_r = name_to_rgn(m_sum, fld_name='country', flds_unique=c('country','year'), fld_value='value', add_rgn_name=T) %>%
   select(rgn_name, rgn_id, year, value) %>%
   arrange(rgn_name, year)  ### JSL come back and look into Netherlands Antilles, etc. ### 
 m_r$year = as.numeric(as.character(factor(m_r$year))); head(m_r)
 stopifnot(anyDuplicated(m_r[,c('rgn_id', 'year', 'rgn_name')]) == 0)
-m_r[duplicated(m_r[,c('rgn_id', 'rgn_name', 'year')]),]
+# m_r[duplicated(m_r[,c('rgn_id', 'rgn_name', 'year')]),]
 
-## for each scenario: id year, rescale and save pressures layer ----
-# makes obsolete: ohiprep:src/R/ohi_clean_fxns.R:: save_pressure_layers_2012a_2013a.r 
-#                 neptune_data:model/GL-FAO-TargetedHarvest_v2011/export_layers.R 
+## for each scenario: identify maximum year, rescale and save pressures layer ----
 
-# identify  years for each scenario and overall
+# identify  max and min years for each scenario and overall
 maxyear_all = max(m_r$year, na.rm=T)
-scenario_maxyear = c('eez2014' = maxyear_all,
-                     'eez2013' = maxyear_all - 1,
-                     'eez2012' = maxyear_all - 2)
+scenario_maxyear = c('eez2015' = maxyear_all,  
+                     'eez2014' = maxyear_all - 1,
+                     'eez2013' = maxyear_all - 2,
+                     'eez2012' = maxyear_all - 3)
 minyear_all = scenario_maxyear[length(scenario_maxyear)]
 
 # calculate and save for each scenario
@@ -183,6 +180,7 @@ for (i in 1:length(names(scenario_maxyear))) { # i=1
                   names(scenario_maxyear)[i], length(unique(m_f$rgn_id)), names(minyear_all), minyear_all, maxyear))
   message(sprintf('%s in %s: %d marine mammals and sea turtles harvested', 
                   m_f_max$rgn_name, m_f_max$year, m_f_max$value))
+  # output displayed below  
   
   m_f = m_f %>%
     filter(year == maxyear) %>%
@@ -203,9 +201,26 @@ for (i in 1:length(names(scenario_maxyear))) { # i=1
   stopifnot(length(m_f_fin$rgn_id) == 221)
   
   filesave = sprintf('rgn_fao_targeted_%sa.csv', scen)
-  write.csv(m_f_fin, file.path(dir_d, 'data', filesave), row.names = F)
+  write.csv(m_f_fin, file.path(dir_out, 'data', filesave), row.names = F)
   
 }
+
+## from eez2015 run: 
+
+# eez2015 pressures scores for 31 regions are rescaled to the max harvest since eez2012 (2010-2013):
+# Japan in 2010: 7489 marine mammals and sea turtles harvested
+# 
+# eez2014 pressures scores for 31 regions are rescaled to the max harvest since eez2012 (2010-2012):
+# Japan in 2010: 7489 marine mammals and sea turtles harvested
+# 
+# eez2013 pressures scores for 30 regions are rescaled to the max harvest since eez2012 (2010-2011):
+# Japan in 2010: 7489 marine mammals and sea turtles harvested
+# 
+# eez2012 pressures scores for 24 regions are rescaled to the max harvest since eez2012 (2010-2010):
+# Japan in 2010: 7489 marine mammals and sea turtles harvested
+
+
+## from eez2014 run:
 
 # eez2014 pressures scores for 30 regions are rescaled to the max harvest since eez2012 (2010-2012):
 #   Japan in 2010: 7489 marine mammals and sea turtles harvested
