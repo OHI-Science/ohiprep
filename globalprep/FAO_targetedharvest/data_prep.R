@@ -205,6 +205,14 @@ for (i in 1:length(names(scenario_maxyear))) { # i=1
   
 }
 
+# exploration figure
+source('~/github/ohiprep/src/R/compareVis_layers.R')
+scatterPlot(csv_orig   = file.path(dir_out, 'data', 'rgn_fao_targeted_2012a.csv'), 
+            csv_new    = file.path(dir_out, 'data', 'rgn_fao_targeted_2015a.csv'), 
+            title_text = 'targeted_harvest',
+            fig_save   = file.path(dir_out, 'data', paste0(title_text,'_scatterPlot.png')))
+
+
 ## from eez2015 run: 
 
 # eez2015 pressures scores for 31 regions are rescaled to the max harvest since eez2012 (2010-2013):
