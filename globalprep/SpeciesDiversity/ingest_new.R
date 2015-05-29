@@ -163,6 +163,8 @@ iucn_cells_spp_sum1 <- process_iucn_spp_per_cell(dir_anx, rgn_cell_lookup, scena
 # loiczid | iucn_mean_cat_score | iucn_mean_trend_score | iucn_n_species.
 # Note scores are not normalized yet to account for 75% species loss = zero.
 
-
-
-
+# TO DO:
+# find weighted mean for each cell, across both AM and IUCN, for cat and trend
+# NOTE: trend_score doesn't have a weightable factor... count the trend values per cell and summarize 'em
+# 
+# Then: for each region, add up mean*area*proportionalArea across all cells within the region.
