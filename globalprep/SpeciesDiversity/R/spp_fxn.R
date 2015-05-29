@@ -358,6 +358,8 @@ extract_loiczid_per_spp <- function(dir_anx, groups_override = NULL, scenario = 
   }
 }
 
+
+##############################################################################=
 process_am_spp_per_cell <- function(dir_anx, rgn_cell_lookup, scenario = 'v2015', reload = FALSE) {
   am_cells_spp_sum_file <- file.path(dir_anx, scenario, 'intermediate/am_cells_spp_sum.csv')
   
@@ -367,7 +369,7 @@ process_am_spp_per_cell <- function(dir_anx, rgn_cell_lookup, scenario = 'v2015'
     ### Load Aquamaps species per cell table
     file_loc <- file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_hcaf_species_native.csv')
     cat(sprintf('Loading AquaMaps cell-species data.  Large file! \n  %s \n', file_loc))
-    am_cells_spp <- read_csv(file_loc, col_types = '_ccn__', n_max = 1000000) %>%
+    am_cells_spp <- read_csv(file_loc, col_types = '_ccn__') %>%
       rename(am_sid = SpeciesID, csq = CsquareCode, prob = probability)
     
     # filter entire aquamaps table to just cells found in appropriate regions

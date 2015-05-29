@@ -106,8 +106,8 @@ popn_trend  <- data.frame(popn_trend=c("Decreasing", "Stable", "Increasing"),
                           trend_score=c(-0.5, 0, 0.5))
 
 spp_all <- spp_all %>%
-  left_join(popn_cat) %>%
-  left_join(popn_trend) 
+  left_join(popn_cat, by = 'popn_category') %>%
+  left_join(popn_trend,  by = 'popn_trend') 
 
 
 ##############################################################################=
