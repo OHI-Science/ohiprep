@@ -409,9 +409,10 @@ process_am_spp_per_cell <- function(dir_anx, rgn_cell_lookup, scenario = 'v2015'
     
     am_cells_spp_sum <- am_cells_spp3 %>%
       group_by(loiczid) %>%
-      summarize(am_mean_cat_score = mean(category_score),  # no na.rm needed; already filtered
-                am_mean_popn_trend_score = mean(trend_score, na.rm = TRUE), 
-                am_n_species = n())                        # no na.rm needed; count all with cat_score
+      summarize(mean_cat_score        = mean(category_score),     # no na.rm needed; already filtered
+                mean_popn_trend_score = mean(trend_score, na.rm = TRUE), 
+                n_cat_species         = n(),
+                n_trend_species       = sum(!is.na(trend_score))) # no na.rm needed; count all with cat_score
     
     am_cells_spp_sum_file <- file.path(dir_anx, scenario, 'intermediate/am_cells_spp_sum.csv')
     cat(sprintf('Writing cell-by-cell summary for Aquamaps species to:\n  %s\n', am_cells_spp_sum_file))
@@ -477,9 +478,10 @@ process_iucn_spp_per_cell <- function(dir_anx, rgn_cell_lookup, scenario = 'v201
     
     iucn_cells_spp_sum <- iucn_cells_spp3 %>%
       group_by(loiczid) %>%
-      summarize(iucn_mean_cat_score = mean(category_score),  # no na.rm needed; already filtered.
-                iucn_mean_popn_trend_score = mean(trend_score, na.rm = TRUE), 
-                iucn_n_species = n())                        # no na.rm needed; count all with cat_score
+      summarize(mean_cat_score = mean(category_score),      # no na.rm needed; already filtered.
+                mean_popn_trend_score = mean(trend_score, na.rm = TRUE), 
+                n_cat_species = n(),
+                n_trend_species = sum(!is.na(trend_score))) # no na.rm needed; count all with cat_score
     
     iucn_cells_spp_sum_file <- file.path(dir_anx, scenario, 'intermediate/iucn_cells_spp_sum.csv')
     cat(sprintf('Writing cell-by-cell summary for IUCN species to:\n  %s\n', iucn_cells_spp_sum_file))
