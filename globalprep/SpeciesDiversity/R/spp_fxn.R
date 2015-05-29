@@ -37,9 +37,9 @@ get_loiczid_raster <- function(dir_anx, reload = FALSE) {
 
 
 ##############################################################################=
-extract_loiczid_per_region <- function(dir_anx, reload = FALSE) {
+extract_cell_id_per_region <- function(dir_anx, reload = FALSE) {
 ### Determines proportional area of each cell covered by region polygons.  Returns data frame
-### of sp_id, loiczid, and proportional area of loiczid cell covered by the sp_id region.
+### of sp_id, loiczid, csq, and proportional area of loiczid cell covered by the sp_id region.
 ### Should not be year-specific, so leave files in SpeciesDiversity/rgns.
 ### ??? TO DO: compare loiczid regions <-> CenterLong and CenterLat to last year's table, to make sure consistent from year to year.
 ### ??? TO DO: update to translate sp_id directly into rgn_id using Melanie's code. Filter out only global regions.
@@ -76,7 +76,6 @@ extract_loiczid_per_region <- function(dir_anx, reload = FALSE) {
       rename(sp_id = .id, 
              loiczid = value, 
              proportionArea = weight)
-    # confusion between dplyr and plyr... this needs dplyr version.
     
     ### ??? add in this region -  Bosnia/Herzegovina (BIH), which appears to be too small to catch using this method (<1% of area)
     ### ??? SKIPPING THIS FOR NOW!!!
@@ -87,12 +86,24 @@ extract_loiczid_per_region <- function(dir_anx, reload = FALSE) {
     # bih <- data.frame(sp_id=232, LOICZID=68076, proportionArea=0.002658641)
     # region_prop_df <- rbind(region_prop_df, bih)
     
+    file_loc <- file.path(dir_anx, 'raw/aquamaps_2014/tables/hcaf.csv')
+    cat(sprintf('Loading AquaMaps half-degree cell authority file.  Less than 1 minute.\n  %s \n', file_loc))
+    am_cells <- fread(file_loc, header = TRUE, stringsAsFactors = FALSE) %>%
+      as.data.frame() %>%
+      select(csq = CsquareCode, loiczid = LOICZID, cell_area = CellArea)
+    stopifnot(sum(duplicated(am_cells$csq)) == 0)
+    
+    cat('Joining csq values and cell areas to loiczid values.\n')
+    region_prop_df <- region_prop_df %>%
+      left_join(am_cells, by = 'loiczid')
+    
+    
     cat('Filtering out all regions with sp_id > 300, to eliminate high seas and antarctic.\n')
     cat('Really, there should be something in here to turn sp_id into rgn_id proper-like.\n')
     region_prop_df <- region_prop_df %>%
       filter(sp_id <= 300)
     
-    cat(sprintf('Writing loiczid cell proportions by region to: \n  %s\n', rgn_prop_file))
+    cat(sprintf('Writing loiczid/csq/cell proportions/cell areas by region to: \n  %s\n', rgn_prop_file))
     write.csv(region_prop_df, rgn_prop_file, row.names = FALSE)
   } else {
     cat(sprintf('Reading loiczid cell proportions by region from: \n  %s\n', rgn_prop_file))
