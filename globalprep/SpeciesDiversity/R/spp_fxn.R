@@ -361,6 +361,14 @@ extract_loiczid_per_spp <- function(dir_anx, groups_override = NULL, scenario = 
 
 ##############################################################################=
 process_am_spp_per_cell <- function(dir_anx, rgn_cell_lookup, scenario = 'v2015', reload = FALSE) {
+# Calculate category and trend scores per cell for Aquamaps species.
+# * load AM species <-> cell lookup
+# * filter to appropriate cells (in regions, meets probability threshold)
+# * join spatial info: loiczid, region ID, cell area
+# * join species info: category score and trend score
+# * filter by cat score != NA
+# * summarize by loiczid - mean category_score, mean trend_score, count
+  
   am_cells_spp_sum_file <- file.path(dir_anx, scenario, 'intermediate/am_cells_spp_sum.csv')
   
   if(!file.exists(am_cells_spp_sum_file) | reload == TRUE) {
@@ -400,7 +408,9 @@ process_am_spp_per_cell <- function(dir_anx, rgn_cell_lookup, scenario = 'v2015'
     
     am_cells_spp_sum <- am_cells_spp3 %>%
       group_by(loiczid) %>%
-      summarize(am_mean_cat_score = mean(category_score), am_mean_popn_trend_score = mean(trend_score), am_n_species = n())
+      summarize(am_mean_cat_score = mean(category_score),  # no na.rm needed; already filtered
+                am_mean_popn_trend_score = mean(trend_score, na.rm = TRUE), 
+                am_n_species = n())                        # no na.rm needed; count all with cat_score
     
     am_cells_spp_sum_file <- file.path(dir_anx, scenario, 'intermediate/am_cells_spp_sum.csv')
     cat(sprintf('Writing cell-by-cell summary for Aquamaps species to:\n  %s\n', am_cells_spp_sum_file))
@@ -410,4 +420,70 @@ process_am_spp_per_cell <- function(dir_anx, rgn_cell_lookup, scenario = 'v2015'
     am_cells_spp_sum <- read_csv(am_cells_spp_sum_file)
   }
   return(invisible(am_cells_spp_sum))
+}
+
+
+##############################################################################=
+process_iucn_spp_per_cell <- function(dir_anx, rgn_cell_lookup, scenario = 'v2015', reload = FALSE) {
+  # Calculate category and trend scores per cell for IUCN species.
+  # * For each IUCN species group:
+  #   * load IUCN species <-> cell lookup
+  #   * filter to appropriate cells (in regions, meets probability threshold)
+  #   * join spatial info: loiczid, region ID, cell area
+  #   * join species info: category score and trend score
+  #   * filter by cat score != NA
+  #   * summarize by loiczid - mean category_score, mean trend_score, count
+  # * Each summary data frame should be saved to a list, to be eventually rbind_all'ed
+  
+  
+  iucn_cells_spp_sum_file <- file.path(dir_anx, scenario, 'intermediate/iucn_cells_spp_sum.csv')
+  
+  if(!file.exists(iucn_cells_spp_sum_file) | reload == TRUE) {
+    cat('Generating cell-by-cell summary for IUCN range-map species.\n')
+    
+    ### Load IUCN species per cell tables
+#    iucn_map_files      <- file.path(dir_anx, 'iucn_intersections', list.files(file.path(dir_anx, 'iucn_intersections')))
+    iucn_map_files      <- file.path(dir_anx, 'iucn_intersections', c('AMPHANURA.csv', 'ANGELFISH.csv'))
+    iucn_cells_spp_list <- lapply(iucn_map_files, read.csv) # read each into dataframe within a list
+    iucn_cells_spp      <- rbind_all(iucn_cells_spp_list)   # combine list of dataframes to single dataframe
+    # This creates a full data frame of all IUCN species, across all species groups, for all cells.
+    # Probably big.
+        
+    # filter entire IUCN table to just cells found in appropriate regions
+    # (as designated by rgn_cell_lookup file). 
+    # 78M <- 39M observations
+    iucn_cells_spp1 <- iucn_cells_spp %>% 
+      rename(loiczid = LOICZID, polygon_prop_area = prop_area) %>%
+      filter(loiczid %in% rgn_cell_lookup$loiczid) 
+    # then join to rgn_cell_lookup to attach loiczid, region ID, and cell area
+    ptm <- proc.time()
+    iucn_cells_spp2 <- iucn_cells_spp1 %>%
+      inner_join(rgn_cell_lookup, by = 'loiczid') %>%
+      select(-csq)
+    proc.time() - ptm
+    
+    # filter species info to just IUCN species with category info, and bind to 
+    # iucn_cells_spp to attach category_score and trend_score.
+    spp_iucn_info <- spp_all %>% 
+      filter(spatial_source == 'iucn') %>%
+      filter(!is.na(category_score)) %>%
+      select(iucn_sid, sciname, category_score, trend_score)
+    
+    iucn_cells_spp3 <- iucn_cells_spp2 %>% 
+      inner_join(spp_iucn_info, by = c('sciname'))
+    
+    iucn_cells_spp_sum <- iucn_cells_spp3 %>%
+      group_by(loiczid) %>%
+      summarize(iucn_mean_cat_score = mean(category_score),  # no na.rm needed; already filtered.
+                iucn_mean_popn_trend_score = mean(trend_score, na.rm = TRUE), 
+                iucn_n_species = n())                        # no na.rm needed; count all with cat_score
+    
+    iucn_cells_spp_sum_file <- file.path(dir_anx, scenario, 'intermediate/iucn_cells_spp_sum.csv')
+    cat(sprintf('Writing cell-by-cell summary for IUCN species to:\n  %s\n', iucn_cells_spp_sum_file))
+    write_csv(iucn_cells_spp_sum, iucn_cells_spp_sum_file)
+  } else {
+    cat(sprintf('Cell-by-cell summary for IUCN species already exists.  Reading from:\n  %s\n', iucn_cells_spp_sum_file))
+    iucn_cells_spp_sum <- read_csv(iucn_cells_spp_sum_file)
+  }
+  return(invisible(iucn_cells_spp_sum))
 }

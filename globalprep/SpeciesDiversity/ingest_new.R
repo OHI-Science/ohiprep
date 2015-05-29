@@ -147,22 +147,22 @@ rgn_cell_lookup <- extract_cell_id_per_region(dir_anx, reload = FALSE)
 # saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/region_prop_df.csv
 
 
-# Calculate category and trend scores per cell for Aquamaps species.
-# * load AM species <-> cell lookup
-# * filter to appropriate cells (in regions, meets probability threshold)
-# * join spatial info: loiczid, region ID, cell area
-# * join species info: category score and trend score
-# * filter by cat score != NA
-# * summarize by loiczid - mean category_score, mean trend_score, count
 
 
 ### Generate Aquamaps species per cell table
 am_cells_spp_sum1 <- process_am_spp_per_cell(dir_anx, rgn_cell_lookup, scenario = 'v2015', reload = FALSE)
 
-# At this point - all species within each cell, including category and trend scores, for aquamaps
-# * summarize by loiczid to mean score, and count, for Aquamaps.
-# * for IUCN, for each species group, do same, and join all together into an IUCN dataframe.
-# * then, for AM and each IUCN spp group, do count-weighted average score, and summarize for each LOICZID.
-# * for each of these, then, 
+# This returns dataframe with variables:
+# loiczid | am_mean_cat_score | am_mean_trend_score | am_n_species.
+# Note scores are not normalized yet to account for 75% species loss = zero.
+
+### Generate IUCN species per cell table
+iucn_cells_spp_sum1 <- process_iucn_spp_per_cell(dir_anx, rgn_cell_lookup, scenario = 'v2015', reload = FALSE)
+
+# This returns dataframe with variables:
+# loiczid | iucn_mean_cat_score | iucn_mean_trend_score | iucn_n_species.
+# Note scores are not normalized yet to account for 75% species loss = zero.
+
+
 
 
