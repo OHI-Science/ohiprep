@@ -91,8 +91,9 @@ source(file.path(dir_git, 'R/spp_fxn.R'))
 ##############################################################################=
 
 spp_all <- create_spp_master_lookup(dir_anx, scenario = 'v2015', reload = FALSE)
-### Output is data frame with these fields:
-### am_sid | sciname | am_status | iucn_sid | iucn_status | popn_trend | popn_status | info_source | spp_group | id_no | objectid | spatial_source
+### Output is spp_all.csv data frame with these fields:
+### | am_sid      | sciname     | am_status | iucn_sid | iucn_status | popn_trend     | 
+### | popn_status | info_source | spp_group | id_no    | objectid    | spatial_source |
 ### Outputs saved to:
 ### * v201X/intermediate/spp_iucn_maps_all.csv 
 ###     (list of all species represented in the IUCN shape files)
@@ -103,26 +104,19 @@ spp_all <- create_spp_master_lookup(dir_anx, scenario = 'v2015', reload = FALSE)
 ###   iucn_sid <-> LOICZID
 ##############################################################################=
 
-# Determine intersections of IUCN range maps with Aquamaps half-degree cells
-#
-# * from the spp_all.csv, extract the species with IUCN range maps.  Use this file
-#   rather than the spp_iucn_maps_all because it is truncated to just species on spp_iucn_marine_global.csv list.
-# * for each species group (spp_group), load parent shape file
-#   * filter by attribute on binomial field, using sciname from range maps list
-#   * use raster::extract, lay the selected polygons over the LOICZID raster.
-#     * NOTE: this takes a long time - multiple hours for some of the shape files
-# * when finished with each spp_group, save a file for that group, with fields:
-#       sciname | iucn_sid | LOICZID | prop_area
-
-tmp <- c("AMPHANURA","SEAGRASSES","MANGROVES")
 extract_loiczid_per_spp(dir_anx, scenario = 'v2015', groups_override = tmp, reload = FALSE)
-# use groups_override argument to run function on partial list of species groups.
+# Extract loiczid cell IDs for each species within each species group.  Save 
+# a .csv file for that group, with fields:
+#       sciname | iucn_sid | LOICZID | prop_area
+# NOTES: this takes a long time - multiple hours for some of the shape files.  
+# * reload = FALSE allows it to skip extraction on groups with files already present.
+# * use groups_override argument to run function on partial list of species groups.
 
 ##############################################################################=
 ### load Aquamaps data on cell IDs and species per cell
 ##############################################################################=
 # Create Aquamaps master spp spatial chart: all species using AM data
-# sciname | am_sid | popn_status | popn_trend | loiczid | prob
+#  | sciname | am_sid | popn_status | popn_trend | loiczid | prob
 # * filter master species lookup by spatial_source == 'am'
 # * filter out any popn_status NAs
 # * check for subspecies (duplicated scinames)
@@ -132,49 +126,35 @@ extract_loiczid_per_spp(dir_anx, scenario = 'v2015', groups_override = tmp, relo
 
 ##############################################################################=
 ### Generate lookup - region ID to spatial raster cell IDs ----
-### * generate half-degree LOICZID raster using Aquamaps cell information
-### * Get percent of each raster cell in the region polygons
-### * create .csv associating raster cell, LOICZID, and CsquareCode
 ##############################################################################=
 
-### Load or generate lookup table of region IDs to loiczid identifier
+### Load or generate lookup table of region IDs to cell information
+rgn_cell_lookup <- extract_cell_id_per_region(dir_anx, reload = FALSE)
+### | sp_id | loiczid | proportionArea | csq | cell_area
 ###   TO DO:  currently as sp_id; update to translate sp_id to rgn_id
-###   TO DO:  Also include csq, since the AM species lookup uses csq not LOICZID.
-rgn_cell_lookup <- extract_loiczid_per_region(dir_anx, reload = FALSE)
 # ??? DOES THIS STILL INCLUDE ALL THE HS and AQ SHIT? get rid of those!
 # saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/region_prop_df.csv
 
-# load and format AquaMaps half-degree cell authority file
-file_loc <- file.path(dir_anx, 'raw/aquamaps_2014/tables/hcaf.csv')
-cat(sprintf('Loading AquaMaps half-degree cell authority file.  Less than 1 minute.\n  %s \n', file_loc))
-am_cells <- fread(file_loc, header = TRUE, stringsAsFactors = FALSE) %>%
-  as.data.frame() %>%
-  select(csq = CsquareCode, loiczid = LOICZID, cell_area = CellArea)
-stopifnot(sum(duplicated(am_cells$csq)) == 0)
-
-am_cells_rgn <- am_cells %>%
-  filter(loiczid %in% rgn_cell_lookup$loiczid)
-
+### Load Aquamaps species per cell table
 file_loc <- file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_hcaf_species_native.csv')
 cat(sprintf('Loading AquaMaps cell-species data.  Come back in 10 minutes. \n  %s \n', file_loc))
-am_cells_spp <- read_csv(file_loc, col_types = '_ccn__', n_max = 500000) %>%
+am_cells_spp <- read_csv(file_loc, col_types = '_ccn__') %>%
   rename(am_sid = SpeciesID, csq = CsquareCode, prob = probability)
 
 ### ??? START HERE ----
 # filter entire aquamaps table to just cells found in global regions. 
+# 78M <- 39M observations
 am_cells_spp1 <- am_cells_spp %>% 
-  filter(csq %in% am_cells_rgn$csq) %>% # this filter quickly reduces by about 20%?
-  filter(prob >= .40)                   # this filter quickly reduces by about 50% with prev.
-
+  filter(csq %in% rgn_cell_lookup$csq) 
+# filter out below probability threshold; 39 M to 29 M observations.
+am_cells_spp1 <- am_cells_spp1 %>%
+  filter(prob >= .40) %>%
+  select(-prob)
+write_csv(am_cells_spp1, file.path(dir_anx, 'v2015/intermediate/am_cells_spp_filtered.csv'))
 # then join.
 ptm <- proc.time()
-am_cells_spp2 <- am_cells_spp %>%
-  inner_join(am_cells_rgn, by = 'csq') %>%
+am_cells_spp2 <- am_cells_spp1 %>%
+  inner_join(rgn_cell_lookup, by = 'csq') %>%
   select(-csq)
-proc.time() - ptm # 6ish sec
+proc.time() - ptm
 
-ptm <- proc.time()
-am_cells_spp3 <- am_cells_spp1 %>%
-  left_join(am_cells_rgn, by = 'csq') %>%
-  select(-csq)
-proc.time() - ptm # 5ish sec
