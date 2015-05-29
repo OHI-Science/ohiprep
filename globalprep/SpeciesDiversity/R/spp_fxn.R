@@ -382,7 +382,7 @@ process_am_spp_per_cell <- function(dir_anx, rgn_cell_lookup, scenario = 'v2015'
     
     # filter entire aquamaps table to just cells found in appropriate regions
     # (as designated by rgn_cell_lookup file). 
-    # 78M <- 39M observations
+    cat('Filtering to just cells within regions, and species with probability greater than 0.4.\n')
     am_cells_spp1 <- am_cells_spp %>% 
       filter(csq %in% rgn_cell_lookup$csq) 
     # filter out below probability threshold; 39 M to 29 M observations.
@@ -398,6 +398,7 @@ process_am_spp_per_cell <- function(dir_anx, rgn_cell_lookup, scenario = 'v2015'
     
     # filter species info to just Aquamaps species with category info, and bind to 
     # am_cells_spp to attach category_score and trend_score.
+    cat('Filtering to just species with non-NA IUCN category scores.\n')
     spp_am_info <- spp_all %>% 
       filter(spatial_source == 'am') %>%
       filter(!is.na(category_score)) %>%
@@ -417,7 +418,7 @@ process_am_spp_per_cell <- function(dir_anx, rgn_cell_lookup, scenario = 'v2015'
     write_csv(am_cells_spp_sum, am_cells_spp_sum_file)
   } else {
     cat(sprintf('Cell-by-cell summary for Aquamaps species already exists.  Reading from:\n  %s\n', am_cells_spp_sum_file))
-    am_cells_spp_sum <- read_csv(am_cells_spp_sum_file)
+    am_cells_spp_sum <- read.csv(am_cells_spp_sum_file)
   }
   return(invisible(am_cells_spp_sum))
 }
@@ -451,7 +452,8 @@ process_iucn_spp_per_cell <- function(dir_anx, rgn_cell_lookup, scenario = 'v201
         
     # filter entire IUCN table to just cells found in appropriate regions
     # (as designated by rgn_cell_lookup file). 
-    # 78M <- 39M observations
+    cat('Filtering to cells within regions.\n')
+
     iucn_cells_spp1 <- iucn_cells_spp %>% 
       rename(loiczid = LOICZID, polygon_prop_area = prop_area) %>%
       filter(loiczid %in% rgn_cell_lookup$loiczid) 
@@ -464,7 +466,8 @@ process_iucn_spp_per_cell <- function(dir_anx, rgn_cell_lookup, scenario = 'v201
     
     # filter species info to just IUCN species with category info, and bind to 
     # iucn_cells_spp to attach category_score and trend_score.
-    spp_iucn_info <- spp_all %>% 
+      cat('Filtering to just species with non-NA IUCN category scores.\n')
+      spp_iucn_info <- spp_all %>% 
       filter(spatial_source == 'iucn') %>%
       filter(!is.na(category_score)) %>%
       select(iucn_sid, sciname, category_score, trend_score)
@@ -483,7 +486,7 @@ process_iucn_spp_per_cell <- function(dir_anx, rgn_cell_lookup, scenario = 'v201
     write_csv(iucn_cells_spp_sum, iucn_cells_spp_sum_file)
   } else {
     cat(sprintf('Cell-by-cell summary for IUCN species already exists.  Reading from:\n  %s\n', iucn_cells_spp_sum_file))
-    iucn_cells_spp_sum <- read_csv(iucn_cells_spp_sum_file)
+    iucn_cells_spp_sum <- read.csv(iucn_cells_spp_sum_file)
   }
   return(invisible(iucn_cells_spp_sum))
 }
