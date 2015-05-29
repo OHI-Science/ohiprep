@@ -1,0 +1,183 @@
+"","ISO","Country","Year","WasteIndex"
+"1","AFG","Afghanistan",2014,0
+"2","ALB","Albania",2014,3.3572
+"3","DZA","Algeria",2014,34.6399166663825
+"4","ASM","American Samoa",2014,40.9767
+"5","AND","Andorra",2014,38.375
+"6","AGO","Angola",2014,0
+"7","ARG","Argentina",2014,11.746875
+"8","ARM","Armenia",2014,22.5852727272727
+"9","AUS","Australia",2014,92.3333333333333
+"10","AUT","Austria",2014,79.05
+"11","AZE","Azerbaijan",2014,13.14649
+"12","BHR","Bahrain",2014,64.2690277777778
+"13","BGD","Bangladesh",2014,0
+"14","BLR","Belarus",2014,86.4456958333334
+"15","BEL","Belgium",2014,60.0044564266667
+"16","BLZ","Belize",2014,2.2801
+"17","BEN","Benin",2014,0.0084
+"18","BMU","Bermuda",2014,0.208333333333334
+"19","BTN","Bhutan",2014,0
+"20","BOL","Bolivia",2014,11.2966666666667
+"21","BIH","Bosnia and Herzegovina",2014,3.17954617330804
+"22","BWA","Botswana",2014,0.95
+"23","BRA","Brazil",2014,10.8687777777778
+"24","VGB","British Virgin Islands",2014,6.0025
+"25","BRN","Brunei Darussalam",2014,37.84
+"26","BGR","Bulgaria",2014,28.86
+"27","BFA","Burkina Faso",2014,0.025
+"28","BDI","Burundi",2014,0
+"29","KHM","Cambodia",2014,0
+"30","CMR","Cameroon",2014,0
+"31","CAN","Canada",2014,80.4199488333333
+"32","CPV","Cape Verde",2014,19.4
+"33","CAF","Central African Republic",2014,0
+"34","TCD","Chad",2014,0
+"35","CHL","Chile",2014,68.8484293939394
+"36","CHN","China",2014,18.179912237635
+"37","COL","Colombia",2014,4.6
+"38","COG","Congo",2014,0.18
+"39","CRI","Costa Rica",2014,0.9
+"40","CIV","Cote d'Ivoire",2014,0.6
+"41","HRV","Croatia",2014,13.2329178571429
+"42","CUB","Cuba",2014,9.1885
+"43","CYP","Cyprus",2014,9.44040816326532
+"44","CZE","Czech Republic",2014,75.68236485
+"45","COD","Dem. Rep. Congo",2014,0
+"46","DNK","Denmark",2014,93.45
+"47","DJI","Djibouti",2014,0
+"48","DMA","Dominica",2014,2.99
+"49","DOM","Dominican Republic",2014,5.90422764227641
+"50","ECU","Ecuador",2014,6.4
+"51","EGY","Egypt",2014,49.4981389584615
+"52","SLV","El Salvador",2014,0.62
+"53","GNQ","Equatorial Guinea",2014,1.25
+"54","ERI","Eritrea",2014,0
+"55","EST","Estonia",2014,75.2707438016528
+"56","ETH","Ethiopia",2014,0
+"57","FJI","Fiji",2014,3.9
+"58","FIN","Finland",2014,84.25
+"59","FRA","France",2014,83.7991333333334
+"60","GUF","French Guiana",2014,17.24995
+"61","GAB","Gabon",2014,0
+"62","GMB","Gambia",2014,0.4
+"63","GEO","Georgia",2014,0
+"64","DEU","Germany",2014,95.18054
+"65","GHA","Ghana",2014,10.2483870966
+"66","GRC","Greece",2014,87.3333333333333
+"67","GLP","Guadeloupe",2014,15.7605
+"68","GTM","Guatemala",2014,5.373
+"69","GIN","Guinea",2014,0.751111111111112
+"70","GNB","Guinea-Bissau",2014,0
+"71","GUY","Guyana",2014,0
+"72","HTI","Haiti",2014,0
+"73","HND","Honduras",2014,15.535
+"74","HKG","Hong Kong",2014,87.78688
+"75","HUN","Hungary",2014,58.6191666666667
+"76","ISL","Iceland",2014,51.9428571428571
+"77","IND","India",2014,10.48760328495
+"78","IDN","Indonesia",2014,0.0175
+"79","IRN","Iran",2014,2.7741753594
+"80","IRQ","Iraq",2014,8.2906617814625
+"81","IRL","Ireland",2014,87.4655833333333
+"82","ISR","Israel",2014,88.4031733333334
+"83","ITA","Italy",2014,91.4375955170658
+"84","JAM","Jamaica",2014,10
+"85","JPN","Japan",2014,71.26
+"86","JOR","Jordan",2014,42.3046483050847
+"87","KAZ","Kazakhstan",2014,30.5
+"88","KEN","Kenya",2014,0.519793939393939
+"89","KWT","Kuwait",2014,43
+"90","KGZ","Kyrgyzstan",2014,4.2
+"91","LAO","Laos",2014,0
+"92","LVA","Latvia",2014,49.625
+"93","LBN","Lebanon",2014,15.08356164172
+"94","LSO","Lesotho",2014,0.3
+"95","LBR","Liberia",2014,0
+"96","LBY","Libya",2014,18.0838323353293
+"97","LTU","Lithuania",2014,45.82
+"98","LUX","Luxembourg",2014,95
+"99","MKD","Macedonia",2014,3.73527777777778
+"100","MDG","Madagascar",2014,0.53125
+"101","MWI","Malawi",2014,0
+"102","MYS","Malaysia",2014,8.64
+"103","MDV","Maldives",2014,4.64517655357143
+"104","MLI","Mali",2014,0
+"105","MLT","Malta",2014,37.0145454545455
+"106","MHL","Marshall Islands",2014,0
+"107","MTQ","Martinique",2014,21.436875
+"108","MRT","Mauritania",2014,0
+"109","MUS","Mauritius",2014,5.43888888888888
+"110","MEX","Mexico",2014,37.4474987011556
+"111","MDA","Moldova",2014,34.153
+"112","MCO","Monaco",2014,100
+"113","MNG","Mongolia",2014,19.8
+"114","MNE","Montenegro",2014,5.1
+"115","MAR","Morocco",2014,39.39325
+"116","MOZ","Mozambique",2014,2.5
+"117","MMR","Myanmar",2014,0
+"118","NAM","Namibia",2014,13
+"119","NPL","Nepal",2014,0
+"120","NLD","Netherlands",2014,98.8181818181818
+"121","NZL","New Zealand",2014,77.9
+"122","NIC","Nicaragua",2014,8.4
+"123","NER","Niger",2014,0
+"124","NGA","Nigeria",2014,1.08171624
+"125","PRK","North Korea",2014,0
+"126","NOR","Norway",2014,77.0533426712685
+"127","OMN","Oman",2014,13.4
+"128","PAK","Pakistan",2014,3.51774841248791
+"129","PLW","Palau",2014,40
+"130","PAN","Panama",2014,20.149375
+"131","PNG","Papua New Guinea",2014,0
+"132","PRY","Paraguay",2014,0.155
+"133","PER","Peru",2014,20.9755
+"134","PHL","Philippines",2014,0.53125
+"135","POL","Poland",2014,60.7272727272727
+"136","PRT","Portugal",2014,70.3305816326531
+"137","PRI","Puerto Rico",2014,57
+"138","QAT","Qatar",2014,67.3151865881658
+"139","REU","Reunion",2014,12.42825
+"140","ROU","Romania",2014,13.055
+"141","RUS","Russia",2014,21.5
+"142","RWA","Rwanda",2014,0
+"143","SAU","Saudi Arabia",2014,28.5443592537
+"144","SEN","Senegal",2014,2.0625
+"145","SRB","Serbia",2014,8.7885
+"146","SLE","Sierra Leone",2014,0
+"147","SGP","Singapore",2014,99.65
+"148","SVK","Slovakia",2014,57.6351333333333
+"149","SVN","Slovenia",2014,53.9918962121212
+"150","SLB","Solomon Islands",2014,0
+"151","ZAF","South Africa",2014,27.85875
+"152","KOR","South Korea",2014,83.68
+"153","ESP","Spain",2014,92.8272
+"154","LKA","Sri Lanka",2014,0
+"155","SDN","Sudan",2014,0
+"156","SUR","Suriname",2014,0.01
+"157","SWZ","Swaziland",2014,55.5
+"158","SWE","Sweden",2014,87.8571428571429
+"159","CHE","Switzerland",2014,96.95
+"160","SYR","Syria",2014,82.1708542752
+"161","TWN","Taiwan",2014,4.59085
+"162","TJK","Tajikistan",2014,2.25
+"163","TZA","Tanzania",2014,0.425
+"164","THA","Thailand",2014,16
+"165","TLS","Timor-Leste",2014,0.3
+"166","TGO","Togo",2014,0
+"167","TTO","Trinidad and Tobago",2014,5.25064489795918
+"168","TUN","Tunisia",2014,27.7731021668479
+"169","TUR","Turkey",2014,48.9315272727273
+"170","TKM","Turkmenistan",2014,9.8
+"171","UGA","Uganda",2014,0.56
+"172","UKR","Ukraine",2014,14.7
+"173","ARE","United Arab Emirates",2014,67.06395
+"174","GBR","United Kingdom",2014,97.927095
+"175","USA","United States of America",2014,63.665
+"176","URY","Uruguay",2014,6.675
+"177","UZB","Uzbekistan",2014,0
+"178","VEN","Venezuela",2014,14.9382909090909
+"179","VNM","Viet Nam",2014,0.1375
+"180","YEM","Yemen",2014,0.48795
+"181","ZMB","Zambia",2014,4.2
+"182","ZWE","Zimbabwe",2014,14.0319587616
