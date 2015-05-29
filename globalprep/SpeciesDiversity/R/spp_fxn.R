@@ -1,17 +1,24 @@
 # spp_fxn.R
 
 ##############################################################################=
-create_loiczid_raster <- function(am_cells, dir_anx, reload = FALSE) {
+get_loiczid_raster <- function(dir_anx, reload = FALSE) {
 ### Generate half-degree raster using am_cells to assign LOICZID to CenterLong x CenterLat.
 ### * Template and output in <dir_anx>/rgns
 ### * rasterize takes about 10 seconds...
 ##############################################################################=
-  stopifnot(sum(duplicated(am_cells$LOICZID)) == 0) #key numeric ID for raster generation.... check for dups
   
   loiczid_raster_file  <- file.path(dir_anx, 'rgns/loiczid_raster.grd')
   raster_template_file <- file.path(dir_anx, 'rgns/am_cells_template.tif')
   
   if(!file.exists(loiczid_raster_file) | reload == TRUE) {
+    # load and format AquaMaps half-degree cell authority file
+    file_loc <- file.path(dir_anx, 'raw/aquamaps_2014/tables/hcaf.csv')
+    cat(sprintf('Loading AquaMaps cell data.  Less than 1 minute.\n  %s \n', file_loc))
+    am_cells <- fread(file_loc, header = TRUE, stringsAsFactors = FALSE) %>%
+      select(csq = CsquareCode, LOICZID, CenterLat, CenterLong, CellArea)
+    
+    stopifnot(sum(duplicated(am_cells$LOICZID)) == 0) #key numeric ID for raster generation.... check for dups
+    
     template_raster <- raster(raster_template_file)
     
     coordinates(am_cells) <- ~ CenterLong + CenterLat
@@ -29,15 +36,16 @@ create_loiczid_raster <- function(am_cells, dir_anx, reload = FALSE) {
 }
 
 
-
 ##############################################################################=
-extract_loiczid_per_region <- function(dir_anx, ogr_location = file.path(dir_neptune_data, 'git-annex/Global/NCEAS-Regions_v2014/data'), reload = FALSE) {
+extract_loiczid_per_region <- function(dir_anx, reload = FALSE) {
 ### Determines proportional area of each cell covered by region polygons.  Returns data frame
-### of sp_id, LOICZID, and proportional area of LOICZID cell covered by the sp_id region.
+### of sp_id, loiczid, and proportional area of loiczid cell covered by the sp_id region.
 ### Should not be year-specific, so leave files in SpeciesDiversity/rgns.
-### ??? TO DO: compare LOICZID regions <-> CenterLong and CenterLat to last year's table, to make sure consistent from year to year.
-### TO DO: update to translate sp_id directly into rgn_id using Melanie's code.
+### ??? TO DO: compare loiczid regions <-> CenterLong and CenterLat to last year's table, to make sure consistent from year to year.
+### ??? TO DO: update to translate sp_id directly into rgn_id using Melanie's code. Filter out only global regions.
 ##############################################################################=
+
+  ogr_location  <- file.path(dir_anx, '../../Global/NCEAS-Regions_v2014/data')
   
   rgn_prop_file <- file.path(dir_anx, 'rgns/region_prop_df.csv')
   
@@ -47,9 +55,11 @@ extract_loiczid_per_region <- function(dir_anx, ogr_location = file.path(dir_nep
     regions <- readOGR(dsn = ogr_location, layer='sp_gcs')
     # slow command... ~ 4 minutes
     regions <- regions[regions@data$rgn_type %in% c('eez', 'fao', 'eez_ccamlr', 'eez-disputed', 'eez-inland'), ]
+
+    raster_file <- file.path(dir_anx, 'rgns/loiczid_raster')
+    loiczid_raster <- get_loiczid_raster(dir_anx, reload = reload)
     
-    cat('Extracting proportional area of LOICZID cells per region polygon.  Come back in 15-20 minutes.')
-    loiczid_raster <- raster(file.path(dir_anx, 'rgns/loiczid_raster'))
+    cat('Extracting proportional area of LOICZID cells per region polygon.  Come back in 15-20 minutes.\n')
     region_prop <- raster::extract(loiczid_raster,  regions, weights = TRUE, normalizeWeights = FALSE, progress = 'text') 
     # small = TRUE returns 1 for sp_id 232, not what we want.
     # slow command... ~15 minutes (even with the small = TRUE)
@@ -64,7 +74,7 @@ extract_loiczid_per_region <- function(dir_anx, ogr_location = file.path(dir_nep
     # ??? consider converting sp_id into rgn_id code from Melanie
     region_prop_df <- region_prop_df %>%
       rename(sp_id = .id, 
-             LOICZID = value, 
+             loiczid = value, 
              proportionArea = weight)
     # confusion between dplyr and plyr... this needs dplyr version.
     
@@ -77,10 +87,17 @@ extract_loiczid_per_region <- function(dir_anx, ogr_location = file.path(dir_nep
     # bih <- data.frame(sp_id=232, LOICZID=68076, proportionArea=0.002658641)
     # region_prop_df <- rbind(region_prop_df, bih)
     
-    cat(sprintf('Writing LOICZID cell proportions by region to: \n  %s', rgn_prop_file))
+    cat('Filtering out all regions with sp_id > 300, to eliminate high seas and antarctic.\n')
+    cat('Really, there should be something in here to turn sp_id into rgn_id proper-like.\n')
+    region_prop_df <- region_prop_df %>%
+      filter(sp_id <= 300)
+    
+    cat(sprintf('Writing loiczid cell proportions by region to: \n  %s\n', rgn_prop_file))
     write.csv(region_prop_df, rgn_prop_file, row.names = FALSE)
   } else {
-    cat(sprintf('Reading LOICZID cell proportions by region from: \n  %s', rgn_prop_file))
+    cat(sprintf('Reading loiczid cell proportions by region from: \n  %s\n', rgn_prop_file))
+    cat('Filtered out all regions with sp_id > 300, to eliminate high seas and antarctic.\n')
+    cat('Really, there should be something in here to turn sp_id into rgn_id proper-like.\n')
     region_prop_df <- read.csv(rgn_prop_file)
   }
   
@@ -261,7 +278,8 @@ extract_loiczid_per_spp <- function(dir_anx, groups_override = NULL, scenario = 
     select(sciname, iucn_sid, id_no, spp_group)
   
   # Import LOICZID raster
-  loiczid_raster <- raster(file.path(dir_anx, 'rgns/loiczid_raster'))
+  raster_file <- file.path(dir_anx, 'rgns/loiczid_raster')
+  loiczid_raster <- get_loiczid_raster(dir_anx, reload = FALSE)
   
   # create list of groups (i.e. shape files) to be analyzed
   if(is.null(groups_override)) spp_gp_list <- unique(iucn_range_maps$spp_group)
