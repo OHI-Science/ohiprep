@@ -10,13 +10,13 @@
 ##      2) am_cells_rgn_proportions: describes the proportion of each raster cells within each region
 ##      3) am_cells_sp: describes the species in each raster cell (modified to use LOICZID rather than cid)  
 
-# Create lookup: species <-> popn_status/popn_trend and spatial_source:
+# Create lookup: species <-> popn_category/popn_trend and spatial_source:
 #   * Desired lookup table to include:
-#     - sciname  iucn_sid  am_sid  status  popn_trend info_source  spatial_source
+#     - sciname  iucn_sid  am_sid  popn_category  popn_trend info_source  spatial_source
 #   * Aquamaps species modified to include:
-#     - SPECIESID   SpecCode   sciname   am_status
+#     - SPECIESID   SpecCode   sciname   am_category
 #   * IUCN species modified to include:
-#     - sid(Red.List.Species.ID)  sciname  iucn_status  popn_trend
+#     - sid(Red.List.Species.ID)  sciname  iucn_category  popn_trend
 #
 # Create lookup: region_id <-> cell_id
 # * pretty much already done... include both LOICZID(?) and CsquareCode?
@@ -35,25 +35,25 @@
 # 
 
 # Create Aquamaps master spp spatial chart: all species using AM data
-# sciname | am_sid | popn_status | popn_trend | loiczid | prob
+# sciname | am_sid | popn_category | popn_trend | loiczid | prob
 # * filter master species lookup by spatial_source == 'am'
-# * filter out any popn_status NAs
+# * filter out any popn_category NAs
 # * check for subspecies (duplicated scinames)
 # * load AM species spatial data
 # * filter spatial data for loiczids in region lookup
 # * inner_join AquaMaps species spatial data to species lookup 
 
 # Create IUCN master spp spatial chart: all species using IUCN data
-# sciname | iucn_sid | popn_status | popn_trend | loiczid | prop_area
+# sciname | iucn_sid | popn_category | popn_trend | loiczid | prop_area
 # * filter master species lookup by spatial_source == 'iucn'
-# * filter out any popn_status NAs
+# * filter out any popn_category NAs
 # * check for subspecies (duplicated scinames)
 # * filter spatial data for loiczids in region lookup
 # * inner_join each IUCN species spatial data to species lookup 
 
 # join full master spp spatial chart:
 # select out unneeded columns (prob and prop_area)
-# bind_rows by sciname, sid, popn_status, popn_trend, loiczid
+# bind_rows by sciname, sid, popn_category, popn_trend, loiczid
 
 
 ##############################################################################=
@@ -84,20 +84,31 @@ source(file.path(dir_git, 'R/spp_fxn.R'))
 
 
 ##############################################################################=
-### Create lookup: species <-> popn_status/popn_trend and spatial_source.
+### Create lookup: species <-> popn_category/popn_trend and spatial_source.
 ### * Join Aquamaps species list and the IUCN marine species list by sciname
-### * determine IUCN red list popn_status and popn_trend
+### * determine IUCN red list popn_category and popn_trend
 ### * determine which species have IUCN range maps available
 ##############################################################################=
 
 spp_all <- create_spp_master_lookup(dir_anx, scenario = 'v2015', reload = FALSE)
 ### Output is spp_all.csv data frame with these fields:
-### | am_sid      | sciname     | am_status | iucn_sid | iucn_status | popn_trend     | 
-### | popn_status | info_source | spp_group | id_no    | objectid    | spatial_source |
+### | am_sid      | sciname     | am_category | iucn_sid | iucn_category | popn_trend     | 
+### | popn_category | info_source | spp_group | id_no    | objectid    | spatial_source |
 ### Outputs saved to:
 ### * v201X/intermediate/spp_iucn_maps_all.csv 
 ###     (list of all species represented in the IUCN shape files)
 ### * v201X/intermediate/spp_all.csv (complete data frame)
+
+# to overall lookup table, add scores for population category and trend.
+popn_cat    <- data.frame(popn_category=c("LC", "NT", "VU", "EN", "CR", "EX"), 
+                          category_score =c(0, 0.2, 0.4, 0.6, 0.8, 1))
+popn_trend  <- data.frame(popn_trend=c("Decreasing", "Stable", "Increasing"), 
+                          trend_score=c(-0.5, 0, 0.5))
+
+spp_all <- spp_all %>%
+  left_join(popn_cat) %>%
+  left_join(popn_trend) 
+
 
 ##############################################################################=
 ### Generate lookup - IUCN species ID to cell ID ----
@@ -116,9 +127,9 @@ extract_loiczid_per_spp(dir_anx, scenario = 'v2015', groups_override = tmp, relo
 ### load Aquamaps data on cell IDs and species per cell
 ##############################################################################=
 # Create Aquamaps master spp spatial chart: all species using AM data
-#  | sciname | am_sid | popn_status | popn_trend | loiczid | prob
+#  | sciname | am_sid | popn_category | popn_trend | loiczid | prob
 # * filter master species lookup by spatial_source == 'am'
-# * filter out any popn_status NAs
+# * filter out any popn_category NAs
 # * check for subspecies (duplicated scinames)
 # * load AM species spatial data
 # * filter spatial data for loiczids in region lookup
@@ -135,26 +146,23 @@ rgn_cell_lookup <- extract_cell_id_per_region(dir_anx, reload = FALSE)
 # ??? DOES THIS STILL INCLUDE ALL THE HS and AQ SHIT? get rid of those!
 # saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/region_prop_df.csv
 
-### Load Aquamaps species per cell table
-file_loc <- file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_hcaf_species_native.csv')
-cat(sprintf('Loading AquaMaps cell-species data.  Come back in 10 minutes. \n  %s \n', file_loc))
-am_cells_spp <- read_csv(file_loc, col_types = '_ccn__') %>%
-  rename(am_sid = SpeciesID, csq = CsquareCode, prob = probability)
 
-### ??? START HERE ----
-# filter entire aquamaps table to just cells found in global regions. 
-# 78M <- 39M observations
-am_cells_spp1 <- am_cells_spp %>% 
-  filter(csq %in% rgn_cell_lookup$csq) 
-# filter out below probability threshold; 39 M to 29 M observations.
-am_cells_spp1 <- am_cells_spp1 %>%
-  filter(prob >= .40) %>%
-  select(-prob)
-write_csv(am_cells_spp1, file.path(dir_anx, 'v2015/intermediate/am_cells_spp_filtered.csv'))
-# then join.
-ptm <- proc.time()
-am_cells_spp2 <- am_cells_spp1 %>%
-  inner_join(rgn_cell_lookup, by = 'csq') %>%
-  select(-csq)
-proc.time() - ptm
+# Calculate category and trend scores per cell for Aquamaps species.
+# * load AM species <-> cell lookup
+# * filter to appropriate cells (in regions, meets probability threshold)
+# * join spatial info: loiczid, region ID, cell area
+# * join species info: category score and trend score
+# * filter by cat score != NA
+# * summarize by loiczid - mean category_score, mean trend_score, count
+
+
+### Generate Aquamaps species per cell table
+am_cells_spp_sum1 <- process_am_spp_per_cell(dir_anx, rgn_cell_lookup, scenario = 'v2015', reload = FALSE)
+
+# At this point - all species within each cell, including category and trend scores, for aquamaps
+# * summarize by loiczid to mean score, and count, for Aquamaps.
+# * for IUCN, for each species group, do same, and join all together into an IUCN dataframe.
+# * then, for AM and each IUCN spp group, do count-weighted average score, and summarize for each LOICZID.
+# * for each of these, then, 
+
 
