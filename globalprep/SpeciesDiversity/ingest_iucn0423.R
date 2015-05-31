@@ -97,6 +97,7 @@ d = d[, !names(d) %in% c('primary')]
 
 # remove infraranks: 30 subspecies records ('ssp.')
 d = subset(d, infrarank.type!='ssp.', !names(d) %in% c('infrarank','infrarank.type','infrarank.authority'))
+# CCO: subset dataframe 'd', rows != ssp, and deselect infrarank columns.
 table(d$category)
 #    CR    DD    EN    EW    EX    LC LR/cd LR/lc LR/nt    NT    VU 
 #   147  2175   228     0    24  4557     6     5    12   518   678
