@@ -11,6 +11,9 @@ library(sp)
 library(rgdal)
 library(raster)
 library(readr)      # for read_csv()
+library(rPython) # to call Python functions and scripts within R?
+
+
 
 setwd('~/github/ohiprep')
 source('src/R/common.R')
@@ -22,15 +25,6 @@ dir_git  <- file.path('~/github/ohiprep', goal)
 
 source(file.path(dir_git, 'R/spp_fxn.R'))
 # SPP-specific functions
-
-library(rPython) # to call Python functions and scripts within R?
-
-
-### Set paths for local, git-annex, model(?), and git-annex/tmp
-dir_git <- '~/github/ohiprep'
-dir_lcl    <- file.path(dir_git, goal)                        ### local:  ~/github/ohiprep/globalprep/SpeciesDiversity
-dir_anx    <- file.path(dir_neptune_data, 'git-annex', goal)  ### Neptune: /git-annex/github/ohiprep/globalprep/SpeciesDiversity
-dir_mdl    <- file.path(dir_neptune_data, 'model')            ### Neptune: /model
 
 
 ##############################################################################=

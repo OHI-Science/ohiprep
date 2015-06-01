@@ -56,15 +56,17 @@ extract_cell_id_per_region <- function(reload = FALSE) {
   if(!file.exists(rgn_prop_file) | reload) {
     
     cat(sprintf('Reading regions shape file - come back in about 4 minutes.\n  %s\n', ogr_location))
-    regions <- readOGR(dsn = ogr_location, layer='sp_gcs')
+    regions <- readOGR(dsn = ogr_location, layer='rgn_gcs')
     # slow command... ~ 4 minutes
-    regions <- regions[regions@data$rgn_type %in% c('eez', 'fao', 'eez_ccamlr', 'eez-disputed', 'eez-inland'), ]
+    
+    rgn_types <- c('eez', 'eez-disputed', 'eez-inland')
+    regions <- regions[regions@data$rgn_type %in% rgn_types, ]
 
     raster_file <- file.path(dir_anx, 'rgns/loiczid_raster')
-    loiczid_raster <- get_loiczid_raster(dir_anx, reload = reload)
+    loiczid_raster <- get_loiczid_raster(reload = FALSE)
     
     cat('Extracting proportional area of LOICZID cells per region polygon.  Come back in 15-20 minutes.\n')
-    region_prop <- raster::extract(loiczid_raster,  regions, weights = TRUE, normalizeWeights = FALSE, progress = 'text') 
+    region_prop <- raster::extract(loiczid_raster,  regions, weights = TRUE, small = TRUE, normalizeWeights = FALSE, progress = 'text') 
     # small = TRUE returns 1 for sp_id 232, not what we want.
     # slow command... ~15 minutes (even with the small = TRUE)
     
@@ -102,17 +104,17 @@ extract_cell_id_per_region <- function(reload = FALSE) {
       left_join(am_cells, by = 'loiczid')
     
     
-    cat('Filtering out all regions with sp_id > 300, to eliminate high seas and antarctic.\n')
-    cat('Really, there should be something in here to turn sp_id into rgn_id proper-like.\n')
-    region_prop_df <- region_prop_df %>%
-      filter(sp_id <= 300)
+#     cat('Filtering out all regions with sp_id > 300, to eliminate high seas and antarctic.\n')
+#     cat('Really, there should be something in here to turn sp_id into rgn_id proper-like.\n')
+#     region_prop_df <- region_prop_df %>%
+#       filter(sp_id <= 300)
     
     cat(sprintf('Writing loiczid/csq/cell proportions/cell areas by region to: \n  %s\n', rgn_prop_file))
     write.csv(region_prop_df, rgn_prop_file, row.names = FALSE)
   } else {
     cat(sprintf('Reading loiczid cell proportions by region from: \n  %s\n', rgn_prop_file))
-    cat('Filtered out all regions with sp_id > 300, to eliminate high seas and antarctic.\n')
-    cat('Really, there should be something in here to turn sp_id into rgn_id proper-like.\n')
+#     cat('Filtered out all regions with sp_id > 300, to eliminate high seas and antarctic.\n')
+#     cat('Really, there should be something in here to turn sp_id into rgn_id proper-like.\n')
     region_prop_df <- read.csv(rgn_prop_file)
   }
   
