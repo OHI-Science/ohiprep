@@ -1,11 +1,30 @@
+##############################################################################=
+### ohiprep/globalprep/SpeciesDiversity/data_prep.R
+###
+### GOAL: Obtain species diversity data and iconics data for global
+### Jun 1, 2015 - CCO.  Combining many different scripts into one data_prep.R
+###   that calls functions and sources code within R/spp_fxn.R
+##############################################################################=
+library(foreign)
+library(data.table) # for fread()
+library(sp)
+library(rgdal)
+library(raster)
+library(readr)      # for read_csv()
 
+setwd('~/github/ohiprep')
+source('src/R/common.R')
 
-source('~/github/ohiprep/src/R/common.R') # set pathnames, load common libraries
+goal     <- 'globalprep/SpeciesDiversity'
+scenario <- 'v2015'
+dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal) 
+dir_git  <- file.path('~/github/ohiprep', goal)
 
-library(rPython) # to call Python functions and scripts within R
+source(file.path(dir_git, 'R/spp_fxn.R'))
+# SPP-specific functions
 
-goal       <- 'globalprep/SpeciesDiversity'
-prod       <- 'v2015'
+library(rPython) # to call Python functions and scripts within R?
+
 
 ### Set paths for local, git-annex, model(?), and git-annex/tmp
 dir_git <- '~/github/ohiprep'
@@ -13,13 +32,11 @@ dir_lcl    <- file.path(dir_git, goal)                        ### local:  ~/gith
 dir_anx    <- file.path(dir_neptune_data, 'git-annex', goal)  ### Neptune: /git-annex/github/ohiprep/globalprep/SpeciesDiversity
 dir_mdl    <- file.path(dir_neptune_data, 'model')            ### Neptune: /model
 
-setwd(dir_lcl)
 
-# order of operations:
-
-
-
-#   ingest_aquamaps.R ----- get script from Jamie -----
+##############################################################################=
+### Ingest Aquamaps data to .csv from .sql ----
+##############################################################################=
+# get R version of SQL extract code from Melanie?
 # ??? updated aquamaps data?  incorporate export.sql into R code?
 # ??? This is probably just reading database and assigning variable names,
 # ??? there may be better ways of doing this.  
@@ -30,8 +47,6 @@ setwd(dir_lcl)
 # - hcaf.sql: hcaf stands for half-degree cells authority file.
 # the harder part is probably extracting the data from the sql files.
 
-# ??? convert into functions to be called from this script?
-#     wrap script in function and source/call it from here
 ingest_aquamaps <- function() {
   library(logging)
   
@@ -80,12 +95,14 @@ ingest_aquamaps <- function() {
   
   return(TRUE)
 }
-
 ingest_aquamaps()
 
 
+##############################################################################=
+### Ingest IUCN species list ----
+##############################################################################=
+# Update this and simplify/clarify
 
-#   ingest_iucn.R ----- get latest from Jamie -----
 # pulls species list from IUCN
 # scrapes data from iucn site for each species on the list; saves to cache
 # extract habitats from cached files
@@ -99,80 +116,131 @@ ingest_aquamaps()
 source('ingest_iucn.R')
 
 
-#   ingest.py -----
-# call the ingest.py Python script from within this R script, using rPython: 
-#   http://www.r-bloggers.com/calling-python-from-r-with-rpython/
-# create lookup tables for:
-# IUCN species in Aquamaps cells; and then into regions.
-python.load('ingest.py')
+##############################################################################=
+### Generate lookup - species <-> category/trend and spatial_source ----
+##############################################################################=
+
+spp_all <- create_spp_master_lookup(reload = FALSE)
+### Output is spp_all.csv data frame with these fields:
+### | am_sid      | sciname     | am_category | iucn_sid | iucn_category | popn_trend     | 
+### | popn_category | info_source | spp_group | id_no    | objectid    | spatial_source |
+### Outputs saved to:
+### * v201X/intermediate/spp_iucn_maps_all.csv 
+###     (list of all species represented in the IUCN shape files)
+### * v201X/intermediate/spp_all.csv (complete data frame)
+
+# to overall lookup table, join scores for population category and trend.
+popn_cat    <- data.frame(popn_category  = c("LC", "NT", "VU", "EN", "CR", "EX"), 
+                          category_score = c(   0,  0.2,  0.4,  0.6,  0.8,   1))
+popn_trend  <- data.frame(popn_trend=c("Decreasing", "Stable", "Increasing"), 
+                          trend_score=c(-0.5, 0, 0.5))
+
+spp_all <- spp_all %>%
+  left_join(popn_cat,   by = 'popn_category') %>%
+  left_join(popn_trend, by = 'popn_trend') 
 
 
-#   ingest_intersections.R -----
-# is this really needed any more?
-ingest_intersections <- function() {
-  
-  dir_mdl_tmp <- file.path(dir_mdl, 'GL-NCEAS-SpeciesDiversity_v2013a/tmp')
-  dir_mdl_cache <- file.path(dir_mdl, 'GL-NCEAS-SpeciesDiversity_v2013a/cache')
-  dir_mdl_intsx <- file.path(dir_mdl_cache, 'iucn_intersections')
-  
-  ### read in spp
-  spp <- read.csv(file.path(dir_mdl_tmp, 'spp_iucn_marine_global.csv'), stringsAsFactors = FALSE)
-  
-  ### get list of dbf files
-  dbfs <- list.files(dir_mdl_intsx, glob2rx('range_*_mar_sid*_pts.dbf')) # 2553 before corals
-  
-  ### extract sid and group from dbf path name, and assign info into spp data.frame
-  sids = as.integer(gsub('range_([a-z]+)_mar_sid([0-9]+)_pts.dbf','\\2', dbfs))
-  grps =            gsub('range_([a-z]+)_mar_sid([0-9]+)_pts.dbf','\\1', dbfs)
-  
-  spp <- spp %>% mutate(
-    shp_dbf = NA, # path to dbf
-    shp_grp = NA, # group like birds or seacucumbers
-    shp_cnt = NA) # number of points counted with intersection of rgn_fao_am_cells_pts_gcs
-  idx = match(sids, spp$sid)
-  # ??? do this with mutate?
-  spp$shp_dbf[idx] = dbfs
-  spp$shp_grp[idx] = grps
-  
-  ### compile monster table of species per cell. 
-  cells_spp = data.frame(cid=integer(0), sid=integer(0)) 
-  ### initialize cells_spp
-  
-  for (i in 1:length(dbfs)){ # i=1
-    ### For loop:
-    ### * Read in .dbf info for one species
-    ### * rename ORIG_FID to cid
-    ### * for all rows where the spp$sid matches this index of sids, set count = number of rows in dbf
-    ### * to cells_spp, add the cid and sid for this species
-    ### ??? This loop is very slow - file reading is slow. Use as.is = TRUE? use readr?
-    
-    # use 'ptm <- proc.time()' and 'proc.time() - ptm' around code to time execution.
-    
-    # read dbf data for one species
-    dbf_data <- foreign::read.dbf(file.path(dir_mdl_intsx, dbfs[i]))
-    if ('ORIG_FID' %in% names(d)){
-      dbf_data <- dbf_data %>% rename(cid = ORIG_FID)
-    }
-    
-    # log dbf path, group, and count of points to species record
-    # ??? do this with mutate?
-    spp$shp_cnt[spp$sid==sids[i]] = nrow(dbf_data) # spp[spp$sid==sids[i], ]
-    
-    # merge with cells_spp
-    cells_spp <- cells_spp %>%
-      bind_rows(dbf_data[ , c('cid','sid')])
-    
-    
-  }
-  
-  write.csv(cells_spp, file.path(dir_mdl_tmp,'cells_spp_iucn.csv'), row.names=F, na='')
-  write.csv(spp,       file.path(dir_mdl_tmp,'spp_iucn.csv'),       row.names=F, na='')
-}
+##############################################################################=
+### Generate lookup - IUCN species to LOICZID ----
+##############################################################################=
 
-ingest_intersections()
+extract_loiczid_per_spp(groups_override = tmp, reload = FALSE)
+### Extract loiczid cell IDs for each species within each species group.  Save 
+### a .csv file for that group, with fields:
+###       sciname | iucn_sid | LOICZID | prop_area
+### NOTES: this takes a long time - multiple hours for some of the shape files.  
+### * reload = FALSE allows it to skip extraction on groups with files already present.
+### * use groups_override argument to run function on partial list of species groups.
 
 
-#   model.R -----
+##############################################################################=
+### Generate lookup - region ID to LOICZID/CSQ ----
+##############################################################################=
+
+rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
+### | sp_id | loiczid | proportionArea | csq | cell_area
+#   TO DO:  currently as sp_id; update to translate sp_id to rgn_id
+# ??? DOES THIS STILL INCLUDE ALL THE HS and AQ SHIT? get rid of those?
+# saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/region_prop_df.csv
+
+
+##############################################################################=
+### SPP - Generate species per cell tables for Aquamaps and IUCN -----
+##############################################################################=
+
+am_cells_spp_sum <- process_am_spp_per_cell(rgn_cell_lookup, reload = FALSE)
+### This returns dataframe with variables:
+### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
+### AM does not include subspecies: every am_sid corresponds to exactly one sciname.
+# > x <- spp_all %>% filter(!is.na(am_sid)) %>% select(am_sid, sciname) %>% unique()
+# > sum(duplicated(x$am_sid))
+# [1] 0
+# > sum(duplicated(x$sciname))
+# [1] 0
+
+iucn_cells_spp_sum <- process_iucn_spp_per_cell(rgn_cell_lookup, reload = TRUE)
+### This returns dataframe with variables:
+### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
+### IUCN includes subspecies - one sciname corresponds to multiple iucn_sid values.
+# > x <- spp_all %>% filter(!is.na(iucn_sid)) %>% select(iucn_sid, sciname) %>% unique()
+# > sum(duplicated(x$iucn_sid))
+# [1] 0
+# > sum(duplicated(x$sciname))
+# [1] 99
+
+
+##############################################################################=
+### SPP - Summarize mean category and trend per cell and per region -----
+##############################################################################=
+
+summary_by_loiczid <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum)
+### This returns dataframe with variables:
+### loiczid | weighted_mean_cat | weighted_mean_trend
+
+summary_by_rgn     <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup)
+### This returns dataframe with variables:
+### sp_id | rgn_mean_cat | rgn_mean_trend | status
+
+
+##############################################################################=
+### ICO -----
+##############################################################################=
+
+# TO DO: modify for ICO scores - 
+#   determine subset of ICO spp per region 
+#     (or is it a single global list of iconic species wherever they show up?)
+#   not area-weighted - just present/absent within a region.
+
+# TO DO: deal with subspecies for IUCN species.
+#   examine range maps - are there overlaps between parent and subspecies/subpops?
+#   - if not - no need to worry.
+#   - if so  - worry!  once extracted, overlap info is lost.
+#     - do a difference between parent and each subpop, and then use that for extract?
+#     - if overlap is consistent (i.e. parent fully covers each subpop), just subtract prop_area?
+#       - what if two subpopulations in same cell - might not overlap; so subtract won't work.
+#   ??? are parents already taken out of the iucn_spp_marine_global? that's what it seems like.
+#       In ingest_iucn script, looks like subpops are subsetted OUT of the main list.
+#       But then merged back in, and then parents subsetted out.
+#   TO DO: confirm that this is the right way to do things?  Does 'parent' really just consist
+#       of sum of 'subpopulations' or could it encompass other areas?
+#     * find the full list of parents and subpopulations for marine species, and see how
+#       many are IUCN range map species.  Select by sci name, spot check a few in QGIS or ArcGIS.
+# subpops <- read_csv(file.path(dir_anx, scenario, 'intermediate/spp_iucn_marine_subpopulations.csv')) %>% 
+#   rename(parent = sid)
+# spp_all_subpops <- spp_all %>%
+#   filter(spatial_source == 'iucn') %>%
+#   left_join(subpops,
+#             by = c('iucn_sid' = 'subpopulations')) %>%
+#   filter(!is.na(parent)) %>%
+#   select(iucn_sid, parent, sciname, iucn_category, spp_group, spatial_source)
+# TO DO: deal with sp_id --> proper region ID.  
+#   Why are there different shape files?
+#   Can we just read an updated shape file for global regions?  
+#   * maybe just filter out CCAMLR/disputed/inland?
+#   If not, can we just fix the region shape files and avoid this in the future?
+#   * see github/ohiprep/globalprep/PressuresRegionExtract/CreateRaster.R
+
+# NOTES ON model.R - should be covered in the above code.
 # ??? compare BB and MF versions - BB version involves 3nm regions? MF version is for AQ and HS
 # Averages IUCN score per cell for all species in that cell; then takes area-weighted average of those scores for each region
 # .csv of score and trend output.
@@ -192,14 +260,3 @@ ingest_intersections()
 # count # of species; count # of species with trend.
 # mean score across all species; mean trend across all species
 # summarize across all cells in region: sum(area of cell * mean score (or trend) for cell) / sum(area of cell)
-
-source('model.R')
-
-
-
-
-# TODO: move 'D:/best/tmp/GL-NCEAS-SpeciesDiversity_v2013a/spp.db'
-#           r'D:\best\tmp\GL-NCEAS-SpeciesDiversity_v2013a\tmp\geodb.gdb'
-
-# TODO: calculate 2012 SPP with 2013 regions
-#       D:\best\docs\data\model\GL-NCEAS-SpeciesDiversity\ohi_spp
