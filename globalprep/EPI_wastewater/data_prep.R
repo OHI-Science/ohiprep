@@ -140,3 +140,11 @@ summary(waste_sum_d)
 # Martinique   1   0
 
 View(waste_sum_d)
+
+## Testing how it would look to have scores of CW status weighted by "Wastewater Index":
+
+test <- read.csv("scores_test.csv")
+colnames(test) = c("goal","dimension","rgn_id","score")
+head(test);
+waste_by_scores <- left_join(test,waste_sum_d);
+waste_by_scores_b <- waste_by_scores$goal=("CW") %>% select_((c("CW","status")) 
