@@ -543,3 +543,51 @@ process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup) {
 }
 
 
+##############################################################################=
+check_sim_names <- function(num_letters = 5) {
+  cat(sprintf('Reading in Aquamaps species from: \n  %s\n', 
+              file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_speciesoccursum.csv')))
+  spp_am <- fread(file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_speciesoccursum.csv')) %>%
+    select(common_name = FBname, am_sid = SPECIESID, genus = Genus, species = Species)
+  
+  cat(sprintf('Reading in IUCN species from: \n  %s\n', 
+              file.path(dir_anx, scenario, 'intermediate/spp_iucn_marine_global.csv')))
+  spp_iucn_marine = read.csv(file.path(dir_anx, scenario, 'intermediate/spp_iucn_marine_global.csv')) %>%
+    select(sciname, iucn_sid = sid) %>%
+    separate(sciname, c('genus', 'species'), sep = ' ', remove = TRUE, extra = 'drop')
+  iucn_names <- data.frame(unique(spp_iucn_marine %>% select(g = genus, s = species))) %>%
+    mutate(g = tolower(g),
+           s = tolower(s),
+           g_x = str_sub(g, 1, num_letters),
+           s_x = str_sub(s, 1, num_letters))
+  am_names   <- data.frame(unique(spp_am %>% select(g = genus, s = species, common_name))) %>%
+    mutate(g   = tolower(g),
+           s = tolower(s),
+           g_x = str_sub(g, 1, num_letters),
+           s_x = str_sub(s, 1, num_letters))
+  iucn_unmatched <- setdiff(iucn_names, am_names %>% select(-common_name))
+  iucn_similar   <- am_names %>% 
+    rename(am_s = s, am_g = g) %>%
+    inner_join(iucn_unmatched %>%
+                 rename(iucn_s = s, iucn_g = g),
+                 by = c('g_x', 's_x')) %>%
+    filter(am_g == iucn_g | am_s == iucn_s) %>%
+    select(-g_x, -s_x)
+  am_unmatched   <- setdiff(am_names %>% select(-common_name), iucn_names)
+  am_similar   <- iucn_names %>% 
+    rename(iucn_s = s, iucn_g = g) %>%
+    inner_join(am_unmatched %>%
+                 rename(am_s = s, am_g = g),
+                 by = c('g_x', 's_x')) %>%
+    filter(am_g == iucn_g | am_s == iucn_s) %>%
+    select(-g_x, -s_x)
+  
+  sim_names <- am_similar %>%
+    full_join(iucn_similar) 
+  
+  it_goes_here <- file.path(dir_anx, sprintf('tmp/sim_names_%d_letters.csv', num_letters))
+  cat(sprintf('Identified %d similar species names, based on first %d letters of Genus or species.\n', nrow(sim_names), num_letters))
+  cat(sprintf('Writing similar names file to: \n  %s\n', it_goes_here))
+  write_csv(sim_names, it_goes_here)
+  return(sim_names)
+}

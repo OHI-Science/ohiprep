@@ -254,3 +254,24 @@ summary_by_rgn     <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup)
 # count # of species; count # of species with trend.
 # mean score across all species; mean trend across all species
 # summarize across all cells in region: sum(area of cell * mean score (or trend) for cell) / sum(area of cell)
+
+
+# some checks: 
+
+# examine species names for mismatches/typos/name variations.  Similar defined as:
+# * first five letters of one field (genus or species) match for both AM and IUCN.
+# * exact match for other field.
+sim_names <- check_sim_names()
+
+# check to see how closely IUCN category info matches between IUCN data and AM data
+category_check <- spp_all %>% 
+  filter(!is.na(iucn_category) & !is.na(am_category)) %>%
+  select(sciname, am_category, iucn_category) %>%
+  mutate(am_category   = as.character(am_category),
+         iucn_category = as.character(iucn_category),
+         cat_match = (am_category == iucn_category))
+sum(category_check$cat_match)
+# Out of 2962 species that include IUCN category from both AM and IUCN,
+# 2862 of them are matches.  96.6% match.
+
+
