@@ -43,10 +43,9 @@ get_loiczid_raster <- function(reload = FALSE) {
 ##############################################################################=
 extract_cell_id_per_region <- function(reload = FALSE) {
 ### Determines proportional area of each cell covered by region polygons.  Returns data frame
-### of sp_id, loiczid, csq, and proportional area of loiczid cell covered by the sp_id region.
+### of rgn_id, loiczid, csq, and proportional area of loiczid cell covered by the rgn_id region.
 ### Should not be year-specific, so leave files in SpeciesDiversity/rgns.
 ### ??? TO DO: compare loiczid regions <-> CenterLong and CenterLat to last year's table, to make sure consistent from year to year.
-### ??? TO DO: update to translate sp_id directly into rgn_id using Melanie's code. Filter out only global regions.
 ##############################################################################=
 
   ogr_location  <- file.path(dir_anx, '../../Global/NCEAS-Regions_v2014/data')
@@ -66,22 +65,24 @@ extract_cell_id_per_region <- function(reload = FALSE) {
     loiczid_raster <- get_loiczid_raster(reload = FALSE)
     
     cat('Extracting proportional area of LOICZID cells per region polygon.  Come back in 15-20 minutes.\n')
-    region_prop <- raster::extract(loiczid_raster,  regions, weights = TRUE, small = TRUE, normalizeWeights = FALSE, progress = 'text') 
-    # small = TRUE returns 1 for sp_id 232, not what we want.
+    region_prop <- raster::extract(loiczid_raster,  regions, weights = TRUE, normalizeWeights = FALSE, progress = 'text') 
+    # small = TRUE returns 1 for rgn_id 232, not what we want.
     # slow command... ~15 minutes (even with the small = TRUE)
     
-    ### assign sp_id identifiers (from `regions`) to region_prop, convert to data.frame
-    names(region_prop) <- regions@data$sp_id
+    
+    ### assign rgn_id and rgn_name identifiers (from `regions`) to region_prop, convert to data.frame
+    rgn_id_name <- data.frame(regions@data$rgn_id, regions@data$rgn_name) %>%
+      unite(combo, regions.data.rgn_id, regions.data.rgn_name, sep = '_')
+    names(region_prop) <- rgn_id_name$combo
     region_prop_df     <- plyr::ldply(region_prop, rbind) # ??? still a plyr function.
     # length(unique(region_prop_df$.id)) 
     #   WAS: less than 254 due to repeats of Canada and one small region (232: Bosnia/Herzegovina) with no rasters identified
     #   IS:  278, including a cell for #232.
-    
-    # ??? consider converting sp_id into rgn_id code from Melanie
     region_prop_df <- region_prop_df %>%
-      rename(sp_id = .id, 
-             loiczid = value, 
+      separate(.id, c('rgn_id', 'rgn_name'), sep = '_') %>%
+      rename(loiczid = value, 
              proportionArea = weight)
+    
     
     ### ??? add in this region -  Bosnia/Herzegovina (BIH), which appears to be too small to catch using this method (<1% of area)
     ### ??? SKIPPING THIS FOR NOW!!!
@@ -89,7 +90,7 @@ extract_cell_id_per_region <- function(reload = FALSE) {
     # cells_2013[cells_2013$csq=='1401:227:4', ]
     # am_cells[am_cells$CsquareCode == '1401:227:4', ]
     # 6.034664/2269.83
-    # bih <- data.frame(sp_id=232, LOICZID=68076, proportionArea=0.002658641)
+    # bih <- data.frame(rgn_id=232, LOICZID=68076, proportionArea=0.002658641)
     # region_prop_df <- rbind(region_prop_df, bih)
     
     file_loc <- file.path(dir_anx, 'raw/aquamaps_2014/tables/hcaf.csv')
@@ -103,18 +104,11 @@ extract_cell_id_per_region <- function(reload = FALSE) {
     region_prop_df <- region_prop_df %>%
       left_join(am_cells, by = 'loiczid')
     
-    
-#     cat('Filtering out all regions with sp_id > 300, to eliminate high seas and antarctic.\n')
-#     cat('Really, there should be something in here to turn sp_id into rgn_id proper-like.\n')
-#     region_prop_df <- region_prop_df %>%
-#       filter(sp_id <= 300)
-    
+        
     cat(sprintf('Writing loiczid/csq/cell proportions/cell areas by region to: \n  %s\n', rgn_prop_file))
     write.csv(region_prop_df, rgn_prop_file, row.names = FALSE)
   } else {
     cat(sprintf('Reading loiczid cell proportions by region from: \n  %s\n', rgn_prop_file))
-#     cat('Filtered out all regions with sp_id > 300, to eliminate high seas and antarctic.\n')
-#     cat('Really, there should be something in here to turn sp_id into rgn_id proper-like.\n')
     region_prop_df <- read.csv(rgn_prop_file)
   }
   
@@ -534,7 +528,7 @@ process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup) {
   arrange(loiczid)
 
   region_sums <- rgn_weighted_sums %>%
-    group_by(sp_id) %>%
+    group_by(rgn_id) %>%
     summarize(rgn_mean_cat   = sum(area_weighted_mean_cat)/sum(rgn_area),
               rgn_mean_trend = sum(area_weighted_mean_trend)/sum(rgn_area))
   
@@ -549,3 +543,51 @@ process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup) {
 }
 
 
+##############################################################################=
+check_sim_names <- function(num_letters = 5) {
+  cat(sprintf('Reading in Aquamaps species from: \n  %s\n', 
+              file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_speciesoccursum.csv')))
+  spp_am <- fread(file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_speciesoccursum.csv')) %>%
+    select(common_name = FBname, am_sid = SPECIESID, genus = Genus, species = Species)
+  
+  cat(sprintf('Reading in IUCN species from: \n  %s\n', 
+              file.path(dir_anx, scenario, 'intermediate/spp_iucn_marine_global.csv')))
+  spp_iucn_marine = read.csv(file.path(dir_anx, scenario, 'intermediate/spp_iucn_marine_global.csv')) %>%
+    select(sciname, iucn_sid = sid) %>%
+    separate(sciname, c('genus', 'species'), sep = ' ', remove = TRUE, extra = 'drop')
+  iucn_names <- data.frame(unique(spp_iucn_marine %>% select(g = genus, s = species))) %>%
+    mutate(g = tolower(g),
+           s = tolower(s),
+           g_x = str_sub(g, 1, num_letters),
+           s_x = str_sub(s, 1, num_letters))
+  am_names   <- data.frame(unique(spp_am %>% select(g = genus, s = species, common_name))) %>%
+    mutate(g   = tolower(g),
+           s = tolower(s),
+           g_x = str_sub(g, 1, num_letters),
+           s_x = str_sub(s, 1, num_letters))
+  iucn_unmatched <- setdiff(iucn_names, am_names %>% select(-common_name))
+  iucn_similar   <- am_names %>% 
+    rename(am_s = s, am_g = g) %>%
+    inner_join(iucn_unmatched %>%
+                 rename(iucn_s = s, iucn_g = g),
+                 by = c('g_x', 's_x')) %>%
+    filter(am_g == iucn_g | am_s == iucn_s) %>%
+    select(-g_x, -s_x)
+  am_unmatched   <- setdiff(am_names %>% select(-common_name), iucn_names)
+  am_similar   <- iucn_names %>% 
+    rename(iucn_s = s, iucn_g = g) %>%
+    inner_join(am_unmatched %>%
+                 rename(am_s = s, am_g = g),
+                 by = c('g_x', 's_x')) %>%
+    filter(am_g == iucn_g | am_s == iucn_s) %>%
+    select(-g_x, -s_x)
+  
+  sim_names <- am_similar %>%
+    full_join(iucn_similar) 
+  
+  it_goes_here <- file.path(dir_anx, sprintf('tmp/sim_names_%d_letters.csv', num_letters))
+  cat(sprintf('Identified %d similar species names, based on first %d letters of Genus or species.\n', nrow(sim_names), num_letters))
+  cat(sprintf('Writing similar names file to: \n  %s\n', it_goes_here))
+  write_csv(sim_names, it_goes_here)
+  return(sim_names)
+}
