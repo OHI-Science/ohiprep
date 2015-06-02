@@ -1,24 +1,13 @@
 # data_prep.r
 
-
+# Prepare FAO fisheries data for targeted harvest pressure.
 # updated for eez2015 by @jules32, based on ohiprep/Global/FAO-TargetedHarvest_v2012/data_prep.r; removes old commenting
 # updates include using @oharac's code for cleaning FAO data codes
 
 
-# Prepare FAO fisheries data for targeted harvest pressure.
-
-#   read in quant/value files
-#   remove Totals, Yugoslavia rows
-#   translate FAO data codes (F, ..., -, 0 0)
-#   carry previous year's value forward if value for max(year) is NA
-#   merge with commodities and collapse to product
-#   add rgn_id using new cbind_rgn function (@bbest updated add_rgn_id())
-#   save single files for each commodity 
-
 # setup ----
 
 # load libraries. Note dplyr, tidyr, stringr are loaded later in common.R
-# library(zoo)  
 library(ohicore) # devtools::install_github('ohi-science/ohicore@dev') # may require uninstall and reinstall
 
 
