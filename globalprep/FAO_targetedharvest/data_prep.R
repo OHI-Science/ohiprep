@@ -23,7 +23,10 @@ library(ohicore) # devtools::install_github('ohi-science/ohicore@dev') # may req
 
 
 # get paths and functions
-source('src/R/common.R') # set dir_neptune_data
+# source('src/R/common.R') # set dir_neptune_data ## MRF: seemed to run better on Neptune without this due to issues with updating the stringr package which requires the coll function in the newer stringr version 
+# library(dplyr)
+# library(stringr)
+# library(tidyr)
 # source('src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na()
 source('src/R/fao_fxn.R') # by @oharac
 
@@ -31,6 +34,12 @@ source('src/R/fao_fxn.R') # by @oharac
 dir_in = '~/github/ohiprep/globalprep/FAO_captureproduction' 
 dir_out = '~/github/ohiprep/globalprep/FAO_targetedharvest'
 dir_old = '~/github/ohiprep/Global/FAO-TargetedHarvest_v2012' 
+
+# # running on neptune:
+# dir_in = 'globalprep/FAO_captureproduction' 
+# dir_out = 'globalprep/FAO_targetedharvest'
+# dir_old = 'Global/FAO-TargetedHarvest_v2012' 
+
 
 # raw FAO data
 fis_fao_csv = file.path(dir_in, 'raw/FAO_captureproduction_1950_2013.csv')
@@ -170,16 +179,25 @@ for (i in 1:length(names(scenario_maxyear))) { # i=1
   
   m_f = m_r %>%
     filter(year >= minyear_all & year <= maxyear) %>%
-    mutate(score = value / max(value, na.rm = T)) # * 1.10:  don't multiply by 1.10 since comparing to the max across all scenarios
+    mutate(score = value / quantile(value, 0.95, na.rm = T)) %>% # * 1.10:  don't multiply by 1.10 since comparing to the max across all scenarios
+    mutate(score = ifelse(score>1, 1, score))
+  
+#   library(ggplot2)
+#   ggplot(m_f, aes(score, fill=as.factor(year))) +
+#     geom_histogram() 
+   
   head(m_f); summary(m_f)
   
   m_f_max = m_f %>%
-    filter(value == max(value, na.rm = T))
+    filter(value == max(value, na.rm = TRUE))
   
-  message(sprintf('\n%s pressures scores for %d regions are rescaled to the max harvest since %s (%d-%d):', 
+  m_f_quantile_95  <- quantile(m_f$value, 0.95, na.rm=TRUE)
+   
+
+  message(sprintf('\n%s pressures scores for %d regions are rescaled to the 95th quantile in harvest since %s (%d-%d):', 
                   names(scenario_maxyear)[i], length(unique(m_f$rgn_id)), names(minyear_all), minyear_all, maxyear))
-  message(sprintf('%s in %s: %d marine mammals and sea turtles harvested', 
-                  m_f_max$rgn_name, m_f_max$year, m_f_max$value))
+  message(sprintf('%s in %s: %d marine mammals and sea turtles harvested, and the 95th quantile is: %s ', 
+                  m_f_max$rgn_name, m_f_max$year, m_f_max$value, m_f_quantile_95))
   # output displayed below  
   
   m_f = m_f %>%
