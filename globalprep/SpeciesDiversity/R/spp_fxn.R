@@ -476,7 +476,7 @@ process_am_spp_per_cell <- function(reload = FALSE) {
 get_am_cells_spp <- function(n_max = -1, reload = FALSE) {
   am_cells_spp_file <- file.path(dir_anx, scenario, 'intermediate/am_cells_spp.csv')
   if(!file.exists(am_cells_spp_file) | relead) {
-    cat(('Creating Aquamaps species per cell file\n')
+    cat('Creating Aquamaps species per cell file\n')
     ### Load Aquamaps species per cell table
     file_loc <- file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_hcaf_species_native.csv')
     cat(sprintf('Loading AquaMaps cell-species data.  Large file! \n  %s \n', file_loc))
