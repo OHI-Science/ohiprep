@@ -117,6 +117,108 @@ extract_cell_id_per_region <- function(reload = FALSE) {
 
 
 ##############################################################################=
+generate_iucn_map_list <- function() {
+### support function for create_spp_master_lookup.  Interrogates each shapefile
+### in raw/iucn_shp/ (for each species group) to determine which species are
+### present.  Creates and returns output of:
+###     spp_group | id_no | objectid | binomial | spatial_source
+  iucn_map_list_file <- file.path(dir_anx, scenario, 'intermediate/spp_iucn_maps_all.csv')
+  if(!file.exists(iucn_map_list_file) | reload) {
+    if(!file.exists(iucn_map_list_file)) cat('No file found for list of available IUCN range maps.  ')
+    cat('Generating new list of available IUCN range maps.\n')
+    
+    dir_iucn_shp <- file.path(dir_anx, 'raw/iucn_shp')
+    groups_list <- as.data.frame(list.files(dir_iucn_shp)) %>%
+      rename(shp_fn = `list.files(dir_iucn_shp)`) %>%
+      filter(tools::file_ext(shp_fn) == 'shp') %>%
+      mutate(shp_fn = str_replace(shp_fn, '.shp', ''))
+    
+    spp_iucn_maps <- data.frame()
+    
+    for (spp_group in groups_list$shp_fn) { 
+      cat(sprintf('Processing species group: %s... \n', tolower(spp_group)))
+      spp_dbf <- read.dbf(file.path(dir_iucn_shp, sprintf('%s.dbf', spp_group)))
+      cat('file read successfully... ')
+      spp_dbf <- as.data.frame(spp_dbf)
+      cat('converted to data frame... ')
+      spp_dbf <- data.frame(spp_group, spp_dbf)
+      if('dbf.ID_NO' %in% names(spp_dbf)) {
+        spp_dbf <- spp_dbf %>% 
+          rename(dbf.id_no = dbf.ID_NO)
+      }
+      if('dbf.OBJECTID' %in% names(spp_dbf)) {
+        spp_dbf <- spp_dbf %>% rename(dbf.objectid = dbf.OBJECTID)
+      }
+      if('dbf.BINOMIAL' %in% names(spp_dbf)) {
+        spp_dbf <- spp_dbf %>% rename(dbf.binomial = dbf.BINOMIAL)
+      }
+      if('dbf.id_no' %in% names(spp_dbf)) {
+        spp_dbf <- spp_dbf %>% 
+          mutate(dbf.id_no = as.integer(dbf.id_no))
+      }
+      spp_iucn_maps <- bind_rows(spp_iucn_maps, spp_dbf)
+      cat('binding to list...\n')
+    }
+    spp_iucn_maps <- spp_iucn_maps %>%
+      select(spp_group, id_no = dbf.id_no, objectid = dbf.objectid, binomial = dbf.binomial) %>% # other fields?
+      mutate(spatial_source = as.character('iucn'))%>%
+      unique()
+    
+    cat(sprintf('Writing list of available IUCN range maps to: \n  %s\n', iucn_map_list_file))
+    write.csv(spp_iucn_maps, iucn_map_list_file, row.names = FALSE)
+  } else {
+    cat(sprintf('Reading list of available IUCN range maps from: \n  %s\n', iucn_map_list_file))
+    spp_iucn_maps <- read.csv(iucn_map_list_file, stringsAsFactors = FALSE)
+  }
+  return(spp_iucn_maps)
+}
+
+
+##############################################################################=
+check_name_matches <- function(spp_all, spp_all_file) {
+### support function for create_master_spp_lookup.  Using the list of close matches
+### from name_matches.csv, and removes any Aquamaps lines for species determined
+### to match with an IUCN range map.
+  name_match_file <- file.path(dir_anx, scenario, 'intermediate/name_matches.csv')
+  if(file.exists(name_match_file)) {
+    cat(sprintf('Checking against list of AM <-> IUCN unmatched names to fix: \n  %s.\n', name_match_file))
+    name_matches <- read_csv(name_match_file)
+    
+    # keep IUCN listings
+    name_match_iucn <- spp_all %>%
+      filter(sciname %in% name_matches$sciname)
+    # discard AM listings
+    simpleCap <- function(x) {
+      s <- strsplit(x, " ")[[1]]
+      paste(toupper(substring(s, 1,1)), substring(s, 2),
+            sep="", collapse=" ")
+    }
+    name_matches$am_g_cap <- sapply(name_matches$am_g, simpleCap)
+    name_matches2 <- name_matches %>%
+      unite(am_sciname, am_g_cap, am_s, sep = ' ')
+    name_match_am <- spp_all %>%
+      filter(sciname %in% name_matches2$am_sciname & spatial_source != 'iucn')
+    if(nrow(name_match_am) > 0) {
+      cat('Force-matched names with both IUCN maps and AM maps: \n')
+      print(as.matrix(name_match_am),quote=F) 
+      spp_all <- spp_all %>%
+        filter(!(sciname %in% name_match_am$sciname))
+      cat(sprintf('Forcing matches and writing modified species lookup table to: \n  %s\n', spp_all_file))
+      write.csv(spp_all, spp_all_file, row.names = FALSE)
+    }
+    else cat('No force-matched species to drop that haven\'t already been taken care of.\n')
+    # OK fine.  Four species dropped; none have category info anyway.
+  } else {
+    cat('No file available with lookup table of near-matches to be fixed between AM and IUCN scientific names.\n')
+    cat('Run the check_sim_names() function, and if any legitimate matches come up, make sure to fix them.\n')
+    cat(sprintf('Save the lookup table here so this function can find it:\n  %s\n', name_match_file))
+  }
+  return(spp_all)
+}
+
+
+
+##############################################################################=
 create_spp_master_lookup <- function(reload = FALSE) {
 ### Create lookup: species <-> popn_category/popn_trend and spatial_source.
 ### Output is data frame with these fields:
@@ -168,56 +270,8 @@ create_spp_master_lookup <- function(reload = FALSE) {
              popn_category = ifelse(!is.na(iucn_category), iucn_category, am_category),
              info_source = ifelse(!is.na(iucn_category), 'iucn',
                                   ifelse(!is.na(am_category), 'am',   NA)))
-  
-    iucn_map_list_file <- file.path(dir_anx, scenario, 'intermediate/spp_iucn_maps_all.csv')
-    if(!file.exists(iucn_map_list_file) | reload) {
-      if(!file.exists(iucn_map_list_file)) cat('No file found for list of available IUCN range maps.  ')
-      cat('Generating new list of available IUCN range maps.\n')
-  
-      dir_iucn_shp <- file.path(dir_anx, 'raw/iucn_shp')
-      groups_list <- as.data.frame(list.files(dir_iucn_shp)) %>%
-        rename(shp_fn = `list.files(dir_iucn_shp)`) %>%
-        filter(tools::file_ext(shp_fn) == 'shp') %>%
-        mutate(shp_fn = str_replace(shp_fn, '.shp', ''))
-      
-      spp_iucn_maps <- data.frame()
-      
-      for (spp_group in groups_list$shp_fn) { 
-        cat(sprintf('Processing species group: %s... \n', tolower(spp_group)))
-        spp_dbf <- read.dbf(file.path(dir_iucn_shp, sprintf('%s.dbf', spp_group)))
-        cat('file read successfully... ')
-        spp_dbf <- as.data.frame(spp_dbf)
-        cat('converted to data frame... ')
-        spp_dbf <- data.frame(spp_group, spp_dbf)
-        if('dbf.ID_NO' %in% names(spp_dbf)) {
-          spp_dbf <- spp_dbf %>% 
-            rename(dbf.id_no = dbf.ID_NO)
-        }
-        if('dbf.OBJECTID' %in% names(spp_dbf)) {
-          spp_dbf <- spp_dbf %>% rename(dbf.objectid = dbf.OBJECTID)
-        }
-        if('dbf.BINOMIAL' %in% names(spp_dbf)) {
-          spp_dbf <- spp_dbf %>% rename(dbf.binomial = dbf.BINOMIAL)
-        }
-        if('dbf.id_no' %in% names(spp_dbf)) {
-          spp_dbf <- spp_dbf %>% 
-            mutate(dbf.id_no = as.integer(dbf.id_no))
-        }
-        spp_iucn_maps <- bind_rows(spp_iucn_maps, spp_dbf)
-        cat('binding to list...\n')
-      }
-      spp_iucn_maps <- spp_iucn_maps %>%
-        select(spp_group, id_no = dbf.id_no, objectid = dbf.objectid, binomial = dbf.binomial) %>% # other fields?
-        mutate(spatial_source = as.character('iucn'))%>%
-        unique()
-      
-      cat(sprintf('Writing list of available IUCN range maps to: \n  %s\n', iucn_map_list_file))
-      write.csv(spp_iucn_maps, iucn_map_list_file, row.names = FALSE)
-    } else {
-      cat(sprintf('Reading list of available IUCN range maps from: \n  %s\n', iucn_map_list_file))
-      spp_iucn_maps <- read.csv(iucn_map_list_file, stringsAsFactors = FALSE)
-    }
-      
+    
+    spp_iucn_maps <- generate_iucn_map_list()
     
     spp_all <- spp_all %>% 
       left_join(spp_iucn_maps, by = c('sciname' = 'binomial')) %>% 
@@ -250,6 +304,10 @@ create_spp_master_lookup <- function(reload = FALSE) {
     cat(sprintf('Full species lookup table already exists.  Reading from: \n  %s\n', spp_all_file))
     spp_all <- read.csv(spp_all_file)
   }
+  
+  spp_all <- check_name_matches(spp_all, spp_all_file)
+  # checks species master list against list of close-match names; forces
+  # matches, keeping only IUCN and omitting Aquamaps.  Re-saves file.
   
   return(invisible(spp_all))
 }
@@ -360,7 +418,7 @@ extract_loiczid_per_spp <- function(groups_override = NULL, reload = FALSE) {
 
 
 ##############################################################################=
-process_am_spp_per_cell <- function(rgn_cell_lookup, reload = FALSE) {
+process_am_spp_per_cell <- function(reload = FALSE) {
 # Calculate category and trend scores per cell for Aquamaps species.
 # * load AM species <-> cell lookup
 # * filter to appropriate cells (in regions, meets probability threshold)
@@ -374,27 +432,7 @@ process_am_spp_per_cell <- function(rgn_cell_lookup, reload = FALSE) {
   if(!file.exists(am_cells_spp_sum_file) | reload) {
     cat('Generating cell-by-cell summary for Aquamaps species.\n')
   
-    ### Load Aquamaps species per cell table
-    file_loc <- file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_hcaf_species_native.csv')
-    cat(sprintf('Loading AquaMaps cell-species data.  Large file! \n  %s \n', file_loc))
-    am_cells_spp <- read_csv(file_loc, col_types = '_ccn__') %>%
-      rename(am_sid = SpeciesID, csq = CsquareCode, prob = probability)
-    
-    # filter entire aquamaps table to just cells found in appropriate regions
-    # (as designated by rgn_cell_lookup file). 
-    cat('Filtering to just cells within regions, and species with probability greater than 0.4.\n')
-    am_cells_spp1 <- am_cells_spp %>% 
-      filter(csq %in% rgn_cell_lookup$csq) 
-
-    # filter out below probability threshold; 39 M to 29 M observations.
-    am_cells_spp1 <- am_cells_spp1 %>%
-      filter(prob >= .40) %>%
-      select(-prob)
-
-    # then join to rgn_cell_lookup to attach loiczid, region ID, and cell area
-    am_cells_spp2 <- am_cells_spp1 %>%
-      inner_join(rgn_cell_lookup, by = 'csq') %>%
-      select(-csq)
+    am_cells_spp <- get_am_cells_spp()
     
     # filter species info to just Aquamaps species with category info, and bind to 
     # am_cells_spp to attach category_score and trend_score.
@@ -404,10 +442,10 @@ process_am_spp_per_cell <- function(rgn_cell_lookup, reload = FALSE) {
       filter(!is.na(category_score)) %>%
       select(am_sid, sciname, category_score, trend_score)
     
-    am_cells_spp3 <- am_cells_spp2 %>% 
+    am_cells_spp <- am_cells_spp %>% 
       inner_join(spp_am_info, by = 'am_sid')
     
-    am_cells_spp_sum <- am_cells_spp3 %>%
+    am_cells_spp_sum <- am_cells_spp %>%
       group_by(loiczid) %>%
       summarize(mean_cat_score        = mean(category_score),     # no na.rm needed; already filtered
                 mean_popn_trend_score = mean(trend_score, na.rm = TRUE), 
@@ -427,7 +465,50 @@ process_am_spp_per_cell <- function(rgn_cell_lookup, reload = FALSE) {
 
 
 ##############################################################################=
-process_iucn_spp_per_cell <- function(rgn_cell_lookup, reload = FALSE) {
+get_am_cells_spp <- function(n_max = -1, reload = FALSE) {
+  ### Load Aquamaps species per cell table
+  file_loc <- file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_hcaf_species_native.csv')
+  cat(sprintf('Loading AquaMaps cell-species data.  Large file! \n  %s \n', file_loc))
+  am_cells_spp <- read_csv(file_loc, col_types = '_ccn__', n_max = n_max) %>%
+    rename(am_sid = SpeciesID, csq = CsquareCode, prob = probability)
+  
+  # filter entire aquamaps table to just cells found in appropriate regions
+  # (as designated by rgn_cell_lookup file). 
+  cat('Filtering to just cells within regions, and species with probability greater than 0.4.\n')
+  if(!exists('rgn_cell_lookup')) rgn_cell_lookup <- extract_cell_id_per_region()
+  am_cells_spp <- am_cells_spp %>% 
+    filter(csq %in% rgn_cell_lookup$csq) 
+  
+  # filter out below probability threshold; 39 M to 29 M observations.
+  am_cells_spp <- am_cells_spp %>%
+    filter(prob >= .40) %>%
+    select(-prob)
+  
+  cat('Joining to region <-> cell lookup table to attach LOICZID, region ID, and cell area.\n')
+  # then join to rgn_cell_lookup to attach loiczid, region ID, and cell area
+  am_cells_spp <- am_cells_spp %>%
+    inner_join(rgn_cell_lookup, by = 'csq') %>%
+    select(-csq)
+  
+  return(am_cells_spp)
+}
+
+
+##############################################################################=
+get_iucn_cells_spp <- function(reload = FALSE) {
+    cat(sprintf('Building IUCN species to cell table.  This might take a few minutes.\n'))
+    iucn_map_files      <- file.path(dir_anx, 'iucn_intersections', list.files(file.path(dir_anx, 'iucn_intersections')))
+    iucn_cells_spp_list <- lapply(iucn_map_files, read.csv) # read each into dataframe within a list
+    iucn_cells_spp      <- rbind_all(iucn_cells_spp_list)   # combine list of dataframes to single dataframe
+    # This creates a full data frame of all IUCN species, across all species groups, for all cells.
+    # Probably big...
+
+    return(iucn_cells_spp)
+}
+
+
+##############################################################################=
+process_iucn_spp_per_cell <- function(reload = FALSE) {
   # Calculate category and trend scores per cell for IUCN species.
   # * For each IUCN species group:
   #   * load IUCN species <-> cell lookup
@@ -445,6 +526,7 @@ process_iucn_spp_per_cell <- function(rgn_cell_lookup, reload = FALSE) {
     cat('Generating cell-by-cell summary for IUCN range-map species.\n')
     
     ### Load IUCN species per cell tables
+    iucn_cells_spp <- get_iucn_cells_spp()
     iucn_map_files      <- file.path(dir_anx, 'iucn_intersections', list.files(file.path(dir_anx, 'iucn_intersections')))
     iucn_cells_spp_list <- lapply(iucn_map_files, read.csv) # read each into dataframe within a list
     iucn_cells_spp      <- rbind_all(iucn_cells_spp_list)   # combine list of dataframes to single dataframe
@@ -459,6 +541,7 @@ process_iucn_spp_per_cell <- function(rgn_cell_lookup, reload = FALSE) {
       filter(loiczid %in% rgn_cell_lookup$loiczid) 
     
     # then join to rgn_cell_lookup to attach loiczid, region ID, and cell area
+    if(!exists('rgn_cell_lookup')) rgn_cell_lookup <- extract_cell_id_per_region()
     iucn_cells_spp2 <- iucn_cells_spp1 %>%
       inner_join(rgn_cell_lookup, by = 'loiczid') %>%
       select(-csq)
@@ -544,7 +627,7 @@ process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup) {
 
 
 ##############################################################################=
-check_sim_names <- function(num_letters = 5) {
+check_sim_names <- function(spp_all, num_letters = 5) {
   cat(sprintf('Reading in Aquamaps species from: \n  %s\n', 
               file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_speciesoccursum.csv')))
   spp_am <- fread(file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_speciesoccursum.csv')) %>%
@@ -582,8 +665,15 @@ check_sim_names <- function(num_letters = 5) {
     filter(am_g == iucn_g | am_s == iucn_s) %>%
     select(-g_x, -s_x)
   
+  spp_maps <- spp_all %>%
+    select(sciname, spatial_source) %>%
+    separate(sciname, c('iucn_g', 'iucn_s'), sep = ' ', remove = FALSE, extra = 'drop') %>%
+    mutate(iucn_g = tolower(iucn_g),
+           iucn_s = tolower(iucn_s))
+  
   sim_names <- am_similar %>%
-    full_join(iucn_similar) 
+    full_join(iucn_similar) %>%
+    left_join(spp_maps, by = c('iucn_g', 'iucn_s'))
   
   it_goes_here <- file.path(dir_anx, sprintf('tmp/sim_names_%d_letters.csv', num_letters))
   cat(sprintf('Identified %d similar species names, based on first %d letters of Genus or species.\n', nrow(sim_names), num_letters))
