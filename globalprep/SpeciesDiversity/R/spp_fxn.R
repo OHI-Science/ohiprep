@@ -217,7 +217,6 @@ check_name_matches <- function(spp_all, spp_all_file) {
 }
 
 
-
 ##############################################################################=
 create_spp_master_lookup <- function(reload = FALSE) {
 ### Create lookup: species <-> popn_category/popn_trend and spatial_source.
@@ -297,6 +296,15 @@ create_spp_master_lookup <- function(reload = FALSE) {
     #   - if different subspp have different categories, but no spatial info, which category to choose - best case? worst case?
     #   - eventually, decide how to filter out unhelpful lines
     
+    # to overall lookup table, join scores for population category and trend.
+    popn_cat    <- data.frame(popn_category  = c("LC", "NT", "VU", "EN", "CR", "EX"), 
+                              category_score = c(   0,  0.2,  0.4,  0.6,  0.8,   1))
+    popn_trend  <- data.frame(popn_trend=c("Decreasing", "Stable", "Increasing"), 
+                              trend_score=c(-0.5, 0, 0.5))
+    
+    spp_all <- spp_all %>%
+      left_join(popn_cat,   by = 'popn_category') %>%
+      left_join(popn_trend, by = 'popn_trend') 
     
     cat(sprintf('Writing full species lookup table to: \n  %s\n', spp_all_file))
     write.csv(spp_all, spp_all_file, row.names = FALSE)
@@ -466,29 +474,45 @@ process_am_spp_per_cell <- function(reload = FALSE) {
 
 ##############################################################################=
 get_am_cells_spp <- function(n_max = -1, reload = FALSE) {
-  ### Load Aquamaps species per cell table
-  file_loc <- file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_hcaf_species_native.csv')
-  cat(sprintf('Loading AquaMaps cell-species data.  Large file! \n  %s \n', file_loc))
-  am_cells_spp <- read_csv(file_loc, col_types = '_ccn__', n_max = n_max) %>%
-    rename(am_sid = SpeciesID, csq = CsquareCode, prob = probability)
-  
-  # filter entire aquamaps table to just cells found in appropriate regions
-  # (as designated by rgn_cell_lookup file). 
-  cat('Filtering to just cells within regions, and species with probability greater than 0.4.\n')
-  if(!exists('rgn_cell_lookup')) rgn_cell_lookup <- extract_cell_id_per_region()
-  am_cells_spp <- am_cells_spp %>% 
-    filter(csq %in% rgn_cell_lookup$csq) 
-  
-  # filter out below probability threshold; 39 M to 29 M observations.
-  am_cells_spp <- am_cells_spp %>%
-    filter(prob >= .40) %>%
-    select(-prob)
-  
-  cat('Joining to region <-> cell lookup table to attach LOICZID, region ID, and cell area.\n')
-  # then join to rgn_cell_lookup to attach loiczid, region ID, and cell area
-  am_cells_spp <- am_cells_spp %>%
-    inner_join(rgn_cell_lookup, by = 'csq') %>%
-    select(-csq)
+  am_cells_spp_file <- file.path(dir_anx, scenario, 'intermediate/am_cells_spp.csv')
+  if(!file.exists(am_cells_spp_file) | relead) {
+    cat(('Creating Aquamaps species per cell file\n')
+    ### Load Aquamaps species per cell table
+    file_loc <- file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_hcaf_species_native.csv')
+    cat(sprintf('Loading AquaMaps cell-species data.  Large file! \n  %s \n', file_loc))
+    am_cells_spp <- read_csv(file_loc, col_types = '_ccn__', n_max = n_max) %>%
+      rename(am_sid = SpeciesID, csq = CsquareCode, prob = probability)
+    
+    # filter entire aquamaps table to just cells found in appropriate regions
+    # (as designated by rgn_cell_lookup file). 
+    cat('Filtering to just cells within regions, and species with probability greater than 0.4.\n')
+    if(!exists('rgn_cell_lookup')) rgn_cell_lookup <- extract_cell_id_per_region()
+    am_cells_spp <- am_cells_spp %>% 
+      filter(csq %in% rgn_cell_lookup$csq) 
+    
+    # filter out below probability threshold; 39 M to 29 M observations.
+    am_cells_spp <- am_cells_spp %>%
+      filter(prob >= .40) %>%
+      select(-prob)
+    
+    cat('Joining to region <-> cell lookup table to attach LOICZID, region ID, and cell area.\n')
+    # then join to rgn_cell_lookup to attach loiczid, region ID, and cell area
+    # merge() faster than inner_join()?
+#     am_cells_spp <- am_cells_spp %>%
+#       inner_join(rgn_cell_lookup, by = 'csq') %>%
+#       select(-csq)
+    ptm = proc.time()
+    am_cells_spp <- merge(am_cells_spp, rgn_cell_lookup, by = 'csq') %>%
+      select(-csq)
+    ptm <- proc.time() - ptm
+    cat(sprintf('Process time: %.2f seconds total\n', ptm[3]))
+    
+    
+    cat(sprintf('Writing Aquamaps species per cell file to: \n  %s\n', am_cells_spp_file))
+  } else {
+    cat(sprintf('Reading Aquamaps species per cell file from: \n  %s\n', am_cells_spp_file))
+    am_cells_spp <- read_csv(am_cells_spp_file)
+  }
   
   return(am_cells_spp)
 }
@@ -682,4 +706,3 @@ check_sim_names <- function(spp_all, num_letters = 5) {
   return(sim_names)
 }
 
-# testing?

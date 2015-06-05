@@ -11,7 +11,7 @@ library(sp)
 library(rgdal)
 library(raster)
 library(readr)      # for read_csv()
-library(rPython) # to call Python functions and scripts within R?
+#library(rPython) # to call Python functions and scripts within R?
 
 setwd('~/github/ohiprep')
 source('src/R/common.R')
@@ -119,16 +119,6 @@ spp_all <- create_spp_master_lookup(reload = FALSE)
 ### * v201X/intermediate/spp_iucn_maps_all.csv 
 ###     (list of all species represented in the IUCN shape files)
 ### * v201X/intermediate/spp_all.csv (complete data frame)
-
-# to overall lookup table, join scores for population category and trend.
-popn_cat    <- data.frame(popn_category  = c("LC", "NT", "VU", "EN", "CR", "EX"), 
-                          category_score = c(   0,  0.2,  0.4,  0.6,  0.8,   1))
-popn_trend  <- data.frame(popn_trend=c("Decreasing", "Stable", "Increasing"), 
-                          trend_score=c(-0.5, 0, 0.5))
-
-spp_all <- spp_all %>%
-  left_join(popn_cat,   by = 'popn_category') %>%
-  left_join(popn_trend, by = 'popn_trend') 
 
 
 ##############################################################################=
