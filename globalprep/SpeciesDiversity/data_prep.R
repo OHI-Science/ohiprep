@@ -400,7 +400,7 @@ get_ico_rgn_am   <- function(ico_list, reload = FALSE) {
       mutate(am_sid = as.character(am_sid))
     
     if(!exists('rgn_cell_lookup'))  rgn_cell_lookup <- extract_cell_id_per_region()
-    cells_spp <- get_am_cells_spp(n_max = 500000) %>%
+    cells_spp <- get_am_cells_spp() %>%
       select(-proportionArea, -cell_area)
     
     ico_am_sid <- unique(ico_list_sp$am_sid)
