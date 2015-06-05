@@ -13,8 +13,6 @@ library(raster)
 library(readr)      # for read_csv()
 library(rPython) # to call Python functions and scripts within R?
 
-
-
 setwd('~/github/ohiprep')
 source('src/R/common.R')
 
@@ -25,7 +23,6 @@ dir_git  <- file.path('~/github/ohiprep', goal)
 
 source(file.path(dir_git, 'R/spp_fxn.R'))
 # SPP-specific functions
-
 
 ##############################################################################=
 ### Ingest Aquamaps data to .csv from .sql ----
@@ -162,7 +159,7 @@ rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
 ### SPP - Generate species per cell tables for Aquamaps and IUCN -----
 ##############################################################################=
 
-am_cells_spp_sum <- process_am_spp_per_cell(rgn_cell_lookup, reload = FALSE)
+am_cells_spp_sum <- process_am_spp_per_cell(reload = FALSE)
 ### This returns dataframe with variables:
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### AM does not include subspecies: every am_sid corresponds to exactly one sciname.
@@ -172,7 +169,7 @@ am_cells_spp_sum <- process_am_spp_per_cell(rgn_cell_lookup, reload = FALSE)
 # > sum(duplicated(x$sciname))
 # [1] 0
 
-iucn_cells_spp_sum <- process_iucn_spp_per_cell(rgn_cell_lookup, reload = TRUE)
+iucn_cells_spp_sum <- process_iucn_spp_per_cell(reload = FALSE)
 ### This returns dataframe with variables:
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### IUCN includes subspecies - one sciname corresponds to multiple iucn_sid values.
@@ -205,7 +202,7 @@ summary_by_rgn     <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup)
 #     (or is it a single global list of iconic species wherever they show up?)
 #   not area-weighted - just present/absent within a region.
 
-# TO DO: deal with subspecies for IUCN species.
+# TO DO: deal with populations for IUCN species.
 #   examine range maps - are there overlaps between parent and subspecies/subpops?
 #   - if not - no need to worry.
 #   - if so  - worry!  once extracted, overlap info is lost.
@@ -241,16 +238,16 @@ summary_by_rgn     <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup)
 # ??? calculate this for both SPP and ICO - SPP is area-weighted (so rare species don't count as much), but ICO is not (rare species count just as much as common)
 
 # For each Aquamaps cell, tally IUCN category scores for all species (AM and IUCN) within that cell.
-      # area-weighted?
-      # e.g. in cell 999, three species:
-      #   lobster, id_no 701, 1.00 area, IUCN cat LC (0.00), popn_trend decreasing (-.5)
-      #   fish,    id_no 205,  .65 area, IUCN cat NT (0.20), popn_trend stable     (0.0)
-      #   snail,   id_no 808,  .42 area, IUCN cat CR (0.80), popn_trend increasing (+.5)
-      # for an endangered species that is only partly indicated within a cell, area weighting reduces the penalty.
-      # E.g. above, the endangered snail, unweighted, gives the cell a penalty of .8; but the snail is only partly found
-      #      within the cell, so area-weighting would give that cell a penalty of .8 * .42 = .336.  If
-      #      only part of this cell fell within a country's EEZ, then it would get further reduced.
-      #      This seems to go along with proportional weighting of AquaMaps species by probability.  Is that what we want to do?
+# area-weighted?
+# e.g. in cell 999, three species:
+#   lobster, id_no 701, 1.00 area, IUCN cat LC (0.00), popn_trend decreasing (-.5)
+#   fish,    id_no 205,  .65 area, IUCN cat NT (0.20), popn_trend stable     (0.0)
+#   snail,   id_no 808,  .42 area, IUCN cat CR (0.80), popn_trend increasing (+.5)
+# for an endangered species that is only partly indicated within a cell, area weighting reduces the penalty.
+# E.g. above, the endangered snail, unweighted, gives the cell a penalty of .8; but the snail is only partly found
+#      within the cell, so area-weighting would give that cell a penalty of .8 * .42 = .336.  If
+#      only part of this cell fell within a country's EEZ, then it would get further reduced.
+#      This seems to go along with proportional weighting of AquaMaps species by probability.  Is that what we want to do?
 # count # of species; count # of species with trend.
 # mean score across all species; mean trend across all species
 # summarize across all cells in region: sum(area of cell * mean score (or trend) for cell) / sum(area of cell)
@@ -261,7 +258,7 @@ summary_by_rgn     <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup)
 # examine species names for mismatches/typos/name variations.  Similar defined as:
 # * first five letters of one field (genus or species) match for both AM and IUCN.
 # * exact match for other field.
-sim_names <- check_sim_names()
+sim_names <- check_sim_names(spp_all)
 
 # check to see how closely IUCN category info matches between IUCN data and AM data
 category_check <- spp_all %>% 
@@ -274,4 +271,165 @@ sum(category_check$cat_match)
 # Out of 2962 species that include IUCN category from both AM and IUCN,
 # 2862 of them are matches.  96.6% match.
 
+# ICO ----
+get_ico_list <- function() {
+  ico_list_file <- file.path(dir_anx, 'ico/ico_global_list.csv')
+  ico_list <- read.csv(ico_list_file, stringsAsFactors = FALSE) %>%
+    select(country    = Country, 
+           comname    = Specie.Common.Name,  
+           sciname    = Specie.Scientific.Name, 
+           ico_flag   = Flagship.Species,
+           ico_local  = Priority.Species_Regional.and.Local,
+           ico_global = Priority.Species_Global,
+           ico_rgn    = Nation.Specific.List,
+           ico_cat_long   = Current.Red.List.Category..Status.,
+           ico_trend  = Population.Increasing..Decreasing..Stable.or.Unknown...over.3.generations.
+    )
+  # clean up names
+  ico_list <- ico_list %>%
+    mutate(sciname = str_trim(sciname),
+           comname = str_trim(comname)) %>%
+    filter(sciname != '')
+  
+  sum(!is.na(ico_list$ico_global) | !is.na(ico_list$ico_flag))
+  # 1673 out of 2592 are globally iconic &/or flagship species
+  sum(!is.na(ico_list$ico_local)  &  is.na(ico_list$ico_global) & is.na(ico_list$ico_flag))
+  # 63 are locally iconic but not on global or flagship lists; all are minke whales.  The rest of the locally important list is all humpback whales.
+  sum((ico_list$ico_rgn != '') & is.na(ico_list$ico_local)  &  is.na(ico_list$ico_global) & is.na(ico_list$ico_flag))
+  # 45 are on nation-specific list that aren't included elsewhere
+  
+  
+  # convert global, flagship, and local iconic flags into single global iconic flag
+  # note 'local' is just humpbacks and minkes, across 50-60 countries each. Just call it global.
+  ico_list <- ico_list %>%
+    mutate(ico_gl = (!is.na(ico_global) | !is.na(ico_local) | !is.na(ico_flag))) %>%
+    select(-ico_global, -ico_local, -ico_flag) 
+  
+  
+  # convert long text IUCN categories into letter codes.
+  cat_lookup  <- data.frame(ico_category = c("LC", "NT", "VU", "EN", "CR", "EX", "DD"), 
+                            ico_cat_long = c('least concern', 'near threatened', 'vulnerable', 'endangered', 'critically endangered', 'extinct', 'data deficient'))
+  ico_list <- ico_list %>%
+    mutate(ico_cat_long = tolower(ico_cat_long)) %>%
+    left_join(cat_lookup, by = 'ico_cat_long') %>%
+    select(-ico_cat_long)
+  
+  # join to spp_all and update category/trend info if available from IUCN spreadsheet
+  ico_list <- ico_list %>%
+    left_join(spp_all %>%
+                select(iucn_sid, am_sid, sciname, popn_trend, iucn_category, spatial_source), 
+              by = 'sciname') %>%
+    mutate(popn_trend    = tolower(popn_trend),
+           iucn_category = ifelse(is.na(iucn_category), 
+                                  as.character(ico_category), 
+                                  as.character(iucn_category)),
+           trend         = ifelse(is.na(popn_trend) | popn_trend == 'unknown', 
+                                  as.character(ico_trend), 
+                                  as.character(popn_trend))) %>%
+    select(-ico_category, -ico_trend, -popn_trend)
+  
+  # convert regional iconic status into a rgn_id, and join to ico_list.
+  rgn_name_file <- '~/github/ohi-global/eez2013/layers/rgn_global.csv'
+  rgn_names <- read_csv(rgn_name_file)
+  ico_list <- ico_list %>%
+    left_join(ico_rgn_list <- ico_list %>%
+                filter(ico_rgn != '' | is.na(spatial_source)) %>%
+                select(country, sciname) %>%
+                left_join(rgn_names, by = c('country' = 'label')),
+              by = c('country', 'sciname')) %>% 
+    select(-country, -ico_rgn, ico_rgn_id = rgn_id) %>% 
+    filter(iucn_category != 'DD') %>%
+    unique
+  return(ico_list)
+}
 
+get_ico_rgn_iucn <- function(ico_list, reload = FALSE) {
+  ico_rgn_iucn_file <- file.path(dir_anx, scenario, 'intermediate/ico_rgn_iucn.csv')
+  if(!file.exists(ico_rgn_iucn_file) | reload) {
+    ico_list_iucn <- ico_list %>%
+      filter(spatial_source == 'iucn') %>%
+      select(-spatial_source)
+    
+    ### Load IUCN species per cell tables : takes a while
+    iucn_cells_spp <- get_iucn_cells_spp()
+    
+    iucn_ico_names <- unique(ico_list_iucn$sciname)
+    if(!exists('rgn_cell_lookup'))  rgn_cell_lookup <- extract_cell_id_per_region()
+    
+    ### filter is faster than join.  Filter iucn_cells_spp by sciname; then join to LOICZID <-> rgn table
+    ico_cells_iucn <- iucn_cells_spp %>%
+      filter(sciname %in% iucn_ico_names) %>%
+      left_join(rgn_cell_lookup %>%
+                  select(rgn_id, rgn_name, loiczid),
+                by = c('LOICZID' = 'loiczid'))
+    ico_rgn_iucn <- ico_cells_iucn %>%
+      group_by(rgn_id, sciname, id_no) %>%
+      summarize(ncells = n()) %>%
+      inner_join(ico_list_iucn, by = 'sciname')
+    ico_rgn_iucn <- ico_rgn_iucn %>%
+      filter(ico_gl == TRUE | rgn_id == ico_rgn_id) %>%
+      select(rgn_id, sciname, comname, iucn_category, trend) %>%
+      unique()
+    cat(sprintf('Writing regional presence of iconic species from IUCN spatial data. \n  %s\n', ico_rgn_iucn_file))
+    write_csv(ico_rgn_iucn, ico_rgn_iucn_file)
+    
+    # Two problem species appear, with same sciname, two iucn_categories, and no 
+    # spatial differentiation by iucn_sid:
+    # Tursiops truncatus  CR
+    # Tursiops truncatus  VU
+    # Balaena mysticetus  NT
+    # Balaena mysticetus  EN
+    # Balaena mysticetus  CR
+  } else {
+    cat(sprintf('Reading regional presence of iconic species from IUCN spatial data from:\n  %s\n', ico_rgn_iucn_file))
+    ico_rgn_iucn <- read_csv(ico_rgn_iucn_file)
+  }
+  return(ico_rgn_iucn)
+}
+
+ico_list <- get_ico_list()
+
+ico_rgn_iucn <- get_ico_rgn_iucn(ico_list) 
+
+get_ico_rgn_am   <- function(ico_list, reload = FALSE) {
+  ico_rgn_file <- file.path(dir_anx, scenario, sprintf('intermediate/ico_rgn_%s.csv', 'am'))
+  if(!file.exists(ico_rgn_file) | reload) {
+    ico_list_sp <- ico_list %>%
+      filter(spatial_source == 'am') %>%
+      select(-spatial_source) %>%
+      mutate(am_sid = as.character(am_sid))
+    
+    if(!exists('rgn_cell_lookup'))  rgn_cell_lookup <- extract_cell_id_per_region()
+    cells_spp <- get_am_cells_spp(n_max = 500000) %>%
+      select(-proportionArea, -cell_area)
+    
+    ico_am_sid <- unique(ico_list_sp$am_sid)
+    
+    
+    ### filter is faster than join.  Filter iucn_cells_spp by sciname; then join to LOICZID <-> rgn table
+    ico_cells <- cells_spp %>%
+      filter(am_sid %in% ico_am_sid)
+    ico_rgn <- ico_cells %>%
+      group_by(rgn_id, sciname, id_no) %>%
+      summarize(ncells = n()) %>%
+      inner_join(ico_list, by = 'am_sid')
+    ico_rgn <- ico_rgn %>%
+      filter(ico_gl == TRUE | rgn_id == ico_rgn_id) %>%
+      select(rgn_id, sciname, comname, iucn_category, trend) %>%
+      unique()
+    cat(sprintf('Writing regional presence of iconic species from %s spatial data. \n  %s\n', 'am', ico_rgn_sp_file))
+    write_csv(ico_rgn_iucn, ico_rgn_iucn_file)
+    
+    # Two problem species appear, with same sciname, two iucn_categories, and no 
+    # spatial differentiation by iucn_sid:
+    # Tursiops truncatus  CR
+    # Tursiops truncatus  VU
+    # Balaena mysticetus  NT
+    # Balaena mysticetus  EN
+    # Balaena mysticetus  CR
+  } else {
+    cat(sprintf('Reading regional presence of iconic species from IUCN spatial data from:\n  %s\n', ico_rgn_iucn_file))
+    ico_rgn_iucn <- read_csv(ico_rgn_iucn_file)
+  }
+  return(ico_rgn_iucn)
+}
