@@ -1,6 +1,8 @@
 # spp_fxn.R
+# created Jun2015 by Casey O'Hara
+# functions to support calculations of the species diversity subgoal
 
-cat('NOTE: The following variables need to be set in the global environment (main script):\n')
+cat('NOTE: spp_fxn.R requires that the following variables be set in the global environment (main script):\n')
 cat(sprintf('dir_anx:  currently set to \'%s\'\n', dir_anx))
 cat(sprintf('scenario: currently set to \'%s\'\n\n', scenario))
 
@@ -524,7 +526,7 @@ get_iucn_cells_spp <- function(reload = FALSE) {
     cat(sprintf('Building IUCN species to cell table.  This might take a few minutes.\n'))
     iucn_map_files      <- file.path(dir_anx, 'iucn_intersections', list.files(file.path(dir_anx, 'iucn_intersections')))
     iucn_cells_spp_list <- lapply(iucn_map_files, read.csv) # read each into dataframe within a list
-    iucn_cells_spp      <- rbind_all(iucn_cells_spp_list)   # combine list of dataframes to single dataframe
+    iucn_cells_spp      <- bind_rows(iucn_cells_spp_list)   # combine list of dataframes to single dataframe
     # This creates a full data frame of all IUCN species, across all species groups, for all cells.
     # Probably big...
 
