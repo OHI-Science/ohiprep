@@ -23,6 +23,13 @@ rm(list = ls())
 # library(foreign)
 # library(DBI)
 # library(RSQLite)
+
+# m = dbDriver("SQLite")
+# database <- "/var/data/ohi/model/GL-NCEAS-SpeciesDiversity_v2013a/tmp/spp.db"
+# db <- dbConnect(m, dbname=database)
+# dbListTables(db)
+# 
+# dbReadTable(db, "cells")
 #write.csv(dbReadTable(db, "cells"), "C:\\Users\\Melanie\\Desktop\\Species and Iconics\\TestingAgainstOldData\\raw\\cells.csv", row.names=FALSE)
 #write.csv(dbReadTable(db, "cells_spp"), "C:\\Users\\Melanie\\Desktop\\Species and Iconics\\TestingAgainstOldData\\raw\\cells_spp.csv", row.names=FALSE)
 #write.csv(dbReadTable(db, "spp"), "C:\\Users\\Melanie\\Desktop\\Species and Iconics\\TestingAgainstOldData\\raw\\spp.csv", row.names=FALSE)
