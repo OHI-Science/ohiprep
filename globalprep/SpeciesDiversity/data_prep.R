@@ -11,9 +11,6 @@ library(sp)
 library(rgdal)
 library(raster)
 library(readr)      # for read_csv()
-library(rPython) # to call Python functions and scripts within R?
-
-
 
 setwd('~/github/ohiprep')
 source('src/R/common.R')
@@ -24,8 +21,8 @@ dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal)
 dir_git  <- file.path('~/github/ohiprep', goal)
 
 source(file.path(dir_git, 'R/spp_fxn.R'))
-# SPP-specific functions
-
+source(file.path(dir_git, 'R/ico_fxn.R'))
+# SPP-specific and ICO-specific functions
 
 ##############################################################################=
 ### Ingest Aquamaps data to .csv from .sql ----
@@ -113,31 +110,17 @@ source('ingest_iucn.R')
 ##############################################################################=
 ### Generate lookup - species <-> category/trend and spatial_source ----
 ##############################################################################=
-
 spp_all <- create_spp_master_lookup(reload = FALSE)
-### Output is spp_all.csv data frame with these fields:
-### | am_sid      | sciname     | am_category | iucn_sid | iucn_category | popn_trend     | 
-### | popn_category | info_source | spp_group | id_no    | objectid    | spatial_source |
+### | am_sid | sciname | am_category | iucn_sid | iucn_category | popn_trend | popn_category | 
+### | info_source | spp_group | id_no | objectid | spatial_source | category_score | trend_score |
 ### Outputs saved to:
-### * v201X/intermediate/spp_iucn_maps_all.csv 
-###     (list of all species represented in the IUCN shape files)
+### * v201X/intermediate/spp_iucn_maps_all.csv (list of all species represented in the IUCN shape files)
 ### * v201X/intermediate/spp_all.csv (complete data frame)
-
-# to overall lookup table, join scores for population category and trend.
-popn_cat    <- data.frame(popn_category  = c("LC", "NT", "VU", "EN", "CR", "EX"), 
-                          category_score = c(   0,  0.2,  0.4,  0.6,  0.8,   1))
-popn_trend  <- data.frame(popn_trend=c("Decreasing", "Stable", "Increasing"), 
-                          trend_score=c(-0.5, 0, 0.5))
-
-spp_all <- spp_all %>%
-  left_join(popn_cat,   by = 'popn_category') %>%
-  left_join(popn_trend, by = 'popn_trend') 
 
 
 ##############################################################################=
 ### Generate lookup - IUCN species to LOICZID ----
 ##############################################################################=
-
 extract_loiczid_per_spp(groups_override = tmp, reload = FALSE)
 ### Extract loiczid cell IDs for each species within each species group.  Save 
 ### a .csv file for that group, with fields:
@@ -150,20 +133,15 @@ extract_loiczid_per_spp(groups_override = tmp, reload = FALSE)
 ##############################################################################=
 ### Generate lookup - region ID to LOICZID/CSQ ----
 ##############################################################################=
-
 rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
 ### | sp_id | loiczid | proportionArea | csq | cell_area
-#   TO DO:  currently as sp_id; update to translate sp_id to rgn_id
-# ??? DOES THIS STILL INCLUDE ALL THE HS and AQ SHIT? get rid of those?
 # saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/region_prop_df.csv
 
 
 ##############################################################################=
 ### SPP - Generate species per cell tables for Aquamaps and IUCN -----
 ##############################################################################=
-
-am_cells_spp_sum <- process_am_spp_per_cell(rgn_cell_lookup, reload = FALSE)
-### This returns dataframe with variables:
+am_cells_spp_sum <- process_am_spp_per_cell(reload = FALSE)
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### AM does not include subspecies: every am_sid corresponds to exactly one sciname.
 # > x <- spp_all %>% filter(!is.na(am_sid)) %>% select(am_sid, sciname) %>% unique()
@@ -172,8 +150,7 @@ am_cells_spp_sum <- process_am_spp_per_cell(rgn_cell_lookup, reload = FALSE)
 # > sum(duplicated(x$sciname))
 # [1] 0
 
-iucn_cells_spp_sum <- process_iucn_spp_per_cell(rgn_cell_lookup, reload = TRUE)
-### This returns dataframe with variables:
+iucn_cells_spp_sum <- process_iucn_spp_per_cell(reload = FALSE)
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### IUCN includes subspecies - one sciname corresponds to multiple iucn_sid values.
 # > x <- spp_all %>% filter(!is.na(iucn_sid)) %>% select(iucn_sid, sciname) %>% unique()
@@ -186,7 +163,6 @@ iucn_cells_spp_sum <- process_iucn_spp_per_cell(rgn_cell_lookup, reload = TRUE)
 ##############################################################################=
 ### SPP - Summarize mean category and trend per cell and per region -----
 ##############################################################################=
-
 summary_by_loiczid <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum)
 ### This returns dataframe with variables:
 ### loiczid | weighted_mean_cat | weighted_mean_trend
@@ -196,16 +172,7 @@ summary_by_rgn     <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup)
 ### sp_id | rgn_mean_cat | rgn_mean_trend | status
 
 
-##############################################################################=
-### ICO -----
-##############################################################################=
-
-# TO DO: modify for ICO scores - 
-#   determine subset of ICO spp per region 
-#     (or is it a single global list of iconic species wherever they show up?)
-#   not area-weighted - just present/absent within a region.
-
-# TO DO: deal with subspecies for IUCN species.
+# TO DO: deal with populations for IUCN species.
 #   examine range maps - are there overlaps between parent and subspecies/subpops?
 #   - if not - no need to worry.
 #   - if so  - worry!  once extracted, overlap info is lost.
@@ -227,12 +194,6 @@ summary_by_rgn     <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup)
 #             by = c('iucn_sid' = 'subpopulations')) %>%
 #   filter(!is.na(parent)) %>%
 #   select(iucn_sid, parent, sciname, iucn_category, spp_group, spatial_source)
-# TO DO: deal with sp_id --> proper region ID.  
-#   Why are there different shape files?
-#   Can we just read an updated shape file for global regions?  
-#   * maybe just filter out CCAMLR/disputed/inland?
-#   If not, can we just fix the region shape files and avoid this in the future?
-#   * see github/ohiprep/globalprep/PressuresRegionExtract/CreateRaster.R
 
 # NOTES ON model.R - should be covered in the above code.
 # ??? compare BB and MF versions - BB version involves 3nm regions? MF version is for AQ and HS
@@ -240,17 +201,94 @@ summary_by_rgn     <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup)
 # .csv of score and trend output.
 # ??? calculate this for both SPP and ICO - SPP is area-weighted (so rare species don't count as much), but ICO is not (rare species count just as much as common)
 
-# For each Aquamaps cell, tally IUCN category scores for all species (AM and IUCN) within that cell.
-      # area-weighted?
-      # e.g. in cell 999, three species:
-      #   lobster, id_no 701, 1.00 area, IUCN cat LC (0.00), popn_trend decreasing (-.5)
-      #   fish,    id_no 205,  .65 area, IUCN cat NT (0.20), popn_trend stable     (0.0)
-      #   snail,   id_no 808,  .42 area, IUCN cat CR (0.80), popn_trend increasing (+.5)
-      # for an endangered species that is only partly indicated within a cell, area weighting reduces the penalty.
-      # E.g. above, the endangered snail, unweighted, gives the cell a penalty of .8; but the snail is only partly found
-      #      within the cell, so area-weighting would give that cell a penalty of .8 * .42 = .336.  If
-      #      only part of this cell fell within a country's EEZ, then it would get further reduced.
-      #      This seems to go along with proportional weighting of AquaMaps species by probability.  Is that what we want to do?
-# count # of species; count # of species with trend.
-# mean score across all species; mean trend across all species
-# summarize across all cells in region: sum(area of cell * mean score (or trend) for cell) / sum(area of cell)
+# some checks: 
+
+# examine species names for mismatches/typos/name variations.  Similar defined as:
+# * first five letters of one field (genus or species) match for both AM and IUCN.
+# * exact match for other field.
+sim_names <- check_sim_names(spp_all)
+
+# check to see how closely IUCN category info matches between IUCN data and AM data
+category_check <- spp_all %>% 
+  filter(!is.na(iucn_category) & !is.na(am_category)) %>%
+  select(sciname, am_category, iucn_category) %>%
+  mutate(am_category   = as.character(am_category),
+         iucn_category = as.character(iucn_category),
+         cat_match = (am_category == iucn_category))
+sum(category_check$cat_match)
+# Out of 2962 species that include IUCN category from both AM and IUCN,
+# 2862 of them are matches.  96.6% match.
+
+##############################################################################=
+### ICO -----
+##############################################################################=
+
+##############################################################################=
+### get master list of Iconic Species -----
+##############################################################################=
+ico_list <- get_ico_list()
+### | comname | sciname | ico_gl (iconic globally?) | iucn_sid | am_sid | spatial_source |
+### | iucn_category (code, NA and DD filtered out) | trend (lower case) | ico_rgn_id 
+### * ico_rgn_id: rgn_id in which species is iconic by regional/national lists,
+###   separately from other lists.
+
+##############################################################################=
+### Determine species lists by region based on IUCN and AM spatial data -----
+##############################################################################=
+ico_rgn_iucn <- get_ico_rgn_iucn(ico_list) 
+### rgn_id | sciname | comname | iucn_category | trend
+# check:
+dupes <- ico_rgn_iucn %>% select(rgn_id, sciname) %>% duplicated()
+dupes <- ico_rgn_iucn %>% filter(sciname %in% ico_rgn_iucn$sciname[dupes])
+# 25 duplicated rows - species duplicated within a region.  Species: 
+# Different IUCN species IDs, but no IUCN ID available for spatial information, 
+# so based upon an undifferentiated IUCN shapefile.  Look up each and assign to regions by hand.
+# Check in the shapefile itself - MAMMMARINE.shp or whatever.
+#         am_sid iucn_sid            sciname am_category iucn_category popn_trend
+#   1 ITS-180533     2468 Balaena mysticetus          LC            NT           
+#   2 ITS-180533     2469 Balaena mysticetus          LC            EN    Unknown
+#   3 ITS-180533     2472 Balaena mysticetus          LC            CR    Unknown
+#   4 ITS-180426   194300 Tursiops truncatus          LC            CR Decreasing
+#   5 ITS-180426 16369383 Tursiops truncatus          LC            VU Decreasing
+
+ico_rgn_am <- get_ico_rgn_am(ico_list)
+### rgn_id | sciname | comname | iucn_category | trend
+dupes <- ico_rgn_am %>% select(rgn_id, sciname) %>% duplicated()
+dupes <- ico_rgn_am %>% filter(sciname %in% ico_rgn_am$sciname[dupes])
+# * Isurus oxyrinchus:    VU, NT
+# * Dermochelys coriacea: LC, CR
+# * Lamna nasus:          CR, EN
+# Different IUCN species IDs, but no IUCN spatial information, so based upon
+# an undifferentiated Aquamaps map.  Look up each and assign to regions by hand.
+# Check on IUCN site by iucn_sid, might have country ranges for each subpop.
+#     am_sid  iucn_sid              sciname am_category iucn_category popn_trend
+#   Rep-2331  46967807 Dermochelys coriacea          CR            CR Decreasing
+#   Rep-2331  46967817 Dermochelys coriacea          CR            CR Decreasing
+#   Rep-2331  46967827 Dermochelys coriacea          CR            LC Increasing
+#   Rep-2331  46967838 Dermochelys coriacea          CR            CR Increasing
+#   Rep-2331  46967863 Dermochelys coriacea          CR            CR Decreasing
+#   Fis-22768    39343          Lamna nasus          VU            CR Decreasing
+#   Fis-22768    39344          Lamna nasus          VU            EN Decreasing
+#   Fis-22768    61420          Lamna nasus          VU            CR Decreasing
+#   Fis-58485   161749    Isurus oxyrinchus          VU            VU Decreasing
+#   Fis-58485   161750    Isurus oxyrinchus          VU            VU Decreasing
+#   Fis-58485   161751    Isurus oxyrinchus          VU            NT Decreasing
+
+##############################################################################=
+### Fill in species lists by region based on original spreadsheet -----
+##############################################################################=
+ico_rgn_other <- ico_list %>% 
+  filter(is.na(spatial_source)) %>%
+  select(rgn_id = ico_rgn_id, sciname, comname, iucn_category, trend)
+### rgn_id | sciname | comname | iucn_category | trend
+
+##############################################################################=
+### Summarize regional iconic species status -----
+##############################################################################=
+ico_rgn_sum <- process_ico_rgn(list(ico_rgn_iucn, ico_rgn_am, ico_rgn_other))
+### rgn_id | mean_cat | mean_trend | status
+
+##############################################################################=
+### Some check functions -----
+##############################################################################=
+x <- ico_rgn_source_compare()

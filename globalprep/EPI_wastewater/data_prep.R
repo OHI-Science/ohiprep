@@ -21,14 +21,14 @@ waste <- read.csv("./raw/WASTECXN_2014.csv", head = TRUE); head(waste)
 
 waste_sum_a <- waste %>% 
   select(iso, country, WASTECXN.2012) %>% 
-  mutate(year = 2014) # Taking out country code and index score; making into long format; 
+  mutate(year = 2014, wastedec = WASTECXN.2012*.01) # Taking out country code and index score; making into long format; 
 
 numc <- length(waste_sum_a[1,])
 numr <- length(waste_sum_a[,1])
 head(waste_sum_a)
 
 # STEP: adding column names
-colnames(waste_sum_a) <- c("ISO", "Country", "WasteIndex", "Year")
+colnames(waste_sum_a) <- c("ISO", "Country", "WasteIndex", "Year", "WasteIndexCoeff")
 
 # STEP: removing NA rows, truncating text
 
@@ -39,45 +39,55 @@ head(waste_sum_b)
 
 waste_sum_b <- filter(waste_sum_b, WasteIndex > -1)
 
-waste_sum_c <- select(waste_sum_b, ISO, Country, Year, WasteIndex)
+waste_sum_c <- select(waste_sum_b, ISO, Country, Year, WasteIndex, WasteIndexCoeff)
 
-summary(waste_sum_c)
+head(waste_sum_c); summary(waste_sum_c)
 
 # NOTE: Rescaling - NA here unlesss you choose to use the raw data CSV instead; however, WasteIndex scores are normalized already from 0 - 1.
 #waste_sum_e = waste_sum_d %>% select(iso, country, year, Treated) %>% mutate(rescale = (Treated)/max(Treated))
 #  head(waste_sum_e);
 
-# STEP: Clean region IDs, using ohicore function 'name_to_rgn()':
+# STEP: Save file in this directory - multiple files for different scenarios
 
-waste_sum_d <- ohicore::name_to_rgn(waste_sum_c, fld_name= 'Country', fld_value = 'WasteIndex') 
+write.csv(waste_sum_c, "po_wastewater_gl2015.csv"); # TO DO: Change to _d after the region collapse works
+write.csv(waste_sum_c, "cw_wastewater_gl2015.csv"); # ibid.
 
-## !ISSUE: after applying this code, a problem occurs where China has > 100. 
-## This is probably because it's summing Hong Kong and/or Taiwan into the data. 
-## 
+# STEP: Clean region IDs, using ohicore function 'name_to_rgn()'. *USER: You should choose whether to use WasteIndex or WasteIndexCoeff:
 
-# summary(waste_sum_d)
+## old: waste_sum_d <- ohicore::name_to_rgn(waste_sum_c, fld_name= 'Country', fld_value = 'WasteIndexCoeff')
+
+## !ISSUE: after applying this code, a problem occured where China has > 100. This is probably because it's summing Hong Kong and/or Taiwan into the data. 
+## Fixing the above issue through the below method of creating a lookup table:
+
+population_weights <- read.csv('../../../ohiprep/src/LookupTables/Pop_weight_chn_hkg_mtq_glp.csv'); head(population_weights)
+
+waste_sum_d <- ohicore::name_to_rgn(waste_sum_c, fld_name='Country', flds_unique='Country', 
+                   fld_value='WasteIndex', add_rgn_name=T, collapse_fxn = 'weighted.mean',  # <- change "d_wgi2"; stays weighted mean; collapse_fxn; 
+                   collapse_csv = '../../../ohiprep/src/LookupTables/Pop_weight_chn_hkg_mtq_glp.csv', # <- make new datasheet; use long names;
+                   dir_lookup = "../../../ohiprep/src/LookupTables"); head(waste_sum_d); summary(waste_sum_d) # 
+
+# !ISSUE: now getting error, `Error: length(fld) == 1 is not TRUE`  
+#^ once the above is fixed, apply the below:
+
+m_d[m_d$rgn_id == 140,] # check that these look correct.
+m_d[m_d$rgn_id == 209,]
+
+m_d_unique <- m_d %>%
+  select(rgn_id, rgn_name) %>%
+  unique() %>%
+  arrange(rgn_id)
+
+
+# !ISSUE-history: summary(waste_sum_d)
 # rgn_id      WasteIndex      
 # Min.   :  7   Min.   :  0.0000  
 # 1st Qu.: 66   1st Qu.:  0.5312  
 # Median :129   Median : 10.8688  
 # Mean   :124   Mean   : 27.5250  
 # 3rd Qu.:185   3rd Qu.: 49.4981  
-# Max.   :255   Max.   :105.9668  
+# Max.   :255   Max.   :105.9668  # > 100 error
 
 ## NOTE: save as pressure layer: only scenario's recent year, but rescaled, including previous scenarios ----
-
-# # rescale with all previous scenarios, to 110%:  Neptune: model/GL-NCEAS-CleanWatersPressures/pathogens/sanitation-population-combo/model.R
-# sp_press = san_pop %>%
-#   filter(include_prev_scenario == T) %>% 
-#   mutate(pressure_score = propWO_x_pop_log / (max(propWO_x_pop_log, na.rm=T) * 1.1)) %>% # number of POOPERS, RESCALED
-#   select(-include_prev_scenario)
-
-
-# STEP: Save file in this directory - multiple files for different scenarios
-
-write.csv(waste_sum_d, "po_wastewater_gl2015.csv");
-write.csv(waste_sum_d, "cw_wastewater_gl2015.csv")
-
 
 #### II. Analysis
 
@@ -147,4 +157,24 @@ test <- read.csv("scores_test.csv")
 colnames(test) = c("goal","dimension","rgn_id","score")
 head(test);
 waste_by_scores <- left_join(test,waste_sum_d);
-waste_by_scores_b <- waste_by_scores$goal=("CW") %>% select_((c("CW","status")) 
+
+waste_by_scores_b <- subset(waste_by_scores, goal == "CW" & dimension == "status"); head(waste_by_scores_b)
+View(waste_by_scores)
+
+scenario_a <- waste_by_scores_b %>% mutate(scorewaste = score*WasteIndexCoeff);
+
+a <- as.data.frame(subset(scenario_a, !is.na(scorewaste == TRUE)))
+head(a)
+summary(a)
+
+p <- qplot(score, scorewaste, data = a) # Compare CW status score against (statusscore*wasteindex));
+
+## Testing it against JMP/WHO data
+
+library(ggplot2)
+
+test2 <- read.csv("Waste_ACSAT_exploration.csv"); head(test2)
+
+testing1 <- test2 %>% select(country, ACSAT.2012, WASTECXN.2012); head(testing1)
+
+qplot(ACSAT.2012, WASTECXN.2012, data = testing1);
