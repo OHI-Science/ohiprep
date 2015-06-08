@@ -8,7 +8,7 @@ devtools::install_github('ohi-science/ohicore@dev') # may require uninstall and 
 getwd()
 setwd("./globalprep/EPI_wastewater")
 
-library(ohicore)
+library(ohicore); # devtools::install_github('ohi-science/ohicore@dev'); 
 library("dplyr")
 library("readr")
 library("tidyr")
@@ -47,36 +47,34 @@ head(waste_sum_c); summary(waste_sum_c)
 #waste_sum_e = waste_sum_d %>% select(iso, country, year, Treated) %>% mutate(rescale = (Treated)/max(Treated))
 #  head(waste_sum_e);
 
-# STEP: Save file in this directory - multiple files for different scenarios
+# STEP: Remove Hong Kong: China-at-large represents a balanced approach already. 
 
-write.csv(waste_sum_c, "po_wastewater_gl2015.csv"); # TO DO: Change to _d after the region collapse works
-write.csv(waste_sum_c, "cw_wastewater_gl2015.csv"); # ibid.
+waste_sum_ci <- waste_sum_c[-74,]
 
 # STEP: Clean region IDs, using ohicore function 'name_to_rgn()'. *USER: You should choose whether to use WasteIndex or WasteIndexCoeff:
 
-## old: waste_sum_d <- ohicore::name_to_rgn(waste_sum_c, fld_name= 'Country', fld_value = 'WasteIndexCoeff')
+waste_sum_d <- ohicore::name_to_rgn(waste_sum_ci, fld_name= 'Country', fld_value = c('WasteIndexCoeff')); summary(waste_sum_d)# 
+# m_d = name_to_rgn(waste_sum_c, fld_name='Country',
+#                   fld_value='WasteIndexCoeff', add_rgn_name=T, collapse_fxn = 'weighted.mean', 
+#                   collapse_csv = "../../../ohiprep/src/LookupTables/Pop_weight_chn_hkg_mtq_glp.csv",
+#                   dir_lookup = "../../../ohiprep/src/LookupTables");head(m_d); summary(m_d) 
 
 ## !ISSUE: after applying this code, a problem occured where China has > 100. This is probably because it's summing Hong Kong and/or Taiwan into the data. 
 ## Fixing the above issue through the below method of creating a lookup table:
 
-population_weights <- read.csv('../../../ohiprep/src/LookupTables/Pop_weight_chn_hkg_mtq_glp.csv'); head(population_weights)
-
-waste_sum_d <- ohicore::name_to_rgn(waste_sum_c, fld_name='Country', flds_unique='Country', 
-                   fld_value='WasteIndex', add_rgn_name=T, collapse_fxn = 'weighted.mean',  # <- change "d_wgi2"; stays weighted mean; collapse_fxn; 
-                   collapse_csv = '../../../ohiprep/src/LookupTables/Pop_weight_chn_hkg_mtq_glp.csv', # <- make new datasheet; use long names;
-                   dir_lookup = "../../../ohiprep/src/LookupTables"); head(waste_sum_d); summary(waste_sum_d) # 
+population_weights <- read.csv('../../../ohiprep/src/LookupTables/Pop_weight_chn_hkg_mtq_glp.csv'); tail(population_weights)
 
 # !ISSUE: now getting error, `Error: length(fld) == 1 is not TRUE`  
 #^ once the above is fixed, apply the below:
 
-m_d[m_d$rgn_id == 140,] # check that these look correct.
-m_d[m_d$rgn_id == 209,]
-
-m_d_unique <- m_d %>%
-  select(rgn_id, rgn_name) %>%
-  unique() %>%
-  arrange(rgn_id)
-
+# m_d[m_d$rgn_id == 140,] # check that these look correct.
+# m_d[m_d$rgn_id == 209,]
+# 
+# m_d_unique <- m_d %>%
+#   select(rgn_id, rgn_name) %>%
+#   unique() %>%
+#   arrange(rgn_id)
+# 
 
 # !ISSUE-history: summary(waste_sum_d)
 # rgn_id      WasteIndex      
@@ -87,12 +85,20 @@ m_d_unique <- m_d %>%
 # 3rd Qu.:185   3rd Qu.: 49.4981  
 # Max.   :255   Max.   :105.9668  # > 100 error
 
-## NOTE: save as pressure layer: only scenario's recent year, but rescaled, including previous scenarios ----
+## STEP: For pressures analysis, invert values to 1 - x:
+
+waste_sum_e <- mutate(waste_sum_d, Inverse = (1 - WasteIndexCoeff)) %>% select(rgn_id, Inverse)
+
+# STEP: Save file in this directory - multiple files for different scenarios
+
+write.csv(waste_sum_d, "cw_wastewater_gl2015.csv"); # Normal version where higher value = better score
+
+write.csv(waste_sum_e, "po_wastewater_gl2015.csv"); # Inverse version where higher value = poorer score. Also, UPDATE: Removed Hong Kong manually per judgment that China data point accounts for urban and non-urban.
 
 #### II. Analysis
 
-dim(waste_sum_d)
-summary(waste_sum_d) 
+#dim(waste_sum_d)
+#summary(waste_sum_d) 
  
 # 141 regions matching.
 # 
@@ -149,32 +155,45 @@ summary(waste_sum_d)
 # Hong Kong    0   1
 # Martinique   1   0
 
-View(waste_sum_d)
+# View(waste_sum_d)
 
 ## Testing how it would look to have scores of CW status weighted by "Wastewater Index":
 
+library(ggplot2)
 test <- read.csv("scores_test.csv")
 colnames(test) = c("goal","dimension","rgn_id","score")
 head(test);
 waste_by_scores <- left_join(test,waste_sum_d);
 
 waste_by_scores_b <- subset(waste_by_scores, goal == "CW" & dimension == "status"); head(waste_by_scores_b)
-View(waste_by_scores)
+#View(waste_by_scores_b)
 
 scenario_a <- waste_by_scores_b %>% mutate(scorewaste = score*WasteIndexCoeff);
 
 a <- as.data.frame(subset(scenario_a, !is.na(scorewaste == TRUE)))
 head(a)
 summary(a)
+ai <- mutate(a, diff = (score - scorewaste), percentchg = (score - scorewaste)/(score)*100); 
+aii <- arrange(ai, percentchg)
+View(aii);
 
 p <- qplot(score, scorewaste, data = a) # Compare CW status score against (statusscore*wasteindex));
 
+g <- ggplot(a, aes(x = score, y = scorewaste, label = rgn_id)) + geom_point(position="jitter") + geom_text(aes(label=rgn_id),hjust=0, vjust=0) + geom_jitter(color="blue")
+
+# Countries that appear robust to this test include (top 3 % change): 185, Monaco, 208, Singapore, 177, Netherlands;
+# Countries that appear to have been down-scores by this test include (bottom 3 % change): Angola, Bangladesh, Myanmar;
+
 ## Testing it against JMP/WHO data
 
-library(ggplot2)
+#old: test2 <- read.csv("Waste_ACSAT_exploration.csv"); head(test2)
+test2 <- read.csv("ACSAT_2014.csv"); head(test2)
+test2i <- left_join(test2, waste); head(test2i)
 
-test2 <- read.csv("Waste_ACSAT_exploration.csv"); head(test2)
+testing1 <- test2i %>% select(country, ACSAT.2011, WASTECXN.2012)
+head(testing1)
 
-testing1 <- test2 %>% select(country, ACSAT.2012, WASTECXN.2012); head(testing1)
+testing1i <- filter(testing1, ACSAT.2011 > -1, WASTECXN.2012 > 1)
 
-qplot(ACSAT.2012, WASTECXN.2012, data = testing1);
+qplot(ACSAT.2011, WASTECXN.2012, data = testing1i);
+g <- ggplot(testing1i, aes(x = ACSAT.2011, y = WASTECXN.2012, label = country)) + geom_point() + geom_text(aes(label=country),hjus=0,vjust=0) + geom_jitter(color="green")
