@@ -248,3 +248,12 @@ abline(0,1)
 
 # Lot of NA's because negative numbers in old data.
 
+
+#-----------------------------------------------------------
+
+# Rasterizing percent change
+
+pct_chg = raster(file.path(ohi_2013,'tmp/saup_pct_chg_mol.tif'))
+# need the shape file
+
+saup_rgns = 
