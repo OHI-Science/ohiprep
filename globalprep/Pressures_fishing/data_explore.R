@@ -203,11 +203,11 @@ all = new_catch_1999to2003%>%
         rename(catch_1999to2003_NEW = avg.catch_1999to2003_new)%>%
           mutate(catch_2008to2010_NEW = new_chg_2008to2010$avg.catch_2008to2010_new[match(id,new_chg_2008to2010$id)],
                 catch_2006to2010_NEW = new_chg_2006to2010$avg.catch_2006to2010_new[match(id,new_chg_2006to2010$id)],
-                catch_1999to2003_OLD = r$yrs1999to2003[match(id,r$id)])%>%
+                catch_1999to2003_OLD = chg$yrs1999to2003[match(id,chg$id)])%>%
         dplyr::select(id_type,id,catch_1999to2003_NEW,catch_1999to2003_OLD,catch_2008to2010_NEW,catch_2006to2010_NEW)%>%
         mutate(pct.chg_2008to2010_NEW = ((catch_2008to2010_NEW-catch_1999to2003_NEW)/catch_1999to2003_NEW)*100,
                pct.chg_2006to2010_NEW = ((catch_2006to2010_NEW-catch_1999to2003_NEW)/catch_1999to2003_NEW)*100,
-               pct.chg_2009to2011_OLD = r$pct_chg[match(id,r$id)])%>% # remember this was calculated using different data for these years...
+               pct.chg_2009to2011_OLD = chg$pct_chg[match(id,chg$id)])%>% # remember this was calculated using different data for these years...
         mutate(growth_08to10 = ifelse(catch_2008to2010_NEW>catch_1999to2003_NEW,1,0))
 # look at the average catch from 2008 to 2010 and 2006 to 2010
 
