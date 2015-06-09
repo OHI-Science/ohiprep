@@ -119,6 +119,56 @@ extract_cell_id_per_region <- function(reload = FALSE) {
 
 
 ##############################################################################=
+iucn_shp_info <- function() {
+  ### Queries shapefiles and extracts column headers.  Use to help identify which
+  ### species groups have no id_no field, and possibly other fields to help 
+  ### differentiate.
+  iucn_shp_info_file <- file.path(dir_anx, scenario, 'intermediate/iucn_shp_info.csv')
+  if(!file.exists(iucn_shp_info_file) | reload) {
+    if(!file.exists(iucn_shp_info_file)) cat('No file found for IUCN shapefile information.  ')
+    cat('Generating new list of available IUCN range maps.\n')
+    
+    dir_iucn_shp <- file.path(dir_anx, 'raw/iucn_shp')
+    groups_list <- as.data.frame(list.files(dir_iucn_shp)) %>%
+      rename(shp_fn = `list.files(dir_iucn_shp)`) %>%
+      filter(tools::file_ext(shp_fn) == 'shp') %>%
+      mutate(shp_fn = str_replace(shp_fn, '.shp', ''))
+    
+    iucn_shp_info <- data.frame()
+    
+    for (spp_gp in groups_list$shp_fn) { # spp_gp <- groups_list$shp_fn[30]
+      # determine size;
+      fsize <- round(file.size(file.path(dir_iucn_shp, sprintf('%s.shp', spp_gp)))/1e6, 2)
+      cat(sprintf('Species group shapefile %s, %.2f MB\n  %s/%s\n', spp_gp, fsize, dir_iucn_shp, spp_gp))
+      # spp_group | .shp size | # species | binomial TF | id_no TF | col_names
+      spp_dbf <- read.dbf(file.path(dir_iucn_shp, sprintf('%s.dbf', spp_gp)))
+      cat('file read successfully... ')
+      spp_dbf <- as.data.frame(spp_dbf)
+      cat('converted to data frame... ')
+      # determine number of species;
+      n_spp    <- nrow(spp_dbf)
+      name_tmp <- names(spp_dbf)
+      # determine whether binomial and id_no are present;
+      binom <- ifelse('binomial' %in% tolower(names(spp_dbf)), T, F)
+      id_no <- ifelse('id_no'    %in% tolower(names(spp_dbf)), T, F)
+      # determine column names
+      fields <- paste(name_tmp, collapse = ' | ')
+      spp_dbf_tmp <- data.frame('spp_gp' = spp_gp, 'shp_MB' = fsize, 'n_spp' = n_spp, 'binomialTF' = binom, 'id_noTF' = id_no, 'fields' = fields)
+      iucn_shp_info <- bind_rows(iucn_shp_info, spp_dbf_tmp)
+      cat('binding to list...\n')
+    }
+    
+    cat(sprintf('Writing list of IUCN range map info to: \n  %s\n', iucn_shp_info_file))
+    write.csv(iucn_shp_info, iucn_shp_info_file, row.names = FALSE)
+  } else {
+    cat(sprintf('Reading list of IUCN range map from: \n  %s\n', iucn_shp_info_file))
+    iucn_shp_info <- read.csv(iucn_shp_info_file, stringsAsFactors = FALSE)
+  }
+  return(iucn_shp_info)
+}
+
+
+##############################################################################=
 generate_iucn_map_list <- function() {
 ### support function for create_spp_master_lookup.  Interrogates each shapefile
 ### in raw/iucn_shp/ (for each species group) to determine which species are
@@ -227,7 +277,7 @@ create_spp_master_lookup <- function(reload = FALSE) {
 ### Aquamaps data is 'ohi_speciesoccursum.csv' with: 
 ### * SPECIESID   SpecCode   sciname   am_category
 ### IUCN input is 'spp_iucn_marine_global.csv' with:
-### * sid(Red.List.Species.ID)  sciname  iucn_category  popn_trend
+### * sid(Red.List.Species.ID)  sciname  iucn_category  popn_trend ??? need 'subpop' field for parent/subpop ('p', 's', NA)
 ### Output details:
 ### * popn_category: IUCN category. Prioritize iucn_category then am_category; otherwise NA
 ### * popn_trend: for species with IUCN popn_trend info: 'Increasing', 'Decreasing', 'Stable'
@@ -256,20 +306,21 @@ create_spp_master_lookup <- function(reload = FALSE) {
     
     cat(sprintf('Reading IUCN marine species list from: \n  %s\n', iucn_list_file))
     spp_iucn_marine = read.csv(iucn_list_file) %>%
-      select(sciname, iucn_sid = sid, iucn_category = category, popn_trend) %>% 
-      filter(iucn_category != 'DD')
+      select(sciname, iucn_sid = sid, iucn_category = category, popn_trend) 
     
     spp_all <- spp_am %>%
-      mutate(sciname = str_trim(sciname)) %>% # ??? this fixed one record - based on spaces, or shifting to caps?
+      mutate(sciname = str_trim(sciname)) %>%
       as.data.frame() %>%
       full_join(spp_iucn_marine, by = 'sciname')
     
     spp_all <- spp_all %>%
-      # create single 'category' field, and flag 'info_source' to indicate iucn or am
+      # create single 'category' field, and flag 'info_source' to indicate iucn or am.
+      # For species with subpopulations and both AM and IUCN categories - use the IUCN.  Later, if using AM
+      #   spatial data, we'll just use the parent IUCN info.
       mutate(iucn_category = as.character(iucn_category),
              am_category   = as.character(am_category),
              popn_category = ifelse(!is.na(iucn_category), iucn_category, am_category),
-             info_source = ifelse(!is.na(iucn_category), 'iucn',
+             info_source   = ifelse(!is.na(iucn_category), 'iucn',
                                   ifelse(!is.na(am_category), 'am',   NA)))
     
     spp_iucn_maps <- generate_iucn_map_list()
@@ -279,24 +330,23 @@ create_spp_master_lookup <- function(reload = FALSE) {
       mutate(spatial_source = ifelse((is.na(spatial_source) & !is.na(am_sid)), 'am', spatial_source))
     # is.na(spatial_source) means it wasn't in the IUCN maps list;
     # !is.na(am_sid) means it is an aquamaps species.
-    # In left_joining, we go from 31429 available species maps to only 21116 in the spp_all.  The omitted
-    # maps are not in the spp_iucn_marine_global list then?
     
     # duplicates of sciname need to be dealt with. Some cases:
-    # * sciname duped, due to multiple IUCN shapefiles (e.g. REPTILES, SEASNAKES, and non-homolopsids)
+    # * sciname duped, due to same sciname/id_no polygons within multiple IUCN shapefiles 
+    #   (e.g. REPTILES, SEASNAKES, and non-homolopsids)
     #   - choose one and drop the others.  Which to choose? let R decide.
     dupes <- spp_all %>% 
       select(sciname, iucn_sid, iucn_category, objectid) %>% 
       duplicated()
-    spp_all <- spp_all %>%
-      filter(!dupes)
-    # * sciname duped, due to multiple id_no from IUCN shapefile (e.g. one name with subpops or subspp)
-    #   - what if one is "parent" and sub pops are overlapped by parent? this creates double-counting?
-    #   - retain all, because spatial data is available for each separately?
-    # * sciname duped, due to multiple iucn_sid from IUCN spreadsheet (e.g. one name with subpops or subspp)
-    #   - this doesn't help us much if we don't have spatially explicit data.
-    #   - if different subspp have different categories, but no spatial info, which category to choose - best case? worst case?
-    #   - eventually, decide how to filter out unhelpful lines
+    spp_all <- spp_all[!dupes, ]
+    # * Multiple IUCN id_no from IUCN shapefiles, but no corresponding differentiation in spreadsheet
+    #   - 92 instances, but all are either DD or NA for category.  Filter out.
+    spp_all <- spp_all %>% 
+      filter(popn_category != 'DD' & !is.na(popn_category))
+    # * Multiple IUCN sid from spreadsheet, but no corresponding differentiation in shapefile (or using AM)
+    #   - common problem - 5000+ instances.
+    #   - use parent information and apply to entire shapefile or AM data set
+    #   - remove listings for subpops? or flag with spatial_source = 'iucn_ignore' or 'am_ignore'
     
     # to overall lookup table, join scores for population category and trend.
     popn_cat    <- data.frame(popn_category  = c("LC", "NT", "VU", "EN", "CR", "EX"), 
@@ -437,7 +487,7 @@ process_am_spp_per_cell <- function(reload = FALSE) {
 # * filter by cat score != NA
 # * summarize by loiczid - mean category_score, mean trend_score, count
   
-  am_cells_spp_sum_file <- file.path(dir_anx, scenario, 'intermediate/am_cells_spp_sum.csv')
+  am_cells_spp_sum_file <- file.path(dir_anx, scenario, 'summary/spp_sum_am_cells.csv')
   
   if(!file.exists(am_cells_spp_sum_file) | reload) {
     cat('Generating cell-by-cell summary for Aquamaps species.\n')
@@ -463,7 +513,6 @@ process_am_spp_per_cell <- function(reload = FALSE) {
                 n_trend_species       = sum(!is.na(trend_score))) %>% # no na.rm needed; count all with cat_score
       mutate(source = 'aquamaps')
     
-    am_cells_spp_sum_file <- file.path(dir_anx, scenario, 'intermediate/am_cells_spp_sum.csv')
     cat(sprintf('Writing cell-by-cell summary for Aquamaps species to:\n  %s\n', am_cells_spp_sum_file))
     write_csv(am_cells_spp_sum, am_cells_spp_sum_file)
   } else {
@@ -547,7 +596,7 @@ process_iucn_spp_per_cell <- function(reload = FALSE) {
   # * Each summary data frame should be saved to a list, to be eventually rbind_all'ed
   
   
-  iucn_cells_spp_sum_file <- file.path(dir_anx, scenario, 'intermediate/iucn_cells_spp_sum.csv')
+  iucn_cells_spp_sum_file <- file.path(dir_anx, scenario, 'summary/spp_sum_iucn_cells.csv')
   
   if(!file.exists(iucn_cells_spp_sum_file) | reload) {
     cat('Generating cell-by-cell summary for IUCN range-map species.\n')
@@ -592,14 +641,12 @@ process_iucn_spp_per_cell <- function(reload = FALSE) {
                 n_trend_species = sum(!is.na(trend_score))) %>% # no na.rm needed; count all with cat_score
       mutate(source = 'iucn')
     
-    iucn_cells_spp_sum_file <- file.path(dir_anx, scenario, 'intermediate/iucn_cells_spp_sum.csv')
     cat(sprintf('Writing cell-by-cell summary for IUCN species to:\n  %s\n', iucn_cells_spp_sum_file))
     write_csv(iucn_cells_spp_sum, iucn_cells_spp_sum_file)
   } else {
     cat(sprintf('Cell-by-cell summary for IUCN species already exists.  Reading from:\n  %s\n', iucn_cells_spp_sum_file))
     iucn_cells_spp_sum <- read.csv(iucn_cells_spp_sum_file)
   }
-  cat('Still need to ditch the parents when a subpopulation is present!\n')
   return(invisible(iucn_cells_spp_sum))
 }
 
@@ -617,7 +664,7 @@ process_means_per_cell <- function(am_cell_summary, iucn_cell_summary) {
               weighted_mean_trend = sum(n_trend_species * mean_popn_trend_score, na.rm = TRUE)/sum(n_trend_species)) %>%
     arrange(loiczid)
 
-  # write_csv(summary_by_loiczid, file.path(dir_anx, scenario, 'intermediate/cell_spp_summary_by_loiczid.csv'))
+  # write_csv(summary_by_loiczid, file.path(dir_anx, scenario, 'summary/cell_spp_summary_by_loiczid.csv'))
   return(summary_by_loiczid)
 }
 
@@ -645,7 +692,7 @@ process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup) {
   region_sums <- region_sums %>%
     mutate(status = ((1 - rgn_mean_cat) - 0.25) / 0.75 * 100)
   
-  region_summary_file <- file.path(dir_anx, scenario, 'intermediate/rgn_summary.csv')
+  region_summary_file <- file.path(dir_anx, scenario, 'summary/rgn_summary.csv')
   cat(sprintf('Writing summary file of area-weighted mean category & trend per region:\n  %s\n', region_summary_file))
   write_csv(region_sums, region_summary_file)
 
