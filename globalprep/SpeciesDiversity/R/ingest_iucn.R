@@ -189,7 +189,7 @@ spp_iucn_mar <- get_mar_spp()
 getDetails = function(sid, download_tries = 10) {
   # example species Oncorhynchus nerka: sid=135301 # (parent) ## sid=135322 # (child)  # sid=4162
   url <- sprintf('http://api.iucnredlist.org/details/%d/0', sid)
-  htm <- sprintf('cache/iucn_details/%d.htm', sid) # htm = '135322.htm'
+  htm <- file.path(dir_anx, sprintf('cache/iucn_details/%d.htm', sid)) # htm = '135322.htm'
   
   i <- 0
   while (!file.exists(htm) | (file.info(htm)$size == 0 & i < download_tries)){
