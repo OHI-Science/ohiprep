@@ -188,7 +188,7 @@ process_ico_rgn <- function(ico_rgn_dfs) {
     summarize(mean_cat = mean(category_score), mean_trend = mean(trend_score, na.rm = TRUE)) %>%
     mutate(status = ((1 - mean_cat) - 0.25) / 0.75 * 100)
   
-  ico_rgn_sum_file <- file.path(dir_anx, scenario, 'intermediate/ico_rgn_sum.csv')
+  ico_rgn_sum_file <- file.path(dir_anx, scenario, 'summary/ico_rgn_sum.csv')
   cat(sprintf('Writing file for iconic species summary by region: \n  %s\n', ico_rgn_sum_file))
   write_csv(ico_rgn_sum, ico_rgn_sum_file)
   
