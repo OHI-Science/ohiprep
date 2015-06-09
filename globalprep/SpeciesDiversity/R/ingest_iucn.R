@@ -41,11 +41,11 @@ generate_iucn_all_spp_list <- function(reload = FALSE) {
 ### then returns the dataframe.
 #############################################################################=
   
-  all_spp_file <- file.path(dir_anx, scenario, 'intermediate/spp_iucn_all.csv')
+  all_spp_file <- file.path(dir_anx, 'tmp/spp_iucn_all.csv')
   all_spp_url  <- 'http://api.iucnredlist.org/index/all.csv'
   if (!file.exists(all_spp_file) | reload){
-    cat(sprintf('Reading full IUCN redlist species from: %s\n', all_spp_url))
-    spp_iucn_all <- read.csv(all_spp_url) 
+    cat(sprintf('Reading remote full IUCN redlist species from: %s\n', all_spp_url))
+    spp_iucn_all <- read.csv(all_spp_url, stringsAsFactors = FALSE) 
     spp_iucn_all <- spp_iucn_all[!duplicated(spp_iucn_all), ] 
     spp_iucn_all <- spp_iucn_all %>%
       rename(sciname  = Scientific.Name,
@@ -57,14 +57,12 @@ generate_iucn_all_spp_list <- function(reload = FALSE) {
     cat(sprintf('Writing full IUCN redlist species list to: %s\n', all_spp_file))
     write_csv(spp_iucn_all, all_spp_file)
   } else {
-    cat(sprintf('Reading full IUCN redlist species list from: %s\n', all_spp_file))
-    spp_iucn_all <- read.csv(all_spp_file)
+    cat(sprintf('Reading local full IUCN redlist species list from: %s\n', all_spp_file))
+    spp_iucn_all <- read.csv(all_spp_file, stringsAsFactors = FALSE)
   }
   return(invisible(spp_iucn_all))
 }
 
-spp_iucn_all <- generate_iucn_all_spp_list()
-  
 
 #############################################################################=
 getHabitats <- function(sid, download_tries = 10) {
@@ -100,7 +98,7 @@ generate_iucn_habitat_list <- function(spp_list = spp_iucn_all, reload = FALSE) 
   spp_hab_file <- file.path(dir_anx, scenario, 'intermediate/spp_iucn_habitats.csv')
   if (!file.exists(spp_hab_file) | reload) {
     if(!file.exists(spp_hab_file)) cat(sprintf('No species-habitat file found at %s. '))
-    cat(sprintf('Generating species habitat list.\n', spp_hab_file))
+    cat(sprintf('Generating species habitat list from IUCN scraped data.\n', spp_hab_file))
     print(system.time({    
       # r <- lapply(spp_list$iucn_sid, getHabitats) # DEBUG
       r <- mclapply(spp_list$iucn_sid, getHabitats, mc.cores = detectCores(), mc.preschedule = FALSE) 
@@ -111,13 +109,11 @@ generate_iucn_habitat_list <- function(spp_list = spp_iucn_all, reload = FALSE) 
     cat(sprintf('Writing species-habitat list to:\n  %s\n', spp_hab_file))
     write_csv(spp_iucn_habitats, spp_hab_file)
   } else {
-    cat(sprintf('Reading species-habitat list from:\n  %s\n', spp_hab_file))
-    spp_iucn_habitats <- read.csv(spp_hab_file)
+    cat(sprintf('Reading local species-habitat list from:\n  %s\n', spp_hab_file))
+    spp_iucn_habitats <- read.csv(spp_hab_file, stringsAsFactors = FALSE)
   }
   return(invisible(spp_iucn_habitats))
 }
-
-spp_iucn_habitats <- generate_iucn_habitat_list(reload = TRUE)
 
 
 #############################################################################=
@@ -142,20 +138,26 @@ ingest_iucn_errorcheck1()
 #####################
 
 get_mar_spp <- function(reload = FALSE) {
-  spp_iucn_marine_file <- file.path(dir_anx, scenario, 'intermediate/spp_iucn_marine.csv')
+### Gets full IUCN list, and IUCN habitats list; inner_joins the two to create
+### a marine-only IUCN list.
+### Cleans up scientific names by trimming whitespace on ends and in middle.
+### Cleans up pre-2001 IUCN categories into current categories.
+### Removes infrarank listings, and drops those columns.
+  spp_iucn_marine_file <- file.path(dir_anx, 'tmp/spp_iucn_marine.csv')
   
   if(!file.exists(spp_iucn_marine_file) | reload) {
     # get distinct marine species
-    spp_iucn_all      <- read.csv(all_spp_file, stringsAsFactors = FALSE)
-    spp_iucn_habitats <- read.csv(spp_hab_file, stringsAsFactors = FALSE)
+    spp_iucn_all      <- generate_iucn_all_spp_list()
+    spp_iucn_habitats <- generate_iucn_habitat_list()
     
     df <- spp_iucn_all %>%
       inner_join(spp_iucn_habitats %>% 
                    filter(habitat == 'Marine'),
                  by = 'iucn_sid')
-    df_dupes <- duplicated(df)
-    df <- df %>% unique() # why so many duplicates?
-    
+    ### clean whitespace from ends and middle:
+    df <- df %>% 
+      mutate(sciname = gsub('\\s+', ' ', str_trim(sciname)))
+             
     # remove infraranks: 30 subspecies records ('ssp.')
     #d = subset(d, infrarank.type!='ssp.', !names(d) %in% c('infrarank','infrarank.type','infrarank.authority'))
     df <- df %>%
@@ -167,9 +169,10 @@ get_mar_spp <- function(reload = FALSE) {
       mutate(category = ifelse(category %in% c('LR/cd', 'LR/nt', 'LR/lc'), 'NT',
                                ifelse (category == 'LR/lc', 'LC',
                                        category)))
-    
-    
-    spp_iucn_marine_file <- file.path(dir_anx, scenario, 'intermediate/spp_iucn_marine.csv')
+             
+    df_dupes <- df[duplicated(df), ]
+    df <- df %>% unique() # why so many duplicates?
+
     cat(sprintf('Writing IUCN marine species file to: \n  %s\n', spp_iucn_marine_file))
     write_csv(df, spp_iucn_marine_file)
   } else {
@@ -177,7 +180,7 @@ get_mar_spp <- function(reload = FALSE) {
     cat(sprintf('Reading IUCN marine species file from: \n  %s\n', spp_iucn_marine_file))
     df <- read.csv(spp_iucn_marine_file, stringsAsFactors = FALSE)
   }
-  return(df)
+  return(invisible(df))
 }
 
 spp_iucn_mar <- get_mar_spp()
@@ -213,11 +216,14 @@ get_trend_and_subpops <- function(df = spp_iucn_mar) {
   spp_subpop     <- data.frame() # initialize
   spp_popn_trend <- data.frame()
   
-  for (sid in df$iucn_sid) { # sid = df$sid[1]
+  i  <- 0
+  ii <- nrow(df)
+  
+  for (sid in df$iucn_sid) { # sid = df$iucn_sid[3]
     sp <-  getDetails(sid)
     # subpop
     if (length(sp$subpops) > 0) {
-      cat(sprintf('Found subpopulations for parent %d: %d\n', sid, sp_subpops))
+      cat(sprintf('Found subpopulations for parent %d: %s\n', sid, paste(sp$subpops, collapse = ' ')))
       sp_subpop = data.frame(parent_sid = sid, subpop_sid = sp$subpops)
       spp_subpop = rbind(spp_subpop, sp_subpop)
     }
@@ -226,11 +232,14 @@ get_trend_and_subpops <- function(df = spp_iucn_mar) {
       sp_popn_trend <- data.frame(iucn_sid = sid, popn_trend = sp$popn_trend)
       spp_popn_trend = rbind(spp_popn_trend, sp_popn_trend)
     }  
+    i <- i + 1
+    if(i == round(i, -2)) cat(sprintf('Processed %d out of %d species.\n', i, ii))
   }
   cat(sprintf('Joining trends and subspecies data frames: %d and %d rows respectively.\n', nrow(spp_popn_trend), nrow(spp_subpop)))
-  spp_trend_subpops <- full_join(spp_popn_trend, 
+  spp_trend_subpops1 <- full_join(spp_popn_trend, 
                                  spp_subpop, 
-                                 by = c('iucn_sid' = 'parent_sid'))
+                                 by = c('iucn_sid' = 'parent_sid')) %>%
+    unique()
   write_csv(spp_trend_subpops, file.path(dir_anx, 'tmp/trend_and_subpops.csv'))
   return(spp_trend_subpops)
 }
@@ -238,11 +247,11 @@ get_trend_and_subpops <- function(df = spp_iucn_mar) {
 spp_trend_subpops <- get_trend_and_subpops(spp_iucn_mar)
 
 # assign popn_trend to d, before subsetting into subpopulations and global species and 
-spp_iucn_mar_trend <- spp_iucn_mar %>%
+spp_iucn_mar <- spp_iucn_mar %>%
   left_join(spp_trend_subpops, 
             by = 'iucn_sid')
 
-summary(d$popn_trend)
+summary(spp_iucn_mar$popn_trend)
 #    Unknown Decreasing     Stable Increasing       NA's 
 #       5559       1338       1002        193        258 
 
