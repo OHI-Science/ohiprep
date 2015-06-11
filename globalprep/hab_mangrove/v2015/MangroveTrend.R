@@ -38,7 +38,7 @@ data <- data %>%
   select(country, year, km2)
 
 
-# #### Convert names to regions:
+# #### Convert names to regions (in this case sum because working with area, change to average if working with percent data):
 data_region = name_to_rgn(data, fld_name='country', flds_unique=c('country','year'), 
                           fld_value='km2', add_rgn_name=T, collapse_fxn = 'sum_na',
                           dir_lookup = "src/LookupTables"); head(data_region); summary(data_region) 
@@ -64,6 +64,7 @@ old <- read.csv('globalprep/hab_mangrove/v2012/data/habitat_trend_mangrove.csv')
 
 ## note compare these when we obtain the new extents...
 #some regions in the old data are missing in the new (this is reflected in health as well, I think this might be due to dissagregation)
+# Also check that health of 64 and 190 are zero
 setdiff(old$rgn_id, data_region_trend$rgn_id) 
 setdiff(data_region_trend$rgn_id, old$rgn_id)
 
