@@ -92,31 +92,38 @@ ingest_aquamaps()
 ##############################################################################=
 ### Ingest IUCN species list ----
 ##############################################################################=
-# Update this and simplify/clarify
 
-# pulls species list from IUCN
-# scrapes data from iucn site for each species on the list; saves to cache
-# extract habitats from cached files
-# filter IUCN list down to just marine species
-# fix older IUCN codes
-# deal with subspecies - this looks complicated, needs more investigation
-# Davis and Baum species?
-
-# ??? convert into functions to be called from this script?
-# ??? update for dplyr/tidyr; clean up output files - which are really necessary?
-source('ingest_iucn.R')
+source(file.path(goal, 'R/ingest_iucn.R'))
+### Pulls species list from IUCN
+### Scrapes data from iucn site for each species on the list; saves to cache directory.
+### Extracts habitats from cached files; filters IUCN list down to just marine species.
+### Fixes older IUCN codes, cleans up scinames, gets rid of infraranks (subspecies).
+### Determines subpopulations/parents and population trends from scraped files.
+### Main outputs, saved to git-annex/globalprep/SpeciesDiversity/v201x/intermediate: 
+### * spp_iucn_all.csv      - full list of IUCN species pulled from web, some cleaning.
+### * spp_iucn_habitats.csv - list of IUCN species (by iucn_sid) and corresponding habitat.
+### * spp_iucn_mar.csv      - prepped list: cleaned marine list with subpops and trends.
 
 
 ##############################################################################=
 ### Generate lookup - species <-> category/trend and spatial_source ----
 ##############################################################################=
-spp_all <- create_spp_master_lookup(reload = FALSE)
+spp_all <- create_spp_master_lookup(reload = TRUE)
 ### | am_sid | sciname | am_category | iucn_sid | iucn_category | popn_trend | popn_category | 
 ### | info_source | spp_group | id_no | objectid | spatial_source | category_score | trend_score |
 ### Outputs saved to:
 ### * v201X/intermediate/spp_iucn_maps_all.csv (list of all species represented in the IUCN shape files)
 ### * v201X/intermediate/spp_all.csv (complete data frame)
 
+##############################################################################=
+### Edit subpop/parent entries ----
+##############################################################################=
+spp_all <- spp_all %>%
+  fix_am_subpops() %>%
+  fix_iucn_subpops()
+  
+iucn <- spp_all %>% select(-parent_sid, -subpop_sid) %>% filter(spatial_source == 'iucn_parent' | spatial_source == 'iucn_subpop')
+am   <- spp_all %>% select(-parent_sid, -subpop_sid) %>% filter(spatial_source == 'am_parent'   | spatial_source == 'am_subpop')
 
 ##############################################################################=
 ### Generate lookup - IUCN species to LOICZID ----
@@ -141,7 +148,7 @@ rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
 ##############################################################################=
 ### SPP - Generate species per cell tables for Aquamaps and IUCN -----
 ##############################################################################=
-am_cells_spp_sum <- process_am_spp_per_cell(reload = FALSE)
+am_cells_spp_sum <- process_am_summary_per_cell(reload = TRUE)
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### AM does not include subspecies: every am_sid corresponds to exactly one sciname.
 # > x <- spp_all %>% filter(!is.na(am_sid)) %>% select(am_sid, sciname) %>% unique()
@@ -150,7 +157,7 @@ am_cells_spp_sum <- process_am_spp_per_cell(reload = FALSE)
 # > sum(duplicated(x$sciname))
 # [1] 0
 
-iucn_cells_spp_sum <- process_iucn_spp_per_cell(reload = FALSE)
+iucn_cells_spp_sum <- process_iucn_summary_per_cell(reload = TRUE)
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### IUCN includes subspecies - one sciname corresponds to multiple iucn_sid values.
 # > x <- spp_all %>% filter(!is.na(iucn_sid)) %>% select(iucn_sid, sciname) %>% unique()
