@@ -35,11 +35,13 @@ regions_mol@data[regions_mol@data$rgn_id == 213, ]
 ### I think we now want to combine regions with the same rgn_id_ccamlr-rgn_type ID so they are functionally the same polygon
 # dont think I want to merge the disputed regions
 regions_mol@data$union <- ifelse(regions_mol@data$rgn_id_ccamlr == 255, regions_mol@data$sp_id, regions_mol@data$rgn_id_ccamlr)  
+writeOGR(regions_mol, dsn="/var/data/ohi/git-annex/globalprep/spatial", "spatial_file_pre_union", driver="ESRI Shapefile")
 
-data <- regions_mol@data
 
-rgn_mol_union <- unionSpatialPolygons(regions_mol, regions_mol@data$rgn_id_ccamlr_rgn_type)
-writeOGR(rgn_mol_union, dsn="globalprep/spatial", "tmp_spatial_file", driver="ESRI Shapefile")
+# tried this approach but there was an error - resorting to Arc
+# data <- regions_mol@data  #saving data to merge with unionized polygons
+# rgn_mol_union <- unionSpatialPolygons(regions_mol, regions_mol@data$rgn_id_ccamlr_rgn_type)
+
 
 
 
