@@ -210,7 +210,7 @@ summary(waste_by_po)
 
 #### What's the difference between the new po_pathogens value (inverse) vs the given po_pathogens value?
 
-waste_by_po_i <- mutate(waste_by_po, diff = pressure_score - Inverse, perchg = abs(((Inverse)-(pressure_score))/(Inverse)))
+waste_by_po_i <- mutate(waste_by_po, diff = pressure_score - Inverse, abs_perchg = abs(((Inverse)-(pressure_score))/(Inverse)))
 waste_by_po_ii <- arrange(waste_by_po_i, by = perchg)
 head(waste_by_po_ii); View(waste_by_po_ii)
 
@@ -243,6 +243,10 @@ waste_by_nutr <- left_join(ponutr, waste_sum_e)
 #View(waste_by_nutr)
 g <- ggplot(waste_by_nutr, aes(x = pressure_score, y = Inverse, label = rgn_id)) + geom_point() + geom_text(aes(label=rgn_id),hjus=0,vjust=0) + geom_jitter(color="red")
 
+plot(ponutr); summary(ponutr)
+
+sqrt((.5*.15))
+
 ### SAMPLE EQUATION. CREATING DATA LAYER TO TEST; ANALYSIS BELOW:
 
 # [u(W) + r(P)] = composite pathogens pressure score
@@ -257,8 +261,9 @@ g <- ggplot(waste_by_nutr, aes(x = pressure_score, y = Inverse, label = rgn_id))
 u = .5
 r = 1-(u)
 
-testdf1 <- waste_by_po %>% mutate(po_adj = (pressure_score*r), wi_adj = (Inverse*u), score=wi_adj+po_adj, u, r)
-testdf1i <- arrange(testdf1, by = score); View(testdf1i); summary(testdf1i)
+testdf1 <- waste_by_po %>% mutate(po_adj = (pressure_score*r), wi_adj = (Inverse*u), score_new=wi_adj+po_adj, u, r)
+testdf1i <- arrange(testdf1, by = score_new); View(testdf1i); summary(testdf1i)
+score5050 <- select(testdf1i, rgn_id, score5050 = score_new); head(score5050)
 
 ## TOP PERFORMERS: 
 # rgn_id pressure_score    Inverse       po_adj      wi_adj       score
@@ -282,6 +287,7 @@ r = 1-(u)
 
 testdf2 <- waste_by_po %>% mutate(po_adj = (pressure_score*r), wi_adj = (Inverse*u), score=wi_adj+po_adj, u, r)
 testdf2i <- arrange(testdf2, by = score); View(testdf2i)
+score2575 <- select(testdf2i, rgn_id, score2575 = score); head(score2575)
 
 # rgn_id pressure_score    Inverse       po_adj      wi_adj       score
 # 1      185   0.0000000000 0.00000000 0.0000000000 0.000000000 0.000000000
@@ -305,6 +311,7 @@ r = 1-(u)
 
 testdf3 <- waste_by_po %>% mutate(po_adj = (pressure_score*r), wi_adj = (Inverse*u), score=wi_adj+po_adj, u, r)
 testdf3i <- arrange(testdf3, by = score); View(testdf3i)
+score7525 <- select(testdf3i, rgn_id, score7525 = score); head(score7525)
 
 ##TOP PERFORMERS:
 # rgn_id  pressure_score	Inverse	po_adj	wi_adj	score
@@ -329,6 +336,17 @@ r = 1-(u)
 
 testdf4 <- waste_by_po %>% mutate(po_adj = (pressure_score*r), wi_adj = (Inverse*u), score=wi_adj+po_adj, u, r)
 testdf4i <- arrange(testdf4, by = score); View(testdf4i)
+score9010 <- select(testdf4i, rgn_id, score9010 = score); head(score9010)
+
+# STEP: Aggregate differences in weightings test:
+
+weighttest <- cbind(score5050, score2575, score7525, score9010); head(weighttest)
+weighttesti <- weighttest[,-3]; weighttestii <- weighttesti[,-4]; weighttestiii <- weighttestii[,-5]; head(weighttestiii)
+weight_test <- write.csv(weighttestiii, "po_adjusted_weight-test.csv")
+
+# STEP: Graph absolute value of the difference per region using a 50-50 scenario:
+g <- ggplot(testdf1v, aes(x = rgn_id, y = diff, label = rgn_id)) + geom_point() + geom_text(aes(label=rgn_id),hjus=0,vjust=0) + geom_jitter(color="red") 
+
 
 # ##TOP PERFORMERS:
 
@@ -346,6 +364,8 @@ testdf4i <- arrange(testdf4, by = score); View(testdf4i)
 # 138	204	0.8617221786	1.00000000	8.617222e-02	0.90000000	0.98617222
 # 139	98	0.8674064665	1.00000000	8.674065e-02	0.90000000	0.98674065
 # 140	99	0.9090909091	0.99991600	9.090909e-02	0.89992440	0.99083349
+
+
 
 
 #Finding:
@@ -369,9 +389,10 @@ po_pathogens_index_gl2014 <- write.csv(testdf1iii, "po_pathogens_index_gl2014.cs
 #### Question: What is the % change to this pressure layer, if we include the new composite?
 
 head(testdf1i)
-testdf1iv <- mutate(testdf1i, diff = pressure_score - score, perchg = abs(((score)-(pressure_score))/(score)))
-testdf1v <- arrange(testdf1iv, by = perchg)
+testdf1iv <- mutate(testdf1i, diff = abs(pressure_score - score), perchg = abs(((score)-(pressure_score))/(score)))
+testdf1v <- arrange(testdf1iv, by = diff)
 head(testdf1v); View(testdf1v)
+po_pathogens_adj_5050 <- write.csv(testdf1v, "po_pathogens_adj_5050.csv")
 
 #### Answer: Here are the top and bottom five.
 
@@ -398,7 +419,13 @@ head(testdf1v); View(testdf1v)
 # graph it:
 
 head(testdf1v)
-g <- ggplot(testdf1v, aes(x = pressure_score, y = score, label = rgn_id)) + geom_point() + geom_text(aes(label=rgn_id),hjus=0,vjust=0) + geom_jitter(color="red")
+g <- ggplot(testdf1v, aes(x = pressure_score, y = score, label = rgn_id)) + geom_point() + geom_text(aes(label=rgn_id),hjus=0,vjust=0) + geom_jitter(color="red") 
+
+# graph absolute value of the difference per region 
+g <- ggplot(testdf1v, aes(x = rgn_id, y = diff, label = rgn_id)) + geom_point() + geom_text(aes(label=rgn_id),hjus=0,vjust=0) + geom_jitter(color="red") 
+
+
+### 
 
 
 ## FINAL STEP: Run this data layer in place of "po_pathogens" in the Toolbox, either for Global or Regional. See elsewhere for results. 
