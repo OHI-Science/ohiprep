@@ -4,9 +4,11 @@
 ## June 7 2015, MRF
 ########################################################
 
+library(maptools)
 library(sp)
 library(rgdal)
 library(dplyr)
+
 
 ### mollweide CRS
 ## reading in the data
@@ -17,25 +19,30 @@ regions_mol@data$rgn_id_ccamlr <- ifelse(regions_mol@data$sp_type %in% c("eez-cc
                                   regions_mol@data$sp_id, 
                                   regions_mol@data$rgn_id)
 
-new <- regions_mol@data$rgn_id
+new <- regions_mol@data$rgn_id_ccamlr
 old[old != new]
-dups <- regions_mol@data$rgn_id[duplicated(regions_mol@data$rgn_id)] 
-regions_mol@data[regions_mol@data$rgn_id %in% dups, ] 
 
-### Preparing the south pole data from the Antarctica project
-s_pole <- readOGR(file.path(dir_neptune_data, "model/GL-AQ-SeaIce_v2014/raw"), layer='sp_s') 
-s_pole <- s_pole[s_pole$sp_type %in% c("eez", "eez-ccamlr", "fao"), ]
-# feel for naming protocols
-head(s_pole)
-s_pole@data[s_pole$sp_type == "eez-ccamlr",]
-s_pole@data[s_pole$sp_type == "fao",]
-s_pole@data[duplicated(s_pole$rgn_id),]
+regions_mol@data$rgn_id_ccamlr_rgn_type <- paste(regions_mol@data$rgn_id_ccamlr, regions_mol@data$rgn_type, sep="_")
+head(regions_mol@data)
 
-## in general, use rgn_id, but use the sp_id for ccamlr regions
-s_pole@data$rgn_id <- ifelse(s_pole@data$sp_type == "eez-ccamlr", s_pole@data$sp_id, s_pole@data$rgn_id)
+## some data checks:
+## NOTE: All these seem correct
+dups <- regions_mol@data$rgn_id_ccamlr_rgn_type[duplicated(regions_mol@data$rgn_id_ccamlr_rgn_type)] 
+duplicatedData <- regions_mol@data[regions_mol@data$rgn_id_ccamlr_rgn_type %in% dups, ] 
+write.csv(duplicatedData, "globalprep/spatial/DataCheckofDuplicatedRegions.csv", row.names=FALSE)
+regions_mol@data[regions_mol@data$rgn_id == 213, ] 
 
-## need to merge matching polygons so the same id is only repeated once
-s_pole_union <- unionSpatialPolygons(s_pole, s_pole$rgn_id)
+### I think we now want to combine regions with the same rgn_id_ccamlr-rgn_type ID so they are functionally the same polygon
+# dont think I want to merge the disputed regions
+regions_mol@data$union <- ifelse(regions_mol@data$rgn_id_ccamlr == 255, regions_mol@data$sp_id, regions_mol@data$rgn_id_ccamlr)  
+
+data <- regions_mol@data
+
+rgn_mol_union <- unionSpatialPolygons(regions_mol, regions_mol@data$rgn_id_ccamlr_rgn_type)
+writeOGR(rgn_mol_union, dsn="globalprep/spatial", "tmp_spatial_file", driver="ESRI Shapefile")
+
+
+
 s_pole_data <- s_pole@data %>%
   select(sp_type, rgn_id, rgn_name, rgn_key, area_km2) %>%
   group_by(sp_type, rgn_id, rgn_name, rgn_key) %>%
