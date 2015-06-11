@@ -491,6 +491,7 @@ remove_iucn_synonyms <- function(spp_all) {
   spp_all <- spp_all %>% left_join(dupe_names, by = 'iucn_sid') %>%
     filter(is.na(alias_name) | sciname == alias_name) %>%
     filter(sciname != '') %>%
+    filter(popn_category != 'DD') %>%
     select(-alias_name) %>%
     unique()
   return(spp_all)
@@ -521,7 +522,7 @@ extract_loiczid_per_spp <- function(groups_override = NULL, reload = FALSE) {
   
   # Import LOICZID raster
   raster_file <- file.path(dir_anx, 'rgns/loiczid_raster')
-  loiczid_raster <- get_loiczid_raster(dir_anx, reload = FALSE)
+  loiczid_raster <- get_loiczid_raster(reload = FALSE)
   
   # create list of groups (i.e. shape files) to be analyzed
   if(is.null(groups_override)) spp_gp_list <- unique(iucn_range_maps$spp_group)
