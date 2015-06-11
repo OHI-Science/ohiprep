@@ -116,14 +116,31 @@ spp_all <- create_spp_master_lookup(reload = TRUE)
 ### * v201X/intermediate/spp_all.csv (complete data frame)
 
 ##############################################################################=
-### Edit subpop/parent entries ----
+### Edit subpop/parent entries and synonyms ----
 ##############################################################################=
 spp_all <- spp_all %>%
   fix_am_subpops() %>%
   fix_iucn_subpops()
-  
-iucn <- spp_all %>% select(-parent_sid, -subpop_sid) %>% filter(spatial_source == 'iucn_parent' | spatial_source == 'iucn_subpop')
-am   <- spp_all %>% select(-parent_sid, -subpop_sid) %>% filter(spatial_source == 'am_parent'   | spatial_source == 'am_subpop')
+
+spp_all <- spp_all %>% remove_iucn_synonyms()
+
+### Explore duplicate records between AM and IUCN 
+
+# > y <- spp_all %>% filter(!is.na(am_sid)) %>% unique()
+# > sum(duplicated(y$am_sid))
+# [1] 184
+# > sum(duplicated(y$sciname))
+# [1] 184
+# y_dupes <- show_dupes(y, 'sciname') # all dupes are subpops or iucn_alias flags
+
+# > x <- spp_all %>% filter(!(spatial_source %in% c('iucn_alias', 'iucn_subpop', 'am_subpop')) & !is.na(spatial_source)) %>% unique()
+# > sum(duplicated(x$iucn_sid))
+# [1] 115
+# > sum(duplicated(x$sciname))
+# [1] 2 # both 'DD' status.
+
+# NOTE: Still some duplicated IUCN species IDs on the list; treated separately in Aquamaps data,
+#       so spatial information is differentiated.  Leave in for 2015...
 
 ##############################################################################=
 ### Generate lookup - IUCN species to LOICZID ----
@@ -148,24 +165,14 @@ rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
 ##############################################################################=
 ### SPP - Generate species per cell tables for Aquamaps and IUCN -----
 ##############################################################################=
-am_cells_spp_sum <- process_am_summary_per_cell(reload = TRUE)
+am_cells_spp_sum <- process_am_summary_per_cell(reload = FALSE)
+### NOTE: the inner_join in here takes a while... 
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### AM does not include subspecies: every am_sid corresponds to exactly one sciname.
-# > x <- spp_all %>% filter(!is.na(am_sid)) %>% select(am_sid, sciname) %>% unique()
-# > sum(duplicated(x$am_sid))
-# [1] 0
-# > sum(duplicated(x$sciname))
-# [1] 0
 
 iucn_cells_spp_sum <- process_iucn_summary_per_cell(reload = TRUE)
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### IUCN includes subspecies - one sciname corresponds to multiple iucn_sid values.
-# > x <- spp_all %>% filter(!is.na(iucn_sid)) %>% select(iucn_sid, sciname) %>% unique()
-# > sum(duplicated(x$iucn_sid))
-# [1] 0
-# > sum(duplicated(x$sciname))
-# [1] 99
-
 
 ##############################################################################=
 ### SPP - Summarize mean category and trend per cell and per region -----
