@@ -145,7 +145,7 @@ spp_all <- spp_all %>% remove_iucn_synonyms()
 ##############################################################################=
 ### Generate lookup - IUCN species to LOICZID ----
 ##############################################################################=
-extract_loiczid_per_spp(groups_override = tmp, reload = FALSE)
+extract_loiczid_per_spp(groups_override = NULL, reload = FALSE)
 ### Extract loiczid cell IDs for each species within each species group.  Save 
 ### a .csv file for that group, with fields:
 ###       sciname | iucn_sid | LOICZID | prop_area
@@ -165,7 +165,7 @@ rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
 ##############################################################################=
 ### SPP - Generate species per cell tables for Aquamaps and IUCN -----
 ##############################################################################=
-am_cells_spp_sum <- process_am_summary_per_cell(reload = FALSE)
+am_cells_spp_sum <- process_am_summary_per_cell(reload = TRUE)
 ### NOTE: the inner_join in here takes a while... 
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### AM does not include subspecies: every am_sid corresponds to exactly one sciname.
