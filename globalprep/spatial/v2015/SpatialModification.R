@@ -18,7 +18,6 @@ old <- regions_mol@data$rgn_id
 regions_mol@data$rgn_id_ccamlr <- ifelse(regions_mol@data$sp_type %in% c("eez-ccamlr", "land-ccamlr"), 
                                          regions_mol@data$sp_id, 
                                          regions_mol@data$rgn_id)
-
 new <- regions_mol@data$rgn_id_ccamlr
 old[old != new]
 
@@ -29,6 +28,7 @@ head(regions_mol@data)
 ## NOTE: All these seem correct
 dups <- regions_mol@data$rgn_id_ccamlr_rgn_type[duplicated(regions_mol@data$rgn_id_ccamlr_rgn_type)] 
 duplicatedData <- regions_mol@data[regions_mol@data$rgn_id_ccamlr_rgn_type %in% dups, ] 
+regions_mol@data[regions_mol@data$rgn_id_ccamlr_rgn_type %in% "171_eez", ] 
 write.csv(duplicatedData, "globalprep/spatial/DataCheckofDuplicatedRegions.csv", row.names=FALSE)
 regions_mol@data[regions_mol@data$rgn_id == 213, ] 
 
@@ -61,5 +61,21 @@ merge_shape@data$area_km2 = merge_shape@data$area_km2/1000000
 plot(data_tmp$Shape_Area, data_tmp$area_km2_v2)
 data_tmp$area3 <- gArea(merge_shape, byid=TRUE)
 
-writeOGR(merge_shape, dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/data", "regions_mol", driver="ESRI Shapefile")
+#writeOGR(merge_shape, dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/data", "regions_mol", driver="ESRI Shapefile")
 
+#### checking on data, and changing variable names to more sensible names:
+
+check <- readOGR(dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/data", layer="regions_mol")
+
+check@data <- select(check@data, c(rgn_typ, ant_typ=sp_type, rgn_id, ant_id=rgn_d_c, rgn_nam, rgn_key, are_km2))
+head(check@data)
+table(check@data$ant_typ)
+table(check@data$rgn_typ)
+#writeOGR(check, dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/data", "regions_mol", driver="ESRI Shapefile", overwrite_layer=TRUE)
+
+check <- readOGR(dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/data", layer="regions_gcs")
+check@data <- select(check@data, c(rgn_typ, ant_typ=sp_type, rgn_id, ant_id=rgn_d_c, rgn_nam, rgn_key, are_km2))
+head(check@data)
+table(check@data$ant_typ)
+table(check@data$rgn_typ)
+#writeOGR(check, dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/data", "regions_gcs", driver="ESRI Shapefile", overwrite_layer=TRUE)
