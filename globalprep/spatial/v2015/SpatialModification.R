@@ -16,8 +16,8 @@ regions_mol <- readOGR(dsn="/var/data/ohi/git-annex/Global/NCEAS-Regions_v2014/d
 
 old <- regions_mol@data$rgn_id
 regions_mol@data$rgn_id_ccamlr <- ifelse(regions_mol@data$sp_type %in% c("eez-ccamlr", "land-ccamlr"), 
-                                  regions_mol@data$sp_id, 
-                                  regions_mol@data$rgn_id)
+                                         regions_mol@data$sp_id, 
+                                         regions_mol@data$rgn_id)
 
 new <- regions_mol@data$rgn_id_ccamlr
 old[old != new]
@@ -35,33 +35,31 @@ regions_mol@data[regions_mol@data$rgn_id == 213, ]
 ### I think we now want to combine regions with the same rgn_id_ccamlr-rgn_type ID so they are functionally the same polygon
 # dont think I want to merge the disputed regions
 regions_mol@data$union <- ifelse(regions_mol@data$rgn_id_ccamlr == 255, regions_mol@data$sp_id, regions_mol@data$rgn_id_ccamlr)  
-writeOGR(regions_mol, dsn="/var/data/ohi/git-annex/globalprep/spatial", "spatial_file_pre_union", driver="ESRI Shapefile")
+regions_mol@data$union <- paste(regions_mol@data$union, regions_mol@data$rgn_type, sep="_")
+data <- regions_mol@data  #saving data to merge with unionized polygons
+#writeOGR(regions_mol, dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/tmp", "spatial_file_pre_union", driver="ESRI Shapefile", overwrite_layer=TRUE)
 
-
-# tried this approach but there was an error - resorting to Arc
-# data <- regions_mol@data  #saving data to merge with unionized polygons
+# # tried this approach but there was an error - resorting to Arc
 # rgn_mol_union <- unionSpatialPolygons(regions_mol, regions_mol@data$rgn_id_ccamlr_rgn_type)
 
+### Now merging all these data with the output file from Arc
+merge_shape <- readOGR(dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/tmp", layer="spatial_file_post_union")
+setdiff(merge_shape@data$union, data$union)
+setdiff(data$union, merge_shape$union)
 
+data_tmp <- data %>%
+  select(sp_type, rgn_type, rgn_id, rgn_name, rgn_key, rgn_id_ccamlr, union, area_km2) %>%
+  group_by(sp_type, rgn_type, rgn_id, rgn_name, rgn_key, rgn_id_ccamlr, union) %>%
+  summarize(area_km2_v2 = sum(area_km2))  %>% # checked the areas and they looked good (highly correlated but slightly different), will just go with arcgis areas
+  select(sp_type, rgn_type, rgn_id, rgn_name, rgn_key, rgn_id_ccamlr, union)
+#merge_shape@data$area3 <- gArea(merge_shape, byid=TRUE) # this nearly perfectly matched the output from arcgis
+  
+merge_shape@data <- left_join(merge_shape@data, data_tmp, by="union")
+merge_shape@data <- dplyr::select(merge_shape@data, sp_type, rgn_type, rgn_id, rgn_name, rgn_key, rgn_id_ccamlr, area_km2=Shape_Area)
+merge_shape@data$area_km2 = merge_shape@data$area_km2/1000000
 
+plot(data_tmp$Shape_Area, data_tmp$area_km2_v2)
+data_tmp$area3 <- gArea(merge_shape, byid=TRUE)
 
-s_pole_data <- s_pole@data %>%
-  select(sp_type, rgn_id, rgn_name, rgn_key, area_km2) %>%
-  group_by(sp_type, rgn_id, rgn_name, rgn_key) %>%
-  summarize(area_km2=sum(area_km2))
-row.names(s_pole_data) <- as.character(s_pole_data$rgn_id)
-s_pole_data <- data.frame(s_pole_data)
-
-s_pole_union <- SpatialPolygonsDataFrame(s_pole_union, s_pole_data)
-s_pole_union@data <- s_pole_union@data %>%
-  select(rgn_typ=sp_type, rgn_id, rgn_nam=rgn_name, rgn_key) # realized the area might be deceptive because I think some of the northern regions are not included.
-
-#writeOGR(s_pole_union, file.path(dir_neptune_data, "git-annex/globalprep/NSIDC_SeaIce/v2015/raw"), layer="New_s_rgn_fao", driver="ESRI Shapefile")
-
-new_s_pole <- readOGR(file.path(dir_neptune_data, "git-annex/globalprep/NSIDC_SeaIce/v2015/raw"), layer="New_s_rgn_fao")
-
-## The next step is actually embedded in the "ObtainingData.R" script.  If the spatial points file is not there, it creates one.
-## This would make more sense in this file, but it requires loading a lot of the NSDIC data first to use as a template. 
-## I think the best bet is to do this in a step-wise fashion: 1) walk through the script and check the output spatial file, 2)
-## then run the sea ice collection.
+writeOGR(merge_shape, dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/data", "regions_mol", driver="ESRI Shapefile")
 
