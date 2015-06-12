@@ -52,10 +52,13 @@ get_ico_list <- function() {
     left_join(cat_lookup, by = 'ico_cat_long') %>%
     select(-ico_cat_long)
   
+  spp_all <- read.csv(file.path(dir_anx, scenario, 'intermediate/spp_all_cleaned.csv'), stringsAsFactors = FALSE)
+
+  
   # join to spp_all and update category/trend info if available from IUCN spreadsheet
   ico_list <- ico_list %>%
     left_join(spp_all %>%
-                select(iucn_sid, am_sid, sciname, popn_trend, iucn_category, spatial_source), 
+                select(iucn_sid, am_sid, sciname, popn_trend, iucn_category, spatial_source, parent_sid, subpop_sid), 
               by = 'sciname') %>%
     mutate(popn_trend    = tolower(popn_trend),
            iucn_category = ifelse(is.na(iucn_category), 
