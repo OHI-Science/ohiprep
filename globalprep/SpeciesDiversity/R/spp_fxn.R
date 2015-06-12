@@ -341,7 +341,7 @@ create_spp_master_lookup <- function(reload = FALSE) {
     # * Multiple IUCN sid from spreadsheet, but no corresponding differentiation in shapefile (or using AM)
     #   - common problem - 5000+ instances.
     #   - use parent information and apply to entire shapefile or AM data set
-    #   - remove listings for subpops? or flag with spatial_source = 'iucn_ignore' or 'am_ignore'
+    #   - flag with spatial_source = 'iucn_parent' or 'iucn_subpop' (or am)
     
     # to overall lookup table, join scores for population category and trend.
     popn_cat    <- data.frame(popn_category  = c("LC", "NT", "VU", "EN", "CR", "EX"), 
@@ -410,7 +410,7 @@ fix_am_subpops <- function(spp_all) {
              spatial_source = ifelse(sciname == spp & !is.na(subpop_sid), 'am_parent', spatial_source))
   }   # end for loop
   ### for all species within the list (aquamaps w/parent or subpop), amend spatial source for subpops - so subpops can be ignored for spatial analysis.
-  print(spp_all %>% filter(sciname %in% am_subpop_spp))
+  print(head(spp_all %>% filter(sciname %in% am_subpop_spp)))
   return(spp_all)
 }
 
@@ -450,7 +450,50 @@ fix_iucn_subpops <- function(spp_all) {
       mutate(spatial_source = ifelse(sciname == spp & !is.na(parent_sid), 'iucn_subpop', spatial_source),
              spatial_source = ifelse(sciname == spp & !is.na(subpop_sid), 'iucn_parent', spatial_source))
   }   # end for loop
-  print(spp_all %>% filter(sciname %in% iucn_subpop_spp))
+  print(head(spp_all %>% filter(sciname %in% iucn_subpop_spp)))
+  ### There are a large number of duplicated scinames still - some of these seem to be IUCN ID#s with multiple
+  ### aliases.  Example: 
+    #        am_sid          sciname iucn_sid  id_no popn_category popn_trend
+    #   1 ITS-75291  Conus jaspideus   192338 192637            LC    Unknown
+    #   2 ITS-75291  Conus jaspideus   192637 192637            LC    Unknown
+    #   3 ITS-75352 Conus granulatus   192590 192624            LC    Unknown
+    #   4 ITS-75352 Conus granulatus   192624 192624            LC    Unknown
+    #   5 ITS-75376     Conus regius   192869 192869            LC    Unknown
+    #   6 ITS-75376     Conus regius   192452 192869            LC       <NA>
+  ### This may be an artifact of matching by sciname rather than species IDs - how to get around it?
+  ### For observations where iucn_sid and id_no are both present, and match, use the spatial data.
+  ### For obs where both are present but don't match, don't use spatial data - mutate the spatial_source field
+  ### to something that can be filtered out later.
+  spp_all_dupes <- show_dupes(spp_all, 'sciname')
+  spp_all <- spp_all %>%
+    mutate(spatial_source = ifelse((sciname %in% spp_all_dupes$sciname) & (iucn_sid != id_no) & (!is.na(iucn_sid) & !is.na(id_no)),
+                                   'iucn_alias',
+                                   spatial_source))
+  print(head(spp_all %>% filter(sciname %in% spp_all_dupes$sciname)))
+  
+  return(spp_all)
+}
+
+
+##############################################################################=
+remove_iucn_synonyms <- function(spp_all) {
+
+# Inspection of list, comparing IUCN search by sciname to iucn_sid shows many aliases.
+
+# Duplicated names list in git-annex/globalprep/SpeciesDiversity/tmp/dupe_names_edit.csv
+# * filter dupe_names to just keep lines with an alias_name designation.
+# * join to spp_all by iucn_sid.
+# * filter spp_all to instances where alias_name == NA (no alias) or sciname == alias_name (so the correct )
+# * also filter out spp_all any instances where sciname == ''
+  dupe_names <- read.csv(file.path(dir_anx, 'tmp/dupe_names_edit.csv'), stringsAsFactors = FALSE) %>%
+    select(iucn_sid, alias_name = alias) %>%
+    filter(!alias_name %in% c('ok', 'OK', ''))
+  spp_all <- spp_all %>% left_join(dupe_names, by = 'iucn_sid') %>%
+    filter(is.na(alias_name) | sciname == alias_name) %>%
+    filter(sciname != '') %>%
+    filter(popn_category != 'DD') %>%
+    select(-alias_name) %>%
+    unique()
   return(spp_all)
 }
 
@@ -479,7 +522,7 @@ extract_loiczid_per_spp <- function(groups_override = NULL, reload = FALSE) {
   
   # Import LOICZID raster
   raster_file <- file.path(dir_anx, 'rgns/loiczid_raster')
-  loiczid_raster <- get_loiczid_raster(dir_anx, reload = FALSE)
+  loiczid_raster <- get_loiczid_raster(reload = FALSE)
   
   # create list of groups (i.e. shape files) to be analyzed
   if(is.null(groups_override)) spp_gp_list <- unique(iucn_range_maps$spp_group)
@@ -582,7 +625,7 @@ process_am_summary_per_cell <- function(reload = FALSE) {
     spp_am_info <- spp_all %>% 
       filter(spatial_source == 'am' | spatial_source == 'am_parent') %>%
       ### NOTE: as of 2015, AM data does not include spatially distinct subpops, so OK to cut 'am_subpops'
-      filter(!is.na(category_score)) %>%
+      filter(!is.na(category_score) & !(category_score == 'DD')) %>%
       select(am_sid, sciname, category_score, trend_score) 
     cat(sprintf('Length of Aquamaps species list: %d\n', nrow(spp_am_info)))
     spp_am_info <- spp_am_info %>% unique()
@@ -700,12 +743,12 @@ process_iucn_summary_per_cell <- function(reload = FALSE) {
     # filter entire IUCN table to just cells found in appropriate regions
     # (as designated by rgn_cell_lookup file). 
     cat('Filtering to cells within regions.\n')
+    if(!exists('rgn_cell_lookup')) rgn_cell_lookup <- extract_cell_id_per_region()
     iucn_cells_spp1 <- iucn_cells_spp %>% 
       rename(loiczid = LOICZID, polygon_prop_area = prop_area) %>%
       filter(loiczid %in% rgn_cell_lookup$loiczid) 
     
     # then join to rgn_cell_lookup to attach loiczid, region ID, and cell area
-    if(!exists('rgn_cell_lookup')) rgn_cell_lookup <- extract_cell_id_per_region()
     cat('Joining cells/id list to region list.\n')
     iucn_cells_spp2 <- iucn_cells_spp1 %>%
       inner_join(rgn_cell_lookup, by = 'loiczid') %>%
@@ -717,7 +760,8 @@ process_iucn_summary_per_cell <- function(reload = FALSE) {
     spp_iucn_info <- spp_all %>% 
       filter(spatial_source == 'iucn' | spatial_source == 'iucn_parent') %>% 
       ### NOTE: for 2015, no IUCN subpops with spatially explicit shapefiles, so OK to cut all 'iucn_subpop' observations.
-      filter(!is.na(category_score)) %>%
+      ### Other values in this field: 'iucn_subpop' and 'iucn_alias' (for duped records due to species aliases)
+      filter(!is.na(category_score) & !(category_score == 'DD')) %>%
       select(iucn_sid, sciname, category_score, trend_score)
     cat(sprintf('Length of IUCN species list: %d\n', nrow(spp_iucn_info)))
     spp_iucn_info <- spp_iucn_info %>% unique()
@@ -851,3 +895,7 @@ check_sim_names <- function(spp_all, num_letters = 5) {
   return(sim_names)
 }
 
+show_dupes <- function(x, y) {
+  # x is data frame, y is field within that dataframe
+  z <- x %>% filter(x[[y]] %in% x[[y]][duplicated(x[[y]])])
+}
