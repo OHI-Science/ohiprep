@@ -345,3 +345,38 @@ quantile(eez$pressure_score)
 data %>%
   filter(sp_type=="eez") %>%
   arrange(mean)
+
+
+
+#########################################
+#### Exploring fertilizer and pesticide plume data ----
+#########################################
+dir(file.path(dir_halpern2008, "mnt/storage/marine_threats/impact_layers_2013_redo/impact_layers/work/land_based/201112/step8"))
+rast_locs <- file.path(dir_halpern2008, "mnt/storage/marine_threats/impact_layers_2013_redo/impact_layers/work/land_based/201112/step8")
+
+# Fertilizer
+fert_older <- raster(file.path(rast_locs, "global_plumes_fert_2007_2010_trans.tif"))
+fert_older <- setMinMax(fert_older)
+fert_older
+
+fert_newer <- raster(file.path(rast_locs, "global_plumes_fert_2011_2012_trans.tif"))
+fert_newer <- setMinMax(fert_newer)
+fert_newer
+
+fert_dif <- raster(file.path(rast_locs, "global_plumes_fert_2011_2012_raw_minus_2007_2010_raw.tif"))
+fert_dif <- setMinMax(fert_dif)
+fert_dif
+
+
+# Pesticide
+pest_older <- raster(file.path(rast_locs, "global_plumes_pest_2007_2010_trans.tif"))
+setMinMax(pest_older)
+pest_older
+
+pest_newer <- raster(file.path(rast_locs, "global_plumes_pest_2011_2012_trans.tif"))
+setMinMax(pest_newer)
+pest_newer
+
+pest_dif <- raster(file.path(rast_locs, "global_plumes_pest_2011_2012_raw_minus_2007_2010_raw.tif"))
+pest_dif <- setMinMax(pest_dif)
+pest_dif
