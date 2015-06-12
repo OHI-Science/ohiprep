@@ -43,8 +43,13 @@ data_region = name_to_rgn(data, fld_name='country', flds_unique=c('country','yea
                           fld_value='km2', add_rgn_name=T, collapse_fxn = 'sum_na',
                           dir_lookup = "src/LookupTables"); head(data_region); summary(data_region) 
 
-## calculate trend data
 
+########################################################################
+## calculate trend data for testing (this will be used to test, use function below to 
+## generate data for different scenarios)
+## NOTE: delete this after I get the extent data together...this has a few
+## notes I would like to preserve until then.
+########################################################################
 data_region_trend <-  data_region %>%
   filter(year %in% 2008:2012) %>%  #dataset includes 2013 and 2014 but these are projected data
   group_by(rgn_id, rgn_name) %>%
@@ -101,10 +106,42 @@ data_region_trend[data_region_trend$rgn_id %in% c(64, 190), ] # Mauritania (64) 
 data_check <- data_region_trend %>%
   arrange(trend)
 write.csv(data_check, 'globalprep/hab_mangrove/v2015/data_explore/trend_check.csv', row.names=FALSE)
+
 #############################################
 ## Final formatting and save
 #############################################
 
+# function that calculates trend for each scenario year and saves data
+# NOTE: scenario 2015 = 2008:2012 years.  
+#       scenario 2014 = 2007:2011, etc.
+
+yearlyMangrove <- function(scenarioYear=2015){
+  yearRange <- (scenarioYear-7):(scenarioYear-3)
+  criteria <- ~year %in% yearRange
+
+data_region_trend <-  data_region %>%
+  filter_(criteria) %>%  #dataset includes 2013 and 2014 but these are projected data
+  group_by(rgn_id, rgn_name) %>%
+  mutate(total_area = sum(km2)) %>% 
+  mutate(km2_rel = km2/km2[year==min(year)]) %>%
+  mutate(km2_rel = ifelse(total_area==0, 0, km2_rel)) %>%  # Mauritania (64) and Qatar (190) had mangrove in teh past but not past 2008
+  do(mdl = lm(km2_rel ~ year, data=.)) %>%
+  summarize(rgn_name = rgn_name,
+            rgn_id = rgn_id,
+            habitat = "mangrove",
+            trend = coef(mdl)['year']*5) %>%
+  mutate(trend = round(trend, 6)) %>%
+  ungroup()
+
 final_data <- data_region_trend %>%
   select(rgn_id, habitat, trend)
-write.csv(final_data, 'globalprep/hab_mangrove/v2015/data/habitat_trend_mangrove.csv', row.names=FALSE)
+
+write.csv(final_data, 
+          sprintf('globalprep/hab_mangrove/v2015/data/habitat_trend_mangrove_v%s.csv', scenarioYear),
+                  row.names=FALSE)
+}
+
+yearlyMangrove(scenarioYear = 2015)
+yearlyMangrove(scenarioYear = 2014)
+yearlyMangrove(scenarioYear = 2013)
+yearlyMangrove(scenarioYear = 2012)
