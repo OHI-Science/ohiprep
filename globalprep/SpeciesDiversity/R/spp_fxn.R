@@ -803,7 +803,7 @@ process_means_per_cell <- function(am_cell_summary, iucn_cell_summary) {
               weighted_mean_trend = sum(n_trend_species * mean_popn_trend_score, na.rm = TRUE)/sum(n_trend_species)) %>%
     arrange(loiczid)
   
-  # write_csv(summary_by_loiczid, file.path(dir_anx, scenario, 'summary/cell_spp_summary_by_loiczid.csv'))
+  write_csv(summary_by_loiczid, file.path(dir_anx, scenario, 'summary/cell_spp_summary_by_loiczid.csv'))
   return(summary_by_loiczid)
 }
 
