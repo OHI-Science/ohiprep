@@ -612,7 +612,7 @@ process_am_summary_per_cell <- function(reload = FALSE) {
   # * filter by cat score != NA
   # * summarize by loiczid - mean category_score, mean trend_score, count
   
-  am_cells_spp_sum_file <- file.path(dir_anx, scenario, 'summary/spp_sum_am_cells.csv')
+  am_cells_spp_sum_file <- file.path(dir_git, scenario, 'summary/spp_sum_am_cells.csv')
   
   if(!file.exists(am_cells_spp_sum_file) | reload) {
     cat('Generating cell-by-cell summary for Aquamaps species.\n')
@@ -727,7 +727,7 @@ process_iucn_summary_per_cell <- function(reload = FALSE) {
   # * Each summary data frame should be saved to a list, to be eventually rbind_all'ed
   
   
-  iucn_cells_spp_sum_file <- file.path(dir_anx, scenario, 'summary/spp_sum_iucn_cells.csv')
+  iucn_cells_spp_sum_file <- file.path(dir_git, scenario, 'summary/spp_sum_iucn_cells.csv')
   
   if(!file.exists(iucn_cells_spp_sum_file) | reload) {
     cat('Generating cell-by-cell summary for IUCN range-map species.\n')
@@ -803,7 +803,7 @@ process_means_per_cell <- function(am_cell_summary, iucn_cell_summary) {
               weighted_mean_trend = sum(n_trend_species * mean_popn_trend_score, na.rm = TRUE)/sum(n_trend_species)) %>%
     arrange(loiczid)
   
-  write_csv(summary_by_loiczid, file.path(dir_anx, scenario, 'summary/cell_spp_summary_by_loiczid.csv'))
+  write_csv(summary_by_loiczid, file.path(dir_git, scenario, 'summary/cell_spp_summary_by_loiczid.csv'))
   return(summary_by_loiczid)
 }
 
@@ -831,7 +831,7 @@ process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup) {
   region_sums <- region_sums %>%
     mutate(status = ((1 - rgn_mean_cat) - 0.25) / 0.75 * 100)
   
-  region_summary_file <- file.path(dir_anx, scenario, 'summary/rgn_summary.csv')
+  region_summary_file <- file.path(dir_git, scenario, 'summary/rgn_summary.csv')
   cat(sprintf('Writing summary file of area-weighted mean category & trend per region:\n  %s\n', region_summary_file))
   write_csv(region_sums, region_summary_file)
   

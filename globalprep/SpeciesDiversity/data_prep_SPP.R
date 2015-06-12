@@ -185,6 +185,19 @@ summary_by_rgn     <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup)
 ### This returns dataframe with variables:
 ### sp_id | rgn_mean_cat | rgn_mean_trend | status
 
+### Create final outputs:
+if(!exists('summary_by_rgn')) 
+  summary_by_rgn <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary.csv'))
+spp_status <- summary_by_rgn %>%
+  select(rgn_id, score = status) %>%
+  mutate(score = score/100)
+spp_trend <- summary_by_rgn %>%
+  select(rgn_id, score = rgn_mean_trend)
+write_csv(spp_status, file.path(dir_git, scenario, 'data/spp_status.csv'))
+write_csv(spp_trend,  file.path(dir_git, scenario, 'data/spp_trend.csv'))
+
+##############################################################################=
+
 
 # TO DO: deal with populations for IUCN species.
 #   examine range maps - are there overlaps between parent and subspecies/subpops?
