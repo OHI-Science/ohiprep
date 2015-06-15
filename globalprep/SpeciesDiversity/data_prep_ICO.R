@@ -5,11 +5,6 @@
 ### Jun 1, 2015 - CCO.  Combining many different scripts into one data_prep.R
 ###   that calls functions and sources code within R/spp_fxn.R
 ##############################################################################=
-library(foreign)
-library(data.table) # for fread()
-library(sp)
-library(rgdal)
-library(raster)
 library(readr)      # for read_csv()
 
 setwd('~/github/ohiprep')
@@ -41,11 +36,29 @@ ico_list <- get_ico_list()
 ##############################################################################=
 ### Determine species lists by region based on IUCN and AM spatial data -----
 ##############################################################################=
-ico_rgn_iucn <- get_ico_rgn_iucn(ico_list) 
+ico_rgn_iucn <- get_ico_rgn_iucn(ico_list, reload = TRUE) 
 ### rgn_id | sciname | comname | iucn_category | trend
+### Species attached to rgn_id, and filtered for species/region combos that are 
+### iconic (either globally or locally).  Doesn't deal with parent/subpops
 # check:
 dupes <- ico_rgn_iucn %>% select(rgn_id, sciname) %>% duplicated()
 dupes <- ico_rgn_iucn %>% filter(sciname %in% ico_rgn_iucn$sciname[dupes])
+
+
+
+# for parents and subpops, get country lists from iucn_details - see BB's script
+#   function: get countries
+#     str_split, turn into vector
+#   for (list of parents/subpops by iucn_sid) get countries for each species ID
+#     don't bind to the main table; just leave as lookup of iucn_sid:rgn_id
+# convert the country lists into region ID numbers; create a lookup table for
+#   parent_sid and subpop_sid vs rgn_id
+# create a 'present' flag for the iucn list: each line is rgn_id matched to sciname (and thus all the other fields).
+#   for parent/subpops, each will have a distinct iucn_sid (even for AM)
+#   for each line, if rgn_id %in% country vector for that iucn_sid, flag present = TRUE
+# then: for the whole list, filter for (spatial_source == 'iucn' | present == TRUE)
+# then: for this list, filter for global == TRUE or region specific == rgn_id
+
 # 25 duplicated rows - species duplicated within a region.  Species: 
 # Different IUCN species IDs, but no IUCN ID available for spatial information, 
 # so based upon an undifferentiated IUCN shapefile.  Look up each and assign to regions by hand.
@@ -87,7 +100,7 @@ dupes <- ico_rgn_iucn %>% filter(sciname %in% ico_rgn_iucn$sciname[dupes])
 # this might be a case for not removing the parent populations.  Bottlenose dolphins should
 # generally be LC.  Check the IUCN shapefiles and see what other info is available.
 
-ico_rgn_am <- get_ico_rgn_am(ico_list)
+ico_rgn_am <- get_ico_rgn_am(ico_list, reload = TRUE)
 ### rgn_id | sciname | comname | iucn_category | trend
 dupes <- ico_rgn_am %>% select(rgn_id, sciname) %>% duplicated()
 dupes <- ico_rgn_am %>% filter(sciname %in% ico_rgn_am$sciname[dupes])
