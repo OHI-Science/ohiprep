@@ -36,16 +36,71 @@ ico_list <- get_ico_list()
 ##############################################################################=
 ### Determine species lists by region based on IUCN and AM spatial data -----
 ##############################################################################=
-ico_rgn_iucn <- get_ico_rgn_iucn(ico_list, reload = TRUE) 
+ico_rgn_iucn <- get_ico_rgn_iucn(ico_list, reload = FALSE) 
+### rgn_id | sciname | comname | iucn_sid | am_sid | iucn_category |
+### spatial_source | parent_sid | subpop_sid | trend
+
+ico_rgn_am <- get_ico_rgn_am(ico_list, reload = FALSE)
+### rgn_id | am_sid | comname | sciname | iucn_sid | trend |
+### iucn_category | spatial_source | parent_sid | subpop_sid |
+
+### Fill in species lists by region based on original spreadsheet
+ico_rgn_other <- ico_list %>% 
+  filter(is.na(spatial_source)) %>%
+  select(rgn_id = ico_rgn_id, sciname, comname, iucn_category, trend)
 ### rgn_id | sciname | comname | iucn_category | trend
-### Species attached to rgn_id, and filtered for species/region combos that are 
-### iconic (either globally or locally).  Doesn't deal with parent/subpops
-# check:
-dupes <- ico_rgn_iucn %>% select(rgn_id, sciname) %>% duplicated()
-dupes <- ico_rgn_iucn %>% filter(sciname %in% ico_rgn_iucn$sciname[dupes])
+
+##############################################################################=
+### Combine ICO lists from all spatial sources, add parent/subpop regions -----
+##############################################################################=
+ico_rgn_all <- bind_rows(ico_rgn_iucn, ico_rgn_am, ico_rgn_other)
+
+ico_list_subpops <- ico_rgn_all %>% 
+  filter(!is.na(parent_sid) | !is.na(subpop_sid)) %>%
+  select(sciname, iucn_sid) %>%
+  unique()
+
+ico_subpop_rgn_ids <- get_countries_all(ico_list_subpops, reload = TRUE)
+
+ico_rgn_all <- ico_rgn_all %>%
+  left_join(ico_subpop_rgn_ids %>%
+              select(sid, rgn_id) %>%
+              mutate(present = TRUE),
+            by = c('iucn_sid' = 'sid', 'rgn_id'))
+
+ico_rgn_all <- ico_rgn_all %>%
+  filter(!((str_detect(spatial_source, 'parent') | str_detect(spatial_source, 'subpop')) & is.na(present))) %>%
+  select(-present, -parent_sid, -subpop_sid)
+
+write_csv(ico_rgn_all, file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv'))
+
+##############################################################################=
+### Summarize regional iconic species status -----
+##############################################################################=
+ico_rgn_sum <- process_ico_rgn(ico_rgn_all)
+### rgn_id | mean_cat | mean_trend | status
+
+ico_status <- ico_rgn_sum %>%
+  select(rgn_id, score = status)
+ico_trend <- ico_rgn_sum %>%
+  select(rgn_id, score = mean_trend)
+write_csv(ico_status, file.path(dir_git, scenario, 'data/ico_status.csv'))
+write_csv(ico_trend,  file.path(dir_git, scenario, 'data/ico_trend.csv'))
+
+
+##############################################################################=
+### Some check functions -----
+##############################################################################=
+x <- ico_rgn_source_compare()
+# For each region, checks whether the presence of a particular species is
+# flagged due to spatially-explicit data (AM or IUCN range maps), the original
+# spreadsheet, or both.
+# NOTE: doesn't account for parent/subpop designations.
 
 
 
+
+### IUCN species with parent/subpopulations:
 # for parents and subpops, get country lists from iucn_details - see BB's script
 #   function: get countries
 #     str_split, turn into vector
@@ -56,6 +111,7 @@ dupes <- ico_rgn_iucn %>% filter(sciname %in% ico_rgn_iucn$sciname[dupes])
 # create a 'present' flag for the iucn list: each line is rgn_id matched to sciname (and thus all the other fields).
 #   for parent/subpops, each will have a distinct iucn_sid (even for AM)
 #   for each line, if rgn_id %in% country vector for that iucn_sid, flag present = TRUE
+#   * captures both parent and subpop presence...?
 # then: for the whole list, filter for (spatial_source == 'iucn' | present == TRUE)
 # then: for this list, filter for global == TRUE or region specific == rgn_id
 
@@ -95,16 +151,11 @@ dupes <- ico_rgn_iucn %>% filter(sciname %in% ico_rgn_iucn$sciname[dupes])
 #       Slovenia; Spain; Syrian Arab Republic; Tunisia; Turkey
 #   # another, not on our list: Black Sea, ssp ponticus, EN/unknown - http://www.iucnredlist.org/details/133714/0
 #
-
-
 # this might be a case for not removing the parent populations.  Bottlenose dolphins should
 # generally be LC.  Check the IUCN shapefiles and see what other info is available.
 
-ico_rgn_am <- get_ico_rgn_am(ico_list, reload = TRUE)
-### rgn_id | sciname | comname | iucn_category | trend
-dupes <- ico_rgn_am %>% select(rgn_id, sciname) %>% duplicated()
-dupes <- ico_rgn_am %>% filter(sciname %in% ico_rgn_am$sciname[dupes])
 
+### Aquamaps ICO species with parents/subpopulations:
 # Different IUCN species IDs, but no IUCN spatial information, so based upon
 # an undifferentiated Aquamaps map.  Look up each and assign to regions by hand.
 # Check on IUCN site by iucn_sid, might have country ranges for each subpop.
@@ -157,21 +208,4 @@ dupes <- ico_rgn_am %>% filter(sciname %in% ico_rgn_am$sciname[dupes])
 #     Nicaragua (Nicaragua (mainland)); Peru; United States (California, Washington)
 # -----
 
-##############################################################################=
-### Fill in species lists by region based on original spreadsheet -----
-##############################################################################=
-ico_rgn_other <- ico_list %>% 
-  filter(is.na(spatial_source)) %>%
-  select(rgn_id = ico_rgn_id, sciname, comname, iucn_category, trend)
-### rgn_id | sciname | comname | iucn_category | trend
 
-##############################################################################=
-### Summarize regional iconic species status -----
-##############################################################################=
-ico_rgn_sum <- process_ico_rgn(list(ico_rgn_iucn, ico_rgn_am, ico_rgn_other))
-### rgn_id | mean_cat | mean_trend | status
-
-##############################################################################=
-### Some check functions -----
-##############################################################################=
-x <- ico_rgn_source_compare()

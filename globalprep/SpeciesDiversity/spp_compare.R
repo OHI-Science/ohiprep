@@ -5,40 +5,13 @@ source('src/R/common.R')
 library(ggplot2)
 
 dir_global <- ('~/github/ohi-global')
-comp_scenario  <- 'eez2014'
+comp_scenario  <- 'eez2013'
 
 goal     <- 'globalprep/SpeciesDiversity'
 scenario <- 'v2015'
-dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal) 
-               
-spp_scores_current <- read.csv(file.path(dir_anx, scenario, 'summary/rgn_summary.csv')) %>%
-  select(rgn_id, cur_status = status, cur_trend = rgn_mean_trend) %>%
-  mutate(cur_status = cur_status/100)
-spp_status_compare <- read.csv(file.path(dir_global, comp_scenario, 'layers/spp_status.csv')) %>%
-  rename(comp_status = score)
-spp_trend_compare <- read.csv(file.path(dir_global, comp_scenario, 'layers/spp_trend.csv')) %>%
-  rename(comp_trend = score)
-spp_scores_compare <- full_join(spp_status_compare, spp_trend_compare, by = 'rgn_id')
-
-spp_scores <- full_join(spp_scores_current, spp_scores_compare, by = 'rgn_id')
-
-ggplot(spp_scores, aes(x = cur_status, y = comp_status)) +
-  geom_point() + 
-  ylim(0.5, 1) + xlim(0.5, 1) +
-  geom_abline(intercept = 0, slope = 1, color = 'red') + 
-  labs(x = sprintf('%s status', scenario), 
-       y = sprintf('%s status', comp_scenario), 
-       title = 'Status comparison for new SSP algorithms vs prior year')
-
-ggplot(spp_scores, aes(x = cur_trend, y = comp_trend)) +
-  geom_point() + 
-  ylim(-.5, .5) + xlim(-.5, .5) +
-  geom_abline(intercept = 0, slope = 1, color = 'red') + 
-  labs(x = sprintf('%s trend', scenario), 
-       y = sprintf('%s trend', comp_scenario), 
-       title = 'Trend comparison for new SSP algorithms vs prior year')
-
-
+dir_git  <- file.path('~/github/ohiprep', goal) 
+ 
+#############################################################################=
 scatterPlot <- function(csv_orig, csv_new, title_text,
                         fig_save = file.path(dir_git, scenario, paste0(title_text, '_scatterPlot.png'))) {
   
@@ -78,10 +51,51 @@ scatterPlot <- function(csv_orig, csv_new, title_text,
   ggsave(fig_save, width = 10, height = 8)
 }
 
-scatterPlot(csv_orig = '~/github/ohi-global/eez2013/layers/spp_status.csv',
-            csv_new  = '~/github/ohiprep/globalprep/SpeciesDiversity/v2015/data/spp_status.csv',
+#############################################################################=
+### SPP Comparison Graphs -----
+#############################################################################=
+
+scatterPlot(csv_orig = file.path(dir_global, comp_scenario, 'layers/spp_status.csv'),
+            csv_new  = file.path(dir_git, scenario, 'data/spp_status.csv'),
             title_text = 'spp_status')
 
-scatterPlot(csv_orig = '~/github/ohi-global/eez2013/layers/spp_trend.csv',
-            csv_new  = '~/github/ohiprep/globalprep/SpeciesDiversity/v2015/data/spp_trend.csv',
+scatterPlot(csv_orig = file.path(dir_global, comp_scenario, 'layers/spp_trend.csv'),
+            csv_new  = file.path(dir_git, scenario, 'data/spp_trend.csv'),
             title_text = 'spp_trend')
+
+
+#############################################################################=
+### ICO Comparison Graphs -----
+#############################################################################=
+
+# ico_status and trend not in correct format in ohi-global/eez2013.
+cat_conv    <- data.frame(category    = c("LC", "NT", "VU", "EN", "CR", "EX"), 
+                          cat_score   = c(   0,  0.2,  0.4,  0.6,  0.8,   1))
+trend_conv  <- data.frame(popn_trend  = c("Decreasing", "Stable", "Increasing"), 
+                          trend_score = c(   -0.5,         0,          0.5   ))
+
+ico_status_raw <- read.csv(file.path(dir_global, comp_scenario, 'layers/ico_spp_extinction_status.csv'), stringsAsFactors = FALSE) 
+ico_status_compare <- ico_status_raw %>%
+  left_join(cat_conv, by = 'category') %>%
+  group_by(rgn_id) %>%
+  summarize(mean_cat = mean(cat_score, na.rm = TRUE)) %>%
+  mutate(score = ((1 - mean_cat) - 0.25) / 0.75)
+ico_trend_raw <- read.csv(file.path(dir_global, comp_scenario, 'layers/ico_spp_popn_trend.csv'), stringsAsFactors = FALSE)
+ico_trend_compare <- ico_trend_raw %>%
+  left_join(trend_conv, by = 'popn_trend') %>%
+  group_by(rgn_id) %>%
+  summarize(score = mean(trend_score, na.rm = TRUE))
+
+write_csv(ico_status_compare, file.path(dir_git, sprintf('tmp/ico_status_%s.csv', comp_scenario)))
+write_csv(ico_trend_compare,  file.path(dir_git, sprintf('tmp/ico_trend_%s.csv',  comp_scenario)))
+
+
+
+scatterPlot(csv_orig = file.path(dir_git, sprintf('tmp/ico_status_%s.csv', comp_scenario)),
+            csv_new  = file.path(dir_git, scenario, 'data/ico_status.csv'),
+            title_text = 'ico_status')
+
+scatterPlot(csv_orig = file.path(dir_git, sprintf('tmp/ico_trend_%s.csv',  comp_scenario)),
+            csv_new  = file.path(dir_git, scenario, 'data/ico_trend.csv'),
+            title_text = 'ico_trend')
+
