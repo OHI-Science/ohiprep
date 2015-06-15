@@ -52,7 +52,9 @@ get_ico_list <- function() {
     left_join(cat_lookup, by = 'ico_cat_long') %>%
     select(-ico_cat_long)
   
-  spp_all <- read.csv(file.path(dir_anx, scenario, 'intermediate/spp_all_cleaned.csv'), stringsAsFactors = FALSE)
+  if(!exists('spp_all')) 
+     spp_all <- read.csv(file.path(dir_anx, scenario, 'intermediate/spp_all_cleaned.csv'), 
+                         stringsAsFactors = FALSE)
 
   
   # join to spp_all and update category/trend info if available from IUCN spreadsheet
@@ -88,14 +90,13 @@ get_ico_rgn_iucn <- function(ico_list, reload = FALSE) {
   ico_rgn_iucn_file <- file.path(dir_anx, scenario, 'intermediate/ico_rgn_iucn.csv')
   if(!file.exists(ico_rgn_iucn_file) | reload) {
     ico_list_iucn <- ico_list %>%
-      filter(spatial_source == 'iucn') %>%
-      select(-spatial_source)
+      filter(str_detect(spatial_source, 'iucn'))
     
     ### Load IUCN species per cell tables : takes a while
     iucn_cells_spp <- get_iucn_cells_spp()
     
     iucn_ico_names <- unique(ico_list_iucn$sciname)
-    if(!exists('rgn_cell_lookup'))  rgn_cell_lookup <- extract_cell_id_per_region()
+    if(!exists('rgn_cell_lookup'))  rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
     
     ### filter is faster than join.  Filter iucn_cells_spp by sciname; then join to LOICZID <-> rgn table
     ico_cells_iucn <- iucn_cells_spp %>%
@@ -110,22 +111,17 @@ get_ico_rgn_iucn <- function(ico_list, reload = FALSE) {
     ico_rgn_iucn <- ico_rgn_iucn %>%
       filter(ico_gl == TRUE | rgn_id == ico_rgn_id) %>%
       filter(!is.na(rgn_id)) %>%
-      select(rgn_id, sciname, comname, iucn_category, trend) %>%
+      select(-id_no, -ncells, -ico_gl, -ico_rgn_id) %>%
       unique()
+
     cat(sprintf('Writing regional presence of iconic species from IUCN spatial data. \n  %s\n', ico_rgn_iucn_file))
     write_csv(ico_rgn_iucn, ico_rgn_iucn_file)
     
-    # Two problem species appear, with same sciname, two iucn_categories, and no 
-    # spatial differentiation by iucn_sid:
-    # Tursiops truncatus  CR
-    # Tursiops truncatus  VU
-    # Balaena mysticetus  NT
-    # Balaena mysticetus  EN
-    # Balaena mysticetus  CR
   } else {
     cat(sprintf('Reading regional presence of iconic species from IUCN spatial data from:\n  %s\n', ico_rgn_iucn_file))
     ico_rgn_iucn <- read_csv(ico_rgn_iucn_file)
   }
+  
   return(ico_rgn_iucn)
 }
 
@@ -152,18 +148,13 @@ get_ico_rgn_am   <- function(ico_list, sp_source = 'am', reload = FALSE) {
       inner_join(ico_list, by = 'am_sid')
     ico_rgn <- ico_rgn %>%
       filter(ico_gl == TRUE | rgn_id == ico_rgn_id) %>%
-      select(rgn_id, sciname, comname, iucn_category, trend) %>%
+      filter(!is.na(rgn_id)) %>% # ???
+      select(-id_no, -ncells, -ico_gl, -ico_rgn_id) %>%
       unique()
+    
     cat(sprintf('Writing regional presence of iconic species from %s spatial data. \n  %s\n', sp_source, ico_rgn_file))
     write_csv(ico_rgn, ico_rgn_file)
     
-    # Two problem species appear, with same sciname, two iucn_categories, and no 
-    # spatial differentiation by iucn_sid:
-    # Tursiops truncatus  CR
-    # Tursiops truncatus  VU
-    # Balaena mysticetus  NT
-    # Balaena mysticetus  EN
-    # Balaena mysticetus  CR
   } else {
     cat(sprintf('Reading regional presence of iconic species from %s spatial data from:\n  %s\n', sp_source, ico_rgn_file))
     ico_rgn <- read_csv(ico_rgn_file)
