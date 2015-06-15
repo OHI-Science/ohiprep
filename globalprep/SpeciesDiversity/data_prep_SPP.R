@@ -191,8 +191,7 @@ summary_by_rgn     <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup)
 if(!exists('summary_by_rgn')) 
   summary_by_rgn <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary.csv'))
 spp_status <- summary_by_rgn %>%
-  select(rgn_id, score = status) %>%
-  mutate(score = score/100)
+  select(rgn_id, score = status)
 spp_trend <- summary_by_rgn %>%
   select(rgn_id, score = rgn_mean_trend)
 write_csv(spp_status, file.path(dir_git, scenario, 'data/spp_status.csv'))
