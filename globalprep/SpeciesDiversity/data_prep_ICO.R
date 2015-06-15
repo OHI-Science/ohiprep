@@ -6,6 +6,9 @@
 ###   that calls functions and sources code within R/spp_fxn.R
 ##############################################################################=
 library(readr)      # for read_csv()
+#library(RCurl)
+library(XML)
+
 
 setwd('~/github/ohiprep')
 source('src/R/common.R')
@@ -70,13 +73,15 @@ ico_rgn_all <- ico_rgn_all %>%
 
 ico_rgn_all <- ico_rgn_all %>%
   filter(!((str_detect(spatial_source, 'parent') | str_detect(spatial_source, 'subpop')) & is.na(present))) %>%
-  select(-present, -parent_sid, -subpop_sid)
+  select(-present, -parent_sid, -subpop_sid) %>%
+  unique()
 
 write_csv(ico_rgn_all, file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv'))
 
 ##############################################################################=
 ### Summarize regional iconic species status -----
 ##############################################################################=
+ico_rgn_all <- read.csv(file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv'), stringsAsFactors = FALSE)
 ico_rgn_sum <- process_ico_rgn(ico_rgn_all)
 ### rgn_id | mean_cat | mean_trend | status
 

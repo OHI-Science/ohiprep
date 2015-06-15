@@ -264,13 +264,19 @@ process_ico_rgn <- function(ico_rgn_all) {
     left_join(popn_trend, by = 'trend') %>%
     select(-iucn_category, -trend)
   
+  ### This section omits parents if a subpopulation is present
+#   ico_rgn_all <- ico_rgn_all %>%
+#     group_by(rgn_id, sciname) %>%
+#     mutate(p_drop_flag = ifelse(n() > 1 & str_detect(spatial_source, 'parent'), TRUE, FALSE)) %>%
+#     filter(!p_drop_flag)
+
   ### This section aggregates category and trend for a single species sciname within a region,
   ### including parent and all subpopulations present in a region.
   ### Species, including parent and all subpops, is weighted same as species w/o parents and subpops.
-  ico_rgn_sub_sum <- ico_rgn_all %>%
+  ico_rgn_all <- ico_rgn_all %>%
     group_by(rgn_id, sciname) %>%
     summarize(category_score = mean(category_score), trend_score = mean(trend_score, na.rm = TRUE))
-  
+
   ico_rgn_sum <- ico_rgn_all %>%
     group_by(rgn_id) %>%
     summarize(mean_cat = mean(category_score), mean_trend = mean(trend_score, na.rm = TRUE)) %>%
