@@ -829,7 +829,7 @@ process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup) {
               rgn_mean_trend = sum(area_weighted_mean_trend)/sum(rgn_area))
   
   region_sums <- region_sums %>%
-    mutate(status = ((1 - rgn_mean_cat) - 0.25) / 0.75 * 100)
+    mutate(status = ((1 - rgn_mean_cat) - 0.25) / 0.75)
   
   region_summary_file <- file.path(dir_git, scenario, 'summary/rgn_summary.csv')
   cat(sprintf('Writing summary file of area-weighted mean category & trend per region:\n  %s\n', region_summary_file))
