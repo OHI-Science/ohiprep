@@ -30,7 +30,6 @@ source(file.path(dir_git, 'R/ico_fxn.R'))
 ##############################################################################=
 ### get master list of Iconic Species -----
 ##############################################################################=
-#############################################################################=
 # this creates ico_list_full.csv
 get_ico_list2 <- function() {
   ico_list_file <- file.path(dir_anx, 'ico/ico_global_list.csv')
@@ -170,9 +169,9 @@ ico_list1 <- ico_list1 %>%
 ##############################################################################=
 ### Determine species lists by region based on IUCN and AM spatial data -----
 ##############################################################################=
-#############################################################################=
+
 get_ico_rgn_iucn2 <- function(ico_list, reload = FALSE) {
-  ico_rgn_iucn_file <- file.path(dir_anx, 'tmp/ico_rgn_iucn.csv')
+  ico_rgn_iucn_file <- file.path(dir_git, 'tmp/ico_rgn_iucn.csv')
   if(!file.exists(ico_rgn_iucn_file) | reload) {
     ico_list_iucn <- ico_list %>%
       filter(str_detect(spatial_source, 'iucn')) %>%
@@ -214,13 +213,11 @@ get_ico_rgn_iucn2 <- function(ico_list, reload = FALSE) {
   return(ico_rgn_iucn)
 }
 
-
-#############################################################################=
-get_ico_rgn_am2   <- function(ico_list, sp_source = 'am', reload = FALSE) {
-  ico_rgn_file <- file.path(dir_anx, sprintf('tmp/ico_rgn_%s.csv', sp_source))
+get_ico_rgn_am2   <- function(ico_list, reload = FALSE) {
+  ico_rgn_file <- file.path(dir_git, 'tmp/ico_rgn_am.csv')
   if(!file.exists(ico_rgn_file) | reload) {
-    ico_list_sp <- ico_list %>%
-      filter(str_detect(spatial_source, sp_source)) %>%
+    ico_list_am <- ico_list1 %>%
+      filter(str_detect(spatial_source, 'am')) %>%
       filter(ico_category != 'EX') %>%
       mutate(am_sid = as.character(am_sid)) %>%
       select(-rgn_name, -rgn_id) %>%
@@ -239,18 +236,18 @@ get_ico_rgn_am2   <- function(ico_list, sp_source = 'am', reload = FALSE) {
     ico_rgn <- ico_cells %>%
       group_by(rgn_id, am_sid) %>%
       summarize(ncells = n()) %>%
-      inner_join(ico_list, by = 'am_sid')
+      inner_join(ico_list_am, by = 'am_sid')
     ico_rgn <- ico_rgn %>%
       filter(ico_gl == TRUE | rgn_id == ico_rgn_id) %>%
       filter(!is.na(rgn_id)) %>% # ???
       select(-ncells, -ico_gl, -ico_rgn_id) %>%
       unique()
     
-    cat(sprintf('Writing regional presence of iconic species from %s spatial data. \n  %s\n', sp_source, ico_rgn_file))
+    cat(sprintf('Writing regional presence of iconic species from AM spatial data. \n  %s\n', ico_rgn_file))
     write_csv(ico_rgn, ico_rgn_file)
     
   } else {
-    cat(sprintf('Reading regional presence of iconic species from %s spatial data from:\n  %s\n', sp_source, ico_rgn_file))
+    cat(sprintf('Reading regional presence of iconic species from AM spatial data from:\n  %s\n', ico_rgn_file))
     ico_rgn <- read_csv(ico_rgn_file)
   }
   return(ico_rgn)
@@ -260,7 +257,7 @@ ico_rgn_iucn <- get_ico_rgn_iucn2(ico_list1, reload = FALSE)
 ### rgn_id | sciname | comname | iucn_sid | am_sid | iucn_category |
 ### spatial_source | parent_sid | subpop_sid | trend
 
-ico_rgn_am <- get_ico_rgn_am(ico_list, reload = FALSE)
+ico_rgn_am <- get_ico_rgn_am2(ico_list, reload = FALSE)
 ### rgn_id | am_sid | comname | sciname | iucn_sid | trend |
 ### iucn_category | spatial_source | parent_sid | subpop_sid |
 
