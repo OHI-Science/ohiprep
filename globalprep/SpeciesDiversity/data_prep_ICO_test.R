@@ -6,7 +6,6 @@
 ###   that calls functions and sources code within R/spp_fxn.R
 ##############################################################################=
 library(readr)      # for read_csv()
-#library(RCurl)
 library(XML)
 
 
@@ -19,7 +18,7 @@ dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal)
 dir_git  <- file.path('~/github/ohiprep', goal)
 
 source(file.path(dir_git, 'R/spp_fxn.R'))
-source(file.path(dir_git, 'R/ico_fxn.R'))
+source(file.path(dir_git, 'R/ico_fxn_test.R'))
 # SPP-specific and ICO-specific functions
 
 
@@ -30,33 +29,71 @@ source(file.path(dir_git, 'R/ico_fxn.R'))
 ##############################################################################=
 ### get master list of Iconic Species -----
 ##############################################################################=
-ico_list <- get_ico_list()
+ico_list <- test_get_ico_list()
 ### | comname | sciname | ico_gl (iconic globally?) | iucn_sid | am_sid | spatial_source |
 ### | iucn_category (code, NA and DD filtered out) | trend (lower case) | ico_rgn_id 
 ### * ico_rgn_id: rgn_id in which species is iconic by regional/national lists,
 ###   separately from other lists.
 
+cat_mismatch <- filter(ico_list, ico_category != iucn_category)
+trend_mismatch <- filter(ico_list, tolower(ico_trend) != tolower(popn_trend))
+rgn_id_mismatch <- filter(ico_list, is.na(rgn_id)) %>% select(country) %>% unique()
+
+ico_list1 <- ico_rgn_name_to_number(ico_list %>% rename(rgn_name = country, rgn_id_tmp = rgn_id)) %>%
+  select(-rgn_id_tmp, -ohi_rgn_name)
+rgn_id_mismatch1 <- filter(ico_list1, is.na(rgn_id)) %>% select(rgn_name) %>% unique()
+# add these countries to the list or manually edit
+        # C�te d'Ivoire
+        # French Southern Territories (the)
+        # R_union
+        # Libyan Arab Jamahiriya
+        # Netherlands Antilles
+        # British Indian Ocean Territory (Chagos Archipelago)
+        # Disputed Territory (Paracel Is., Spratly Is.)
+        # French Polynesia (Tuamotu)
+        # Micronesia, Federated States of
+        # United States Minor Outlying Islands (Wake Is.)
+        # Lao People's Democratic Republic
+        # Province of China
+        # Dominican Republic Ecuador
+        # Ethiopia
+        # Sao Tom_ and Principe
+
+ico_list1 <- ico_list1 %>% select(-rgn_id, -rgn_name) %>% unique()
+
+ico_list1 <- ico_list1 %>% 
+  mutate(trend = ico_trend,
+         iucn_category = ico_category) %>%
+  select(-ico_category, -ico_trend, -popn_trend) %>%
+  unique()
+
+ico_list2 <- ico_list1 %>% select(-rgn_name) %>% unique()
+
 ##############################################################################=
 ### Determine species lists by region based on IUCN and AM spatial data -----
 ##############################################################################=
-ico_rgn_iucn <- get_ico_rgn_iucn(ico_list, reload = FALSE) 
+ico_rgn_iucn <- get_ico_rgn_iucn(ico_list2, reload = TRUE)
 ### rgn_id | sciname | comname | iucn_sid | am_sid | iucn_category |
 ### spatial_source | parent_sid | subpop_sid | trend
+ico_rgn_iucn <- ico_rgn_iucn %>% select(-iucn_sid, -am_sid, -parent_sid, -subpop_sid) %>% mutate(spatial_source = 'iucn') %>% unique()
 
-ico_rgn_am <- get_ico_rgn_am(ico_list, reload = FALSE)
+ico_rgn_am <- get_ico_rgn_am(ico_list2, reload = TRUE)
+ico_rgn_am <- ico_rgn_am %>% select(-iucn_sid, -am_sid, -parent_sid, -subpop_sid) %>% mutate(spatial_source = 'am') %>% unique()
 ### rgn_id | am_sid | comname | sciname | iucn_sid | trend |
 ### iucn_category | spatial_source | parent_sid | subpop_sid |
 
 ### Fill in species lists by region based on original spreadsheet
-ico_rgn_other <- ico_list %>% 
+ico_rgn_other <- ico_list1 %>% 
   filter(is.na(spatial_source)) %>%
-  select(rgn_id = ico_rgn_id, sciname, comname, iucn_category, trend)
+  select(-iucn_sid, -am_sid, -parent_sid, -subpop_sid, -rgn_name, -ico_rgn_id, -ico_gl) %>% unique()
+
 ### rgn_id | sciname | comname | iucn_category | trend
 
 ##############################################################################=
 ### Combine ICO lists from all spatial sources, add parent/subpop regions -----
 ##############################################################################=
-ico_rgn_all <- bind_rows(ico_rgn_iucn, ico_rgn_am, ico_rgn_other)
+ico_rgn_all <- bind_rows(ico_rgn_iucn, ico_rgn_am, ico_rgn_other) %>%
+  filter(iucn_category != 'EX' & iucn_category != 'DD')
 
 # ico_list_subpops <- ico_rgn_all %>% 
 #   filter(!is.na(parent_sid) | !is.na(subpop_sid)) %>%
@@ -70,20 +107,38 @@ ico_rgn_all <- bind_rows(ico_rgn_iucn, ico_rgn_am, ico_rgn_other)
 #               select(sid, rgn_id) %>%
 #               mutate(present = TRUE),
 #             by = c('iucn_sid' = 'sid', 'rgn_id'))
-# 
+
 # ico_rgn_all <- ico_rgn_all %>%
 #   filter(!((str_detect(spatial_source, 'parent') | str_detect(spatial_source, 'subpop')) & is.na(present))) %>%
 #   select(-present, -parent_sid, -subpop_sid) %>%
 #   unique()
 
-ico_rgn_all <- ico_rgn_all %>% filter(!str_detect(spatial_source, 'subpop'))
-
-# write_csv(ico_rgn_all, file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv'))
+write_csv(ico_rgn_all, file.path(dir_anx, 'tmp/ico_rgn_cat-ss_sp-maps.csv'))
 
 ##############################################################################=
 ### Summarize regional iconic species status -----
 ##############################################################################=
-# ico_rgn_all <- read.csv(file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv'), stringsAsFactors = FALSE)
+ico_rgn_all <- read.csv(file.path(dir_anx, 'tmp/ico_rgn_cat-ss_sp-maps.csv'), stringsAsFactors = FALSE)
+
+cat_mismatch <- filter(ico_rgn_all, ico_category != iucn_category)
+trend_mismatch <- filter(ico_rgn_all, tolower(ico_trend) != tolower(popn_trend))
+
+ico_rgn_all1 <- ico_rgn_all %>%
+  mutate(popn_trend    = tolower(popn_trend),
+         iucn_category = ifelse(is.na(iucn_category), 
+                                as.character(ico_category), 
+                                as.character(iucn_category)),
+         trend         = ifelse(is.na(popn_trend) | popn_trend == 'unknown', 
+                                as.character(ico_trend), 
+                                as.character(popn_trend))) %>%
+  select(-rgn_name, -ico_category, -ico_trend, -popn_trend)
+
+ico_rgn_all2 <- ico_rgn_all %>%
+  mutate(trend = ico_trend,
+         iucn_category = ico_category) %>%
+  select(-rgn_name, -ico_category, -ico_trend, -popn_trend)
+
+
 ico_rgn_sum <- process_ico_rgn(ico_rgn_all)
 ### rgn_id | mean_cat | mean_trend | status
 
@@ -91,10 +146,8 @@ ico_status <- ico_rgn_sum %>%
   select(rgn_id, score = status)
 ico_trend <- ico_rgn_sum %>%
   select(rgn_id, score = mean_trend)
-write_csv(ico_status, file.path(dir_git, scenario, 'data/ico_status_no_subpops.csv'))
-write_csv(ico_trend,  file.path(dir_git, scenario, 'data/ico_trend_no_subpops.csv'))
-# write_csv(ico_status, file.path(dir_git, scenario, 'data/ico_status.csv'))
-# write_csv(ico_trend,  file.path(dir_git, scenario, 'data/ico_trend.csv'))
+write_csv(ico_status, file.path(dir_git, scenario, 'data/ico_status_cat-ss_sp-maps.csv'))
+write_csv(ico_trend,  file.path(dir_git, scenario, 'data/ico_trend_cat-ss_sp-maps.csv'))
 
 
 ##############################################################################=
