@@ -139,7 +139,7 @@ plot(new_catch_1999to2003$avg.catch_1999to2003_new~new_catch_1999to2003$avg.catc
 abline(0,1)
 
 # look at them logged
-plot(log(new_catch_1999to2003$avg.catch_1999to2003_new)~log(new_catch_1999to2003$avg.catch_1999to2003_old),pty='s',
+plot(log(new_catch_1999to2003$avg.catch_1999to2003_new+1)~log(new_catch_1999to2003$avg.catch_1999to2003_old+1),pty='s',
      xlab='Old Avg Catch (tons)',ylab='New Avg Catch (tons)',main='Average Catch per region (eez/fao)\n1999 to 2003')
 abline(0,1)
 
@@ -207,26 +207,34 @@ all = new_catch_1999to2003%>%
         dplyr::select(id_type,id,catch_1999to2003_NEW,catch_1999to2003_OLD,catch_2008to2010_NEW,catch_2006to2010_NEW)%>%
         mutate(pct.chg_2008to2010_NEW = ((catch_2008to2010_NEW-catch_1999to2003_NEW)/catch_1999to2003_NEW)*100,
                pct.chg_2006to2010_NEW = ((catch_2006to2010_NEW-catch_1999to2003_NEW)/catch_1999to2003_NEW)*100,
-               pct.chg_2009to2011_OLD = chg$pct_chg[match(id,chg$id)])%>% # remember this was calculated using different data for these years...
-        mutate(growth_08to10 = ifelse(catch_2008to2010_NEW>catch_1999to2003_NEW,1,0))
+               pct.chg_2009to2011_OLD = chg$pct_chg[match(id,chg$id)]) # remember this was calculated using different data for these years...
+
 # look at the average catch from 2008 to 2010 and 2006 to 2010
 
 x = all$catch_2008to2010_NEW
 y = all$catch_2006to2010_NEW
 
-plot(x~y,xlab='Average Catch (tons) 2008-2010',ylab='Average Catch (tons) 2006-2010')
+plot(x~y,ylab='Average Catch (tons) 2008-2010',xlab='Average Catch (tons) 2006-2010')
 abline(0,1)
 
 # SUPER CLOSE - maybe doesnt matter what one we choose? Let's look at pct change now
 
 x2 = all$pct.chg_2008to2010_NEW
 y2 = all$pct.chg_2006to2010_NEW
-plot(x2~y2,xlab='Percent Change in Catch 2008-2010',ylab='Percent Change in Catch 2006-2010')
+plot(x2~y2,ylab='Percent Change in Catch 2008-2010',xlab='Percent Change in Catch 2006-2010')
+abline(0,1)
+
+# remove the large outlier to get a better picture
+t = filter(all,pct.chg_2008to2010_NEW<2000)
+
+x2 = t$pct.chg_2008to2010_NEW
+y2 = t$pct.chg_2006to2010_NEW
+plot(x2~y2,ylab='Percent Change in Catch 2008-2010',xlab='Percent Change in Catch 2006-2010')
 abline(0,1)
 
 # lets log it to look?
 
-plot(log(x2)~log(y2),xlab='Percent Change in Catch 2008-2010',ylab='Percent Change in Catch 2006-2010')
+plot(log(x2)~log(y2),ylab='Percent Change in Catch 2008-2010',xlab='Percent Change in Catch 2006-2010')
 abline(0,1)
 
 #very close so I don't think it matters what number of years we choose
@@ -235,15 +243,27 @@ abline(0,1)
 #the old data which looked at percent change 2009to 2011
 
 x3 = all$pct.chg_2009to2011_OLD
-y3 = all$pct.chg_2008to2010_NEW
+y3 = all$pct.chg_2006to2010_NEW
 
 
-plot(x3~y3,xlab='Previous % change (2009to2011 old data)',ylab='% Change with new data (2008-2010)')
+plot(x3~y3,ylab='Previous % change (2009to2011 old data)',xlab='% Change with new data (2006-2010)')
 abline(0,1)
+
+
+# remove outlier to get better picture
+
+m = filter(all,pct.chg_2006to2010_NEW<500)
+
+x3 = m$pct.chg_2009to2011_OLD
+y3 = m$pct.chg_2006to2010_NEW
+
+plot(x3~y3,ylab='Previous % change (2009to2011 old data)',xlab='% Change with new data (2006-2010)')
+abline(0,1)
+
 
 #look at log?
 
-plot(log(x3)~log(y3),xlab='Previous % change (2009to2011 old data)',ylab='% Change with new data (2008-2010)')
+plot(log(x3)~log(y3),ylab='Previous % change (2009to2011 old data)',xlab='% Change with new data (2006-2010)')
 abline(0,1)
 
 # Lot of NA's because negative numbers in old data.
