@@ -14,7 +14,7 @@ get_ico_list <- function() {
   ico_list_file <- file.path(dir_anx, 'ico/ico_global_list.csv')
   cat(sprintf('Reading raw iconic species list master file from: \n  %s\n', ico_list_file))
   ico_list_raw <- read.csv(ico_list_file, stringsAsFactors = FALSE) %>%
-    select(country    = Country, 
+    select(rgn_name   = Country, 
            comname    = Specie.Common.Name,  
            sciname    = Specie.Scientific.Name, 
            ico_flag   = Flagship.Species,
@@ -26,8 +26,9 @@ get_ico_list <- function() {
     )
   # clean up names
   ico_list_raw <- ico_list_raw %>%
-    mutate(sciname = str_trim(sciname),
-           comname = str_trim(comname)) %>%
+    mutate(rgn_name = str_trim(rgn_name),
+           sciname  = str_trim(sciname),
+           comname  = str_trim(comname)) %>%
     filter(sciname != '')
   
   sum(!is.na(ico_list_raw$ico_global) | !is.na(ico_list_raw$ico_flag))
@@ -76,7 +77,7 @@ get_ico_list <- function() {
   # - consider only observations with ico_rgn indicator or without spatial data.
   # - for these, attach an "ico_rgn_id" variable to track which countries to 
   #   count for these species
-  # - then from all lines, remove the "country" variable, losing the country
+  # - then from all lines, remove the "rgn_name" variable, losing the rgn_name
   #   specific info from the spreadsheet for all but locally iconic species and
   #   those species without IUCN or AM spatial data.  The spatial data will
   #   instead be used to fill out the countries for those.
@@ -85,10 +86,10 @@ get_ico_list <- function() {
   ico_list <- ico_list %>%
     left_join(ico_list %>%
                 filter(ico_rgn != '' | is.na(spatial_source)) %>%
-                select(country, sciname) %>%
-                left_join(rgn_names, by = c('country' = 'label')),
-              by = c('country', 'sciname')) %>% 
-    select(-country, -ico_rgn, ico_rgn_id = rgn_id) %>% 
+                select(rgn_name, sciname) %>%
+                left_join(rgn_names, by = c('rgn_name' = 'label')),
+              by = c('rgn_name', 'sciname')) %>% 
+    select(-rgn_name, -ico_rgn, ico_rgn_id = rgn_id) %>% 
     filter(iucn_category != 'DD') %>%
     unique
   return(ico_list)
@@ -239,13 +240,13 @@ get_countries_all <- function(df = ico_list_subpops, reload = FALSE) {
 
 #############################################################################=
 ico_rgn_name_to_number <- function(ico_countries) {
-  if(!exists('rgn_cell_lookup'))  
-    rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
+  rgn_name_file <- '~/github/ohi-global/eez2013/layers/rgn_global.csv'
+  rgn_names <- read_csv(rgn_name_file) %>%
+    rename(rgn_name = label)
+  
   rgn_iucn2ohi <- read.csv(file.path(dir_anx, 'rgns/rgns_iucn2ohi.csv'), stringsAsFactors = FALSE)
   ico_countries <- ico_countries %>%
-    left_join(rgn_cell_lookup %>%
-                select(rgn_id, rgn_name) %>%
-                unique(),
+    left_join(rgn_names,
               by = 'rgn_name')
   ico_countries <- ico_countries %>%
     left_join(rgn_iucn2ohi, 
@@ -305,7 +306,7 @@ ico_rgn_source_compare <- function() {
   
   ico_list_file <- file.path(dir_anx, 'ico/ico_global_list.csv')
   ico_list_raw <- read.csv(ico_list_file, stringsAsFactors = FALSE) %>%
-    select(country    = Country, 
+    select(rgn_name   = Country, 
            comname    = Specie.Common.Name,  
            sciname    = Specie.Scientific.Name
     )
@@ -316,7 +317,7 @@ ico_rgn_source_compare <- function() {
     filter(sciname != '')
   
   ico_source_old <- ico_list_raw %>%
-    left_join(rgn_names, by = c('country' = 'label')) %>%
+    left_join(rgn_names, by = c('rgn_name' = 'label')) %>%
     select(rgn_id, sciname, comname)   # 2592 observations according to spreadsheet
   ico_source_new <- read_csv(file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv')) %>%
     select(rgn_id, sciname, comname)   # 4121 observations according to new spatial process
