@@ -29,11 +29,15 @@ names= names(ssta)
 
 # Bring in 
 
-for (i in 1982:2012){
+for (i in 1992:2012){
+  
+  print(i)
   
   s = stack()
   
   for (j in 1:53){
+    
+    print(j)
     
     sd = raster(paste0('tmp/sd_sst_week_',j,'.tif')) #sd for week
     w = which(substr(names,2,5)==i)[j]
@@ -42,6 +46,9 @@ for (i in 1982:2012){
     
     count = overlay(w_ssta,sd,fun=function(x,y){ifelse(x>y,1,0)},progress='text') #compare to average anomaly for that week 
     
+    s = stack(s,count)
     
   }
+  
+  year = calc(s,fun=function(x){sum(x)},progress='text',filename=paste0('tmp/annual_pos_anomalies_sd_',i,'.tif'))
 }
