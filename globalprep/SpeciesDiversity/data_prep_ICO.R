@@ -58,30 +58,32 @@ ico_rgn_other <- ico_list %>%
 ##############################################################################=
 ico_rgn_all <- bind_rows(ico_rgn_iucn, ico_rgn_am, ico_rgn_other)
 
-ico_list_subpops <- ico_rgn_all %>% 
-  filter(!is.na(parent_sid) | !is.na(subpop_sid)) %>%
-  select(sciname, iucn_sid) %>%
-  unique()
+# ico_list_subpops <- ico_rgn_all %>% 
+#   filter(!is.na(parent_sid) | !is.na(subpop_sid)) %>%
+#   select(sciname, iucn_sid) %>%
+#   unique()
+# 
+# ico_subpop_rgn_ids <- get_countries_all(ico_list_subpops, reload = TRUE)
+# 
+# ico_rgn_all <- ico_rgn_all %>%
+#   left_join(ico_subpop_rgn_ids %>%
+#               select(sid, rgn_id) %>%
+#               mutate(present = TRUE),
+#             by = c('iucn_sid' = 'sid', 'rgn_id'))
+# 
+# ico_rgn_all <- ico_rgn_all %>%
+#   filter(!((str_detect(spatial_source, 'parent') | str_detect(spatial_source, 'subpop')) & is.na(present))) %>%
+#   select(-present, -parent_sid, -subpop_sid) %>%
+#   unique()
 
-ico_subpop_rgn_ids <- get_countries_all(ico_list_subpops, reload = TRUE)
+ico_rgn_all <- ico_rgn_all %>% filter(!str_detect(spatial_source, 'subpop'))
 
-ico_rgn_all <- ico_rgn_all %>%
-  left_join(ico_subpop_rgn_ids %>%
-              select(sid, rgn_id) %>%
-              mutate(present = TRUE),
-            by = c('iucn_sid' = 'sid', 'rgn_id'))
-
-ico_rgn_all <- ico_rgn_all %>%
-  filter(!((str_detect(spatial_source, 'parent') | str_detect(spatial_source, 'subpop')) & is.na(present))) %>%
-  select(-present, -parent_sid, -subpop_sid) %>%
-  unique()
-
-write_csv(ico_rgn_all, file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv'))
+# write_csv(ico_rgn_all, file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv'))
 
 ##############################################################################=
 ### Summarize regional iconic species status -----
 ##############################################################################=
-ico_rgn_all <- read.csv(file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv'), stringsAsFactors = FALSE)
+# ico_rgn_all <- read.csv(file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv'), stringsAsFactors = FALSE)
 ico_rgn_sum <- process_ico_rgn(ico_rgn_all)
 ### rgn_id | mean_cat | mean_trend | status
 
@@ -89,8 +91,10 @@ ico_status <- ico_rgn_sum %>%
   select(rgn_id, score = status)
 ico_trend <- ico_rgn_sum %>%
   select(rgn_id, score = mean_trend)
-write_csv(ico_status, file.path(dir_git, scenario, 'data/ico_status.csv'))
-write_csv(ico_trend,  file.path(dir_git, scenario, 'data/ico_trend.csv'))
+write_csv(ico_status, file.path(dir_git, scenario, 'data/ico_status_no_subpops.csv'))
+write_csv(ico_trend,  file.path(dir_git, scenario, 'data/ico_trend_no_subpops.csv'))
+# write_csv(ico_status, file.path(dir_git, scenario, 'data/ico_status.csv'))
+# write_csv(ico_trend,  file.path(dir_git, scenario, 'data/ico_trend.csv'))
 
 
 ##############################################################################=
