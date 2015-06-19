@@ -23,6 +23,8 @@ setwd(file.path(dir_N,'git-annex/globalprep/Pressures_SST'))
 ssta = stack('data/cortadv5_SSTA.nc',varname='SSTA')
 weekly_sst = stack('data/cortadv5_WeeklySST.nc',varname='WeeklySST')
 
+week_sst_names = names(weekly_sst)
+
 # Second Loop to calculate annual positive anomalies
 
 # Bring in 
@@ -33,8 +35,14 @@ for (i in 1982:2012){
   
   for (j in 1:53){
     
-    sd = raster(paste0('tmp/sd_sst_week_',j,'.tif'))
+    sd = raster(paste0('tmp/sd_sst_week_',j,'.tif')) #sd for week
+    #now need to pull in the week from the year
+    names = names(weekly_sst)
+    w = which(substr(names,2,5)==i)[j]
     
+    m = weekly_sst[[w]]
+    
+    count = 
     
     
   }
