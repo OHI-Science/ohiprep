@@ -1,13 +1,15 @@
-# Creating fisheries pressure layers with new SAUP data
+# Create fish pressure layers 
 
-# June 2015
-
-# Jamie Afflerbach
 
 rm(list=ls())
 
 library(raster)
 library(dplyr)
+library(RColorBrewer)
+library(rgdal)
+library(ggplot2)
+
+cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
 
 
 
@@ -30,6 +32,85 @@ saup_2015 = file.path(dir_N,'git-annex/globalprep/SAUP_data_2015')
 
 # Directory where the updates to the 2008 data were done for 2013 ohi
 saup_update = file.path(dir_N, 'model/GL-SAUP-FisheriesCatchData_v2013')
+
+#---------------------------------------------------------------------------------
+
+# Get gear catch rasters
+
+area = raster(file.path(saup_pressures,'catch_area_gcs.tif')) # i think this is area!??
+
+dem_d = raster(file.path(saup_pressures,'catch_dem_d_gcs.tif'))
+
+dem_hb = raster(file.path(saup_pressures,'catch_dem_nd_hb_gcs.tif'))
+
+dem_lb = raster(file.path(saup_pressures,'catch_dem_nd_lb_gcs.tif'))
+
+pel_lb = raster(file.path(saup_pressures,'catch_pel_lb_gcs.tif'))
+
+pel_hb = raster(file.path(saup_pressures,'catch_pel_hb_gcs.tif'))
+
+# aggregate high and low bycatch
+
+hb = stack(dem_d,dem_hb,pel_hb)%>%
+        calc(.,fun=function(x){sum(x)},progress='text')
+
+lb = stack(pel_lb,dem_lb)%>%
+      calc(.,fun=function(x){sum(x)},progress='text')
+
+# aggregate all catch
+
+all_catch = stack(dem_d,dem_hb,dem_lb,pel_lb,pel_hb)%>%
+             calc(.,fun=function(x){sum(x)},progress='text')
+
+# create percent rasters
+
+
+gear_prop_hb = overlay(hb,all_catch,fun=function(x,y){x/y},progress='text')
+
+gear_prop_lb = overlay(lb,all_catch,fun=function(x,y){x/y},progress='text')
+
+# sum these together to see if we have regions with zeros (ideally these are all 1??)
+
+sum = sum(gear_prop_hb,gear_prop_lb)
+
+# for regions where there is no catch in the past, get the average proportion of high and low bycatch
+
+hb_mean = cellStats(gear_prop_hb,'mean')
+lb_mean = cellStats(gear_prop_lb,'mean')
+
+# replace NAs with high and low bycatch (then we'll have to mask out land later down the line)
+
+gear_prop_hb[is.na(gear_prop_hb)]<-hb_mean
+gear_prop_lb[is.na(gear_prop_lb)]<-lb_mean
+
+# reproject to moll then Resample to 1km then mask
+
+projection(gear_prop_hb)<- "+proj=longlat +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +no_defs"
+
+moll_crs = CRS("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs")
+
+gear_prop_hb_moll = projectRaster(gear_prop_hb,crs=moll_crs,over=T,progress='text')
+gear_prop_lb_moll = projectRaster(gear_prop_lb,crs=moll_crs,over=T,progress='text')
+
+#bring in old SAUP region raster (at 1km with no land)
+
+old_saup_eez = raster(file.path(dir_N,'model/GL-NCEAS-Pressures_CommercialFisheries_v2013a/tmp/saup_fao_mol.tif'))
+
+gear_prop_hb_1km = resample(gear_prop_hb_moll,old_saup_eez,method='ngb',progress='text',filename ='v2015/gear_prop_hb_moll_1km.tif')
+gear_prop_lb_1km = resample(gear_prop_lb_moll,old_saup_eez,method='ngb',progress='text',filename ='v2015/gear_prop_lb_moll_1km.tif')
+
+# mask out land
+
+gear_prop_hb_1km_ocean = mask(gear_prop_hb_1km,old_saup_eez,progress='text',filename='v2015/gear_prop_hb_moll_1km_ocean.tif')
+gear_prop_hb_1km_ocean = mask(gear_prop_hb_1km,old_saup_eez,progress='text',filename='v2015/gear_prop_hb_moll_1km_ocean.tif')
+
+# TO DO:
+
+# Region 18 should have 0 catch
+
+
+
+
 
 
 #--------------------------------------------------------------------------------------
@@ -72,97 +153,16 @@ filter(ohi_2015_taxons,taxonkey%in%saup_taxon_exclude$stock_id)
 
 # filter our taxons and aggregate catch per year/region - add in the old SAUP IDs
 saup_data = saup_all%>% 
-            filter(!TaxonKey %in% saup_taxon_exclude$stock_id)%>%
-             mutate(id      = ifelse(EEZID==0,FAOAreaID+1000,EEZID),
-                    id_type = ifelse(id>1000,'fao','eez'))%>% 
-              group_by(Year,id_type,id)%>%
-               summarize(catch=sum(catch))%>%
-              mutate(old_saup_id = as.integer(ifelse(id_type=='eez',saup_2015_eez$old_saup_id[match(id,saup_2015_eez$EEZID)],id)))%>%
-              select(new_id = id, Year, id_type,catch,old_saup_id)
+  filter(!TaxonKey %in% saup_taxon_exclude$stock_id)%>%
+  mutate(id      = ifelse(EEZID==0,FAOAreaID+1000,EEZID),
+         id_type = ifelse(id>1000,'fao','eez'))%>% 
+  group_by(Year,id_type,id)%>%
+  summarize(catch=sum(catch))%>%
+  mutate(old_saup_id = as.integer(ifelse(id_type=='eez',saup_2015_eez$old_saup_id[match(id,saup_2015_eez$EEZID)],id)))%>%
+  select(new_id = id, Year, id_type,catch,old_saup_id)
 
 
 # now we have the total catch per year per id.
 
 
 #-----------------------------------------------------------------------------
-
-
-# Calculate change in catch since the period 1999-2003
-
-# Here I am going to use the data from the old SAUP dataset for the years 1999-2003 to calculate the change
-# in catch. This should be more accurate than using the new dataset catches for 1999-2003 since they are likely
-# much different.
-
-# bring in old data
-change_old = read.csv(file.path(saup_update,'data/pct_chg_saup_2009to2011_vs_1999to2003.csv'))
-
-# The catch in yrs1999to2003 is what we want to compare to.
-
-# Now aggregate data for periods 
-
-saup_06_10 = saup_data%>%
-            filter(Year>2005 & Year < 2011)%>%
-            group_by(id_type,old_saup_id)%>%
-             summarize(avg_catch_2006to2010 = mean(catch))%>%
-      mutate(yrs_1999to2003 = change_old$yrs1999to2003[match(old_saup_id,change_old$id)],
-             pct_chg = ((avg_catch_2006to2010-yrs_1999to2003)/yrs_1999to2003)*100)%>%
-              as.data.frame()
-
-saup_05_09 = saup_data%>%
-  filter(Year>2004 & Year < 2010)%>%
-  group_by(id_type,old_saup_id)%>%
-  summarize(avg_catch_2005to2009 = mean(catch))%>%
-  mutate(yrs_1999to2003 = change_old$yrs1999to2003[match(old_saup_id,change_old$id)],
-         pct_chg = ((avg_catch_2005to2009-yrs_1999to2003)/yrs_1999to2003)*100)%>%
-  as.data.frame()
-
-saup_04_08 = saup_data%>%
-  filter(Year>2003 & Year < 2009)%>%
-  group_by(id_type,old_saup_id)%>%
-  summarize(avg_catch_2004to2008 = mean(catch))%>%
-  mutate(yrs_1999to2003 = change_old$yrs1999to2003[match(old_saup_id,change_old$id)],
-         pct_chg = ((avg_catch_2004to2008-yrs_1999to2003)/yrs_1999to2003)*100)%>%
-  as.data.frame()
-
-saup_03_07 = saup_data%>%
-  filter(Year>2002 & Year < 2008)%>%
-  group_by(id_type,old_saup_id)%>%
-  summarize(avg_catch_2003to2007 = mean(catch))%>%
-  mutate(yrs_1999to2003 = change_old$yrs1999to2003[match(old_saup_id,change_old$id)],
-         pct_chg = ((avg_catch_2003to2007-yrs_1999to2003)/yrs_1999to2003)*100)%>%
-  as.data.frame()
-
-#----------------------------------------------------------------------
-
-# bring all together (not sure this is necessary...)
-
-catch_chg = saup_06_10%>%
-              inner_join(saup_05_09)%>%
-              inner_join(saup_04_08)%>%
-              inner_join(saup_03_07)%>%
-            mutate(yrs_1999to2003 = change_old$yrs1999to2003[match(old_saup_id,change_old$id)])
-
-# look at rows where yrs_1999to2003 are NA
-
-missing = as.data.frame(filter(catch_chg,is.na(yrs_1999to2003)))
-
-# 2 regions that don't have a match between old and new - these actually make sense and are ok.
-
-
-
-#-------------------------------------------------------------------
-#create change rasters for each period of years (4)
-
-#bring in old SAUP region raster
-
-old_saup_eez = raster(file.path(dir_N,'model/GL-NCEAS-Pressures_CommercialFisheries_v2013a/tmp/saup_fao_mol.tif'))
-
-# need to substitue values of regions with percent change
-
-# 6-16-2015: NEED TO RUN THIS! Maybe try on neptune??
-
-rcl = saup_06_10%>%
-        select(is=old_saup_id,becomes=pct_chg)
-
-chg_ras_06_10 = reclassify(old_saup_eez,rcl,filename='v2015/pct_change_rasters/pct_chg_1999to2003_2006to2010.tif',progress='text')
-
