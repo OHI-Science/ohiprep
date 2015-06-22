@@ -34,6 +34,7 @@ source(file.path(dir_git, 'R/ico_fxn.R'))
 # * use IUCN master list from SPP for category and trend; does it still have year info?
 
 ico_list <- get_ico_list()
+
 ### | comname | sciname | ico_gl (iconic globally?) | iucn_sid | am_sid | spatial_source |
 ### | iucn_category (code, NA and DD filtered out) | trend (lower case) | ico_rgn_id 
 ### * ico_rgn_id: rgn_id in which species is iconic by regional/national lists,
@@ -41,35 +42,40 @@ ico_list <- get_ico_list()
 
 
 ##############################################################################=
-### Combine ICO lists from all spatial sources, add parent/subpop regions -----
+### Find ICO regions for all species on ICO list -----
 ##############################################################################=
+### NOTE: since this is pulling country lists from IUCN site, all ICO species
+### must have an IUCN SID.  Not a problem from 2011 list so far.
 
-ico_list_subpops <- ico_list %>% 
-  filter(!is.na(parent_sid) | !is.na(subpop_sid)) %>%
+ico_spp_list <- ico_list %>%
   select(sciname, iucn_sid) %>%
   unique()
 
-ico_subpop_rgn_ids <- get_countries_all(ico_list_subpops, reload = TRUE)
+ico_rgn_list <- get_ico_details_all(ico_spp_list, reload = TRUE)
+
+ico_rgn_all <- ico_list %>%
+  left_join(ico_rgn_list, 
+            by = c('iucn_sid' = 'sid'))
+
+### Deal with the regionally and possibly extinct - mutate the category here.
+### Regionally extinct are essentially counted as an extinct subpop.
+### Possibly extinct are considered functionally extinct in this, so same as regionally extinct.
+ico_rgn_all <- ico_rgn_all %>%
+  mutate(category = ifelse(rgn_type == 'possibly extinct',   'EX', category),
+         category = ifelse(rgn_type == 'regionally extinct', 'EX', category),
+         trend    = ifelse(rgn_type == 'possibly extinct',    NA,  trend),
+         trend    = ifelse(rgn_type == 'regionally extinct',  NA,  trend))
 
 ico_rgn_all <- ico_rgn_all %>%
-  left_join(ico_subpop_rgn_ids %>%
-              select(sid, rgn_id) %>%
-              mutate(present = TRUE),
-            by = c('iucn_sid' = 'sid', 'rgn_id'))
+  filter((ico_gl == TRUE & is.na(ico_rgn_id) | ico_rgn_id == rgn_id))
 
-# ico_rgn_all <- ico_rgn_all %>%
-#   filter(!((str_detect(spatial_source, 'parent') | str_detect(spatial_source, 'subpop')) & is.na(present))) %>%
-#   select(-present, -parent_sid, -subpop_sid) %>%
-#   unique()
-
-ico_rgn_all <- ico_rgn_all %>% filter(!str_detect(spatial_source, 'subpop'))
-
-# write_csv(ico_rgn_all, file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv'))
+write_csv(ico_rgn_all, file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv'))
 
 ##############################################################################=
 ### Summarize regional iconic species status -----
 ##############################################################################=
-# ico_rgn_all <- read.csv(file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv'), stringsAsFactors = FALSE)
+ico_rgn_all <- read.csv(file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv'), stringsAsFactors = FALSE)
+
 ico_rgn_sum <- process_ico_rgn(ico_rgn_all)
 ### rgn_id | mean_cat | mean_trend | status
 
@@ -77,8 +83,8 @@ ico_status <- ico_rgn_sum %>%
   select(rgn_id, score = status)
 ico_trend <- ico_rgn_sum %>%
   select(rgn_id, score = mean_trend)
-write_csv(ico_status, file.path(dir_git, scenario, 'data/ico_status_no_subpops.csv'))
-write_csv(ico_trend,  file.path(dir_git, scenario, 'data/ico_trend_no_subpops.csv'))
+write_csv(ico_status, file.path(dir_git, scenario, 'data/ico_status.csv'))
+write_csv(ico_trend,  file.path(dir_git, scenario, 'data/ico_trend.csv'))
 # write_csv(ico_status, file.path(dir_git, scenario, 'data/ico_status.csv'))
 # write_csv(ico_trend,  file.path(dir_git, scenario, 'data/ico_trend.csv'))
 

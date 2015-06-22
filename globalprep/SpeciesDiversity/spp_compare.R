@@ -68,26 +68,26 @@ scatterPlot(csv_orig = file.path(dir_global, comp_scenario, 'layers/spp_trend.cs
 ### ICO Comparison Graphs -----
 #############################################################################=
 
-# ico_status and trend not in correct format in ohi-global/eez2013.
-cat_conv    <- data.frame(category    = c("LC", "NT", "VU", "EN", "CR", "EX"), 
-                          cat_score   = c(   0,  0.2,  0.4,  0.6,  0.8,   1))
-trend_conv  <- data.frame(popn_trend  = c("Decreasing", "Stable", "Increasing"), 
-                          trend_score = c(   -0.5,         0,          0.5   ))
-
-ico_status_raw <- read.csv(file.path(dir_global, comp_scenario, 'layers/ico_spp_extinction_status.csv'), stringsAsFactors = FALSE) 
-ico_status_compare <- ico_status_raw %>%
-  left_join(cat_conv, by = 'category') %>%
-  group_by(rgn_id) %>%
-  summarize(mean_cat = mean(cat_score, na.rm = TRUE)) %>%
-  mutate(score = ((1 - mean_cat) - 0.25) / 0.75)
-ico_trend_raw <- read.csv(file.path(dir_global, comp_scenario, 'layers/ico_spp_popn_trend.csv'), stringsAsFactors = FALSE)
-ico_trend_compare <- ico_trend_raw %>%
-  left_join(trend_conv, by = 'popn_trend') %>%
-  group_by(rgn_id) %>%
-  summarize(score = mean(trend_score, na.rm = TRUE))
-
-write_csv(ico_status_compare, file.path(dir_git, sprintf('tmp/ico_status_%s.csv', comp_scenario)))
-write_csv(ico_trend_compare,  file.path(dir_git, sprintf('tmp/ico_trend_%s.csv',  comp_scenario)))
+# # ico_status and trend not in correct format in ohi-global/eez2013.
+# cat_conv    <- data.frame(category    = c("LC", "NT", "VU", "EN", "CR", "EX"), 
+#                           cat_score   = c(   0,  0.2,  0.4,  0.6,  0.8,   1))
+# trend_conv  <- data.frame(popn_trend  = c("Decreasing", "Stable", "Increasing"), 
+#                           trend_score = c(   -0.5,         0,          0.5   ))
+# 
+# ico_status_raw <- read.csv(file.path(dir_global, comp_scenario, 'layers/ico_spp_extinction_status.csv'), stringsAsFactors = FALSE) 
+# ico_status_compare <- ico_status_raw %>%
+#   left_join(cat_conv, by = 'category') %>%
+#   group_by(rgn_id) %>%
+#   summarize(mean_cat = mean(cat_score, na.rm = TRUE)) %>%
+#   mutate(score = ((1 - mean_cat) - 0.25) / 0.75)
+# ico_trend_raw <- read.csv(file.path(dir_global, comp_scenario, 'layers/ico_spp_popn_trend.csv'), stringsAsFactors = FALSE)
+# ico_trend_compare <- ico_trend_raw %>%
+#   left_join(trend_conv, by = 'popn_trend') %>%
+#   group_by(rgn_id) %>%
+#   summarize(score = mean(trend_score, na.rm = TRUE))
+# 
+# write_csv(ico_status_compare, file.path(dir_git, sprintf('tmp/ico_status_%s.csv', comp_scenario)))
+# write_csv(ico_trend_compare,  file.path(dir_git, sprintf('tmp/ico_trend_%s.csv',  comp_scenario)))
 
 
 
