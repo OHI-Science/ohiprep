@@ -46,16 +46,16 @@ get_ico_list <- function() {
   # join ico_list to spp_all to incorporate category info and parent/subpop info.
   ico_list <- ico_list %>%
     left_join(spp_all %>%
-                select(sciname, iucn_category, popn_trend, parent_sid, subpop_sid) %>%
-                filter(sciname %in% ico_list$sciname)
+                select(sciname, category = iucn_category, iucn_sid, trend = popn_trend, parent_sid, subpop_sid) %>%
+                filter(sciname %in% ico_list$sciname),
               by = 'sciname')
   cat_list <- c('LC', 'NT', 'VU', 'EN', 'CR', 'EX')
   ico_list <- ico_list %>%
-    mutate(popn_trend = tolower(popn_trend)
+    mutate(trend    = tolower(trend),
            category = ifelse(category == 'DD', NA, category),
            category = ifelse(category == 'LR/lc', 'LC', category),
-           category = ifelse(cateogry == 'LR/nt', 'NT', category)) %>%
-    filter(iucn_category %in% cat_list)
+           category = ifelse(category == 'LR/nt', 'NT', category)) %>%
+    filter(category %in% cat_list)
   
   # convert regional iconic status into a rgn_id, and join to ico_list.
   # - consider only observations with ico_rgn indicator
@@ -65,14 +65,16 @@ get_ico_list <- function() {
   rgn_names <- read_csv(rgn_name_file)
   ico_list <- ico_list %>%
     left_join(ico_list %>%
-                filter(ico_rgn != '' | is.na(spatial_source)) %>%
+                filter(ico_rgn != '') %>%
                 select(rgn_name, sciname) %>%
                 left_join(rgn_names, by = c('rgn_name' = 'label')),
               by = c('rgn_name', 'sciname')) %>% 
     rename(ico_rgn_id = rgn_id) %>% 
       # note: check that all countries properly translate on this. 
       # Should be easy since I can control the rgn-specific country names in the spreadsheet.
-    unique
+    select(-rgn_name, -ico_rgn) %>%
+
+    unique()
   return(ico_list)
 }
 
@@ -81,7 +83,7 @@ get_ico_list <- function() {
 get_ico_details = function(sid, download_tries = 10) {
   ### function to extract subpopulation information and population trend information
   ### for a species, given the IUCN species ID.
-  ### example species Oncorhynchus nerka: sid=135301 # (parent) ## sid=135322 # (child)  # sid=4162
+  ### example species Oncorhynchus nerka: sid=135301 # (parent) ## sid=135322 # (child)  # sid=4615
   url <- sprintf('http://api.iucnredlist.org/details/%d/0', sid)
   htm <- file.path(dir_anx, sprintf('cache/iucn_details/%d.htm', sid)) # htm = '135322.htm'
   
@@ -93,54 +95,56 @@ get_ico_details = function(sid, download_tries = 10) {
   
   if (file.info(htm)$size == 0) stop(sprintf('Only getting empty file for: %s', url))
   h <- htmlParse(htm)
-  countries <- as.character(xpathSApply(h, '//ul[@class="country_distribution"]/li/ul/li', xmlValue))
+#  countries <- as.character(xpathSApply(h, '//ul[@class="country_distribution"]/li/ul/li', xmlValue))
+  native  <- as.character(xpathSApply(h, '//ul[@class="country_distribution"]/li[div="Native"]/ul/li', xmlValue)) %>%
+    as.data.frame() %>% mutate(rgn_type = 'native')
+  pos_ex  <- as.character(xpathSApply(h, '//ul[@class="country_distribution"]/li[div="Possibly extinct"]/ul/li', xmlValue)) %>%
+    as.data.frame() %>% mutate(rgn_type = 'possibly extinct')
+  rgn_ex  <- as.character(xpathSApply(h, '//ul[@class="country_distribution"]/li[div="Regionally extinct"]/ul/li', xmlValue)) %>%
+    as.data.frame() %>% mutate(rgn_type = 'regionally extinct')
+  reintro <- as.character(xpathSApply(h, '//ul[@class="country_distribution"]/li[div="Reintroduced"]/ul/li', xmlValue)) %>%
+    as.data.frame() %>% mutate(rgn_type = 'reintroduced')
   # ??? check for possibly/regionally extinct in here as well
   # NOTE greater specificity 
   #   for http://www.iucnredlist.org/details/135322/0 -- United States (Alaska) 
   #   vs  http://api.iucnredlist.org/details/135322/0 -- United States
   #countries = xpathSApply(h, '//td[@class="label"][strong="Countries:"]/following-sibling::td/div/text()', xmlValue)    
-  
+  countries = bind_rows(native, pos_ex, rgn_ex, reintro)
+  names(countries)[1] = 'rgn_name'
   return(countries)
 }
 # ??? update to scrape possibly/regionally extinct countries
-# ??? also include population trend in this function (maybe 'get_details')
 
 #############################################################################=
-get_ico_details_all <- function(df = ico_list, reload = FALSE) {
+get_ico_details_all <- function(ico_spp_list, reload = FALSE) {
   ### gets a list of countries in which parents and subpops appear, from
   ### the scraped data in iucn_details.
   
-  ico_countries_file <- file.path(dir_anx, 'tmp/ico_subpop_countries.csv')
-  if(!file.exists(ico_countries_file) | reload == TRUE) {
-    cat('Creating parent and subpop countries list.\n')
-    ico_countries     <- data.frame() # initialize
+  ico_rgns_file <- file.path(dir_anx, 'tmp/ico_rgns.csv')
+  if(!file.exists(ico_rgns_file) | reload == TRUE) {
+    cat('Creating temporary ICO regions list.\n')
+    ico_rgns <- data.frame() # initialize
     
-    i  <- 0
-    
-    for (sid in df$iucn_sid) { # sid = df$iucn_sid[3]
-      country_list <-  get_countries(sid)
+    for (sid in ico_spp_list$iucn_sid) { # sid = ico_spp_list$iucn_sid[3]
+      region_list <-  get_ico_details(sid)
       # subpop
-      if (length(country_list) > 0) {
-        cat(sprintf('Found countries list for species %d: %s\n', sid, paste(country_list, collapse = ' ')))
-        ico_countries_sid <- data.frame(sid, country_list)
-        ico_countries     <- rbind(ico_countries, ico_countries_sid)
+      if (length(region_list) > 0) {
+        cat(sprintf('Found native regions for species %d: %s\n', sid, paste(region_list[region_list$rgn_type == 'native', 1], collapse = ' ')))
+        cat(sprintf('Possibly/regionally extinct regions for species %d: %s\n', sid, paste(region_list[region_list$rgn_type != 'native', 1], collapse = ' ')))
+        ico_regions_sid <- data.frame(sid, region_list)
+        ico_rgns     <- rbind(ico_rgns, ico_regions_sid)
       }
-      i <- i + 1
     }
     
-    ico_countries <- ico_countries %>%
-      rename(rgn_name = country_list)
-    
-    cat(sprintf('Writing parent/subpop countries file to: \n  %s\n', ico_countries_file))
-    write_csv(ico_countries, ico_countries_file)
+    cat(sprintf('Writing temporary ICO regions file to: \n  %s\n', ico_rgns_file))
+    write_csv(ico_rgns, ico_rgns_file)
   } else {
-    cat(sprintf('Reading parent/subpop countries file from: \n  %s\n', ico_countries_file))
-    ico_countries <- read.csv(ico_countries_file, stringsAsFactors = FALSE)
+    cat(sprintf('Reading parent/subpop countries file from: \n  %s\n', ico_rgns_file))
+    ico_rgns <- read.csv(ico_rgns_file, stringsAsFactors = FALSE)
   }
-  ico_countries <- ico_rgn_name_to_number(ico_countries)
-  return(ico_countries)
+  ico_rgns <- ico_rgn_name_to_number(ico_rgns)
+  return(ico_rgns)
 }
-# ??? pretty good already - include regionally/possibly extinct functionality and trend
 
 #############################################################################=
 ico_rgn_name_to_number <- function(ico_countries) {
@@ -155,9 +159,10 @@ ico_rgn_name_to_number <- function(ico_countries) {
   ico_countries <- ico_countries %>%
     left_join(rgn_iucn2ohi, 
               by = c('rgn_name' = 'iucn_rgn_name')) %>%
-    mutate(rgn_id = ifelse(is.na(rgn_id), ohi_rgn_id, rgn_id)) %>%
-    select(-ohi_rgn_id) %>%
-    filter(!is.na(rgn_id))
+    mutate(rgn_id   = ifelse(is.na(rgn_id),       ohi_rgn_id, rgn_id),
+           rgn_name = ifelse(is.na(ohi_rgn_name), rgn_name,   sprintf('%s WAS %s', ohi_rgn_name, rgn_name))) %>%
+    filter(!is.na(rgn_id)) %>% # comment this out to check that all country names get an ID
+    select(-ohi_rgn_id, -ohi_rgn_name)
   return(ico_countries)
 }
 # ??? good - may need to update with new mismatches
@@ -172,14 +177,14 @@ process_ico_rgn <- function(ico_rgn_list) {
   ### Summarize category and trend for each region.
   
   # to overall lookup table, join scores for population category and trend.
-  popn_cat    <- data.frame(iucn_category  = c('LC', 'NT', 'VU', 'EN', 'CR', 'EX'), 
+  popn_cat    <- data.frame(category  = c('LC', 'NT', 'VU', 'EN', 'CR', 'EX'), 
                             category_score = c(   0,  0.2,  0.4,  0.6,  0.8,   1))
   popn_trend  <- data.frame(trend=c('decreasing', 'stable', 'increasing'), 
                             trend_score=c(-0.5, 0, 0.5))
   ico_rgn_list <- ico_rgn_list %>%
-    left_join(popn_cat,   by = 'iucn_category') %>%
+    left_join(popn_cat,   by = 'category') %>%
     left_join(popn_trend, by = 'trend') %>%
-    select(-iucn_category, -trend)
+    select(-category, -trend)
   
   ### This section aggregates category and trend for a single species sciname within a region,
   ### including parent and all subpopulations present in a region.
@@ -194,7 +199,7 @@ process_ico_rgn <- function(ico_rgn_list) {
     mutate(status = ((1 - mean_cat) - 0.25) / 0.75,
            status = ifelse(status < 0, 0, status))
   
-  ico_rgn_sum_file <- file.path(dir_anx, scenario, 'summary/ico_rgn_sum.csv')
+  ico_rgn_sum_file <- file.path(dir_git, scenario, 'summary/ico_rgn_sum.csv')
   cat(sprintf('Writing file for iconic species summary by region: \n  %s\n', ico_rgn_sum_file))
   write_csv(ico_rgn_sum, ico_rgn_sum_file)
   
