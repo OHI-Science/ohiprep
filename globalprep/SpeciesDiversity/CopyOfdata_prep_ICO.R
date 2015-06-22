@@ -6,6 +6,7 @@
 ###   that calls functions and sources code within R/spp_fxn.R
 ##############################################################################=
 library(readr)      # for read_csv()
+#library(RCurl)
 library(XML)
 
 
@@ -21,42 +22,55 @@ source(file.path(dir_git, 'R/spp_fxn.R'))
 source(file.path(dir_git, 'R/ico_fxn.R'))
 # SPP-specific and ICO-specific functions
 
+
+##############################################################################=
+### ICO -----
+##############################################################################=
+
 ##############################################################################=
 ### get master list of Iconic Species -----
 ##############################################################################=
-
-# ??? include functionality to pull from cached scraped data.
-# * download the IUCN list; check for last updated year
-# * load the latest WWF lists - use 2011 spreadsheet as a starting guid
-# * for each species on the WWF list, check against IUCN master list for last updated year
-#   * if updated recently, pull in country lists
-#   * since it's really not that many species, maybe just pull 'em all in, esp for first year
-# * use IUCN master list from SPP for category and trend; does it still have year info?
-
 ico_list <- get_ico_list()
 ### | comname | sciname | ico_gl (iconic globally?) | iucn_sid | am_sid | spatial_source |
 ### | iucn_category (code, NA and DD filtered out) | trend (lower case) | ico_rgn_id 
 ### * ico_rgn_id: rgn_id in which species is iconic by regional/national lists,
 ###   separately from other lists.
 
+##############################################################################=
+### Determine species lists by region based on IUCN and AM spatial data -----
+##############################################################################=
+ico_rgn_iucn <- get_ico_rgn_iucn(ico_list, reload = FALSE) 
+### rgn_id | sciname | comname | iucn_sid | am_sid | iucn_category |
+### spatial_source | parent_sid | subpop_sid | trend
+
+ico_rgn_am <- get_ico_rgn_am(ico_list, reload = FALSE)
+### rgn_id | am_sid | comname | sciname | iucn_sid | trend |
+### iucn_category | spatial_source | parent_sid | subpop_sid |
+
+### Fill in species lists by region based on original spreadsheet
+ico_rgn_other <- ico_list %>% 
+  filter(is.na(spatial_source)) %>%
+  select(rgn_id = ico_rgn_id, sciname, comname, iucn_category, trend)
+### rgn_id | sciname | comname | iucn_category | trend
 
 ##############################################################################=
 ### Combine ICO lists from all spatial sources, add parent/subpop regions -----
 ##############################################################################=
+ico_rgn_all <- bind_rows(ico_rgn_iucn, ico_rgn_am, ico_rgn_other)
 
-ico_list_subpops <- ico_list %>% 
-  filter(!is.na(parent_sid) | !is.na(subpop_sid)) %>%
-  select(sciname, iucn_sid) %>%
-  unique()
-
-ico_subpop_rgn_ids <- get_countries_all(ico_list_subpops, reload = TRUE)
-
-ico_rgn_all <- ico_rgn_all %>%
-  left_join(ico_subpop_rgn_ids %>%
-              select(sid, rgn_id) %>%
-              mutate(present = TRUE),
-            by = c('iucn_sid' = 'sid', 'rgn_id'))
-
+# ico_list_subpops <- ico_rgn_all %>% 
+#   filter(!is.na(parent_sid) | !is.na(subpop_sid)) %>%
+#   select(sciname, iucn_sid) %>%
+#   unique()
+# 
+# ico_subpop_rgn_ids <- get_countries_all(ico_list_subpops, reload = TRUE)
+# 
+# ico_rgn_all <- ico_rgn_all %>%
+#   left_join(ico_subpop_rgn_ids %>%
+#               select(sid, rgn_id) %>%
+#               mutate(present = TRUE),
+#             by = c('iucn_sid' = 'sid', 'rgn_id'))
+# 
 # ico_rgn_all <- ico_rgn_all %>%
 #   filter(!((str_detect(spatial_source, 'parent') | str_detect(spatial_source, 'subpop')) & is.na(present))) %>%
 #   select(-present, -parent_sid, -subpop_sid) %>%

@@ -79,7 +79,8 @@ scatterPlot(csv_orig = file.path(dir_global, comp_scenario, 'layers/spp_trend.cs
 #   left_join(cat_conv, by = 'category') %>%
 #   group_by(rgn_id) %>%
 #   summarize(mean_cat = mean(cat_score, na.rm = TRUE)) %>%
-#   mutate(score = ((1 - mean_cat) - 0.25) / 0.75)
+#   mutate(score = ((1 - mean_cat) - 0.25) / 0.75,
+#          score = ifelse(score < 0, 0, score))
 # ico_trend_raw <- read.csv(file.path(dir_global, comp_scenario, 'layers/ico_spp_popn_trend.csv'), stringsAsFactors = FALSE)
 # ico_trend_compare <- ico_trend_raw %>%
 #   left_join(trend_conv, by = 'popn_trend') %>%
@@ -89,26 +90,43 @@ scatterPlot(csv_orig = file.path(dir_global, comp_scenario, 'layers/spp_trend.cs
 # write_csv(ico_status_compare, file.path(dir_git, sprintf('tmp/ico_status_%s.csv', comp_scenario)))
 # write_csv(ico_trend_compare,  file.path(dir_git, sprintf('tmp/ico_trend_%s.csv',  comp_scenario)))
 
-#2013 SSP status/trend:
-
-
-
+#2013 ICO status/trend vs. 2015 Spatially-explicit data, no subpops ----
 scatterPlot(csv_orig = file.path(dir_git, sprintf('tmp/ico_status_%s.csv', comp_scenario)),
             csv_new  = file.path(dir_git, scenario, 'data/ico_status_no_subpops.csv'),
             title_text = 'ico_status_test_no_subpops')
-
 scatterPlot(csv_orig = file.path(dir_git, sprintf('tmp/ico_trend_%s.csv',  comp_scenario)),
             csv_new  = file.path(dir_git, scenario, 'data/ico_trend_no_subpops.csv'),
             title_text = 'ico_trend_test_no_subpops')
 
+#2013 ICO status filtered for IUCN species, vs 2015 ICO status from just IUCN shps (no subpops) ----
+scatterPlot(csv_orig = file.path(dir_git, sprintf('tmp/ico_status_%s_iucn.csv', comp_scenario)),
+            csv_new  = file.path(dir_git, 'tmp/ico_status_iucn.csv'),
+            title_text = '2013_vs_2015_ico_iucn_shps')
 
+#2013 ICO status filtered for AM species, vs 2015 ICO status from just AM rasters (no subpops) ----
+scatterPlot(csv_orig = file.path(dir_git, sprintf('tmp/ico_status_%s_iucn.csv', comp_scenario)),
+            csv_new  = file.path(dir_git, 'tmp/ico_status_am.csv'),
+            title_text = '2013_vs_2015_ico_am_rasters')
+
+#include subpop info ----
 scatterPlot(csv_orig = file.path(dir_git, sprintf('tmp/ico_status_%s.csv', comp_scenario)),
-            csv_new  = file.path(dir_global, 'eez2013/layers/spp_status.csv'),
-            title_text = '2013_ico_vs_spp')
+            csv_new  = file.path(dir_git, 'tmp/ico_status_ss1.csv'),
+            title_text = 'update_cat_with_subpops')
 
-scatterPlot(csv_orig = file.path(dir_git, scenario, 'data/ico_status.csv'),
-            csv_new  = file.path(dir_git, scenario, 'data/spp_status.csv'),
-            title_text = '2015_ico_vs_spp')
+# linear models ----
+status_x   <- left_join(read.csv(file.path(dir_git, sprintf('tmp/ico_status_%s.csv', comp_scenario))), 
+                       read.csv(file.path(dir_git, 'tmp/ico_status_am3.csv')), 
+                       by = 'rgn_id')
+status_mdl <- lm(status_x$score.x ~ status_x$score.y)
+summary(status_mdl)
+
+status_x   <- left_join(read.csv(file.path(dir_git, sprintf('tmp/ico_status_%s.csv', comp_scenario))) %>%
+                          mutate(score = ifelse(score<0, 0, score)), 
+                        read.csv(file.path(dir_git, 'tmp/ico_status_iucn3.csv')) %>%
+                          mutate(score = ifelse(score<0, 0, score)), , 
+                        by = 'rgn_id')
+status_mdl <- lm(status_x$score.x ~ status_x$score.y)
+summary(status_mdl)
 
 
 status_x   <- left_join(ico_status_compare, 
