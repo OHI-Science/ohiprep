@@ -102,7 +102,7 @@ gear_prop_lb_1km = resample(gear_prop_lb_moll,old_saup_eez,method='ngb',progress
 # mask out land
 
 gear_prop_hb_1km_ocean = mask(gear_prop_hb_1km,old_saup_eez,progress='text',filename='v2015/gear_prop_hb_moll_1km_ocean.tif')
-gear_prop_hb_1km_ocean = mask(gear_prop_hb_1km,old_saup_eez,progress='text',filename='v2015/gear_prop_hb_moll_1km_ocean.tif')
+gear_prop_lb_1km_ocean = mask(gear_prop_lb_1km,old_saup_eez,progress='text',filename='v2015/gear_prop_lb_moll_1km_ocean.tif',overwrite=T)
 
 # TO DO:
 
