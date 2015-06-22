@@ -262,15 +262,218 @@ ico_rgn_am <- get_ico_rgn_am2(ico_list, reload = FALSE)
 ### iucn_category | spatial_source | parent_sid | subpop_sid |
 
 ### Fill in species lists by region based on original spreadsheet
-ico_rgn_other <- ico_list %>% 
+ico_rgn_other <- ico_list1 %>% 
   filter(is.na(spatial_source)) %>%
-  select(rgn_id = ico_rgn_id, sciname, comname, iucn_category, trend)
-### rgn_id | sciname | comname | iucn_category | trend
+  select(-rgn_name, -ico_gl, -ico_rgn_id)
 
 ##############################################################################=
 ### Combine ICO lists from all spatial sources, add parent/subpop regions -----
 ##############################################################################=
+
+# A few checks:
+# mismatches in category
+mismatch_cat <- ico_list1 %>% 
+  filter(ico_category != iucn_category) %>% select(sciname, ico_category, ico_trend, iucn_category, popn_trend, iucn_sid, spatial_source) %>% unique()
+mismatch_cat_no_subpops <- mismatch_cat %>% filter(!str_detect(spatial_source, 'subpop'))
+
 ico_rgn_all <- bind_rows(ico_rgn_iucn, ico_rgn_am, ico_rgn_other)
+
+# Spatial/category from original list (no subpops), compared with 2013 results: 
+# - done; close match
+# Spatial from original list, category with subpops, compared with 2013: 
+# - done; vertical spread
+# Category from original list (no subpops), spatial from IUCN 
+# - done
+# Category from original list (no subpops), spatial from AM 
+# - done
+
+# Compare country lists vs presence from IUCN shapefile
+# - for each species with IUCN shapefiles, create country list and compare to orig spreadsheet (or IUCN site)
+# - do similar for AM species.
+##############################################################################=
+### compare country list from SS to lists from IUCN and AM -----
+##############################################################################=
+rgn_list_iucn <- ico_rgn_iucn %>%
+  select(sciname, rgn_id, spatial_source)
+rgn_list_am <- ico_rgn_am %>%
+  select(sciname, rgn_id, spatial_source)
+rgn_iucn_in_ss <- ico_list1 %>%
+  filter(sciname %in% ico_rgn_iucn$sciname) %>%
+  select(sciname, rgn_id, spatial_source)
+rgn_am_in_ss <- ico_list1 %>%
+  filter(sciname %in% ico_rgn_am$sciname) %>%
+  select(sciname, rgn_id, spatial_source)
+
+rgn_name_file <- '~/github/ohi-global/eez2013/layers/rgn_global.csv'
+rgn_names <- read_csv(rgn_name_file) %>% rename(rgn_name = label)
+  
+rgn_iucn_diffs <- setdiff(rgn_list_iucn, rgn_iucn_in_ss) %>%    # in shp, not in ss
+  left_join(rgn_names, by = 'rgn_id')
+rgn_am_diffs <- setdiff(rgn_list_am, rgn_am_in_ss) %>%          # in map, not in ss
+  left_join(rgn_names, by = 'rgn_id')
+rgn_iucn_diffs2 <- setdiff(rgn_iucn_in_ss, rgn_list_iucn) %>%   # in ss, not in shp
+  left_join(rgn_names, by = 'rgn_id')
+rgn_am_diffs2 <- setdiff(rgn_am_in_ss, rgn_list_am) %>%         # in ss, not in map
+  left_join(rgn_names, by = 'rgn_id')
+
+            
+country_lists_am   <- ico_list1ico_rgn_am
+
+##############################################################################=
+### Load 2013 status and convert to scores -----
+##############################################################################=
+# ico_status and trend not in correct format in ohi-global/eez2013.
+dir_global <- ('~/github/ohi-global')
+comp_scenario  <- 'eez2013'
+cat_conv    <- data.frame(category    = c("LC", "NT", "VU", "EN", "CR", "EX"), 
+                          cat_score   = c(   0,  0.2,  0.4,  0.6,  0.8,   1))
+
+ico_status_raw <- read.csv(file.path(dir_global, comp_scenario, 'layers/ico_spp_extinction_status.csv'), stringsAsFactors = FALSE) 
+ico_status_iucn_only <- ico_status_raw %>%
+  filter(sciname %in% ico_rgn_iucn$sciname)
+ico_status_am_only <- ico_status_raw %>%
+  filter(sciname %in% ico_rgn_am$sciname)
+
+ico_status_compare <- ico_status_raw %>%
+  left_join(cat_conv, by = 'category') %>%
+  group_by(rgn_id) %>%
+  summarize(mean_cat = mean(cat_score, na.rm = TRUE)) %>%
+  mutate(score = ((1 - mean_cat) - 0.25) / 0.75,
+         score = ifelse(score < 0, 0, score))
+ico_status_compare_iucn_only <- ico_status_iucn_only %>%
+  left_join(cat_conv, by = 'category') %>%
+  group_by(rgn_id) %>%
+  summarize(mean_cat = mean(cat_score, na.rm = TRUE)) %>%
+  mutate(score = ((1 - mean_cat) - 0.25) / 0.75,
+         score = ifelse(score < 0, 0, score))
+write_csv(ico_status_compare_iucn_only, file.path(dir_git, sprintf('tmp/ico_status_%s_iucn.csv', comp_scenario)))
+ico_status_compare_am_only <- ico_status_am_only %>%
+  left_join(cat_conv, by = 'category') %>%
+  group_by(rgn_id) %>%
+  summarize(mean_cat = mean(cat_score, na.rm = TRUE)) %>%
+  mutate(score = ((1 - mean_cat) - 0.25) / 0.75,
+         score = ifelse(score < 0, 0, score))
+write_csv(ico_status_compare_am_only, file.path(dir_git, sprintf('tmp/ico_status_%s_am.csv', comp_scenario)))
+
+##############################################################################=
+### process new data chunked into AM and IUCN - WITH subpops, for graphing -----
+##############################################################################=
+
+process_ico_rgn2 <- function(ico_rgn_all, filename_flag = '') {
+  ### Summarize category and trend for each region.
+  
+  # to overall lookup table, join scores for population category and trend.
+  popn_cat    <- data.frame(iucn_category  = c("LC", "NT", "VU", "EN", "CR", "EX"), 
+                            category_score = c(   0,  0.2,  0.4,  0.6,  0.8,   1))
+  popn_trend  <- data.frame(trend=c("decreasing", "stable", "increasing"), 
+                            trend_score=c(-0.5, 0, 0.5))
+  ico_rgn_all <- ico_rgn_all %>%
+    rename(trend = popn_trend) %>%
+    left_join(popn_cat,   by = 'iucn_category') %>%
+    left_join(popn_trend, by = 'trend') %>%
+    select(-iucn_category, -trend)
+  
+  ### This section omits parents if a subpopulation is present
+  #   ico_rgn_all <- ico_rgn_all %>%
+  #     group_by(rgn_id, sciname) %>%
+  #     mutate(p_drop_flag = ifelse(n() > 1 & str_detect(spatial_source, 'parent'), TRUE, FALSE)) %>%
+  #     filter(!p_drop_flag)
+  
+  ### This section aggregates category and trend for a single species sciname within a region,
+  ### including parent and all subpopulations present in a region.
+  ### Species, including parent and all subpops, is weighted same as species w/o parents and subpops.
+  ico_rgn_all <- ico_rgn_all %>%
+    group_by(rgn_id, sciname) %>%
+    summarize(category_score = mean(category_score), trend_score = mean(trend_score, na.rm = TRUE))
+  
+  ico_rgn_sum <- ico_rgn_all %>%
+    group_by(rgn_id) %>%
+    summarize(mean_cat = mean(category_score), mean_trend = mean(trend_score, na.rm = TRUE)) %>%
+    mutate(status = ((1 - mean_cat) - 0.25) / 0.75,
+           status = ifelse(status < 0, 0, status))
+  
+  ico_rgn_sum_file <- file.path(dir_git, sprintf('tmp/ico_rgn_sum%s.csv', filename_flag))
+  cat(sprintf('Writing file for iconic species summary by region: \n  %s\n', ico_rgn_sum_file))
+  write_csv(ico_rgn_sum, ico_rgn_sum_file)
+  
+  return(invisible(ico_rgn_sum))
+}
+
+# create rgn summaries for IUCN, AM separately, with subpops removed.
+ico_rgn_iucn1 <- ico_rgn_iucn
+ico_rgn_am1   <- ico_rgn_am
+
+ico_rgn_sum_iucn1 <- process_ico_rgn2(ico_rgn_iucn1, filename_flag = '_iucn1')
+ico_rgn_sum_am1   <- process_ico_rgn2(ico_rgn_am2,   filename_flag = '_am1')
+
+ico_status_am1 <- ico_rgn_sum_am1 %>%
+  select(rgn_id, score = status)
+ico_status_iucn1 <- ico_rgn_sum_iucn1 %>%
+  select(rgn_id, score = status)
+write_csv(ico_status_am2, file.path(dir_git, 'tmp/ico_status_am1.csv'))
+write_csv(ico_status_iucn2,  file.path(dir_git, 'tmp/ico_status_iucn1.csv'))
+
+##############################################################################=
+### process new data chunked into AM and IUCN without subpops, for graphing -----
+##############################################################################=
+
+# create rgn summaries for IUCN, AM separately, with subpops removed.
+ico_rgn_iucn2 <- ico_rgn_iucn %>% filter(!str_detect(spatial_source, 'subpop'))
+ico_rgn_am2   <- ico_rgn_am %>% filter(!str_detect(spatial_source, 'subpop'))
+
+ico_rgn_sum_iucn2 <- process_ico_rgn2(ico_rgn_iucn2, filename_flag = '_iucn2')
+ico_rgn_sum_am2   <- process_ico_rgn2(ico_rgn_am2,   filename_flag = '_am2')
+
+ico_status_am2 <- ico_rgn_sum_am2 %>%
+  select(rgn_id, score = status)
+ico_status_iucn2 <- ico_rgn_sum_iucn2 %>%
+  select(rgn_id, score = status)
+write_csv(ico_status_am2, file.path(dir_git, 'tmp/ico_status_am2.csv'))
+write_csv(ico_status_iucn2,  file.path(dir_git, 'tmp/ico_status_iucn2.csv'))
+
+##############################################################################=
+### process new data chunked into AM and IUCN sans subpops, but with list data for the other side -----
+##############################################################################=
+
+# create rgn summaries for IUCN, AM separately, with subpops removed.
+### Fill in species lists by region based on original spreadsheet
+ico_rgn_non_iucn <- ico_list1 %>% 
+  filter(is.na(spatial_source) | str_detect(spatial_source, 'am')) %>%
+  select(-rgn_name, -ico_gl, -ico_rgn_id)
+ico_rgn_non_am <- ico_list1 %>% 
+  filter(is.na(spatial_source) | str_detect(spatial_source, 'iucn')) %>%
+  select(-rgn_name, -ico_gl, -ico_rgn_id)
+
+ico_rgn_iucn3 <- ico_rgn_iucn %>% 
+  bind_rows(ico_rgn_non_iucn) %>%
+  filter(!str_detect(spatial_source, 'subpop'))
+ico_rgn_am3   <- ico_rgn_am %>% 
+  bind_rows(ico_rgn_non_am) %>%
+  filter(!str_detect(spatial_source, 'subpop'))
+
+ico_rgn_sum_iucn3 <- process_ico_rgn2(ico_rgn_iucn3, filename_flag = '_iucn3')
+ico_rgn_sum_am3   <- process_ico_rgn2(ico_rgn_am3,   filename_flag = '_am3')
+
+ico_status_am3 <- ico_rgn_sum_am3 %>%
+  select(rgn_id, score = status)
+ico_status_iucn3 <- ico_rgn_sum_iucn3 %>%
+  select(rgn_id, score = status)
+write_csv(ico_status_am3, file.path(dir_git, 'tmp/ico_status_am3.csv'))
+write_csv(ico_status_iucn3,  file.path(dir_git, 'tmp/ico_status_iucn3.csv'))
+
+### process original spreadsheet data but subpops -----
+##############################################################################=
+
+x <- ico_list1 %>% 
+  filter(iucn_category != 'DD' & !is.na(iucn_category))
+
+
+ss1 <- process_ico_rgn2(x, filename_flag = '_iucn_cat_only')
+ico_status_ss1 <- ss1 %>%
+  select(rgn_id, score = status)
+write_csv(ico_status_ss1,  file.path(dir_git, 'tmp/ico_status_ss1.csv'))
+
+
 
 # ico_list_subpops <- ico_rgn_all %>% 
 #   filter(!is.na(parent_sid) | !is.na(subpop_sid)) %>%
@@ -290,15 +493,15 @@ ico_rgn_all <- bind_rows(ico_rgn_iucn, ico_rgn_am, ico_rgn_other)
 #   select(-present, -parent_sid, -subpop_sid) %>%
 #   unique()
 
-ico_rgn_all <- ico_rgn_all %>% filter(!str_detect(spatial_source, 'subpop'))
 
 # write_csv(ico_rgn_all, file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv'))
 
 ##############################################################################=
-### Summarize regional iconic species status -----
+### process new data, using both spatial sources, WITH subpops -----
 ##############################################################################=
 # ico_rgn_all <- read.csv(file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv'), stringsAsFactors = FALSE)
-ico_rgn_sum <- process_ico_rgn(ico_rgn_all)
+ico_rgn_all1 <- ico_rgn_all %>% filter(!str_detect(spatial_source, 'subpop'))
+ico_rgn_sum <- process_ico_rgn(ico_rgn_all1)
 ### rgn_id | mean_cat | mean_trend | status
 
 ico_status <- ico_rgn_sum %>%
@@ -361,7 +564,6 @@ x <- ico_rgn_source_compare()
 #       Severnaya Zemlya (Russian Federation), and south at least occasionally to northern Iceland 
 #       and the coast of Finnmark (Norway) and Jan Mayen (Norway) (Rice 1998).
 #     - Native: Greenland; Svalbard and Jan Mayen (Norway)
-
 #   Tursiops truncatus -----
 #     - PARENT: http://www.iucnredlist.org/details/22563/0, LC, unknown; worldwide range
 #   4 ITS-180426   194300 Tursiops truncatus          LC            CR Decreasing 
@@ -404,7 +606,6 @@ x <- ico_rgn_source_compare()
 #   - Angola (Angola); Comoros; French Southern Territories (Mozambique Channel Is.); Kenya; Madagascar; 
 #     Mauritius; Mayotte; Mozambique; Namibia; Seychelles; South Africa; Tanzania, United Republic of
 #   NOTE: couple of data-deficient ones in there too.  See PARENT url.
-
 # * Lamna nasus:          CR, EN -----
 #   PARENT: http://www.iucnredlist.org/details/11200/0, VU, dec
 #   Fis-22768    39343          Lamna nasus          VU            CR Decreasing - Northeast Atlantic subpopulation
@@ -417,7 +618,6 @@ x <- ico_rgn_source_compare()
 #   - http://www.iucnredlist.org/details/61420/0
 #   - Albania; Algeria; Bosnia and Herzegovina; Croatia; Cyprus; Egypt; France; Greece; Israel; Italy; 
 #     Lebanon; Libya; Malta; Monaco; Montenegro; Morocco; Slovenia; Spain; Syrian Arab Republic; Tunisia; Turkey
-
 # * Isurus oxyrinchus:    VU, NT -----
 # - PARENT: http://www.iucnredlist.org/details/39341/0, VU, dec
 #   Fis-58485   161749    Isurus oxyrinchus          VU            VU Decreasing - Atlantic subpopulation
