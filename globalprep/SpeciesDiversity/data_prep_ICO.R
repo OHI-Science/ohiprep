@@ -64,17 +64,32 @@ ico_rgn_all <- ico_rgn_all %>%
 write_csv(ico_rgn_all, file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv'))
 
 ##############################################################################=
-### Summarize regional iconic species status -----
+### Report and summarize regional iconic species status -----
 ##############################################################################=
 ico_rgn_all <- read.csv(file.path(dir_anx, scenario, 'intermediate/ico_rgn_all.csv'), stringsAsFactors = FALSE)
 
+# Report out for toolbox format (rgn_id | sciname | category or popn_trend for each species within a region).
+# Note: in toolbox, group_by(rgn_id, sciname) and then summarize(category = mean(category)) to
+#   average any parent/subpop species listings before aggregating to overall average per region.
+ico_status <- ico_rgn_all %>%
+  select(rgn_id, sciname, category) %>%
+  arrange(rgn_id, sciname)
+ico_trend <- ico_rgn_all %>%
+  select(rgn_id, sciname, popn_trend = trend) %>%
+  arrange(rgn_id, sciname)
+write_csv(ico_status, file.path(dir_git, scenario, 'data/ico_status.csv'))
+write_csv(ico_trend,  file.path(dir_git, scenario, 'data/ico_trend.csv'))
+
+# Report out for finalized status and trend values per region.
 ico_rgn_sum <- process_ico_rgn(ico_rgn_all)
 ### rgn_id | mean_cat | mean_trend | status
 
-ico_status <- ico_rgn_sum %>%
-  select(rgn_id, score = status)
-ico_trend <- ico_rgn_sum %>%
-  select(rgn_id, score = mean_trend)
-write_csv(ico_status, file.path(dir_git, scenario, 'data/ico_status.csv'))
-write_csv(ico_trend,  file.path(dir_git, scenario, 'data/ico_trend.csv'))
+ico_status_sum <- ico_rgn_sum %>%
+  select(rgn_id, score = status) %>%
+  arrange(rgn_id)
+ico_trend_sum <- ico_rgn_sum %>%
+  select(rgn_id, score = mean_trend) %>%
+  arrange(rgn_id)
+write_csv(ico_status_sum, file.path(dir_git, scenario, 'data/ico_status_sum.csv'))
+write_csv(ico_trend_sum,  file.path(dir_git, scenario, 'data/ico_trend_sum.csv'))
 
