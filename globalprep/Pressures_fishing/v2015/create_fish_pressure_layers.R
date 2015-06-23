@@ -37,8 +37,6 @@ saup_update = file.path(dir_N, 'model/GL-SAUP-FisheriesCatchData_v2013')
 
 # Get gear catch rasters
 
-area = raster(file.path(saup_pressures,'catch_area_gcs.tif')) # i think this is area!??
-
 dem_d = raster(file.path(saup_pressures,'catch_dem_d_gcs.tif'))
 
 dem_hb = raster(file.path(saup_pressures,'catch_dem_nd_hb_gcs.tif'))
@@ -83,6 +81,9 @@ lb_mean = cellStats(gear_prop_lb,'mean')
 gear_prop_hb[is.na(gear_prop_hb)]<-hb_mean
 gear_prop_lb[is.na(gear_prop_lb)]<-lb_mean
 
+
+
+
 # reproject to moll then Resample to 1km then mask
 
 projection(gear_prop_hb)<- "+proj=longlat +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +no_defs"
@@ -106,14 +107,13 @@ gear_prop_lb_1km_ocean = mask(gear_prop_lb_1km,old_saup_eez,progress='text',file
 
 # TO DO:
 
-# Region 18 should have 0 catch
+# Region 18 should have 0 catch (I think it will after multiplying by catch? Or at least will be NA?)
 
 
+#-----------------------------------------------------------------------------
 
+# Get catch
 
-
-
-#--------------------------------------------------------------------------------------
 
 # New SAUP data
 
@@ -166,3 +166,147 @@ saup_data = saup_all%>%
 
 
 #-----------------------------------------------------------------------------
+
+# Calculate change in catch since the period 1999-2003
+
+# Here I am going to use the data from the old SAUP dataset for the years 1999-2003 to calculate the change
+# in catch. This should be more accurate than using the new dataset catches for 1999-2003 since they are likely
+# much different.
+
+# bring in old data that has aggregate catch by region from 1999 to 2003
+
+change_old = read.csv(file.path(saup_update,'data/pct_chg_saup_2009to2011_vs_1999to2003.csv'))
+
+# The catch in yrs1999to2003 is what we want to compare to.
+
+# Now aggregate data for periods 
+
+# this is the period of years that was originally used. Though these data are not the same data
+# that were used to create the rasters. These have likely changed drastically.
+# Look at them here for comparison
+
+# saup_1999to2003 = saup_06_10 = saup_data%>%
+#   filter(Year>1998 & Year < 2004)%>%
+#   group_by(id_type,old_saup_id)%>%
+#   summarize(avg_catch_1999to2003 = mean(catch))%>%
+#   mutate(yrs_1999to2003 = change_old$yrs1999to2003[match(old_saup_id,change_old$id)],
+#          pct_chg = ((avg_catch_1999to2003-yrs_1999to2003)/yrs_1999to2003)*100,
+#          Name = saup_2015_eez$Name[match(old_saup_id,saup_2015_eez$old_saup_id)])%>%
+#   as.data.frame()%>%
+#   filter(!is.na(old_saup_id))
+
+saup_06_10 = saup_data%>%
+  filter(Year>2005 & Year < 2011)%>%
+  group_by(new_id)%>%
+  summarize(avg_catch_2006to2010 = mean(catch))%>%
+  as.data.frame()
+  #mutate(yrs_1999to2003 = change_old$yrs1999to2003[match(old_saup_id,change_old$id)],
+  #       pct_chg = ((avg_catch_2006to2010-yrs_1999to2003)/yrs_1999to2003)*100,
+  #       Name = saup_2015_eez$Name[match(old_saup_id,saup_2015_eez$old_saup_id)])%>%
+  #as.data.frame()%>%
+  #filter(!is.na(old_saup_id))
+
+write.csv(saup_06_10,file='v2015/saup_catch_2006_2010.csv')
+
+
+saup_05_09 = saup_data%>%
+  filter(Year>2004 & Year < 2010)%>%
+  group_by(new_id)%>%
+  summarize(avg_catch_2005to2009 = mean(catch))%>%
+  as.data.frame()
+#   mutate(yrs_1999to2003 = change_old$yrs1999to2003[match(old_saup_id,change_old$id)],
+#          pct_chg = ((avg_catch_2005to2009-yrs_1999to2003)/yrs_1999to2003)*100,
+#          Name = saup_2015_eez$Name[match(old_saup_id,saup_2015_eez$old_saup_id)])%>%
+#   as.data.frame()%>%
+#   filter(!is.na(old_saup_id))
+
+write.csv(saup_05_09,file='v2015/saup_catch_2005_2009.csv')
+
+
+saup_04_08 = saup_data%>%
+  filter(Year>2003 & Year < 2009)%>%
+  group_by(new_id)%>%
+  summarize(avg_catch_2004to2008 = mean(catch))%>%
+  as.data.frame()
+#   mutate(yrs_1999to2003 = change_old$yrs1999to2003[match(old_saup_id,change_old$id)],
+#          pct_chg = ((avg_catch_2004to2008-yrs_1999to2003)/yrs_1999to2003)*100,
+#          Name = saup_2015_eez$Name[match(old_saup_id,saup_2015_eez$old_saup_id)])%>%
+#   as.data.frame()%>%
+#   filter(!is.na(old_saup_id))
+
+write.csv(saup_04_08,file='v2015/saup_catch_2004_2008.csv')
+
+
+saup_03_07 = saup_data%>%
+  filter(Year>2002 & Year < 2008)%>%
+  group_by(new_id)%>%
+  summarize(avg_catch_2003to2007 = mean(catch))%>%
+  as.data.frame()
+#   mutate(yrs_1999to2003 = change_old$yrs1999to2003[match(old_saup_id,change_old$id)],
+#          pct_chg = ((avg_catch_2003to2007-yrs_1999to2003)/yrs_1999to2003)*100,
+#          Name = saup_2015_eez$Name[match(old_saup_id,saup_2015_eez$old_saup_id)])%>%
+#   as.data.frame()%>%
+#   filter(!is.na(old_saup_id))
+
+write.csv(saup_03_07,file='v2015/saup_catch_2003_2007.csv')
+
+
+# merge all catch together
+
+catch_all_yrs = Reduce(function(x,y)merge(x,y,all=TRUE),list(saup_06_10,saup_05_09,saup_04_08,saup_03_07))
+
+#-------------------------------------------------------------------------------------
+
+# Calculate area using the nonprojected original raster
+
+area = raster(file.path(saup_pressures,'catch_area_gcs.tif')) # i think this is area!??
+
+#remove NAs (where no fishing occurs)
+
+area = mask(area,gear_prop_hb,progress='text')
+
+#bring in new saup shapefile
+
+new_rgns = readOGR(dsn=file.path(saup_2015,'raw/SAUEEZ_for_OHI'),layer='SAUEEZ_for_OHI')
+
+
+#------------------------------------------------------------------------------------
+
+# Rasterize catch for each period of time
+
+
+
+rgns_ras = rasterize(new_rgns,area,field='EEZID',progress='text')
+#for some reason getting a really weird overlay in australia and greenland and probably other countries. Need to 
+# mask this
+
+rgns_ras = mask(rgns_ras,gear_prop_hb,progress='text',filename='v2015/new_saup_rgns.tif',overwrite=T)
+
+#rasterize each time period
+
+#r_06_10 = rasterize(rgns_catch,area,field='avg_catch_2006to2010',progress='text',filename='v2015/catch_06_10.tif')
+
+
+#extract total area per polygon of cells that have catch
+
+catch_area = zonal(area,rgns_ras,fun='sum',na.rm=T,progress='text')%>%as.data.frame()
+
+
+#Add new field to data
+
+new_rgns@data = new_rgns@data%>%
+              left_join(catch_all_yrs,by = c('EEZID'='new_id'))%>%
+               left_join(catch_area,by= c('EEZID'='zone'))%>%
+                mutate(catch_per_km_06_10 = avg_catch_2006to2010/sum,
+                       catch_per_km_05_09 = avg_catch_2005to2009/sum,
+                       catch_per_km_04_08 = avg_catch_2004to2008/sum,
+                       catch_per_km_03_07 = avg_catch_2003to2007/sum)%>%
+                filter(sum>0)#sum is the catch_area in km2 - need to rename
+
+
+# rasterize 
+
+ras_06_10 = rasterize(new_rgns,rgns_ras,field='catch_per_km_06_10',progress='text',filename='catch_06_10.tif')
+ras_05_09 = rasterize(new_rgns,rgns_ras,field='catch_per_km_05_09',progress='text',filename='catch_05_09.tif')
+ras_04_08 = rasterize(new_rgns,rgns_ras,field='catch_per_km_04_08',progress='text',filename='catch_04_08.tif')
+ras_03_07 = rasterize(new_rgns,rgns_ras,field='catch_per_km_03_07',progress='text',filename='catch_03_07.tif')
