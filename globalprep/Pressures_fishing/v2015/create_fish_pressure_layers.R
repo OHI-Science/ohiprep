@@ -73,20 +73,20 @@ sum = sum(gear_prop_hb,gear_prop_lb)
 
 # for regions where there is no catch in the past, get the average proportion of high and low bycatch
 
-hb_mean = cellStats(gear_prop_hb,'mean')
-lb_mean = cellStats(gear_prop_lb,'mean')
+#hb_mean = cellStats(gear_prop_hb,'mean')
+#lb_mean = cellStats(gear_prop_lb,'mean')
 
 # replace NAs with high and low bycatch (then we'll have to mask out land later down the line)
 
-gear_prop_hb[is.na(gear_prop_hb)]<-hb_mean
-gear_prop_lb[is.na(gear_prop_lb)]<-lb_mean
+#gear_prop_hb[is.na(gear_prop_hb)]<-hb_mean
+#gear_prop_lb[is.na(gear_prop_lb)]<-lb_mean
 
 
 
 
 # reproject to moll then Resample to 1km then mask
 
-projection(gear_prop_hb)<- "+proj=longlat +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +no_defs"
+projection(gear_prop_hb) <- "+proj=longlat +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +no_defs"
 
 moll_crs = CRS("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs")
 
@@ -97,12 +97,12 @@ gear_prop_lb_moll = projectRaster(gear_prop_lb,crs=moll_crs,over=T,progress='tex
 
 old_saup_eez = raster(file.path(dir_N,'model/GL-NCEAS-Pressures_CommercialFisheries_v2013a/tmp/saup_fao_mol.tif'))
 
-gear_prop_hb_1km = resample(gear_prop_hb_moll,old_saup_eez,method='ngb',progress='text',filename ='v2015/gear_prop_hb_moll_1km.tif')
-gear_prop_lb_1km = resample(gear_prop_lb_moll,old_saup_eez,method='ngb',progress='text',filename ='v2015/gear_prop_lb_moll_1km.tif')
+gear_prop_hb_1km = resample(gear_prop_hb_moll,old_saup_eez,method='ngb',progress='text',filename ='v2015/gear_prop_hb_moll_1km.tif',overwrite=T)
+gear_prop_lb_1km = resample(gear_prop_lb_moll,old_saup_eez,method='ngb',progress='text',filename ='v2015/gear_prop_lb_moll_1km.tif',overwrite=T)
 
 # mask out land
 
-gear_prop_hb_1km_ocean = mask(gear_prop_hb_1km,old_saup_eez,progress='text',filename='v2015/gear_prop_hb_moll_1km_ocean.tif')
+gear_prop_hb_1km_ocean = mask(gear_prop_hb_1km,old_saup_eez,progress='text',filename='v2015/gear_prop_hb_moll_1km_ocean.tif',overwrite=T)
 gear_prop_lb_1km_ocean = mask(gear_prop_lb_1km,old_saup_eez,progress='text',filename='v2015/gear_prop_lb_moll_1km_ocean.tif',overwrite=T)
 
 # TO DO:
@@ -200,13 +200,8 @@ saup_06_10 = saup_data%>%
   group_by(new_id)%>%
   summarize(avg_catch_2006to2010 = mean(catch))%>%
   as.data.frame()
-  #mutate(yrs_1999to2003 = change_old$yrs1999to2003[match(old_saup_id,change_old$id)],
-  #       pct_chg = ((avg_catch_2006to2010-yrs_1999to2003)/yrs_1999to2003)*100,
-  #       Name = saup_2015_eez$Name[match(old_saup_id,saup_2015_eez$old_saup_id)])%>%
-  #as.data.frame()%>%
-  #filter(!is.na(old_saup_id))
 
-write.csv(saup_06_10,file='v2015/saup_catch_2006_2010.csv')
+#write.csv(saup_06_10,file='v2015/saup_catch_2006_2010.csv')
 
 
 saup_05_09 = saup_data%>%
@@ -214,13 +209,8 @@ saup_05_09 = saup_data%>%
   group_by(new_id)%>%
   summarize(avg_catch_2005to2009 = mean(catch))%>%
   as.data.frame()
-#   mutate(yrs_1999to2003 = change_old$yrs1999to2003[match(old_saup_id,change_old$id)],
-#          pct_chg = ((avg_catch_2005to2009-yrs_1999to2003)/yrs_1999to2003)*100,
-#          Name = saup_2015_eez$Name[match(old_saup_id,saup_2015_eez$old_saup_id)])%>%
-#   as.data.frame()%>%
-#   filter(!is.na(old_saup_id))
 
-write.csv(saup_05_09,file='v2015/saup_catch_2005_2009.csv')
+#write.csv(saup_05_09,file='v2015/saup_catch_2005_2009.csv')
 
 
 saup_04_08 = saup_data%>%
@@ -228,13 +218,8 @@ saup_04_08 = saup_data%>%
   group_by(new_id)%>%
   summarize(avg_catch_2004to2008 = mean(catch))%>%
   as.data.frame()
-#   mutate(yrs_1999to2003 = change_old$yrs1999to2003[match(old_saup_id,change_old$id)],
-#          pct_chg = ((avg_catch_2004to2008-yrs_1999to2003)/yrs_1999to2003)*100,
-#          Name = saup_2015_eez$Name[match(old_saup_id,saup_2015_eez$old_saup_id)])%>%
-#   as.data.frame()%>%
-#   filter(!is.na(old_saup_id))
 
-write.csv(saup_04_08,file='v2015/saup_catch_2004_2008.csv')
+#write.csv(saup_04_08,file='v2015/saup_catch_2004_2008.csv')
 
 
 saup_03_07 = saup_data%>%
@@ -242,13 +227,8 @@ saup_03_07 = saup_data%>%
   group_by(new_id)%>%
   summarize(avg_catch_2003to2007 = mean(catch))%>%
   as.data.frame()
-#   mutate(yrs_1999to2003 = change_old$yrs1999to2003[match(old_saup_id,change_old$id)],
-#          pct_chg = ((avg_catch_2003to2007-yrs_1999to2003)/yrs_1999to2003)*100,
-#          Name = saup_2015_eez$Name[match(old_saup_id,saup_2015_eez$old_saup_id)])%>%
-#   as.data.frame()%>%
-#   filter(!is.na(old_saup_id))
 
-write.csv(saup_03_07,file='v2015/saup_catch_2003_2007.csv')
+#write.csv(saup_03_07,file='v2015/saup_catch_2003_2007.csv')
 
 
 # merge all catch together
@@ -259,7 +239,7 @@ catch_all_yrs = Reduce(function(x,y)merge(x,y,all=TRUE),list(saup_06_10,saup_05_
 
 # Calculate area using the nonprojected original raster
 
-area = raster(file.path(saup_pressures,'catch_area_gcs.tif')) # i think this is area!??
+area = raster(file.path(saup_pressures,'catch_area_gcs.tif')) # i think this is area
 
 #remove NAs (where no fishing occurs)
 
@@ -267,24 +247,20 @@ area = mask(area,gear_prop_hb,progress='text')
 
 #bring in new saup shapefile
 
-new_rgns = readOGR(dsn=file.path(saup_2015,'raw/SAUEEZ_for_OHI'),layer='SAUEEZ_for_OHI')
+new_rgns = readOGR(dsn=file.path(saup_2015,'raw/SAU_EEZ_High_Seas'),layer='SAU_EEZ_High_Seas')
 
 
 #------------------------------------------------------------------------------------
 
 # Rasterize catch for each period of time
 
-
-
 rgns_ras = rasterize(new_rgns,area,field='EEZID',progress='text')
 #for some reason getting a really weird overlay in australia and greenland and probably other countries. Need to 
 # mask this
 
-rgns_ras = mask(rgns_ras,gear_prop_hb,progress='text',filename='v2015/new_saup_rgns.tif',overwrite=T)
+plot(rgns_ras,col=cols)
 
-#rasterize each time period
-
-#r_06_10 = rasterize(rgns_catch,area,field='avg_catch_2006to2010',progress='text',filename='v2015/catch_06_10.tif')
+rgns_ras = mask(rgns_ras,sum,progress='text',filename='v2015/new_saup_rgns.tif',overwrite=T) #maybe switch sum to all_catch? Will be same result
 
 
 #extract total area per polygon of cells that have catch
@@ -300,13 +276,43 @@ new_rgns@data = new_rgns@data%>%
                 mutate(catch_per_km_06_10 = avg_catch_2006to2010/sum,
                        catch_per_km_05_09 = avg_catch_2005to2009/sum,
                        catch_per_km_04_08 = avg_catch_2004to2008/sum,
-                       catch_per_km_03_07 = avg_catch_2003to2007/sum)%>%
-                filter(sum>0)#sum is the catch_area in km2 - need to rename
+                       catch_per_km_03_07 = avg_catch_2003to2007/sum)#sum is the catch_area in km2 - need to rename
 
 
-# rasterize 
+# rasterize catch per km2  
 
-ras_06_10 = rasterize(new_rgns,rgns_ras,field='catch_per_km_06_10',progress='text',filename='catch_06_10.tif')
-ras_05_09 = rasterize(new_rgns,rgns_ras,field='catch_per_km_05_09',progress='text',filename='catch_05_09.tif')
-ras_04_08 = rasterize(new_rgns,rgns_ras,field='catch_per_km_04_08',progress='text',filename='catch_04_08.tif')
-ras_03_07 = rasterize(new_rgns,rgns_ras,field='catch_per_km_03_07',progress='text',filename='catch_03_07.tif')
+ras_06_10 = rasterize(new_rgns,rgns_ras,field='catch_per_km_06_10',progress='text',filename='catch_06_10.tif',overwrite=T)
+ras_05_09 = rasterize(new_rgns,rgns_ras,field='catch_per_km_05_09',progress='text',filename='catch_05_09.tif',overwrite=T)
+ras_04_08 = rasterize(new_rgns,rgns_ras,field='catch_per_km_04_08',progress='text',filename='catch_04_08.tif',overwrite=T)
+ras_03_07 = rasterize(new_rgns,rgns_ras,field='catch_per_km_03_07',progress='text',filename='catch_03_07.tif',overwrite=T)
+
+
+# catch at 1km resolution
+
+moll_crs = CRS("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs")
+
+rep_res_mask = function(raster){
+  
+  name=names(raster)
+  
+  a = projectRaster(raster,crs=moll_crs,progress='text',over=T)
+  b = resample(a,old_saup_eez,method='ngb',progress='text',filename= paste0('v2015/',name,'_1km.tif',sep=''),overwrite=T) #using the old saup region raster which is at 1km
+  c = mask(b,old_saup_eez,progress='text',filename=paste0('v2015/',name,'_1km_ocean.tif'))
+  
+  
+}
+
+
+
+#resample
+
+# primary productivity at 1km resolution
+
+
+
+
+
+#gear props at 1km resolution (already have...)
+
+
+catch_prod_hb_06_10 = catch_prod_06_10 * gear_prop_hb = 
