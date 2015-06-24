@@ -1,16 +1,18 @@
-# data_prep.R: reformat and add rgn_ids to World Economic Forum (WEF) data 
-#
-# by JStewartLowndes Mar2014; updated from 'clean_WEF.R' by JStewart in May 2013
-#   Data: 
-#       Global Competitiveness Index (GCI)
-#       Travel and Tourist Competitiveness Index (TTCI)
-#   read in individual files
-#   call add_rgn_id.r to add OHI region_ids
-#   georegional gapfilling with gapfill_georegions.r 
-#   final processing by hand: see end of script
+### data_prep.R: reformat and add rgn_ids to World Economic Forum (WEF) data 
+### 
+### by JStewartLowndes Mar2014; updated from 'clean_WEF.R' by JStewart in May 2013
+###   Data: 
+###       Global Competitiveness Index (GCI)
+###       Travel and Tourist Competitiveness Index (TTCI)
+###   read in individual files
+###   call add_rgn_id.r to add OHI region_ids
+###   georegional gapfilling with gapfill_georegions.r 
+###   final processing by hand: see end of script
 
 
-# setup ----
+##############################################################################=
+### setup ----
+##############################################################################=
 library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 
 setwd('~/github/ohiprep')
@@ -27,7 +29,7 @@ source('../ohiprep/src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na
 ##############################################################################=
 ### WEF GCI formatting ----
 ##############################################################################=
-
+### For 2014-2015, 
 dir_wef <- file.path(dir_anx, 'WEF-Economics')
 # read in files ----
 gci_raw <- read.csv(file.path(dir_wef, 'raw', 'GCI_Dataset_2006-07-2014-15.csv'), skip = 3, check.names = FALSE, stringsAsFactors = FALSE)
@@ -39,66 +41,57 @@ gci_raw <- read.csv(file.path(dir_wef, 'raw', 'GCI_Dataset_2006-07-2014-15.csv')
 gci <- gci_raw %>%
   filter(`GLOBAL ID` == 'GCI') %>%
   select(-(1:2), -(4:7), edition = Edition, attribute = Attribute) %>%
-  gather(country, value, -(edition:attribute)) %>%
-  spread(attribute, value)
+  gather(country, value, -(edition:attribute)) %>%  
+    # convert to long format by country and value
+  filter(attribute == 'Value') %>%
+  select(-attribute)
 
 ### delete summary statistic rows
 summary_categories <- c('Average GCR', 'Latin America and the Caribbean',	'Emerging and Developing Asia',	'Middle East, North Africa, and Pakistan',	
                         'Sub-Saharan Africa',	'Commonwealth of Independent States',	'Emerging and Developing Europe',	'Advanced economies',	
                         'Low income',	'Lower middle income',	'Upper middle income',	'High income: OECD',	'High income: nonOECD',	'ASEAN',	
                         'Stage 1',	'Transition from 1 to 2',	'Stage 2',	'Transition from 2 to 3',	'Stage 3')
-gci <- gci %>% filter(!(country %in% summary_categories)) %>%
-  select(-Note, -Period, -Source, -`Source date`, -Rank, value = Value)
+gci <- gci %>% filter(!(country %in% summary_categories))
 
-# Rescale all scores (out of 7) to range from 0 - 1.
+### Clean up:
+### * Rescale all scores (out of 7) to range from 0 - 1. 
+### * Convert 'edition' to 'year'.
+### * clean up South Korea name in prep for name_to_rgn function
 gci <- gci %>%
   mutate(score = as.numeric(value)/7,
-         country = str_replace(country, 'Korea', 'South Korea'))
-head(gci)
+         year  = as.integer(substr(edition, 1, 4)),
+         country = str_replace(country, 'South Korea, Rep.', 'South Korea')) %>%
+  select(-edition)
 
-# clean up 
-gci <- gci %>%
-  select(country = Country, 
-         score = Score_1_to_7) %>%
-  mutate(country = str_replace(country, 'Korea', 'South Korea')); head(gci)
+gci_rgn <- name_to_rgn(gci, fld_name='country', 
+                       flds_unique=c('country', 'year'), fld_value='score', 
+                       collapse_fxn = 'mean', add_rgn_name = T) %>%
+  arrange(rgn_id, year)
 
-# (could also do this as):
-# rng <- c(min(gci$score), 7)
-# d.m2 <- within(d.m2,{
-#   score = (score - rng[1]) / (rng[2] - rng[1])}); head(d.m2); summary(d.m2)
-
-# ??? use name to rgn function?  problems with multiple years: 
-#       Error: sum(duplicated(d[, flds_unique])) == 0 is not TRUE
-#   could do something like spread it out by 'edition' field...
-#   or just do a left_join?
+stopifnot(max(gci_rgn$score, na.rm = T) < 1)
 
 
+##############################################################################=
+### georegional gapfilling with gapfill_georegions.r ----
+##############################################################################=
 
-gci_rgn <- name_to_rgn(gci, fld_name='country', flds_unique=c('country'), fld_value='score', collapse_fxn = mean, add_rgn_name = T) 
-
-stopifnot(max(gci_rgn$score) < 1)
-
-## georegional gapfilling with gapfill_georegions.r ----
 georegions <- read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %>%
-  dcast(rgn_id ~ level, value.var='georgn_id')
+  spread(level, georgn_id)
 
 georegion_labels <- read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv') %>%    
-  mutate(level_label = sprintf('%s_label', level)) %>%
-  dcast(rgn_id ~ level_label, value.var='label') %>%
+  mutate(level = sprintf('%s_label', level)) %>%
+  spread(level, label) %>%
   left_join(
     read.csv('../ohi-global/eez2013/layers/rgn_labels.csv') %>%
-      select(rgn_id, v_label=label),
+      select(rgn_id, v_label = label),
     by='rgn_id') %>%
   arrange(r0_label, r1_label, r2_label, v_label); head(georegion_labels)
 
+layersave <- file.path(dir_git, scenario, 'data', 'rgn_wef_gci.csv')
+attrsave  <- file.path(dir_git, scenario, 'data', 'rgn_wef_gci_attr.csv')
 
-layersave <- file.path(dir_d, 'data', 'rgn_wef_gci_2014a.csv')
-attrsave  <- file.path(dir_d, 'data', 'rgn_wef_gci_2014a_attr.csv')
-
-# library(devtools); load_all('../ohicore')
-# source('../ohicore/R/gapfill_georegions.R')
-d_g_a <- gapfill_georegions(
-  data = m_d %>%
+gci_rgn1 <- gapfill_georegions(
+  data = gci_rgn %>%
     filter(!rgn_id %in% c(213,255)) %>%
     select(rgn_id, score),
   fld_id = 'rgn_id',
@@ -108,11 +101,11 @@ d_g_a <- gapfill_georegions(
   attributes_csv = attrsave) # don't chain gapfill_georegions or will lose head(attr(d_g_a, 'gapfill_georegions')) ability
 
 # investigate attribute tables
-head(attr(d_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('open %s', attrsave))
+head(attr(gci_rgn1, 'gapfill_georegions'))  # or to open in excel: system(sprintf('open %s', attrsave))
 
 
 ## last step: give North Korea the minimum value and save ----
-d_g <- d_g_a %>%
+d_g <- gci_rgn1 %>%
   select(rgn_id, score) %>%
   arrange(rgn_id); head(d_g)
 
