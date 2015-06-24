@@ -16,41 +16,37 @@ Files produced
 
 Description
 ===========
-Data taken from two separate pdf reports for GCI and TTCI. Both reports have extensive data for each country, including 2013's Index scores and rankings, comparisons to previous years, subIndices and Pillars, but this information is in several separate tables. Tables including previous years are processed here since this might be useful for trend calculation. 
+Data taken from two separate pdf reports for GCI and TTCI. Both reports have extensive data for each country, including Index scores and rankings, comparisons to previous years, subIndices and Pillars, but this information is in several separate tables. Tables including previous years are processed here since this might be useful for trend calculation. 
 
-ACCESS: 
-
-http://www.weforum.org/issues/global-competitiveness
-
-* http://www.weforum.org/issues/global-competitiveness: Table 3 (p. 15; 2013-2014)
-
-http://www.weforum.org/issues/travel-and-tourism-competitiveness
-
-* http://reports.weforum.org/travel-and-tourism-competitiveness-report-2013/: Table 1 (p.10)
-
+**Data available:**
+Global Competitiveness:
+* download .xlsx: http://www3.weforum.org/docs/GCR2014-15/GCI_Dataset_2006-07-2014-15.xlsx
+  * note: contains data for each year from 2006/2007 to 2014/2015
+* read report: http://reports.weforum.org/global-competitiveness-report-2014-2015/
+  * table 3 in this .pdf: http://reports.weforum.org/global-competitiveness-report-2014-2015/wp-content/blogs.dir/54/mp/files/pages/files/tables3-7-wef-globalcompetitivenessreport-2014-15-2.pdf
+  
+Travel and Tourism competitiveness:
+* download .xlsx: http://www3.weforum.org/docs/TT15/WEF_TTCR_Dataset_2015.xlsx
+  * note: only 2015 is represented here.  
+* read report online: http://reports.weforum.org/travel-and-tourism-competitiveness-report-2015/
+  * table 1: http://reports.weforum.org/travel-and-tourism-competitiveness-report-2015/index-results-the-travel-tourism-competitiveness-index-ranking-2015/
 
 R scripts involved
 ==================
 SCRIPT:
 
-* data_prep.r
+* ~/github/ohiprep/globalprep/TourismRecreation/data_prep.R
 
 DETAILS: cleaning
 
-Original data downloaded as a pdf from [World Economic Forum](http://www.weforum.org/issues/global-competitiveness) at this [link] (http://www3.weforum.org/docs/WEF_GlobalCompetitivenessReport_2013-14.pdf). This pdf is stored on Neptune on data_edit: git-annex/Global/WEF-Economics_v2014/WEF_GlobalCompetitivenessReport_2013-14.pdf
+Original data downloaded as .xls from links above.  These .xlsx files are stored on Neptune on data_edit: 
+* git-annex/globalprep/TourismRecreation/WEF-Economics/raw/GCI_Dataset_2006-07-2014-15.xlsx
+* git-annex/globalprep/TourismRecreation/WEF-Economics/raw/WEF_TTCR_Dataset_2015.xlsx
 
-To create .csv files from these pdf tables, follow these steps 
-TODO: make a python script for this:
+Each file has been opened and the 'data' sheet saved as .csv in the same location:
+* git-annex/globalprep/TourismRecreation/WEF-Economics/raw/GCI_Dataset_2006-07-2014-15.csv
+* git-annex/globalprep/TourismRecreation/WEF-Economics/raw/WEF_TTCR_Dataset_2015.csv
 
-* To copy data, use Adobe Acrobat Pro 9.0 
-* Table was copied into WEF_GCI_2013-2014_Table3.txt and WEF_TTCI_2013-2014_Table1.txt 
-* Table saved as WEF_GCI_2013-2014_Table3_reformatted.csv and WEF_TTCI_2013-2014_Table1_reformatted.csv with TextWrangler: 
-  + add quotes around countries with commas (~5 of these) 
-  + add commas to make it csv: 
-    - search '(\w) (\d)' replace '\1,\2'; 
-    - search '(\d) (\d)' replace '\1,\2'; 
-    - search ' (n\/a)' replace ',NA' 
-    - simplify/rename headers with commas
 
 WEF_GCI_2013-2014_Table3_reformatted.csv is processed further by data_prep.R in ohiprep/Global/WEF-Economics_v2014/
 
