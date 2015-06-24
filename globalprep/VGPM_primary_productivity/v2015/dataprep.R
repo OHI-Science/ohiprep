@@ -3,6 +3,12 @@
 
 # This code was adapted from Luke Miller: http://lukemiller.org/index.php/2011/12/loading-osus-vgpm-ocean-productivity-data-in-r/
 
+#libraries
+
+library(raster)
+
+library(fields)
+
 #paths
 dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
           'Darwin'  = '/Volumes/data_edit',
@@ -13,8 +19,6 @@ tmpdir='~/big/R_raster_tmp'
 dir.create(tmpdir, showWarnings=F)
 rasterOptions(tmpdir=tmpdir)
 
-
-library(fields)
 
 setwd(file.path(dir_N,'git-annex/globalprep/VGPM_primary_productivity/v_2015'))
 
@@ -37,6 +41,11 @@ r <- raster(e,ncol=2160,nrow=1080)
   # interest with lat/lon listed in the row and column names.
 
 # I (jamie) added to this function to create an output raster rather than matrix of values
+
+w.lon = -180
+e.lon = 180
+n.lat = 90
+s.lat = -90
 
   vgpm.raster = function(file, w.lon, e.lon, n.lat, s.lat, log = TRUE, 
                          color = tim.colors(30)){
@@ -146,13 +155,13 @@ r <- raster(e,ncol=2160,nrow=1080)
          legend.lab=expression(paste('mg C /', m^2,'/ day')),
          legend.mar=4.3)
     
-    writeRaster(r,filename=paste0('../working/rasterized_rawdata/npp',sep='_',strftime(day1,'%B %Y')),format='GTiff',overwrite=T)
+    writeRaster(r,filename=paste0('working/rasterized_rawdata/npp',sep='_',strftime(day1,'%B %Y')),format='GTiff',overwrite=T)
     
   }  # end of vgpm.raster() function
   
   
   
-  files = list.files('vgpm.m.2009.xyz',full.names=TRUE)
+  files = list.files('inputs/vgpm.m.2008.xyz',full.names=TRUE)
 
   for (i in 1:length(files)){
     file = files[i]
