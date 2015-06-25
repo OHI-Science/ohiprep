@@ -1,4 +1,7 @@
 #### WTTC_Tourism data
+
+See github/ohiprep/globalprep/TourismRecreation for processing scripts.
+
 Data for 2014 is now available, MRF downloaded these data on May 6 2015.
 
 Data extends past 2014, but these are "predicted" data:

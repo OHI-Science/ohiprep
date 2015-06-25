@@ -1,13 +1,27 @@
 ### data_prep.R: reformat and add rgn_ids to World Economic Forum (WEF) data 
 ### 
-### by JStewartLowndes Mar2014; updated from 'clean_WEF.R' by JStewart in May 2013
+###   Provenance:
+###     Jun2015 Casey O'Hara - updated for 2015, removed gapfilling, set up for .csv instead of .pdf
+###     Mar2014 JStewartLowndes; updated from 'clean_WEF.R' by JStewart in May 2013
+###     May2013 'clean_WEF.R' by JStewart
+###
 ###   Data: 
-###       Global Competitiveness Index (GCI)
-###       Travel and Tourist Competitiveness Index (TTCI)
+###     TTCI: Travel and Tourism competitiveness:
+###       * download .xlsx: http://www3.weforum.org/docs/TT15/WEF_TTCR_Dataset_2015.xlsx
+###     * note: only 2015 is represented here.  
+###     * read report online: http://reports.weforum.org/travel-and-tourism-competitiveness-report-2015/
+###       * table 1: http://reports.weforum.org/travel-and-tourism-competitiveness-report-2015/
+###           index-results-the-travel-tourism-competitiveness-index-ranking-2015/
+###
+###     GCI: Global Competitiveness (not used in 2015, left for reference)
+###       * download .xlsx: http://www3.weforum.org/docs/GCR2014-15/GCI_Dataset_2006-07-2014-15.xlsx
+###     * note: contains data for each year from 2006/2007 to 2014/2015
+###     * read report: http://reports.weforum.org/global-competitiveness-report-2014-2015/
+###       * table 3 in this .pdf: http://reports.weforum.org/global-competitiveness-report-2014-2015/
+###           wp-content/blogs.dir/54/mp/files/pages/files/tables3-7-wef-globalcompetitivenessreport-2014-15-2.pdf
+###
 ###   read in individual files
-###   call add_rgn_id.r to add OHI region_ids
-###   georegional gapfilling with gapfill_georegions.r 
-###   final processing by hand: see end of script
+###   call name_to_rgn() from ohicore
 
 
 ##############################################################################=
@@ -23,12 +37,59 @@ goal     <- 'globalprep/TourismRecreation'
 scenario <- 'v2015'
 dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal) 
 dir_git  <- file.path('~/github/ohiprep', goal)
+dir_wef  <- file.path(dir_anx, '../WEF-Economics')
+
+
+##############################################################################=
+### WEF TTCI formatting ----
+##############################################################################=
+# read in files
+ttci_raw <- read.csv(file.path(dir_wef, 'raw', 'WEF_TTCR_Dataset_2015.csv'), 
+                     skip = 3, check.names = FALSE, stringsAsFactors = FALSE)
+### NOTE: check.names = FALSE because of Cote d'Ivoire has an accent circonflex over the 'o' (probably other issues in there too)
+
+ttci <- ttci_raw[1, 1:150]
+### first row is index scores for 2015.  After column 150, a bunch of NA columns...
+
+ttci <- ttci %>%
+  select(-(1:2), -(4:9), year = Edition) %>%
+  gather(country, value, -year)
+
+### Rescale all scores (out of 7) to range from 0 - 1. 
+ttci <- ttci %>%
+  mutate(score = as.numeric(value)/7)
+
+ttci_rgn <- name_to_rgn(ttci, fld_name='country', 
+                        flds_unique=c('country', 'year'), fld_value='score', 
+                        collapse_fxn = 'mean', add_rgn_name = T) %>%
+  arrange(rgn_id, year)
+
+stopifnot(max(ttci_rgn$score, na.rm = T) < 1)
+
+head(ttci_rgn, 10)
+#        rgn_id year     score    rgn_name
+#     1      14 2015 0.6214286      Taiwan
+#     2      15 2015 0.5185714 Philippines
+#     3      16 2015 0.7114286   Australia
+#     4      20 2015 0.6242857 South Korea
+#     5      24 2015 0.4628571    Cambodia
+#     6      25 2015 0.6085714    Thailand
+#     7      31 2015 0.5714286  Seychelles
+#     8      37 2015 0.5571429   Mauritius
+#     9      40 2015 0.5428571   Sri Lanka
+#     10     41 2015 0.4014286  Mozambique
+
+### Save TTCI data file
+ttci_file <- file.path(dir_git, scenario, 'data/wef_ttci_2015.csv')
+write_csv(ttci_rgn, ttci_file)
+
+
 
 ##############################################################################=
 ### WEF GCI formatting ----
 ##############################################################################=
-### For 2014-2015, 
-dir_wef <- file.path(dir_anx, 'WEF-Economics')
+### This data set was exploratory for previous years.  Not used in 2015.
+{
 # read in files ----
 gci_raw <- read.csv(file.path(dir_wef, 'raw', 'GCI_Dataset_2006-07-2014-15.csv'), skip = 3, check.names = FALSE, stringsAsFactors = FALSE)
 ### NOTE: check.names = FALSE because of Cote d'Ivoire has an accent circonflex over the 'o' (probably other issues in there too)
@@ -83,171 +144,8 @@ head(gci_rgn %>% filter(year == 2006), 10)
 ### NOTE: retains NA values for regions that were not assessed in a given year
 
 ### Save GCI data file
-gci_file <- file.path(dir_git, scenario, 'data/wef-gci-2006-2014.csv')
+gci_file <- file.path(dir_git, scenario, 'data/wef_gci_2006_2014.csv')
 write_csv(gci_rgn, gci_file)
 
-##############################################################################=
-### WEF TTCI formatting ----
-##############################################################################=
+}
 
-# read in files ----
-ttci_raw <- read.csv(file.path(dir_wef, 'raw', 'WEF_TTCR_Dataset_2015.csv'), skip = 3, check.names = FALSE, stringsAsFactors = FALSE)
-### NOTE: check.names = FALSE because of Cote d'Ivoire has an accent circonflex over the 'o' (probably other issues in there too)
-
-ttci <- ttci_raw[1, 1:150]
-### first row is index scores for 2015.  After column 150, a bunch of NA columns...
-
-ttci <- ttci %>%
-  select(-(1:2), -(4:9), year = Edition) %>%
-  gather(country, value, -year)
-
-### Rescale all scores (out of 7) to range from 0 - 1. 
-ttci <- ttci %>%
-  mutate(score = as.numeric(value)/7)
-
-ttci_rgn <- name_to_rgn(ttci, fld_name='country', 
-                       flds_unique=c('country', 'year'), fld_value='score', 
-                       collapse_fxn = 'mean', add_rgn_name = T) %>%
-  arrange(rgn_id, year)
-
-stopifnot(max(ttci_rgn$score, na.rm = T) < 1)
-
-head(ttci_rgn, 10)
-#        rgn_id year     score    rgn_name
-#     1      14 2015 0.6214286      Taiwan
-#     2      15 2015 0.5185714 Philippines
-#     3      16 2015 0.7114286   Australia
-#     4      20 2015 0.6242857 South Korea
-#     5      24 2015 0.4628571    Cambodia
-#     6      25 2015 0.6085714    Thailand
-#     7      31 2015 0.5714286  Seychelles
-#     8      37 2015 0.5571429   Mauritius
-#     9      40 2015 0.5428571   Sri Lanka
-#     10     41 2015 0.4014286  Mozambique
-
-### Save TTCI data file
-ttci_file <- file.path(dir_git, scenario, 'data/wef-ttci-2015.csv')
-write_csv(ttci_rgn, ttci_file)
-
-
-##############################################################################=
-### georegional gapfilling with gapfill_georegions.r ----
-##############################################################################=
-
-# georegions <- read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %>%
-#   spread(level, georgn_id)
-# 
-# georegion_labels <- read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv') %>%    
-#   mutate(level = sprintf('%s_label', level)) %>%
-#   spread(level, label) %>%
-#   left_join(
-#     read.csv('../ohi-global/eez2013/layers/rgn_labels.csv') %>%
-#       select(rgn_id, v_label = label),
-#     by='rgn_id') %>%
-#   arrange(r0_label, r1_label, r2_label, v_label); head(georegion_labels)
-# 
-# layersave <- file.path(dir_git, scenario, 'data', 'rgn_wef_gci.csv')
-# attrsave  <- file.path(dir_git, scenario, 'data', 'rgn_wef_gci_attr.csv')
-# 
-# gci_rgn1 <- gapfill_georegions(
-#   data = gci_rgn %>%
-#     filter(!rgn_id %in% c(213,255)) %>%
-#     select(rgn_id, score),
-#   fld_id = 'rgn_id',
-#   georegions = georegions,
-#   georegion_labels = georegion_labels,
-#   r0_to_NA = TRUE, 
-#   attributes_csv = attrsave) # don't chain gapfill_georegions or will lose head(attr(d_g_a, 'gapfill_georegions')) ability
-# 
-# # investigate attribute tables
-# head(attr(gci_rgn1, 'gapfill_georegions'))  # or to open in excel: system(sprintf('open %s', attrsave))
-# 
-# 
-# ## last step: give North Korea the minimum value and save ----
-# d_g <- gci_rgn1 %>%
-#   select(rgn_id, score) %>%
-#   arrange(rgn_id); head(d_g)
-# 
-# # find minimum  
-# s_min <- min(d_g %>%
-#               select(score) %>%
-#               filter(!is.na(score)))
-# 
-# # replace North Korea (rgn_id == 21) in gapfilled_data
-# d_g$score[d_g$rgn_id == 21] <- s_min 
-# 
-# # save
-# stopifnot(anyDuplicated(d_g[,c('rgn_id')]) == 0)
-# write.csv(d_g, layersave, na = '', row.names=FALSE)
-# 
-# 
-# ## also change attributes table ---- 
-# d_attr <- read.csv(attrsave) %>%
-#   filter(id != 21)
-# 
-# d_nk <- d_attr %>%
-#   filter(id == 21) %>%
-#   mutate(
-#     z_level = 'XH',
-#     
-#     r2_v = s_min, 
-#     r1_v = s_min, 
-#     r0_v = s_min, 
-#     z    = s_min, 
-#     
-#     r2         = NA,
-#     r1         = NA,
-#     r0         = NA,
-#     r2_n_notna = NA,
-#     r1_n_notna = NA,
-#     r0_n_notna = NA,
-#     z_ids      = NA,
-#     r2_n       = NA,
-#     r1_n       = NA,
-#     r0_n       = NA,
-#     z_n        = NA,
-#     z_n_pct    = NA,
-#     z_g_score  = NA); d_nk
-# 
-# d_attr_fin <- rbind(d_attr, d_nk) %>%
-#   arrange(r0_label, r1_label, r2_label, v_label) 
-# write.csv(d_attr_fin, attrsave, na = '', row.names=F)
-# 
-# 
-# # --- fin
-# 
-
-
-
-
-# ## 2013 stuff to clean TTCI data. Not done in 2014 so would have to be updated a bit for nextime data are updated
-# 
-# d.ttci <- read.csv('WEF_TTCI_2012-2013_Table1_reformatted.csv')
-# d.ttci2 <- cbind(d.ttci,rep('ttci',length(d.ttci[,1])))
-# names(d.ttci2) <- c('Region','Rank2013','IndexScore2013','Rank2011','layer')
-# 
-# # concatenate f files
-# d.all <- rbind(d.gci2[c(1,3,5)], d.ttci2[c(1,3,5)])
-# 
-# 
-# ## run add_rgn_id and save
-# uifilesave <- paste(dir1, 'data/', 'GL-WEF-Economics_v2013-cleaned.csv', sep='')
-# add_rgn_id(d.all, uifilesave)
-# 
-# 
-# ## georegional gapfilling with add_gapfill.r 
-# 
-# cleaned_data1 <- read.csv(uifilesave)
-# 
-# layer_uni <- unique(cleaned_data1$layer)
-# layernames <- sprintf('rgn_wef_%s_tmp.csv', tolower(layer_uni))
-# s_island_val <- NA # assign what southern islands will get. 
-# 
-# for(i in 1:length(layer_uni)) {
-#   cleaned_layer <- cleaned_data1[cleaned_data1$layer == layer_uni[i],]
-#   cleaned_layer$layer <- NULL
-#   
-#   layersave <- paste(dir1, 'raw/', layernames[i], sep='')    
-#   add_gapfill_singleyear(cleaned_layer, layersave, s_island_val)
-# }
-# 
