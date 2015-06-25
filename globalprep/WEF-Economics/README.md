@@ -1,22 +1,15 @@
-GL-WEF-Economics_v2013
+WEF-Economics
 ===========================
+See github/ohiprep/globalprep/TourismRecreation/ for scripts on processing and cleaning this data
 
 WEF = World Economic Forum
 
 * GCI = Global Competitiveness Index 
 * TTCI = Travel and Tourist Competitiveness Index
 
-
-Files produced
-==============
-
-* /ohiprep/Global/WEF-Economics_v2014/data/rgn_wef_gci_2014a_rescaled.csv
-* Note:: Final WEF TTCI data was not updated; this is still on Neptune data_edit: /model/GL-WEF-Economics_v2013/data/rgn_wef_ttci_2013a.csv
-
-
 Description
 ===========
-Data taken from two separate pdf reports for GCI and TTCI. Both reports have extensive data for each country, including Index scores and rankings, comparisons to previous years, subIndices and Pillars, but this information is in several separate tables. Tables including previous years are processed here since this might be useful for trend calculation. 
+Data taken from two separate reports for GCI and TTCI. Both reports have extensive data for each country, including Index scores and rankings, comparisons to previous years, subIndices and Pillars, but this information is in several separate tables. Tables including previous years are processed here since this might be useful for trend calculation. 
 
 **Data available:**
 Global Competitiveness:
@@ -35,7 +28,7 @@ R scripts involved
 ==================
 SCRIPT:
 
-* ~/github/ohiprep/globalprep/TourismRecreation/data_prep.R
+* ~/github/ohiprep/globalprep/TourismRecreation/data_prep_WEF.R
 
 DETAILS: cleaning
 
@@ -49,16 +42,6 @@ Each file has been opened and the 'data' sheet saved as .csv in the same locatio
 
 
 WEF_GCI_2013-2014_Table3_reformatted.csv is processed further by data_prep.R in ohiprep/Global/WEF-Economics_v2014/
-
-Gapfilling 
-==========
-CATEGORY: SG, XSI
-
-EXCEPTIONS: NA
-
-DETAILS: Southern Islands == NA
-
-* used add_gapfill_singleyear
 
 
 From 2013 README:
