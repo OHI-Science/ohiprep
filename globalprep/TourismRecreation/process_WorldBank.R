@@ -1,4 +1,6 @@
-# data_prep_WorldBank.R
+# process_WorldBank.R  
+# Do not run stand-alone - source from main data_prep.R for TourismRecreation.
+#
 # Reformat and add rgn_ids for World Bank statistics data.
 # Provenance:
 #   Jun2015 Casey O'Hara updated for 2015 assessment
@@ -25,19 +27,7 @@
 ##############################################################################=
 ### setup ----
 ##############################################################################=
-library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
-
-setwd('~/github/ohiprep')
-source('src/R/common.R')
-library(readr)
-
-goal     <- 'globalprep/TourismRecreation'
-scenario <- 'v2015'
-dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal) 
-dir_git  <- file.path('~/github/ohiprep', goal)
-dir_data <- file.path(dir_git, scenario, 'data')
-dir_int  <- file.path(dir_git, scenario, 'intermediate')
-
+### Libraries and such are set up within data_prep.R
 
 
 ##############################################################################=
@@ -109,7 +99,7 @@ pop_file  <- file.path(dir_int, 'wb_country_total_pop.csv')
 cat(sprintf('Writing population data to: \n  %s\n', pop_file))
 write_csv(wb_pop, pop_file)
 
-data_file <- file.path(dir_int, 'data_all.csv')
+data_file <- file.path(dir_int, 'wb_data_all.csv')
 data_layers <- paste(unique(data_all$layer), collapse = ', ')
 cat(sprintf('Writing %s data to: \n  %s\n', data_layers, data_file))
 write_csv(data_all, data_file)
@@ -127,7 +117,7 @@ data_rgn1 <- name_to_rgn(data_all %>%
                          collapse_fxn = 'sum_na') 
 
 ### name_to_rgn with collapse_fxn = sum_weight_by_pop for gdppcppp and uem ----
-pop_file <- file.path(dir_data, 'wb_country_total_pop.csv')
+pop_file <- file.path(dir_int, 'wb_country_total_pop.csv')
 data_rgn2 <- name_to_rgn(data_all %>%
                            filter(layer %in% c('gdppcppp', 'uem')), 
                          fld_name='country', flds_unique=c('country','year','layer'), 
@@ -151,10 +141,10 @@ for (l_name in unique(data_rgn$layer)) {  # l_name = unique(data_rgn$layer)[1]
                     gdppcppp = 'intl_dollar',
                     uem = 'percent')
 
-  names(tmp_data)[names(tmp_data) == 'value'] <- l_units
   tmp_data <- data_rgn %>% 
     filter(layer == l_name)
-
+  names(tmp_data)[names(tmp_data) == 'value'] <- l_units
+  
   layer_file <- file.path(dir_int, sprintf('wb_rgn_%s.csv', l_name))
   cat(sprintf('Writing complete layer %s (%s) data to:\n  %s\n', l_name, l_units, layer_file))
   write_csv(tmp_data, layer_file)
@@ -201,58 +191,58 @@ for (l_name in unique(data_rgn$layer)) {  # l_name = unique(data_rgn$layer)[1]
 ##############################################################################=
 
 ## rescale GDPpcPPP by the max of each year
-
-ppp <- read.csv(file.path(dir_d, 'data', 'rgn_wb_gdppcppp_2014a_ratio-gapfilled.csv')); head(ppp)
-
-p <- ppp %>%
-  left_join(ppp %>%
-              group_by(year) %>%
-              summarize(max_intl_dollar = max(intl_dollar, na.rm=T)),
-            by='year') %>% 
-  mutate(value = intl_dollar/max_intl_dollar); head(p); summary(p)
-
-## save
-scenarios <- list('2012a'=2011,
-                 '2013a'=2012,
-                 '2014a'=2013)
-
-for (scen in names(scenarios)){ # scen = names(scenarios)[1]
-  
-  yr <- scenarios[[scen]]
-  cat(sprintf('\nScenario %s using year == %d\n', scen, yr))
-  
-  p_yr <- p %>%
-    filter(year <= yr) %>% # remove any years greater than the scenario
-    select(rgn_id, year, value)
-  
-  csv <- sprintf('rgn_wb_gdppcppp_rescaled_%s.csv', scen)
-  write.csv(p_yr, file.path(dir_d, 'data', csv), row.names=F)
-  
-}
+# 
+# ppp <- read.csv(file.path(dir_d, 'data', 'rgn_wb_gdppcppp_2014a_ratio-gapfilled.csv')); head(ppp)
+# 
+# p <- ppp %>%
+#   left_join(ppp %>%
+#               group_by(year) %>%
+#               summarize(max_intl_dollar = max(intl_dollar, na.rm=T)),
+#             by='year') %>% 
+#   mutate(value = intl_dollar/max_intl_dollar); head(p); summary(p)
+# 
+# ## save
+# scenarios <- list('2012a'=2011,
+#                  '2013a'=2012,
+#                  '2014a'=2013)
+# 
+# for (scen in names(scenarios)){ # scen = names(scenarios)[1]
+#   
+#   yr <- scenarios[[scen]]
+#   cat(sprintf('\nScenario %s using year == %d\n', scen, yr))
+#   
+#   p_yr <- p %>%
+#     filter(year <= yr) %>% # remove any years greater than the scenario
+#     select(rgn_id, year, value)
+#   
+#   csv <- sprintf('rgn_wb_gdppcppp_rescaled_%s.csv', scen)
+#   write.csv(p_yr, file.path(dir_d, 'data', csv), row.names=F)
+#   
+# }
 
 
 ## translate total labor force to cntry_key; save for each scenario
 # this makes obsolete the troublesome (because of NAs and unknown origin) file on Neptune: model/GL-NCEAS-LayersDisaggregated_v2013a/data/le_workforcesize_adj.csv 
 
-fname <- 'rgn_wb_tlf_2014a_ratio-gapfilled.csv'
-f <- read.csv(file.path(dir_d, 'data', fname)); head(f)
-cp <- read.csv(file.path(dir_neptune_data, 'model/GL-NCEAS-CoastalPopulation_v2013/data', 
-                                 'cntry_popsum2013_inland25mi_complete.csv'))
-
-lf1 <- f %>%
-  select(rgn_id, year, count) %>%
-  left_join(cp,
-            by = 'rgn_id') 
-
-lf <- lf1 %>%
-  left_join(lf1 %>%
-              group_by(rgn_id, year) %>%
-              summarize(rgn_popsum = sum(cntry_popsum2013_inland25mi)), 
-            by = c('rgn_id', 'year')) %>%
-  mutate(pop_ratio = cntry_popsum2013_inland25mi/rgn_popsum,
-         jobs = count * pop_ratio) %>% # debug: lf %>% filter(pop_ratio != 1) see below
-  select(cntry_key, year, jobs) %>%
-  arrange(cntry_key, year); head(lf); summary(lf)
+# fname <- 'rgn_wb_tlf_2014a_ratio-gapfilled.csv'
+# f <- read.csv(file.path(dir_d, 'data', fname)); head(f)
+# cp <- read.csv(file.path(dir_neptune_data, 'model/GL-NCEAS-CoastalPopulation_v2013/data', 
+#                                  'cntry_popsum2013_inland25mi_complete.csv'))
+# 
+# lf1 <- f %>%
+#   select(rgn_id, year, count) %>%
+#   left_join(cp,
+#             by = 'rgn_id') 
+# 
+# lf <- lf1 %>%
+#   left_join(lf1 %>%
+#               group_by(rgn_id, year) %>%
+#               summarize(rgn_popsum = sum(cntry_popsum2013_inland25mi)), 
+#             by = c('rgn_id', 'year')) %>%
+#   mutate(pop_ratio = cntry_popsum2013_inland25mi/rgn_popsum,
+#          jobs = count * pop_ratio) %>% # debug: lf %>% filter(pop_ratio != 1) see below
+#   select(cntry_key, year, jobs) %>%
+#   arrange(cntry_key, year); head(lf); summary(lf)
 
 # show which rgn_ids and cntry_keys are split with pop_ratio
 # lf %>% filter(pop_ratio != 1)
@@ -278,23 +268,23 @@ lf <- lf1 %>%
 
 # save for each scenario 
 
-scenarios <- list('2012a'= max(lf$year, na.rm=T)-2,
-                 '2013a'= max(lf$year, na.rm=T)-1,
-                 '2014a'= max(lf$year, na.rm=T))
-
-for (scen in names(scenarios)){ # scen = names(scenarios)[1]
-  
-  yr <- scenarios[[scen]]
-  cat(sprintf('\nScenario %s using year == %d\n', scen, yr))
-  
-  lf_yr <- lf %>%
-    filter(year <= yr) # remove any years greater than the scenario
-  stopifnot(anyDuplicated(lf_yr[,c('cntry_key', 'year')]) == 0)
-  
-  csv <- sprintf('cntry_wb_tlf_%s_ratio-gapfilled.csv', scen) # file_path_sans_ext(fname)
-  write.csv(lf_yr, file.path(dir_d, 'data', csv), row.names=F)
-  
-}
-
+# scenarios <- list('2012a'= max(lf$year, na.rm=T)-2,
+#                  '2013a'= max(lf$year, na.rm=T)-1,
+#                  '2014a'= max(lf$year, na.rm=T))
+# 
+# for (scen in names(scenarios)){ # scen = names(scenarios)[1]
+#   
+#   yr <- scenarios[[scen]]
+#   cat(sprintf('\nScenario %s using year == %d\n', scen, yr))
+#   
+#   lf_yr <- lf %>%
+#     filter(year <= yr) # remove any years greater than the scenario
+#   stopifnot(anyDuplicated(lf_yr[,c('cntry_key', 'year')]) == 0)
+#   
+#   csv <- sprintf('cntry_wb_tlf_%s_ratio-gapfilled.csv', scen) # file_path_sans_ext(fname)
+#   write.csv(lf_yr, file.path(dir_d, 'data', csv), row.names=F)
+#   
+# }
+# 
 
 # --- fin ---
