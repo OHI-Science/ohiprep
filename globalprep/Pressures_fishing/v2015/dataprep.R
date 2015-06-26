@@ -11,6 +11,11 @@ library(ggplot2)
 
 cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
 
+# set tmp directory
+
+tmpdir='~/big/R_raster_tmp'
+dir.create(tmpdir, showWarnings=F)
+rasterOptions(tmpdir=tmpdir)
 
 
 dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
@@ -295,4 +300,6 @@ rep_res_mask = function(raster){
 rep_res_mask(ras_05_09)
 rep_res_mask(ras_04_08)
 rep_res_mask(ras_03_07)
+
+#--------------------------------------------------------------------------------------------------
 
