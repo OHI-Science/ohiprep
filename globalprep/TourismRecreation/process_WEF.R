@@ -1,4 +1,7 @@
-### data_prep.R: reformat and add rgn_ids to World Economic Forum (WEF) data 
+### process_WEF.R: 
+### Do not run stand-alone - source from main data_prep.R for TourismRecreation.
+###
+### reformat and add rgn_ids to World Economic Forum (WEF) data 
 ### 
 ###   Provenance:
 ###     Jun2015 Casey O'Hara - updated for 2015, removed gapfilling, set up for .csv instead of .pdf
@@ -27,16 +30,8 @@
 ##############################################################################=
 ### setup ----
 ##############################################################################=
-library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
+### Libraries and such are set up within data_prep.R
 
-setwd('~/github/ohiprep')
-source('src/R/common.R')
-library(readr)
-
-goal     <- 'globalprep/TourismRecreation'
-scenario <- 'v2015'
-dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal) 
-dir_git  <- file.path('~/github/ohiprep', goal)
 dir_wef  <- file.path(dir_anx, '../WEF-Economics')
 
 
