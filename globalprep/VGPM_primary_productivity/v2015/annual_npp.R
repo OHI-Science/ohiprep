@@ -8,7 +8,7 @@ dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
           'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
 
 # set tmp directory
-tmpdir='~/big/R_raster_tmp'
+tmpdir=file.path(dir_N,'home_big/afflerbach/R_raster_tmp')
 dir.create(tmpdir, showWarnings=F)
 rasterOptions(tmpdir=tmpdir)
 
@@ -40,5 +40,5 @@ for (i in 2003:2014){
 }
 
 
-# Resample to 1km and mollweide
+
 
