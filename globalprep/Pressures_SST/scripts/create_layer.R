@@ -56,8 +56,11 @@ yrs_05_10_85_90 = yrs_05_10 - yrs_1985_90
 # (3) new
 yrs_08_12_85_90 = yrs_08_12 - yrs_1985_90
 
-sst_2015 = projectRaster(yrs_08_12_85_90,crs=mollCRS,progress='text')%>%
-            resample(.,ocean,method='ngb',progress='text',filename='')
+projection(yrs_08_12_85_90) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0" 
+
+sst_2015 = projectRaster(yrs_08_12_85_90,crs=mollCRS,progress='text',over=T)%>%
+            resample(.,ocean,method='ngb',progress='text')%>%
+              mask(.,ocean,filename='sst_08_12-85_90.tif')
 
 
 
