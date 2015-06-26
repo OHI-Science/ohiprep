@@ -122,14 +122,16 @@ write_csv(data_all, data_file)
 ### name_to_rgn with collapse_fxn = sum_na for all but gdppcppp and uem ----
 data_rgn1 <- name_to_rgn(data_all %>%
                            filter(!layer %in% c('gdppcppp', 'uem')), 
-                         fld_name='country', flds_unique=c('country','year','layer'), fld_value='value', add_rgn_name=T, 
+                         fld_name='country', flds_unique=c('country','year','layer'), 
+                         fld_value='value', add_rgn_name=T, 
                          collapse_fxn = 'sum_na') 
 
 ### name_to_rgn with collapse_fxn = sum_weight_by_pop for gdppcppp and uem ----
 pop_file <- file.path(dir_data, 'wb_country_total_pop.csv')
 data_rgn2 <- name_to_rgn(data_all %>%
                            filter(layer %in% c('gdppcppp', 'uem')), 
-                         fld_name='country', flds_unique=c('country','year','layer'), fld_value='value', add_rgn_name=T,
+                         fld_name='country', flds_unique=c('country','year','layer'), 
+                         fld_value='value', add_rgn_name=T,
                          collapse_fxn='weighted.mean', collapse_csv = pop_file)
 
 # rbind together from name_to_rgn calls ----
@@ -148,14 +150,14 @@ for (l_name in unique(data_rgn$layer)) {  # l_name = unique(data_rgn$layer)[1]
                     gdp = 'usd',
                     gdppcppp = 'intl_dollar',
                     uem = 'percent')
+
+  names(tmp_data)[names(tmp_data) == 'value'] <- l_units
   tmp_data <- data_rgn %>% 
     filter(layer == l_name)
-  
-  names(tmp_data)[names(tmp_data) == 'value'] <- l_units
-  
-  layer_file <- file.path(dir_data, sprintf('wb_rgn_%s.csv', l_name))
-  cat(sprintf('Writing layer %s (%s) data to:\n  %s\n', l_name, l_units, layer_file))
-  write_csv(, layer_file)
+
+  layer_file <- file.path(dir_int, sprintf('wb_rgn_%s.csv', l_name))
+  cat(sprintf('Writing complete layer %s (%s) data to:\n  %s\n', l_name, l_units, layer_file))
+  write_csv(tmp_data, layer_file)
 }
 
 
