@@ -44,12 +44,13 @@ dir_wef  <- file.path(dir_anx, '../WEF-Economics')
 ### WEF TTCI formatting ----
 ##############################################################################=
 # read in files
-ttci_raw <- read.csv(file.path(dir_wef, 'raw', 'WEF_TTCR_Dataset_2015.csv'), 
+ttci_raw <- read.csv(file.path(dir_wef, scenario, 'raw', 'WEF_TTCR_Dataset_2015.csv'), 
                      skip = 3, check.names = FALSE, stringsAsFactors = FALSE)
 ### NOTE: check.names = FALSE because of Cote d'Ivoire has an accent circonflex over the 'o' (probably other issues in there too)
 
-ttci <- ttci_raw[1, 1:150]
-### first row is index scores for 2015.  After column 150, a bunch of NA columns...
+ttci <- ttci_raw[1, names(ttci_raw) != '']
+### first row is index scores for 2015.
+### After column 150, a bunch of unnamed columns that throw errors
 
 ttci <- ttci %>%
   select(-(1:2), -(4:9), year = Edition) %>%
@@ -80,7 +81,7 @@ head(ttci_rgn, 10)
 #     10     41 2015 0.4014286  Mozambique
 
 ### Save TTCI data file
-ttci_file <- file.path(dir_git, scenario, 'data/wef_ttci_2015.csv')
+ttci_file <- file.path(dir_git, scenario, 'intermediate/wef_ttci_2015.csv')
 write_csv(ttci_rgn, ttci_file)
 
 
@@ -91,7 +92,8 @@ write_csv(ttci_rgn, ttci_file)
 ### This data set was exploratory for previous years.  Not used in 2015.
 {
 # read in files ----
-gci_raw <- read.csv(file.path(dir_wef, 'raw', 'GCI_Dataset_2006-07-2014-15.csv'), skip = 3, check.names = FALSE, stringsAsFactors = FALSE)
+gci_raw <- read.csv(file.path(dir_wef, scenario, 'raw', 'GCI_Dataset_2006-07-2014-15.csv'), 
+                    skip = 3, check.names = FALSE, stringsAsFactors = FALSE)
 ### NOTE: check.names = FALSE because of Cote d'Ivoire has an accent circonflex over the 'o' (probably other issues in there too)
 
 ### Possible filters:
@@ -144,7 +146,7 @@ head(gci_rgn %>% filter(year == 2006), 10)
 ### NOTE: retains NA values for regions that were not assessed in a given year
 
 ### Save GCI data file
-gci_file <- file.path(dir_git, scenario, 'data/wef_gci_2006_2014.csv')
+gci_file <- file.path(dir_git, scenario, 'intermediate/wef_gci_2006_2014.csv')
 write_csv(gci_rgn, gci_file)
 
 }
