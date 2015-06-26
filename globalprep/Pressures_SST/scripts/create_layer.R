@@ -40,18 +40,22 @@ for(i in 1:53){
   
   for (j in 1982:2012){
     
-    w = which(substr(names_weekly,2,5)==i)[j] 
+    w = which(substr(names_weekly,2,5)==j)[i] 
+    if(is.na(w))next()
     
+    w_week = weekly_sst[[w]]
     
+    s = stack(s,w_week)
     
   }
+  
+  sd = calc(s,fun=function(x){sd(x,na.rm=T)},progress='text',filename=paste('sd_sst_week_',i,'.tif'))
 }
 
 # Second Loop to calculate annual positive anomalies
 
-# Bring in 
 
-for (i in 1982:2012){
+for (i in 1983:2012){
   
   print(i)
   
