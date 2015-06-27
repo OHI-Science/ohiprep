@@ -82,18 +82,38 @@ process_emp_data <- function(emp_file) {
 empd <- process_emp_data(empd_file)
 empt <- process_emp_data(empt_file)
 
-### Prep direct and total employment data with name_to_rgn function, and then 
-### write csvs to github in TourismRecreation/v2015/intermediate location.
+### Prep direct and total employment data with name_to_rgn function
 empd_rgn <- name_to_rgn(empd, 
                         fld_name='rgn_name', flds_unique=c('rgn_name','year', 'jobs_pct'), 
                         fld_value='jobs_ct', add_rgn_name = TRUE, 
                         collapse_fxn = 'sum_na')
+# ??? collapse_fxn = 'sum_na' is not summing them - leaves separate
+dupes <- unique(empd_rgn$rgn_name[duplicated(empd_rgn[ , 1:2])])
+cat(sprintf('Duplicated regions: \n%s\n', paste(dupes, collapse = ', ')))
+# ??? This affects China, as well as 
+#     "Guadeloupe and Martinique" and
+#     "Puerto Rico and Virgin Islands of the United States"
+# ??? Adding this section to get around it for now:
+if(length(dupes) > 0) {
+  empd_rgn <- empd_rgn %>%
+    group_by(rgn_id, year, rgn_name) %>%
+    summarize(jobs_ct = sum(jobs_ct))
+} else cat('No duplicates in direct tourism employment to fix.\n')
 
+# ??? NOTE: the same problem will occur here, but not using this data anyway...
 empt_rgn <- name_to_rgn(empt, 
                         fld_name='rgn_name', flds_unique=c('rgn_name','year', 'jobs_pct'), 
                         fld_value='jobs_ct', add_rgn_name = TRUE, 
                         collapse_fxn = 'sum_na')
+dupes <- unique(empd_rgn$rgn_name[duplicated(empd_rgn[ , 1:2])])
+cat(sprintf('Duplicated regions: \n%s\n', paste(dupes, collapse = ', ')))
+if(length(dupes) > 0) {
+  empt_rgn <- empt_rgn %>%
+    group_by(rgn_id, year, rgn_name) %>%
+    summarize(jobs_ct = sum(jobs_ct))
+} else cat('No duplicates in total tourism employment to fix.\n')
 
+### write csvs to github in TourismRecreation/v2015/intermediate location.
 write_csv(empd_rgn, file.path(dir_int, 'wttc_empd_rgn.csv'))
 write_csv(empt_rgn, file.path(dir_int, 'wttc_empt_rgn.csv'))
 

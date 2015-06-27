@@ -1,5 +1,9 @@
 # data_explore.R for Tourism & Recreation
 
+setwd('~/github/ohiprep')
+source('src/R/common.R')
+
+
 library(ggplot2)
 
 goal      <- 'globalprep/TourismRecreation'
@@ -45,7 +49,7 @@ scatterPlot <- function(data_orig, data_new, title_text,
     geom_abline(slope = 1, intercept = 0, color = "red") +
     geom_text(aes(label = plotLabel), vjust = 1.5, size = 3)
   
-  ggsave(fig_save, width = 10, height = 8)
+  #ggsave(fig_save, width = 10, height = 8)
 }
 
 #############################################################################=
@@ -53,7 +57,7 @@ scatterPlot <- function(data_orig, data_new, title_text,
 #############################################################################=
 
 # tr_unemployment ----
-year_compare <- 2012
+year_compare <- 2005
 
 tr_unem_orig <- read.csv(file.path(dir_eez2013, 'tr_unemployment.csv'), stringsAsFactors = FALSE) %>%
   filter(year == year_compare) %>%
@@ -64,12 +68,11 @@ tr_unem_new  <- read.csv(file.path(dir_data,    'tr_unemployment.csv'), stringsA
 
 scatterPlot(data_orig = tr_unem_orig,
             data_new  = tr_unem_new,
-            title_text = 'WB unemployment 2012')
+            title_text = 'WB unemployment 2005')
 
 # tr_sustainability ----
 # comparison of 2015 scores to previous year's scores (2013-2014? I think)
-tr_sust_orig <- read.csv(file.path(dir_eez2013, 'tr_sustainability.csv'), stringsAsFactors = FALSE) %>% 
-  mutate(score = score/7) # ???
+tr_sust_orig <- read.csv(file.path(dir_eez2013, 'tr_sustainability.csv'), stringsAsFactors = FALSE) 
 tr_sust_new  <- read.csv(file.path(dir_data,    'tr_sustainability.csv'), stringsAsFactors = FALSE)
 
 #  this taken from .xls from 2013 report:
