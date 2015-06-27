@@ -49,32 +49,30 @@ ttci <- ttci_raw[1, names(ttci_raw) != '']
 
 ttci <- ttci %>%
   select(-(1:2), -(4:9), year = Edition) %>%
-  gather(country, value, -year)
+  gather(country, value, -year) %>%
+  mutate(score = as.numeric(value))
 
 ### Rescale all scores (out of 7) to range from 0 - 1. 
-ttci <- ttci %>%
-  mutate(score = as.numeric(value)/7)
+# ttci <- ttci %>%
+#   mutate(score = score/7)
 
 ttci_rgn <- name_to_rgn(ttci, fld_name='country', 
                         flds_unique=c('country', 'year'), fld_value='score', 
                         collapse_fxn = 'mean', add_rgn_name = T) %>%
   arrange(rgn_id, year)
 
-stopifnot(max(ttci_rgn$score, na.rm = T) < 1)
-
 head(ttci_rgn, 10)
-#        rgn_id year     score    rgn_name
-#     1      14 2015 0.6214286      Taiwan
-#     2      15 2015 0.5185714 Philippines
-#     3      16 2015 0.7114286   Australia
-#     4      20 2015 0.6242857 South Korea
-#     5      24 2015 0.4628571    Cambodia
-#     6      25 2015 0.6085714    Thailand
-#     7      31 2015 0.5714286  Seychelles
-#     8      37 2015 0.5571429   Mauritius
-#     9      40 2015 0.5428571   Sri Lanka
-#     10     41 2015 0.4014286  Mozambique
-
+#        rgn_id year score    rgn_name
+#     1      14 2015  4.35      Taiwan
+#     2      15 2015  3.63 Philippines
+#     3      16 2015  4.98   Australia
+#     4      20 2015  4.37 South Korea
+#     5      24 2015  3.24    Cambodia
+#     6      25 2015  4.26    Thailand
+#     7      31 2015  4.00  Seychelles
+#     8      37 2015  3.90   Mauritius
+#     9      40 2015  3.80   Sri Lanka
+#     10     41 2015  2.81  Mozambique
 ### Save TTCI data file
 ttci_file <- file.path(dir_git, scenario, 'intermediate/wef_ttci_2015.csv')
 write_csv(ttci_rgn, ttci_file)
