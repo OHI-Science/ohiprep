@@ -49,7 +49,7 @@ scatterPlot <- function(data_orig, data_new, title_text,
     geom_abline(slope = 1, intercept = 0, color = "red") +
     geom_text(aes(label = plotLabel), vjust = 1.5, size = 3)
   
-  #ggsave(fig_save, width = 10, height = 8)
+  ggsave(fig_save, width = 10, height = 8)
 }
 
 #############################################################################=
