@@ -84,14 +84,14 @@ catch_npp_03_07 = overlay(catch_03_07,npp_03_07,fun=function(x,y){x/y},progress=
 # Divide catch by primary productivity then multiply by gear proportions
 
 
-out_06_10_hb = (catch_06_10/npp_06_10)*gear_hb
-out_06_10_lb = (catch_06_10/npp_06_10)*gear_lb
+out_06_10_hb = overlay(catch_npp_06_10,gear_hb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_06_10_npp_hb_raw.tif')
+out_06_10_lb = overlay(catch_npp_06_10,gear_lb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_06_10_npp_lb_raw.tif')
 
-out_05_09_hb = (catch_05_09/npp_05_09)*gear_hb
-out_05_09_lb = (catch_05_09/npp_05_09)*gear_lb
+out_05_09_hb = overlay(catch_npp_05_09,gear_hb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_05_09_npp_hb_raw.tif')
+out_05_09_lb = overlay(catch_npp_05_09,gear_lb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_05_09_npp_lb_raw.tif')
 
-out_04_08_hb = (catch_04_08/npp_04_08)*gear_hb
-out_04_08_lb = (catch_04_08/npp_04_08)*gear_lb
+out_04_08_hb = overlay(catch_npp_04_08,gear_hb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_04_08_npp_hb_raw.tif')
+out_04_08_lb = overlay(catch_npp_04_08,gear_lb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_04_08_npp_lb_raw.tif')
 
-out_03_07_hb = (catch_03_07/npp_03_07)*gear_hb
-out_03_07_lb = (catch_03_07/npp_03_07)*gear_lb
+out_03_07_hb = overlay(catch_npp_03_07,gear_hb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_03_07_npp_hb_raw.tif')
+out_03_07_lb = overlay(catch_npp_03_07,gear_lb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_03_07_npp_lb_raw.tif')
