@@ -39,7 +39,7 @@ mollCRS=crs('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs')
   
 # Get 5 year aggregates
 
-  yrs_08_12   <- stack(l[27:31])%>%sum(.)
+  yrs_07_12   <- stack(l[26:31])%>%sum(.)
   yrs_00_05   <- stack(l[19:24])%>%sum(.)
   yrs_05_10   <- stack(l[24:29])%>%sum(.)
   yrs_1982_86 <- stack(l[1:5])%>%sum(.)
@@ -54,17 +54,30 @@ yrs_00_05_85_90 = yrs_00_05 - yrs_1985_90
 yrs_05_10_85_90 = yrs_05_10 - yrs_1985_90
 
 # (3) new
-yrs_08_12_85_90 = yrs_08_12 - yrs_1985_90
+yrs_07_12_85_90 = yrs_07_12 - yrs_1985_90
 
-projection(yrs_08_12_85_90) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0" 
+projection(yrs_07_12_85_90) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0" 
 
-sst_2015 = projectRaster(yrs_08_12_85_90,crs=mollCRS,progress='text',over=T)%>%
+sst_2015 = projectRaster(yrs_07_12_85_90,crs=mollCRS,progress='text',over=T)%>%
             resample(.,ocean,method='ngb',progress='text')%>%
-              mask(.,ocean,filename='sst_08_12-85_90.tif')
+              mask(.,ocean,filename='sst_07_12-85_90.tif',overwrite=T)
 
+sst_ohi = projectRaster(yrs_05_10_85_90,crs=mollCRS,progress='text',over=T)%>%
+  resample(.,ocean,method='ngb',progress='text')%>%
+  mask(.,ocean,filename='sst_05_10-85_90.tif',overwrite=T)
 
+sst_chi = projectRaster(yrs_00_05_85_90,crs=mollCRS,progress='text',over=T)%>%
+  resample(.,ocean,method='ngb',progress='text')%>%
+  mask(.,ocean,filename='sst_00_05-85_90.tif',overwrite=T)
 
+#--------------------------------------------------------------------
 
-#compare 2 and 3
+# Rescale 
 
-com = yrs_08_12_85_90 - yrs_05_10_85_90
+quant = quantile(sst_2015,prob=c(0.9,0.95,0.99,0.999,0.9999))
+
+# using 99.99 quantile
+
+ref = quantile(sst_2015,prob=0.9999)
+
+sst_2015_resc = calc(sst_2015,fun=function(x){ifelse(x>0,ifelse(x>ref,1,x/ref),0)},progress='text',filename='sst_07-12_85-90_resclaed.tif',overwrite=T)
