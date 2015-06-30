@@ -82,6 +82,11 @@ process_emp_data <- function(emp_file) {
 empd <- process_emp_data(empd_file)
 empt <- process_emp_data(empt_file)
 
+empd <- empd %>%
+  filter(!(rgn_name=='Macau' & year < 1990))
+    ### NOTE: Macau's reported tourism job percentage is 3.34595e+06 and 4.00790e+06... 
+    ### ... just gonna filter those out
+  
 ### Prep direct and total employment data with name_to_rgn function
 empd_rgn <- name_to_rgn(empd, 
                         fld_name='rgn_name', flds_unique=c('rgn_name','year', 'jobs_pct'), 
@@ -97,7 +102,9 @@ cat(sprintf('Duplicated regions: \n%s\n', paste(dupes, collapse = ', ')))
 if(length(dupes) > 0) {
   empd_rgn <- empd_rgn %>%
     group_by(rgn_id, year, rgn_name) %>%
-    summarize(jobs_ct = sum(jobs_ct))
+    rename(jobs_ct_orig = jobs_ct, jobs_pct_orig = jobs_pct) %>%  
+      ### temporary rename, so summary can end up with the original column names
+    summarize(jobs_ct = sum(jobs_ct_orig), jobs_pct = weighted.mean(jobs_pct_orig, jobs_ct_orig, na.rm = TRUE))
 } else cat('No duplicates in direct tourism employment to fix.\n')
 
 # ??? NOTE: the same problem will occur here, but not using this data anyway...
