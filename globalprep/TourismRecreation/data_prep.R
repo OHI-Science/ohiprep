@@ -122,36 +122,45 @@ gdppcppp <- read.csv(file.path(dir_int, 'wb_rgn_gdppcppp.csv')) %>%
 tr_model <- tr_model %>%
   left_join(gdppcppp, by = c('rgn_id', 'year'))
 
-no_gdp <- tr_model %>% filter(is.na(pcgdp) & year == year_max) %>% select(rgn_label) %>% arrange(rgn_label)
-# missing gdp data for the following countries (2013): 
-# Anguilla | Argentina | Aruba | Barbados | Bermuda | British Virgin Islands
-# Cayman Islands | Cuba | East Timor | French Polynesia | Guadeloupe and Martinique | Kuwait
-# Myanmar | New Caledonia | North Korea | Northern Mariana Islands and Guam | Oman | R_union
-# Somalia | Syria | Taiwan | United Arab Emirates
-gdp_imf <- read.csv(file.path(dir_git, 'raw/imf_gdp_pc_ppp.csv'), stringsAsFactors = FALSE)
-
-gdp_imf <- gdp_imf %>%
-  select(starts_with('X'), rgn_label = Country) %>%
-  gather(year, pcgdp_imf, -rgn_label) %>%
-  mutate(year = as.integer(as.character(str_replace(year, 'X', ''))),
-         pcgdp_imf = as.numeric(str_replace(pcgdp_imf, ',', '')))
-
-gdp_imf1 <- name_to_rgn(gdp_imf, 
-                        fld_name='rgn_label', flds_unique = c('rgn_label', 'year'), 
-                        fld_value='pcgdp_imf', add_rgn_name = TRUE, 
-                        collapse_fxn = 'mean') %>%
-  rename(rgn_label = rgn_name)
-
-# gdp_compare <- tr_model %>% filter(year == year_max) %>% select(rgn_label, pcgdp) %>%
-#   full_join(gdp_imf1 %>% filter(year == year_max), by = 'rgn_label') %>% arrange(rgn_label)
-# plot(pcgdp ~ pcgdp_imf, data = gdp_compare)
-# summary(lm(pcgdp ~ pcgdp_imf, data = gdp_compare))
-tr_model <- tr_model %>%
-  left_join(gdp_imf1 %>% 
-              filter(rgn_label %in% no_gdp$rgn_label) %>%
-              select(-rgn_id),
-            by = c('rgn_label', 'year'))
+gdp_gapfill <- function(data) {
+### Gapfill GDP figures using IMF data to sub for missing WB data, so that the TTCI regression can include values.
+  no_gdp <- data %>% filter(is.na(pcgdp) & year == year_max) %>% select(rgn_label) %>% arrange(rgn_label)
+  # missing gdp data for the following countries (2013): 
+  # Anguilla | Argentina | Aruba | Barbados | Bermuda | British Virgin Islands
+  # Cayman Islands | Cuba | East Timor | French Polynesia | Guadeloupe and Martinique | Kuwait
+  # Myanmar | New Caledonia | North Korea | Northern Mariana Islands and Guam | Oman | R_union
+  # Somalia | Syria | Taiwan | United Arab Emirates
+  gdp_imf <- read.csv(file.path(dir_git, 'raw/imf_gdp_pc_ppp.csv'), stringsAsFactors = FALSE)
   
+  gdp_imf <- gdp_imf %>%
+    select(starts_with('X'), rgn_label = Country) %>%
+    gather(year, pcgdp_imf, -rgn_label) %>%
+    mutate(year = as.integer(as.character(str_replace(year, 'X', ''))),
+           pcgdp_imf = as.numeric(str_replace(pcgdp_imf, ',', '')))
+  
+  gdp_imf1 <- name_to_rgn(gdp_imf, 
+                          fld_name='rgn_label', flds_unique = c('rgn_label', 'year'), 
+                          fld_value='pcgdp_imf', add_rgn_name = TRUE, 
+                          collapse_fxn = 'mean') %>%
+    rename(rgn_label = rgn_name)
+  
+  # gdp_compare <- data %>% filter(year == year_max) %>% select(rgn_label, pcgdp) %>%
+  #   full_join(gdp_imf1 %>% filter(year == year_max), by = 'rgn_label') %>% arrange(rgn_label)
+  # plot(pcgdp ~ pcgdp_imf, data = gdp_compare)
+  # summary(lm(pcgdp ~ pcgdp_imf, data = gdp_compare))
+  data <- data %>%
+    left_join(gdp_imf1 %>% 
+                filter(rgn_label %in% no_gdp$rgn_label) %>%
+                select(-rgn_id),
+              by = c('rgn_label', 'year')) %>%
+    mutate(pcgdp = ifelse(is.na(pcgdp), pcgdp_imf, pcgdp)) %>%
+    select(-pcgdp_imf)
+  return(data)
+}
+  
+tr_model <- tr_model %>% gdp_gapfill()
+
+
 ##############################################################################=
 ### Plots of E vs Ed -----
 
@@ -307,7 +316,22 @@ ggplot(tr_model1 %>% filter(year == year_max),
        y = 'Predicted from model: S ~ gdp + r2 then S ~ gdp + r1',
        title = 'Georegional regression model vs scaled TTCI scores')
 
+##############################################################################=
+gapfill_flags <- function(data) {
+### Identify the gaps in data.  '_' indicates no gap; a letter indicates a gap
+### that will force an NA result.  If E term used the Ep data, then U and L are no barrier;
+### mark them with a '*'. 
+  data <- data %>%
+    mutate(ed_gap = ifelse(is.na(Ed), 'E', '_'),
+           u_gap  = ifelse(is.na(U),  ifelse(!is.na(Ep), '*', 'U'), '_'),
+           s_gap  = ifelse(is.na(S_score),  ifelse(!is.na(s_mdl), '+', 'S'), '_'),
+           l_gap  = ifelse(is.na(L),  ifelse(!is.na(Ep), '*', 'L'), '_'),
+           gaps   = paste(ed_gap, u_gap, s_gap, l_gap, sep = '')) %>%
+    select(-ed_gap, -u_gap, -s_gap, -l_gap)
+  return(data)
+}
 
+tr_model1 <- tr_model1 %>% gapfill_flags()
 
 ##############################################################################=
 ### Model modified to prefer the Ep term (percent of tourism jobs from WTTC) to determine E;
@@ -325,20 +349,6 @@ TR_process_model <- function(data_chunk) {
 }
 
 
-##############################################################################=
-### Identify the gaps in data.  '_' indicates no gap; a letter indicates a gap
-### that will force an NA result.  If E term used the Ep data, then U and L are no barrier;
-### mark them with a '*'. 
-gapfill_flags <- function(tr_model) {
-  tr_model <- tr_model %>%
-    mutate(ed_gap = ifelse(is.na(Ed), 'E', '_'),
-           u_gap  = ifelse(is.na(U),  ifelse(!is.na(Ep), '*', 'U'), '_'),
-           s_gap  = ifelse(is.na(S),  ifelse(!is.na(s_mdl), '+', 'S'), '_'),
-           l_gap  = ifelse(is.na(L),  ifelse(!is.na(Ep), '*', 'L'), '_'),
-           gaps   = paste(ed_gap, u_gap, s_gap, l_gap, sep = '')) %>%
-    select(-ed_gap, -u_gap, -s_gap, -l_gap)
-  
-}
 
 ##############################################################################=
 ### Explore gaps by georegion -----
