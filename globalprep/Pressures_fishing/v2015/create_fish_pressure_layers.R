@@ -95,3 +95,12 @@ out_04_08_lb = overlay(catch_npp_04_08,gear_lb,fun=function(x,y){x*y},progress='
 
 out_03_07_hb = overlay(catch_npp_03_07,gear_hb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_03_07_npp_hb_raw.tif')
 out_03_07_lb = overlay(catch_npp_03_07,gear_lb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_03_07_npp_lb_raw.tif')
+
+#----------------------------------------------------------------------------
+
+# Rescale
+
+#look at 99.99 quantile
+
+quant = quantile(out_06_10_hb,prob=c(0.9,0.95,0.99,0.999,0.9999))
+
