@@ -104,28 +104,54 @@ tr_data <- tr_jobs_tour %>%
   full_join(rgn_names, by = 'rgn_id') %>%
   filter(year <= year_max)
 
-##############################################################################=
-### Model modified to prefer the Ep term (percent of tourism jobs from WTTC) to determine E;
-### if Ep term is not available, calculate old way: E = Ed / (L - (L * U))
-### Model modified to normalize S_score by the maximum value, after subtracting one.
-
-tr_model <- tr_data %>%
-  mutate(
-    E     = ifelse(is.na(Ep), Ed / (L - (L * U)), Ep),
-    S     = (S_score - 1) / max((S_score - 1), na.rm = TRUE),
-    Xtr   = E * S ) 
 
 ##############################################################################=
 ### Attach georegions to explore data variances by region...
 georegions       <- read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='')
 georegion_labels <- read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv')
 
-tr_model <- tr_model %>%
+tr_model <- tr_data %>%
   left_join(georegion_labels %>%
               spread(level, label) %>%
               select(-r0),
-            by = 'rgn_id')
+            by = 'rgn_id') %>%
+  filter(rgn_id != 255) # ditch disputed regions...
 
+gdppcppp <- read.csv(file.path(dir_int, 'wb_rgn_gdppcppp.csv')) %>%
+  select(rgn_id, year, pcgdp = intl_dollar)
+tr_model <- tr_model %>%
+  left_join(gdppcppp, by = c('rgn_id', 'year'))
+
+no_gdp <- tr_model %>% filter(is.na(pcgdp) & year == year_max) %>% select(rgn_label) %>% arrange(rgn_label)
+# missing gdp data for the following countries (2013): 
+# Anguilla | Argentina | Aruba | Barbados | Bermuda | British Virgin Islands
+# Cayman Islands | Cuba | East Timor | French Polynesia | Guadeloupe and Martinique | Kuwait
+# Myanmar | New Caledonia | North Korea | Northern Mariana Islands and Guam | Oman | R_union
+# Somalia | Syria | Taiwan | United Arab Emirates
+gdp_imf <- read.csv(file.path(dir_git, 'raw/imf_gdp_pc_ppp.csv'), stringsAsFactors = FALSE)
+
+gdp_imf <- gdp_imf %>%
+  select(starts_with('X'), rgn_label = Country) %>%
+  gather(year, pcgdp_imf, -rgn_label) %>%
+  mutate(year = as.integer(as.character(str_replace(year, 'X', ''))),
+         pcgdp_imf = as.numeric(str_replace(pcgdp_imf, ',', '')))
+
+gdp_imf1 <- name_to_rgn(gdp_imf, 
+                        fld_name='rgn_label', flds_unique = c('rgn_label', 'year'), 
+                        fld_value='pcgdp_imf', add_rgn_name = TRUE, 
+                        collapse_fxn = 'mean') %>%
+  rename(rgn_label = rgn_name)
+
+# gdp_compare <- tr_model %>% filter(year == year_max) %>% select(rgn_label, pcgdp) %>%
+#   full_join(gdp_imf1 %>% filter(year == year_max), by = 'rgn_label') %>% arrange(rgn_label)
+# plot(pcgdp ~ pcgdp_imf, data = gdp_compare)
+# summary(lm(pcgdp ~ pcgdp_imf, data = gdp_compare))
+tr_model <- tr_model %>%
+  left_join(gdp_imf1 %>% 
+              filter(rgn_label %in% no_gdp$rgn_label) %>%
+              select(-rgn_id),
+            by = c('rgn_label', 'year'))
+  
 ##############################################################################=
 ### Plots of E vs Ed -----
 
@@ -178,11 +204,6 @@ ggplot(test_new_formulas %>% filter(E_calc < .25) %>%
 ##############################################################################=
 ### Examine S vs PPP PC GDP ----
 
-gdppcppp <- read.csv(file.path(dir_int, 'wb_rgn_gdppcppp.csv')) %>%
-  select(rgn_id, year, pcgdp = intl_dollar)
-tr_model <- tr_model %>%
-  left_join(gdppcppp, by = c('rgn_id', 'year'))
-
 s_corr <- tr_model %>%
   select(rgn_id, rgn_label, year, S, E, pcgdp, r1, r2) %>%
   filter(year == 2013)
@@ -200,51 +221,84 @@ summary(lm(s_corr$S ~ s_corr$r1))
 summary(lm(s_corr$S ~ s_corr$r2))
 summary(lm(s_corr$S ~ s_corr$pcgdp + s_corr$r1))
 summary(lm(s_corr$S ~ s_corr$pcgdp + s_corr$r2))
-
------
+#-----
+  
 ##############################################################################=
 ### Gapfill S using r1 and/or r2 regional data and PPP-adjusted per-capita GDP ----
 
-s1 <- tr_model %>% filter(year == year_max)
-s1_coef <- unlist(lm(S ~ pcgdp + r1, data = s1)['coefficients'])
-
-s1_mdl  <- stack(s1_coef)
-colnames(s1_mdl) <- c('r1_coef', 'r1')
-
-s1_mdl  <- s1_mdl %>%
-  mutate(r1_int      = s1_coef[1],
-         r1_gdp_coef = s1_coef[2],
-         r1 = str_replace(r1, 'coefficients.r1', '')) # strip the prefix
+S_regr_r1 <- function(data, y_max = year_max) {
+### create a regression model of S as a function of PPP-adjusted per-capita GDP, and
+### with a dummy variable correlating to r1 level georegions
+  s1 <- data %>% filter(year == y_max)
+  s1_coef <- unlist(lm(S_score ~ pcgdp + r1, data = s1)['coefficients'])
   
-s2_coef <- unlist(lm(S ~ pcgdp + r2, data = s1)['coefficients'])
+  s1_mdl  <- stack(s1_coef)
+  colnames(s1_mdl) <- c('r1_coef', 'r1')
+  
+  s1_mdl  <- s1_mdl %>%
+    mutate(r1_int      = s1_coef[1],
+           r1_gdp_coef = s1_coef[2],
+           r1 = str_replace(r1, 'coefficients.r1', '')) # strip the prefix
+  data <- data %>%
+    left_join(s1_mdl, by = 'r1')
+  
+  # process r1 level model:
+  dropped_rgn <- levels(as.factor(data$r1))[1] # auto figure out which region was first in the list
+  data <- data %>%
+    mutate(r1_coef = ifelse(r1 == dropped_rgn, 0, r1_coef),
+           r1_mdl  = r1_int + r1_gdp_coef * pcgdp + r1_coef,
+           r1_mdl1 = ifelse(is.na(pcgdp), (r1_int + r1_gdp_coef * r2_mean_gdp + r1_coef), r1_mdl)) %>%
+  select(-r1_coef, -r1_gdp_coef, -r1_int)
+  
+  return(data)
+}
+  
+S_regr_r2 <- function(data, y_max = year_max) {
+### create a regression model of S as a function of PPP-adjusted per-capita GDP, and
+### with a dummy variable correlating to r2 level georegions
+  s2 <- data %>% filter(year == y_max)
+  s2_coef <- unlist(lm(S_score ~ pcgdp + r2, data = s2)['coefficients'])
+  
+  s2_mdl  <- stack(s2_coef)
+  colnames(s2_mdl) <- c('r2_coef', 'r2')
+  
+  s2_mdl  <- s2_mdl %>%
+    mutate(r2_int      = s2_coef[1],
+           r2_gdp_coef = s2_coef[2],
+           r2 = str_replace(r2, 'coefficients.r2', '')) # strip the prefix
+  data <- data %>%
+    left_join(s2_mdl, by = 'r2')
+    
+  # process r2 level model:
+  dropped_rgn <- levels(as.factor(data$r2))[1] # auto figure out which region was first in the list
+  data <- data %>%
+    mutate(r2_coef = ifelse(r2 == dropped_rgn, 0, r2_coef),
+           r2_mdl  = r2_int + r2_gdp_coef * pcgdp + r2_coef,
+           r2_mdl1 = ifelse(is.na(pcgdp), (r2_int + r2_gdp_coef * r2_mean_gdp + r2_coef), r2_mdl)) %>%
+  select(-r2_coef, -r2_gdp_coef, -r2_int)
+  
+  return(data)
+}
 
-s2_mdl  <- stack(s2_coef)
-colnames(s2_mdl) <- c('r2_coef', 'r2')
+S_gapfill_r2_r1 <- function(data, y_max = year_max) {
+  # if per capita GDP not available for a region, fill with R2 level georegional average
+  data <- data %>%
+    group_by(r2, year) %>%
+    mutate(r2_mean_gdp = mean(pcgdp, na.rm = TRUE))
+  data <- data %>% 
+    S_regr_r2(y_max) %>%
+    S_regr_r1(y_max)
+  
+  data <- data %>%
+    mutate(s_mdl = ifelse(!is.na(r2_mdl), r2_mdl, r1_mdl)) #%>%
+    #select(-r1_mdl, -r2_mdl)
+  
+  return(data)
+}
 
-s2_mdl  <- s2_mdl %>%
-  mutate(r2_int      = s2_coef[1],
-         r2_gdp_coef = s2_coef[2],
-         r2 = str_replace(r2, 'coefficients.r2', '')) # strip the prefix
+tr_model1 <- S_gapfill_r2_r1(tr_model)
 
-tr_model1 <- tr_model %>%
-  left_join(s2_mdl, by = 'r2') %>%
-  left_join(s1_mdl, by = 'r1')
-
-# process r2 level model:
-dropped_rgn <- levels(as.factor(tr_model1$r2))[1] # auto figure out which region was first in the list
-tr_model1 <- tr_model1 %>%
-  mutate(r2_coef = ifelse(r2 == dropped_rgn, 0, r2_coef),
-         r2_mdl  = r2_int + r2_gdp_coef * pcgdp + r2_coef)
-# process r1 level model:
-dropped_rgn <- levels(as.factor(tr_model1$r1))[1] # auto figure out which region was first in the list
-tr_model1 <- tr_model1 %>%
-  mutate(r1_coef = ifelse(r1 == dropped_rgn, 0, r1_coef),
-         r1_mdl  = r1_int + r1_gdp_coef * pcgdp + r1_coef)
-
-tr_model <- tr_model1 %>%
-  mutate(s_mdl = ifelse(!is.na(r2_mdl), r2_mdl, r1_mdl))
 # plot all for S vs model
-
 ggplot(tr_model1 %>% filter(year == year_max), 
        aes(x = S, y = s_mdl, color = r1)) +
   geom_point() + 
@@ -254,17 +308,37 @@ ggplot(tr_model1 %>% filter(year == year_max),
        title = 'Georegional regression model vs scaled TTCI scores')
 
 
+
+##############################################################################=
+### Model modified to prefer the Ep term (percent of tourism jobs from WTTC) to determine E;
+### if Ep term is not available, calculate old way: E = Ed / (L - (L * U))
+### Model modified to normalize S_score by the maximum value, after subtracting one.
+
+TR_process_model <- function(data_chunk) {
+  data_chunk <- data_chunk %>%
+    mutate(
+      E     = ifelse(is.na(Ep), Ed / (L - (L * U)), Ep),
+      S     = (S_score - 1) / (7 - 1), # 7 because that's the max, - 1 because that's the min
+      #  maybe divide by 6 (overall maximum range), or divide by (max(S_score - 1)) * 1.1 as a 10% buffer, etc.
+      Xtr   = E * S )
+  return(data_chunk)
+}
+
+
 ##############################################################################=
 ### Identify the gaps in data.  '_' indicates no gap; a letter indicates a gap
 ### that will force an NA result.  If E term used the Ep data, then U and L are no barrier;
-### mark them with a '*'.  
-tr_model <- tr_model %>%
-  mutate(ed_gap = ifelse(is.na(Ed), 'E', '_'),
-         u_gap  = ifelse(is.na(U),  ifelse(!is.na(Ep), '*', 'U'), '_'),
-         s_gap  = ifelse(is.na(S),  ifelse(!is.na(s_mdl), '*', 'S'), '_'),
-         l_gap  = ifelse(is.na(L),  ifelse(!is.na(Ep), '*', 'L'), '_'),
-         gaps   = paste(ed_gap, u_gap, s_gap, l_gap, sep = '')) %>%
-  select(-ed_gap, -u_gap, -s_gap, -l_gap)
+### mark them with a '*'. 
+gapfill_flags <- function(tr_model) {
+  tr_model <- tr_model %>%
+    mutate(ed_gap = ifelse(is.na(Ed), 'E', '_'),
+           u_gap  = ifelse(is.na(U),  ifelse(!is.na(Ep), '*', 'U'), '_'),
+           s_gap  = ifelse(is.na(S),  ifelse(!is.na(s_mdl), '+', 'S'), '_'),
+           l_gap  = ifelse(is.na(L),  ifelse(!is.na(Ep), '*', 'L'), '_'),
+           gaps   = paste(ed_gap, u_gap, s_gap, l_gap, sep = '')) %>%
+    select(-ed_gap, -u_gap, -s_gap, -l_gap)
+  
+}
 
 ##############################################################################=
 ### Explore gaps by georegion -----
