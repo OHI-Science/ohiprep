@@ -61,7 +61,7 @@ write_csv(tr_sust, file.path(dir_data, 'tr_sustainability.csv'))
 
 #   * tr_jobs_tourism.csv from WTTC direct tourism employment
 tr_jobs_tour <- read.csv(file.path(dir_int, 'wttc_empd_rgn.csv'), stringsAsFactors = FALSE) %>%
-  select(rgn_id, year, count = jobs_ct)
+  select(rgn_id, year, count = jobs_ct, jobs_pct)
 write_csv(tr_jobs_tour, file.path(dir_data, 'tr_jobs_tourism.csv'))
 
 #   * tr_jobs_total.csv from World Bank total labor force
@@ -83,8 +83,14 @@ rgn_names    <- read_csv('~/github/ohi-global/eez2013/layers/rgn_global.csv') %>
   rename(rgn_label = label)
 year_max     <- 2013
 
+##############################################################################=
+### Assembling the data from layers
+### Note: if we use the Ep term, may need to save it as a separate layer.
+
 tr_data <- tr_jobs_tour %>%
-  rename(Ed = count) %>%
+  rename(Ed = count, Ep = jobs_pct) %>%
+  mutate(Ep = Ep/100,
+         Ep = ifelse(Ep > 1, NA, Ep)) %>%
   full_join(tr_jobs_tot %>%
               rename(L = count),
             by = c('rgn_id', 'year')) %>%
@@ -98,22 +104,170 @@ tr_data <- tr_jobs_tour %>%
   full_join(rgn_names, by = 'rgn_id') %>%
   filter(year <= year_max)
 
+##############################################################################=
+### Model modified to prefer the Ep term (percent of tourism jobs from WTTC) to determine E;
+### if Ep term is not available, calculate old way: E = Ed / (L - (L * U))
+### Model modified to normalize S_score by the maximum value, after subtracting one.
+
 tr_model <- tr_data %>%
   mutate(
-    E     = Ed / (L - (L * U)),
-    S     = (S_score - 1) / 5,
+    E     = ifelse(is.na(Ep), Ed / (L - (L * U)), Ep),
+    S     = (S_score - 1) / max((S_score - 1), na.rm = TRUE),
     Xtr   = E * S ) 
 
-### Identify the gaps in data
+##############################################################################=
+### Attach georegions to explore data variances by region...
+georegions       <- read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='')
+georegion_labels <- read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv')
+
+tr_model <- tr_model %>%
+  left_join(georegion_labels %>%
+              spread(level, label) %>%
+              select(-r0),
+            by = 'rgn_id')
+
+##############################################################################=
+### Plots of E vs Ed -----
+
+# library(ggplot2)
+test_new_formulas <- tr_model %>%
+  mutate(
+    E_calc = Ed / (L - (L * U)),
+    S_orig = (S_score - 1) / 5) %>%
+  select(rgn_id, rgn_label, year, E, Ep, E_calc, S, S_orig, r1, r2)
+
+# plot all for E calculated vs direct
+ggplot(test_new_formulas, 
+       aes(x = E_calc, y = Ep, color = r1)) +
+  geom_point() + 
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  labs(x = 'E = (Ed / (L - (L * U)) original model',
+       y = 'E = Ep, direct percentage of tourism employment from WTTC data',
+       title = 'Comparison of Tourism/Total total jobs')
+
+# plot all for E calculated vs direct, zoomed in to lower end of scale
+ggplot(test_new_formulas %>% filter(E_calc < .25), 
+       aes(x = E_calc, y = Ep, color = r1)) +
+  geom_point() + 
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  labs(x = 'E = (Ed / (L - (L * U)) original model',
+       y = 'E = Ep, direct percentage of tourism employment from WTTC data',
+       title = 'Comparison of Tourism/Total jobs: zoom in on E < .25')
+
+# E calculated vs direct, regions
+ggplot(test_new_formulas %>% filter(E_calc < .25) %>%
+         filter(r1 %in% c('Africa', 'Asia', 'Latin America and the Caribbean')) %>%
+         filter(year >= 2009), 
+       aes(x = E_calc, y = Ep, color = r2)) +
+  geom_point() + 
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  labs(x = 'E = (Ed / (L - (L * U)) original model',
+       y = 'E = Ep, direct percentage of tourism employment from WTTC data',
+       title = 'Comparison of Tourism/Total jobs: zoom in on E < .25')
+ggplot(test_new_formulas %>% filter(E_calc < .25) %>%
+         filter(r1 %in% c('Europe', 'Americas', 'Oceania')) %>%
+         filter(year >= 2009), 
+       aes(x = E_calc, y = Ep, color = r1)) +
+  geom_point() + 
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  labs(x = 'E = (Ed / (L - (L * U)) original model',
+       y = 'E = Ep, direct percentage of tourism employment from WTTC data',
+       title = 'Comparison of Tourism/Total jobs: zoom in on E < .25')
+# -----
+
+##############################################################################=
+### Examine S vs PPP PC GDP ----
+
+gdppcppp <- read.csv(file.path(dir_int, 'wb_rgn_gdppcppp.csv')) %>%
+  select(rgn_id, year, pcgdp = intl_dollar)
+tr_model <- tr_model %>%
+  left_join(gdppcppp, by = c('rgn_id', 'year'))
+
+s_corr <- tr_model %>%
+  select(rgn_id, rgn_label, year, S, E, pcgdp, r1, r2) %>%
+  filter(year == 2013)
+
+# plot all for E calculated vs direct
+ggplot(s_corr, 
+       aes(x = pcgdp, y = S, color = r1)) +
+  geom_point() + 
+  labs(x = 'PPP-adjusted per capita GDP',
+       y = 'S (normalized TTCI)',
+       title = 'TTCI vs pc GDP')
+
+summary(lm(s_corr$S ~ s_corr$pcgdp))
+summary(lm(s_corr$S ~ s_corr$r1))
+summary(lm(s_corr$S ~ s_corr$r2))
+summary(lm(s_corr$S ~ s_corr$pcgdp + s_corr$r1))
+summary(lm(s_corr$S ~ s_corr$pcgdp + s_corr$r2))
+
+-----
+##############################################################################=
+### Gapfill S using r1 and/or r2 regional data and PPP-adjusted per-capita GDP ----
+
+s1 <- tr_model %>% filter(year == year_max)
+s1_coef <- unlist(lm(S ~ pcgdp + r1, data = s1)['coefficients'])
+
+s1_mdl  <- stack(s1_coef)
+colnames(s1_mdl) <- c('r1_coef', 'r1')
+
+s1_mdl  <- s1_mdl %>%
+  mutate(r1_int      = s1_coef[1],
+         r1_gdp_coef = s1_coef[2],
+         r1 = str_replace(r1, 'coefficients.r1', '')) # strip the prefix
+  
+s2_coef <- unlist(lm(S ~ pcgdp + r2, data = s1)['coefficients'])
+
+s2_mdl  <- stack(s2_coef)
+colnames(s2_mdl) <- c('r2_coef', 'r2')
+
+s2_mdl  <- s2_mdl %>%
+  mutate(r2_int      = s2_coef[1],
+         r2_gdp_coef = s2_coef[2],
+         r2 = str_replace(r2, 'coefficients.r2', '')) # strip the prefix
+
+tr_model1 <- tr_model %>%
+  left_join(s2_mdl, by = 'r2') %>%
+  left_join(s1_mdl, by = 'r1')
+
+# process r2 level model:
+dropped_rgn <- levels(as.factor(tr_model1$r2))[1] # auto figure out which region was first in the list
+tr_model1 <- tr_model1 %>%
+  mutate(r2_coef = ifelse(r2 == dropped_rgn, 0, r2_coef),
+         r2_mdl  = r2_int + r2_gdp_coef * pcgdp + r2_coef)
+# process r1 level model:
+dropped_rgn <- levels(as.factor(tr_model1$r1))[1] # auto figure out which region was first in the list
+tr_model1 <- tr_model1 %>%
+  mutate(r1_coef = ifelse(r1 == dropped_rgn, 0, r1_coef),
+         r1_mdl  = r1_int + r1_gdp_coef * pcgdp + r1_coef)
+
+tr_model <- tr_model1 %>%
+  mutate(s_mdl = ifelse(!is.na(r2_mdl), r2_mdl, r1_mdl))
+# plot all for S vs model
+
+ggplot(tr_model1 %>% filter(year == year_max), 
+       aes(x = S, y = s_mdl, color = r1)) +
+  geom_point() + 
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  labs(x = 'S from TTCI',
+       y = 'Predicted from model: S ~ gdp + r2 then S ~ gdp + r1',
+       title = 'Georegional regression model vs scaled TTCI scores')
+
+
+##############################################################################=
+### Identify the gaps in data.  '_' indicates no gap; a letter indicates a gap
+### that will force an NA result.  If E term used the Ep data, then U and L are no barrier;
+### mark them with a '*'.  
 tr_model <- tr_model %>%
   mutate(ed_gap = ifelse(is.na(Ed), 'E', '_'),
-         u_gap  = ifelse(is.na(U),  'U', '_'),
-         s_gap  = ifelse(is.na(S),  'S', '_'),
-         l_gap  = ifelse(is.na(L),  'L', '_'),
+         u_gap  = ifelse(is.na(U),  ifelse(!is.na(Ep), '*', 'U'), '_'),
+         s_gap  = ifelse(is.na(S),  ifelse(!is.na(s_mdl), '*', 'S'), '_'),
+         l_gap  = ifelse(is.na(L),  ifelse(!is.na(Ep), '*', 'L'), '_'),
          gaps   = paste(ed_gap, u_gap, s_gap, l_gap, sep = '')) %>%
   select(-ed_gap, -u_gap, -s_gap, -l_gap)
 
-### Explore gaps by georegion
+##############################################################################=
+### Explore gaps by georegion -----
 georegions       <- read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='')
 georegion_labels <- read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv')
 
