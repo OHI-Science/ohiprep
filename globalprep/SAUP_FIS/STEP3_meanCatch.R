@@ -3,10 +3,18 @@
 ## MRF June 18 2015
 ###############################################
 
+library(dplyr)
 source('../ohiprep/src/R/common.R') # set dir_neptune_data
+
 
 ## get catch data
 data <- read.csv(file.path(dir_neptune_data, 'git-annex/globalprep/SAUP_data_2015/tmp/Catch_Value_11062015_summary.csv')) 
+# eez_fao <- data %>%
+#   filter(EEZID != 0) %>%
+#   dplyr::select(EEZID, FAOAreaID, TaxonKey) %>%
+#   unique()
+# write.csv(eez_fao, "globalprep/SAUP_FIS/tmp/eez_fao_taxa_combos.csv", row.names=FALSE)
+
 
 ## SAUP to OHI region data
 region <- read.csv(file.path(dir_neptune_data, 'git-annex/globalprep/SAUP_data_2015/tmp/new_saup_to_rgn_v2.csv'))
