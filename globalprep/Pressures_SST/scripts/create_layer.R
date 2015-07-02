@@ -32,52 +32,31 @@ mollCRS=crs('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs')
 
 # Look at all years
 
-  l   <- list.files('tmp',pattern='annual_pos_anomalies',full.names=TRUE)
-  sta <- stack(l)
-  plot(sta,col=cols)
-
+  l   <- list.files('v2015/tmp',pattern='annual_pos_anomalies',full.names=TRUE)
   
 # Get 5 year aggregates
 
-  yrs_07_12   <- stack(l[26:31])%>%sum(.)
-  yrs_00_05   <- stack(l[19:24])%>%sum(.)
-  yrs_05_10   <- stack(l[24:29])%>%sum(.)
-  yrs_1982_86 <- stack(l[1:5])%>%sum(.)
-  yrs_1985_90 <- stack(l[4:9])%>%sum(.)
-
-# Look at difference between
-
-# (1) used in original CHI
-yrs_00_05_85_90 = yrs_00_05 - yrs_1985_90
-
-# (2) used in updated OHI/CHI
-yrs_05_10_85_90 = yrs_05_10 - yrs_1985_90
-
-# (3) new
-yrs_07_12_85_90 = yrs_07_12 - yrs_1985_90
-
-projection(yrs_07_12_85_90) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0" 
-
-sst_2015 = projectRaster(yrs_07_12_85_90,crs=mollCRS,progress='text',over=T)%>%
-            resample(.,ocean,method='ngb',progress='text')%>%
-              mask(.,ocean,filename='sst_07_12-85_90.tif',overwrite=T)
-
-sst_ohi = projectRaster(yrs_05_10_85_90,crs=mollCRS,progress='text',over=T)%>%
-  resample(.,ocean,method='ngb',progress='text')%>%
-  mask(.,ocean,filename='sst_05_10-85_90.tif',overwrite=T)
-
-sst_chi = projectRaster(yrs_00_05_85_90,crs=mollCRS,progress='text',over=T)%>%
-  resample(.,ocean,method='ngb',progress='text')%>%
-  mask(.,ocean,filename='sst_00_05-85_90.tif',overwrite=T)
-
-#--------------------------------------------------------------------
-
-# Rescale 
-
-quant = quantile(sst_2015,prob=c(0.9,0.95,0.99,0.999,0.9999))
-
-# using 99.99 quantile
-
-ref = quantile(sst_2015,prob=0.9999)
-
-sst_2015_resc = calc(sst_2015,fun=function(x){ifelse(x>0,ifelse(x>ref,1,x/ref),0)},progress='text',filename='sst_07-12_85-90_resclaed.tif',overwrite=T)
+  yrs_1985_1989 <- stack(l[4:8])%>%sum(.) # This is the time period we are using for historical comparison
+  
+  
+for(i in 2005:2008){
+  print(i)
+  
+  yrs <- c(i,i+1,i+2,i+3,i+4)
+  s   <- stack(l[substr(l,35,38)%in%yrs])%>%sum(.)
+  
+  diff = s - yrs_1985_1989
+  
+  projection(diff) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+  
+  out = projectRaster(diff,crs=mollCRS,progress='text',over=T)%>%
+         resample(.,ocean,method='ngb',progress='text')%>%
+          mask(.,ocean,filename=paste0('v2015/output/sst_',min(yrs),'_',max(yrs),'-1985_1989.tif',sep=""),overwrite=T)
+  
+  ref = quantile(out,prob=0.9999) # calculate the 99.99th quantile  
+  
+  sprintf('Rescaling')
+  
+  out_rescale = calc(out,fun=function(x){ifelse(x>0,ifelse(x>ref,1,x/ref),0)},progress='text',
+                     filename=paste0('v2015/output/sst_',min(yrs),'_',max(yrs),'-1985_1989_rescaled.tif',sep=""),overwrite=T)
+}
