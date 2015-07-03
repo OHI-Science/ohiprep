@@ -1,10 +1,10 @@
 # Create fish pressure layers 
 
+source('~/GitHub/ohiprep/src/R/common.R')
 
 rm(list=ls())
 
 library(raster)
-library(dplyr)
 library(RColorBrewer)
 library(rgdal)
 library(ggplot2)
@@ -18,9 +18,7 @@ dir.create(tmpdir, showWarnings=F)
 rasterOptions(tmpdir=tmpdir)
 
 
-dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
-          'Darwin'  = '/Volumes/data_edit',
-          'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
+dir_N = dir_neptune_data
 
 setwd(file.path(dir_N,'git-annex/globalprep/Pressures_fishing'))
 
@@ -102,6 +100,23 @@ gear_prop_lb_1km_ocean = mask(gear_prop_lb_1km,old_saup_eez,progress='text',file
 # Region 18 should have 0 catch (I think it will after multiplying by catch? Or at least will be NA?)
 
 
+#------------------------------------------------------------------------------
+
+# see if any regions have all NA cells
+
+rgn = readOGR(dsn=file.path(dir_N,'git-annex/globalprep/spatial/v2015/data'),layer='regions_mol')
+
+
+# raster/zonal data
+rast_loc <- file.path(dir_N, "git-annex/Global/NCEAS-Regions_v2014/data/sp_mol_raster_1km")
+zones <- raster(file.path(rast_loc, "sp_mol_raster_1km.tif"))  # raster data
+rgn_data <- read.csv(file.path(rast_loc, 'regionData.csv'))    # data for sp_id's used in raster
+
+#extract data for each region:
+regions_stats <- zonal(gear_prop_hb,  zones, fun="mean", na.rm=TRUE, progress="text")
+
+#bouvet island does have NAs. This should be accounted for when allocating catch
+
 #-----------------------------------------------------------------------------
 
 # Get catch
@@ -115,22 +130,25 @@ saup_all = read.csv(file.path(saup_2015,'tmp/Catch_Value_11062015_summary.csv'))
 
 # new eezs
 
-saup_2015_eez = read.csv('v2015/ohi_eezs_plus_old_saup_ids.csv')
+#EEZ file from Lydia at SAUP that lists all the new and old SAUP region names and IDs
+eez_old = read.csv(file.path(saup_2015,'raw/EEZ_OldNew.csv'))%>%
+            rename(EEZID_old = EEZID,EEZID_new = EEZID.1)
+
+#lookup table Katie Longo did by hand to match OHI regions to SAUP new regions
+ohi_eezs_to_saup = read.csv('~/GitHub/ohiprep/src/LookupTables/new_saup_to_ohi_rgn.csv')
 
 #-----------------------------------------------------------------------------
 
 
-# filter out taxonkey not used previously
+# filter out taxonkeys not used previously
 
-saup_taxon_exclude = read.csv(file.path(saup_update,'tmp/global_srcdata_ss_saup_excluded_stock.csv'))
+  saup_taxon_exclude = read.csv(file.path(saup_update,'tmp/global_srcdata_ss_saup_excluded_stock.csv'))
 
 # look at what these taxons are
 
-# are these taxon keys the same?
+  ohi_2015_taxons = read.csv(file.path(saup_2015,'raw/ohi_taxon.csv'))
 
-ohi_2015_taxons = read.csv(file.path(saup_2015,'raw/ohi_taxon.csv'))
-
-filter(ohi_2015_taxons,taxonkey%in%saup_taxon_exclude$stock_id)
+  filter(ohi_2015_taxons,taxonkey%in%saup_taxon_exclude$stock_id)
 
 #   X taxonkey                     scientific.name           common.name
 #1  1   100000                      Marine animals        Marine animals
@@ -150,7 +168,7 @@ saup_data = saup_all%>%
          id_type = ifelse(id>1000,'fao','eez'))%>% 
   group_by(Year,id_type,id)%>%
   summarize(catch=sum(catch))%>%
-  mutate(old_saup_id = as.integer(ifelse(id_type=='eez',saup_2015_eez$old_saup_id[match(id,saup_2015_eez$EEZID)],id)))%>%
+  mutate(old_saup_id = as.integer(ifelse(id_type=='eez',eez_old$EEZID_old[match(id,eez_old$EEZID_new)],id)))%>% #matching old SAUP region ids to the new ones where relevant
   select(new_id = id, Year, id_type,catch,old_saup_id)
 
 
@@ -159,33 +177,7 @@ saup_data = saup_all%>%
 
 #-----------------------------------------------------------------------------
 
-# Calculate change in catch since the period 1999-2003
-
-# Here I am going to use the data from the old SAUP dataset for the years 1999-2003 to calculate the change
-# in catch. This should be more accurate than using the new dataset catches for 1999-2003 since they are likely
-# much different.
-
-# bring in old data that has aggregate catch by region from 1999 to 2003
-
-change_old = read.csv(file.path(saup_update,'data/pct_chg_saup_2009to2011_vs_1999to2003.csv'))
-
-# The catch in yrs1999to2003 is what we want to compare to.
-
-# Now aggregate data for periods 
-
-# this is the period of years that was originally used. Though these data are not the same data
-# that were used to create the rasters. These have likely changed drastically.
-# Look at them here for comparison
-
-# saup_1999to2003 = saup_06_10 = saup_data%>%
-#   filter(Year>1998 & Year < 2004)%>%
-#   group_by(id_type,old_saup_id)%>%
-#   summarize(avg_catch_1999to2003 = mean(catch))%>%
-#   mutate(yrs_1999to2003 = change_old$yrs1999to2003[match(old_saup_id,change_old$id)],
-#          pct_chg = ((avg_catch_1999to2003-yrs_1999to2003)/yrs_1999to2003)*100,
-#          Name = saup_2015_eez$Name[match(old_saup_id,saup_2015_eez$old_saup_id)])%>%
-#   as.data.frame()%>%
-#   filter(!is.na(old_saup_id))
+# Calculate catch for all time periods we are interested in
 
 saup_06_10 = saup_data%>%
   filter(Year>2005 & Year < 2011)%>%
@@ -255,10 +247,8 @@ new_rgns@data = new_rgns@data%>%
 
 rgns_ras = rasterize(new_rgns,area,field='EEZID',progress='text',fun='min',filename='v2015/new_saup_rgns.tif')
 
-
 plot(rgns_ras,col=cols)
 
-#rgns_ras = mask(rgns_ras,sum,progress='text') #maybe switch sum to all_catch? Will be same result - JA MAYBE WE DELETE THIS?
 
 #extract total area per polygon of cells that have catch
 
@@ -278,7 +268,13 @@ new_rgns@data = new_rgns@data%>%
 
 # rasterize catch per km2  
 
-ras_06_10 = rasterize(new_rgns,rgns_ras,field='catch_per_km_06_10',progress='text',filename='v2015/catch_06_10.tif',overwrite=T)
+# create a new regions raster with all NA cells included
+
+## JA (7/2/15) figure out why the areas for each region are messed up. When looking at new_rgns@data, EEZID 24 has two rows (makes sense, two FAO areas) but
+## the sum is the same (these should be different!)
+
+ras_06_10 = rasterize(new_rgns,rgns_ras,field='catch_per_km_06_10',progress='text')%>%
+              mask(.,area,progress='text')#,filename='v2015/catch_06_10.tif',overwrite=T)
 ras_05_09 = rasterize(new_rgns,rgns_ras,field='catch_per_km_05_09',progress='text',filename='v2015/catch_05_09.tif',overwrite=T)
 ras_04_08 = rasterize(new_rgns,rgns_ras,field='catch_per_km_04_08',progress='text',filename='v2015/catch_04_08.tif',overwrite=T)
 ras_03_07 = rasterize(new_rgns,rgns_ras,field='catch_per_km_03_07',progress='text',filename='v2015/catch_03_07.tif',overwrite=T)
@@ -288,7 +284,7 @@ ras_03_07 = rasterize(new_rgns,rgns_ras,field='catch_per_km_03_07',progress='tex
 
 moll_crs = CRS("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs")
 
-rep_res_mask = function(raster){
+rep_res = function(raster){
   
   name=names(raster)
   
@@ -297,9 +293,9 @@ rep_res_mask = function(raster){
   
 }
 
-rep_res_mask(ras_05_09)
-rep_res_mask(ras_04_08)
-rep_res_mask(ras_03_07)
+rep_res(ras_05_09)
+rep_res(ras_04_08)
+rep_res(ras_03_07)
 
 #--------------------------------------------------------------------------------------------------
 
