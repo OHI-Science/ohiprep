@@ -23,7 +23,6 @@ dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
 
 setwd(file.path(dir_N,'git-annex/globalprep/Pressures_fishing'))
 
-# set tmp directory
 
 # set tmp directory
 tmpdir=file.path(dir_N,'home_big/afflerbach/R_raster_tmp')
@@ -54,17 +53,25 @@ npp_06_10 = calc(stack(npp[substr(npp,113,116) %in% 2006:2010]),fun=function(x){
              projectRaster(.,crs=moll_crs,progress='text',over=T)%>%
               resample(.,ocean,method='ngb',filename='v2015/npp/npp_06_10.tif')
 
+npp_06_10 = raster('v2015/npp/npp_06_10.tif')
+
 npp_05_09 = calc(stack(npp[substr(npp,113,116) %in% 2005:2009]),fun=function(x){mean(x,na.rm=T)},progress='text')%>%
                projectRaster(.,crs=moll_crs,progress='text',over=T)%>%
                 resample(.,ocean,method='ngb',filename='v2015/npp/npp_05_09.tif')
+
+npp_05_09 = raster('v2015/npp/npp_05_09.tif')
 
 npp_04_08 = calc(stack(npp[substr(npp,113,116) %in% 2004:2008]),fun=function(x){mean(x,na.rm=T)},progress='text')%>%
              projectRaster(.,crs=moll_crs,progress='text',over=T)%>%
               resample(.,ocean,method='ngb',filename='v2015/npp/npp_04_08.tif')
 
+npp_04_08 = raster('v2015/npp/npp_04_08.tif')
+
 npp_03_07 = calc(stack(npp[substr(npp,113,116) %in% 2003:2007]),fun=function(x){mean(x,na.rm=T)},progress='text')%>%
              projectRaster(.,crs=moll_crs,progress='text',over=T)%>%
               resample(.,ocean,method='ngb',filename='v2015/npp/npp_03_07.tif')
+
+npp_03_07 = raster('v2015/npp/npp_03_07.tif')
 
   
 # gear proportions at 1 km
@@ -98,9 +105,20 @@ out_03_07_lb = overlay(catch_npp_03_07,gear_lb,fun=function(x,y){x*y},progress='
 
 #----------------------------------------------------------------------------
 
-# Rescale
+# Rescale using 99.99 quantile
 
-#look at 99.99 quantile
+fishing.pressures = list.files("v2015/output",full.names=T)
 
-quant = quantile(out_06_10_hb,prob=c(0.9,0.95,0.99,0.999,0.9999))
-
+for (i in 1:length(fishing.pressures)){
+  
+  r    = raster(fishing.pressures[i])
+  yrs  = substr(names(r),7,11)
+  gear = substr(names(r),17,18)
+  
+  ref = cellStats(r,stat='max')
+  
+  resc = calc(r,fun=function(x){x/ref},progress='text')
+  
+  writeRaster(resc,filename=paste0('v2015/output/catch_',yrs,'_npp_',gear,'_rescaled.tif'),overwrite=T)
+  
+}
