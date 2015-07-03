@@ -8,8 +8,11 @@
 #     * rgn_id, score (no year value - only current year)
 #     * TTCI score, not normalized (1-7)
 #   * tr_jobs_tourism.csv
-#     * rgn_id, year, count (individuals)
+#     * rgn_id, year, jobs_ct (individuals)
 #     * Number of jobs, direct employment in tourism
+#   * tr_jobs_pct_tourism.csv
+#     * rgn_id, year, jobs_pct
+#     * Percent of direct tourism jobs
 #   * tr_jobs_total.csv
 #     * rgn_id, year, count (individuals)
 #     * Total jobs
@@ -33,14 +36,33 @@ dir_int  <- file.path(dir_git, scenario, 'intermediate')
 #   within the TourismRecreation directory.
 
 
+
 ##############################################################################=
 ### Process data sets individually ----
 ##############################################################################=
 ### Process each data set and saves tidied data in v201X/intermediate directory.
 
-source(file.path(dir_git, 'process_WTTC.R'))
-source(file.path(dir_git, 'process_WEF.R'))
-source(file.path(dir_git, 'process_WorldBank.R'))
+reload = FALSE
+
+tr_data_files <- c(unem      = file.path(dir_int, 'wb_rgn_uem.csv'),
+                   jobs_tot  = file.path(dir_int, 'wb_rgn_tlf.csv'),
+                   sust      = file.path(dir_int, 'wef_ttci_2015.csv'),
+                   jobs_tour = file.path(dir_int, 'wttc_empd_rgn.csv'))
+
+if(any(!file.exists(tr_data_files)) | reload == TRUE) {
+  cat(sprintf('Raw data will be processed into: \n  %s\n', dir_int))
+  cat(sprintf('    %s\n', basename(tr_data_files)))
+  
+  cat('Processing data from World Bank...\n')
+  source(file.path(dir_git, 'process_WorldBank.R'))
+  cat('Processing data from WTTC...\n')
+  source(file.path(dir_git, 'process_WTTC.R'))
+  cat('Processing data from World Economic Forum...\n')
+  source(file.path(dir_git, 'process_WEF.R'))
+
+}
+cat(sprintf('Raw data has been processed; files exist in: \n  %s\n', dir_int))
+cat(sprintf('    %s\n', list.files(dir_int)))
 
 
 ##############################################################################=
@@ -49,48 +71,65 @@ source(file.path(dir_git, 'process_WorldBank.R'))
 ### Separate out just the model variables and save these to v201X/data directory,
 ### ready for use in the toolbox.
 
-#   * tr_unemployment.csv from World Bank data
-tr_unem <- read.csv(file.path(dir_int, 'wb_rgn_uem.csv'), stringsAsFactors = FALSE) %>%
-  select(rgn_id, year, percent)
-write_csv(tr_unem, file.path(dir_data, 'tr_unemployment.csv'))
+tr_layers <- c(unem     = file.path(dir_data, 'tr_unemployment.csv'),
+               jobs_tot = file.path(dir_data, 'tr_jobs_total.csv'),
+               sust     = file.path(dir_data, 'tr_sustainability.csv'),
+               jobs_tour     = file.path(dir_data, 'tr_jobs_tourism.csv'),
+               jobs_pct_tour = file.path(dir_data, 'tr_jobs_pct_tourism.csv'))
 
-#   * tr_sustainability.csv from WEF TTCI
-tr_sust <- read.csv(file.path(dir_int, 'wef_ttci_2015.csv'), stringsAsFactors = FALSE) %>%
-  select(rgn_id, score)
-write_csv(tr_sust, file.path(dir_data, 'tr_sustainability.csv'))
-
-#   * tr_jobs_tourism.csv from WTTC direct tourism employment
-tr_jobs_tour <- read.csv(file.path(dir_int, 'wttc_empd_rgn.csv'), stringsAsFactors = FALSE) %>%
-  select(rgn_id, year, count = jobs_ct, jobs_pct)
-write_csv(tr_jobs_tour, file.path(dir_data, 'tr_jobs_tourism.csv'))
-
-#   * tr_jobs_total.csv from World Bank total labor force
-#     * rgn_id, year, count (individuals)
-tr_jobs_tot <- read.csv(file.path(dir_int, 'wb_rgn_tlf.csv'), stringsAsFactors = FALSE) %>%
-  select(rgn_id, year, count)
-write_csv(tr_jobs_tot, file.path(dir_data, 'tr_jobs_total.csv'))
+if(any(!file.exists(tr_layers)) | reload == TRUE) {
+  #   * tr_unemployment.csv from World Bank data
+  tr_unem <- read.csv(tr_data_files[['unem']], stringsAsFactors = FALSE) %>%
+    select(rgn_id, year, percent)
+  write_csv(tr_unem, tr_layers[['unem']])
+  
+  #   * tr_jobs_total.csv from World Bank total labor force
+  #     * rgn_id, year, count (individuals)
+  tr_jobs_tot <- read.csv(tr_data_files[['jobs_tot']], stringsAsFactors = FALSE) %>%
+    select(rgn_id, year, count)
+  write_csv(tr_jobs_tot, tr_layers[['jobs_tot']])
+  
+  #   * tr_sustainability.csv from WEF TTCI
+  tr_sust <- read.csv(tr_data_files[['sust']], stringsAsFactors = FALSE) %>%
+    select(rgn_id, score)
+  write_csv(tr_sust, tr_layers[['sust']])
+  
+  #   * tr_jobs_tourism.csv from WTTC direct tourism employment and 
+  #   * tr_jobs_pct_tourism.csv from WTTC direct tourism employment percentage
+  tr_jobs_tour <- read.csv(tr_data_files[['jobs_tour']], stringsAsFactors = FALSE) 
+  write_csv(tr_jobs_tour %>%
+              select(rgn_id, year, jobs_ct), 
+            tr_layers[['jobs_tour']])
+  write_csv(tr_jobs_tour %>%
+              select(rgn_id, year, jobs_pct),
+            tr_layers[['jobs_pct_tour']])
+}
+cat(sprintf('Data layers have been processed; files exist here: \n  %s\n', dir_data))
+cat(sprintf('    %s\n', list.files(dir_data)))
 
 
 ##############################################################################=
-### Testing the model ----
+### Assembling the data from layers -----
 ##############################################################################=
 
-tr_unem      <- read.csv(file.path(dir_data, 'tr_unemployment.csv'))
-tr_sust      <- read.csv(file.path(dir_data, 'tr_sustainability.csv'))
-tr_jobs_tour <- read.csv(file.path(dir_data, 'tr_jobs_tourism.csv'))
-tr_jobs_tot  <- read.csv(file.path(dir_data, 'tr_jobs_total.csv'))
-rgn_names    <- read_csv('~/github/ohi-global/eez2013/layers/rgn_global.csv') %>%
-  rename(rgn_label = label)
+tr_unem          <- read.csv(tr_layers[['unem']],          stringsAsFactors = FALSE)
+tr_sust          <- read.csv(tr_layers[['sust']],          stringsAsFactors = FALSE)
+tr_jobs_tour     <- read.csv(tr_layers[['jobs_tour']],     stringsAsFactors = FALSE)
+tr_jobs_pct_tour <- read.csv(tr_layers[['jobs_pct_tour']], stringsAsFactors = FALSE)
+tr_jobs_tot      <- read.csv(tr_layers[['jobs_tot']],      stringsAsFactors = FALSE)
+
+rgn_names        <- read_csv('~/github/ohi-global/eez2013/layers/rgn_global.csv') %>%
+  rename(rgn_name = label)
+
 year_max     <- 2013
 
-##############################################################################=
-### Assembling the data from layers
-### Note: if we use the Ep term, may need to save it as a separate layer.
-
-tr_data <- tr_jobs_tour %>%
-  rename(Ed = count, Ep = jobs_pct) %>%
-  mutate(Ep = Ep/100,
-         Ep = ifelse(Ep > 1, NA, Ep)) %>%
+tr_data_raw <- tr_jobs_tour %>%
+  rename(Ed = jobs_ct) %>%
+  full_join(tr_jobs_pct_tour,
+            by = c('rgn_id', 'year')) %>%
+    rename(Ep = jobs_pct) %>%
+    mutate(Ep = Ep/100,
+           Ep = ifelse(Ep > 1, NA, Ep)) %>%
   full_join(tr_jobs_tot %>%
               rename(L = count),
             by = c('rgn_id', 'year')) %>%
@@ -106,11 +145,13 @@ tr_data <- tr_jobs_tour %>%
 
 
 ##############################################################################=
-### Attach georegions to explore data variances by region...
+### Attach georegions and per-capita GDP info for various gapfilling -----
+##############################################################################=
+
 georegions       <- read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='')
 georegion_labels <- read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv')
 
-tr_model <- tr_data %>%
+tr_data_raw <- tr_data_raw %>%
   left_join(georegion_labels %>%
               spread(level, label) %>%
               select(-r0),
@@ -119,123 +160,89 @@ tr_model <- tr_data %>%
 
 gdppcppp <- read.csv(file.path(dir_int, 'wb_rgn_gdppcppp.csv')) %>%
   select(rgn_id, year, pcgdp = intl_dollar)
-tr_model <- tr_model %>%
+tr_data_raw <- tr_data_raw %>%
   left_join(gdppcppp, by = c('rgn_id', 'year'))
 
+
+##############################################################################=
+### Add gapfill flag variable -----
+##############################################################################=
+gapfill_flags <- function(data) {
+  ### Identify the gaps in data.  '_' indicates no gap; a letter indicates a gap
+  ### that will force an NA result.  If E term used the Ep data, then U and L are no barrier;
+  ### mark them with a '*'. If S_score is present, then GDP gaps don't matter; mark with '*'.
+  data <- data %>%
+    mutate(ed_gap  = ifelse(is.na(Ed), 'E', '_'),
+           u_gap   = ifelse(is.na(U),  ifelse(!is.na(Ep), '*', 'U'), '_'),
+           s_gap   = ifelse(is.na(S_score), 'S', '_'),
+           l_gap   = ifelse(is.na(L),  ifelse(!is.na(Ep), '*', 'L'), '_'),
+           gdp_gap = ifelse(is.na(pcgdp), ifelse(is.na(S_score), 'G', '*'), '_'),
+           gaps    = paste(ed_gap, u_gap, s_gap, l_gap, gdp_gap, sep = '')) %>%
+    select(-ed_gap, -u_gap, -s_gap, -l_gap, -gdp_gap)
+  return(data)
+}
+
+tr_data_raw <- tr_data_raw %>% gapfill_flags()
+
+
+write_csv(tr_data_raw, file.path(dir_int, 'tr_data_raw.csv'))
+
+##############################################################################=
+
+  
+##############################################################################=
+### Gapfill S using r1 and/or r2 regional data and PPP-adjusted per-capita GDP ----
+##############################################################################=
+tr_data_raw <- read.csv(file.path(dir_int, 'tr_data_raw.csv'), stringsAsFactors = FALSE)
+
+
 gdp_gapfill <- function(data) {
-### Gapfill GDP figures using IMF data to sub for missing WB data, so that the TTCI regression can include values.
-  no_gdp <- data %>% filter(is.na(pcgdp) & year == year_max) %>% select(rgn_label) %>% arrange(rgn_label)
+  ### Gapfill GDP figures using CIA data to sub for missing WB data for 
+  ### current year, so that the TTCI regression can include values.
+  no_gdp <- data %>% filter(is.na(pcgdp) & year == year_max) %>% select(rgn_name) %>% arrange(rgn_name)
   # missing gdp data for the following countries (2013): 
   # Anguilla | Argentina | Aruba | Barbados | Bermuda | British Virgin Islands
   # Cayman Islands | Cuba | East Timor | French Polynesia | Guadeloupe and Martinique | Kuwait
   # Myanmar | New Caledonia | North Korea | Northern Mariana Islands and Guam | Oman | R_union
   # Somalia | Syria | Taiwan | United Arab Emirates
-  gdp_imf <- read.csv(file.path(dir_git, 'raw/imf_gdp_pc_ppp.csv'), stringsAsFactors = FALSE)
   
-  gdp_imf <- gdp_imf %>%
-    select(starts_with('X'), rgn_label = Country) %>%
-    gather(year, pcgdp_imf, -rgn_label) %>%
-    mutate(year = as.integer(as.character(str_replace(year, 'X', ''))),
-           pcgdp_imf = as.numeric(str_replace(pcgdp_imf, ',', '')))
+  gdp_cia <- read.csv(file.path(dir_git, 'raw/cia_gdp_pc_ppp.csv'), stringsAsFactors = FALSE, header = FALSE)
   
-  gdp_imf1 <- name_to_rgn(gdp_imf, 
-                          fld_name='rgn_label', flds_unique = c('rgn_label', 'year'), 
-                          fld_value='pcgdp_imf', add_rgn_name = TRUE, 
+  gdp_cia <- gdp_cia %>%
+    select(rgn_name = V2, pcgdp_cia = V4) %>%
+    mutate(pcgdp_cia = as.numeric(str_replace(pcgdp_cia, ',', '')))
+  
+  gdp_cia1 <- name_to_rgn(gdp_cia, 
+                          fld_name='rgn_name', flds_unique = c('rgn_name'), 
+                          fld_value='pcgdp_cia', add_rgn_name = TRUE, 
                           collapse_fxn = 'mean') %>%
-    rename(rgn_label = rgn_name)
+    mutate(year = year_max)  # technically, 2014 estimates, but call it 2013
   
-  # gdp_compare <- data %>% filter(year == year_max) %>% select(rgn_label, pcgdp) %>%
-  #   full_join(gdp_imf1 %>% filter(year == year_max), by = 'rgn_label') %>% arrange(rgn_label)
-  # plot(pcgdp ~ pcgdp_imf, data = gdp_compare)
-  # summary(lm(pcgdp ~ pcgdp_imf, data = gdp_compare))
-  data <- data %>%
-    left_join(gdp_imf1 %>% 
-                filter(rgn_label %in% no_gdp$rgn_label) %>%
-                select(-rgn_id),
-              by = c('rgn_label', 'year')) %>%
-    mutate(pcgdp = ifelse(is.na(pcgdp), pcgdp_imf, pcgdp)) %>%
-    select(-pcgdp_imf)
-  return(data)
+  data1 <- data %>%
+    left_join(gdp_cia1 %>% select(-rgn_id),
+              by = c('rgn_name', 'year')) 
+  #   plot(pcgdp_cia ~ pcgdp, data = data1)
+  #   abline(0,  1, col = 'red')
+  data1 <- data1 %>%
+    mutate(gaps  = ifelse(is.na(pcgdp) & !is.na(pcgdp_cia), str_replace(gaps, 'G', 'c'), gaps),
+           pcgdp = ifelse(is.na(pcgdp) & !is.na(pcgdp_cia), pcgdp_cia, pcgdp)) %>%
+    select(-pcgdp_cia)
+  
+  # hand-fill Guadeloupe/Martinique and Reunion Island.  
+  gdp_reun <- 23501 # from http://www.insee.fr/fr/insee_regions/reunion/themes/dossiers/ter/ter2008_resultats_economiques.pdf
+  # in 2007, not PPP
+  gdp_mart <- 24118 # from: http://web.archive.org/web/20080216021351/http://prod-afd.afd.zeni.fr/jahia/webdav/site/cerom/users/admin_cerom/public/Pdf/CR2006_ma.pdf
+  # in 2006, real exchange rate (PPP?)
+  gdp_guad <- 21780 # from: http://www.insee.fr/fr/regions/guadeloupe/default.asp?page=publications/publications.htm
+  # in 2006 dollars, not PPP.
+  data1 <- data1 %>%
+    mutate(pcgdp = ifelse(rgn_id == 32  & year == year_max, gdp_reun, pcgdp),
+           pcgdp = ifelse(rgn_id == 140 & year == year_max, (gdp_guad+gdp_mart)/2, pcgdp),
+           gaps  = ifelse(rgn_id %in% c(32, 140) & year == year_max, str_replace(gaps, 'G', 'h'), gaps))
+  return(data1)
 }
-  
-tr_model <- tr_model %>% gdp_gapfill()
 
-
-##############################################################################=
-### Plots of E vs Ed -----
-
-# library(ggplot2)
-test_new_formulas <- tr_model %>%
-  mutate(
-    E_calc = Ed / (L - (L * U)),
-    S_orig = (S_score - 1) / 5) %>%
-  select(rgn_id, rgn_label, year, E, Ep, E_calc, S, S_orig, r1, r2)
-
-# plot all for E calculated vs direct
-ggplot(test_new_formulas, 
-       aes(x = E_calc, y = Ep, color = r1)) +
-  geom_point() + 
-  geom_abline(slope = 1, intercept = 0, color = 'red') +
-  labs(x = 'E = (Ed / (L - (L * U)) original model',
-       y = 'E = Ep, direct percentage of tourism employment from WTTC data',
-       title = 'Comparison of Tourism/Total total jobs')
-
-# plot all for E calculated vs direct, zoomed in to lower end of scale
-ggplot(test_new_formulas %>% filter(E_calc < .25), 
-       aes(x = E_calc, y = Ep, color = r1)) +
-  geom_point() + 
-  geom_abline(slope = 1, intercept = 0, color = 'red') +
-  labs(x = 'E = (Ed / (L - (L * U)) original model',
-       y = 'E = Ep, direct percentage of tourism employment from WTTC data',
-       title = 'Comparison of Tourism/Total jobs: zoom in on E < .25')
-
-# E calculated vs direct, regions
-ggplot(test_new_formulas %>% filter(E_calc < .25) %>%
-         filter(r1 %in% c('Africa', 'Asia', 'Latin America and the Caribbean')) %>%
-         filter(year >= 2009), 
-       aes(x = E_calc, y = Ep, color = r2)) +
-  geom_point() + 
-  geom_abline(slope = 1, intercept = 0, color = 'red') +
-  labs(x = 'E = (Ed / (L - (L * U)) original model',
-       y = 'E = Ep, direct percentage of tourism employment from WTTC data',
-       title = 'Comparison of Tourism/Total jobs: zoom in on E < .25')
-ggplot(test_new_formulas %>% filter(E_calc < .25) %>%
-         filter(r1 %in% c('Europe', 'Americas', 'Oceania')) %>%
-         filter(year >= 2009), 
-       aes(x = E_calc, y = Ep, color = r1)) +
-  geom_point() + 
-  geom_abline(slope = 1, intercept = 0, color = 'red') +
-  labs(x = 'E = (Ed / (L - (L * U)) original model',
-       y = 'E = Ep, direct percentage of tourism employment from WTTC data',
-       title = 'Comparison of Tourism/Total jobs: zoom in on E < .25')
-# -----
-
-##############################################################################=
-### Examine S vs PPP PC GDP ----
-
-s_corr <- tr_model %>%
-  select(rgn_id, rgn_label, year, S, E, pcgdp, r1, r2) %>%
-  filter(year == 2013)
-
-# plot all for E calculated vs direct
-ggplot(s_corr, 
-       aes(x = pcgdp, y = S, color = r1)) +
-  geom_point() + 
-  labs(x = 'PPP-adjusted per capita GDP',
-       y = 'S (normalized TTCI)',
-       title = 'TTCI vs pc GDP')
-
-summary(lm(s_corr$S ~ s_corr$pcgdp))
-summary(lm(s_corr$S ~ s_corr$r1))
-summary(lm(s_corr$S ~ s_corr$r2))
-summary(lm(s_corr$S ~ s_corr$pcgdp + s_corr$r1))
-summary(lm(s_corr$S ~ s_corr$pcgdp + s_corr$r2))
-#-----
-  
-##############################################################################=
-### Gapfill S using r1 and/or r2 regional data and PPP-adjusted per-capita GDP ----
-
-S_regr_r1 <- function(data, y_max = year_max) {
+s_regr_r1 <- function(data, y_max = year_max) {
 ### create a regression model of S as a function of PPP-adjusted per-capita GDP, and
 ### with a dummy variable correlating to r1 level georegions
   s1 <- data %>% filter(year == y_max)
@@ -255,14 +262,13 @@ S_regr_r1 <- function(data, y_max = year_max) {
   dropped_rgn <- levels(as.factor(data$r1))[1] # auto figure out which region was first in the list
   data <- data %>%
     mutate(r1_coef = ifelse(r1 == dropped_rgn, 0, r1_coef),
-           r1_mdl  = r1_int + r1_gdp_coef * pcgdp + r1_coef,
-           r1_mdl1 = ifelse(is.na(pcgdp), (r1_int + r1_gdp_coef * r2_mean_gdp + r1_coef), r1_mdl)) %>%
+           r1_mdl  = r1_int + r1_gdp_coef * pcgdp + r1_coef) %>%
   select(-r1_coef, -r1_gdp_coef, -r1_int)
   
   return(data)
 }
   
-S_regr_r2 <- function(data, y_max = year_max) {
+s_regr_r2 <- function(data, y_max = year_max) {
 ### create a regression model of S as a function of PPP-adjusted per-capita GDP, and
 ### with a dummy variable correlating to r2 level georegions
   s2 <- data %>% filter(year == y_max)
@@ -282,129 +288,145 @@ S_regr_r2 <- function(data, y_max = year_max) {
   dropped_rgn <- levels(as.factor(data$r2))[1] # auto figure out which region was first in the list
   data <- data %>%
     mutate(r2_coef = ifelse(r2 == dropped_rgn, 0, r2_coef),
-           r2_mdl  = r2_int + r2_gdp_coef * pcgdp + r2_coef,
-           r2_mdl1 = ifelse(is.na(pcgdp), (r2_int + r2_gdp_coef * r2_mean_gdp + r2_coef), r2_mdl)) %>%
+           r2_mdl  = r2_int + r2_gdp_coef * pcgdp + r2_coef) %>%
   select(-r2_coef, -r2_gdp_coef, -r2_int)
   
   return(data)
 }
 
-S_gapfill_r2_r1 <- function(data, y_max = year_max) {
-  # if per capita GDP not available for a region, fill with R2 level georegional average
-  data <- data %>%
-    group_by(r2, year) %>%
-    mutate(r2_mean_gdp = mean(pcgdp, na.rm = TRUE))
+s_gapfill_r2_r1 <- function(data, y_max = year_max) {
   data <- data %>% 
-    S_regr_r2(y_max) %>%
-    S_regr_r1(y_max)
+    s_regr_r2(y_max) %>%
+    s_regr_r1(y_max)
   
   data <- data %>%
-    mutate(s_mdl = ifelse(!is.na(r2_mdl), r2_mdl, r1_mdl)) #%>%
-    #select(-r1_mdl, -r2_mdl)
+    mutate(s_mdl = ifelse(!is.na(r2_mdl), r2_mdl, r1_mdl),
+           gaps  = ifelse(is.na(S_score) & (!is.na(s_mdl)), str_replace(gaps, 'S', 'g'), gaps),
+           S_score = ifelse(is.na(S_score), s_mdl, S_score)) %>%
+    select(-r1_mdl, -r2_mdl, -s_mdl)
   
   return(data)
 }
 
-tr_model1 <- S_gapfill_r2_r1(tr_model)
+tr_data <- tr_data_raw %>% gdp_gapfill()
 
-# plot all for S vs model
-ggplot(tr_model1 %>% filter(year == year_max), 
-       aes(x = S, y = s_mdl, color = r1)) +
-  geom_point() + 
-  geom_abline(slope = 1, intercept = 0, color = 'red') +
-  labs(x = 'S from TTCI',
-       y = 'Predicted from model: S ~ gdp + r2 then S ~ gdp + r1',
-       title = 'Georegional regression model vs scaled TTCI scores')
+tr_data <- s_gapfill_r2_r1(tr_data)
+
+# Apply only the 2013 S_score to all years - so it's consistent, as we only have
+# actual scores from the current year.
+tr_data1 <- tr_data %>%
+  select(-S_score) %>%
+  left_join(tr_data %>%
+              filter(year == year_max) %>%
+              select(rgn_id, S_score),
+            by = 'rgn_id')
 
 ##############################################################################=
-gapfill_flags <- function(data) {
-### Identify the gaps in data.  '_' indicates no gap; a letter indicates a gap
-### that will force an NA result.  If E term used the Ep data, then U and L are no barrier;
-### mark them with a '*'. 
-  data <- data %>%
-    mutate(ed_gap = ifelse(is.na(Ed), 'E', '_'),
-           u_gap  = ifelse(is.na(U),  ifelse(!is.na(Ep), '*', 'U'), '_'),
-           s_gap  = ifelse(is.na(S_score),  ifelse(!is.na(s_mdl), '+', 'S'), '_'),
-           l_gap  = ifelse(is.na(L),  ifelse(!is.na(Ep), '*', 'L'), '_'),
-           gaps   = paste(ed_gap, u_gap, s_gap, l_gap, sep = '')) %>%
-    select(-ed_gap, -u_gap, -s_gap, -l_gap)
-  return(data)
-}
+### Gapfill Ep using regional averages ----
 
-tr_model1 <- tr_model1 %>% gapfill_flags()
+tr_data <- tr_data %>%
+  group_by(r2, year) %>%
+  mutate(E_mdl2 = mean(Ep, na.rm = TRUE),
+         gaps   = ifelse(is.na(Ep) & !is.na(E_mdl2), str_replace(gaps, 'E', 'r'), gaps),
+         Ep     = ifelse(is.na(Ep), E_mdl2, Ep)) %>%
+  select(-E_mdl2)
+
+# summary(lm(E_mdl2 ~ Ep, data = tr_data)) # R^2 = .3124 before replacement
+# 
+# library(ggplot2)
+# ggplot(data1 %>% filter(year == year_max), 
+#        aes(x = Ep, y = E_mdl2, color = r1)) +
+#   geom_point() + 
+#   geom_abline(slope = 1, intercept = 0, color = 'red') +
+#   labs(x = '% tourism employment, reported',
+#        y = '% tourism employment, rgn avg',
+#        title = 'Comparison of Tourism/Total jobs')
+
+write_csv(tr_data, file.path(dir_int, 'tr_data_processed.csv'))
+
 
 ##############################################################################=
 ### Model modified to prefer the Ep term (percent of tourism jobs from WTTC) to determine E;
 ### if Ep term is not available, calculate old way: E = Ed / (L - (L * U))
 ### Model modified to normalize S_score by the maximum value, after subtracting one.
+tr_data <- read.csv(file.path(dir_int, 'tr_data_processed.csv'), stringsAsFactors = FALSE)
 
-TR_process_model <- function(data_chunk) {
+tr_calc_model <- function(data_chunk) {
   data_chunk <- data_chunk %>%
     mutate(
-      E     = ifelse(is.na(Ep), Ed / (L - (L * U)), Ep),
-      S     = (S_score - 1) / (7 - 1), # 7 because that's the max, - 1 because that's the min
-      #  maybe divide by 6 (overall maximum range), or divide by (max(S_score - 1)) * 1.1 as a 10% buffer, etc.
-      Xtr   = E * S )
+      E       = ifelse(is.na(Ep), Ed / (L - (L * U)), Ep),
+      S       = (S_score - 1) / (7 - 1), # scale score from 1 to 7.
+      Xtr     = E * S )
   return(data_chunk)
 }
 
+tr_model <- tr_calc_model(tr_data)  %>%
+  filter(year <= year_max & year >= year_max - 4) 
+# five data years, four intervals? or six and five?
 
 
-##############################################################################=
-### Explore gaps by georegion -----
-georegions       <- read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='')
-georegion_labels <- read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv')
 
-tr_model <- tr_model %>%
-  left_join(georegion_labels %>%
-              spread(level, label) %>%
-              select(-r0),
-            by = 'rgn_id')
+# Calculate status based on quantile reference
+pct_ref <- 95 # the threshold for quantile where status score = 1.0
+Xtr_max <- max(tr_model$Xtr, na.rm = TRUE)
 
-tr_rgns2013 <- tr_model %>%
-  filter(year == year_max)
-x1 <- tr_model %>%
+tr_scores <- tr_model %>%
+  select(rgn_id, S_score, year, rgn_name, Xtr, gaps, r1) %>%
+    left_join(tr_model %>%
+              group_by(year) %>%
+              summarize(Xtr_q = quantile(Xtr, probs = pct_ref/100, na.rm = TRUE)),
+            by = 'year') %>%
+  mutate(
+    Xtr_rq  = ifelse(Xtr / Xtr_q > 1, 1, Xtr / Xtr_q), # rescale to qth percentile, cap at 1
+    Xtr_rmax = Xtr / Xtr_max )                         # rescale to max value   
+
+# Comparing to 2013, and examining distributions to find cutoff for score of 100
+library(ggplot2)
+
+s_2013 <- read.csv('~/github/ohi-global/eez2013/layers/tr_sustainability.csv')
+s_compare <- tr_scores %>% filter(year == year_max) %>%
+  select(rgn_id, Xtr, S_score, gaps) %>%
+  full_join(s_2013, by = 'rgn_id') %>%
+  mutate(gaps = ifelse(str_detect(gaps, 'g'), TRUE, FALSE))
+
+ggplot(s_compare, aes(x = score, y = S_score, color = gaps)) +
+  geom_point() + 
+  geom_abline(intercept = 0, slope = 1/100, color = 'red')
+
+tr_2013 <- read.csv('~/github/ohi-global/eez2013/scores.csv') %>%
+  filter(goal == 'TR' & dimension %in% c('status', 'trend', 'score')) %>%
+  spread(dimension, score)
+
+tr_check <- full_join(tr_scores, tr_2013, by = c('rgn_id' = 'region_id')) %>%
   filter(year == year_max) %>%
-  filter(gaps != '____')
+  mutate(gaps = ifelse(str_detect(gaps, 'g'), TRUE, FALSE))
 
-x_l <- nrow(x1 %>% filter(str_detect(gaps, 'L')))
-x_u <- nrow(x1 %>% filter(str_detect(gaps, 'U')))
-x_s <- nrow(x1 %>% filter(str_detect(gaps, 'S')))
-x_e <- nrow(x1 %>% filter(str_detect(gaps, 'E')))
-x_count <- 4 - x1$gaps %>% str_count('_')
-sum(x_count == 1); sum(x_count == 2); sum(x_count == 3); sum(x_count == 4)
+ggplot(tr_check, aes(x = status, y = Xtr_rq, color = gaps)) +
+  geom_point() + 
+  geom_abline(intercept = 0, slope = 1/100, color = 'red')
 
-head(x1)
-cat(sprintf('# gaps, total jobs: %s; tourism jobs: %s; unemployment: %s; sustainability score: %s\n', x_l, x_e, x_u, x_s))
+x_100 <- tr_check %>% filter(Xtr_rq == 1)
 
-### Sustainability gaps:
-s_gap_rgns <- tr_rgns2013 %>% 
-  filter(str_detect(gaps, 'S')) %>% 
-  select(r1, r2) %>% 
-  unique()
+x_coef <- lm(Xtr_rq ~ status, data = tr_check)[['coefficients']]
 
-s_gap <- tr_rgns2013 %>% 
-  filter(r1 %in% s_gap_rgns$r1) %>%
-  group_by(r1) %>%
-  mutate(r1_S_NA_ratio = sum(is.na(S))/n(),
-         r1_points = sum(!is.na(S))) %>%
-  group_by(r2) %>%
-  mutate(r2_S_NA_ratio = sum(is.na(S))/n(),
-         r2_points = sum(!is.na(S))) %>%
-  select(rgn_id, rgn_label,  gaps, r1,	r2,	r1_S_NA_ratio, r1_points, r2_S_NA_ratio, r2_points) %>%
-  filter(str_detect(gaps, 'S')) %>%
-  arrange(r2, r1, rgn_id)
-
-sust2 <- tr_rgns2013 %>%
-  filter(r2 %in% s_gap_rgns$r2 )
-par(mar = c(8, 3, 4, 1))
-boxplot(sust2$S ~ sust2$r2, las = 2)
-  title('Sustainability score by georegion r2')
-sust1 <- tr_rgns2013 %>%
-  filter(r1 %in% s_gap_rgns$r1 )
-boxplot(sust1$S ~ sust1$r1, las = 2)
-  title('Sustainability score by georegion r1')
-
-
-### Explore L as a proportion of total pop
-### could also examine pop by age groups
+ggplot(tr_check, aes(x = status, y = Xtr_rq, color = r1)) +
+  geom_point() + 
+  geom_abline(intercept = 0, slope = 1/100, color = 'red') + 
+  geom_abline(intercept = x_coef[1], slope = x_coef[2], color = 'blue') + 
+  labs(x = 'TR status 2013', y = 'TR status new',
+       title = sprintf('TR comparison; ref pt at %d%% of raw score', pct_ref))
+  
+# awesome distribution with quantiles plot
+dens <- density(tr_check$Xtr)
+df <- data.frame(x=dens$x, y=dens$y)
+probs <- c(0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99)
+quantiles <- quantile(tr_check$Xtr, prob=probs)
+df$quant <- factor(findInterval(df$x,quantiles))
+ggplot(df, aes(x,y)) + 
+  geom_line() + 
+  geom_ribbon(aes(ymin=0, ymax=y, fill=quant)) + 
+  scale_x_continuous(breaks=quantiles) + 
+  scale_fill_brewer(guide="none") +
+  labs(x = 'Employment * Sustainability, raw',
+       y = 'Frequency',
+       title = 'Quantiles of TR status pre-normalized')
