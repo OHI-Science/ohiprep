@@ -123,3 +123,73 @@ scatterPlot(data_orig = tr_jobs_tot_orig,
             data_new  = tr_jobs_tot_new,
             title_text = 'WB log jobs-total labor force 2012')
 
+##############################################################################=
+### Plots of E vs Ed -----
+
+# library(ggplot2)
+test_new_formulas <- tr_model %>%
+  mutate(
+    E_calc = Ed / (L - (L * U)),
+    S_orig = (S_score - 1) / 5) %>%
+  select(rgn_id, rgn_name, year, E, Ep, E_calc, S, S_orig, r1, r2)
+
+# plot all for E calculated vs direct
+ggplot(test_new_formulas, 
+       aes(x = E_calc, y = Ep, color = r1)) +
+  geom_point() + 
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  labs(x = 'E = (Ed / (L - (L * U)) original model',
+       y = 'E = Ep, direct percentage of tourism employment from WTTC data',
+       title = 'Comparison of Tourism/Total total jobs')
+
+# plot all for E calculated vs direct, zoomed in to lower end of scale
+ggplot(test_new_formulas %>% filter(E_calc < .25), 
+       aes(x = E_calc, y = Ep, color = r1)) +
+  geom_point() + 
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  labs(x = 'E = (Ed / (L - (L * U)) original model',
+       y = 'E = Ep, direct percentage of tourism employment from WTTC data',
+       title = 'Comparison of Tourism/Total jobs: zoom in on E < .25')
+
+# E calculated vs direct, regions
+ggplot(test_new_formulas %>% filter(E_calc < .25) %>%
+         filter(r1 %in% c('Africa', 'Asia', 'Latin America and the Caribbean')) %>%
+         filter(year >= 2009), 
+       aes(x = E_calc, y = Ep, color = r2)) +
+  geom_point() + 
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  labs(x = 'E = (Ed / (L - (L * U)) original model',
+       y = 'E = Ep, direct percentage of tourism employment from WTTC data',
+       title = 'Comparison of Tourism/Total jobs: zoom in on E < .25')
+ggplot(test_new_formulas %>% filter(E_calc < .25) %>%
+         filter(r1 %in% c('Europe', 'Americas', 'Oceania')) %>%
+         filter(year >= 2009), 
+       aes(x = E_calc, y = Ep, color = r1)) +
+  geom_point() + 
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  labs(x = 'E = (Ed / (L - (L * U)) original model',
+       y = 'E = Ep, direct percentage of tourism employment from WTTC data',
+       title = 'Comparison of Tourism/Total jobs: zoom in on E < .25')
+# -----
+
+##############################################################################=
+### Examine S vs PPP PC GDP ----
+
+s_corr <- tr_model %>%
+  select(rgn_id, rgn_name, year, S, E, pcgdp, r1, r2) %>%
+  filter(year == 2013)
+
+# plot all for E calculated vs direct
+ggplot(s_corr, 
+       aes(x = pcgdp, y = S, color = r1)) +
+  geom_point() + 
+  labs(x = 'PPP-adjusted per capita GDP',
+       y = 'S (normalized TTCI)',
+       title = 'TTCI vs pc GDP')
+
+summary(lm(s_corr$S ~ s_corr$pcgdp))
+summary(lm(s_corr$S ~ s_corr$r1))
+summary(lm(s_corr$S ~ s_corr$r2))
+summary(lm(s_corr$S ~ s_corr$pcgdp + s_corr$r1))
+summary(lm(s_corr$S ~ s_corr$pcgdp + s_corr$r2))
+#-----
