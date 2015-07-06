@@ -39,7 +39,7 @@ mollCRS=crs('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs')
   yrs_1985_1989 <- stack(l[4:8])%>%sum(.) # This is the time period we are using for historical comparison
   
   
-for(i in 2005:2008){
+for(i in 2005:2008){ #i=2005
   print(i)
   
   yrs <- c(i,i+1,i+2,i+3,i+4)
@@ -60,3 +60,30 @@ for(i in 2005:2008){
   out_rescale = calc(out,fun=function(x){ifelse(x>0,ifelse(x>ref,1,x/ref),0)},progress='text',
                      filename=paste0('v2015/output/sst_',min(yrs),'_',max(yrs),'-1985_1989_rescaled.tif',sep=""),overwrite=T)
 }
+
+  
+### creating a set of rescaled rasters that is scaled by the highest 99.99th quantile
+    
+  ## figure out the scaling value:
+  rast_2012 <- raster(file.path(dir_neptune_data, 'git-annex/globalprep/Pressures_SST/v2015/output/sst_2005_2009-1985_1989.tif'))
+  quantile(rast_2012,prob=0.9999)  #118.4027
+  rast_2013 <- raster(file.path(dir_neptune_data, 'git-annex/globalprep/Pressures_SST/v2015/output/sst_2006_2010-1985_1989.tif'))
+  quantile(rast_2013,prob=0.9999)   #133.0371 
+  rast_2014 <- raster(file.path(dir_neptune_data, 'git-annex/globalprep/Pressures_SST/v2015/output/sst_2007_2011-1985_1989.tif'))
+  quantile(rast_2014,prob=0.9999)  #127.1995
+  rast_2015 <- raster(file.path(dir_neptune_data, 'git-annex/globalprep/Pressures_SST/v2015/output/sst_2008_2012-1985_1989.tif'))
+  quantile(rast_2015,prob=0.9999)  #130.5288
+  
+  # loop to rescale based on a constant reference point
+  ref <- 133.0371 # maximum value across rasters
+  
+  for(i in 2005:2008){ #i=2005
+    print(i)
+    
+    final_yr <- c(i+4)
+
+  out <- raster(file.path(dir_neptune_data, 
+                          sprintf('git-annex/globalprep/Pressures_SST/v2015/output/sst_%s_%s-1985_1989.tif', i, final_yr)))  
+  out_rescale = calc(out,fun=function(x){ifelse(x>0,ifelse(x>ref,1,x/ref),0)},progress='text',
+                     filename=paste0('v2015/output/sst_',i,'_',final_yr,'-1985_1989_rescaled_v2.tif',sep=""),overwrite=T)
+  }
