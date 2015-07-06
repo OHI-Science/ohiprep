@@ -397,6 +397,8 @@ tr_2013 <- read.csv('~/github/ohi-global/eez2013/scores.csv') %>%
   filter(goal == 'TR' & dimension %in% c('status', 'trend', 'score')) %>%
   spread(dimension, score)
 
+
+
 tr_check <- full_join(tr_scores, tr_2013, by = c('rgn_id' = 'region_id')) %>%
   filter(year == year_max) %>%
   mutate(gaps = ifelse(str_detect(gaps, 'g'), TRUE, FALSE))
@@ -416,6 +418,43 @@ ggplot(tr_check, aes(x = status, y = Xtr_rq, color = r1)) +
   labs(x = 'TR status 2013', y = 'TR status new',
        title = sprintf('TR comparison; ref pt at %d%% of raw score', pct_ref))
   
+
+
+s_2013 <- read.csv('~/github/ohi-global/eez2013/layers/tr_sustainability.csv')
+l_2013 <- read.csv('~/github/ohi-global/eez2013/layers/tr_jobs_total.csv')
+u_2013 <- read.csv('~/github/ohi-global/eez2013/layers/tr_unemployment.csv')
+e_2013 <- read.csv('~/github/ohi-global/eez2013/layers/tr_jobs_tourism.csv')
+
+tr_model_2013 <- l_2013 %>% 
+  rename(L = count) %>%
+  left_join(s_2013 %>%
+              rename(S_score = score),
+            by = 'rgn_id') %>%
+  left_join(u_2013 %>% 
+              rename(U = percent), 
+            by = c('rgn_id', 'year')) %>%
+  left_join(e_2013 %>%
+              rename(Ed = count),
+            by = c('rgn_id', 'year')) %>%
+  mutate(
+    E       = Ed / (L - (L * U/100)),
+    S       = (S_score - 1) / (7 - 1), # scale score from 1 to 7.
+    Xtr     = E * S ) %>%
+  filter(year == 2012)
+  
+tr_temp <- tr_model %>% 
+  filter(year == year_max) %>%
+  select(rgn_id, new_Xtr = Xtr) %>%
+  left_join(tr_model_2013 %>% 
+              select(rgn_id, old_Xtr = Xtr), 
+            by = c('rgn_id'))
+
+ggplot(tr_temp, aes(x = old_Xtr, y = new_Xtr)) +
+  geom_point() + 
+  geom_abline(intercept = 0, slope = 1, color = 'red') + 
+  labs(x = 'TR model old', y = 'TR model new',
+       title = 'TR comparison')
+
 # awesome distribution with quantiles plot
 dens <- density(tr_check$Xtr)
 df <- data.frame(x=dens$x, y=dens$y)
