@@ -8,12 +8,13 @@ library(ggplot2)
 
 goal      <- 'globalprep/TourismRecreation'
 scenario  <- 'v2015'
-dir_git   <- file.path('~/github/ohiprep/', goal)
-dir_data  <- file.path('~/github/ohiprep', goal, scenario, 'data')
+dir_git  <- file.path('~/github/ohiprep', goal)
+dir_data <- file.path(dir_git, scenario, 'data')
+dir_int  <- file.path(dir_git, scenario, 'intermediate')
 dir_eez2013 <- file.path('~/github/ohi-global/eez2013/layers')
 
 #############################################################################=
-scatterPlot <- function(data_orig, data_new, title_text,
+scatterPlot <- function(data_orig, data_new, title_text, x_text = title_text, y_text = title_text,
                         fig_save = file.path(dir_git, scenario, paste0(title_text, '_scatterPlot.png'))) {
   
   require(git2r)
@@ -44,12 +45,12 @@ scatterPlot <- function(data_orig, data_new, title_text,
     geom_point(shape = 19) +
     theme_bw() + 
     labs(title=sprintf('Score differences for %s', title_text), 
-         x = paste0('Orig: ', title_text), 
-         y = paste0('New: ',  title_text) ) +
+         x = paste0('Orig: ', x_text), 
+         y = paste0('New: ',  y_text) ) +
     geom_abline(slope = 1, intercept = 0, color = "red") +
     geom_text(aes(label = plotLabel), vjust = 1.5, size = 3)
   
-  ggsave(fig_save, width = 10, height = 8)
+#   ggsave(fig_save, width = 10, height = 8)
 }
 
 #############################################################################=
@@ -193,3 +194,97 @@ summary(lm(s_corr$S ~ s_corr$r2))
 summary(lm(s_corr$S ~ s_corr$pcgdp + s_corr$r1))
 summary(lm(s_corr$S ~ s_corr$pcgdp + s_corr$r2))
 #-----
+
+tr_model <- read.csv(file.path(dir_int, 'tr_model.csv'), stringsAsFactors = F)
+tr_scores <- read.csv(file.path(dir_int, 'tr_scores.csv'), stringsAsFactors = F)
+
+
+##############################################################################=
+### recreate un-normalized model using 2013 data layers -----
+
+s_2013 <- read.csv('~/github/ohi-global/eez2013/layers/tr_sustainability.csv')
+l_2013 <- read.csv('~/github/ohi-global/eez2013/layers/tr_jobs_total.csv')
+u_2013 <- read.csv('~/github/ohi-global/eez2013/layers/tr_unemployment.csv')
+e_2013 <- read.csv('~/github/ohi-global/eez2013/layers/tr_jobs_tourism.csv')
+
+tr_model_2013 <- l_2013 %>% 
+  rename(L = count) %>%
+  left_join(s_2013 %>%
+              rename(S_score = score),
+            by = 'rgn_id') %>%
+  left_join(u_2013 %>% 
+              rename(U = percent), 
+            by = c('rgn_id', 'year')) %>%
+  left_join(e_2013 %>%
+              rename(Ed = count),
+            by = c('rgn_id', 'year')) %>%
+  mutate(
+    E       = Ed / (L - (L * U/100)),
+    S       = (S_score - 1) / (7 - 1), # scale score from 1 to 7.
+    Xtr     = E * S) %>%
+  filter(year == 2012) %>%
+  left_join(rgn_names, by = 'rgn_id')
+
+scatterPlot(data_orig = tr_model_2013 %>% 
+              select(rgn_id, score = Xtr) %>%
+              filter(score < 1),
+            data_new  = tr_model %>%
+              filter(year == 2013) %>%
+              select(rgn_id, score = Xtr),
+            title_text = 'TR raw model scores, 2013 vs new',
+            x_text = 'TR model, 2013 data', y_text = 'TR model, 2015 data')
+
+# -----
+
+# Quantile cutoff - where should it be?
+# Comparing to 2013, and examining distributions to find cutoff for score of 100
+
+s_2013 <- read.csv('~/github/ohi-global/eez2013/layers/tr_sustainability.csv')
+s_compare <- tr_scores %>% filter(year == year_max) %>%
+  select(rgn_id, Xtr, S_score, gaps) %>%
+  full_join(s_2013, by = 'rgn_id') %>%
+  mutate(gaps = ifelse(str_detect(gaps, 'g'), TRUE, FALSE))
+
+ggplot(s_compare, aes(x = score, y = S_score, color = gaps)) +
+  geom_point() + 
+  geom_abline(intercept = 0, slope = 1/100, color = 'red')
+
+tr_2013 <- read.csv('~/github/ohi-global/eez2013/scores.csv') %>%
+  filter(goal == 'TR' & dimension %in% c('status', 'trend', 'score')) %>%
+  spread(dimension, score)
+
+tr_check <- full_join(tr_scores, tr_2013, by = c('rgn_id' = 'region_id')) %>%
+  filter(year == year_max) %>%
+  mutate(gaps = ifelse(str_detect(gaps, 'g'), TRUE, FALSE))
+
+ggplot(tr_check, aes(x = status, y = Xtr_rq, color = gaps)) +
+  geom_point() + 
+  geom_abline(intercept = 0, slope = 1/100, color = 'red')
+
+x_100 <- tr_check %>% filter(Xtr_rq == 1)
+
+x_coef <- lm(Xtr_rq ~ status, data = tr_check)[['coefficients']]
+
+ggplot(tr_check, aes(x = status, y = Xtr_rq, color = r1)) +
+  geom_point() + 
+  geom_abline(intercept = 0, slope = 1/100, color = 'red') + 
+  geom_abline(intercept = x_coef[1], slope = x_coef[2], color = 'blue') + 
+  labs(x = 'TR status 2013', y = 'TR status new',
+       title = sprintf('TR comparison; ref pt at %d%% of raw score', pct_ref))
+
+
+
+# awesome distribution with quantiles plot
+dens <- density(tr_check$Xtr)
+df <- data.frame(x=dens$x, y=dens$y)
+probs <- c(0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99)
+quantiles <- quantile(tr_check$Xtr, prob=probs)
+df$quant <- factor(findInterval(df$x,quantiles))
+ggplot(df, aes(x,y)) + 
+  geom_line() + 
+  geom_ribbon(aes(ymin=0, ymax=y, fill=quant)) + 
+  scale_x_continuous(breaks=quantiles) + 
+  scale_fill_brewer(guide="none") +
+  labs(x = 'Employment * Sustainability, raw',
+       y = 'Frequency',
+       title = 'Quantiles of TR status pre-normalized')
