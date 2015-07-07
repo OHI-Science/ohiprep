@@ -198,6 +198,19 @@ summary(lm(s_corr$S ~ s_corr$pcgdp + s_corr$r2))
 tr_model <- read.csv(file.path(dir_int, 'tr_model.csv'), stringsAsFactors = F)
 tr_scores <- read.csv(file.path(dir_int, 'tr_scores.csv'), stringsAsFactors = F)
 
+##############################################################################=
+### test new functions.R and new data against old...
+
+x_old <- read.csv(file.path(dir_git, 'old_model/scores_2015.csv')) %>%
+  filter(goal == 'TR' & dimension %in% c('status'))
+x_new <- read.csv(file.path(dir_git, 'new_model/scores_2015.csv')) %>%
+  filter(goal == 'TR' & dimension %in% c('status'))
+scatterPlot(data_orig = x_old %>% 
+              select(rgn_id = region_id, score),
+            data_new  = x_new %>%
+              select(rgn_id = region_id, score),
+            title_text = 'TR status script check 2015',
+            x_text = 'TR status, old functions.R', y_text = 'TR status, functions.R update')
 
 ##############################################################################=
 ### recreate un-normalized model using 2013 data layers -----
@@ -206,6 +219,8 @@ s_2013 <- read.csv('~/github/ohi-global/eez2013/layers/tr_sustainability.csv')
 l_2013 <- read.csv('~/github/ohi-global/eez2013/layers/tr_jobs_total.csv')
 u_2013 <- read.csv('~/github/ohi-global/eez2013/layers/tr_unemployment.csv')
 e_2013 <- read.csv('~/github/ohi-global/eez2013/layers/tr_jobs_tourism.csv')
+
+
 
 tr_model_2013 <- l_2013 %>% 
   rename(L = count) %>%
