@@ -182,7 +182,7 @@ write_csv(tr_data %>% select(rgn_id, year, gaps),    file.path(dir_data, 'tr_gap
 # write_csv(tr_model, file.path(dir_int, 'tr_model.csv'))
 # 
 # # regions with Travel Warnings at http://travel.state.gov/content/passports/english/alertswarnings.html
-# rgn_travel_warnings <- read.csv(file.path(dir_git, scenario, 'us_travel_warnings_20150706.csv'), stringsAsFactors = F) %>%
+# rgn_travel_warnings <- read.csv(file.path(dir_data, 'tr_travelwarnings_2015.csv'), stringsAsFactors = F) %>%
 #   select(rgn_name) %>%
 #   left_join(rgn_names, by = 'rgn_name') %>%
 #   filter(!is.na(rgn_id))
