@@ -46,13 +46,12 @@ source(file.path(dir_git, 'R/tr_fxns.R'))
 ### Process data and layers ----
 ##############################################################################=
 
-reload = TRUE
 tr_data_files <- c(unem      = file.path(dir_int, 'wb_rgn_uem.csv'),
                    jobs_tot  = file.path(dir_int, 'wb_rgn_tlf.csv'),
                    sust      = file.path(dir_int, 'wef_ttci_2015.csv'),
                    jobs_tour = file.path(dir_int, 'wttc_empd_rgn.csv'))
 
-tr_prep_data(tr_data_files)
+tr_prep_data(tr_data_files, reload = TRUE)
 ### Process each data set and saves tidied data in v201X/intermediate directory.
 
 tr_layers <- c(unem     = file.path(dir_int, 'tr_pregap_unemployment.csv'),
@@ -61,7 +60,7 @@ tr_layers <- c(unem     = file.path(dir_int, 'tr_pregap_unemployment.csv'),
                jobs_tour     = file.path(dir_int, 'tr_pregap_jobs_tourism.csv'),
                jobs_pct_tour = file.path(dir_int, 'tr_pregap_jobs_pct_tourism.csv'))
 
-tr_prep_layers(tr_layers, tr_data_files)
+tr_prep_layers(tr_layers, tr_data_files, reload = TRUE)
 ### Separate out just the model variables and save these to v201X/data directory,
 ### ready for use in the toolbox.
 
@@ -69,9 +68,10 @@ tr_prep_layers(tr_layers, tr_data_files)
 ##############################################################################=
 ### Assembling the data from layers -----
 ##############################################################################=
-year_max     <- 2013
+year_max    <- 2013
 
 tr_data_raw <- tr_assemble_layers(tr_layers)
+
 
 ### Attach georegions and per-capita GDP info for various gapfilling
 georegions       <- read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='')
@@ -111,8 +111,8 @@ tr_data <- tr_data_raw %>% gdp_gapfill()
 tr_data <- s_gapfill_r2_r1(tr_data)
 
 # Apply only the 2013 S_score to all years - so it's consistent, as we only have
-# actual scores from the current year.
-tr_data1 <- tr_data %>%
+# actual scores from the current year.  NOTE: doesn't change gapfill flag for past years...
+tr_data <- tr_data %>%
   select(-S_score) %>%
   left_join(tr_data %>%
               filter(year == year_max) %>%
@@ -125,6 +125,8 @@ tr_data <- tr_data %>%
   group_by(r2, year) %>%
   mutate(E_mdl2 = mean(Ep, na.rm = TRUE),
          gaps   = ifelse(is.na(Ep) & !is.na(E_mdl2), str_replace(gaps, 'E', 'r'), gaps),
+         gaps   = ifelse(is.na(Ep) & !is.na(E_mdl2), str_replace(gaps, 'U', '*'), gaps),
+         gaps   = ifelse(is.na(Ep) & !is.na(E_mdl2), str_replace(gaps, 'L', '*'), gaps),
          Ep     = ifelse(is.na(Ep), E_mdl2, Ep)) %>%
   select(-E_mdl2) %>%
   ungroup()

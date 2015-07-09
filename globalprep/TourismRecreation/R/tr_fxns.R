@@ -8,11 +8,16 @@ tr_prep_data <- function(tr_data_files, reload = FALSE) {
     cat(sprintf('    %s\n', basename(tr_data_files)))
     
     cat('Processing data from World Bank...\n')
-    source(file.path(dir_git, 'R/process_WorldBank.R'))
+    source(file.path(dir_git, 'R/process_WorldBank.R'), local = TRUE)
     cat('Processing data from WTTC...\n')
-    source(file.path(dir_git, 'R/process_WTTC.R'))
+    source(file.path(dir_git, 'R/process_WTTC.R'), local = TRUE)
     cat('Processing data from World Economic Forum...\n')
-    source(file.path(dir_git, 'R/process_WEF.R'))
+    source(file.path(dir_git, 'R/process_WEF.R'), local = TRUE)
+    # clear all data from this process
+    #cat(sprintf('Currently within process_WEF.R - environment = %s\n', environment()))
+    cat('Variables to be cleared: \n')
+    cat(sprintf('%s', ls()))
+    rm(list = ls())
     
   }
   cat(sprintf('Raw data has been processed; files exist in: \n  %s\n', dir_int))
@@ -67,14 +72,22 @@ tr_assemble_layers <- function(tr_layers) {
   rgn_names        <- read_csv('~/github/ohi-global/eez2013/layers/rgn_global.csv') %>%
     rename(rgn_name = label)
   
-  
-  tr_data_raw <- tr_jobs_tour %>%
-    rename(Ed = jobs_ct) %>%
-    full_join(tr_jobs_pct_tour,
+  rgn_names <- rgn_names %>%
+    left_join(data.frame(rgn_id = rep(1:max(rgn_names$rgn_id), each = 25),
+                         year   = rep(c((year_max-24):year_max), max(rgn_names$rgn_id))),
+              by = 'rgn_id')
+  ### this looks stupid but it assigns a list of years to all regions, just to
+  ###   avoid filtering them out later.  Probably a way better way to do this...
+    
+  tr_data_raw <- rgn_names %>%
+    full_join(tr_jobs_tour %>%
+                rename(Ed = jobs_ct),
               by = c('rgn_id', 'year')) %>%
-    rename(Ep = jobs_pct) %>%
-    mutate(Ep = Ep/100,
-           Ep = ifelse(Ep > 1, NA, Ep)) %>%
+    full_join(tr_jobs_pct_tour %>%
+                rename(Ep = jobs_pct) %>%
+                mutate(Ep = Ep/100,
+                       Ep = ifelse(Ep > 1, NA, Ep)),
+              by = c('rgn_id', 'year')) %>%
     full_join(tr_jobs_tot %>%
                 rename(L = count),
               by = c('rgn_id', 'year')) %>%
@@ -85,8 +98,8 @@ tr_assemble_layers <- function(tr_layers) {
     full_join(tr_sust %>%
                 rename(S_score = score),
               by = 'rgn_id') %>%
-    full_join(rgn_names, by = 'rgn_id') %>%
-    filter(year <= year_max)
+    filter(year <= year_max) %>%
+    filter(!is.na(rgn_name))
   return(tr_data_raw)
 }
 
@@ -110,7 +123,7 @@ gapfill_flags <- function(data) {
 gdp_gapfill <- function(data) {
   ### Gapfill GDP figures using CIA data to sub for missing WB data for 
   ### current year, so that the TTCI regression can include values.
-  no_gdp <- data %>% filter(is.na(pcgdp) & year == year_max) %>% select(rgn_name) %>% arrange(rgn_name)
+  no_gdp <- data %>% filter(is.na(pcgdp) & year == year_max & is.na(S_score))  %>% arrange(rgn_name)
   # missing gdp data for the following countries (2013): 
   # Anguilla | Argentina | Aruba | Barbados | Bermuda | British Virgin Islands
   # Cayman Islands | Cuba | East Timor | French Polynesia | Guadeloupe and Martinique | Kuwait
@@ -129,27 +142,39 @@ gdp_gapfill <- function(data) {
                           collapse_fxn = 'mean') %>%
     mutate(year = year_max)  # technically, 2014 estimates, but call it 2013
   
-  data1 <- data %>%
+  data <- data %>%
     left_join(gdp_cia1 %>% select(-rgn_id),
               by = c('rgn_name', 'year')) 
   #   plot(pcgdp_cia ~ pcgdp, data = data1)
   #   abline(0,  1, col = 'red')
-  data1 <- data1 %>%
+  data <- data %>%
     mutate(gaps  = ifelse(is.na(pcgdp) & !is.na(pcgdp_cia), str_replace(gaps, 'G', 'c'), gaps),
            pcgdp = ifelse(is.na(pcgdp) & !is.na(pcgdp_cia), pcgdp_cia, pcgdp)) %>%
     select(-pcgdp_cia)
   
-  # hand-fill Guadeloupe/Martinique and Reunion Island.  
-  gdp_reun <- 23501 # from http://www.insee.fr/fr/insee_regions/reunion/themes/dossiers/ter/ter2008_resultats_economiques.pdf
-  # in 2007, not PPP
-  gdp_mart <- 24118 # from: http://web.archive.org/web/20080216021351/http://prod-afd.afd.zeni.fr/jahia/webdav/site/cerom/users/admin_cerom/public/Pdf/CR2006_ma.pdf
-  # in 2006, real exchange rate (PPP?)
-  gdp_guad <- 21780 # from: http://www.insee.fr/fr/regions/guadeloupe/default.asp?page=publications/publications.htm
-  # in 2006 dollars, not PPP.
-  data1 <- data1 %>%
-    mutate(pcgdp = ifelse(rgn_id == 32  & year == year_max, gdp_reun, pcgdp),
-           pcgdp = ifelse(rgn_id == 140 & year == year_max, (gdp_guad+gdp_mart)/2, pcgdp),
-           gaps  = ifelse(rgn_id %in% c(32, 140) & year == year_max, str_replace(gaps, 'G', 'h'), gaps))
+  gdp_r2_mean <- data %>%
+    group_by(r2, year) %>%
+    summarize(gdp_r2 = mean(pcgdp, na.rm = TRUE))
+  
+  data1 <- data %>%
+    left_join(gdp_r2_mean, by = c('r2', 'year')) %>%
+    mutate(gaps  = ifelse(is.na(pcgdp) & !is.na(gdp_r2), str_replace(gaps, 'G', 'r'), gaps),
+           pcgdp = ifelse(is.na(pcgdp) & !is.na(gdp_r2), gdp_r2, pcgdp)) %>%
+    select(-gdp_r2)
+
+# skip this - there are others as well; this doesn't add much value.  Rely on regional averages.
+#   # hand-fill select values: 
+#   gdp_reun <- 23501 # from http://www.insee.fr/fr/insee_regions/reunion/themes/dossiers/ter/ter2008_resultats_economiques.pdf
+#   # in 2007, not PPP
+#   gdp_mart <- 24118 # from: http://web.archive.org/web/20080216021351/http://prod-afd.afd.zeni.fr/jahia/webdav/site/cerom/users/admin_cerom/public/Pdf/CR2006_ma.pdf
+#   # in 2006, real exchange rate (PPP?)
+#   gdp_guad <- 21780 # from: http://www.insee.fr/fr/regions/guadeloupe/default.asp?page=publications/publications.htm
+#   # in 2006 dollars, not PPP.
+#   data1 <- data1 %>%
+#     mutate(pcgdp = ifelse(rgn_id == 32  & year == year_max, gdp_reun, pcgdp),
+#            pcgdp = ifelse(rgn_id == 140 & year == year_max, (gdp_guad+gdp_mart)/2, pcgdp),
+#            gaps  = ifelse(rgn_id %in% c(32, 140) & year == year_max, str_replace(gaps, 'G', 'h'), gaps))
+
   return(data1)
 }
 
