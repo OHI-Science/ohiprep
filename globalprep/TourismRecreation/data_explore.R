@@ -201,16 +201,75 @@ tr_scores <- read.csv(file.path(dir_int, 'tr_scores.csv'), stringsAsFactors = F)
 ##############################################################################=
 ### test new functions.R and new data against old...
 
-x_old <- read.csv(file.path(dir_git, 'old_model/scores_2015.csv')) %>%
+st_old <- read.csv(file.path(dir_git, 'old_model/scores_2015.csv')) %>%
   filter(goal == 'TR' & dimension %in% c('status'))
-x_new <- read.csv(file.path(dir_git, 'new_model/scores_2015.csv')) %>%
+st_new <- read.csv(file.path(dir_git, 'new_model/scores_2015.csv')) %>%
   filter(goal == 'TR' & dimension %in% c('status'))
-scatterPlot(data_orig = x_old %>% 
+scatterPlot(data_orig = st_old %>% 
               select(rgn_id = region_id, score),
-            data_new  = x_new %>%
+            data_new  = st_new %>%
               select(rgn_id = region_id, score),
             title_text = 'TR status script check 2015',
             x_text = 'TR status, old functions.R', y_text = 'TR status, functions.R update')
+
+tr_old <- read.csv(file.path(dir_git, 'old_model/scores_2015.csv')) %>%
+  filter(goal == 'TR' & dimension %in% c('trend'))
+tr_new <- read.csv(file.path(dir_git, 'new_model/scores_2015.csv')) %>%
+  filter(goal == 'TR' & dimension %in% c('trend'))
+scatterPlot(data_orig = tr_old %>% 
+              select(rgn_id = region_id, score),
+            data_new  = tr_new %>%
+              select(rgn_id = region_id, score),
+            title_text = 'TR trend script check 2015',
+            x_text = 'TR trend, old functions.R', y_text = 'TR trend, functions.R update')
+
+tr_model1 <- tr_model %>%
+  select(rgn_id, rgn_name, year, Xtr) %>%
+  left_join(tr_model %>%
+              group_by(year) %>%
+              summarize(Xtr_q = quantile(Xtr, probs = pct_ref/100, na.rm = TRUE)),
+            by = 'year') %>%
+  mutate(
+    Xtr_rq  = ifelse(Xtr / Xtr_q > 1, 1, Xtr / Xtr_q)) # rescale to qth percentile, cap at 1
+
+
+# calculate trend
+tr_trend <- tr_model1 %>%
+  filter(!is.na(Xtr_rq)) %>%
+  arrange(year, rgn_id) %>%
+  group_by(rgn_id) %>%
+  do(mod = lm(Xtr_rq ~ year, data = .)) %>%
+  do(data.frame(
+    rgn_id    = .$rgn_id,
+    dimension = 'trend',
+    coef      = coef(.$mod)[['year']],
+    score     =  max(min(coef(.$mod)[['year']] * 5, 1), -1)))
+tr_model <- tr_model %>% 
+  left_join(tr_model1 %>% select(rgn_id, year, Xtr_q, Xtr_rq), by = c('rgn_id', 'year')) %>%
+  left_join(tr_trend  %>% select(rgn_id, coef, trend = score), by = 'rgn_id')
+
+tr_model_2013 <- tr_model_2013 %>%
+  mutate(Xtr = round(Xtr, 3),
+         E   = round(E, 3),
+         Xtr_q = round(Xtr_q, 3),
+         Xtr_rq = round(Xtr_rq, 3),
+         coef = round(coef, 3),
+         trend = round(trend, 3))
+
+tr_model_2013 <- tr_model_2013 %>%
+  left_join(tr_model_2015 %>% select(rgn_id, rgn_name) %>% unique(),
+            by = 'rgn_id')
+
+scatterPlot(data_orig = tr_model_2013 %>% 
+              select(rgn_id, score = trend),
+            data_new  = tr_model2015 %>%
+              select(rgn_id, score = trend),
+            title_text = 'TR trend script check - new script',
+            x_text = 'TR trend, old layers', y_text = 'TR trend, new layers')
+
+# check info on countries with odd trends:
+prob_trends <- c('Cambodia', 'Cayman Islands', 'Belize', 'Bahrain', 'Bermuda', 'Costa Rica', 'Egypt', 'Netherlands', 'Taiwan')
+trendcheck <- filter(tr_scores, rgn_name %in% prob_trends)
 
 ##############################################################################=
 ### recreate un-normalized model using 2013 data layers -----
@@ -237,7 +296,7 @@ tr_model_2013 <- l_2013 %>%
     E       = Ed / (L - (L * U/100)),
     S       = (S_score - 1) / (7 - 1), # scale score from 1 to 7.
     Xtr     = E * S) %>%
-  filter(year == 2012) %>%
+#  filter(year == 2012) %>%
   left_join(rgn_names, by = 'rgn_id')
 
 scatterPlot(data_orig = tr_model_2013 %>% 

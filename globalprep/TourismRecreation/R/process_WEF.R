@@ -143,4 +143,3 @@ gci_file <- file.path(dir_git, scenario, 'intermediate/wef_gci_2006_2014.csv')
 write_csv(gci_rgn, gci_file)
 
 }
-
