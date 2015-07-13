@@ -1,5 +1,9 @@
-# Create fish pressure layers 
+# Create the fishing pressure layers
 
+
+#-----------------------------------------------------------------------------
+#SETUP 
+#-----------------------------------------------------------------------------
 
 rm(list=ls())
 
@@ -19,300 +23,102 @@ dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
 
 setwd(file.path(dir_N,'git-annex/globalprep/Pressures_fishing'))
 
-# File paths
 
-saup_pressures = file.path(dir_N,'git-annex/Global/SAUP-FishCatchByGearType_Halpern2008/data')
+# set tmp directory
+tmpdir=file.path(dir_N,'home_big/afflerbach/R_raster_tmp')
+dir.create(tmpdir, showWarnings=F)
+rasterOptions(tmpdir=tmpdir)
 
-# Data used for the commercial fishing pressures layers in OHI 2013. 
-#These are derivatives and updates to the 2008 data 
-ohi_2013  = file.path(dir_N,'model/GL-NCEAS-Pressures_CommercialFisheries_v2013a')
-
-# new SAUP data
-saup_2015 = file.path(dir_N,'git-annex/globalprep/SAUP_data_2015')
-
-# Directory where the updates to the 2008 data were done for 2013 ohi
-saup_update = file.path(dir_N, 'model/GL-SAUP-FisheriesCatchData_v2013')
-
-#---------------------------------------------------------------------------------
-
-# Get gear catch rasters
-
-dem_d = raster(file.path(saup_pressures,'catch_dem_d_gcs.tif'))
-
-dem_hb = raster(file.path(saup_pressures,'catch_dem_nd_hb_gcs.tif'))
-
-dem_lb = raster(file.path(saup_pressures,'catch_dem_nd_lb_gcs.tif'))
-
-pel_lb = raster(file.path(saup_pressures,'catch_pel_lb_gcs.tif'))
-
-pel_hb = raster(file.path(saup_pressures,'catch_pel_hb_gcs.tif'))
-
-# aggregate high and low bycatch
-
-hb = stack(dem_d,dem_hb,pel_hb)%>%
-        calc(.,fun=function(x){sum(x)},progress='text')
-
-lb = stack(pel_lb,dem_lb)%>%
-      calc(.,fun=function(x){sum(x)},progress='text')
-
-# aggregate all catch
-
-all_catch = stack(dem_d,dem_hb,dem_lb,pel_lb,pel_hb)%>%
-             calc(.,fun=function(x){sum(x)},progress='text')
-
-# create percent rasters
-
-
-gear_prop_hb = overlay(hb,all_catch,fun=function(x,y){x/y},progress='text')
-
-gear_prop_lb = overlay(lb,all_catch,fun=function(x,y){x/y},progress='text')
-
-# sum these together to see if we have regions with zeros (ideally these are all 1??)
-
-sum = sum(gear_prop_hb,gear_prop_lb)
-
-# for regions where there is no catch in the past, get the average proportion of high and low bycatch
-
-#hb_mean = cellStats(gear_prop_hb,'mean')
-#lb_mean = cellStats(gear_prop_lb,'mean')
-
-# replace NAs with high and low bycatch (then we'll have to mask out land later down the line)
-
-#gear_prop_hb[is.na(gear_prop_hb)]<-hb_mean
-#gear_prop_lb[is.na(gear_prop_lb)]<-lb_mean
-
-
-
-
-# reproject to moll then Resample to 1km then mask
-
-projection(gear_prop_hb) <- "+proj=longlat +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +no_defs"
-
+# set mollweide projection
 moll_crs = CRS("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs")
 
-gear_prop_hb_moll = projectRaster(gear_prop_hb,crs=moll_crs,over=T,progress='text')
-gear_prop_lb_moll = projectRaster(gear_prop_lb,crs=moll_crs,over=T,progress='text')
 
-#bring in old SAUP region raster (at 1km with no land)
-
-old_saup_eez = raster(file.path(dir_N,'model/GL-NCEAS-Pressures_CommercialFisheries_v2013a/tmp/saup_fao_mol.tif'))
-
-gear_prop_hb_1km = resample(gear_prop_hb_moll,old_saup_eez,method='ngb',progress='text',filename ='v2015/gear_prop_hb_moll_1km.tif',overwrite=T)
-gear_prop_lb_1km = resample(gear_prop_lb_moll,old_saup_eez,method='ngb',progress='text',filename ='v2015/gear_prop_lb_moll_1km.tif',overwrite=T)
-
-# mask out land
-
-gear_prop_hb_1km_ocean = mask(gear_prop_hb_1km,old_saup_eez,progress='text',filename='v2015/gear_prop_hb_moll_1km_ocean.tif',overwrite=T)
-gear_prop_lb_1km_ocean = mask(gear_prop_lb_1km,old_saup_eez,progress='text',filename='v2015/gear_prop_lb_moll_1km_ocean.tif',overwrite=T)
-
-# TO DO:
-
-# Region 18 should have 0 catch (I think it will after multiplying by catch? Or at least will be NA?)
-
-
+ocean = raster(file.path(dir_N, 'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
+#-----------------------------------------------------------------------------
+#READ IN DATA
 #-----------------------------------------------------------------------------
 
-# Get catch
+# Fish catch at 1km
 
+catch_06_10 = raster('v2015/catch_06_10_1km.tif')
+catch_05_09 = raster('v2015/catch_05_09_1km.tif')
+catch_04_08 = raster('v2015/catch_04_08_1km.tif')
+catch_03_07 = raster('v2015/catch_03_07_1km.tif')
 
-# New SAUP data
+#Primary productivity at 1km - aggregate to time periods
 
-saup_all = read.csv(file.path(saup_2015,'tmp/Catch_Value_11062015_summary.csv'))
+npp = list.files(file.path(dir_N,'git-annex/globalprep/VGPM_primary_productivity/v_2015/output'),pattern='annual_mean_npp_2',full.names=T)
 
-#-----------------------------------------------------------------------------
+npp_06_10 = calc(stack(npp[substr(npp,113,116) %in% 2006:2010]),fun=function(x){mean(x,na.rm=T)},progress='text')%>%
+             projectRaster(.,crs=moll_crs,progress='text',over=T)%>%
+              resample(.,ocean,method='ngb',filename='v2015/npp/npp_06_10.tif')
 
-# new eezs
+npp_06_10 = raster('v2015/npp/npp_06_10.tif')
 
-saup_2015_eez = read.csv('v2015/ohi_eezs_plus_old_saup_ids.csv')
+npp_05_09 = calc(stack(npp[substr(npp,113,116) %in% 2005:2009]),fun=function(x){mean(x,na.rm=T)},progress='text')%>%
+               projectRaster(.,crs=moll_crs,progress='text',over=T)%>%
+                resample(.,ocean,method='ngb',filename='v2015/npp/npp_05_09.tif')
 
-#-----------------------------------------------------------------------------
+npp_05_09 = raster('v2015/npp/npp_05_09.tif')
 
+npp_04_08 = calc(stack(npp[substr(npp,113,116) %in% 2004:2008]),fun=function(x){mean(x,na.rm=T)},progress='text')%>%
+             projectRaster(.,crs=moll_crs,progress='text',over=T)%>%
+              resample(.,ocean,method='ngb',filename='v2015/npp/npp_04_08.tif')
 
-# filter out taxonkey not used previously
+npp_04_08 = raster('v2015/npp/npp_04_08.tif')
 
-saup_taxon_exclude = read.csv(file.path(saup_update,'tmp/global_srcdata_ss_saup_excluded_stock.csv'))
+npp_03_07 = calc(stack(npp[substr(npp,113,116) %in% 2003:2007]),fun=function(x){mean(x,na.rm=T)},progress='text')%>%
+             projectRaster(.,crs=moll_crs,progress='text',over=T)%>%
+              resample(.,ocean,method='ngb',filename='v2015/npp/npp_03_07.tif')
 
-# look at what these taxons are
+npp_03_07 = raster('v2015/npp/npp_03_07.tif')
 
-# are these taxon keys the same?
-
-ohi_2015_taxons = read.csv(file.path(saup_2015,'raw/ohi_taxon.csv'))
-
-filter(ohi_2015_taxons,taxonkey%in%saup_taxon_exclude$stock_id)
-
-#   X taxonkey                     scientific.name           common.name
-#1  1   100000                      Marine animals        Marine animals
-#2  3   100025     Miscellaneous diadromous fishes     Diadromous fishes
-#3  8   100039        Marine fishes not identified         Marine fishes
-#4 12   100047    Miscellaneous marine crustaceans    Marine crustaceans
-#5 14   100058       Miscellaneous marine molluscs       Marine molluscs
-#6 15   100077 Miscellaneous aquatic invertebrates Aquatic invertebrates
-#7 16   100139        Marine fishes not identified             Finfishes
-#8 20   100239        Marine fishes not identified          Groundfishes
-#9 23   100339        Marine fishes not identified        Pelagic fishes
-
-# filter our taxons and aggregate catch per year/region - add in the old SAUP IDs
-saup_data = saup_all%>% 
-  filter(!TaxonKey %in% saup_taxon_exclude$stock_id)%>%
-  mutate(id      = ifelse(EEZID==0,FAOAreaID+1000,EEZID),
-         id_type = ifelse(id>1000,'fao','eez'))%>% 
-  group_by(Year,id_type,id)%>%
-  summarize(catch=sum(catch))%>%
-  mutate(old_saup_id = as.integer(ifelse(id_type=='eez',saup_2015_eez$old_saup_id[match(id,saup_2015_eez$EEZID)],id)))%>%
-  select(new_id = id, Year, id_type,catch,old_saup_id)
-
-
-# now we have the total catch per year per id.
-
-
-#-----------------------------------------------------------------------------
-
-# Calculate change in catch since the period 1999-2003
-
-# Here I am going to use the data from the old SAUP dataset for the years 1999-2003 to calculate the change
-# in catch. This should be more accurate than using the new dataset catches for 1999-2003 since they are likely
-# much different.
-
-# bring in old data that has aggregate catch by region from 1999 to 2003
-
-change_old = read.csv(file.path(saup_update,'data/pct_chg_saup_2009to2011_vs_1999to2003.csv'))
-
-# The catch in yrs1999to2003 is what we want to compare to.
-
-# Now aggregate data for periods 
-
-# this is the period of years that was originally used. Though these data are not the same data
-# that were used to create the rasters. These have likely changed drastically.
-# Look at them here for comparison
-
-# saup_1999to2003 = saup_06_10 = saup_data%>%
-#   filter(Year>1998 & Year < 2004)%>%
-#   group_by(id_type,old_saup_id)%>%
-#   summarize(avg_catch_1999to2003 = mean(catch))%>%
-#   mutate(yrs_1999to2003 = change_old$yrs1999to2003[match(old_saup_id,change_old$id)],
-#          pct_chg = ((avg_catch_1999to2003-yrs_1999to2003)/yrs_1999to2003)*100,
-#          Name = saup_2015_eez$Name[match(old_saup_id,saup_2015_eez$old_saup_id)])%>%
-#   as.data.frame()%>%
-#   filter(!is.na(old_saup_id))
-
-saup_06_10 = saup_data%>%
-  filter(Year>2005 & Year < 2011)%>%
-  group_by(new_id)%>%
-  summarize(avg_catch_2006to2010 = mean(catch))%>%
-  as.data.frame()
-
-#write.csv(saup_06_10,file='v2015/saup_catch_2006_2010.csv')
-
-
-saup_05_09 = saup_data%>%
-  filter(Year>2004 & Year < 2010)%>%
-  group_by(new_id)%>%
-  summarize(avg_catch_2005to2009 = mean(catch))%>%
-  as.data.frame()
-
-#write.csv(saup_05_09,file='v2015/saup_catch_2005_2009.csv')
-
-
-saup_04_08 = saup_data%>%
-  filter(Year>2003 & Year < 2009)%>%
-  group_by(new_id)%>%
-  summarize(avg_catch_2004to2008 = mean(catch))%>%
-  as.data.frame()
-
-#write.csv(saup_04_08,file='v2015/saup_catch_2004_2008.csv')
-
-
-saup_03_07 = saup_data%>%
-  filter(Year>2002 & Year < 2008)%>%
-  group_by(new_id)%>%
-  summarize(avg_catch_2003to2007 = mean(catch))%>%
-  as.data.frame()
-
-#write.csv(saup_03_07,file='v2015/saup_catch_2003_2007.csv')
-
-
-# merge all catch together
-
-catch_all_yrs = Reduce(function(x,y)merge(x,y,all=TRUE),list(saup_06_10,saup_05_09,saup_04_08,saup_03_07))
-
-#-------------------------------------------------------------------------------------
-
-# Calculate area using the nonprojected original raster
-
-area = raster(file.path(saup_pressures,'catch_area_gcs.tif')) # i think this is area
-
-#remove NAs (where no fishing occurs)
-
-area = mask(area,gear_prop_hb,progress='text')
-
-#bring in new saup shapefile
-
-new_rgns = readOGR(dsn=file.path(saup_2015,'raw/SAU_EEZ_High_Seas'),layer='SAU_EEZ_High_Seas')
-
-
-#------------------------------------------------------------------------------------
-
-# Rasterize catch for each period of time
-
-rgns_ras = rasterize(new_rgns,area,field='EEZID',progress='text')
-#for some reason getting a really weird overlay in australia and greenland and probably other countries. Need to 
-# mask this
-
-plot(rgns_ras,col=cols)
-
-rgns_ras = mask(rgns_ras,sum,progress='text',filename='v2015/new_saup_rgns.tif',overwrite=T) #maybe switch sum to all_catch? Will be same result
-
-
-#extract total area per polygon of cells that have catch
-
-catch_area = zonal(area,rgns_ras,fun='sum',na.rm=T,progress='text')%>%as.data.frame()
-
-
-#Add new field to data
-
-new_rgns@data = new_rgns@data%>%
-              left_join(catch_all_yrs,by = c('EEZID'='new_id'))%>%
-               left_join(catch_area,by= c('EEZID'='zone'))%>%
-                mutate(catch_per_km_06_10 = avg_catch_2006to2010/sum,
-                       catch_per_km_05_09 = avg_catch_2005to2009/sum,
-                       catch_per_km_04_08 = avg_catch_2004to2008/sum,
-                       catch_per_km_03_07 = avg_catch_2003to2007/sum)#sum is the catch_area in km2 - need to rename
-
-
-# rasterize catch per km2  
-
-ras_06_10 = rasterize(new_rgns,rgns_ras,field='catch_per_km_06_10',progress='text',filename='catch_06_10.tif',overwrite=T)
-ras_05_09 = rasterize(new_rgns,rgns_ras,field='catch_per_km_05_09',progress='text',filename='catch_05_09.tif',overwrite=T)
-ras_04_08 = rasterize(new_rgns,rgns_ras,field='catch_per_km_04_08',progress='text',filename='catch_04_08.tif',overwrite=T)
-ras_03_07 = rasterize(new_rgns,rgns_ras,field='catch_per_km_03_07',progress='text',filename='catch_03_07.tif',overwrite=T)
-
-
-# catch at 1km resolution
-
-moll_crs = CRS("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs")
-
-rep_res_mask = function(raster){
   
-  name=names(raster)
+# gear proportions at 1 km
+
+gear_hb = raster('v2015/gear_prop_hb_moll_1km_ocean.tif')
+gear_lb = raster('v2015/gear_prop_lb_moll_1km_ocean.tif')
+
+#---------------------------------------------------------------------------
+
+# Catch standardized by primary productivity
+
+catch_npp_06_10 = overlay(catch_06_10,npp_06_10,fun=function(x,y){x/y},progress='text',filename='v2015/catch_npp_06_10.tif')
+catch_npp_05_09 = overlay(catch_05_09,npp_05_09,fun=function(x,y){x/y},progress='text',filename='v2015/catch_npp_05_09.tif')
+catch_npp_04_08 = overlay(catch_04_08,npp_04_08,fun=function(x,y){x/y},progress='text',filename='v2015/catch_npp_04_08.tif')
+catch_npp_03_07 = overlay(catch_03_07,npp_03_07,fun=function(x,y){x/y},progress='text',filename='v2015/catch_npp_03_07.tif')
+#----------------------------------------------------------------------------
+# Divide catch by primary productivity then multiply by gear proportions
+
+
+out_06_10_hb = overlay(catch_npp_06_10,gear_hb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_06_10_npp_hb_raw.tif')
+out_06_10_lb = overlay(catch_npp_06_10,gear_lb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_06_10_npp_lb_raw.tif')
+
+out_05_09_hb = overlay(catch_npp_05_09,gear_hb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_05_09_npp_hb_raw.tif')
+out_05_09_lb = overlay(catch_npp_05_09,gear_lb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_05_09_npp_lb_raw.tif')
+
+out_04_08_hb = overlay(catch_npp_04_08,gear_hb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_04_08_npp_hb_raw.tif')
+out_04_08_lb = overlay(catch_npp_04_08,gear_lb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_04_08_npp_lb_raw.tif')
+
+out_03_07_hb = overlay(catch_npp_03_07,gear_hb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_03_07_npp_hb_raw.tif')
+out_03_07_lb = overlay(catch_npp_03_07,gear_lb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_03_07_npp_lb_raw.tif')
+
+#----------------------------------------------------------------------------
+
+# Rescale using 99.99 quantile
+
+fishing.pressures = list.files("v2015/output",full.names=T)
+
+for (i in 1:length(fishing.pressures)){
   
-  a = projectRaster(raster,crs=moll_crs,progress='text',over=T)
-  b = resample(a,old_saup_eez,method='ngb',progress='text',filename= paste0('v2015/',name,'_1km.tif',sep=''),overwrite=T) #using the old saup region raster which is at 1km
-  c = mask(b,old_saup_eez,progress='text',filename=paste0('v2015/',name,'_1km_ocean.tif'))
+  r    = raster(fishing.pressures[i])
+  yrs  = substr(names(r),7,11)
+  gear = substr(names(r),17,18)
   
+  ref = cellStats(r,stat='max')
+  
+  resc = calc(r,fun=function(x){x/ref},progress='text')
+  
+  writeRaster(resc,filename=paste0('v2015/output/catch_',yrs,'_npp_',gear,'_rescaled.tif'),overwrite=T)
   
 }
-
-
-
-#resample
-
-# primary productivity at 1km resolution
-
-
-
-
-
-#gear props at 1km resolution (already have...)
-
-
-catch_prod_hb_06_10 = catch_prod_06_10 * gear_prop_hb = 

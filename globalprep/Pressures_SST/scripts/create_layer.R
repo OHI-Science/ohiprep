@@ -22,89 +22,68 @@ cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color sc
 
 # data
 
-# Bring in SSTA
+#ocean raster at 1km
+	
+ocean = raster(file.path(dir_N, 'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
 
-ssta = stack('data/cortadv5_SSTA.nc',varname='SSTA')
-weekly_sst = stack('data/cortadv5_WeeklySST.nc',varname='WeeklySST')
-
-names_ssta = names(ssta)
-names_weekly = names(weekly_sst)
-
-
-#TODO REWRITE FIRST LOOP
-
-
-for(i in 1:53){
-  
-  s = stack()
-  
-  for (j in 1982:2012){
-    
-    w = which(substr(names_weekly,2,5)==i)[j] 
-    
-    
-    
-  }
-}
-
-# Second Loop to calculate annual positive anomalies
-
-# Bring in 
-
-for (i in 1982:2012){
-  
-  print(i)
-  
-  s = stack()
-  
-  for (j in 1:53){
-    
-    print(j)
-    
-    sd = raster(paste0('tmp/sd_sst_week_',j,'.tif')) #sd for week
-    w = which(substr(names_ssta,2,5)==i)[j]
-    if(is.na(w))next()
-    
-    w_ssta = ssta[[w]] #subset the week/year anomaly
-    
-    count = overlay(w_ssta,sd,fun=function(x,y){ifelse(x>y,1,0)},progress='text') #compare to average anomaly for that week 
-    
-    s = stack(s,count)
-    
-  }
-  
-  year = calc(s,fun=function(x){sum(x,na.rm=T)},progress='text',filename=paste0('tmp/annual_pos_anomalies_sd_',i,'.tif'),overwrite=T)
-}
-
-
+mollCRS=crs('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs')
+	
 
 
 # Look at all years
 
-l = list.files('tmp',pattern='annual_pos_anomalies',full.names=TRUE)
-
-sta = stack(l)
-
-plot(sta,col=cols)
-
+  l   <- list.files('v2015/tmp',pattern='annual_pos_anomalies',full.names=TRUE)
+  
 # Get 5 year aggregates
 
-yrs_08_12 = stack(l[27:31])%>%sum(.)
+  yrs_1985_1989 <- stack(l[4:8])%>%sum(.) # This is the time period we are using for historical comparison
+  
+  
+for(i in 2005:2008){ #i=2005
+  print(i)
+  
+  yrs <- c(i,i+1,i+2,i+3,i+4)
+  s   <- stack(l[substr(l,35,38)%in%yrs])%>%sum(.)
+  
+  diff = s - yrs_1985_1989
+  
+  projection(diff) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+  
+  out = projectRaster(diff,crs=mollCRS,progress='text',over=T)%>%
+         resample(.,ocean,method='ngb',progress='text')%>%
+          mask(.,ocean,filename=paste0('v2015/output/sst_',min(yrs),'_',max(yrs),'-1985_1989.tif',sep=""),overwrite=T)
+  
+  ref = quantile(out,prob=0.9999) # calculate the 99.99th quantile  
+  
+  sprintf('Rescaling')
+  
+  out_rescale = calc(out,fun=function(x){ifelse(x>0,ifelse(x>ref,1,x/ref),0)},progress='text',
+                     filename=paste0('v2015/output/sst_',min(yrs),'_',max(yrs),'-1985_1989_rescaled.tif',sep=""),overwrite=T)
+}
 
-yrs_00_05 = stack(l[19:24])%>%sum(.)
+  
+### creating a set of rescaled rasters that is scaled by the highest 99.99th quantile
+    
+  ## figure out the scaling value:
+  rast_2012 <- raster(file.path(dir_neptune_data, 'git-annex/globalprep/Pressures_SST/v2015/output/sst_2005_2009-1985_1989.tif'))
+  quantile(rast_2012,prob=0.9999)  #118.4027
+  rast_2013 <- raster(file.path(dir_neptune_data, 'git-annex/globalprep/Pressures_SST/v2015/output/sst_2006_2010-1985_1989.tif'))
+  quantile(rast_2013,prob=0.9999)   #133.0371 
+  rast_2014 <- raster(file.path(dir_neptune_data, 'git-annex/globalprep/Pressures_SST/v2015/output/sst_2007_2011-1985_1989.tif'))
+  quantile(rast_2014,prob=0.9999)  #127.1995
+  rast_2015 <- raster(file.path(dir_neptune_data, 'git-annex/globalprep/Pressures_SST/v2015/output/sst_2008_2012-1985_1989.tif'))
+  quantile(rast_2015,prob=0.9999)  #130.5288
+  
+  # loop to rescale based on a constant reference point
+  ref <- 133.0371 # maximum value across rasters
+  
+  for(i in 2005:2008){ #i=2005
+    print(i)
+    
+    final_yr <- c(i+4)
 
-yrs_05_10 = stack(l[24:29])%>%sum(.)
-
-yrs_1982_86 = stack(l[1:5])%>%sum(.)
-
-yrs_1985_90 = stack(l[4:9])%>%sum(.)
-
-# Look at difference between
-
-yrs_00_05_85_90 = yrs_00_05 - yrs_1985_90
-
-
-
-
-
-
+  out <- raster(file.path(dir_neptune_data, 
+                          sprintf('git-annex/globalprep/Pressures_SST/v2015/output/sst_%s_%s-1985_1989.tif', i, final_yr)))  
+  out_rescale = calc(out,fun=function(x){ifelse(x>0,ifelse(x>ref,1,x/ref),0)},progress='text',
+                     filename=paste0('v2015/output/sst_',i,'_',final_yr,'-1985_1989_rescaled_v2.tif',sep=""),overwrite=T)
+  }

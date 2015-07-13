@@ -1,201 +1,212 @@
-# data_prep.R: reformat and add rgn_ids to World Economic Forum (WEF) data 
-#
-# by JStewartLowndes Mar2014; updated from 'clean_WEF.R' by JStewart in May 2013
-#   Data: 
-#       Global Competitiveness Index (GCI)
-#       Travel and Tourist Competitiveness Index (TTCI)
-#   read in individual files
-#   call add_rgn_id.r to add OHI region_ids
-#   georegional gapfilling with gapfill_georegions.r 
-#   final processing by hand: see end of script
+# data_prep.R for Tourism & Recreation - master data_prep.R file
+# Jul2015: Casey O'Hara - combining multiple scripts and data sets into one
+#   master script.  
+#   Supplemental scripts are located in TourismRecreation/R.
 
+#   Outputs:
+#   * tr_unemployment.csv
+#     * rgn_id, year, percent
+#     * Percent unemployment (0-100%)
+#   * tr_sustainability.csv
+#     * rgn_id, score (no year value - only current year)
+#     * TTCI score, not normalized (1-7)
+#   * tr_jobs_tourism.csv
+#     * rgn_id, year, jobs_ct (individuals)
+#     * Number of jobs, direct employment in tourism
+#   * tr_jobs_pct_tourism.csv
+#     * rgn_id, year, jobs_pct
+#     * Percent of direct tourism jobs
+#   * tr_jobs_total.csv
+#     * rgn_id, year, count (individuals)
+#     * Total jobs
 
-# setup ----
+##############################################################################=
+### setup -----
+##############################################################################=
 library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 
 setwd('~/github/ohiprep')
 source('src/R/common.R')
+library(readr)
 
 goal     <- 'globalprep/TourismRecreation'
 scenario <- 'v2015'
 dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal) 
 dir_git  <- file.path('~/github/ohiprep', goal)
+dir_data <- file.path(dir_git, scenario, 'data')
+dir_int  <- file.path(dir_git, scenario, 'intermediate')
+# dir_git points to TourismRecreation; dir_data and dir_int point to v201X/data and v201x/intermediate
+#   within the TourismRecreation directory.
 
-source('../ohiprep/src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na()
+source(file.path(dir_git, 'R/tr_fxns.R'))
+
 
 
 ##############################################################################=
-### WEF GCI formatting ----
+### Process data and layers ----
 ##############################################################################=
 
-dir_wef <- file.path(dir_anx, 'WEF-Economics')
-# read in files ----
-gci_raw <- read.csv(file.path(dir_wef, 'raw', 'GCI_Dataset_2006-07-2014-15.csv'), skip = 3, check.names = FALSE, stringsAsFactors = FALSE)
-### NOTE: check.names = FALSE because of Cote d'Ivoire has an accent circonflex over the 'o' (probably other issues in there too)
+tr_data_files <- c(unem      = file.path(dir_int, 'wb_rgn_uem.csv'),
+                   jobs_tot  = file.path(dir_int, 'wb_rgn_tlf.csv'),
+                   sust      = file.path(dir_int, 'wef_ttci_2015.csv'),
+                   jobs_tour = file.path(dir_int, 'wttc_empd_rgn.csv'))
 
-### Possible filters:
-### * Placement == 158
-### * GLOBAL ID == GCI
-gci <- gci_raw %>%
-  filter(`GLOBAL ID` == 'GCI') %>%
-  select(-(1:2), -(4:7), edition = Edition, attribute = Attribute) %>%
-  gather(country, value, -(edition:attribute)) %>%
-  spread(attribute, value)
+tr_prep_data(tr_data_files, reload = TRUE)
+### Process each data set and saves tidied data in v201X/intermediate directory.
 
-### delete summary statistic rows
-summary_categories <- c('Average GCR', 'Latin America and the Caribbean',	'Emerging and Developing Asia',	'Middle East, North Africa, and Pakistan',	
-                        'Sub-Saharan Africa',	'Commonwealth of Independent States',	'Emerging and Developing Europe',	'Advanced economies',	
-                        'Low income',	'Lower middle income',	'Upper middle income',	'High income: OECD',	'High income: nonOECD',	'ASEAN',	
-                        'Stage 1',	'Transition from 1 to 2',	'Stage 2',	'Transition from 2 to 3',	'Stage 3')
-gci <- gci %>% filter(!(country %in% summary_categories)) %>%
-  select(-Note, -Period, -Source, -`Source date`, -Rank, value = Value)
+tr_layers <- c(unem     = file.path(dir_int, 'tr_pregap_unemployment.csv'),
+               jobs_tot = file.path(dir_int, 'tr_pregap_jobs_total.csv'),
+               sust     = file.path(dir_int, 'tr_pregap_sustainability.csv'),
+               jobs_tour     = file.path(dir_int, 'tr_pregap_jobs_tourism.csv'),
+               jobs_pct_tour = file.path(dir_int, 'tr_pregap_jobs_pct_tourism.csv'))
 
-# Rescale all scores (out of 7) to range from 0 - 1.
-gci <- gci %>%
-  mutate(score = as.numeric(value)/7,
-         country = str_replace(country, 'Korea', 'South Korea'))
-head(gci)
-
-# clean up 
-gci <- gci %>%
-  select(country = Country, 
-         score = Score_1_to_7) %>%
-  mutate(country = str_replace(country, 'Korea', 'South Korea')); head(gci)
-
-# (could also do this as):
-# rng <- c(min(gci$score), 7)
-# d.m2 <- within(d.m2,{
-#   score = (score - rng[1]) / (rng[2] - rng[1])}); head(d.m2); summary(d.m2)
-
-# ??? use name to rgn function?  problems with multiple years: 
-#       Error: sum(duplicated(d[, flds_unique])) == 0 is not TRUE
-#   could do something like spread it out by 'edition' field...
-#   or just do a left_join?
+tr_prep_layers(tr_layers, tr_data_files, reload = TRUE)
+### Separate out just the model variables and save these to v201X/data directory,
+### ready for use in the toolbox.
 
 
+##############################################################################=
+### Assembling the data from layers -----
+##############################################################################=
+year_max    <- 2013
 
-gci_rgn <- name_to_rgn(gci, fld_name='country', flds_unique=c('country'), fld_value='score', collapse_fxn = mean, add_rgn_name = T) 
-
-stopifnot(max(gci_rgn$score) < 1)
-
-## georegional gapfilling with gapfill_georegions.r ----
-georegions <- read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %>%
-  dcast(rgn_id ~ level, value.var='georgn_id')
-
-georegion_labels <- read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv') %>%    
-  mutate(level_label = sprintf('%s_label', level)) %>%
-  dcast(rgn_id ~ level_label, value.var='label') %>%
-  left_join(
-    read.csv('../ohi-global/eez2013/layers/rgn_labels.csv') %>%
-      select(rgn_id, v_label=label),
-    by='rgn_id') %>%
-  arrange(r0_label, r1_label, r2_label, v_label); head(georegion_labels)
+tr_data_raw <- tr_assemble_layers(tr_layers)
 
 
-layersave <- file.path(dir_d, 'data', 'rgn_wef_gci_2014a.csv')
-attrsave  <- file.path(dir_d, 'data', 'rgn_wef_gci_2014a_attr.csv')
+### Attach georegions and per-capita GDP info for various gapfilling
+georegions       <- read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='')
+georegion_labels <- read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv')
 
-# library(devtools); load_all('../ohicore')
-# source('../ohicore/R/gapfill_georegions.R')
-d_g_a <- gapfill_georegions(
-  data = m_d %>%
-    filter(!rgn_id %in% c(213,255)) %>%
-    select(rgn_id, score),
-  fld_id = 'rgn_id',
-  georegions = georegions,
-  georegion_labels = georegion_labels,
-  r0_to_NA = TRUE, 
-  attributes_csv = attrsave) # don't chain gapfill_georegions or will lose head(attr(d_g_a, 'gapfill_georegions')) ability
+tr_data_raw <- tr_data_raw %>%
+  left_join(georegion_labels %>%
+              spread(level, label) %>%
+              select(-r0),
+            by = 'rgn_id') %>%
+  filter(rgn_id != 255) # ditch disputed regions...
 
-# investigate attribute tables
-head(attr(d_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('open %s', attrsave))
+gdppcppp <- read.csv(file.path(dir_int, 'wb_rgn_gdppcppp.csv')) %>%
+  select(rgn_id, year, pcgdp = intl_dollar)
+tr_data_raw <- tr_data_raw %>%
+  left_join(gdppcppp, by = c('rgn_id', 'year'))
 
 
-## last step: give North Korea the minimum value and save ----
-d_g <- d_g_a %>%
-  select(rgn_id, score) %>%
-  arrange(rgn_id); head(d_g)
+### Add gapfill flag variable 
 
-# find minimum  
-s_min <- min(d_g %>%
-              select(score) %>%
-              filter(!is.na(score)))
+tr_data_raw <- tr_data_raw %>% gapfill_flags()
 
-# replace North Korea (rgn_id == 21) in gapfilled_data
-d_g$score[d_g$rgn_id == 21] <- s_min 
-
-# save
-stopifnot(anyDuplicated(d_g[,c('rgn_id')]) == 0)
-write.csv(d_g, layersave, na = '', row.names=FALSE)
+write_csv(tr_data_raw, file.path(dir_int, 'tr_data_raw.csv'))
 
 
-## also change attributes table ---- 
-d_attr <- read.csv(attrsave) %>%
-  filter(id != 21)
+  
+##############################################################################=
+### Gapfilling ----
+##############################################################################=
 
-d_nk <- d_attr %>%
-  filter(id == 21) %>%
-  mutate(
-    z_level = 'XH',
-    
-    r2_v = s_min, 
-    r1_v = s_min, 
-    r0_v = s_min, 
-    z    = s_min, 
-    
-    r2         = NA,
-    r1         = NA,
-    r0         = NA,
-    r2_n_notna = NA,
-    r1_n_notna = NA,
-    r0_n_notna = NA,
-    z_ids      = NA,
-    r2_n       = NA,
-    r1_n       = NA,
-    r0_n       = NA,
-    z_n        = NA,
-    z_n_pct    = NA,
-    z_g_score  = NA); d_nk
+### Gapfill S using r1 and/or r2 regional data and PPP-adjusted per-capita GDP
+tr_data_raw <- read.csv(file.path(dir_int, 'tr_data_raw.csv'), stringsAsFactors = FALSE)
 
-d_attr_fin <- rbind(d_attr, d_nk) %>%
-  arrange(r0_label, r1_label, r2_label, v_label) 
-write.csv(d_attr_fin, attrsave, na = '', row.names=F)
+tr_data <- tr_data_raw %>% gdp_gapfill()
+### gap fill any missing GDP values, so the TTCI Score gapfill can use gdp as a proxy
 
+tr_data <- s_gapfill_r2_r1(tr_data)
 
-# --- fin
+# Apply only the 2013 S_score to all years - so it's consistent, as we only have
+# actual scores from the current year.  NOTE: doesn't change gapfill flag for past years...
+tr_data <- tr_data %>%
+  select(-S_score) %>%
+  left_join(tr_data %>%
+              filter(year == year_max) %>%
+              select(rgn_id, S_score),
+            by = 'rgn_id')
 
+### Gapfill Ep using regional averages
 
+tr_data <- tr_data %>%
+  group_by(r2, year) %>%
+  mutate(E_mdl2 = mean(Ep, na.rm = TRUE),
+         gaps   = ifelse(is.na(Ep) & !is.na(E_mdl2), str_replace(gaps, 'E', 'r'), gaps),
+         gaps   = ifelse(is.na(Ep) & !is.na(E_mdl2), str_replace(gaps, 'U', '*'), gaps),
+         gaps   = ifelse(is.na(Ep) & !is.na(E_mdl2), str_replace(gaps, 'L', '*'), gaps),
+         Ep     = ifelse(is.na(Ep), E_mdl2, Ep)) %>%
+  select(-E_mdl2) %>%
+  ungroup()
 
-
-
-# ## 2013 stuff to clean TTCI data. Not done in 2014 so would have to be updated a bit for nextime data are updated
+# summary(lm(E_mdl2 ~ Ep, data = tr_data)) # R^2 = .3124 before replacement
 # 
-# d.ttci <- read.csv('WEF_TTCI_2012-2013_Table1_reformatted.csv')
-# d.ttci2 <- cbind(d.ttci,rep('ttci',length(d.ttci[,1])))
-# names(d.ttci2) <- c('Region','Rank2013','IndexScore2013','Rank2011','layer')
+# library(ggplot2)
+# ggplot(data1 %>% filter(year == year_max), 
+#        aes(x = Ep, y = E_mdl2, color = r1)) +
+#   geom_point() + 
+#   geom_abline(slope = 1, intercept = 0, color = 'red') +
+#   labs(x = '% tourism employment, reported',
+#        y = '% tourism employment, rgn avg',
+#        title = 'Comparison of Tourism/Total jobs')
+
+### write full gapfilled data set to the intermediate directory
+write_csv(tr_data, file.path(dir_int, 'tr_data_processed.csv'))
+
+### write layers, post-gapfill, to data directory-----
+write_csv(tr_data %>% select(rgn_id, year, U),       file.path(dir_data, 'tr_unemployment.csv'))
+write_csv(tr_data %>% select(rgn_id, year, Ed),      file.path(dir_data, 'tr_jobs_tourism.csv'))
+write_csv(tr_data %>% select(rgn_id, year, Ep),      file.path(dir_data, 'tr_jobs_pct_tourism.csv'))
+write_csv(tr_data %>% select(rgn_id, year, L),       file.path(dir_data, 'tr_jobs_total.csv'))
+write_csv(tr_data %>% filter(year == year_max) %>% select(rgn_id, S_score), file.path(dir_data, 'tr_sustainability.csv'))
+  ### NOTE: only writing most recent year of sustainability index - use same value across all years.
+
+write_csv(tr_data %>% select(rgn_id, year, gaps),    file.path(dir_data, 'tr_gapfill.csv'))
+
+##############################################################################=
+### Run model (transfer to functions.R) -----
+##############################################################################=
+### Load data layers, reassemble, and process them through the model calculations.
+
+# rgn_names        <- read_csv('~/github/ohi-global/eez2013/layers/rgn_global.csv') %>%
+#   rename(rgn_name = label)
 # 
-# # concatenate f files
-# d.all <- rbind(d.gci2[c(1,3,5)], d.ttci2[c(1,3,5)])
+# tr_data1 <- read_csv(file.path(dir_data, 'tr_jobs_pct_tourism.csv')) %>%
+#   full_join(read_csv(file.path(dir_data, 'tr_jobs_tourism.csv')), by = c('rgn_id', 'year')) %>%
+#   full_join(read_csv(file.path(dir_data, 'tr_unemployment.csv')), by = c('rgn_id', 'year')) %>%
+#   full_join(read_csv(file.path(dir_data, 'tr_jobs_total.csv')), by = c('rgn_id', 'year')) %>%
+#   full_join(read_csv(file.path(dir_data, 'tr_sustainability.csv')), by = c('rgn_id')) %>%
+#     ### NOTE: just using most recent sustainability year value across all years, since TTCI data
+#     ###   is only available for most recent year
+#   full_join(read_csv(file.path(dir_data, 'tr_gapfill.csv')), by = c('rgn_id', 'year')) %>%
+#   full_join(rgn_names, by = 'rgn_id') %>%
+#   filter(year <= year_max)
+# 
+# tr_model <- tr_calc_model(tr_data1)  %>%
+#   filter(year <= year_max & year > year_max - 5) 
+# # five data years, four intervals
 # 
 # 
-# ## run add_rgn_id and save
-# uifilesave <- paste(dir1, 'data/', 'GL-WEF-Economics_v2013-cleaned.csv', sep='')
-# add_rgn_id(d.all, uifilesave)
 # 
+# ### Write the un-normalized model calculations.
+# write_csv(tr_model, file.path(dir_int, 'tr_model.csv'))
 # 
-# ## georegional gapfilling with add_gapfill.r 
+# # regions with Travel Warnings at http://travel.state.gov/content/passports/english/alertswarnings.html
+# rgn_travel_warnings <- read.csv(file.path(dir_data, 'tr_travelwarnings_2015.csv'), stringsAsFactors = F) %>%
+#   select(rgn_name) %>%
+#   left_join(rgn_names, by = 'rgn_name') %>%
+#   filter(!is.na(rgn_id))
+# # TODO: check if regions with travel warnings are gapfilled (manually checked for 2013)
+# tr_model <- tr_model %>%
+#   filter(!rgn_id %in% rgn_travel_warnings$rgn_id) %>%
+#   bind_rows(tr_model %>%
+#               filter(rgn_id %in% rgn_travel_warnings$rgn_id) %>%
+#               mutate(
+#                 Xtr = 0.1 * Xtr))
 # 
-# cleaned_data1 <- read.csv(uifilesave)
+# ### Calculate status based on quantile reference
+# pct_ref <- 90 # the threshold for quantile where status score = 1.0
 # 
-# layer_uni <- unique(cleaned_data1$layer)
-# layernames <- sprintf('rgn_wef_%s_tmp.csv', tolower(layer_uni))
-# s_island_val <- NA # assign what southern islands will get. 
+# tr_scores <- tr_model %>%
+#   select(rgn_id, S_score, year, rgn_name, Xtr, gaps) %>%
+#     left_join(tr_model %>%
+#               group_by(year) %>%
+#               summarize(Xtr_q = quantile(Xtr, probs = pct_ref/100, na.rm = TRUE)),
+#             by = 'year') %>%
+#   mutate(
+#     Xtr_rq  = ifelse(Xtr / Xtr_q > 1, 1, Xtr / Xtr_q)) # rescale to qth percentile, cap at 1
 # 
-# for(i in 1:length(layer_uni)) {
-#   cleaned_layer <- cleaned_data1[cleaned_data1$layer == layer_uni[i],]
-#   cleaned_layer$layer <- NULL
-#   
-#   layersave <- paste(dir1, 'raw/', layernames[i], sep='')    
-#   add_gapfill_singleyear(cleaned_layer, layersave, s_island_val)
-# }
+# write_csv(tr_scores, file.path(dir_int, 'tr_scores.csv'))
 # 
