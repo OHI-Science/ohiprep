@@ -85,7 +85,7 @@ ico_rgn_sum <- process_ico_rgn(ico_rgn_all)
 ### rgn_id | mean_cat | mean_trend | status
 
 ico_status_sum <- ico_rgn_sum %>%
-  select(rgn_id, score = status) %>%
+  select(rgn_id, score = mean_cat) %>%
   arrange(rgn_id)
 ico_trend_sum <- ico_rgn_sum %>%
   select(rgn_id, score = mean_trend) %>%

@@ -349,6 +349,131 @@ data %>%
 
 
 #########################################
+#### SST ----
+#########################################
+# https://github.com/OHI-Science/issues/issues/499
+
+# load and check relevant rasters
+rast_2012 <- raster(file.path(dir_neptune_data, 
+                              'git-annex/globalprep/Pressures_SST/v2015/output/sst_2005_2009-1985_1989_rescaled_v2.tif'))
+rast_2012
+rast_2013 <- raster(file.path(dir_neptune_data, 
+                              'git-annex/globalprep/Pressures_SST/v2015/output/sst_2006_2010-1985_1989_rescaled_v2.tif'))
+rast_2013
+rast_2014 <- raster(file.path(dir_neptune_data, 
+                              'git-annex/globalprep/Pressures_SST/v2015/output/sst_2007_2011-1985_1989_rescaled_v2.tif'))
+rast_2014
+rast_2015 <- raster(file.path(dir_neptune_data, 
+                              'git-annex/globalprep/Pressures_SST/v2015/output/sst_2008_2012-1985_1989_rescaled_v2.tif'))
+rast_2015
+
+
+# apply ice mask
+ice_mask <- raster("/var/data/ohi/git-annex/Global/NCEAS-Pressures-Summaries_frazier2013/ice_mask_resampled")
+
+for(i in 2012:2015){ #i=2012
+rast <- get(paste0("rast_", i))
+overlay(rast, ice_mask, fun=function(x,y) x*y, progress='text',
+                         filename=file.path(dir_neptune_data, 
+                        sprintf('git-annex/globalprep/Pressures_SST/v2015/output/sst_stack_%s_rescaled_icemask', i)),
+        overwrite=TRUE)
+}
+
+
+
+# extract data
+sst_2012_ice <- raster(file.path(dir_neptune_data, 'git-annex/globalprep/Pressures_SST/v2015/output/sst_stack_2012_rescaled_icemask'))
+names(sst_2012_ice) <- "sst_2012"
+sst_2013_ice <- raster(file.path(dir_neptune_data, 'git-annex/globalprep/Pressures_SST/v2015/output/sst_stack_2013_rescaled_icemask'))
+names(sst_2013_ice) <- "sst_2013"
+plot(sst_2013_ice)
+sst_2014_ice <- raster(file.path(dir_neptune_data, 'git-annex/globalprep/Pressures_SST/v2015/output/sst_stack_2014_rescaled_icemask'))
+names(sst_2014_ice) <- "sst_2014"
+sst_2015_ice <- raster(file.path(dir_neptune_data, 'git-annex/globalprep/Pressures_SST/v2015/output/sst_stack_2015_rescaled_icemask'))
+names(sst_2015_ice) <- "sst_2015"
+
+
+sst_stack <- stack(sst_2012_ice, sst_2013_ice, sst_2014_ice, sst_2015_ice)
+
+# extract data
+regions_stats <- zonal(sst_stack,  zones, fun="mean", na.rm=TRUE, progress="text")
+regions_stats2 <- data.frame(regions_stats)
+setdiff(regions_stats2$zone, rgn_data$sp_id) #should be none
+setdiff(rgn_data$sp_id, regions_stats2$zone) #should be none
+
+data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone")
+#write.csv(data, file.path(save_loc, "tmp/sst.csv"), row.names=FALSE)
+data <- read.csv(file.path(save_loc, "tmp/sst.csv"))
+
+## save data for toolbox
+for(years in c(2012:2015)){ #years="2012"
+  scenario <- sprintf("sst_%s", years)
+  
+  eez <- filter(data, sp_type == "eez")
+  eez <- eez[, c('rgn_id', scenario)]
+  names(eez)[names(eez) == scenario] <- "pressure_score"
+  write.csv(eez, sprintf('globalprep/PressuresRegionExtract/data/sst_eez_%s.csv', years), row.names=FALSE)
+  
+  ant <- filter(data, sp_type == "eez-ccamlr")
+  ant <- ant[, c('sp_id', scenario)]
+  names(ant)[names(ant) == scenario] <- "pressure_score"
+  names(ant)[names(ant) == 'sp_id'] <- "rgn_id"
+  write.csv(ant, sprintf('globalprep/PressuresRegionExtract/data/sst_eez-ccamlr_%s', years), row.names=FALSE)
+  
+  fao <- filter(data, sp_type == "fao")
+  fao <- fao[, c('rgn_id', scenario)]
+  names(fao)[names(fao) == scenario] <- "pressure_score"
+  write.csv(fao, sprintf('globalprep/PressuresRegionExtract/data/sst_fao_%s', years), row.names=FALSE)
+}
+
+
+## plot the data to make sure range of values for regions is reasonable
+
+# 1. compare with last years data
+
+old_sst <- read.csv(file.path(dir_neptune_data, "model/GL-NCEAS-Pressures_v2013a/data/cc_sst_2013_NEW.csv"))
+compare <- old_sst %>%
+  dplyr::select(rgn_id, old_pressure_score=pressure_score) %>%
+  left_join(data) %>%
+  filter(!(is.na(rgn_name))) %>%
+  filter(sp_type=="eez") %>%
+  dplyr::select(rgn_id, rgn_name, old_pressure_score, sst_2012, sst_2013, sst_2014, sst_2015)
+
+#filtered out these, but wanted to make sure they didn't reflect underlying issues:  
+# compare[is.na(compare$sp_id), ] # ones that don't match new data are antarctica high seas regions (268, 271, 278), an NA high seas region (265), and conflict areas (255)   
+# compare[is.na(compare$old_pressure_score), ] # often Bosnia/Herzegovina falls out of raster analyses due to very small eez region
+
+library(ggplot2)
+
+ggplot(compare, aes(x=old_pressure_score, y=sst_2013)) +
+  geom_point(shape=19) + 
+  theme_bw() + 
+  geom_abline(intercept=0, slope=1) + 
+  labs(title="SST comparison")
+
+ggplot(compare, aes(x=sst_2013)) +
+  geom_histogram(fill="gray", color="black") + 
+  theme_bw() + 
+  labs(title="SST 2013")
+quantile(compare$sst_2013)
+
+library(tidyr)
+compare_plot <- gather(compare, "year", "pressure_score", 3:7) %>%
+  filter(year != "old_pressure_score") %>%
+  mutate(year = as.numeric(gsub("sst_", "", year))) %>%
+  dplyr::select(rgn_name, year, pressure_score)
+
+library(googleVis)
+
+Motion=gvisMotionChart(compare_plot, 
+                       idvar="rgn_name", 
+                       timevar="year")
+plot(Motion)
+
+print(Motion, file=file.path(save_loc, 'sst.html'))
+
+
+#########################################
 #### Exploring fertilizer and pesticide plume data ----
 #########################################
 dir(file.path(dir_halpern2008, "mnt/storage/marine_threats/impact_layers_2013_redo/impact_layers/work/land_based/201112/step8"))
