@@ -5,7 +5,10 @@ library(dplyr)
 library(tidyr)
 library(zoo)
 
+# -------------------------------------------------------------------
 ## 1. take the 5 year running average of b/bmsy values to smooth data
+# -------------------------------------------------------------------
+
 constrained <- read.csv('globalprep/SAUP_FIS/tmp/b_bmsy_scores_constrained.csv')
 uniform <- read.csv('globalprep/SAUP_FIS/tmp/b_bmsy_scores_uniform.csv')
 
@@ -21,9 +24,11 @@ new_b_bmsy <- function(b_bmsy=constrained){
 new_b_bmsy(constrained)
 new_b_bmsy(uniform)
 
+#--------------------------------------------------------------------
 ## 2. CMSY b/bmsy data selection based on stock resilience scores
 # B/bmsy data is generated using different models 
 # depending on the resilience score of the stock
+# -------------------------------------------------------------------
 
 # resilience scores to select the appropriate b/bmsy 
 res <- read.csv("globalprep/SAUP_FIS/tmp/stock_resil_06cutoff_2015.csv")
@@ -36,7 +41,6 @@ b_bmsy_constrained <- read.csv("globalprep/SAUP_FIS/tmp/b_bmsy_scores_constraine
 b_bmsy_constrained <- b_bmsy_constrained %>%
   select(stock_id, year, b_bmsy_constrained=mean_5year) 
 
-
 setdiff(res$stock_id, b_bmsy_constrained$stock_id)
 setdiff(b_bmsy_constrained$stock_id, res$stock_id)
 setdiff(res$stock_id, b_bmsy_uniform$stock_id)
@@ -45,6 +49,8 @@ setdiff(b_bmsy_uniform$stock_id, res$stock_id)
 bmsy <- b_bmsy_uniform %>%
   left_join(b_bmsy_constrained, by=c("stock_id", "year")) %>%
   left_join(res, by="stock_id")
+plot(bmsy$b_bmsy_uniform, bmsy$b_bmsy_constrained)
+abline(0,1,col="red")
 
 bmsy <- bmsy %>%
   mutate(b_bmsy = ifelse(unif_prior==1, b_bmsy_uniform, b_bmsy_constrained)) 
@@ -54,12 +60,11 @@ bmsy <- separate(bmsy, stock_id, c("TaxonKey", "fao_id")) %>%
          fao_id = as.integer(fao_id)) %>%
   dplyr::select(TaxonKey, fao_id, year, b_bmsy); head(bmsy)
 
-#### Expand so that each stock_region_id has a value (previously only needed stock_id)
-## This is done because the RAM data are reported at this 
-## resolution.
-
+#--------------------------------------------------------------------
+#### Put data at same spatial scale as RAM data (previously only needed stock_id)
+#-----------------------------------------------------------------------
 catch <- read.csv('globalprep/SAUP_FIS/data/mean_catch.csv')
-catch <- separate(catch_raw, fao_ohi_id, c("fao_id", "rgn_id")) %>%
+catch <- separate(catch, fao_ohi_id, c("fao_id", "rgn_id")) %>%
   mutate(fao_id = as.numeric(fao_id)) %>%
   mutate(rgn_id = as.numeric(rgn_id))
 catch <- separate(catch, taxon_name_key, c("TaxonName", "TaxonKey"), sep="_") %>%
@@ -79,6 +84,7 @@ summary(bmsy_fao_rgn)
 # NA catch data: non-species catch, species with < 10 years non-zero data
 summary(bmsy_fao_rgn[is.na(bmsy_fao_rgn$b_bmsy), ])
 bmsy_fao_rgn[is.na(bmsy_fao_rgn$b_bmsy) & bmsy_fao_rgn$TaxonKey>=600000, ]
+
 source('../ohiprep/src/R/common.R') # set dir_neptune_data
 data <- read.csv(file.path(dir_neptune_data, 'git-annex/globalprep/SAUP_data_2015/tmp/Catch_Value_11062015_summary.csv')) 
 data[data$TaxonKey == 690177 & data$FAOAreaID == 71, ] #rgn_id=7 is saup_id=90 
@@ -86,7 +92,9 @@ data[data$TaxonKey == 690177 & data$FAOAreaID == 71, ] #rgn_id=7 is saup_id=90
 
 filter(bmsy_fao_rgn, fao_id==37 & TaxonKey==600030 & year==2006) #should all have the same value (and they do)
 
-### Read in RAM data and replace where possible
+# -------------------------------------------------------------------
+### Read in RAM data and replace cmsy data where possible
+# -----------------------------------------------------------------
 ram <- read.csv('globalprep/SAUP_FIS/tmp/RAM_fao_ohi.csv') %>%
   select(TaxonKey=Taxonid, fao_id=FAOAreaID, rgn_id=ohi_id_2013, year=scenarioYear, ram_b_bmsy=bbmsy) %>%
   filter(!is.na(ram_b_bmsy)); head(ram); summary(ram)
@@ -100,6 +108,7 @@ bmsy_final$bbmsy <- ifelse(is.na(bmsy_final$ram_b_bmsy), bmsy_final$b_bmsy, bmsy
 bmsy_final <- bmsy_final %>%
   mutate(fao_ohi_id = paste(fao_id, rgn_id, sep='_')) %>%
   select(fao_ohi_id, TaxonKey, year, b_bmsy=bbmsy); head(bmsy_final); summary(bmsy_final)
+filter(bmsy_final, fao_ohi_id=='71_13', TaxonKey==600107)
 
 write.csv(bmsy_final, 'globalprep/SAUP_FIS/data/fnk_fis_b_bmsy_lyr.csv', row.names=F, na='')
 
