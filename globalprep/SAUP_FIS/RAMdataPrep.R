@@ -3,8 +3,6 @@
 #######################################################
 library(dplyr)
 
-
-
 # STEP 1:  
 ##### Prepare data to link RAM stocks to SAUP regions and Taxon IDs
 # The initial MatchedPairs.csv file was from Lydia Teh (SAUP).  
@@ -84,7 +82,7 @@ ram <- ram %>%
 #### STEP3:
 # Adding in some data because the RAM data didn't have the most up-to-date data for this important species 
 # (based on ICCAT documents - which is the datasource used by RAM for these stocks) 
-ram[ram$stocklong == "Skipjack tuna Western Atlantic",]
+ram[ram$stocklong == "Skipjack tuna Western Atlantic",] #these were cut because data was too old, so no values should show up
 ram[ram$stocklong == "Skipjack tuna Eastern Atlantic",]
 skipjacks <- read.csv('globalprep/SAUP_FIS/tmp/Skipjack_Bmsy.csv') %>%
   mutate(scenarioYear = scenarioYear - 2)  # making the most recent year of data correspond to the 2010 catch
@@ -108,6 +106,7 @@ RAM_b_bmsy <- RAMstocks %>%
   summarize(bbmsy = mean(bbmsy, na.rm=TRUE)) %>%    #averaging the stocks when they co-occur in the same EEZID/FAO N=6668
   ungroup()
 RAM_b_bmsy[RAM_b_bmsy$Taxonid == 600142 & RAM_b_bmsy$FAOAreaID == 57, ]
+data.frame(filter(RAM_b_bmsy, Taxonid == 600107 & FAOAreaID == 71))
 
 
 ### STEP 5
@@ -178,15 +177,17 @@ data.frame(filter(RAM_b_bmsy_ohi_rgn_catch, ohi_id_2013==204 & FAOAreaID==57 & T
 data.frame(RAM_b_bmsy_ohi_rgn_catch[RAM_b_bmsy_ohi_rgn_catch$Taxonid == 600142 & RAM_b_bmsy_ohi_rgn_catch$FAOAreaID == 57, ])
 
 
-RAM_b_bmsy_ohi_rgn_catch_2 <- RAM_b_bmsy_ohi_rgn_catch %>%
+RAM_b_bmsy_ohi_rgn_catch <- RAM_b_bmsy_ohi_rgn_catch %>%
   group_by(Taxonid, FAOAreaID, ohi_id_2013, scenarioYear) %>%
   summarize(bbmsy = weighted.mean(bbmsy, Catch, na.rm=TRUE)); head(RAM_b_bmsy_ohi_rgn_catch)
 
-filter(RAM_b_bmsy_ohi_rgn_catch_2, Taxonid=600142 & FAOAreaID==57 & ohi_id_2013==204)
+filter(RAM_b_bmsy_ohi_rgn_catch, Taxonid==600142 & FAOAreaID==57 & ohi_id_2013==204)
+filter(RAM_b_bmsy_ohi_rgn_catch, Taxonid==600107 & FAOAreaID==71 & ohi_id_2013==13)
 
 ## check: 2010 value should be just under 1.490 (yes):
-RAM_b_bmsy_ohi_rgn_catch_2[RAM_b_bmsy_ohi_rgn_catch_2$Taxonid == 600504 & 
-                           RAM_b_bmsy_ohi_rgn_catch_2$ohi_id_2013==163 & 
-                           RAM_b_bmsy_ohi_rgn_catch_2$FAOAreaID == 67, ]
+RAM_b_bmsy_ohi_rgn_catch[RAM_b_bmsy_ohi_rgn_catch$Taxonid == 600504 & 
+                           RAM_b_bmsy_ohi_rgn_catch$ohi_id_2013==163 & 
+                           RAM_b_bmsy_ohi_rgn_catch$FAOAreaID == 67, ]
+filter()
 
 write.csv(RAM_b_bmsy_ohi_rgn_catch, 'globalprep/SAUP_FIS/tmp/RAM_fao_ohi.csv', row.names=FALSE)
