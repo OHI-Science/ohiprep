@@ -1,0 +1,402 @@
+
+R version 2.15.3 (2013-03-01) -- "Security Blanket"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> require(ohi)
+Loading required package: ohi
+Loading required package: reshape2
+Loading OHI options (version 0.9.10)
+> 
+> ohi.load('global_resilience_layers', dir='manual_output')
+> ohi.load('global_resilience_matrix', dir='manual_output')
+> 
+> global_resilience_layers
+                   LAYER
+1          alien-species
+2                  cites
+3             fishing-v1
+4             fishing-v2
+5             fishing-v3
+6         fishing-v1-eez
+7         fishing-v2-eez
+8         fishing-v3-eez
+9                habitat
+10         habitat-combo
+11     habitat-combo-eez
+12                li-gci
+13    li-sector-evenness
+14           mariculture
+15               msi-gov
+16     species-diversity
+17 species-diversity-3nm
+18               tourism
+19                 water
+20               wgi-all
+                                                                                                     NAME
+1                                               Convention on Biological Diversity (CBD) :: Alien species
+2  Convention on International Trade in Endangered Species of Wild Fauna and Flora (CITES) :: Signatories
+3                                                               Fishing Resilience :: Version 1 (Coastal)
+4                                                               Fishing Resilience :: Version 2 (Coastal)
+5                                                               Fishing Resilience :: Version 3 (Coastal)
+6                                                                   Fishing Resilience :: Version 1 (EEZ)
+7                                                                   Fishing Resilience :: Version 2 (EEZ)
+8                                                                   Fishing Resilience :: Version 3 (EEZ)
+9                                                               Habitat Resilience :: Alternative version
+10                                                                          Habitat Resilience :: Coastal
+11                                                                              Habitat Resilience :: EEZ
+12                                                                     Global Competitiveness Index (GCI)
+13                                                                                        Sector Evenness
+14                                                Convention on Biological Diversity (CBD) :: Mariculture
+15                                                                    Mariculture :: Sustainability Index
+16                                                                              Biodiversity Index :: EEZ
+17                                                                          Biodiversity Index :: Coastal
+18                                                    Convention on Biological Diversity (CBD) :: Tourism
+19                                                      Convention on Biological Diversity (CBD) :: Water
+20                                                                  Worldwide Governance Indicators (WGI)
+         TYPE    CATEGORY VALUE
+1  ecological regulations     1
+2  ecological regulations     1
+3  ecological regulations     2
+4  ecological regulations     2
+5  ecological regulations     2
+6  ecological regulations     2
+7  ecological regulations     2
+8  ecological regulations     2
+9  ecological regulations     1
+10 ecological regulations     2
+11 ecological regulations     2
+12     social        none     1
+13     social        none     1
+14 ecological regulations     1
+15 ecological regulations     2
+16 ecological   integrity     1
+17 ecological   integrity     1
+18 ecological regulations     1
+19 ecological regulations     1
+20     social        none     1
+> global_resilience_matrix
+                      GOAL                              COMPONENT
+1        artisanal-fishing                                    all
+2        artisanal-fishing                                    all
+3        artisanal-fishing                                    all
+4        artisanal-fishing                                    all
+5             biodiversity                                species
+6             biodiversity                                species
+7             biodiversity                                species
+8             biodiversity                                species
+9             biodiversity                                species
+10            biodiversity                                species
+11            biodiversity                                species
+12            biodiversity                                species
+13            biodiversity                habitats-bd-corals-only
+14            biodiversity                habitats-bd-corals-only
+15            biodiversity                habitats-bd-corals-only
+16            biodiversity                habitats-bd-corals-only
+17            biodiversity                habitats-bd-corals-only
+18            biodiversity                habitats-bd-corals-only
+19            biodiversity                habitats-bd-corals-only
+20            biodiversity                habitats-bd-corals-only
+21            biodiversity            habitats-bd-seagrasses-only
+22            biodiversity            habitats-bd-seagrasses-only
+23            biodiversity            habitats-bd-seagrasses-only
+24            biodiversity            habitats-bd-seagrasses-only
+25            biodiversity            habitats-bd-seagrasses-only
+26            biodiversity            habitats-bd-seagrasses-only
+27            biodiversity            habitats-bd-seagrasses-only
+28            biodiversity    habitats-bd-soft-bottom-with-corals
+29            biodiversity    habitats-bd-soft-bottom-with-corals
+30            biodiversity    habitats-bd-soft-bottom-with-corals
+31            biodiversity    habitats-bd-soft-bottom-with-corals
+32            biodiversity    habitats-bd-soft-bottom-with-corals
+33            biodiversity    habitats-bd-soft-bottom-with-corals
+34            biodiversity    habitats-bd-soft-bottom-with-corals
+35            biodiversity    habitats-bd-soft-bottom-with-corals
+36            biodiversity habitats-bd-soft-bottom-without-corals
+37            biodiversity habitats-bd-soft-bottom-without-corals
+38            biodiversity habitats-bd-soft-bottom-without-corals
+39            biodiversity habitats-bd-soft-bottom-without-corals
+40            biodiversity habitats-bd-soft-bottom-without-corals
+41            biodiversity habitats-bd-soft-bottom-without-corals
+42            biodiversity habitats-bd-soft-bottom-without-corals
+43            biodiversity habitats-bd-soft-bottom-without-corals
+44          carbon-storage              habitats-ca-mangrove-only
+45          carbon-storage              habitats-ca-mangrove-only
+46          carbon-storage                    habitats-ca-default
+47          carbon-storage                    habitats-ca-default
+48          carbon-storage                    habitats-ca-default
+49            clean-waters                                    all
+50            clean-waters                                    all
+51          food-provision                                fishing
+52          food-provision                                fishing
+53          food-provision                                fishing
+54          food-provision                                fishing
+55          food-provision                            mariculture
+56          food-provision                            mariculture
+57          food-provision                            mariculture
+58          food-provision                            mariculture
+59             livelihoods                                economy
+60             livelihoods                                economy
+61             livelihoods                             livelihood
+62             livelihoods                             livelihood
+63             livelihoods                             livelihood
+64        natural-products                                 corals
+65        natural-products                                 corals
+66        natural-products                                 corals
+67        natural-products                                 corals
+68        natural-products                                 corals
+69        natural-products                               fish_oil
+70        natural-products                               fish_oil
+71        natural-products                               fish_oil
+72        natural-products                               fish_oil
+73        natural-products                               fish_oil
+74        natural-products                               fish_oil
+75        natural-products                            ornamentals
+76        natural-products                            ornamentals
+77        natural-products                            ornamentals
+78        natural-products                            ornamentals
+79        natural-products                            ornamentals
+80        natural-products                            ornamentals
+81        natural-products                               seaweeds
+82        natural-products                               seaweeds
+83        natural-products                               seaweeds
+84        natural-products                               seaweeds
+85        natural-products                                 shells
+86        natural-products                                 shells
+87        natural-products                                 shells
+88        natural-products                                 shells
+89        natural-products                                sponges
+90        natural-products                                sponges
+91        natural-products                                sponges
+92        natural-products                                sponges
+93         safe-coastlines              habitats-sh-mangrove-only
+94         safe-coastlines              habitats-sh-mangrove-only
+95         safe-coastlines                habitats-sh-seaice-only
+96         safe-coastlines                    habitats-sh-default
+97         safe-coastlines                    habitats-sh-default
+98         safe-coastlines                    habitats-sh-default
+99          sense-of-place                         iconic-species
+100         sense-of-place                         iconic-species
+101         sense-of-place                         iconic-species
+102         sense-of-place                         iconic-species
+103         sense-of-place                         iconic-species
+104         sense-of-place                         iconic-species
+105         sense-of-place                 lasting-special-places
+106         sense-of-place                 lasting-special-places
+107         sense-of-place                 lasting-special-places
+108 tourism-and-recreation                                    all
+109 tourism-and-recreation                                    all
+                    LAYER
+1              fishing-v1
+2           habitat-combo
+3   species-diversity-3nm
+4                 wgi-all
+5           alien-species
+6                   cites
+7          fishing-v2-eez
+8       habitat-combo-eez
+9             mariculture
+10                tourism
+11                  water
+12                wgi-all
+13                  water
+14         fishing-v3-eez
+15      habitat-combo-eez
+16                tourism
+17            mariculture
+18          alien-species
+19      species-diversity
+20                wgi-all
+21                  water
+22      habitat-combo-eez
+23                tourism
+24            mariculture
+25          alien-species
+26      species-diversity
+27                wgi-all
+28                  water
+29         fishing-v2-eez
+30      habitat-combo-eez
+31                tourism
+32            mariculture
+33          alien-species
+34      species-diversity
+35                wgi-all
+36                  water
+37         fishing-v1-eez
+38      habitat-combo-eez
+39                tourism
+40            mariculture
+41          alien-species
+42      species-diversity
+43                wgi-all
+44          habitat-combo
+45                wgi-all
+46                  water
+47          habitat-combo
+48                wgi-all
+49                  water
+50                wgi-all
+51         fishing-v2-eez
+52      habitat-combo-eez
+53      species-diversity
+54                wgi-all
+55            mariculture
+56                msi-gov
+57                  water
+58                wgi-all
+59                 li-gci
+60                wgi-all
+61                 li-gci
+62     li-sector-evenness
+63                wgi-all
+64                  cites
+65          habitat-combo
+66  species-diversity-3nm
+67                  water
+68                wgi-all
+69                  cites
+70             fishing-v1
+71          habitat-combo
+72  species-diversity-3nm
+73                  water
+74                wgi-all
+75                  cites
+76             fishing-v3
+77          habitat-combo
+78  species-diversity-3nm
+79                  water
+80                wgi-all
+81                  cites
+82  species-diversity-3nm
+83                  water
+84                wgi-all
+85                  cites
+86          habitat-combo
+87  species-diversity-3nm
+88                wgi-all
+89                  cites
+90          habitat-combo
+91  species-diversity-3nm
+92                wgi-all
+93          habitat-combo
+94                wgi-all
+95                wgi-all
+96                  water
+97          habitat-combo
+98                wgi-all
+99      habitat-combo-eez
+100                 cites
+101        fishing-v2-eez
+102     species-diversity
+103                 water
+104               wgi-all
+105               habitat
+106                 water
+107               wgi-all
+108                 water
+109               wgi-all
+> 
+> 
+> d <- NULL
+> for (f in list.files('data', '^r_.*.csv')) {
++   k <- gsub('^r_', '', gsub('.csv$', '', f))
++   print(k)
++   z <- ohi.read.csv(file.path('data', f))
++   z$layer <- k
++   d <- rbind(d, z)
++ }
+[1] "af_oaf_mora"
+[1] "alien_species"
+[1] "bd_wgi_government_effectiveness"
+[1] "bd_wgi_political_stability"
+[1] "cbd_alien_species"
+[1] "cbd_habitat"
+[1] "cbd_mariculture"
+[1] "cbd_signatories"
+[1] "cbd_tourism"
+[1] "cbd_water"
+[1] "cites"
+[1] "fishing"
+[1] "fishing_v1"
+[1] "fishing_v1_eez"
+[1] "fishing_v2"
+[1] "fishing_v2_eez"
+[1] "fishing_v3"
+[1] "fishing_v3_eez"
+[1] "fishing_v4"
+[1] "fishing_v4_eez"
+[1] "habitat_combo"
+[1] "habitat_combo_eez"
+[1] "habitat"
+[1] "li_gci"
+[1] "li_sector_evenness"
+[1] "li_wgi_regulatory_quality"
+[1] "mariculture"
+[1] "mora"
+[1] "mora_et_al_2009"
+[1] "mora_s4"
+[1] "mpa_percent"
+[1] "mpa_percent_eez"
+[1] "msi_gov_code_of_conduct"
+[1] "msi_gov"
+[1] "msi_gov_traceability"
+[1] "species_diversity_3nm"
+[1] "species_diversity"
+[1] "tourism"
+[1] "water"
+[1] "wgi_all"
+> d <- d[,c('layer', 'id', 'value')]
+> names(d)[2] <- 'region_id'
+> summary(d)
+    layer             region_id                  value               
+ Length:6538        Min.   :  1.0000000000   Min.   :0.000000000000  
+ Class :character   1st Qu.: 44.0000000000   1st Qu.:0.386363636364  
+ Mode  :character   Median : 88.0000000000   Median :0.500000000000  
+                    Mean   : 87.1501988376   Mean   :0.528430048441  
+                    3rd Qu.:130.0000000000   3rd Qu.:0.717489291386  
+                    Max.   :186.0000000000   Max.   :1.000000000000  
+> 
+> # extract resilience data
+> resilience_data <- d[with(d, order(layer, region_id)),]
+> resilience_data$layer <- tolower(make.names(gsub('_', '.', resilience_data$layer)))
+> ohi.save('resilience_data')
+> 
+> # extract weight matrix
+> w <- as.vector(global_resilience_layers$VALUE)
+> names(w) <- make.names(global_resilience_layers$LAYER)
+> 
+> # filter out data for which we have no weighting value
+> w <- w[names(w) %in% resilience_data$layer] 
+> resilience_data <- subset(resilience_data, layer %in% names(w))
+> 
+> # filter out data for which we have no weighting value
+> w <- w[sort(names(w))]
+> resilience_data <- resilience_data[with(resilience_data, order(layer, region_id)),]
+> 
+> 
+> # perform calculations
+> r <- acast(region_id ~ layer, data=resilience_data)
+> names(dimnames(r)) <- c('region_id', 'layer')
+> stopifnot(all(dimnames(r)$layer == names(w)))
+> 
+> w <- array(w, dim=dim(r), dimnames=dimnames(r))
+> 
+> ohi.model.resilience(r, w)
+Error: all(is.matrix(r), is.vector(t)) is not TRUE
+Execution halted
