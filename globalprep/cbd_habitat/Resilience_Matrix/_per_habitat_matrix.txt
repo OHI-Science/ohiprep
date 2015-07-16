@@ -1,0 +1,46 @@
+biodiversity,habitats-bd-corals-only,water
+biodiversity,habitats-bd-corals-only,fishing-v3-eez
+biodiversity,habitats-bd-corals-only,habitat-combo-eez
+biodiversity,habitats-bd-corals-only,tourism
+biodiversity,habitats-bd-corals-only,mariculture
+biodiversity,habitats-bd-corals-only,alien-species
+biodiversity,habitats-bd-corals-only,species-diversity
+biodiversity,habitats-bd-corals-only,wgi-all
+biodiversity,habitats-bd-seagrasses-only,water
+biodiversity,habitats-bd-seagrasses-only,habitat-combo-eez
+biodiversity,habitats-bd-seagrasses-only,tourism
+biodiversity,habitats-bd-seagrasses-only,mariculture
+biodiversity,habitats-bd-seagrasses-only,alien-species
+biodiversity,habitats-bd-seagrasses-only,species-diversity
+biodiversity,habitats-bd-seagrasses-only,wgi-all
+biodiversity,habitats-bd-soft-bottom-with-corals,water
+biodiversity,habitats-bd-soft-bottom-with-corals,fishing-v2-eez
+biodiversity,habitats-bd-soft-bottom-with-corals,habitat-combo-eez
+biodiversity,habitats-bd-soft-bottom-with-corals,tourism
+biodiversity,habitats-bd-soft-bottom-with-corals,mariculture
+biodiversity,habitats-bd-soft-bottom-with-corals,alien-species
+biodiversity,habitats-bd-soft-bottom-with-corals,species-diversity
+biodiversity,habitats-bd-soft-bottom-with-corals,wgi-all
+biodiversity,habitats-bd-soft-bottom-without-corals,water
+biodiversity,habitats-bd-soft-bottom-without-corals,fishing-v1-eez
+biodiversity,habitats-bd-soft-bottom-without-corals,habitat-combo-eez
+biodiversity,habitats-bd-soft-bottom-without-corals,tourism
+biodiversity,habitats-bd-soft-bottom-without-corals,mariculture
+biodiversity,habitats-bd-soft-bottom-without-corals,alien-species
+biodiversity,habitats-bd-soft-bottom-without-corals,species-diversity
+biodiversity,habitats-bd-soft-bottom-without-corals,wgi-all
+safe-coastlines,habitats-sh-mangrove-only,habitat-combo
+safe-coastlines,habitats-sh-mangrove-only,wgi-all
+safe-coastlines,habitats-sh-seaice-only,wgi-all
+safe-coastlines,habitats-sh-default,water
+safe-coastlines,habitats-sh-default,habitat-combo
+safe-coastlines,habitats-sh-default,wgi-all
+carbon-storage,habitats-ca-mangrove-only,habitat-combo
+carbon-storage,habitats-ca-mangrove-only,wgi-all
+carbon-storage,habitats-ca-default,water
+carbon-storage,habitats-ca-default,habitat-combo
+carbon-storage,habitats-ca-default,wgi-all
+
+> proc.time()
+   user  system elapsed 
+  0.332   0.016   0.341 
