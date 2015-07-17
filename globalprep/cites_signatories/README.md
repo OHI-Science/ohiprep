@@ -1,15 +1,15 @@
 GL-CITES-Signatories_v2013
 ===========================
 
-Final file for model 
-====================
-
-v2015/data/cites.csv
+Final files for model 
+=====================
+v2015/data/rgn_cites_eez2012.csv
+... through ...
+v2015/data/rgn_cites_eez201x.csv
 
 
 Raw data files downloaded
 =========================
-
 Data accessed from CITES: Convention on International Trade in Endangered Species of Wild Fauna and Flora. 
 www.cites.org. 
 
@@ -29,7 +29,6 @@ copied and saved into
 
 Cleaning
 ========
-
 Cleaned data has been processed from raw using data_prep.R (previously clean_CITES.R) and add_rgn_id.R:
 Also, join all other regions (boolean==0)
 

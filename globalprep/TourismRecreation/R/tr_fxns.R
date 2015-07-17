@@ -69,7 +69,7 @@ tr_assemble_layers <- function(tr_layers) {
   tr_jobs_pct_tour <- read.csv(tr_layers[['jobs_pct_tour']], stringsAsFactors = FALSE)
   tr_jobs_tot      <- read.csv(tr_layers[['jobs_tot']],      stringsAsFactors = FALSE)
   
-  rgn_names        <- read_csv('~/github/ohi-global/eez2013/layers/rgn_global.csv') %>%
+  rgn_names        <- read_csv('~/github/ohi-global/eez2013/layers/rgn_global.csv', stringsAsFactors = FALSE) %>%
     rename(rgn_name = label)
   
   rgn_names <- rgn_names %>%
