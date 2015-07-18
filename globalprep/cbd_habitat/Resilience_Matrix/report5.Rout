@@ -1,0 +1,642 @@
+
+R version 2.15.3 (2013-03-01) -- "Security Blanket"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> require(ohi)
+Loading required package: ohi
+Loading required package: reshape2
+Loading OHI options (version 0.9.10)
+> options(digits=4)
+> options(width=70)
+> ## Example for computing CW resilience
+> 
+> # load data
+> ohi.load('global_v_resilience_layers')
+> ohi.load('global_resilience_layers')
+> ohi.load('global_resilience_matrix')
+> names(global_resilience_layers) <- tolower(names(global_resilience_layers))
+> 
+> # extract relavant resilience layers for CW goal
+> layers <- subset(global_resilience_matrix, GOAL == 'clean-waters' & COMPONENT == 'all')$LAYER
+> layers
+[1] "water"   "wgi-all"
+> 
+> # extract resilience layers typing information
+> # XXX: we need to fix the global_resilience_layers to use the correct values
+> d <- subset(global_resilience_layers, layer %in% layers)[,c('layer', 'type', 'category', 'value')]
+> d$type <- ifelse(d$type == 'ecological', 'environmental', d$type)
+> d$type <- ifelse(paste(d$type, d$category) == 'environmental regulations', 'regulatory', d$type)
+> t <- d$type
+> names(t) <- d$layer
+> t
+       water      wgi-all 
+"regulatory"     "social" 
+> 
+> # extract resilience layers weighting information
+> w <- d$value
+> names(w) <- d$layer
+> w
+  water wgi-all 
+      1       1 
+> 
+> # extract resilience layers data for regions
+> r <- acast(id ~ layer, data=subset(global_v_resilience_layers, id %in% 1:172 & layer %in% layers))
+> names(dimnames(r)) <- c('region_id', 'layer')
+> r
+         layer
+region_id   water wgi-all
+      1   1.00000 0.81661
+      2   1.00000 0.81661
+      3   0.52130 0.36428
+      4   0.50000 0.55573
+      5   1.00000 0.40791
+      6   0.75000 0.55649
+      7   0.50000 0.52875
+      8   0.50000 0.53344
+      9   0.50000 0.48115
+      10  0.97837 0.66993
+      11  1.00000 0.40331
+      12  1.00000 0.81556
+      13  0.50000 0.35905
+      14  0.50000 0.35528
+      15  0.50000 0.55510
+      16  1.00000 0.64624
+      17  0.75000 0.18656
+      18  1.00000 0.33841
+      19  1.00000 0.45484
+      20  0.75000 0.28260
+      21  0.90269 0.68493
+      22  1.00000 0.52216
+      23  1.00000 0.65518
+      24  0.92895 0.36922
+      25  0.50000 0.43858
+      26  1.00000 0.40951
+      27  1.00000 0.45855
+      28  1.00000 0.38746
+      29  1.00000 0.34573
+      30  0.50000 0.04923
+      31  0.75000 0.22621
+      32  0.50000 0.39831
+      33  0.50000 0.25078
+      34  0.50000 0.57350
+      35  0.50000 0.19201
+      36  1.00000 0.44189
+      37  0.50000 0.54308
+      38  0.50000 0.54309
+      39  1.00000 0.26826
+      40  1.00000 0.60274
+      41  0.50000 0.59578
+      42  1.00000 0.75771
+      43  0.97814 0.63530
+      44  0.75000 0.49021
+      45  1.00000 0.44245
+      46  0.16524 0.30626
+      47  0.75000 0.32524
+      48  1.00000 0.40893
+      49  1.00000 0.43462
+      50  0.50000 0.32549
+      51  1.00000 0.73800
+      52  1.00000 0.63295
+      53  1.00000 0.71491
+      54  0.50000 0.55385
+      55  0.75000 0.54418
+      56  1.00000 0.35630
+      57  0.50000 0.47518
+      58  1.00000 0.39064
+      59  1.00000 0.49591
+      60  0.75000 0.31934
+      61  1.00000 0.36613
+      62  1.00000 0.59790
+      63  1.00000 0.59938
+      64  1.00000 0.70675
+      65  1.00000 0.47507
+      66  0.75000 0.33356
+      67  0.97062 0.78473
+      68  0.97062 0.78473
+      69  0.75000 0.34813
+      70  1.00000 0.32177
+      71  1.00000 0.31942
+      72  1.00000 0.45247
+      73  0.50000 0.28781
+      74  1.00000 0.56266
+      75  0.50000 0.55555
+      76  0.50000 0.42737
+      77  0.50000 0.24457
+      78  1.00000 0.52665
+      79  0.58439 0.57029
+      80  0.75000 0.69510
+      81  1.00000 0.36233
+      82  0.50000 0.29365
+      83  0.75000 0.44173
+      84  0.32793 0.63585
+      85  0.82793 0.71983
+      86  0.50000 0.68254
+      87  1.00000 0.65736
+      88  1.00000 0.68631
+      89  1.00000 0.64697
+      90  1.00000 0.71741
+      91  1.00000 0.57893
+      92  0.50000 0.54074
+      93  0.75000 0.67924
+      94  0.82793 0.65601
+      95  0.75000 0.53492
+      96  1.00000 0.62815
+      97  0.75000 0.36575
+      98  1.00000 0.42223
+      99  1.00000 0.38505
+      100 1.00000 0.48319
+      101 0.75000 0.47092
+      102 1.00000 0.38201
+      103 1.00000 0.31923
+      104 0.50000 0.43847
+      105 0.50000 0.24601
+      106 0.82793 0.64647
+      107 0.50000 0.80070
+      108 0.72027 0.55793
+      109 0.72027 0.55793
+      110 0.08439 0.57029
+      111 0.08439 0.63746
+      112 0.75000 0.57180
+      113 0.50000 0.44836
+      114 0.08439 0.57029
+      115 0.99990 0.84678
+      116 0.00000 0.73269
+      117 0.50000 0.48394
+      118 0.50000 0.49017
+      119 1.00000 0.42107
+      120 0.50000 0.48243
+      121 0.83547 0.69701
+      122 1.00000 0.52675
+      123 0.50000 0.42549
+      124 0.50000 0.66615
+      125 1.00000 0.86351
+      126 1.00000 0.76604
+      127 1.00000 0.78445
+      128 1.00000 0.82508
+      129 1.00000 0.65587
+      130 1.00000 0.74260
+      131 1.00000 0.76238
+      132 1.00000 0.79038
+      133 1.00000 0.67520
+      134 1.00000 0.71212
+      135 1.00000 0.61433
+      136 0.50000 0.76140
+      137 0.47814 0.63530
+      138 1.00000 0.58678
+      139 1.00000 0.70263
+      140 1.00000 0.64003
+      141 1.00000 0.65267
+      142 0.75000 0.25948
+      143 0.50000 0.19975
+      144 0.75000 0.29996
+      145 1.00000 0.21253
+      146 1.00000 0.25436
+      147 0.50000 0.26561
+      148 1.00000 0.33597
+      149 0.50000 0.37827
+      150 0.75000 0.16559
+      151 0.75000 0.30542
+      152 1.00000 0.44283
+      153 1.00000 0.45713
+      154 1.00000 0.32088
+      155 0.50000 0.12264
+      156 1.00000 0.54756
+      157 1.00000 0.39681
+      158 1.00000 0.78821
+      159 1.00000 0.39830
+      160 0.50000 0.73249
+      161 0.48838 0.50912
+      162 0.00000      NA
+      163 1.00000 0.41250
+      164 1.00000 0.50690
+      165 1.00000 0.41816
+      166 0.50000 0.82319
+      167 0.50000 0.77889
+      168 1.00000 0.84864
+      169 1.00000 0.82296
+      170 1.00000 0.73080
+      171 0.50000 0.33597
+      172 0.50000 0.43275
+> 
+> # extract data mask
+> b <- ifelse(!is.na(r),T,F)
+> b
+         layer
+region_id water wgi-all
+      1    TRUE    TRUE
+      2    TRUE    TRUE
+      3    TRUE    TRUE
+      4    TRUE    TRUE
+      5    TRUE    TRUE
+      6    TRUE    TRUE
+      7    TRUE    TRUE
+      8    TRUE    TRUE
+      9    TRUE    TRUE
+      10   TRUE    TRUE
+      11   TRUE    TRUE
+      12   TRUE    TRUE
+      13   TRUE    TRUE
+      14   TRUE    TRUE
+      15   TRUE    TRUE
+      16   TRUE    TRUE
+      17   TRUE    TRUE
+      18   TRUE    TRUE
+      19   TRUE    TRUE
+      20   TRUE    TRUE
+      21   TRUE    TRUE
+      22   TRUE    TRUE
+      23   TRUE    TRUE
+      24   TRUE    TRUE
+      25   TRUE    TRUE
+      26   TRUE    TRUE
+      27   TRUE    TRUE
+      28   TRUE    TRUE
+      29   TRUE    TRUE
+      30   TRUE    TRUE
+      31   TRUE    TRUE
+      32   TRUE    TRUE
+      33   TRUE    TRUE
+      34   TRUE    TRUE
+      35   TRUE    TRUE
+      36   TRUE    TRUE
+      37   TRUE    TRUE
+      38   TRUE    TRUE
+      39   TRUE    TRUE
+      40   TRUE    TRUE
+      41   TRUE    TRUE
+      42   TRUE    TRUE
+      43   TRUE    TRUE
+      44   TRUE    TRUE
+      45   TRUE    TRUE
+      46   TRUE    TRUE
+      47   TRUE    TRUE
+      48   TRUE    TRUE
+      49   TRUE    TRUE
+      50   TRUE    TRUE
+      51   TRUE    TRUE
+      52   TRUE    TRUE
+      53   TRUE    TRUE
+      54   TRUE    TRUE
+      55   TRUE    TRUE
+      56   TRUE    TRUE
+      57   TRUE    TRUE
+      58   TRUE    TRUE
+      59   TRUE    TRUE
+      60   TRUE    TRUE
+      61   TRUE    TRUE
+      62   TRUE    TRUE
+      63   TRUE    TRUE
+      64   TRUE    TRUE
+      65   TRUE    TRUE
+      66   TRUE    TRUE
+      67   TRUE    TRUE
+      68   TRUE    TRUE
+      69   TRUE    TRUE
+      70   TRUE    TRUE
+      71   TRUE    TRUE
+      72   TRUE    TRUE
+      73   TRUE    TRUE
+      74   TRUE    TRUE
+      75   TRUE    TRUE
+      76   TRUE    TRUE
+      77   TRUE    TRUE
+      78   TRUE    TRUE
+      79   TRUE    TRUE
+      80   TRUE    TRUE
+      81   TRUE    TRUE
+      82   TRUE    TRUE
+      83   TRUE    TRUE
+      84   TRUE    TRUE
+      85   TRUE    TRUE
+      86   TRUE    TRUE
+      87   TRUE    TRUE
+      88   TRUE    TRUE
+      89   TRUE    TRUE
+      90   TRUE    TRUE
+      91   TRUE    TRUE
+      92   TRUE    TRUE
+      93   TRUE    TRUE
+      94   TRUE    TRUE
+      95   TRUE    TRUE
+      96   TRUE    TRUE
+      97   TRUE    TRUE
+      98   TRUE    TRUE
+      99   TRUE    TRUE
+      100  TRUE    TRUE
+      101  TRUE    TRUE
+      102  TRUE    TRUE
+      103  TRUE    TRUE
+      104  TRUE    TRUE
+      105  TRUE    TRUE
+      106  TRUE    TRUE
+      107  TRUE    TRUE
+      108  TRUE    TRUE
+      109  TRUE    TRUE
+      110  TRUE    TRUE
+      111  TRUE    TRUE
+      112  TRUE    TRUE
+      113  TRUE    TRUE
+      114  TRUE    TRUE
+      115  TRUE    TRUE
+      116  TRUE    TRUE
+      117  TRUE    TRUE
+      118  TRUE    TRUE
+      119  TRUE    TRUE
+      120  TRUE    TRUE
+      121  TRUE    TRUE
+      122  TRUE    TRUE
+      123  TRUE    TRUE
+      124  TRUE    TRUE
+      125  TRUE    TRUE
+      126  TRUE    TRUE
+      127  TRUE    TRUE
+      128  TRUE    TRUE
+      129  TRUE    TRUE
+      130  TRUE    TRUE
+      131  TRUE    TRUE
+      132  TRUE    TRUE
+      133  TRUE    TRUE
+      134  TRUE    TRUE
+      135  TRUE    TRUE
+      136  TRUE    TRUE
+      137  TRUE    TRUE
+      138  TRUE    TRUE
+      139  TRUE    TRUE
+      140  TRUE    TRUE
+      141  TRUE    TRUE
+      142  TRUE    TRUE
+      143  TRUE    TRUE
+      144  TRUE    TRUE
+      145  TRUE    TRUE
+      146  TRUE    TRUE
+      147  TRUE    TRUE
+      148  TRUE    TRUE
+      149  TRUE    TRUE
+      150  TRUE    TRUE
+      151  TRUE    TRUE
+      152  TRUE    TRUE
+      153  TRUE    TRUE
+      154  TRUE    TRUE
+      155  TRUE    TRUE
+      156  TRUE    TRUE
+      157  TRUE    TRUE
+      158  TRUE    TRUE
+      159  TRUE    TRUE
+      160  TRUE    TRUE
+      161  TRUE    TRUE
+      162  TRUE   FALSE
+      163  TRUE    TRUE
+      164  TRUE    TRUE
+      165  TRUE    TRUE
+      166  TRUE    TRUE
+      167  TRUE    TRUE
+      168  TRUE    TRUE
+      169  TRUE    TRUE
+      170  TRUE    TRUE
+      171  TRUE    TRUE
+      172  TRUE    TRUE
+> 
+> # run resilience matrix model
+> w <- ohi.model.resilience.matrix(b, w)
+> w
+         layer
+region_id water wgi-all
+      1       1       1
+      2       1       1
+      3       1       1
+      4       1       1
+      5       1       1
+      6       1       1
+      7       1       1
+      8       1       1
+      9       1       1
+      10      1       1
+      11      1       1
+      12      1       1
+      13      1       1
+      14      1       1
+      15      1       1
+      16      1       1
+      17      1       1
+      18      1       1
+      19      1       1
+      20      1       1
+      21      1       1
+      22      1       1
+      23      1       1
+      24      1       1
+      25      1       1
+      26      1       1
+      27      1       1
+      28      1       1
+      29      1       1
+      30      1       1
+      31      1       1
+      32      1       1
+      33      1       1
+      34      1       1
+      35      1       1
+      36      1       1
+      37      1       1
+      38      1       1
+      39      1       1
+      40      1       1
+      41      1       1
+      42      1       1
+      43      1       1
+      44      1       1
+      45      1       1
+      46      1       1
+      47      1       1
+      48      1       1
+      49      1       1
+      50      1       1
+      51      1       1
+      52      1       1
+      53      1       1
+      54      1       1
+      55      1       1
+      56      1       1
+      57      1       1
+      58      1       1
+      59      1       1
+      60      1       1
+      61      1       1
+      62      1       1
+      63      1       1
+      64      1       1
+      65      1       1
+      66      1       1
+      67      1       1
+      68      1       1
+      69      1       1
+      70      1       1
+      71      1       1
+      72      1       1
+      73      1       1
+      74      1       1
+      75      1       1
+      76      1       1
+      77      1       1
+      78      1       1
+      79      1       1
+      80      1       1
+      81      1       1
+      82      1       1
+      83      1       1
+      84      1       1
+      85      1       1
+      86      1       1
+      87      1       1
+      88      1       1
+      89      1       1
+      90      1       1
+      91      1       1
+      92      1       1
+      93      1       1
+      94      1       1
+      95      1       1
+      96      1       1
+      97      1       1
+      98      1       1
+      99      1       1
+      100     1       1
+      101     1       1
+      102     1       1
+      103     1       1
+      104     1       1
+      105     1       1
+      106     1       1
+      107     1       1
+      108     1       1
+      109     1       1
+      110     1       1
+      111     1       1
+      112     1       1
+      113     1       1
+      114     1       1
+      115     1       1
+      116     1       1
+      117     1       1
+      118     1       1
+      119     1       1
+      120     1       1
+      121     1       1
+      122     1       1
+      123     1       1
+      124     1       1
+      125     1       1
+      126     1       1
+      127     1       1
+      128     1       1
+      129     1       1
+      130     1       1
+      131     1       1
+      132     1       1
+      133     1       1
+      134     1       1
+      135     1       1
+      136     1       1
+      137     1       1
+      138     1       1
+      139     1       1
+      140     1       1
+      141     1       1
+      142     1       1
+      143     1       1
+      144     1       1
+      145     1       1
+      146     1       1
+      147     1       1
+      148     1       1
+      149     1       1
+      150     1       1
+      151     1       1
+      152     1       1
+      153     1       1
+      154     1       1
+      155     1       1
+      156     1       1
+      157     1       1
+      158     1       1
+      159     1       1
+      160     1       1
+      161     1       1
+      162     1      NA
+      163     1       1
+      164     1       1
+      165     1       1
+      166     1       1
+      167     1       1
+      168     1       1
+      169     1       1
+      170     1       1
+      171     1       1
+      172     1       1
+> x <- ohi.model.resilience(r, t, w)
+> x
+     1      2      3      4      5      6      7      8      9     10 
+0.9083 0.9083 0.4428 0.5279 0.7040 0.6532 0.5144 0.5167 0.4906 0.8242 
+    11     12     13     14     15     16     17     18     19     20 
+0.7017 0.9078 0.4295 0.4276 0.5275 0.8231 0.4683 0.6692 0.7274 0.5163 
+    21     22     23     24     25     26     27     28     29     30 
+0.7938 0.7611 0.8276 0.6491 0.4693 0.7048 0.7293 0.6937 0.6729 0.2746 
+    31     32     33     34     35     36     37     38     39     40 
+0.4881 0.4492 0.3754 0.5368 0.3460 0.7209 0.5215 0.5215 0.6341 0.8014 
+    41     42     43     44     45     46     47     48     49     50 
+0.5479 0.8789 0.8067 0.6201 0.7212 0.2358 0.5376 0.7045 0.7173 0.4127 
+    51     52     53     54     55     56     57     58     59     60 
+0.8690 0.8165 0.8575 0.5269 0.6471 0.6781 0.4876 0.6953 0.7480 0.5347 
+    61     62     63     64     65     66     67     68     69     70 
+0.6831 0.7989 0.7997 0.8534 0.7375 0.5418 0.8777 0.8777 0.5491 0.6609 
+    71     72     73     74     75     76     77     78     79     80 
+0.6597 0.7262 0.3939 0.7813 0.5278 0.4637 0.3723 0.7633 0.5773 0.7225 
+    81     82     83     84     85     86     87     88     89     90 
+0.6812 0.3968 0.5959 0.4819 0.7739 0.5913 0.8287 0.8432 0.8235 0.8587 
+    91     92     93     94     95     96     97     98     99    100 
+0.7895 0.5204 0.7146 0.7420 0.6425 0.8141 0.5579 0.7111 0.6925 0.7416 
+   101    102    103    104    105    106    107    108    109    110 
+0.6105 0.6910 0.6596 0.4692 0.3730 0.7372 0.6504 0.6391 0.6391 0.3273 
+   111    112    113    114    115    116    117    118    119    120 
+0.3609 0.6609 0.4742 0.3273 0.9233 0.3663 0.4920 0.4951 0.7105 0.4912 
+   121    122    123    124    125    126    127    128    129    130 
+0.7662 0.7634 0.4627 0.5831 0.9318 0.8830 0.8922 0.9125 0.8279 0.8713 
+   131    132    133    134    135    136    137    138    139    140 
+0.8812 0.8952 0.8376 0.8561 0.8072 0.6307 0.5567 0.7934 0.8513 0.8200 
+   141    142    143    144    145    146    147    148    149    150 
+0.8263 0.5047 0.3499 0.5250 0.6063 0.6272 0.3828 0.6680 0.4391 0.4578 
+   151    152    153    154    155    156    157    158    159    160 
+0.5277 0.7214 0.7286 0.6604 0.3113 0.7738 0.6984 0.8941 0.6992 0.6162 
+   161    162    163    164    165    166    167    168    169    170 
+0.4988 0.0000 0.7062 0.7534 0.7091 0.6616 0.6394 0.9243 0.9115 0.8654 
+   171    172 
+0.4180 0.4664 
+> 
+> # test against 2012 resilience scores
+> ohi.load('results_global_data', dir='/usr/local/ohi/src/model/global2012/doc/')
+> x.actual <- subset(results_global_data, goal.subgoal=='CW')[,'resilience']
+> names(x.actual) <- subset(results_global_data, goal.subgoal=='CW')[,'id']
+> x.actual <- x.actual[names(x)]
+> stopifnot(names(x) == names(x.actual))
+> stopifnot(all(round(x.actual/100 - x, 3) == 0.000, na.rm=T))
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  0.452   0.056   0.502 
