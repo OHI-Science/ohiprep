@@ -1,0 +1,868 @@
+
+R version 2.15.3 (2013-03-01) -- "Security Blanket"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> require(ohi)
+Loading required package: ohi
+Loading required package: reshape2
+Loading OHI options (version 0.9.10)
+> 
+> ohi.load('global_v_resilience_layers')
+> ohi.load('global_resilience_layers')
+> 
+> # check that all layers are in global2012/layers_data
+> ohi.load('layers_data', dir='/usr/local/ohi/src/model/global2012/doc')
+> stopifnot(all(gsub('-','_',global_resilience_layers$LAYER) %in% layers_data$layer_id))
+> 
+> names(global_resilience_layers) <- tolower(names(global_resilience_layers))
+> 
+> r <- acast(id ~ layer, data=subset(global_v_resilience_layers, id %in% ohi.global.regions.eez))
+> names(dimnames(r)) <- c('region_id', 'layer')
+> b <- ifelse(!is.na(r),T,F)
+> 
+> w <- global_resilience_layers$value
+> names(w) <- global_resilience_layers$layer
+> w
+        alien-species                 cites            fishing-v1 
+                    1                     1                     2 
+           fishing-v2            fishing-v3        fishing-v1-eez 
+                    2                     2                     2 
+       fishing-v2-eez        fishing-v3-eez               habitat 
+                    2                     2                     1 
+        habitat-combo     habitat-combo-eez                li-gci 
+                    2                     2                     1 
+   li-sector-evenness           mariculture               msi-gov 
+                    1                     1                     2 
+    species-diversity species-diversity-3nm               tourism 
+                    1                     1                     1 
+                water               wgi-all 
+                    1                     1 
+> 
+> d <- global_resilience_layers[,c('layer', 'type', 'category')]
+> d$type <- ifelse(d$type == 'ecological', 'environmental', d$type)
+> d$type <- ifelse(paste(d$type, d$category) == 'environmental regulations', 'regulatory', d$type)
+> t <- d$type
+> names(t) <- d$layer
+> t <- t[names(w)]
+> t
+        alien-species                 cites            fishing-v1 
+         "regulatory"          "regulatory"          "regulatory" 
+           fishing-v2            fishing-v3        fishing-v1-eez 
+         "regulatory"          "regulatory"          "regulatory" 
+       fishing-v2-eez        fishing-v3-eez               habitat 
+         "regulatory"          "regulatory"          "regulatory" 
+        habitat-combo     habitat-combo-eez                li-gci 
+         "regulatory"          "regulatory"              "social" 
+   li-sector-evenness           mariculture               msi-gov 
+             "social"          "regulatory"          "regulatory" 
+    species-diversity species-diversity-3nm               tourism 
+      "environmental"       "environmental"          "regulatory" 
+                water               wgi-all 
+         "regulatory"              "social" 
+> 
+> 
+> w <- ohi.model.resilience.matrix(b, w)
+> w
+         layer
+region_id alien-species cites fishing-v1 fishing-v1-eez fishing-v2
+      1               1     1          2              2          2
+      2               1     1          2              2          2
+      3               1     1          2              2          2
+      4               1     1          2              2          2
+      5               1     1          2              2          2
+      6               1     1          2              2          2
+      7               1     1          2              2          2
+      8               1     1          2              2          2
+      9               1     1          2              2          2
+      10              1     1          2              2          2
+      11              1     1          2              2          2
+      12              1     1          2              2          2
+      13              1     1          2              2          2
+      14              1     1          2              2          2
+      15              1     1          2              2          2
+      16              1     1          2              2          2
+      17              1     1          2              2          2
+      18              1     1          2              2          2
+      19              1     1          2              2          2
+      20              1     1          2              2          2
+      21              1     1          2              2          2
+      22              1     1          2              2          2
+      23              1     1          2              2          2
+      24              1     1          2              2          2
+      25              1     1          2              2          2
+      26              1     1          2              2          2
+      27              1     1          2              2          2
+      28              1     1          2              2          2
+      29              1     1          2              2          2
+      30              1     1          2              2          2
+      31              1     1          2              2          2
+      32              1     1          2              2          2
+      33              1     1          2              2          2
+      34              1     1          2              2          2
+      35              1     1          2              2          2
+      36              1     1          2              2          2
+      37              1     1          2              2          2
+      38              1     1          2              2          2
+      39              1     1          2              2          2
+      40              1     1          2              2          2
+      41              1     1          2              2          2
+      42              1     1          2              2          2
+      43              1     1          2              2          2
+      44              1     1          2              2          2
+      45              1     1          2              2          2
+      46              1     1          2              2          2
+      47              1     1          2              2          2
+      48              1     1          2              2          2
+      49              1     1          2              2          2
+      50              1     1          2              2          2
+      51              1     1          2              2          2
+      52              1     1          2              2          2
+      53              1     1          2              2          2
+      54              1     1          2              2          2
+      55              1     1          2              2          2
+      56              1     1          2              2          2
+      57              1     1          2              2          2
+      58              1     1          2              2          2
+      59              1     1          2              2          2
+      60              1     1          2              2          2
+      61              1     1          2              2          2
+      62              1     1          2              2          2
+      63              1     1          2              2          2
+      64              1     1          2              2          2
+      65              1     1          2              2          2
+      66              1     1          2              2          2
+      67              1     1          2              2          2
+      68              1     1          2              2          2
+      69              1     1          2              2          2
+      70              1     1          2              2          2
+      71              1     1          2              2          2
+      72              1     1          2              2          2
+      73              1     1          2              2          2
+      74              1     1          2              2          2
+      75              1     1          2              2          2
+      76              1     1          2              2          2
+      77              1     1          2              2          2
+      78              1     1          2              2          2
+      79              1     1          2              2          2
+      80              1     1          2              2          2
+      81              1     1          2              2          2
+      82              1     1          2              2          2
+      83              1     1          2              2          2
+      84              1     1          2              2          2
+      85              1     1          2              2          2
+      86              1     1          2              2          2
+      87              1     1          2              2          2
+      88              1     1          2              2          2
+      89              1     1          2              2          2
+      90              1     1          2              2          2
+      91              1     1          2              2          2
+      92              1     1          2              2          2
+      93              1     1          2              2          2
+      94              1     1          2              2          2
+      95              1     1          2              2          2
+      96              1     1          2              2          2
+      97              1     1          2              2          2
+      98              1     1          2              2          2
+      99              1     1          2              2          2
+      100             1     1          2              2          2
+      101             1     1          2              2          2
+      102             1     1          2              2          2
+      103             1     1          2              2          2
+      104             1     1          2              2          2
+      105             1     1          2              2          2
+      106             1     1          2              2          2
+      107             1     1          2              2          2
+      108             1     1          2              2          2
+      109             1     1          2              2          2
+      110             1     1          2              2          2
+      111             1     1          2              2          2
+      112             1     1          2              2          2
+      113             1     1          2              2          2
+      114             1     1          2              2          2
+      115             1     1          2              2          2
+      116             1     1          2              2          2
+      117             1     1          2              2          2
+      118             1     1          2              2          2
+      119             1     1          2              2          2
+      120             1     1          2              2          2
+      121             1     1          2              2          2
+      122             1     1          2              2          2
+      123             1     1          2              2          2
+      124             1     1          2              2          2
+      125             1     1          2              2          2
+      126             1     1          2              2          2
+      127             1     1          2              2          2
+      128             1     1          2              2          2
+      129             1     1          2              2          2
+      130             1     1          2              2          2
+      131             1     1          2              2          2
+      132             1     1          2              2          2
+      133             1     1          2              2          2
+      134             1     1          2              2          2
+      135             1     1          2              2          2
+      136             1     1          2              2          2
+      137             1     1          2              2          2
+      138             1     1          2              2          2
+      139             1     1          2              2          2
+      140             1     1          2              2          2
+      141             1     1          2              2          2
+      142             1     1          2              2          2
+      143             1     1          2              2          2
+      144             1     1          2              2          2
+      145             1     1          2              2          2
+      146             1     1          2              2          2
+      147             1     1          2              2          2
+      148             1     1          2              2          2
+      149             1     1          2              2          2
+      150             1     1          2              2          2
+      151             1     1          2              2          2
+      152             1     1          2              2          2
+      153             1     1          2              2          2
+      154             1     1          2              2          2
+      155             1     1          2              2          2
+      156             1     1          2              2          2
+      157             1     1          2              2          2
+      158             1     1          2              2          2
+      159             1     1          2              2          2
+      160             1     1          2              2          2
+      161             1     1          2              2          2
+      162             1     1          2              2          2
+      163             1     1          2              2          2
+      164             1     1          2              2          2
+      165             1     1          2              2          2
+      166             1     1          2              2          2
+      167             1     1          2              2          2
+      168             1     1          2              2          2
+      169             1     1          2              2          2
+      170             1     1          2              2          2
+      171             1     1          2              2          2
+      172             1     1          2              2          2
+         layer
+region_id fishing-v2-eez fishing-v3 fishing-v3-eez habitat habitat-combo
+      1                2          2              2       1             2
+      2                2          2              2       1             2
+      3                2          2              2       1             2
+      4                2          2              2       1             2
+      5                2          2              2       1             2
+      6                2          2              2       1             2
+      7                2          2              2       1             2
+      8                2          2              2       1             2
+      9                2          2              2       1             2
+      10               2          2              2       1             2
+      11               2          2              2       1             2
+      12               2          2              2       1             2
+      13               2          2              2       1             2
+      14               2          2              2       1             2
+      15               2          2              2       1             2
+      16               2          2              2       1             2
+      17               2          2              2       1             2
+      18               2          2              2       1             2
+      19               2          2              2       1             2
+      20               2          2              2       1             2
+      21               2          2              2       1             2
+      22               2          2              2       1             2
+      23               2          2              2       1             2
+      24               2          2              2       1             2
+      25               2          2              2       1             2
+      26               2          2              2       1             2
+      27               2          2              2       1             2
+      28               2          2              2       1             2
+      29               2          2              2       1             2
+      30               2          2              2       1             2
+      31               2          2              2       1             2
+      32               2          2              2       1             2
+      33               2          2              2       1             2
+      34               2          2              2       1             2
+      35               2          2              2       1             2
+      36               2          2              2       1             2
+      37               2          2              2       1             2
+      38               2          2              2       1             2
+      39               2          2              2       1             2
+      40               2          2              2       1             2
+      41               2          2              2       1             2
+      42               2          2              2       1             2
+      43               2          2              2       1             2
+      44               2          2              2       1             2
+      45               2          2              2       1             2
+      46               2          2              2       1             2
+      47               2          2              2       1             2
+      48               2          2              2       1             2
+      49               2          2              2       1             2
+      50               2          2              2       1             2
+      51               2          2              2       1             2
+      52               2          2              2       1             2
+      53               2          2              2       1             2
+      54               2          2              2       1             2
+      55               2          2              2       1             2
+      56               2          2              2       1             2
+      57               2          2              2       1             2
+      58               2          2              2       1             2
+      59               2          2              2       1             2
+      60               2          2              2       1             2
+      61               2          2              2       1             2
+      62               2          2              2       1             2
+      63               2          2              2       1             2
+      64               2          2              2       1             2
+      65               2          2              2       1             2
+      66               2          2              2       1             2
+      67               2          2              2       1             2
+      68               2          2              2       1             2
+      69               2          2              2       1             2
+      70               2          2              2       1             2
+      71               2          2              2       1             2
+      72               2          2              2       1             2
+      73               2          2              2       1             2
+      74               2          2              2       1             2
+      75               2          2              2       1             2
+      76               2          2              2       1             2
+      77               2          2              2       1             2
+      78               2          2              2       1             2
+      79               2          2              2       1             2
+      80               2          2              2       1             2
+      81               2          2              2       1             2
+      82               2          2              2       1             2
+      83               2          2              2       1             2
+      84               2          2              2       1             2
+      85               2          2              2       1             2
+      86               2          2              2       1             2
+      87               2          2              2       1             2
+      88               2          2              2       1             2
+      89               2          2              2       1             2
+      90               2          2              2       1             2
+      91               2          2              2       1             2
+      92               2          2              2       1             2
+      93               2          2              2       1             2
+      94               2          2              2       1             2
+      95               2          2              2       1             2
+      96               2          2              2       1             2
+      97               2          2              2       1             2
+      98               2          2              2       1             2
+      99               2          2              2       1             2
+      100              2          2              2       1             2
+      101              2          2              2       1             2
+      102              2          2              2       1             2
+      103              2          2              2       1             2
+      104              2          2              2       1             2
+      105              2          2              2       1             2
+      106              2          2              2       1             2
+      107              2          2              2       1             2
+      108              2          2              2       1             2
+      109              2          2              2       1             2
+      110              2          2              2       1             2
+      111              2          2              2       1             2
+      112              2          2              2       1             2
+      113              2          2              2       1             2
+      114              2          2              2       1             2
+      115              2          2              2       1             2
+      116              2          2              2       1             2
+      117              2          2              2       1             2
+      118              2          2              2       1             2
+      119              2          2              2       1             2
+      120              2          2              2       1             2
+      121              2          2              2       1             2
+      122              2          2              2       1             2
+      123              2          2              2       1             2
+      124              2          2              2       1             2
+      125              2          2              2       1             2
+      126              2          2              2       1             2
+      127              2          2              2       1             2
+      128              2          2              2       1             2
+      129              2          2              2       1             2
+      130              2          2              2       1             2
+      131              2          2              2       1             2
+      132              2          2              2       1             2
+      133              2          2              2       1             2
+      134              2          2              2       1             2
+      135              2          2              2       1             2
+      136              2          2              2       1             2
+      137              2          2              2       1             2
+      138              2          2              2       1             2
+      139              2          2              2       1             2
+      140              2          2              2       1             2
+      141              2          2              2       1             2
+      142              2          2              2       1             2
+      143              2          2              2       1             2
+      144              2          2              2       1             2
+      145              2          2              2       1             2
+      146              2          2              2       1             2
+      147              2          2              2       1             2
+      148              2          2              2       1             2
+      149              2          2              2       1             2
+      150              2          2              2       1             2
+      151              2          2              2       1             2
+      152              2          2              2       1             2
+      153              2          2              2       1             2
+      154              2          2              2       1             2
+      155              2          2              2       1             2
+      156              2          2              2       1             2
+      157              2          2              2       1             2
+      158              2          2              2       1             2
+      159              2          2              2       1             2
+      160              2          2              2       1             2
+      161              2          2              2       1             2
+      162              2          2              2       1             2
+      163              2          2              2       1             2
+      164              2          2              2       1             2
+      165              2          2              2       1             2
+      166              2          2              2       1             2
+      167              2          2              2       1             2
+      168              2          2              2       1             2
+      169              2          2              2       1             2
+      170              2          2              2       1             2
+      171              2          2              2       1             2
+      172              2          2              2       1             2
+         layer
+region_id habitat-combo-eez li-gci li-sector-evenness mariculture msi-gov
+      1                   2      1                  1           1      NA
+      2                   2      1                  1           1      NA
+      3                   2     NA                  1           1      NA
+      4                   2     NA                  1           1      NA
+      5                   2     NA                  1           1      NA
+      6                   2     NA                  1           1      NA
+      7                   2     NA                  1           1      NA
+      8                   2     NA                  1           1      NA
+      9                   2     NA                  1           1      NA
+      10                  2      1                  1           1       2
+      11                  2      1                  1           1       2
+      12                  2      1                  1           1       2
+      13                  2     NA                  1           1      NA
+      14                  2     NA                  1           1      NA
+      15                  2     NA                  1           1      NA
+      16                  2      1                  1           1       2
+      17                  2      1                  1           1       2
+      18                  2      1                  1           1       2
+      19                  2      1                  1           1       2
+      20                  2      1                  1           1      NA
+      21                  2      1                  1           1      NA
+      22                  2      1                  1           1      NA
+      23                  2      1                  1           1      NA
+      24                  2      1                  1           1      NA
+      25                  2      1                  1           1      NA
+      26                  2      1                  1           1       2
+      27                  2      1                  1           1      NA
+      28                  2      1                  1           1       2
+      29                  2      1                  1           1      NA
+      30                  2      1                  1           1      NA
+      31                  2      1                  1           1      NA
+      32                  2      1                  1           1      NA
+      33                  2      1                  1           1      NA
+      34                  2      1                  1           1      NA
+      35                  2      1                  1           1      NA
+      36                  2      1                  1           1       2
+      37                  2      1                  1           1      NA
+      38                  2      1                  1           1      NA
+      39                  2      1                  1           1       2
+      40                  2      1                  1           1      NA
+      41                  2      1                  1           1      NA
+      42                  2      1                  1           1      NA
+      43                  2      1                  1           1      NA
+      44                  2      1                  1           1      NA
+      45                  2      1                  1           1       2
+      46                  2      1                  1           1      NA
+      47                  2      1                  1           1      NA
+      48                  2      1                  1           1      NA
+      49                  2      1                  1           1       2
+      50                  2      1                  1           1      NA
+      51                  2      1                  1           1      NA
+      52                  2      1                  1           1      NA
+      53                  2      1                  1           1      NA
+      54                  2      1                  1           1      NA
+      55                  2      1                  1           1      NA
+      56                  2      1                  1           1       2
+      57                  2      1                  1           1      NA
+      58                  2      1                  1           1       2
+      59                  2      1                  1           1       2
+      60                  2      1                  1           1      NA
+      61                  2      1                  1           1      NA
+      62                  2      1                  1           1      NA
+      63                  2      1                  1           1       2
+      64                  2      1                  1           1      NA
+      65                  2      1                  1           1      NA
+      66                  2      1                  1           1      NA
+      67                  2      1                  1           1      NA
+      68                  2      1                  1           1      NA
+      69                  2      1                  1           1      NA
+      70                  2      1                  1           1      NA
+      71                  2      1                  1           1      NA
+      72                  2      1                  1           1      NA
+      73                  2      1                  1           1      NA
+      74                  2      1                  1           1       2
+      75                  2      1                  1           1       2
+      76                  2      1                  1           1      NA
+      77                  2      1                  1           1      NA
+      78                  2      1                  1           1      NA
+      79                  2     NA                  1           1      NA
+      80                  2      1                  1           1      NA
+      81                  2      1                  1           1      NA
+      82                  2      1                  1           1      NA
+      83                  2      1                  1           1      NA
+      84                  2      1                  1           1      NA
+      85                  2      1                  1           1      NA
+      86                  2      1                  1           1      NA
+      87                  2      1                  1           1      NA
+      88                  2      1                  1           1      NA
+      89                  2      1                  1           1      NA
+      90                  2      1                  1           1      NA
+      91                  2      1                  1           1      NA
+      92                  2      1                  1           1      NA
+      93                  2      1                  1           1      NA
+      94                  2      1                  1           1      NA
+      95                  2      1                  1           1       2
+      96                  2      1                  1           1       2
+      97                  2      1                  1           1       2
+      98                  2      1                  1           1       2
+      99                  2      1                  1           1       2
+      100                 2      1                  1           1      NA
+      101                 2      1                  1           1       2
+      102                 2      1                  1           1       2
+      103                 2      1                  1           1       2
+      104                 2      1                  1           1       2
+      105                 2      1                  1           1       2
+      106                 2      1                  1           1      NA
+      107                 2      1                  1           1       2
+      108                 2     NA                  1           1      NA
+      109                 2     NA                  1           1      NA
+      110                 2     NA                  1           1      NA
+      111                 2     NA                  1           1      NA
+      112                 2     NA                  1           1      NA
+      113                 2     NA                  1           1       2
+      114                 2     NA                  1           1      NA
+      115                 2      1                  1           1       2
+      116                 2      1                  1           1       2
+      117                 2      1                  1           1       2
+      118                 2      1                  1           1      NA
+      119                 2      1                  1           1      NA
+      120                 2      1                  1           1      NA
+      121                 2      1                  1           1      NA
+      122                 2      1                  1           1       2
+      123                 2      1                  1           1       2
+      124                 2      1                  1           1      NA
+      125                 2      1                  1           1       2
+      126                 2      1                  1           1       2
+      127                 2      1                  1           1       2
+      128                 2      1                  1           1       2
+      129                 2      1                  1           1       2
+      130                 2      1                  1           1       2
+      131                 2      1                  1           1       2
+      132                 2      1                  1           1       2
+      133                 2      1                  1           1       2
+      134                 2      1                  1           1       2
+      135                 2      1                  1           1       2
+      136                 2      1                  1           1      NA
+      137                 2      1                  1           1      NA
+      138                 2      1                  1           1      NA
+      139                 2      1                  1           1      NA
+      140                 2      1                  1           1      NA
+      141                 2      1                  1           1      NA
+      142                 2      1                  1           1       2
+      143                 2      1                  1           1      NA
+      144                 2      1                  1           1      NA
+      145                 2      1                  1           1      NA
+      146                 2      1                  1           1      NA
+      147                 2      1                  1           1       2
+      148                 2      1                  1           1      NA
+      149                 2      1                  1           1      NA
+      150                 2      1                  1           1      NA
+      151                 2      1                  1           1      NA
+      152                 2      1                  1           1      NA
+      153                 2      1                  1           1       2
+      154                 2      1                  1           1       2
+      155                 2      1                  1           1       2
+      156                 2      1                  1           1       2
+      157                 2      1                  1           1       2
+      158                 2      1                  1           1      NA
+      159                 2      1                  1           1       2
+      160                 2      1                  1           1       2
+      161                 2     NA                  1           1       2
+      162                 2     NA                  1           1      NA
+      163                 2      1                  1           1       2
+      164                 2      1                  1           1      NA
+      165                 2      1                  1           1       2
+      166                 2      1                  1           1       2
+      167                 2      1                  1           1      NA
+      168                 2      1                  1           1       2
+      169                 2      1                  1           1       2
+      170                 2      1                  1           1       2
+      171                 2      1                  1           1      NA
+      172                 2      1                  1           1      NA
+         layer
+region_id species-diversity species-diversity-3nm tourism water wgi-all
+      1                   1                     1       1     1       1
+      2                   1                     1       1     1       1
+      3                   1                     1       1     1       1
+      4                   1                     1       1     1       1
+      5                   1                     1       1     1       1
+      6                   1                     1       1     1       1
+      7                   1                     1       1     1       1
+      8                   1                     1       1     1       1
+      9                   1                     1       1     1       1
+      10                  1                     1       1     1       1
+      11                  1                     1       1     1       1
+      12                  1                     1       1     1       1
+      13                  1                     1       1     1       1
+      14                  1                     1       1     1       1
+      15                  1                     1       1     1       1
+      16                  1                     1       1     1       1
+      17                  1                     1       1     1       1
+      18                  1                     1       1     1       1
+      19                  1                     1       1     1       1
+      20                  1                     1       1     1       1
+      21                  1                     1       1     1       1
+      22                  1                     1       1     1       1
+      23                  1                     1       1     1       1
+      24                  1                     1       1     1       1
+      25                  1                     1       1     1       1
+      26                  1                     1       1     1       1
+      27                  1                     1       1     1       1
+      28                  1                     1       1     1       1
+      29                  1                     1       1     1       1
+      30                  1                     1       1     1       1
+      31                  1                     1       1     1       1
+      32                  1                     1       1     1       1
+      33                  1                     1       1     1       1
+      34                  1                     1       1     1       1
+      35                  1                     1       1     1       1
+      36                  1                     1       1     1       1
+      37                  1                     1       1     1       1
+      38                  1                     1       1     1       1
+      39                  1                     1       1     1       1
+      40                  1                     1       1     1       1
+      41                  1                     1       1     1       1
+      42                  1                     1       1     1       1
+      43                  1                     1       1     1       1
+      44                  1                     1       1     1       1
+      45                  1                     1       1     1       1
+      46                  1                     1       1     1       1
+      47                  1                     1       1     1       1
+      48                  1                     1       1     1       1
+      49                  1                     1       1     1       1
+      50                  1                     1       1     1       1
+      51                  1                     1       1     1       1
+      52                  1                     1       1     1       1
+      53                  1                     1       1     1       1
+      54                  1                     1       1     1       1
+      55                  1                     1       1     1       1
+      56                  1                     1       1     1       1
+      57                  1                     1       1     1       1
+      58                  1                     1       1     1       1
+      59                  1                     1       1     1       1
+      60                  1                     1       1     1       1
+      61                  1                     1       1     1       1
+      62                  1                     1       1     1       1
+      63                  1                     1       1     1       1
+      64                  1                     1       1     1       1
+      65                  1                     1       1     1       1
+      66                  1                     1       1     1       1
+      67                  1                     1       1     1       1
+      68                  1                     1       1     1       1
+      69                  1                     1       1     1       1
+      70                  1                     1       1     1       1
+      71                  1                     1       1     1       1
+      72                  1                     1       1     1       1
+      73                  1                     1       1     1       1
+      74                  1                     1       1     1       1
+      75                  1                     1       1     1       1
+      76                  1                     1       1     1       1
+      77                  1                     1       1     1       1
+      78                  1                     1       1     1       1
+      79                  1                     1       1     1       1
+      80                  1                     1       1     1       1
+      81                  1                     1       1     1       1
+      82                  1                     1       1     1       1
+      83                  1                     1       1     1       1
+      84                  1                     1       1     1       1
+      85                  1                     1       1     1       1
+      86                  1                     1       1     1       1
+      87                  1                     1       1     1       1
+      88                  1                     1       1     1       1
+      89                  1                     1       1     1       1
+      90                  1                     1       1     1       1
+      91                  1                     1       1     1       1
+      92                  1                     1       1     1       1
+      93                  1                     1       1     1       1
+      94                  1                     1       1     1       1
+      95                  1                     1       1     1       1
+      96                  1                     1       1     1       1
+      97                  1                     1       1     1       1
+      98                  1                     1       1     1       1
+      99                  1                     1       1     1       1
+      100                 1                     1       1     1       1
+      101                 1                     1       1     1       1
+      102                 1                     1       1     1       1
+      103                 1                     1       1     1       1
+      104                 1                     1       1     1       1
+      105                 1                     1       1     1       1
+      106                 1                     1       1     1       1
+      107                 1                     1       1     1       1
+      108                 1                     1       1     1       1
+      109                 1                     1       1     1       1
+      110                 1                     1       1     1       1
+      111                 1                     1       1     1       1
+      112                 1                     1       1     1       1
+      113                 1                     1       1     1       1
+      114                 1                     1       1     1       1
+      115                 1                     1       1     1       1
+      116                 1                     1       1     1       1
+      117                 1                     1       1     1       1
+      118                 1                     1       1     1       1
+      119                 1                     1       1     1       1
+      120                 1                     1       1     1       1
+      121                 1                     1       1     1       1
+      122                 1                     1       1     1       1
+      123                 1                     1       1     1       1
+      124                 1                     1       1     1       1
+      125                 1                     1       1     1       1
+      126                 1                     1       1     1       1
+      127                 1                     1       1     1       1
+      128                 1                     1       1     1       1
+      129                 1                     1       1     1       1
+      130                 1                     1       1     1       1
+      131                 1                     1       1     1       1
+      132                 1                     1       1     1       1
+      133                 1                     1       1     1       1
+      134                 1                     1       1     1       1
+      135                 1                     1       1     1       1
+      136                 1                     1       1     1       1
+      137                 1                     1       1     1       1
+      138                 1                     1       1     1       1
+      139                 1                     1       1     1       1
+      140                 1                     1       1     1       1
+      141                 1                     1       1     1       1
+      142                 1                     1       1     1       1
+      143                 1                     1       1     1       1
+      144                 1                     1       1     1       1
+      145                 1                     1       1     1       1
+      146                 1                     1       1     1       1
+      147                 1                     1       1     1       1
+      148                 1                     1       1     1       1
+      149                 1                     1       1     1       1
+      150                 1                     1       1     1       1
+      151                 1                     1       1     1       1
+      152                 1                     1       1     1       1
+      153                 1                     1       1     1       1
+      154                 1                     1       1     1       1
+      155                 1                     1       1     1       1
+      156                 1                     1       1     1       1
+      157                 1                     1       1     1       1
+      158                 1                     1       1     1       1
+      159                 1                     1       1     1       1
+      160                 1                     1       1     1       1
+      161                 1                     1       1     1       1
+      162                 1                     1       1     1      NA
+      163                 1                     1       1     1       1
+      164                 1                     1       1     1       1
+      165                 1                     1       1     1       1
+      166                 1                     1       1     1       1
+      167                 1                     1       1     1       1
+      168                 1                     1       1     1       1
+      169                 1                     1       1     1       1
+      170                 1                     1       1     1       1
+      171                 1                     1       1     1       1
+      172                 1                     1       1     1       1
+> ohi.model.resilience(r, t, w)
+                1                 2                 3                 4 
+0.707552613345533 0.679745931045951 0.448749146056826 0.503797467339186 
+                5                 6                 7                 8 
+0.470165577783048 0.492914555710363 0.434576951232191 0.519260601524333 
+                9                10                11                12 
+0.513017923355473 0.711610622878508 0.601785798050789 0.697759966282746 
+               13                14                15                16 
+0.412975330948598 0.431480550679518 0.490033041496754 0.644003120617697 
+               17                18                19                20 
+0.569435822972405 0.526308493230899 0.646302582370284 0.638386758626948 
+               21                22                23                24 
+0.554430098070037 0.588074187310896 0.611344984555867 0.619281642474991 
+               25                26                27                28 
+0.538488996435967 0.612430357158599 0.505922349246761 0.586802628436914 
+               29                30                31                32 
+0.584394551877127 0.456951001509680 0.526600897812140 0.545828745898978 
+               33                34                35                36 
+0.613275491850418 0.611456499014048 0.494503153632608 0.691901684988930 
+               37                38                39                40 
+0.527831952665049 0.557000557739385 0.600654279787390 0.647856320385954 
+               41                42                43                44 
+0.606237813325050 0.617102460319281 0.537952959889684 0.639304426609693 
+               45                46                47                48 
+0.619365511065678 0.454062270612530 0.556134931229054 0.581849570164457 
+               49                50                51                52 
+0.597903570354812 0.442041853233003 0.588673236301091 0.598362578150088 
+               53                54                55                56 
+0.668518970481554 0.498069586743367 0.657156961473515 0.591543050053541 
+               57                58                59                60 
+0.539351217867939 0.505839350894506 0.540825253257446 0.587709191391547 
+               61                62                63                64 
+0.533457569964383 0.583301434544951 0.584590940020328 0.621785493713944 
+               65                66                67                68 
+0.546080079633845 0.480136253251238 0.627211732728572 0.603443388790323 
+               69                70                71                72 
+0.471595892639411 0.480858816499367 0.485093113570645 0.519123187428065 
+               73                74                75                76 
+0.489416065352191 0.540660416117059 0.649602492596945 0.541527452946814 
+               77                78                79                80 
+0.419741768645675 0.529756121154593 0.566352186744048 0.558499419103861 
+               81                82                83                84 
+0.548722569198351 0.442046141539110 0.517633221899021 0.503890878648364 
+               85                86                87                88 
+0.575815981248070 0.555164582680858 0.586024288093015 0.601750906888285 
+               89                90                91                92 
+0.606438699434089 0.625609702435891 0.623719709549756 0.513154357606922 
+               93                94                95                96 
+0.637046398989689 0.550024960264297 0.642020325477683 0.566853731255743 
+               97                98                99               100 
+0.596083378817207 0.516807063378339 0.598053136217890 0.622966633897068 
+              101               102               103               104 
+0.612164658943197 0.550909792483534 0.640436963699214 0.611356697135656 
+              105               106               107               108 
+0.519944872452358 0.616450189462881 0.624676574397860 0.563685625122700 
+              109               110               111               112 
+0.514981621160921 0.549309204503211 0.539779088776082 0.551018529121388 
+              113               114               115               116 
+0.559377885287591 0.552586967658263 0.674355205844285 0.575289431188449 
+              117               118               119               120 
+0.614552412776857 0.537109047572076 0.560975776687550 0.567625115278115 
+              121               122               123               124 
+0.560612190284431 0.565096954544933 0.586190934795626 0.592202689144681 
+              125               126               127               128 
+0.719490012205137 0.643146969825769 0.660255522041293 0.662359004826385 
+              129               130               131               132 
+0.617078312363025 0.644833298293660 0.642022745398526 0.598835857999779 
+              133               134               135               136 
+0.571333541799810 0.563673318906313 0.561809720261733 0.585318393228951 
+              137               138               139               140 
+0.490788064504151 0.586215634264672 0.586382546798166 0.664736116434416 
+              141               142               143               144 
+0.678956454467104 0.571911989590742 0.450684425035457 0.551187030974899 
+              145               146               147               148 
+0.448895877021075 0.620327750701638 0.456269696046903 0.608311744609113 
+              149               150               151               152 
+0.521882077960764 0.441624204491768 0.512251408718752 0.601209021298512 
+              153               154               155               156 
+0.607666750344555 0.555039606155516 0.483222023362736 0.657783101833823 
+              157               158               159               160 
+0.522735876308963 0.604425718351403 0.677793710168788 0.635159750403984 
+              161               162               163               164 
+0.703386642232381 0.217928571860888 0.660930684443632 0.618643620663974 
+              165               166               167               168 
+0.610216678189709 0.688927085372569 0.592963011041447 0.676748566447655 
+              169               170               171               172 
+0.734485299964490 0.698094572197361 0.476409644335723 0.465333630848737 
+> 
+> proc.time()
+   user  system elapsed 
+  0.712   0.036   0.748 
