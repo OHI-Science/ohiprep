@@ -10,9 +10,10 @@ dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
           'Darwin'  = '/Volumes/data_edit',
           'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
 
+#set working directory
 setwd(file.path(dir_N,'git-annex/globalprep/Pressures_SST'))
 
-cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
+cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme for plotting
 
 # set tmp directory
 
@@ -20,13 +21,16 @@ tmpdir='~/big/R_raster_tmp'
 dir.create(tmpdir, showWarnings=F)
 rasterOptions(tmpdir=tmpdir)
 
+#-----------------------------------------------------
+
 # data
+
 # Bring in SSTA
 
-ssta = stack('data/cortadv5_SSTA.nc',varname='SSTA')
-weekly_sst = stack('data/cortadv5_WeeklySST.nc',varname='WeeklySST')
+ssta         = stack('data/cortadv5_SSTA.nc',varname='SSTA')
+weekly_sst   = stack('data/cortadv5_WeeklySST.nc',varname='WeeklySST')
 
-names_ssta = names(ssta)
+names_ssta   = names(ssta)
 names_weekly = names(weekly_sst)
 
 #Create weekly standard deviations across all years
