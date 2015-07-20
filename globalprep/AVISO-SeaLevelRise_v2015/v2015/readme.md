@@ -6,7 +6,7 @@ The Sea Level Rise pressure layer was updated with new data for years through 20
 Data for mean sea level rise (in mm) between January 1993 and June 2014 was downloaded on 1/12/15 from [AVISO](http://www.aviso.altimetry.fr/en/data/products/ocean-indicators-products/mean-sea-level/products-images.html). These raw products came as NetCDFs.
 
 
-![alt Image](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/AVISO-SeaLevelRise_v2015/images/slr_mm_raster_93_14.png)
+![alt Image](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/AVISO-SeaLevelRise_v2015/v2015/images/slr_mm_raster_93_14.png)
 
 
 #### Data prep for OHI 2015
@@ -23,4 +23,4 @@ For full procedure and code see [slr_procedure.html](https://github.com/OHI-Scie
 
 ### Final Layer
 
-![alt image](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/AVISO-SeaLevelRise_v2015/images/slr_final.png)
+![alt image](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/AVISO-SeaLevelRise_v2015/v2015/images/slr_final.png)
