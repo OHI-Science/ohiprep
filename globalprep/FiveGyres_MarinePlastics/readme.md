@@ -12,7 +12,7 @@ For OHI we used the weight density data:
 The data was summed across all 4 size classes and log transformed:
 
 
-![](./images/paper_weight_fig.png)
+![](./images/weight_log.png)
 
 
 The **reference point** was set at the 99.99th quantile of the data distribution to rescale the layer from 0 to 1.
