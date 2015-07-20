@@ -58,19 +58,16 @@ uv_log = calc(resamp,fun=function(x){log(x+1)},filename='working/uv_anomaly_diff
 #mask out land
 
 uv_log_mask = mask(uv_log,ocean,progress='text')
-uv_mask = mask(resamp,ocean,progress='text')
 
 
 # get 99.99th quantile
 
 ref_log = quantile(uv_log_mask,prob=0.9999)
-ref_nonlog = quantile(uv_mask,prob=0.9999)
 
 
 #rescale
 
 resc_log = calc(uv_log_mask,fun=function(x){ifelse(x>ref_log,1,x/ref_log)},filename='output/uv_anomaly_diff_moll_1km_log_resc.tif',overwrite=T)
-resc_nonlog = calc(uv_mask,fun=function(x){ifelse(x>ref_nonlog,1,x/ref_nonlog)},filename='output/uv_anomaly_diff_moll_1km_resc.tif',overwrite=T)
 
 
 
