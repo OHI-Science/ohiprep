@@ -141,13 +141,13 @@ rasterOptions(tmpdir=tmpdir)
 
 #--------------------------------------------------
 
-# (9) Clip out ocean
+# (8) Clip out ocean
 
 
 r_final = mask(r_int,ocean,progress='text',filename='output/slr_nonlog_final.tif')
 
 #---------------------------------------------------
 
-# (10) Create interpolated cells raster
+# (9) Create interpolated cells raster
 
 interp = mask(r_final,slr_1km,progress='text',inverse=TRUE,filename='output/slr_interpolated_cells.tif')
