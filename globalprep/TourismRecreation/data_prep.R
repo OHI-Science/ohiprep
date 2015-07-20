@@ -160,7 +160,7 @@ write_csv(tr_data %>% select(rgn_id, year, gaps),    file.path(dir_data, 'tr_gap
 ##############################################################################=
 ### Load data layers, reassemble, and process them through the model calculations.
 
-# rgn_names        <- read_csv('~/github/ohi-global/eez2013/layers/rgn_global.csv') %>%
+# rgn_names        <- read_csv('~/github/ohi-global/eez2013/layers/rgn_global.csv', stringsAsFactors = FALSE) %>%
 #   rename(rgn_name = label)
 # 
 # tr_data1 <- read_csv(file.path(dir_data, 'tr_jobs_pct_tourism.csv')) %>%

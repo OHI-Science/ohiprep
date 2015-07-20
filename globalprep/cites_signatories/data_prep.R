@@ -28,7 +28,9 @@ dir_data <- file.path(dir_git, scenario, 'data')
 source('src/R/ohi_clean_fxns.R')
 
 
-## read in and process files ----
+##############################################################################=
+### read in and process CITES signatory file ----
+##############################################################################=
 
 cites_raw <- read.csv(file.path(dir_raw, 'cites_member_countries_2015-07.csv'), stringsAsFactors = FALSE) %>%
   select(rgn_name    = Official.name,
@@ -43,23 +45,44 @@ cites_raw <- read.csv(file.path(dir_raw, 'cites_member_countries_2015-07.csv'), 
                  ifelse(y_s < 100, y_s + 1900,
                    y_s))) # 
 
+### NOTE: consider for future assessments using the year variable, to facilitate
+### trend calculations, and perhaps use one file/data set to drive the resilience calcs.
+### For now, simply create a list of countries for each year, with variable "boolean"
+### to indicate whether the countries had signed or not.
+
 cites <- cites_raw %>%
   select(rgn_name, year_signed = y_s) %>%
   name_to_rgn(fld_name     = 'rgn_name', 
               fld_value    = 'year_signed',
               add_rgn_name = TRUE)
 
-rgn_names <- read.csv('~/github/ohi-global/eez2013/layers/rgn_global.csv') %>%
+rgn_names <- read.csv('~/github/ohi-global/eez2013/layers/rgn_global.csv', stringsAsFactors = FALSE) %>%
   rename(rgn_name = label)
 
 cites <- cites %>% 
-  full_join(rgn_names, by = c('rgn_id', 'rgn_name')) %>%
-  mutate(year_signed = ifelse(is.na(year_signed), 0, year_signed)) %>%
-  arrange(rgn_id)
+  full_join(rgn_names, by = c('rgn_id', 'rgn_name'))
+
+### At this point, each region will have an integer value of year signed, or
+### an NA for countries that have not signed.
 
 
-f_save <- 'rgn_cites_sigs.csv'
-write.csv(cites, file.path(dir_data, f_save), na = '', row.names=FALSE)
+##############################################################################=
+### Loop over scenario years to create separate lists ----
+##############################################################################=
+sc_year <- as.integer(str_replace(scenario, 'v', ''))
+sc_years <- c(2012:sc_year)
+
+for (y in sc_years) {
+  cites_sc <- cites %>%
+    mutate(resilience_score = ifelse(is.na(year_signed) | year_signed > y, 0, 1)) %>%
+    select(rgn_id, resilience_score) %>%
+    arrange(rgn_id)
+  
+  cat(sprintf('For scenario year %d, %d CITES signatories.\n', y, sum(cites_sc$resilience_score)))
+  
+  f_save <- sprintf('rgn_cites_eez%d.csv', y)
+  write.csv(cites_sc, file.path(dir_data, f_save), na = '', row.names=FALSE)
+}
   
   
  # --- fin
