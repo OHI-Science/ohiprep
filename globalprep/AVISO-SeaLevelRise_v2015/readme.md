@@ -11,11 +11,11 @@ Data for mean sea level rise (in mm) between January 1993 and June 2014 was down
 
 #### Data prep for OHI 2015
 
-The original sea level rise data (plotted above) was prepped for OHI 2015 through the following steps:
+The original sea level rise data (plotted above) was prepped for OHI 2015 as follows:
 
 - All negative values, indicating decreases in sea level, were set to zero  
-- Data was resampled from the native c(0.25 degree) resolution to ~ 1km
-- Data was rescaled by setting all values greater than or equal to the 99.99th quantile to 1, and dividing the remaining values by the 99.99th quantile
+- Data was resampled from the native cell resolution (0.25 degrees) to ~ 1km
+- The reference point was set as the 99.99th quantile of the data distribution to rescale all values from 0 to 1
 - All NA cells were filled in through nearest neighbor interpolation
 
 
