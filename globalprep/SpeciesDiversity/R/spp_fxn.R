@@ -57,13 +57,13 @@ extract_cell_id_per_region <- function(reload = FALSE) {
   if(!file.exists(rgn_prop_file) | reload) {
     
     cat(sprintf('Reading regions shape file - come back in about 4 minutes.\n  %s\n', ogr_location))
-    regions <- readOGR(dsn = ogr_location, layer='rgn_gcs')
+    regions        <- readOGR(dsn = ogr_location, layer='rgn_gcs')
     # slow command... ~ 4 minutes
     
-    rgn_types <- c('eez', 'eez-disputed', 'eez-inland')
-    regions <- regions[regions@data$rgn_type %in% rgn_types, ]
+    rgn_types      <- c('eez', 'eez-disputed', 'eez-inland')
+    regions        <- regions[regions@data$rgn_type %in% rgn_types, ]
     
-    raster_file <- file.path(dir_anx, 'rgns/loiczid_raster')
+    raster_file    <- file.path(dir_anx, 'rgns/loiczid_raster')
     loiczid_raster <- get_loiczid_raster(reload = FALSE)
     
     cat('Extracting proportional area of LOICZID cells per region polygon.  Come back in 15-20 minutes.\n')
