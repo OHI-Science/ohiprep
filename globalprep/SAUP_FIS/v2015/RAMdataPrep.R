@@ -32,7 +32,7 @@ RAM2saup <- read.csv('globalprep/SAUP_FIS/v2015/raw/MatchedPairs.csv') %>%
   filter(!(Taxonid == 607039 & EEZID == 910)) # removing here and adding to FAO/SAUP data because we do not have this region
 
 
-# these are SAUP/FAO regions with multiple stocks of the same species:
+# these are SAUP/FAO regions with multiple stocks of the same species (the b/bmsy scores will be averaged):
 tmp <- RAM2saup[RAM2saup$notes=='multiple stocks in same region', ]
 
 ## joining with template data to get FAO regions
@@ -70,7 +70,7 @@ RAMstocks <- bind_rows(RAM2saup_join, RAM2saup2) %>%  #data.frame(RAMstocks[is.n
 
 
 # STEP 2: 
-#### Preparing the RAM data (v3, downloaded from here: http://ramlegacy.org/database/)
+#### Preparing the RAM b/bmsy data (v3, downloaded from here: http://ramlegacy.org/database/)
 ## subsets the data to the most current 6 years of data and assigns a relative year to correspond to the catch data 
 ## different stocks will have different ranges of years that are used for the analysis
 ## NOTE: data prior to 2003 is not used
@@ -121,7 +121,7 @@ dim(RAMstocks[RAMstocks$stocklong %in% tmp, ])
 
 RAM_b_bmsy <- RAMstocks %>%
   filter(!(stocklong %in% tmp)) %>% #cut stock that aren't in the RAM database
-  left_join(ram) %>%   # expands data by adding a year for each stocklong, 1808*6 years
+  left_join(ram) %>%   # expands data by adding a year for each stocklong, 1809*6=10854 years
   group_by(Taxonid, EEZID, FAOAreaID, catchYear_rel) %>%  
   summarize(bbmsy = mean(bbmsy, na.rm=TRUE)) %>%    #averaging the stocks of the same Taxa within an EEZID/FAO N=6668
   ungroup()

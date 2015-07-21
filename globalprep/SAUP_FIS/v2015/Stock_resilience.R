@@ -16,22 +16,20 @@
 ## NOTE: this requires SAUP fisheries data where castal(=eez) and high seas are combined (distinguished by saup_id == 0 for high seas) ##
 
 source('../ohiprep/src/R/common.R') # set dir_neptune_data
-library(stringr)
 library(tidyr)
 
 #################################
 ## Formatting new SAUP catch data
 #################################
 
-stocks <- read.csv(file.path(dir_neptune_data, 
-        'git-annex/globalprep/SAUP_FIS_data/v2015/tmp/b_bmsy_v16072015.csv')) %>%
+## Identify and select the stocks that b/bmsy was calculated for (cmsy method):
+
+stocks <- read.csv('globalprep/SAUP_FIS/v2015/tmp/b_bmsy_v16072015.csv') %>%
   select(stock_id) %>%
   unique()
 
-
 meanCatch <- read.csv('globalprep/SAUP_FIS/v2015/tmp/mean_catch_saup_fao.csv')
 
-## Select the stocks that b/bmsy was calculated for:
 meanCatch  <- meanCatch %>%
   filter(EEZID != 274) %>% #remove Gaza strip
    mutate(stock_id = paste(TaxonKey, FAOAreaID, sep="_")) %>%
@@ -39,6 +37,7 @@ meanCatch  <- meanCatch %>%
   select(stock_id, EEZID, FAOAreaID, TaxonKey, mean_catch) %>%
   unique()
 
+# calculate relative catch within each eez/hs region for each stock
 meanCatch <- meanCatch %>%
   mutate(stock_saup_id = paste(stock_id, EEZID, sep="_")) %>%
   group_by(TaxonKey, FAOAreaID) %>%
@@ -48,7 +47,7 @@ meanCatch <- meanCatch %>%
 
 
 ################################################################
-## EEZ data: Converting SAUP regions to OHI regions to add Mora resilience
+## converting spatial scale of Mora scores (ohi 2013 regions) to saup regions 
 ################################################################
 # file to convert saup regions to ohi regions
 saup_ohi <- read.csv(file.path('../ohiprep/src/LookupTables/new_saup_to_ohi_rgn.csv'), stringsAsFactors = F) %>% 
@@ -66,12 +65,12 @@ head(eez_r)
 eez_r[duplicated(eez_r$saup_id),]  #should be no duplicates
 
 res_eez <- meanCatch %>%  
-  filter(saup_id > 0) %>%  #N=15774
+  filter(saup_id > 0) %>%  
   left_join(eez_r) %>%
   mutate(proparea = 1, rfmo = 0) %>%  
   select(fao_id, saup_id, rfmo, proparea, stock_saup_id, Score)  
 head(res_eez); summary(res_eez) 
-
+#N=15763
 ################################################################
 ## High seas: determining resilience scores (saup_id=0)
 ################################################################
@@ -175,7 +174,7 @@ FinalRes <- meanCatch %>%
   group_by(stock_saup_id, stock_id, TaxonKey, fao_id, saup_id) %>%
   summarize(part_score = max(part_score, na.rm=TRUE)) %>%  # when a stock is protected by >1 rfmo within an FAO, select the highest score
   ungroup()
-#check on why NA values are generated!
+#NAs result for high seas taxa that are not protected by any RFMO
 
 FinalRes <- FinalRes %>%
   group_by(stock_id) %>%
