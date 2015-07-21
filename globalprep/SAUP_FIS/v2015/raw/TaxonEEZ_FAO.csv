@@ -1,0 +1,47 @@
+stocklong,Taxonid,Has a non zero Bmsytouse value (#N/A=no),Country,FAO region,EEZID,NOTES,FAO,notes
+Atlantic cod Georges Bank,600069,20,USA (East Coast),,851,,21,multiple stocks in saup region with multiple FAOs
+Atlantic cod Gulf of Maine,600069,21,USA (East Coast),,851,,21,multiple stocks in saup region with multiple FAOs
+Pacific cod Bering Sea and Aleutian Islands,600308,129,"USA (Alaska, Subarctic)",,959,,67,multiple stocks in saup region with multiple FAOs
+Pacific cod Gulf of Alaska,600308,130,"USA (Alaska, Subarctic)",,959,,67,multiple stocks in saup region with multiple FAOs
+Walleye pollock Aleutian Islands,600318,212,"USA (Alaska, Subarctic)",,959,,67,multiple stocks in saup region with multiple FAOs
+Walleye pollock Eastern Bering Sea,600318,213,"USA (Alaska, Subarctic)",,959,,67,multiple stocks in saup region with multiple FAOs
+Walleye pollock Gulf of Alaska,600318,214,"USA (Alaska, Subarctic)",,959,,67,multiple stocks in saup region with multiple FAOs
+Walleye Pollock Navarinsky,600318,215,Russia (Far East),,649,,61,multiple stocks in saup region with multiple FAOs
+Walleye pollock Northern Sea of Okhotsk,600318,216,Russia (Far East),,649,,61,multiple stocks in saup region with multiple FAOs
+Walleye pollock Western Bering Sea,600318,217,Russia (Far East),,649,,61,multiple stocks in saup region with multiple FAOs
+New Zealand ling Eastern half of Southeast Australia,600482,,,,36,,81,multiple stocks in saup region with multiple FAOs
+New Zealand ling Western half of Southeast Australia,600482,,,,36,,57,multiple stocks in saup region with multiple FAOs
+New Zealand ling New Zealand Areas LIN 3 and 4,600482,,,,554,,81,multiple stocks in saup region with multiple FAOs
+New Zealand ling New Zealand Areas LIN 5 and 6,600482,,,,554,,81,multiple stocks in saup region with multiple FAOs
+New Zealand ling New Zealand Area LIN 6b,600482,,,,554,,81,multiple stocks in saup region with multiple FAOs
+New Zealand ling New Zealand Area LIN 72,600482,,,,554,,81,multiple stocks in saup region with multiple FAOs
+New Zealand ling New Zealand Area LIN 7WC - WCSI,600482,,,,554,,81,multiple stocks in saup region with multiple FAOs
+Lingcod Northern Pacific Coast,600509,106,USA (West Coast),,848,,67,multiple stocks in saup region with multiple FAOs
+Lingcod Southern Pacific Coast,600509,107,USA (West Coast),,848,,77,multiple stocks in saup region with multiple FAOs
+Flathead sole Bering Sea and Aleutian Islands,600519,81,"USA (Alaska, Subarctic)",,959,,67,multiple stocks in saup region with multiple FAOs
+Flathead sole Gulf of Alaska,600519,82,"USA (Alaska, Subarctic)",,959,,67,multiple stocks in saup region with multiple FAOs
+Yellowtail flounder Cape Cod / Gulf of Maine,600521,234,USA (East Coast),,851,,21,multiple stocks in saup region with multiple FAOs
+Yellowtail flounder Georges Bank,600521,235,USA (East Coast),,851,,21,multiple stocks in saup region with multiple FAOs
+Yellowtail Flounder Southern New England-Mid Atlantic,600521,237,USA (East Coast),,851,,21,multiple stocks in saup region with multiple FAOs
+Winter Flounder NAFO-5Z,600524,224,USA (East Coast),,851,,21,multiple stocks in saup region with multiple FAOs
+Winter Flounder Southern New England-Mid Atlantic,600524,225,USA (East Coast),,851,,21,multiple stocks in saup region with multiple FAOs
+Windowpane flounder - Gulf of Maine / Georges Bank,600530,222,USA (East Coast),,851,,21,multiple stocks in saup region with multiple FAOs
+Windowpane Southern New England-Mid Atlantic,600530,223,USA (East Coast),,851,,21,multiple stocks in saup region with multiple FAOs
+Haddock NAFO-5Y,601381,96,USA (East Coast),,851,,21,multiple stocks in saup region with multiple FAOs
+Haddock Georges Bank,601381,94,USA (East Coast),,851,,21,multiple stocks in saup region with multiple FAOs
+Black rockfish Northern Pacific Coast,603979,42,USA (West Coast),,848,,67,multiple stocks in saup region with multiple FAOs
+Black rockfish Southern Pacific Coast,603979,43,USA (West Coast),,848,,77,multiple stocks in saup region with multiple FAOs
+Cabezon Northern California,604140,62,USA (West Coast),,848,,77,multiple stocks in saup region with multiple FAOs
+Cabezon Oregon Coast,604140,63,USA (West Coast),,848,,67,multiple stocks in saup region with multiple FAOs
+Cabezon Southern California,604140,64,USA (West Coast),,848,,77,multiple stocks in saup region with multiple FAOs
+Starry flounder Northern Pacific Coast,604249,191,USA (West Coast),,848,,67,multiple stocks in saup region with multiple FAOs
+Starry flounder Southern Pacific Coast,604249,192,USA (West Coast),,848,,77,multiple stocks in saup region with multiple FAOs
+Blue Warehou Eastern half of Southeast Australia,612918,55,Australia (mainland),,36,,81,multiple stocks in saup region with multiple FAOs
+Blue Warehou Western half of Southeast Australia,612918,56,Australia (mainland),,36,,57,multiple stocks in saup region with multiple FAOs
+Red king crab Bristol Bay,690621,146,"USA (Alaska, Subarctic)",,959,,67,multiple stocks in saup region with multiple FAOs
+Red king crab Norton Sound,690621,147,"USA (Alaska, Subarctic)",,959,,67,multiple stocks in saup region with multiple FAOs
+Red king crab Pribilof Islands,690621,148,"USA (Alaska, Subarctic)",,959,,67,multiple stocks in saup region with multiple FAOs
+Blue king crab Pribilof Islands,690622,50,"USA (Alaska, Subarctic)",,959,,67,multiple stocks in saup region with multiple FAOs
+Blue king crab Saint Matthews Island,690622,51,"USA (Alaska, Subarctic)",,959,,67,multiple stocks in saup region with multiple FAOs
+Swordfish Mediterranean Sea,600226,,,,946,,37,multiple stocks in saup region with multiple FAOs
+Swordfish North Atlantic,600226,,,,946,,34,multiple stocks in saup region with multiple FAOs

@@ -108,7 +108,7 @@ saup_id,saup_nam,ohi_id_2013,ohi_nam_2013,notes
 897,Kerguelen Isl. (France),93,Kerguelen Islands,
 334,Heard & McDonald Isl. (Australia),94,Heard and McDonald Islands,
 238,Falkland Isl. (UK),95,Falkland Islands,
-910,South Orkney Islands (UK),213,Antarctica,split
+910,South Orkney Islands (UK),0,Antarctica,split
 694,Sierra Leone,96,Sierra Leone,
 430,Liberia,97,Liberia,
 768,Togo,98,Togo,
@@ -204,7 +204,7 @@ saup_id,saup_nam,ohi_id_2013,ohi_nam_2013,notes
 246,Finland,174,Finland,
 931,Denmark (Baltic Sea),175,Denmark,
 932,Denmark (North Sea),175,Denmark,
-304,Greenland (Denmark),175,Denmark,
+304,Greenland (Denmark),145,Denmark,
 278,Germany (Baltic Sea),176,Germany,
 277,Germany (North Sea),176,Germany,
 528,Netherlands,177,Netherlands,
