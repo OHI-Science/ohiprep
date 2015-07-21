@@ -23,10 +23,15 @@ dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal)
 ##############################################################################=
 
 ### Locations of ASCII raster files for 2005/2010/2015 populations at 15 arc-minute resolution
-### (2.5 arc-minute resolution version at 'glpYYag.asc')
 pop_raster_files <- c(pop_2005 = file.path(dir_anx, 'pop_count_data', 'glp05ag15.asc'),
                       pop_2010 = file.path(dir_anx, 'pop_count_data', 'glp10ag15.asc'),
                       pop_2015 = file.path(dir_anx, 'pop_count_data', 'glp15ag15.asc'))
+
+### Locations of ASCII raster files for 2005/2010/2015 populations at 2.5 arc-minute resolution
+# pop_raster_files <- c(pop_2005_25 = file.path(dir_anx, 'pop_count_data', 'glp05ag.asc'),
+#                       pop_2010_25 = file.path(dir_anx, 'pop_count_data', 'glp10ag.asc'),
+#                       pop_2015_25 = file.path(dir_anx, 'pop_count_data', 'glp15ag.asc'))
+
 ### location of region vector data - the folder, not the file.
 OGR_location    <- file.path(dir_neptune_data, 'git-annex/Global/NCEAS-Regions_v2014/data/')
 
@@ -39,7 +44,7 @@ regions        <- readOGR(dsn = OGR_location, layer = 'rgn_inland25mi_gcs')
 rgn_types   <- 'land' #  for ocean analyses, use: c('eez', 'eez-disputed', 'eez-inland')
 regions     <- regions[regions@data$rgn_type %in% rgn_types, ]
 
-for (i in 1:length(pop_raster_files)) { # i = 2
+for (i in 1:length(pop_raster_files)) { # i = 3
   ### create a raster object from the ascii raster file
   pop_sum_fname <- file.path(dir_int, sprintf('%s_sum.csv', names(pop_raster_files)[i]))
   if(!file.exists(pop_sum_fname)) {
@@ -50,19 +55,27 @@ for (i in 1:length(pop_raster_files)) { # i = 2
     cat(sprintf('Extracting region info for %s data:\n  %s\n', names(pop_raster_files)[i], pop_raster_files[i]))
     rgn_pop_ex <- raster::extract(pop_raster,  regions, weights = TRUE, normalizeWeights = FALSE, progress = 'text') 
     
+    
+    ### Create region name & id dataframe based on regions polygon. Combine rgn_name and rgn_id
+    ### into one identifier... to be split later.
     rgn_id_name <- data.frame(regions@data$rgn_id, regions@data$rgn_name) %>%
       unite(combo, regions.data.rgn_id, regions.data.rgn_name, sep = '_')
     names(rgn_pop_ex) <- rgn_id_name$combo
+    
+    ### turn list elements into dataframe rows
     rgn_pop <- plyr::ldply(rgn_pop_ex, rbind) # ??? still a plyr function.
+    
+    ### fix dataframe variable names - split the rgn identifier
     rgn_pop <- rgn_pop %>%
       separate(.id, c('rgn_id', 'rgn_name'), sep = '_') %>%
       rename(pop = value, 
              proportionArea = weight) %>%
       mutate(rgn_id = as.integer(rgn_id))
     rgn_pop_sum <- rgn_pop %>%
-      group_by(rgn_id) %>%
+      group_by(rgn_id, rgn_name) %>%
       summarize(pop_total = round(sum(pop, na.rm = TRUE)))
     
+    ### write output files
     cat(sprintf('Writing summarized region/pop info for %s data:\n  %s\n', names(pop_raster_files)[i], pop_sum_fname))
     write.csv(rgn_pop_sum, pop_sum_fname, row.names = FALSE)
     
