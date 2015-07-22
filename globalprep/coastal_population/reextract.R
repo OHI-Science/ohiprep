@@ -23,14 +23,14 @@ dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal)
 ##############################################################################=
 
 ### Locations of ASCII raster files for 2005/2010/2015 populations at 15 arc-minute resolution
-pop_raster_files <- c(pop_2005 = file.path(dir_anx, 'pop_count_data', 'glp05ag15.asc'),
-                      pop_2010 = file.path(dir_anx, 'pop_count_data', 'glp10ag15.asc'),
-                      pop_2015 = file.path(dir_anx, 'pop_count_data', 'glp15ag15.asc'))
+# pop_raster_files <- c(pop_2005 = file.path(dir_anx, 'pop_count_data', 'glp05ag15.asc'),
+#                       pop_2010 = file.path(dir_anx, 'pop_count_data', 'glp10ag15.asc'),
+#                       pop_2015 = file.path(dir_anx, 'pop_count_data', 'glp15ag15.asc'))
 
 ### Locations of ASCII raster files for 2005/2010/2015 populations at 2.5 arc-minute resolution
-# pop_raster_files <- c(pop_2005_25 = file.path(dir_anx, 'pop_count_data', 'glp05ag.asc'),
-#                       pop_2010_25 = file.path(dir_anx, 'pop_count_data', 'glp10ag.asc'),
-#                       pop_2015_25 = file.path(dir_anx, 'pop_count_data', 'glp15ag.asc'))
+pop_raster_files <- c(pop_2005_25 = file.path(dir_anx, 'pop_count_data', 'glp05ag.asc'),
+                      pop_2010_25 = file.path(dir_anx, 'pop_count_data', 'glp10ag.asc'),
+                      pop_2015_25 = file.path(dir_anx, 'pop_count_data', 'glp15ag.asc'))
 
 ### location of region vector data - the folder, not the file.
 OGR_location    <- file.path(dir_neptune_data, 'git-annex/Global/NCEAS-Regions_v2014/data/')
@@ -75,11 +75,11 @@ for (i in 1:length(pop_raster_files)) { # i = 3
       group_by(rgn_id, rgn_name) %>%
       summarize(pop_total = round(sum(pop, na.rm = TRUE)))
     
-    ### write output files
+    ### write output files: summary to github, cell-by-cell to git-annex for future possible reference?
     cat(sprintf('Writing summarized region/pop info for %s data:\n  %s\n', names(pop_raster_files)[i], pop_sum_fname))
     write.csv(rgn_pop_sum, pop_sum_fname, row.names = FALSE)
     
-    pop_cell_fname <- file.path(dir_int, sprintf('%s_cells.csv', names(pop_raster_files)[i]))
+    pop_cell_fname <- file.path(dir_anx, scenario, sprintf('int/%s_cells.csv', names(pop_raster_files)[i]))
     cat(sprintf('Writing cell-by-cell region/pop info for %s data:\n  %s\n', names(pop_raster_files)[i], pop_cell_fname))
     write.csv(rgn_pop, pop_cell_fname, row.names = FALSE)
   } else {

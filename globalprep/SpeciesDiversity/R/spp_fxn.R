@@ -43,21 +43,22 @@ get_loiczid_raster <- function(reload = FALSE) {
 
 
 ##############################################################################=
-extract_cell_id_per_region <- function(reload = FALSE) {
+extract_cell_id_per_region <- function(reload = FALSE, rgn_layer = 'rgn_gcs') {
   ### Determines proportional area of each cell covered by region polygons.  Returns data frame
   ### of rgn_id, loiczid, csq, and proportional area of loiczid cell covered by the rgn_id region.
   ### Should not be year-specific, so leave files in SpeciesDiversity/rgns.
   ### ??? TO DO: compare loiczid regions <-> CenterLong and CenterLat to last year's table, to make sure consistent from year to year.
   ##############################################################################=
   
-  ogr_location  <- file.path(dir_anx, '../../Global/NCEAS-Regions_v2014/data')
+  ogr_location  <- file.path(dir_neptune_data, 'git-annex/Global/NCEAS-Regions_v2014/data')
+  cat(sprintf('Getting cell ID per region based upon region file: %s\n  %s\n', rgn_layer, file.path(ogr_location, rgn_layer)))
   
-  rgn_prop_file <- file.path(dir_anx, 'rgns/region_prop_df.csv')
+  rgn_prop_file <- file.path(dir_anx, sprintf('rgns/cellID_%s.csv', rgn_layer))
   
   if(!file.exists(rgn_prop_file) | reload) {
     
     cat(sprintf('Reading regions shape file - come back in about 4 minutes.\n  %s\n', ogr_location))
-    regions        <- readOGR(dsn = ogr_location, layer='rgn_gcs')
+    regions        <- readOGR(dsn = ogr_location, layer = rgn_layer)
     # slow command... ~ 4 minutes
     
     rgn_types      <- c('eez', 'eez-disputed', 'eez-inland')
@@ -809,7 +810,7 @@ process_means_per_cell <- function(am_cell_summary, iucn_cell_summary) {
 
 
 ##############################################################################=
-process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup) {  
+process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup, rgn_note = NULL) {  
   ### Joins region-cell info to mean cat & trend per cell.
   ### Groups by region IDs, and calcs area-weighted mean category and trend values
   ### for all cells across entire region.  Cells only partly within a region are
@@ -831,7 +832,11 @@ process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup) {
   region_sums <- region_sums %>%
     mutate(status = ((1 - rgn_mean_cat) - 0.25) / 0.75)
   
-  region_summary_file <- file.path(dir_git, scenario, 'summary/rgn_summary.csv')
+  region_summary_file <- file.path(dir_git, 
+                                   scenario, 
+                                   sprintf('summary/rgn_summary%s.csv', ifelse(is.null(rgn_note), "", 
+                                                                               sprintf('_%s', rgn_note))))
+  
   cat(sprintf('Writing summary file of area-weighted mean category & trend per region:\n  %s\n', region_summary_file))
   write_csv(region_sums, region_summary_file)
   
