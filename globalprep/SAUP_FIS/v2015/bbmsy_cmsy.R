@@ -7,9 +7,7 @@
 # library(devtools)
 # devtools::install('../datalimited/datalimited')
 library(datalimited)
-library(dplyr)
 library(tidyr)
-library(stringr)
 
 
 ## source path directories
@@ -17,8 +15,7 @@ source('src/R/common.R')
 
 
 ## read in data (catch data summarized by FAO region)
-data <- read.csv(file.path(dir_neptune_data, 
-      'git-annex/globalprep/SAUP_FIS_data/v2015/tmp/b_bmsy_v16072015.csv'))
+data <- read.csv('globalprep/SAUP_FIS/v2015/tmp/b_bmsy_v16072015.csv')
 
 ################################################
 ## constrained prior calculations ----

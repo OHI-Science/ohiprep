@@ -29,8 +29,6 @@ setdiff(b_bmsy_uniform$stock_id, res$stock_id)
 bmsy <- b_bmsy_uniform %>%
   left_join(b_bmsy_constrained, by=c("stock_id", "year")) %>%
   left_join(res, by="stock_id")
-plot(bmsy$b_bmsy_uniform, bmsy$b_bmsy_constrained)
-abline(0,1,col="red")
 
 bmsy <- bmsy %>%
   mutate(b_bmsy = ifelse(unif_prior==1, b_bmsy_uniform, b_bmsy_constrained)) 
@@ -41,7 +39,7 @@ bmsy <- separate(bmsy, stock_id, c("TaxonKey", "fao_id")) %>%
   dplyr::select(TaxonKey, fao_id, year, b_bmsy); head(bmsy)
 
 #--------------------------------------------------------------------
-#### Put data at same spatial scale as RAM data (previously only needed stock_id)
+#### getting b/bmsy data to teh correct spatial scale
 #-----------------------------------------------------------------------
 catch <- read.csv('globalprep/SAUP_FIS/v2015/data/mean_catch.csv')
 catch <- separate(catch, fao_ohi_id, c("fao_id", "rgn_id")) %>%
@@ -56,10 +54,11 @@ dim(unique(catch))
 
 bmsy_fao_rgn <- catch %>%
   left_join(bmsy) %>%
-  filter(!is.na(b_bmsy)) %>%
+  filter(!is.na(b_bmsy))
 head(bmsy_fao_rgn)
 summary(bmsy_fao_rgn)
 
+# just checking things out
 # NA catch data: non-species catch, species with < 10 years non-zero data
 summary(bmsy_fao_rgn[is.na(bmsy_fao_rgn$b_bmsy), ])
 bmsy_fao_rgn[is.na(bmsy_fao_rgn$b_bmsy) & bmsy_fao_rgn$TaxonKey>=600000, ]
@@ -68,8 +67,8 @@ source('../ohiprep/src/R/common.R') # set dir_neptune_data
 data <- read.csv(file.path(dir_neptune_data, 'git-annex/globalprep/SAUP_FIS_data/v2015/tmp/Catch_v16072015_summary.csv')) 
 data[data$TaxonKey == 690177 & data$FAOAreaID == 71, ] #rgn_id=7 is saup_id=90 
 
-
 filter(bmsy_fao_rgn, fao_id==37 & TaxonKey==600030 & year==2006) #should all have the same value (and they do)
+###
 
 # -------------------------------------------------------------------
 ### Read in RAM data and replace cmsy data where possible
