@@ -161,18 +161,18 @@ extract_loiczid_per_spp(groups_override = NULL, reload = FALSE)
 ##############################################################################=
 rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
 ### | sp_id | loiczid | proportionArea | csq | cell_area
-# saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/region_prop_df.csv
-
+### saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/cellID_rgn_gcs.csv
+### To use a different region shapefile, add an argument of: rgn_layer = '<rgn file here, without extension>'
 
 ##############################################################################=
 ### SPP - Generate species per cell tables for Aquamaps and IUCN -----
 ##############################################################################=
-am_cells_spp_sum <- process_am_summary_per_cell(reload = TRUE)
+am_cells_spp_sum <- process_am_summary_per_cell(reload = FALSE)
 ### NOTE: the inner_join in here takes a while... 
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### AM does not include subspecies: every am_sid corresponds to exactly one sciname.
 
-iucn_cells_spp_sum <- process_iucn_summary_per_cell(reload = TRUE)
+iucn_cells_spp_sum <- process_iucn_summary_per_cell(reload = FALSE)
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### IUCN includes subspecies - one sciname corresponds to multiple iucn_sid values.
 
@@ -196,6 +196,27 @@ spp_trend <- summary_by_rgn %>%
   select(rgn_id, score = rgn_mean_trend)
 write_csv(spp_status, file.path(dir_git, scenario, 'data/spp_status.csv'))
 write_csv(spp_trend,  file.path(dir_git, scenario, 'data/spp_trend.csv'))
+
+
+##############################################################################=
+### SPP 3nm - Summarize mean category and trend per region within 3 nm of shore -----
+##############################################################################=
+### create final outputs for 3nm zone:
+### This version is for the 3 nm coastal zone cells...
+rgn_cell_lookup_3nm <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 'rgn_offshore3nm_gcs')
+### | sp_id | loiczid | proportionArea | csq | cell_area
+### saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/cellID_rgn_offshore3nm_gcs.csv
+
+summary_by_rgn_3nm <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup_3nm, rgn_note = '3nm')
+
+if(!exists('summary_by_rgn_3nm')) 
+  summary_by_rgn_3nm <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_3nm.csv'))
+spp_status_3nm <- summary_by_rgn_3nm %>%
+  select(rgn_id, score = status)
+spp_trend_3nm <- summary_by_rgn_3nm %>%
+  select(rgn_id, score = rgn_mean_trend)
+write_csv(spp_status_3nm, file.path(dir_git, scenario, 'data/spp_status_3nm.csv'))
+write_csv(spp_trend_3nm,  file.path(dir_git, scenario, 'data/spp_trend_3nm.csv'))
 
 ##############################################################################=
 
