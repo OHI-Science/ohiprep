@@ -21,8 +21,9 @@ data <- data %>%
 region <- read.csv("src/LookupTables/new_saup_to_ohi_rgn.csv")
 dups <- region[duplicated(region$saup_id), ]
 region[region$saup_id %in% dups$saup_id, ] #duplicates, 
-###### cause the sample size of the following merge to increase, but this is ok.  
-###### They end up getting the same score.  Some SAUP regions have lower resolution than OHI regions.
+###### dups occur because some SAUP regions have lower resolution than OHI regions.
+###### This causes the sample size of the following merge to increase, but this is ok.  
+###### They end up getting the same score.  
 
 species <- read.csv(file.path(dir_neptune_data, 
                               'git-annex/globalprep/SAUP_FIS_data/v2015/raw/ohi_taxon.csv'))
@@ -81,7 +82,7 @@ write.csv(catch_saup_fao_mean, 'globalprep/SAUP_FIS/v2015/tmp/mean_catch_saup_fa
 ## converting SAUP regions to OHI regions:
 catch_ohi_fao <- catch_zero_gapfill %>%
   left_join(region, by=c("EEZID"="saup_id")) %>%   #N increases here due to SAUP regions that correspond to multiple OHI regions
-  mutate(ohi_id_2013 = ifelse(is.na(ohi_id_2013), 0, ohi_id_2013)) %>%
+  mutate(ohi_id_2013 = ifelse(is.na(ohi_id_2013), 0, ohi_id_2013)) %>%  # All NA values are EEZID=0
   dplyr::select(region_id=ohi_id_2013, FAO_id=FAOAreaID, TaxonKey, Year, Catch) %>%
   group_by(region_id, FAO_id, TaxonKey, Year) %>%
   summarize(catch=sum(Catch)) %>%  # N decreases due to OHI regions that are comprised of multiple SAUP regions

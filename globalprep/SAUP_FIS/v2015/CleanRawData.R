@@ -2,10 +2,7 @@
 ## Preparing data files for FIS analysis
 ## MRF: June 16 2015
 #######################################
-library(dplyr)
 library(tidyr)
-library(stringr)
-
 source('src/R/common.R')
 
 #####################################################
@@ -13,10 +10,10 @@ source('src/R/common.R')
 #####################################################
 eez <- read.csv(file.path(dir_neptune_data, 
     "git-annex/globalprep/SAUP_FIS_data/v2015/raw/Catch_v16072015.csv"), header = FALSE)
-names(eez) <- c('EEZID', 'FAOAreaID', 'Year', 'TaxonKey', 'CatchAmount', "Value")
+names(eez) <- c('EEZID', 'FAOAreaID', 'Year', 'TaxonKey', 'CatchAmount', "Value") #N=2000082
 
 ### straighten out data. There are repeats with same EEZID, FAOAreaID, Year, and TaxonKey.  This is fine and just needs to be summarized.
-# should be N=2146016
+# should be N=1222380
 
 eez_catch <- eez %>%
   group_by(EEZID, FAOAreaID, Year, TaxonKey) %>%
@@ -41,7 +38,7 @@ b_bmsy <- eez %>%
   arrange(TaxonKey, FAOAreaID, Year)
 
 
-### check number of years of non-zero data for each stock
+### number of years of non-zero data for each stock
 stock_count <- b_bmsy %>%
   group_by(stock_id) %>%
   summarize(nonzero = sum(stock_id>0)) %>%
@@ -51,10 +48,10 @@ stock_count <- b_bmsy %>%
 b_bmsy <- b_bmsy %>%
   filter(stock_id %in% stock_count$stock_id)
 
-length(unique(b_bmsy$stock_id))
+length(unique(b_bmsy$stock_id)) #2,684 stocks
 
-write.csv(b_bmsy, file.path(dir_neptune_data, 
-      'git-annex/globalprep/SAUP_FIS_data/v2015/tmp/b_bmsy_v16072015.csv'), row.names=FALSE)
+write.csv(b_bmsy,  
+      file.path('globalprep/SAUP_FIS/v2015/tmp/b_bmsy_v16072015.csv'), row.names=FALSE)
 
 
 
