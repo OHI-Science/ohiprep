@@ -1,7 +1,7 @@
 # data_prep.R for CITES signatories
 
 # processing and adding rgn_ids to CITES Signatories
-# Jul2015 by CO'Hara; updating for new data
+# Jul2015 by CO'Hara; updating for new data.  
 # Mar2014 by JSLowndes; previously had been clean_CITES.r (by JStewart May2013)
 
 # Input:
@@ -9,6 +9,10 @@
 #   - .csv of CITES signatories from https://cites.org/eng/disc/parties/chronolo.php
 # Output:
 # * ~/github/ohiprep/globalprep/cites_signatories/v201x/data/rgn_cites_sigs.csv
+#
+# Note: identifying signatories by signing date.  If a country has signed
+# the treaty, it gets counted for the year in which it was signed, not effective.
+# (original model - presence on the signatory list regardless of date)
 
 ##############################################################################=
 ### setup -----
