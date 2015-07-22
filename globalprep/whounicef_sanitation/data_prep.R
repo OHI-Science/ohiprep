@@ -34,6 +34,7 @@ goal     <- 'globalprep/whounicef_sanitation'
 scenario <- 'v2015'
 dir_git  <- file.path('~/github/ohiprep', goal)
 dir_data <- file.path(dir_git, scenario, 'data')
+dir_int  <- file.path(dir_git, scenario, 'int')
 
 
 ##############################################################################=
@@ -105,8 +106,8 @@ georegion_labels <- read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.
     by='rgn_id') %>%
   arrange(r0_label, r1_label, r2_label, rgn_id); head(georegion_labels)
 
-layersave <- file.path(dir_data, 'rgn_jmp_san_2015a_raw_prop_access.csv')
-attrsave  <- file.path(dir_data, 'rgn_jmp_san_2015a_attr.csv')
+layersave <- file.path(dir_int, 'rgn_jmp_san_2015a_raw_prop_access.csv')
+attrsave  <- file.path(dir_int, 'rgn_jmp_san_2015a_attr.csv')
 
 r_g_a <- gapfill_georegions(
   data = rgn_sani %>%

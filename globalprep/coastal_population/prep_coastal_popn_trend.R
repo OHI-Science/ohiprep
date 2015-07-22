@@ -31,11 +31,12 @@ scenario_years <- c('eez2012' = 2012, 'eez2013' = 2013, 'eez2014' = 2014, 'eez20
 
 for (i in 1:length(scenario_years)) {  #i = 2
   year_max <- scenario_years[i]
+  year_min <- year_max - 4 # (past five data points, not five intervals)
   scenario <- names(scenario_years)[i]
   
-  ### filter to years of interest (past five data years, not five intervals)
+  ### filter to years of interest 
   pop_years <- pop_data %>%
-    filter(year_max - 5 < year & year <= year_max) %>%
+    filter(year_min <= year & year <= year_max) %>%
     arrange (rgn_id)
   
   ### calc linear model and pull annual change in population; convert to % change
@@ -46,17 +47,16 @@ for (i in 1:length(scenario_years)) {  #i = 2
                 filter(year == min(year)) %>%
                 select(rgn_id, popsum), by = 'rgn_id') %>%
     mutate(annual_change_pct = annual_change/popsum) %>%
-    select(-pop_sum)
-  
-  pop_years <- pop_years %>%
-    left_join(pop_trend, by = 'rgn_id') 
+    select(-popsum)
   
   ### Summarize total trend by sum(annual_change_pct) -- since there are five
   ### data years, basically the same as multiplying by 5...
-  pop_trend_sum <- pop_years %>%
-    group_by(rgn_id) %>%
-    summarize(trend = sum(annual_change_pct))
+  pop_trend_sum <- pop_trend %>%
+    mutate(trend = 5 * annual_change_pct) %>%
+    select(rgn_id, trend)
   
   ### write .csv
-  write.csv(pop_trend_sum, file.path(dir_data, sprintf('cw_coastalpopn_trend_%s.csv', scenario)))
+  pop_file <- file.path(dir_data, sprintf('rgn_popn5yrtrend_inland25mi_%dto%d.csv', year_min, year_max))
+  cat(sprintf('Writing trend data for %s scenario (%d to %d) to: \n  %s\n', scenario, year_min, year_max, pop_file))
+  write.csv(pop_trend_sum, pop_file, row.names = FALSE)
 }
