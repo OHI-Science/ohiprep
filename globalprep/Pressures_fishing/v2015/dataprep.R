@@ -255,7 +255,7 @@ calc_area = area(area_gcs,na.rm=T,weights=FALSE,progress='text')%>% #calculate a
 
     new_rgns = readOGR(dsn=file.path(saup_2015,'raw/SAU_EEZ_High_Seas'),layer='SAU_EEZ_High_Seas')
 
-    new_rgns = spTransform(new_rgns,crs(area))
+    new_rgns = spTransform(new_rgns,crs(calc_area))
 
 #need to turn EEZID into the FAO ID (1000+fao area) in order to match catch
 
@@ -275,13 +275,13 @@ calc_area = area(area_gcs,na.rm=T,weights=FALSE,progress='text')%>% #calculate a
 # rasterizing by objectID because polygons that split FAO regions need to be rasterized as 
 # individual polygons. 
     
-    rgns_ras = rasterize(new_rgns,area,field='raster_id',fun='first',progress='text',filename='v2015/new_saup_rgns_rasterid.tif',overwrite=T)
+    rgns_ras = rasterize(new_rgns,calc_area,field='raster_id',progress='text',filename='v2015/new_saup_rgns_rasterid.tif',overwrite=T)
     plot(rgns_ras,col=cols)
 
 
 #extract total area per polygon of cells that have catch
 
-catch_area = zonal(area,rgns_ras,fun='sum',na.rm=T,progress='text')%>%as.data.frame()
+catch_area = zonal(calc_area,rgns_ras,fun='sum',na.rm=T,progress='text')%>%as.data.frame()
 
 
 #Add new field (area in km2 for just fished areas) to data
@@ -289,10 +289,10 @@ catch_area = zonal(area,rgns_ras,fun='sum',na.rm=T,progress='text')%>%as.data.fr
 new_rgns@data = new_rgns@data%>%
               left_join(catch_all_yrs,by = c('raster_id'='eez_fao_id'))%>%
                left_join(catch_area,by= c('raster_id'='zone'))%>%
-                mutate(catch_per_km_06_10 = avg_catch_2006to2010/sum,
-                       catch_per_km_05_09 = avg_catch_2005to2009/sum,
-                       catch_per_km_04_08 = avg_catch_2004to2008/sum,
-                       catch_per_km_03_07 = avg_catch_2003to2007/sum) #sum is the fished area in km2
+                mutate(catch_per_km_06_10 = (avg_catch_2006to2010/sum)*.872356, #the final cells are 934m*934m so multiply catch by .872356km2 (it's not actually 1km2 cell resolution at the end)
+                       catch_per_km_05_09 = (avg_catch_2005to2009/sum)*.872356,
+                       catch_per_km_04_08 = (avg_catch_2004to2008/sum)*.872356,
+                       catch_per_km_03_07 = (avg_catch_2003to2007/sum)*.872356) #sum is the fished area in km2
 
 #---------------------------------------------------------------------------
 
@@ -302,42 +302,56 @@ new_rgns@data = new_rgns@data%>%
 saup_rgns = spTransform(new_rgns,moll_crs,progress='text')
 saup_rgns_1km = rasterize(saup_rgns,old_saup_eez,field='raster_id',progress='text',filename='v2015/saup_raster_id_1km.tif')
 
+saup_rgns_1km_area = projectRaster(saup_rgns_1km,crs=crs(area_gcs),progress='text',file='v2015/saup_rgns_1km_gcs.tif')
+
+
 #(2) Next, substitute values in saup_rgns_1km for the catch per km
 
 catch = as.data.frame(new_rgns@data)%>%
-            dplyr::select(raster_id,catch_per_km_06_10)
+            dplyr::select(raster_id,catch_per_km_06_10,catch_per_km_05_09,catch_per_km_04_08,catch_per_km_03_07)
 
 catch_km_06_10 = subs(saup_rgns_1km,catch,which=2,progress='text')%>%
                   mask(.,gear_prop_hb,progress='text',filename='v2015/catch_km_06_10.tif',overwrite=T)
   
+catch_km_05_09 = subs(saup_rgns_1km,catch,which=3,progress='text')%>%
+  mask(.,gear_prop_hb,progress='text',filename='v2015/catch_km_05_09.tif',overwrite=T)
 
-    catch_zonal = zonal(catch_km_06_10,saup_rgns_1km,fun='sum',na.rm=T,progress='text')%>%as.data.frame()%>%
-                  mutate(catch=saup_06_10$avg_catch_2006to2010[match(zone,saup_06_10$eez_fao_id)],
-                         diff = catch - sum)
+catch_km_04_08 = subs(saup_rgns_1km,catch,which=4,progress='text')%>%
+  mask(.,gear_prop_hb,progress='text',filename='v2015/catch_km_04_08.tif',overwrite=T)
 
-ras_06_10 = rasterize(new_rgns,rgns_ras,field='catch_per_km_06_10',progress='text')%>%
-              mask(.,calc_area,progress='text',filename='v2015/catch_06_10.tif',overwrite=T)
-ras_05_09 = rasterize(new_rgns,rgns_ras,field='catch_per_km_05_09',progress='text',filename='v2015/catch_05_09.tif',overwrite=T)
-ras_04_08 = rasterize(new_rgns,rgns_ras,field='catch_per_km_04_08',progress='text',filename='v2015/catch_04_08.tif',overwrite=T)
-ras_03_07 = rasterize(new_rgns,rgns_ras,field='catch_per_km_03_07',progress='text',filename='v2015/catch_03_07.tif',overwrite=T)
+catch_km_03_07 = subs(saup_rgns_1km,catch,which=5,progress='text')%>%
+  mask(.,gear_prop_hb,progress='text',filename='v2015/catch_km_03_07.tif',overwrite=T)
 
 
-# catch at 1km resolution
+#--------------------------------------------------------------------------------------
 
-moll_crs = CRS("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs")
+# Sum rasterized catch and compare to actual values to see how they match up
 
-rep_res = function(raster){
-  
-  name=names(raster)
-  
-  a = projectRaster(raster,crs=moll_crs,progress='text',over=T)
-  b = resample(a,old_saup_eez,method='ngb',progress='text',filename= paste0('v2015/',name,'_1km.tif',sep=''),overwrite=T) #using the old saup region raster which is at 1km
-  
-}
+catch_zonal_06_10 = zonal(catch_km_06_10,saup_rgns_1km,fun='sum',na.rm=T,progress='text')%>%as.data.frame()%>%
+  mutate(catch=saup_06_10$avg_catch_2005to2009[match(zone,saup_06_10$eez_fao_id)],
+         diff = catch - sum)
 
-rep_res(ras_05_09)
-rep_res(ras_04_08)
-rep_res(ras_03_07)
+plot(catch_zonal_06_10$sum~catch_zonal_06_10$catch)
+
+catch_zonal_05_09 = zonal(catch_km_05_09,saup_rgns_1km,fun='sum',na.rm=T,progress='text')%>%as.data.frame()%>%
+                mutate(catch=saup_05_09$avg_catch_2005to2009[match(zone,saup_05_09$eez_fao_id)],
+                       diff = catch - sum)
+
+plot(catch_zonal_05_09$sum~catch_zonal_05_09$catch)
+
+catch_zonal_04_08 = zonal(catch_km_04_08,saup_rgns_1km,fun='sum',na.rm=T,progress='text')%>%as.data.frame()%>%
+  mutate(catch=saup_04_08$avg_catch_2004to2008[match(zone,saup_04_08$eez_fao_id)],
+         diff = catch - sum)
+
+plot(catch_zonal_04_08$sum~catch_zonal_04_08$catch)
+
+catch_zonal_03_07 = zonal(catch_km_03_07,saup_rgns_1km,fun='sum',na.rm=T,progress='text')%>%as.data.frame()%>%
+  mutate(catch=saup_03_07$avg_catch_2003to2007[match(zone,saup_03_07$eez_fao_id)],
+         diff = catch - sum)
+
+plot(catch_zonal_03_07$sum~catch_zonal_03_07$catch)
+
+
 
 #--------------------------------------------------------------------------------------------------
 
