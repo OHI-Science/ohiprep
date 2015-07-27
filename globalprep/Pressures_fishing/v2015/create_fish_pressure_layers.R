@@ -40,10 +40,10 @@ ocean = raster(file.path(dir_N, 'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
 
 # Fish catch at 1km
 
-catch_06_10 = raster('v2015/catch_06_10_1km.tif')
-catch_05_09 = raster('v2015/catch_05_09_1km.tif')
-catch_04_08 = raster('v2015/catch_04_08_1km.tif')
-catch_03_07 = raster('v2015/catch_03_07_1km.tif')
+catch_06_10 = raster('v2015/catch_km_06_10.tif')
+catch_05_09 = raster('v2015/catch_km_05_09.tif')
+catch_04_08 = raster('v2015/catch_km_04_08.tif')
+catch_03_07 = raster('v2015/catch_km_03_07.tif')
 
 #Primary productivity at 1km - aggregate to time periods
 
@@ -91,17 +91,25 @@ catch_npp_03_07 = overlay(catch_03_07,npp_03_07,fun=function(x,y){x/y},progress=
 # Divide catch by primary productivity then multiply by gear proportions
 
 
-out_06_10_hb = overlay(catch_npp_06_10,gear_hb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_06_10_npp_hb_raw.tif')
-out_06_10_lb = overlay(catch_npp_06_10,gear_lb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_06_10_npp_lb_raw.tif')
+out_06_10_hb = overlay(catch_npp_06_10,gear_hb,fun=function(x,y){x*y},progress='text',
+                       filename='v2015/output/catch_06_10_npp_hb_raw.tif',overwrite=T)
+out_06_10_lb = overlay(catch_npp_06_10,gear_lb,fun=function(x,y){x*y},progress='text',
+                       filename='v2015/output/catch_06_10_npp_lb_raw.tif',overwrite=T)
 
-out_05_09_hb = overlay(catch_npp_05_09,gear_hb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_05_09_npp_hb_raw.tif')
-out_05_09_lb = overlay(catch_npp_05_09,gear_lb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_05_09_npp_lb_raw.tif')
+out_05_09_hb = overlay(catch_npp_05_09,gear_hb,fun=function(x,y){x*y},progress='text',
+                       filename='v2015/output/catch_05_09_npp_hb_raw.tif',overwrite=T)
+out_05_09_lb = overlay(catch_npp_05_09,gear_lb,fun=function(x,y){x*y},progress='text',
+                       filename='v2015/output/catch_05_09_npp_lb_raw.tif',overwrite=T)
 
-out_04_08_hb = overlay(catch_npp_04_08,gear_hb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_04_08_npp_hb_raw.tif')
-out_04_08_lb = overlay(catch_npp_04_08,gear_lb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_04_08_npp_lb_raw.tif')
+out_04_08_hb = overlay(catch_npp_04_08,gear_hb,fun=function(x,y){x*y},progress='text',
+                       filename='v2015/output/catch_04_08_npp_hb_raw.tif',overwrite=T)
+out_04_08_lb = overlay(catch_npp_04_08,gear_lb,fun=function(x,y){x*y},progress='text',
+                       filename='v2015/output/catch_04_08_npp_lb_raw.tif',overwrite=T)
 
-out_03_07_hb = overlay(catch_npp_03_07,gear_hb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_03_07_npp_hb_raw.tif')
-out_03_07_lb = overlay(catch_npp_03_07,gear_lb,fun=function(x,y){x*y},progress='text',filename='v2015/output/catch_03_07_npp_lb_raw.tif')
+out_03_07_hb = overlay(catch_npp_03_07,gear_hb,fun=function(x,y){x*y},progress='text',
+                       filename='v2015/output/catch_03_07_npp_hb_raw.tif',overwrite=T)
+out_03_07_lb = overlay(catch_npp_03_07,gear_lb,fun=function(x,y){x*y},progress='text',
+                       filename='v2015/output/catch_03_07_npp_lb_raw.tif',overwrite=T)
 
 #----------------------------------------------------------------------------
 
@@ -111,14 +119,20 @@ fishing.pressures = list.files("v2015/output",full.names=T)
 
 for (i in 1:length(fishing.pressures)){
   
+  print(i)
+  
   r    = raster(fishing.pressures[i])
   yrs  = substr(names(r),7,11)
   gear = substr(names(r),17,18)
   
-  ref = cellStats(r,stat='max')
+  # look at logged data
   
-  resc = calc(r,fun=function(x){x/ref},progress='text')
+  r_log = calc(r,fun=function(x){log(x+1)},progress='text')
+
+  ref = quantile(r_log,prob=0.9999)
   
-  writeRaster(resc,filename=paste0('v2015/output/catch_',yrs,'_npp_',gear,'_rescaled.tif'),overwrite=T)
+  resc_log =  calc(r_log,fun=function(x){ifelse(x>ref,1,x/ref)},progress='text')
+  
+  writeRaster(resc_log,filename=paste0('v2015/output/catch_',yrs,'_npp_',gear,'_rescaled.tif'),overwrite=T)
   
 }
