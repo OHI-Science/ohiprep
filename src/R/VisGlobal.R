@@ -29,7 +29,7 @@ changePlot <- function(repo="~/ohi-global", scenario="eez2013", commit="previous
     mutate(change = score-old_score) 
   
   ggplot(data_new, aes(x=goal, y=change, color=dimension)) +
-    geom_point(shape=19, size=1) +
+    #geom_point(shape=19, size=1) +
     theme_bw() + 
     labs(title=paste(scenario, commit, sep=" "), y="Change in score", x="") +
     scale_x_discrete(limits = c("Index", "AO", "SPP", "BD", "HAB", "CP", "CS", "CW", "FIS", "FP", 
@@ -92,7 +92,7 @@ scatterPlot <- function(repo="~/ohi-global", scenario="eez2013", commit="previou
   ggplot(data_new, aes(x=old_score, y=score)) +
     geom_point(shape=19) +
     theme_bw() + 
-    labs(title=paste(scenario, goal, dim, commit, sep=": "), y="New scores", x="Scores from 2015 analysis") +
+    labs(title=paste(scenario, goal, dim, commit, sep=": "), y="New scores", x="Scores from previous analysis") +
     geom_abline(slope=1, intercept=0, color="red") +
     geom_text(aes(label=plotLabel), vjust=1.5, size=3)
     
