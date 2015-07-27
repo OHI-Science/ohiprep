@@ -30,12 +30,12 @@ get_loiczid_raster <- function(reload = FALSE) {
     coordinates(am_cells) <- ~ CenterLong + CenterLat
     proj4string(am_cells) <- CRS(projection(template_raster))
     
-    cat(sprintf('Writing LOICZID 0.5° raster to: \n  %s', rgn_prop_file))
+    cat(sprintf('Writing LOICZID 0.5° raster to: \n  %s\n', rgn_prop_file))
     rasterize(am_cells, template_raster, field = 'LOICZID', progress = 'text', 
               filename = loiczid_raster_file,
               overwrite = TRUE)
   } else {
-    cat(sprintf('Reading LOICZID 0.5° raster from: \n  %s', loiczid_raster_file))
+    cat(sprintf('Reading LOICZID 0.5° raster from: \n  %s\n', loiczid_raster_file))
   }
   loiczid_raster <- raster(loiczid_raster_file)
   return(invisible(loiczid_raster))
@@ -43,17 +43,24 @@ get_loiczid_raster <- function(reload = FALSE) {
 
 
 ##############################################################################=
-extract_cell_id_per_region <- function(reload = FALSE, rgn_layer = 'rgn_gcs') {
+extract_cell_id_per_region <- function(reload       = FALSE, 
+                                       ogr_location = file.path(dir_neptune_data, 'git-annex/globalprep/spatial/v2015/data'),
+                                       rgn_layer    = 'regions_gcs', 
+                                       ohi_type     = 'global') {
   ### Determines proportional area of each cell covered by region polygons.  Returns data frame
   ### of rgn_id, loiczid, csq, and proportional area of loiczid cell covered by the rgn_id region.
-  ### Should not be year-specific, so leave files in SpeciesDiversity/rgns.
+  ### * reload: re-extract region IDs to cell IDs from indicated shape file?
+  ### * ogr_location: where is the region vector layer information (without layer name)
+  ### * rgn_layer:    which vector layer to use (no file extension, e.g. .shp)
+  ### * ohi_type:     what type of assessment: global, HS, AQ
+  ###
+  ### Should not be year-specific, so leave prepped files in SpeciesDiversity/rgns, or change reload to TRUE.
   ### ??? TO DO: compare loiczid regions <-> CenterLong and CenterLat to last year's table, to make sure consistent from year to year.
   ##############################################################################=
   
-  ogr_location  <- file.path(dir_neptune_data, 'git-annex/Global/NCEAS-Regions_v2014/data')
   cat(sprintf('Getting cell ID per region based upon region file: %s\n  %s\n', rgn_layer, file.path(ogr_location, rgn_layer)))
   
-  rgn_prop_file <- file.path(dir_anx, sprintf('rgns/cellID_%s.csv', rgn_layer))
+  rgn_prop_file <- file.path(dir_anx, sprintf('rgns/cellID_%s_%s.csv', rgn_layer, ohi_type))
   
   if(!file.exists(rgn_prop_file) | reload) {
     
@@ -61,8 +68,11 @@ extract_cell_id_per_region <- function(reload = FALSE, rgn_layer = 'rgn_gcs') {
     regions        <- readOGR(dsn = ogr_location, layer = rgn_layer)
     # slow command... ~ 4 minutes
     
-    rgn_types      <- c('eez', 'eez-disputed', 'eez-inland')
-    regions        <- regions[regions@data$rgn_type %in% rgn_types, ]
+    regions <- switch(ohi_type,
+                        global = regions[regions@data$rgn_typ %in% c('eez', 'eez-disputed', 'eez-inland'), ],
+                        HS     = regions[regions@data$rgn_typ %in% c('fao'), ],
+                        AQ     = regions[regions@data$ant_typ %in% c('eez-ccamlr'), ],
+                        regions[regions@data$rgn_typ %in% c('eez', 'eez-disputed', 'eez-inland'), ]) #default to same as global
     
     raster_file    <- file.path(dir_anx, 'rgns/loiczid_raster')
     loiczid_raster <- get_loiczid_raster(reload = FALSE)
@@ -74,8 +84,13 @@ extract_cell_id_per_region <- function(reload = FALSE, rgn_layer = 'rgn_gcs') {
     
     
     ### assign rgn_id and rgn_name identifiers (from `regions`) to region_prop, convert to data.frame
-    rgn_id_name <- data.frame(regions@data$rgn_id, regions@data$rgn_name) %>%
-      unite(combo, regions.data.rgn_id, regions.data.rgn_name, sep = '_')
+    if(ohi_type != 'AQ') {
+      rgn_id_name <- data.frame(regions@data$rgn_id, regions@data$rgn_nam) %>%
+        unite(combo, regions.data.rgn_id, regions.data.rgn_nam, sep = '_')
+    } else {
+      rgn_id_name <- data.frame(regions@data$ant_id, regions@data$rgn_nam) %>%
+        unite(combo, regions.data.ant_id, regions.data.rgn_nam, sep = '_')
+    }
     names(region_prop) <- rgn_id_name$combo
     region_prop_df     <- plyr::ldply(region_prop, rbind) # ??? still a plyr function.
     # length(unique(region_prop_df$.id)) 

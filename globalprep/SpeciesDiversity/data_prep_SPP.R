@@ -21,7 +21,6 @@ dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal)
 dir_git  <- file.path('~/github/ohiprep', goal)
 
 source(file.path(dir_git, 'R/spp_fxn.R'))
-source(file.path(dir_git, 'R/ico_fxn.R'))
 # SPP-specific and ICO-specific functions
 
 ##############################################################################=
@@ -108,7 +107,7 @@ source(file.path(goal, 'R/ingest_iucn.R'))
 ##############################################################################=
 ### Generate lookup - species <-> category/trend and spatial_source ----
 ##############################################################################=
-spp_all <- create_spp_master_lookup(reload = TRUE)
+spp_all <- create_spp_master_lookup(reload = FALSE)
 ### | am_sid | sciname | am_category | iucn_sid | iucn_category | popn_trend | popn_category | 
 ### | info_source | spp_group | id_no | objectid | spatial_source | category_score | trend_score |
 ### Outputs saved to:
@@ -161,8 +160,10 @@ extract_loiczid_per_spp(groups_override = NULL, reload = FALSE)
 ##############################################################################=
 rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
 ### | sp_id | loiczid | proportionArea | csq | cell_area
-### saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/cellID_rgn_gcs.csv
+### saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/cellID_region_gcs_global.csv
 ### To use a different region shapefile, add an argument of: rgn_layer = '<rgn file here, without extension>'
+### To use a shape file from a different directory (other than git-annex/globalprep/spatial/v2015/data), add an ogr_location argument.
+### To run a different type of analysis, add an ohi_type argument with global (default), HS, or AQ
 
 ##############################################################################=
 ### SPP - Generate species per cell tables for Aquamaps and IUCN -----
@@ -194,8 +195,8 @@ spp_status <- summary_by_rgn %>%
   select(rgn_id, score = status)
 spp_trend <- summary_by_rgn %>%
   select(rgn_id, score = rgn_mean_trend)
-write_csv(spp_status, file.path(dir_git, scenario, 'data/spp_status.csv'))
-write_csv(spp_trend,  file.path(dir_git, scenario, 'data/spp_trend.csv'))
+write_csv(spp_status, file.path(dir_git, scenario, 'data/spp_status_global.csv'))
+write_csv(spp_trend,  file.path(dir_git, scenario, 'data/spp_trend_global.csv'))
 
 
 ##############################################################################=
@@ -203,9 +204,11 @@ write_csv(spp_trend,  file.path(dir_git, scenario, 'data/spp_trend.csv'))
 ##############################################################################=
 ### create final outputs for 3nm zone:
 ### This version is for the 3 nm coastal zone cells...
-rgn_cell_lookup_3nm <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 'rgn_offshore3nm_gcs')
+rgn_cell_lookup_3nm <- extract_cell_id_per_region(reload = FALSE, 
+                                                  ogr_location = file.path(dir_neptune_data, 'git-annex/Global/NCEAS-Regions_v2014/data',
+                                                  rgn_layer = 'rgn_offshore3nm_gcs')
 ### | sp_id | loiczid | proportionArea | csq | cell_area
-### saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/cellID_rgn_offshore3nm_gcs.csv
+### saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/cellID_rgn_offshore3nm_gcs_global.csv
 
 summary_by_rgn_3nm <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup_3nm, rgn_note = '3nm')
 
@@ -217,6 +220,44 @@ spp_trend_3nm <- summary_by_rgn_3nm %>%
   select(rgn_id, score = rgn_mean_trend)
 write_csv(spp_status_3nm, file.path(dir_git, scenario, 'data/spp_status_3nm.csv'))
 write_csv(spp_trend_3nm,  file.path(dir_git, scenario, 'data/spp_trend_3nm.csv'))
+
+##############################################################################=
+### SPP HS and Antarctic - Summarize mean category and trend per region -----
+##############################################################################=
+### create final outputs for HS zone:
+### This version is for the high seas cells...
+rgn_cell_lookup_hs <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 'region_gcs', ohi_type = 'HS')
+### | sp_id | loiczid | proportionArea | csq | cell_area
+### saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/cellID_region_gcs_HS.csv
+
+summary_by_rgn_hs <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup_hs, rgn_note = 'HS')
+
+if(!exists('summary_by_rgn_hs')) 
+  summary_by_rgn_hs <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_hs.csv'))
+spp_status_hs <- summary_by_rgn_hs %>%
+  select(rgn_id, score = status)
+spp_trend_hs <- summary_by_rgn_hs %>%
+  select(rgn_id, score = rgn_mean_trend)
+write_csv(spp_status_hs, file.path(dir_git, scenario, 'data/spp_status_hs.csv'))
+write_csv(spp_trend_hs,  file.path(dir_git, scenario, 'data/spp_trend_hs.csv'))
+
+
+### create final outputs for AQ zone:
+### This version is for the Antarctic cells...
+rgn_cell_lookup_hs <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 'region_gcs', ohi_type = 'AQ')
+### | sp_id | loiczid | proportionArea | csq | cell_area
+### saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/cellID_region_gcs_AQ.csv
+
+summary_by_rgn_aq <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup_hs, rgn_note = 'AQ')
+
+if(!exists('summary_by_rgn_aq')) 
+  summary_by_rgn_aq <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_aq.csv'))
+spp_status_hs <- summary_by_rgn_aq %>%
+  select(rgn_id, score = status)
+spp_trend_aq <- summary_by_rgn_aq %>%
+  select(rgn_id, score = rgn_mean_trend)
+write_csv(spp_status_aq, file.path(dir_git, scenario, 'data/spp_status_aq.csv'))
+write_csv(spp_trend_aq,  file.path(dir_git, scenario, 'data/spp_trend_aq.csv'))
 
 ##############################################################################=
 
