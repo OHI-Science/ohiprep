@@ -46,7 +46,7 @@ get_loiczid_raster <- function(reload = FALSE) {
 extract_cell_id_per_region <- function(reload       = FALSE, 
                                        ogr_location = file.path(dir_neptune_data, 'git-annex/globalprep/spatial/v2015/data'),
                                        rgn_layer    = 'regions_gcs', 
-                                       ohi_type     = 'global') {
+                                       ohi_type     = 'global') {   # ohi_type = 'HS'    ohi_type = 'AQ'
   ### Determines proportional area of each cell covered by region polygons.  Returns data frame
   ### of rgn_id, loiczid, csq, and proportional area of loiczid cell covered by the rgn_id region.
   ### * reload: re-extract region IDs to cell IDs from indicated shape file?
@@ -64,7 +64,7 @@ extract_cell_id_per_region <- function(reload       = FALSE,
   
   if(!file.exists(rgn_prop_file) | reload) {
     
-    cat(sprintf('Reading regions shape file - come back in about 4 minutes.\n  %s\n', ogr_location))
+    cat(sprintf('Reading regions shape file %s - come back in about 4 minutes.\n  %s/%s\n', rgn_layer, ogr_location, rgn_layer))
     regions        <- readOGR(dsn = ogr_location, layer = rgn_layer)
     # slow command... ~ 4 minutes
     
