@@ -37,6 +37,22 @@ m <- m %>%
   arrange(country, species, fao, environment, year, value) %>% # replace with bind_rows command once updated dplyr  
   rbind(m_ant2) # replace with bind_rows command once updated dplyr
 
+m_ant3 <- m %>%
+  filter(country == 'Channel Islands') %>%
+  mutate(
+    value            = value/2,
+    'Guernsey'        = value,
+    'Jersey'           = value) %>%
+  select(-value, -country) %>%
+  gather(country, value, -species, -fao, -environment, -year) %>%
+  mutate(country = as.character(country))  
+m <- m %>%
+  filter(country != 'Channel Islands') %>%
+  #    bind_rows(m_ant) # commented out until you update dplyr 
+  arrange(country, species, fao, environment, year, value) %>% # replace with bind_rows command once updated dplyr  
+  rbind(m_ant3) # replace with bind_rows command once updated dplyr
+
+
   return(m)
 }
 
