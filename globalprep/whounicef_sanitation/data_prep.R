@@ -28,7 +28,6 @@ setwd('~/github/ohiprep')
 source('src/R/common.R')
 
 source('src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na()
-dir_d <- 'Global/WHOUNICEF-Sanitation_v2012' 
 
 goal     <- 'globalprep/whounicef_sanitation'
 scenario <- 'v2015'
@@ -41,7 +40,8 @@ dir_int  <- file.path(dir_git, scenario, 'int')
 ### read in files, clean up data ----
 ##############################################################################=
 
-sani_raw <- read.csv(file.path(dir_git, 'raw', 'whounicef_sanitation_1990-2015.csv'), na.strings=c(NA,''), skip=3, stringsAsFactors = FALSE) 
+sani_raw <- read.csv(file.path(dir_git, 'raw', 'whounicef_sanitation_1990-2015.csv'), 
+                     na.strings = c(NA, ''), skip = 3, stringsAsFactors = FALSE) 
 ### note: na.strings argument important for na.locf to work
 
 sani <- sani_raw %>%
@@ -51,33 +51,25 @@ sani <- sani_raw %>%
          imp_tot_ct     = Total.Improved..x1000. ,
          imp_tot_pct    = Total.Improved.... ,
          unimp_tot_ct   = Total.Unimproved..x1000. ,
-         unimp_tot_pct  = Total.Unimproved.... ,
-         prop_access    = X) %>%
+         unimp_tot_pct  = Total.Unimproved....) %>%
   mutate(pop            = pop          * 1000,
          imp_tot_ct     = imp_tot_ct   * 1000,
          unimp_tot_ct   = unimp_tot_ct * 1000,
-         country        = na.locf(country)) %>%      # use na.locf() function from zoo package to fill down for country names
-  group_by(country) %>%
-  mutate(prop_access = max(prop_access, na.rm = TRUE)) 
-          ### Since not all countries have a prop_access value, na.locf() will not work correctly.
-          ### So, group_by(country) then mutate(prop_access = max(prop_access, na.rm = TRUE)) 
-          ### should perform the same, except will leave NAs where they should be.
-          ### should be only one value for each country; so max, mean, min, etc should all return the same.
-          ### But now there are many countries with NAs in this variable - gapfilling problem later?
+         country        = na.locf(country))      # use na.locf() function from zoo package to fill down for country names
 
 ### select and scale percent of population with access to improved sanitation
 sani_improved <- sani %>%
-  select(country, year, imp_access_pct = imp_tot_pct) %>%
-  mutate(imp_access_pct = imp_access_pct/100)
+  select(country, year, access_pct = imp_tot_pct) %>%
+  mutate(access_pct = access_pct/100)
 summary(sani_improved); head(sani_improved)
 
 ### add rgn_id: country to rgn_id
 rgn_sani <- name_to_rgn(sani_improved, 
-                        fld_name='country', 
-                        flds_unique=c('country','year'), 
-                        fld_value='imp_access_pct', 
+                        fld_name     = 'country', 
+                        flds_unique  = c('country','year'), 
+                        fld_value    = 'access_pct', 
                         collapse_fxn = 'mean', 
-                        add_rgn_name=T) %>%
+                        add_rgn_name = TRUE) %>%
   arrange(rgn_id, year)
     ### original note: must use mean, otherwise prop_access > 1
     ### new note (CCO 2015): what about a population-weighted mean?  The following countries could be affected:
@@ -112,7 +104,7 @@ attrsave  <- file.path(dir_int, 'rgn_jmp_san_2015a_attr.csv')
 r_g_a <- gapfill_georegions(
   data = rgn_sani %>%
     filter(!rgn_id %in% c(213,255)) %>%
-    select(rgn_id, year, imp_access_pct),
+    select(rgn_id, year, access_pct),
   fld_id = 'rgn_id',
   georegions = georegions,
   georegion_labels = georegion_labels,
@@ -126,11 +118,13 @@ head(attr(r_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('
 ##############################################################################=
 ### save raw proportion with access ----
 ##############################################################################=
-r_g <- r_g_a %>%
-  select(rgn_id, year, imp_access_pct) %>%
-  arrange(rgn_id, year); head(r_g)
-write.csv(r_g, layersave, na = '', row.names=FALSE)
-# r_g = read.csv('ohiprep/Global/WHOUNICEF-Sanitation_v2012/data/rgn_jmp_san_2014a_raw_prop_access.csv')
+rgn_sani <- r_g_a %>%
+  select(rgn_id, year, access_pct) %>%
+  arrange(rgn_id, year); head(rgn_sani)
+write.csv(rgn_sani, layersave, na = '', row.names = FALSE)
+
+### read raw proportion with access ----
+rgn_sani <- read.csv(layersave, stringsAsFactors = FALSE)
 
 
 ##############################################################################=
@@ -138,186 +132,116 @@ write.csv(r_g, layersave, na = '', row.names=FALSE)
 ##############################################################################=
 # based from neptune_data:model/GL-NCEAS-Pressures_v2013a/model_pathogens.R
 
-popn_density_file <- read.csv(file.path(dir_neptune_data, 'model/GL-NCEAS-CoastalPopulation_v2013/data', 
-                                       'rgn_popsum_area_density_2005to2015_inland25mi.csv')); head(popn_density_file) 
+popn_density_file <- read.csv(file.path(dir_neptune_data, 
+                                        'model/GL-NCEAS-CoastalPopulation_v2013/data', 
+                                       'rgn_popsum_area_density_2005to2015_inland25mi.csv'))
 
-# explore skew of population density
+# population density - strong right skew
 popn_density <- popn_density_file %>%  
-  filter(pop_per_km2 != 0) %>% # remove any unpopulated regions (rgn_id 149, 158)
-  mutate(
-    pop_per_km2_lin     = pop_per_km2 / max(pop_per_km2, na.rm=T),
-    pop_per_km2_log     = ifelse(pop_per_km2!=0, log(pop_per_km2), 0),
-    pop_per_km2_log_lin = ( pop_per_km2_log - min(pop_per_km2_log) ) / ( max(pop_per_km2_log, na.rm=T) - min(pop_per_km2_log) )) %>%
-  select(rgn_id, year, pop_per_km2, pop_per_km2_lin, pop_per_km2_log_lin) %>%
-  arrange(desc(pop_per_km2)); head(popn_density)
+  filter(pop_per_km2 != 0) ### remove any unpopulated regions (rgn_id 149, 158)
 
 # to add any missing regions as NA
 rgns <- read.csv('src/LookupTables/eez_rgn_2013master.csv') %>%
   select(rgn_id = rgn_id_2013,
          rgn_name = rgn_nam_2013)  %>%
-  filter(rgn_id < 255) %>%
-  arrange(rgn_id); head(rgns)
+  filter(rgn_id < 255)
 
 
 ##############################################################################=
 ### calculate by scenario ----
 ##############################################################################=
 
-# identify  years for each scenario and overall. 'san' = 'sanitation'
-maxyear_all_san <- max(r_g$year, na.rm=T)
-scenario_maxyear <- c('eez2015' = maxyear_all_san,
-                      'eez2014' = maxyear_all_san - 1,
-                      'eez2013' = maxyear_all_san - 2,
-                      'eez2012' = maxyear_all_san - 3)
+# identify  years for each scenario and overall.
+maxyear_all      <- max(rgn_sani$year, na.rm=T)
+scenarios <- c('eez2015' = maxyear_all,
+               'eez2014' = maxyear_all - 1,
+               'eez2013' = maxyear_all - 2,
+               'eez2012' = maxyear_all - 3)
 
-minyear_all <- min(scenario_maxyear)
-
-for (i in 1:length(names(scenario_maxyear_san))) { # i=2
-  maxyear <- scenario_maxyear_san[i]
+for (i in 1:length(names(scenarios))) { # i=2
+  maxyear <- scenarios[i]
+  minyear <- maxyear - 4
+  sc_name <- names(scenarios)[i]
   
-  san_pop <- r_g %>%  # sanitation-population (san_pop)
-    filter(year %in% (maxyear - 4):maxyear, 
-           !is.na(imp_access_pct)) %>%  
-    mutate(include_prev_scenario = (year >= minyear_all))   %>% 
-    select(rgn_id, year, imp_access_pct, include_prev_scenario) %>%
+  unsani_pop <- rgn_sani %>%  ### 'poopers' (lack of access) * population density
+    filter(year %in% minyear:maxyear, 
+           !is.na(access_pct)) %>%  
+    select(rgn_id, year, access_pct) %>%
     left_join(popn_density %>%
-                filter(year %in% (maxyear - 4):maxyear) %>%
+                filter(year %in% minyear:maxyear) %>%
                 select(rgn_id, year, pop_per_km2), 
               by=c('rgn_id', 'year')) %>%
-    mutate(propWO_x_pop     = (1 - imp_access_pct) * pop_per_km2, # this is the number of 'POOPERS'
-           propWO_x_pop_log = log(propWO_x_pop + 1))              # log is important because the skew was high otherwise
-  head(san_pop); summary(san_pop) 
+    mutate(propWO_x_pop     = (1 - access_pct) * pop_per_km2, # this is the population density of people without access
+           propWO_x_pop_log = log(propWO_x_pop + 1))          # log is important because the skew was high otherwise
 
   
-  ## save as pressure layer: only scenario's recent year, but rescaled, including previous scenarios ----
+  ### rescale with all previous scenarios, to 110%:  
+  ###   Neptune: model/GL-NCEAS-CleanWatersPressures/pathogens/sanitation-population-combo/model.R
+  ### Previous assessments rescaled pressure to maximum 'poopers' since eez2012; now
+  ###   pressure is rescaled to 110% of max 'poopers' within past five years.
+  unsani_pop <- unsani_pop %>%
+    mutate(pressure_score = propWO_x_pop_log / (1.1 * max(propWO_x_pop_log, na.rm = TRUE)))
+      
+  ### Combine with any missing regions as 0.  In 2015, these regions are:
+  ###   Antarctica,	Bouvet Island, Heard and McDonald Islands, Kerguelen Islands, 
+  ###   Amsterdam Island and Saint Paul Island, Crozet Islands, Prince Edward Islands,
+  ###   South Georgia and the South Sandwich Islands
+  sp_pressure <- rbind(unsani_pop %>%
+                         filter(year == maxyear) %>%
+                         select(rgn_id, pressure_score), 
+                       rgns %>%
+                         anti_join(unsani_pop, by = 'rgn_id') %>% 
+                         mutate(pressure_score = 0) %>%
+                         select(-rgn_name))
 
-  # rescale with all previous scenarios, to 110%:  Neptune: model/GL-NCEAS-CleanWatersPressures/pathogens/sanitation-population-combo/model.R
-  sp_press <- san_pop %>%
-    filter(include_prev_scenario == T) %>% 
-    mutate(pressure_score = propWO_x_pop_log / (max(propWO_x_pop_log, na.rm=T) * 1.1)) %>% # number of POOPERS, RESCALED
-    select(-include_prev_scenario)
-  
-#   # investigate Benin[99]
-#   r %>% filter(year == 2012) %>% # eez2013
-#     arrange(prop_access) %>% head(10) 
-#   sp_press %>%
-#     arrange(desc(propWO_x_pop)) %>% head(15)
-    
-  # combine with any missing regions as 0
-  sp_pressure <- rbind(sp_press %>%
-                        filter(year == max(year, na.rm=T)) %>% # capture only the most recent year
-                        select(rgn_id, pressure_score), 
-                      rgns %>%
-                        anti_join(san_pop, by = 'rgn_id') %>% 
-                        mutate(pressure_score = 0) %>%
-                        select(-rgn_name)) %>%
-    arrange(rgn_id); head(sp_pressure); summary(sp_pressure)
   stopifnot(anyDuplicated(sp_pressure[,c('rgn_id')]) == 0)  
+  
+  summary(sp_pressure)
+  
+  pressures_file <- file.path(dir_data, 
+                              sprintf('po_pathogens_popdensity25mi_%sa.csv', substr(sc_name, 4, 7))) 
+  write.csv(sp_pressure, pressures_file, row.names = FALSE, na = '')
+  
 
-  csv_p <- file.path(dir_data, sprintf('po_pathogens_popdensity25km_%sa.csv', 
-                                           str_extract(names(scenario_maxyear_san)[i], '\\d{4}'))) # sprintf('po_pathogens_sanitation%d_popninland25km%d.csv', yr_max_san, yr_max_pop)) # previous, longer name
-  write.csv(sp_pressure, csv_p, row.names=F, na='')
-  
-  
   ##############################################################################=
   ### model 5 year trend ----
   ##############################################################################=
-  # trend needs to be calculated with status, which is NON-POOPERS, so must re-invert.
-  # use a linear model since there is enough data. See below at the end for approach used in 2013a
-  sp_mdl <- san_pop %>%
-    mutate(prop_x_pop     = imp_access_pct * pop_per_km2,
-           prop_x_pop_log = log(prop_x_pop + 1)) %>%  # log is important because the skew was high otherwise
-    select(rgn_id, year, prop_x_pop_log) %>%
-    filter(!is.na(prop_x_pop_log)) %>% # lm can't handle NAs!!
+  ### trend is slope of linear regression of pressure scores over the past five 
+  ### data years (annual change in pressure), times 5. 
+  sp_mdl <- unsani_pop %>%
+    filter(!is.na(pressure_score)) %>% # lm can't handle NAs!!
     group_by(rgn_id) %>%
-    do(
-      mdl = lm(prop_x_pop_log ~ year, data=.)) %>% 
+    do(mdl = lm(pressure_score ~ year, data=.)) %>% 
     summarize(
       rgn_id = rgn_id, 
       year_ix0  = coef(mdl)['(Intercept)'],
       year_coef = coef(mdl)['year']) %>%
     mutate(
-      trend_tmp = year_coef / (year_coef * maxyear_san + year_ix0) * 5, # save as separate steps to check it's working # ??? WHAT ARE WE NORMALIZING TO?
-      trend_min = pmin(trend_tmp, 1, na.rm = T),
-      trend_max = pmax(trend_min, -1)) %>% 
-    select(rgn_id, 
-           trend = trend_max); head(sp_mdl); summary(sp_mdl)
-  
+      trend_raw = year_coef * 5,
+      trend = ifelse(trend_raw > 1, 1,
+                         ifelse(trend_raw < -1, -1,
+                                trend_raw))) %>%
+        ### deal with anything outside of +/- 1 - not likely but just in case
+    select(rgn_id, trend)
+    
   # save 5-year trend 
-  # add any missing regions as 0
-  sp_mdl_fin <- rbind(sp_mdl, 
-                     rgns %>%
-                       anti_join(sp_mdl, by = 'rgn_id') %>%
-                       mutate(trend = 0) %>%
-                       select(-rgn_name)) %>%
-    arrange(rgn_id); head(sp_mdl_fin); summary(sp_mdl_fin)
-  stopifnot(anyDuplicated(sp_mdl_fin[,c('rgn_id')]) == 0)
+  # add any missing regions as 0 (note: includes all regions with pressure == NA)
+  sp_mdl <- rbind(sp_mdl, 
+                  rgns %>%
+                    anti_join(sp_mdl, by = 'rgn_id') %>%
+                    mutate(trend = 0) %>%
+                    select(-rgn_name))
+
+  stopifnot(anyDuplicated(sp_mdl[ , c('rgn_id')]) == 0)
   
-  csv_t <- file.path(dir_data, sprintf('pathogens_popdensity25km_trend_%sa.csv', 
-                                           str_extract(names(scenario_maxyear_san)[i], '\\d{4}')))  # sprintf('po_pathogens_trend_sanitation%d_popninland25km%d.csv', yr_max_san, yr_max_pop)) # previous, longer name
-  write.csv(sp_mdl_fin, csv_t, row.names=F, na='')
+  summary(sp_mdl)
   
+  trend_file <- file.path(dir_data, 
+                          sprintf('pathogens_popdensity25mi_trend_%sa.csv', 
+                                  substr(sc_name, 4, 7)))  
+  
+  write.csv(sp_mdl, trend_file, row.names = FALSE, na = '')
 }
-
-
-# pressures:
-
-# 2014 pressures scores are rescaled to maximum 'poopers' since eez2012 (2010-2012):
-# Benin in 2012
-# 
-# 2013 pressures scores are rescaled to maximum 'poopers' since eez2012 (2010-2011):
-# Benin in 2011
-# 
-# 2012 pressures scores are rescaled to maximum 'poopers' since eez2012 (2010-2010):
-# Benin in 2010
-
-
-
-
-## test with Quandl ----
-# for now, Quandl (2010) doesn't have the up-to-date information that the JMP website does (2012).
-# library(devtools)
-# install_github('R-package','quandl')
-# library(Quandl)
-# Quandl.auth("JULES32")
-# 
-# qs <- Quandl.search(query = "WHO / UNICEF Joint Monitoring Program for Water Supply and Sanitation", silent = FALSE)
-# 
-# # in the future, pull the names of each country (x below) from the qs list, and loop through to pull them all and make a data.frame. 
-# # to make the loop, either pull from qs above or download the 'complete list' of data that match this search: http://www.quandl.com/WHO_UNICEF?keyword=%20&page=4&code=WHO_UNICEF&source_ids=439
-# x <- 'WHO_UNICEF/WATERSAN_ABS_DENMARK'
-# JMP_san <- Quandl(x); summary(JMP_san)
-
-
-## 2013a approach: model_pathogens.R ----
-
-# similar approach to what was done in 2013a: in model_pathogens.R
-#    for (scen in names(scenarios)){ # scen <- names(scenarios)[1]
-#     yr.san <- scenarios[[scen]][['sanitation']]
-#     yr.pop <- scenarios[[scen]][['population']]
-#     d <- rename(subset(m, year==yr.san), setNames('popsum_inland25mi', sprintf('popsum%d_inland25mi', yr.pop))); head(d)
-#     d <- within(d, {
-#       popn_density           = popsum_inland25mi / area_inland25mi_km2
-#       #popn_density_log       = ifelse(popn_density!=0, log(popn_density), 0)
-#       popn_density_log       = log(popn_density+1)
-#       popn_density_log_lin   = ( popn_density_log - min(popn_density_log) ) / ( max(popn_density_log) - min(popn_density_log) )
-#       pct_without_sanitation = (100 - pct_sanitation_access)
-#       score_raw              = pct_without_sanitation / 100 * popn_density_log_lin
-#       pressure_score         = score_raw/(max(score_raw)*1.10)
-#     })
-
-
-# calculate trend from two files ----
-# d <- merge(rename(read.csv('data/po_pathogens_sanitation2008_popninland25km2008.csv', na.strings=''),
-#                  c('pressure_score' = 'pressure_score_2008')),
-#           rename(read.csv('data/po_pathogens_sanitation2011_popninland25km2013.csv', na.strings=''),
-#                  c('pressure_score' = 'pressure_score_2011'))); head(d)
-# # get 5 year trend from this 3 year period
-# d <- within(d, {
-#   trend <- (pressure_score_2011 - pressure_score_2008) / 3 * 5}); head(d)
-# write.csv(d[,c('rgn_id','trend')], 'data/po_pathogens_trend_sanitation2008to2011_popninland25km2008to2013.csv', row.names=F, na='')
-
-
 
 
 
