@@ -85,7 +85,7 @@ sum(!is.na(bmsy_final$ram_b_bmsy)) #9368/83679, about 11% of Taxon/fao/rgn recor
 bmsy_final$bbmsy <- ifelse(is.na(bmsy_final$ram_b_bmsy), bmsy_final$b_bmsy, bmsy_final$ram_b_bmsy) 
 bmsy_final <- bmsy_final %>%
   mutate(fao_ohi_id = paste(fao_id, rgn_id, sep='_')) %>%
-  select(fao_ohi_id, TaxonKey, year, b_bmsy=bbmsy); head(bmsy_final); summary(bmsy_final)
+  select(fao_ohi_id, taxonkey=TaxonKey, year, b_bmsy=bbmsy); head(bmsy_final); summary(bmsy_final)
 filter(bmsy_final, fao_ohi_id=='71_13', TaxonKey==600107)
 
 write.csv(bmsy_final, 'globalprep/SAUP_FIS/v2015/data/fnk_fis_b_bmsy_lyr.csv', row.names=F, na='')
