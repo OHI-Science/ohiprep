@@ -39,7 +39,16 @@ d <- read.csv(file.path(dir_d,'raw','MAR_data_2015_nofreshwater.csv'), check.nam
       5:ncol(d)) %>%  
     gather(year, value, -country, -species, -fao, -environment)
 
-  ## tried to use the fao_clean_data function - but in commodities they put " F" at the end - here it is at the beginning.
+  
+# remove seaweeds/algae/plants (these are not always used for food sources, so included in NP instead)
+  seaweed <- read.csv(file.path(dir_d,'raw/MAR_species_seaweeds.csv')) %>%
+    filter(seaweed == "yes") %>%
+    select(species)
+  
+m <- m %>%
+  filter(!(species %in% seaweed$species))
+  
+    ## tried to use the fao_clean_data function - but in commodities they put " F" at the end - here it is at the beginning.
 m = m %>%
   filter(!country %in% c('Totals', 'Yugoslavia SFR', 'Palestine, Occupied Tr.', 'Un. Sov. Soc. Rep.'), environment!='Freshwater') %>%    
   mutate(  
