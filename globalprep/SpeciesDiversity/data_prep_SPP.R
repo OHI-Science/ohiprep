@@ -205,7 +205,7 @@ write_csv(spp_trend,  file.path(dir_git, scenario, 'data/spp_trend_global.csv'))
 ### create final outputs for 3nm zone:
 ### This version is for the 3 nm coastal zone cells...
 rgn_cell_lookup_3nm <- extract_cell_id_per_region(reload = FALSE, 
-                                                  ogr_location = file.path(dir_neptune_data, 'git-annex/Global/NCEAS-Regions_v2014/data',
+                                                  ogr_location = file.path(dir_neptune_data, 'git-annex/Global/NCEAS-Regions_v2014/data'),
                                                   rgn_layer = 'rgn_offshore3nm_gcs')
 ### | sp_id | loiczid | proportionArea | csq | cell_area
 ### saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/cellID_rgn_offshore3nm_gcs_global.csv
@@ -226,7 +226,7 @@ write_csv(spp_trend_3nm,  file.path(dir_git, scenario, 'data/spp_trend_3nm.csv')
 ##############################################################################=
 ### create final outputs for HS zone:
 ### This version is for the high seas cells...
-rgn_cell_lookup_hs <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 'region_gcs', ohi_type = 'HS')
+rgn_cell_lookup_hs <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 'regions_gcs', ohi_type = 'HS')
 ### | sp_id | loiczid | proportionArea | csq | cell_area
 ### saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/cellID_region_gcs_HS.csv
 
@@ -244,15 +244,15 @@ write_csv(spp_trend_hs,  file.path(dir_git, scenario, 'data/spp_trend_hs.csv'))
 
 ### create final outputs for AQ zone:
 ### This version is for the Antarctic cells...
-rgn_cell_lookup_hs <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 'region_gcs', ohi_type = 'AQ')
+rgn_cell_lookup_aq <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 'regions_gcs', ohi_type = 'AQ')
 ### | sp_id | loiczid | proportionArea | csq | cell_area
 ### saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/cellID_region_gcs_AQ.csv
 
-summary_by_rgn_aq <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup_hs, rgn_note = 'AQ')
+summary_by_rgn_aq <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup_aq, rgn_note = 'AQ')
 
 if(!exists('summary_by_rgn_aq')) 
   summary_by_rgn_aq <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_aq.csv'))
-spp_status_hs <- summary_by_rgn_aq %>%
+spp_status_aq <- summary_by_rgn_aq %>%
   select(rgn_id, score = status)
 spp_trend_aq <- summary_by_rgn_aq %>%
   select(rgn_id, score = rgn_mean_trend)
