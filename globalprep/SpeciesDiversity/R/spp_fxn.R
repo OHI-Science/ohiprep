@@ -58,7 +58,7 @@ extract_cell_id_per_region <- function(reload       = FALSE,
   ### ??? TO DO: compare loiczid regions <-> CenterLong and CenterLat to last year's table, to make sure consistent from year to year.
   ##############################################################################=
   
-  cat(sprintf('Getting cell ID per region based upon region file: %s\n  %s\n', rgn_layer, file.path(ogr_location, rgn_layer)))
+  cat(sprintf('Getting cell ID per %s region based upon region file: %s\n  %s\n', ohi_type, rgn_layer, file.path(ogr_location, rgn_layer)))
   
   rgn_prop_file <- file.path(dir_anx, sprintf('rgns/cellID_%s_%s.csv', rgn_layer, ohi_type))
   
@@ -84,13 +84,14 @@ extract_cell_id_per_region <- function(reload       = FALSE,
     
     
     ### assign rgn_id and rgn_name identifiers (from `regions`) to region_prop, convert to data.frame
-    if(ohi_type != 'AQ') {
-      rgn_id_name <- data.frame(regions@data$rgn_id, regions@data$rgn_nam) %>%
-        unite(combo, regions.data.rgn_id, regions.data.rgn_nam, sep = '_')
-    } else {
+    if(ohi_type == 'AQ') {
       rgn_id_name <- data.frame(regions@data$ant_id, regions@data$rgn_nam) %>%
         unite(combo, regions.data.ant_id, regions.data.rgn_nam, sep = '_')
+    } else {
+      rgn_id_name <- data.frame(regions@data$rgn_id, regions@data$rgn_nam) %>%
+        unite(combo, regions.data.rgn_id, regions.data.rgn_nam, sep = '_')
     }
+    
     names(region_prop) <- rgn_id_name$combo
     region_prop_df     <- plyr::ldply(region_prop, rbind) # ??? still a plyr function.
     # length(unique(region_prop_df$.id)) 

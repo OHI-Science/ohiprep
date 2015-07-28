@@ -248,7 +248,7 @@ rgn_cell_lookup_aq <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 're
 ### | sp_id | loiczid | proportionArea | csq | cell_area
 ### saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/cellID_region_gcs_AQ.csv
 
-summary_by_rgn_aq <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup_hs, rgn_note = 'AQ')
+summary_by_rgn_aq <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup_aq, rgn_note = 'AQ')
 
 if(!exists('summary_by_rgn_aq')) 
   summary_by_rgn_aq <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_aq.csv'))
