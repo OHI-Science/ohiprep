@@ -166,6 +166,10 @@ m2 = m %>%
   ungroup() %>% 
   select(id, country,  species, fao, environment, year, value, Taxon_code, gap_0_fill)
 
+### save this cleaned file to estimate total MAR yield per country
+write.csv(m2, 'globalprep/mariculture_status/data/MAR_FP_data.csv', row.names=FALSE)
+
+
 # add a unique identifier per cultivated stock
 identifier = m2 %>% 
   select(id, country, species, fao, environment) %>% 

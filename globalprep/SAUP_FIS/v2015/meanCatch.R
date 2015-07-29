@@ -116,6 +116,9 @@ eez <-  catch_ohi_fao_taxa %>%
   mutate(fao_ohi_id = paste(FAO_id, region_id, sep="_")) %>%
   mutate(taxon_name_key = paste(scientific.name, TaxonKey, sep="_")) %>%
   select(fao_ohi_id, taxon_name_key, year=Year, catch)
+### save these data for calculating FP weightings
+write.csv(eez, "globalprep/SAUP_FIS/v2015/data/FP_fis_data.csv", row.names=FALSE)
+
 
 ### Average catch across years
 eez_meanCatch <- eez %>%
