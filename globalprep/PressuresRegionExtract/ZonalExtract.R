@@ -473,6 +473,149 @@ plot(Motion)
 print(Motion, file=file.path(save_loc, 'sst.html'))
 
 
+#### Fisheries ----
+# read in fisheries pressure data (should be 8 layers, with values 0 to 1)
+
+#check an example:
+tmp <- raster('/var/data/ohi/git-annex/globalprep/Pressures_fishing/v2015/output/catch_03_07_npp_hb_rescaled.tif')
+
+files <- list.files('/var/data/ohi/git-annex/globalprep/Pressures_fishing/v2015/output')
+rescaled_files <- grep("_rescaled", files, value=TRUE)
+
+pressure_stack <- stack()
+for(rast in rescaled_files){ # rast = 'catch_03_07_npp_hb_rescaled.tif'
+  tmp <- raster(file.path('/var/data/ohi/git-annex/globalprep/Pressures_fishing/v2015/output', rast))
+  pressure_stack <- stack(pressure_stack, tmp)
+}
+
+# extract data for each region:
+regions_stats <- zonal(pressure_stack,  zones, fun="mean", na.rm=TRUE, progress="text")
+regions_stats2 <- data.frame(regions_stats)
+setdiff(regions_stats2$zone, rgn_data$sp_id) #should be none
+setdiff(rgn_data$sp_id, regions_stats2$zone) #should be none
+
+data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
+write.csv(data, file.path(save_loc, "tmp/fisheries.csv"), row.names=FALSE)
+
+data[is.na(data$catch_03_07_npp_hb_rescaled), ]
+
+data <- read.csv(file.path(save_loc, "tmp/fisheries.csv"))
+data_long <- data %>%
+  gather("layer", "pressure_score", starts_with("catch")) %>%
+  mutate(layer = gsub('_rescaled', '', layer)) 
+#  mutate(pressure_score = ifelse(is.na(pressure_score), 0, pressure_score))
+
+## record gap-filled regions:
+convert_year <- data.frame(layer =c('catch_06_10_npp_hb', 'catch_05_09_npp_hb', 'catch_04_08_npp_hb', 'catch_03_07_npp_hb',
+                                    'catch_06_10_npp_lb', 'catch_05_09_npp_lb', 'catch_04_08_npp_lb', 'catch_03_07_npp_lb'),
+                           year = 2015:2012)
+
+
+gap_record <- data_long %>% 
+  left_join(convert_year) %>%
+  mutate(gap_filled = ifelse(is.na(pressure_score), "gap-filled", "no"))
+write.csv(gap_record, file.path(save_loc, "data/fisheries_gap_filling.csv"), row.names=FALSE)
+
+### gap-fill some eez regions:
+
+regions <- read.csv("src/LookupTables/rgn_georegions_wide_2013b.csv") %>%
+  dplyr::select(-rgn_nam)
+
+## fill in a couple missing values:
+# replace Bosnia with Croatio values
+croatia <- data_long[data_long$rgn_id == 187,] %>%
+  dplyr::select(layer, pressure_score2=pressure_score) %>%
+  mutate(rgn_id = 232)
+
+data_gapfill <- data_long %>%
+  left_join(croatia) %>%
+  mutate(pressure_score = ifelse(is.na(pressure_score), pressure_score2, pressure_score)) %>%
+  dplyr::select(-pressure_score2)
+
+# replace arctic and Bouvet Island with zeros 
+data_gapfill$pressure_score[data_gapfill$rgn_id %in% c(105, 260)] <- 0
+
+# regional gap-filling for remaining: Bulgaria (71), Romania (72), Georgia (74), Ukraine (75), Jordan (215)  
+eez_gap_fill <- data_gapfill %>%
+  filter(sp_type == "eez") %>%
+  left_join(regions, by="rgn_id") %>%
+  group_by(layer, r2) %>%
+  mutate(mean_pressure_score = mean(pressure_score, na.rm=TRUE)) %>%
+  mutate(pressure_score = ifelse(is.na(pressure_score), mean_pressure_score, pressure_score)) %>%
+  ungroup() %>%
+  dplyr::select(sp_id, sp_type, rgn_id, rgn_name, layer, pressure_score)
+
+## the two r2 regions that need gap-filled data:
+data.frame(eez_gap_fill[eez_gap_fill$r2 %in% c("151"), ])
+data.frame(eez_gap_fill[eez_gap_fill$r2 %in% c(145), ])
+
+### replacing previous eez data with gapfilled eez data:
+pressure_data <- data_gapfill %>%
+  filter(sp_type != "eez") %>%
+  bind_rows(eez_gap_fill)
+
+
+layerType <- unique(pressure_data$layer)
+
+for(layer in layerType){ #layer="catch_03_07_npp_hb"
+  pressureData <- pressure_data[pressure_data$layer %in% layer, ]
+
+  # eez data
+    data <- pressureData %>%
+    filter(sp_type == 'eez') %>%
+    dplyr::select(rgn_id = rgn_id, pressure_score) %>%
+    arrange(rgn_id)
+  write.csv(data, file.path(save_loc, sprintf('data/%s_eez.csv', layer)), row.names=FALSE)
+  
+  # hs data
+  data <- pressureData %>%
+    filter(sp_type == 'fao') %>%
+    dplyr::select(rgn_id = rgn_id, pressure_score) %>%
+    arrange(rgn_id)
+  write.csv(data, file.path(save_loc, sprintf('data/%s_fao.csv', layer)), row.names=FALSE)
+  
+  # antarctica data
+  data <- pressureData %>%
+    filter(sp_type == 'eez-ccamlr') %>%
+    dplyr::select(rgn_id = sp_id, pressure_score) %>%
+    arrange(rgn_id)
+  write.csv(data, file.path(save_loc, sprintf('data/%s_ccamlr.csv', layer)), row.names=FALSE)
+
+}
+
+
+### try visualizing the data using googleVis plot
+library(googleVis)
+
+
+high_bycatch <- pressure_data %>%
+  filter(sp_type == "eez") %>%
+  filter(layer %in% grep("_hb", layerType, value=TRUE)) %>%
+  left_join(convert_year) %>%
+  dplyr::select(rgn_name, year, pressure_score)
+
+
+Motion=gvisMotionChart(high_bycatch, 
+                       idvar="rgn_name", 
+                       timevar="year")
+plot(Motion)
+
+print(Motion, file=file.path(save_loc, 'high_bycatch.html'))
+
+
+low_bycatch <- pressure_data %>%
+  filter(sp_type == "eez") %>%
+  filter(layer %in% grep("_lb", layerType, value=TRUE)) %>%
+  left_join(convert_year) %>%
+  dplyr::select(rgn_name, year, pressure_score)
+Motion=gvisMotionChart(high_bycatch, 
+                       idvar="rgn_name", 
+                       timevar="year")
+plot(Motion)
+
+print(Motion, file=file.path(save_loc, 'low_bycatch.html'))
+
+
 #########################################
 #### Exploring fertilizer and pesticide plume data ----
 #########################################
