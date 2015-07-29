@@ -1,7 +1,5 @@
 # Create fish pressure layers 
 
-source('~/GitHub/ohiprep/src/R/common.R')
-
 rm(list=ls())
 
 options(scipen=999)
@@ -22,7 +20,8 @@ dir.create(tmpdir, showWarnings=F)
 rasterOptions(tmpdir=tmpdir)
 
 
-dir_N = dir_neptune_data
+dir_N = c('Windows'='//neptune.nceas.ucsb.edu/data_edit',
+          'Linux' = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
 
 setwd(file.path(dir_N,'git-annex/globalprep/Pressures_fishing'))
 
@@ -289,7 +288,7 @@ catch_area = zonal(calc_area,rgns_ras,fun='sum',na.rm=T,progress='text')%>%as.da
 new_rgns@data = new_rgns@data%>%
               left_join(catch_all_yrs,by = c('raster_id'='eez_fao_id'))%>%
                left_join(catch_area,by= c('raster_id'='zone'))%>%
-                mutate(catch_per_km_06_10 = (avg_catch_2006to2010/sum)*.872356, #the final cells are 934m*934m so multiply catch by .872356km2 (it's not actually 1km2 cell resolution at the end)
+                mutate(catch_per_km_06_10 = (avg_catch_2006to2010/sum)*.872356,#the final cells are 934m*934m so multiply catch by .872356km2 (it's not actually 1km2 cell resolution at the end)
                        catch_per_km_05_09 = (avg_catch_2005to2009/sum)*.872356,
                        catch_per_km_04_08 = (avg_catch_2004to2008/sum)*.872356,
                        catch_per_km_03_07 = (avg_catch_2003to2007/sum)*.872356) #sum is the fished area in km2
