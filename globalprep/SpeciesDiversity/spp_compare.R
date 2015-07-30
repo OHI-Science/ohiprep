@@ -11,6 +11,17 @@ goal     <- 'globalprep/SpeciesDiversity'
 scenario <- 'v2015'
 dir_git  <- file.path('~/github/ohiprep', goal) 
  
+
+hs_st_old <- (file.path(dir_hs, 'spp_status.csv'))
+hs_tr_old <- (file.path(dir_hs, 'spp_trend.csv'))
+aq_st_old <- (file.path(dir_aq, 'spp_status.csv'))
+aq_tr_old <- (file.path(dir_aq, 'spp_trend.csv'))
+hs_st_new <- (file.path(dir_data, 'spp_status_hs.csv'))
+hs_tr_new <- (file.path(dir_data, 'spp_trend_hs.csv'))
+aq_st_new <- (file.path(dir_data, 'spp_status_aq.csv'))
+aq_tr_new <- (file.path(dir_data, 'spp_trend_aq.csv'))
+
+scatterPlot(hs_st_old, hs_st_new, 'High Seas SPP status')
 #############################################################################=
 scatterPlot <- function(csv_orig, csv_new, title_text,
                         fig_save = file.path(dir_git, scenario, paste0(title_text, '_scatterPlot.png'))) {
@@ -48,7 +59,7 @@ scatterPlot <- function(csv_orig, csv_new, title_text,
     geom_abline(slope = 1, intercept = 0, color = "red") +
     geom_text(aes(label = plotLabel), vjust = 1.5, size = 3)
   
-  ggsave(fig_save, width = 10, height = 8)
+#  ggsave(fig_save, width = 10, height = 8)
 }
 
 #############################################################################=
