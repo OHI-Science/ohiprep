@@ -175,7 +175,6 @@ write.csv(pop_all, file.path(dir_int, 'rgn_pop_dens_adjusted_2005-2015.csv'), ro
 
 pop_rescaled <- read.csv(file.path(dir_int, 'rgn_pop_dens_adjusted_2005-2015.csv'), stringsAsFactors = FALSE) %>%
   select(rgn_id, rgn_name, year, pop, adjusted, area_km2, pop_per_km2) %>%
-  group_by(year) %>%
   mutate(dens_max     = max(pop_per_km2, na.rm = TRUE),
          log_dens_max = log(dens_max + 1)) %>%
   group_by(rgn_id, year) %>%
@@ -184,18 +183,8 @@ pop_rescaled <- read.csv(file.path(dir_int, 'rgn_pop_dens_adjusted_2005-2015.csv
 
 pdens_max <- pop_rescaled %>% 
   filter(pop_per_km2 == dens_max)
-#        rgn_id  rgn_name year     pop adjusted area_km2 pop_per_km2 dens_max log_dens_max log_dens dens_rescaled
-#     1     208 Singapore 2005 4265800     TRUE  600.601    7102.552 7102.552     8.868350 8.868350             1
-#     2     208 Singapore 2006 4401400     TRUE  600.601    7328.326 7328.326     8.899639 8.899639             1
-#     3     208 Singapore 2007 4588600     TRUE  600.601    7640.014 7640.014     8.941286 8.941286             1
-#     4     208 Singapore 2008 4681435    FALSE  600.601    7794.584 7794.584     8.961313 8.961313             1
-#     5     208 Singapore 2009 4729313    FALSE  600.601    7874.301 7874.301     8.971487 8.971487             1
-#     6     208 Singapore 2010 4777191    FALSE  600.601    7954.018 7954.018     8.981558 8.981558             1
-#     7     208 Singapore 2011 4811731    FALSE  600.601    8011.527 8011.527     8.988761 8.988761             1
-#     8     208 Singapore 2012 4846271    FALSE  600.601    8069.036 8069.036     8.995913 8.995913             1
-#     9     208 Singapore 2013 4880812    FALSE  600.601    8126.546 8126.546     9.003014 9.003014             1
-#     10    208 Singapore 2014 4915352    FALSE  600.601    8184.055 8184.055     9.010065 9.010065             1
-#     11    208 Singapore 2015 4949892    FALSE  600.601    8241.565 8241.565     9.017067 9.017067             1
+#     rgn_id  rgn_name year     pop adjusted area_km2 pop_per_km2 dens_max log_dens_max log_dens dens_rescaled
+#        208 Singapore 2015 4949892    FALSE  600.601    8241.565 8241.565     9.017067 9.017067             1
 
 pop_rescaled <- pop_rescaled %>%
   select(rgn_id, rgn_name, year, pop, area_km2, pop_per_km2, dens_rescaled)
@@ -249,12 +238,12 @@ for (i in 1:length(scenario_years)) {  #i = 2
 ### compare results to those using original data from 2013 -----
 ##############################################################################=
 # 
-x <- read.csv(file.path(dir_data, 'rgn_popn5yrtrend_inland25mi_2009to2013.csv'))
-# y <- read.csv(file.path(dir_data, 'orig_data/rgn_popn5yrtrend_inland25mi_2009to2013.csv'))
-y <- read.csv('~/github/ohi-global/eez2013/layers/cw_coastalpopn_trend.csv')
-z <- left_join(x %>% rename(trend_new = trend), y %>% rename(trend_orig = trend), by = 'rgn_id')
-plot(trend_new ~ trend_orig, data = z)
-abline(0, 1, col = 'red')
+# x <- read.csv(file.path(dir_data, 'rgn_popn5yrtrend_inland25mi_2009to2013.csv'))
+# # y <- read.csv(file.path(dir_data, 'orig_data/rgn_popn5yrtrend_inland25mi_2009to2013.csv'))
+# y <- read.csv('~/github/ohi-global/eez2013/layers/cw_coastalpopn_trend.csv')
+# z <- left_join(x %>% rename(trend_new = trend), y %>% rename(trend_orig = trend), by = 'rgn_id')
+# plot(trend_new ~ trend_orig, data = z)
+# abline(0, 1, col = 'red')
 # 
 # xx <- read.csv(file.path(dir_data, 'rgn_rescaled_popsum_area_density_2005to2015_inland25mi.csv')) %>% 
 #   filter(year == 2013)
