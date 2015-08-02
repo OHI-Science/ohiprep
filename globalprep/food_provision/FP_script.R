@@ -27,7 +27,10 @@ fis <- fis %>%
 weight <- merge(mar, fis, by=c('rgn_id', 'year'), all=TRUE)
 weight <- weight %>%
   filter(year >= 1980) %>%
-  filter(year <= 2010)
+  mutate(fp_weight = fis_t/(fis_t + mar_t))
+
+weight[weight$rgn_id == 176, ]
+weight[weight$rgn_id == 232, ]
 
 ## function to combine different years of data:
 extract <- function(scenarioYear, marYear, fisYear){ #scenarioYear=2015; marYear=2013; fisYear=2010
