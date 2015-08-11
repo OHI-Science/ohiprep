@@ -1,10 +1,34 @@
-##Ocean Acidification Pressures Layer
+##Ocean Acidification Pressures Layer for OHI 2015
 
-Raw data provided by Woods Hole on December 16, 2014. This data is an update to the work done by [Feely et al. (2009)](http://www.tos.org/oceanography/archive/22-4_feely.pdf).  
+### Data
 
-Monthly aragonite saturation state data provided for years 1880-1889 and 2005-2014 in NetCDF format with a resolution of about 1 degree.
+Raw data was provided by Woods Hole on December 16, 2014. This data is an update to the work done by [Feely et al. (2009)](http://www.tos.org/oceanography/archive/22-4_feely.pdf).  
 
-####Procedure Overview
+**Resolution**: 1 degree
+**Values**: Surface &#937; aragonite saturation state
+**Time Range**: 1880-1889 and 2005-2014 (monthly data was provided for each year)
+**Format**: NetCDF
+
+### Scripts
+
+1. `oa_dataprep.R` takes raw NetCDF data and creates annual mean rasters (.tif) for all years
+2. `create_global_oa_pressures_layer` creates final pressures layer used in OHI 2015
+3. `OA_interpolation.py` uses arcpy to interpolate the raster to fill in NA cells
+4. `interpolated_cells.R` creates a single raster that shows all interpolated raster cells
+
+`run_python_script.txt` explains how to run the python script (OA_interpolation.py)
+
+### Updates from previous assessment
+
+Previous assessments did not have updated ocean acidification data after the 2012 global assessment. 
+
+This dataset provides more detailed temporal changes and includes more recent years of data. In addition, a biological reference point was set rather than the maximum value. All oceanic cells with values of &#937; aragonite at or below 1 were assigned a value of 1. This threshold was chosen based on evidence from the literature that once undersaturation is reached (<=1), dissolution of CaCO3 occurs and negatively impacts biological processes including calcification.
+
+***
+
+### Methods Overview
+
+For full methods see [oa_methods_2015.html](file:///C:/Users/Afflerbach/Documents/GitHub/ohiprep/globalprep/Pressures_acid/v2015/oa_methods_2015.html)
 
 For each year in the dataset provided, an average annual aragonite saturation state layer was created. Using these annual averages, a     decadal average for both 1880-1889 and 2005-2014 was calculated.
     
