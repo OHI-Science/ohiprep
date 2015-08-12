@@ -7,7 +7,7 @@ arcpy.env.overwriteOutput = True
 
 
 # think of as the input directory
-feature_dir = r"N:\git-annex\globalprep\AVISO-SeaLevelRise_v2015\tmp" #feature directory is where Arc considers the 'home' for this script
+feature_dir = r"N:\git-annex\globalprep\Pressures_SeaLevelRise\tmp" #feature directory is where Arc considers the 'home' for this script
 # the r above means treat the following as a raw string (don't escape the backslashes)
 output_raster_dir = feature_dir
 

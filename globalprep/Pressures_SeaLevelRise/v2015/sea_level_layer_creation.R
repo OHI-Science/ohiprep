@@ -36,7 +36,7 @@ rasterOptions(tmpdir=tmpdir)
               'Darwin'  = '/Volumes/data_edit',
               'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
 
-    setwd(file.path(dir_N,'git-annex/globalprep/AVISO-SeaLevelRise_v2015'))
+    setwd(file.path(dir_N,'git-annex/globalprep/Pressures_SeaLevelRise'))
 
 
 #set colors for plotting
