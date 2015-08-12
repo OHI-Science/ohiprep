@@ -26,7 +26,7 @@ This dataset provides more detailed temporal changes and includes more recent ye
   
   ***
   
-  ### Methods Overview
+### Methods Overview
   
   For full methods download [oa_methods_2015.html](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/Pressures_acid/v2015/oa_methods_2015.html)
 
