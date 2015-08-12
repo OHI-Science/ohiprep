@@ -8,9 +8,9 @@ arcpy.env.overwriteOutput = True
 
 
 # think of as the input directory
-feature_dir = r'N:\git-annex\globalprep\Pressures_acid\v2015\working' #feature directory is where Arc considers the 'home' for this script
+feature_dir = r'N:\git-annex\globalprep\Pressures_OceanAcidification\v2015\working' #feature directory is where Arc considers the 'home' for this script
 # the r above means treat the following as a raw string (don't escape the backslashes)
-output_raster_dir = r'N:\git-annex\globalprep\Pressures_acid\v2015\working\annual_oa_rescaled_1km_int'
+output_raster_dir = r'N:\git-annex\globalprep\Pressures_OceanAcidification\v2015\working\annual_oa_rescaled_1km_int'
 
 
 arcpy.env.workspace = feature_dir
@@ -20,7 +20,7 @@ if not os.path.exists(output_raster_dir):
     os.mkdir(output_raster_dir) #if output folder doesn't already exist, create it!
 
 # for multiple rasters (ocean acid)
-rasters = glob.glob('N:/git-annex/globalprep/Pressures_acid/v2015/working/annual_oa_rescaled_1km/*.tif') 
+rasters = glob.glob('N:/git-annex/globalprep/Pressures_OceanAcidification/v2015/working/annual_oa_rescaled_1km/*.tif') 
 for raster_in in rasters:
     basename = os.path.splitext(raster_in)[0]	#indent this once for ocean acid
     outname = os.path.join(output_raster_dir,basename+"_int.tif") #indent this once for ocean acid
