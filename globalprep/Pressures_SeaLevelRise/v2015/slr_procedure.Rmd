@@ -34,7 +34,7 @@ Data for mean sea level rise (in mm) between January 1993 and June 2014 was down
               'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
 
 
-knitr::opts_knit$set(root.dir = file.path(dir_N,'git-annex/globalprep/AVISO-SeaLevelRise'))
+knitr::opts_knit$set(root.dir = file.path(dir_N,'git-annex/globalprep/Pressures_SeaLevelRise'))
 ```
 
 
@@ -155,7 +155,7 @@ All values at or above the 99.99th quantile (512.8) are set to equal 1.
 
 **7. Interpolation**  
 
-Interpolating the data was done using ArcGIS. All NA cells were interpolated using nearest neighbor. The python script can be found [here](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/AVISO-SeaLevelRise_v2015/scripts/SLR_interpolation.py)  
+Interpolating the data was done using ArcGIS. All NA cells were interpolated using nearest neighbor. The python script can be found [here](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/Pressures_SeaLevelRise/scripts/SLR_interpolation.py)  
 ```{r,message=FALSE,warning=FALSE}
 
   r_int = raster('tmp/slr_moll_nonlog_1km_resc_int.tif')

@@ -55,7 +55,7 @@ output: html_document
 
 #set root directory
 
-   knitr::opts_knit$set(root.dir = file.path(dir_N,'git-annex/globalprep/Pressures_acid/v2015'))
+   knitr::opts_knit$set(root.dir = file.path(dir_N,'git-annex/globalprep/Pressures_OceanAcidification/v2015'))
 
 
 # read in data
