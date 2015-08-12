@@ -49,7 +49,7 @@ For OHI 2015, data from the years 2011-2014 were averaged for the final pressure
 
 
 
-**References** 
-  Woods Hole Oceanographic Institution. 2014 update to data originally published in: Feely, R.A., S.C. Doney, and
+**References**  
+Woods Hole Oceanographic Institution. 2014 update to data originally published in: Feely, R.A., S.C. Doney, and
 S.R. Cooley. 2009. Ocean acidification: Present conditions and future changes in a high-CO2 world.
 Oceanography 22(4):36–47
