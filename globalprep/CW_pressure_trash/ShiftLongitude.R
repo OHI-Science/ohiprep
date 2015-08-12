@@ -7,7 +7,7 @@ dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
           'Darwin'  = '/Volumes/data_edit',
           'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
 
-data_wd = file.path(dir_N,'git-annex/globalprep/FiveGyres_MarinePlastics_CW/v2015')
+data_wd = file.path(dir_N,'git-annex/globalprep/CW_pressure_trash/v2015')
 
 setwd(data_wd)
 

@@ -32,7 +32,7 @@ cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color sc
 mytheme <- rasterTheme(region = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)))
 
 #set working directory on neptune
-data_wd = file.path(dir_N,'git-annex/globalprep/FiveGyres_MarinePlastics_CW')
+data_wd = file.path(dir_N,'git-annex/globalprep/CW_pressure_trash')
 
 setwd(data_wd)
 
