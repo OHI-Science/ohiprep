@@ -18,6 +18,8 @@ source('src/R/common.R')
 goal     <- 'globalprep/SpeciesDiversity'
 scenario <- 'v2015'
 dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal) 
+dir_data_am    <- file.path(dir_neptune_data, 'git-annex/_raw_data', 'aquamaps/v2014') 
+dir_data_iucn  <- file.path(dir_neptune_data, 'git-annex/_raw_data', 'iucn_spp') 
 dir_git  <- file.path('~/github/ohiprep', goal)
 
 source(file.path(dir_git, 'R/spp_fxn.R'))
@@ -156,24 +158,14 @@ extract_loiczid_per_spp(groups_override = NULL, reload = FALSE)
 
 
 ##############################################################################=
-### Generate lookup - region ID to LOICZID/CSQ ----
-##############################################################################=
-rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
-### | sp_id | loiczid | proportionArea | csq | cell_area
-### saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/cellID_region_gcs_global.csv
-### To use a different region shapefile, add an argument of: rgn_layer = '<rgn file here, without extension>'
-### To use a shape file from a different directory (other than git-annex/globalprep/spatial/v2015/data), add an ogr_location argument.
-### To run a different type of analysis, add an ohi_type argument with global (default), HS, or AQ
-
-##############################################################################=
 ### SPP - Generate species per cell tables for Aquamaps and IUCN -----
 ##############################################################################=
-am_cells_spp_sum <- process_am_summary_per_cell(reload = FALSE)
+am_cells_spp_sum <- process_am_summary_per_cell(reload = TRUE)
 ### NOTE: the inner_join in here takes a while... 
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### AM does not include subspecies: every am_sid corresponds to exactly one sciname.
 
-iucn_cells_spp_sum <- process_iucn_summary_per_cell(reload = FALSE)
+iucn_cells_spp_sum <- process_iucn_summary_per_cell(reload = TRUE)
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### IUCN includes subspecies - one sciname corresponds to multiple iucn_sid values.
 
@@ -183,6 +175,13 @@ iucn_cells_spp_sum <- process_iucn_summary_per_cell(reload = FALSE)
 summary_by_loiczid <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum)
 ### This returns dataframe with variables:
 ### loiczid | weighted_mean_cat | weighted_mean_trend
+
+rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
+### | sp_id | loiczid | proportionArea | csq | cell_area
+### saves lookup table to git-annex/globalprep/SpeciesDiversity/rgns/cellID_region_gcs_global.csv
+### To use a different region shapefile, add an argument of: rgn_layer = '<rgn file here, without extension>'
+### To use a shape file from a different directory (other than git-annex/globalprep/spatial/v2015/data), add an ogr_location argument.
+### To run a different type of analysis, add an ohi_type argument with global (default), HS, or AQ
 
 summary_by_rgn     <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup)
 ### This returns dataframe with variables:
