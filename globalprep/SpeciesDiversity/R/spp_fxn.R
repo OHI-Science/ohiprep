@@ -18,9 +18,9 @@ get_loiczid_raster <- function(reload = FALSE) {
   
   if(!file.exists(loiczid_raster_file) | reload) {
     # load and format AquaMaps half-degree cell authority file
-    file_loc <- file.path(dir_anx, 'raw/aquamaps_2014/tables/hcaf.csv')
+    hcaf_file <- file.path(dir_data_am, 'tables/hcaf.csv')
     cat(sprintf('Loading AquaMaps cell data.  Less than 1 minute.\n  %s \n', file_loc))
-    am_cells <- fread(file_loc, header = TRUE, stringsAsFactors = FALSE) %>%
+    am_cells <- fread(hcaf_file, header = TRUE, stringsAsFactors = FALSE) %>%
       select(csq = CsquareCode, LOICZID, CenterLat, CenterLong, CellArea)
     
     stopifnot(sum(duplicated(am_cells$LOICZID)) == 0) #key numeric ID for raster generation.... check for dups
@@ -112,7 +112,7 @@ extract_cell_id_per_region <- function(reload       = FALSE,
     # bih <- data.frame(rgn_id=232, LOICZID=68076, proportionArea=0.002658641)
     # region_prop_df <- rbind(region_prop_df, bih)
     
-    file_loc <- file.path(dir_anx, 'raw/aquamaps_2014/tables/hcaf.csv')
+    file_loc <- file.path(dir_data_am, 'tables/hcaf.csv')
     cat(sprintf('Loading AquaMaps half-degree cell authority file.  Less than 1 minute.\n  %s \n', file_loc))
     am_cells <- fread(file_loc, header = TRUE, stringsAsFactors = FALSE) %>%
       as.data.frame() %>%
@@ -128,7 +128,7 @@ extract_cell_id_per_region <- function(reload       = FALSE,
     write.csv(region_prop_df, rgn_prop_file, row.names = FALSE)
   } else {
     cat(sprintf('Reading loiczid cell proportions by region from: \n  %s\n', rgn_prop_file))
-    region_prop_df <- read.csv(rgn_prop_file)
+    region_prop_df <- read.csv(rgn_prop_file, stringsAsFactors = FALSE)
   }
   
   return(invisible(region_prop_df))
@@ -145,7 +145,7 @@ iucn_shp_info <- function() {
     if(!file.exists(iucn_shp_info_file)) cat('No file found for IUCN shapefile information.  ')
     cat('Generating new list of available IUCN range maps.\n')
     
-    dir_iucn_shp <- file.path(dir_anx, 'raw/iucn_shp')
+    dir_iucn_shp <- file.path(dir_data_iucn, 'iucn_shp')
     groups_list <- as.data.frame(list.files(dir_iucn_shp)) %>%
       rename(shp_fn = `list.files(dir_iucn_shp)`) %>%
       filter(tools::file_ext(shp_fn) == 'shp') %>%
@@ -196,7 +196,7 @@ generate_iucn_map_list <- function(reload = FALSE) {
     if(!file.exists(iucn_map_list_file)) cat('No file found for list of available IUCN range maps.  ')
     cat('Generating new list of available IUCN range maps.\n')
     
-    dir_iucn_shp <- file.path(dir_anx, 'raw/iucn_shp')
+    dir_iucn_shp <- file.path(dir_data_iucn, 'iucn_shp')
     groups_list <- as.data.frame(list.files(dir_iucn_shp)) %>%
       rename(shp_fn = `list.files(dir_iucn_shp)`) %>%
       filter(tools::file_ext(shp_fn) == 'shp') %>%
@@ -302,7 +302,7 @@ create_spp_master_lookup <- function(reload = FALSE) {
   spp_all_file <- file.path(dir_anx, scenario, 'intermediate/spp_all.csv')
   
   if(!file.exists(spp_all_file) | reload) {
-    spp_am_file <- file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_speciesoccursum.csv')
+    spp_am_file <- file.path(dir_data_am, 'tables/ohi_speciesoccursum.csv')
     cat(sprintf('Reading AquaMaps species list from: \n  %s\n', spp_am_file))
     
     spp_am <- fread(spp_am_file) %>%
@@ -374,7 +374,7 @@ create_spp_master_lookup <- function(reload = FALSE) {
     write.csv(spp_all, spp_all_file, row.names = FALSE)
   } else {
     cat(sprintf('Full species lookup table already exists.  Reading from: \n  %s\n', spp_all_file))
-    spp_all <- read.csv(spp_all_file)
+    spp_all <- read.csv(spp_all_file, stringsAsFactors = FALSE)
   }
   
   spp_all <- check_name_matches(spp_all, spp_all_file)
@@ -545,7 +545,7 @@ extract_loiczid_per_spp <- function(groups_override = NULL, reload = FALSE) {
   if(is.null(groups_override)) spp_gp_list <- unique(iucn_range_maps$spp_group)
   else spp_gp_list <- groups_override
   
-  ogr_location <- file.path(dir_anx, 'raw/iucn_shp')
+  ogr_location <- file.path(dir_data_iucn, 'iucn_shp')
   
   for(spp_gp in spp_gp_list) { # spp_gp <- 'LOBSTERS' # spp_gp <- 'CORAL3'
     maps_in_group <- iucn_range_maps %>%
@@ -629,7 +629,7 @@ process_am_summary_per_cell <- function(reload = FALSE) {
   # * filter by cat score != NA
   # * summarize by loiczid - mean category_score, mean trend_score, count
   
-  am_cells_spp_sum_file <- file.path(dir_git, scenario, 'summary/spp_sum_am_cells.csv')
+  am_cells_spp_sum_file <- file.path(dir_git, scenario, 'summary/spp_sum_am_cells_new.csv')
   
   if(!file.exists(am_cells_spp_sum_file) | reload) {
     cat('Generating cell-by-cell summary for Aquamaps species.\n')
@@ -665,7 +665,7 @@ process_am_summary_per_cell <- function(reload = FALSE) {
     write_csv(am_cells_spp_sum, am_cells_spp_sum_file)
   } else {
     cat(sprintf('Cell-by-cell summary for Aquamaps species already exists.  Reading from:\n  %s\n', am_cells_spp_sum_file))
-    am_cells_spp_sum <- read.csv(am_cells_spp_sum_file)
+    am_cells_spp_sum <- read.csv(am_cells_spp_sum_file, stringsAsFactors = FALSE)
   }
   return(invisible(am_cells_spp_sum))
 }
@@ -673,38 +673,33 @@ process_am_summary_per_cell <- function(reload = FALSE) {
 
 ##############################################################################=
 get_am_cells_spp <- function(n_max = -1, reload = FALSE) {
-  am_cells_spp_file <- file.path(dir_anx, scenario, 'intermediate/am_cells_spp.csv')
+  am_cells_spp_file <- file.path(dir_anx, scenario, 'intermediate/am_cells_spp_new.csv')
   if(!file.exists(am_cells_spp_file) | reload) {
     cat('Creating Aquamaps species per cell file\n')
     ### Load Aquamaps species per cell table
-    file_loc <- file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_hcaf_species_native.csv')
+    spp_cell_file <- file.path(dir_data_am, 'tables/ohi_hcaf_species_native.csv')
     cat(sprintf('Loading AquaMaps cell-species data.  Large file! \n  %s \n', file_loc))
-    am_cells_spp <- read_csv(file_loc, col_types = '_ccn__', n_max = n_max) %>%
+    am_cells_spp <- read_csv(spp_cell_file, col_types = '_ccn__', n_max = n_max) %>%
       rename(am_sid = SpeciesID, csq = CsquareCode, prob = probability)
-    
-    # filter entire aquamaps table to just cells found in appropriate regions
-    # (as designated by rgn_cell_lookup file). 
-    cat('Filtering to just cells within regions, and species with probability greater than 0.4.\n')
-    if(!exists('rgn_cell_lookup')) rgn_cell_lookup <- extract_cell_id_per_region()
-    am_cells_spp <- am_cells_spp %>% 
-      filter(csq %in% rgn_cell_lookup$csq) 
-    
+        
     # filter out below probability threshold; 39 M to 29 M observations.
     am_cells_spp <- am_cells_spp %>%
       filter(prob >= .40) %>%
       select(-prob)
     
     cat('Joining to region <-> cell lookup table to attach LOICZID, region ID, and cell area.\n')
-    # then join to rgn_cell_lookup to attach loiczid, region ID, and cell area
+    # then join to am_cells (from hcaf.csv) to attach loiczid
+    cell_file <- file.path(dir_data_am, 'tables/hcaf.csv')
+    cat(sprintf('Loading AquaMaps cell data.  Less than 1 minute.\n  %s \n', file_loc))
+    am_cells <- fread(cell_file, header = TRUE, stringsAsFactors = FALSE) %>%
+      select(csq = CsquareCode, loiczid = LOICZID)
+
     # merge() faster than inner_join()?
     #     am_cells_spp <- am_cells_spp %>%
-    #       inner_join(rgn_cell_lookup, by = 'csq') %>%
+    #       inner_join(am_cells, by = 'csq') %>%
     #       select(-csq)
-    ptm = proc.time()
-    am_cells_spp <- merge(am_cells_spp, rgn_cell_lookup, by = 'csq') %>%
+    am_cells_spp <- merge(am_cells_spp, am_cells, by = 'csq') %>%
       select(-csq)
-    ptm <- proc.time() - ptm
-    cat(sprintf('Process time: %.2f seconds total\n', ptm[3]))
     
     
     cat(sprintf('Writing Aquamaps species per cell file to: \n  %s\n', am_cells_spp_file))
@@ -719,7 +714,7 @@ get_am_cells_spp <- function(n_max = -1, reload = FALSE) {
 
 
 ##############################################################################=
-get_iucn_cells_spp <- function(reload = FALSE) {
+get_iucn_cells_spp <- function() {
   cat(sprintf('Building IUCN species to cell table.  This might take a few minutes.\n'))
   iucn_map_files      <- file.path(dir_anx, 'iucn_intersections', list.files(file.path(dir_anx, 'iucn_intersections')))
   iucn_cells_spp_list <- lapply(iucn_map_files, read.csv) # read each into dataframe within a list
@@ -744,32 +739,16 @@ process_iucn_summary_per_cell <- function(reload = FALSE) {
   # * Each summary data frame should be saved to a list, to be eventually rbind_all'ed
   
   
-  iucn_cells_spp_sum_file <- file.path(dir_git, scenario, 'summary/spp_sum_iucn_cells.csv')
+  iucn_cells_spp_sum_file <- file.path(dir_git, scenario, 'summary/spp_sum_iucn_cells_new.csv')
   
   if(!file.exists(iucn_cells_spp_sum_file) | reload) {
     cat('Generating cell-by-cell summary for IUCN range-map species.\n')
     
     ### Load IUCN species per cell tables
     iucn_cells_spp      <- get_iucn_cells_spp()
-    iucn_map_files      <- file.path(dir_anx, 'iucn_intersections', list.files(file.path(dir_anx, 'iucn_intersections')))
-    iucn_cells_spp_list <- lapply(iucn_map_files, read.csv) # read each into dataframe within a list
-    iucn_cells_spp      <- rbind_all(iucn_cells_spp_list)   # combine list of dataframes to single dataframe
-    # This creates a full data frame of all IUCN species, across all species groups, for all cells.
-    # Probably big...
     
     # filter entire IUCN table to just cells found in appropriate regions
     # (as designated by rgn_cell_lookup file). 
-    cat('Filtering to cells within regions.\n')
-    if(!exists('rgn_cell_lookup')) rgn_cell_lookup <- extract_cell_id_per_region()
-    iucn_cells_spp1 <- iucn_cells_spp %>% 
-      rename(loiczid = LOICZID, polygon_prop_area = prop_area) %>%
-      filter(loiczid %in% rgn_cell_lookup$loiczid) 
-    
-    # then join to rgn_cell_lookup to attach loiczid, region ID, and cell area
-    cat('Joining cells/id list to region list.\n')
-    iucn_cells_spp2 <- iucn_cells_spp1 %>%
-      inner_join(rgn_cell_lookup, by = 'loiczid') %>%
-      select(-csq)
     
     # filter species info to just IUCN species with category info, and bind to 
     # iucn_cells_spp to attach category_score and trend_score.
@@ -783,13 +762,16 @@ process_iucn_summary_per_cell <- function(reload = FALSE) {
     cat(sprintf('Length of IUCN species list: %d\n', nrow(spp_iucn_info)))
     spp_iucn_info <- spp_iucn_info %>% unique()
     cat(sprintf('Length of IUCN species list, unique: %d\n', nrow(spp_iucn_info)))
-    
+
+
     cat('Joining to species master list (filtered for spatial_source == iucn or iucn_parent).\n')
-    iucn_cells_spp3 <- iucn_cells_spp2 %>% 
-      inner_join(spp_iucn_info, by = c('sciname'))
-    
+    iucn_cells_spp1 <- iucn_cells_spp %>% 
+      inner_join(spp_iucn_info, by = c('sciname')) %>%
+      group_by(sciname, iucn_sid, loiczid, category_score, trend_score) %>%
+      summarize(prop_area = max(prop_area))
+        
     cat('Grouping by cell and summarizing mean category/trend and n_spp for each, for IUCN spatial info.\n')
-    iucn_cells_spp_sum <- iucn_cells_spp3 %>%
+    iucn_cells_spp_sum <- iucn_cells_spp1 %>%
       group_by(loiczid) %>%
       summarize(mean_cat_score = mean(category_score),      # no na.rm needed; already filtered.
                 mean_popn_trend_score = mean(trend_score, na.rm = TRUE), 
@@ -801,7 +783,7 @@ process_iucn_summary_per_cell <- function(reload = FALSE) {
     write_csv(iucn_cells_spp_sum, iucn_cells_spp_sum_file)
   } else {
     cat(sprintf('Cell-by-cell summary for IUCN species already exists.  Reading from:\n  %s\n', iucn_cells_spp_sum_file))
-    iucn_cells_spp_sum <- read.csv(iucn_cells_spp_sum_file)
+    iucn_cells_spp_sum <- read.csv(iucn_cells_spp_sum_file, stringsAsFactors = FALSE)
   }
   return(invisible(iucn_cells_spp_sum))
 }
@@ -862,14 +844,13 @@ process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup, rgn_note 
 
 ##############################################################################=
 check_sim_names <- function(spp_all, num_letters = 5) {
-  cat(sprintf('Reading in Aquamaps species from: \n  %s\n', 
-              file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_speciesoccursum.csv')))
-  spp_am <- fread(file.path(dir_anx, 'raw/aquamaps_2014/tables/ohi_speciesoccursum.csv')) %>%
+  am_spp_file   <- file.path(dir_data_am, 'tables/ohi_speciesoccursum.csv')
+  iucn_spp_file <- file.path(dir_anx, scenario, 'intermediate/spp_iucn_marine_global.csv')
+  cat(sprintf('Reading in Aquamaps species from: \n  %s\n', am_spp_file))
+  spp_am <- fread(am_spp_file) %>%
     select(common_name = FBname, am_sid = SPECIESID, genus = Genus, species = Species)
-  
-  cat(sprintf('Reading in IUCN species from: \n  %s\n', 
-              file.path(dir_anx, scenario, 'intermediate/spp_iucn_marine_global.csv')))
-  spp_iucn_marine = read.csv(file.path(dir_anx, scenario, 'intermediate/spp_iucn_marine_global.csv')) %>%
+  cat(sprintf('Reading in IUCN species from: \n  %s\n', iucn_spp_file))
+  spp_iucn_marine = read.csv(iucn_spp_file), stringsAsFactors = FALSE) %>%
     select(sciname, iucn_sid = sid) %>%
     separate(sciname, c('genus', 'species'), sep = ' ', remove = TRUE, extra = 'drop')
   iucn_names <- data.frame(unique(spp_iucn_marine %>% select(g = genus, s = species))) %>%
