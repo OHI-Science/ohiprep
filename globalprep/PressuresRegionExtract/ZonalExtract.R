@@ -1,6 +1,8 @@
 ### zonal extraction and summary of pressure data
 ### MRF: Feb 25 2015
 
+tmpdir <- '~/big/R_raster_tmp'
+rasterOptions(tmpdir=tmpdir)
 
 source('../ohiprep/src/R/common.R')
 
@@ -584,7 +586,7 @@ for(layer in layerType){ #layer="catch_03_07_npp_hb"
 }
 
 
-### try visualizing the data using googleVis plot
+### visualizing the data using googleVis plot
 library(googleVis)
 
 
@@ -617,34 +619,323 @@ print(Motion, file=file.path(save_loc, 'low_bycatch.html'))
 
 
 #########################################
-#### Exploring fertilizer and pesticide plume data ----
+#### Land-based fertilizer and pesticide plume data prep ----
 #########################################
-dir(file.path(dir_halpern2008, "mnt/storage/marine_threats/impact_layers_2013_redo/impact_layers/work/land_based/201112/step8"))
-rast_locs <- file.path(dir_halpern2008, "mnt/storage/marine_threats/impact_layers_2013_redo/impact_layers/work/land_based/201112/step8")
 
-# Fertilizer
-fert_older <- raster(file.path(rast_locs, "global_plumes_fert_2007_2010_trans.tif"))
-fert_older <- setMinMax(fert_older)
-fert_older
+rast_locs <- file.path(dir_halpern2008, "mnt/storage/marine_threats/impact_layers_2013_redo/impact_layers/work/land_based/before_2007/raw_global_results")
 
-fert_newer <- raster(file.path(rast_locs, "global_plumes_fert_2011_2012_trans.tif"))
-fert_newer <- setMinMax(fert_newer)
-fert_newer
+## peak at raster to see what is up:
+check <- raster(file.path(rast_locs, 'global_plumes_fert_2012_raw.tif'))
+## darn: different extents and such...need to make these the same
 
-fert_dif <- raster(file.path(rast_locs, "global_plumes_fert_2011_2012_raw_minus_2007_2010_raw.tif"))
-fert_dif <- setMinMax(fert_dif)
-fert_dif
+quantiles <- data.frame(plumeData <- list.files(rast_locs), quantile_9999_ln=NA)
+files <- grep(".tif", list.files(rast_locs), value=TRUE)
+
+for(plume in files){ #plume='global_plumes_fert_2007_raw.tif'
+  tmp <- raster(file.path(rast_locs, plume))
+  saveName <- gsub(".tif", "", plume)
+  calc(tmp, function(x){log(x+1)}, progress="text", filename=file.path(rast_locs, sprintf("Frazier/%s_log.tif", saveName)), overwrite=TRUE)
+  tmp <- raster(file.path(rast_locs, sprintf("Frazier/%s_log.tif", saveName)))
+  quantiles$quantile_9999_ln[plumeData == plume] <- quantile(tmp, .9999)
+  extend(tmp, zones, filename=file.path(rast_locs, sprintf("Frazier/%s_log_extend.tif", saveName)), progress="text", overwrite=TRUE)
+  tmp <- raster(file.path(rast_locs, sprintf("Frazier/%s_log_extend.tif", saveName)))
+  unlink(file.path(rast_locs, sprintf('Frazier/%s_log.tif', saveName)))
+}
 
 
-# Pesticide
-pest_older <- raster(file.path(rast_locs, "global_plumes_pest_2007_2010_trans.tif"))
-setMinMax(pest_older)
-pest_older
+#############################
+## fertilizer ----
+#############################
 
-pest_newer <- raster(file.path(rast_locs, "global_plumes_pest_2011_2012_trans.tif"))
-setMinMax(pest_newer)
-pest_newer
+## scaling coefficient for fertlizer = 5.594088 (file with these values: ohiprep/globalprep/PressuresRegionExtract/land_based_quantiles.csv)
+fert_scalar <- 5.594088
 
-pest_dif <- raster(file.path(rast_locs, "global_plumes_pest_2011_2012_raw_minus_2007_2010_raw.tif"))
-pest_dif <- setMinMax(pest_dif)
-pest_dif
+list_fert <- files <- grep("_fert", list.files(file.path(rast_locs, "Frazier")), value=TRUE)
+
+for(fert in list_fert){ #fert="global_plumes_fert_2007_raw_log_extend.tif"
+  tmp <- raster(file.path(rast_locs, "Frazier", fert))
+  saveName <- gsub('.tif', '', fert)
+  calc(tmp, fun=function(x){ifelse(x>fert_scalar, 1, x/fert_scalar)},
+       progress='text',
+       filename=file.path(rast_locs, sprintf("Frazier/%s_scaled.tif", saveName)), overwrite=TRUE)
+}
+
+list_fert <- files <- grep("_fert", list.files(file.path(rast_locs, "Frazier")), value=TRUE)
+list_fert_scaled <- grep("_scaled", list_fert, value=TRUE)
+
+
+pressure_stack <- stack()
+for(rast in list_fert_scaled){
+  tmp <- raster(file.path(rast_locs, "Frazier", rast))
+  pressure_stack <- stack(pressure_stack, tmp)
+}
+
+
+# extract data for each eez region:
+regions_stats <- zonal(pressure_stack,  zones, fun="mean", na.rm=TRUE, progress="text")
+regions_stats2 <- data.frame(regions_stats)
+setdiff(regions_stats2$zone, rgn_data$sp_id) #should be none
+setdiff(rgn_data$sp_id, regions_stats2$zone) #should be none
+
+data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
+write.csv(data, file.path(save_loc, "tmp/nutrients_plume_data.csv"), row.names=FALSE)
+
+data <- read.csv(file.path(save_loc, "tmp/nutrients_plume_data.csv"))
+data <- gather(data, "year", "pressure_score", starts_with("global"))
+data <- data %>%
+  mutate(year = gsub("global_plumes_fert_", "", year)) %>%
+  mutate(year = gsub("_raw_log_extend_scaled", "", year)) %>%
+  mutate(year = as.numeric(as.character(year))) %>% 
+  filter(sp_type == "eez") %>%   # this doesn't really apply to high seas regions and Antarctica is all zeros
+  dplyr::select(rgn_id, rgn_name, year, pressure_score)
+
+# calculate pressure data for each year
+## trend should be calculated on 3nm (not eez)
+for(scenario_year in 2012:2015){ #scenario_year=2015
+  #calculate/save pressure score data
+  score_data <- data %>%
+    filter(year == (scenario_year-3)) %>%
+    dplyr::select(rgn_id, pressure_score)
+  write.csv(score_data, file.path(save_loc, sprintf('data/cw_fertilizers_score_%s.csv', scenario_year)), row.names=FALSE)
+}
+
+## extract at 3 nm (in addition to a pressure, this will be used for CW and the CW trend)
+# (going to try using the polygon, rather than converting to raster)
+offshore_3nm_poly <- readOGR(dsn="/var/data/ohi/git-annex/Global/NCEAS-Regions_v2014/data", "rgn_offshore3nm_mol")
+offshore_3nm_poly <- offshore_3nm_poly[offshore_3nm_poly@data$rgn_type == "eez", ]
+
+# this is here in case I decide to use this method instead of using the polygons to extract the data:
+# tmp <- raster(file.path(rast_locs, "Frazier/global_plumes_fert_2007_raw_log_extend.tif"))
+# rasterize(inland_3nm_poly, tmp, field='rgn_id', 
+#           filename=file.path(rast_locs, "Frazier/inland_3nm.tif"), overwrite=TRUE,
+#           progress='text')
+
+data <- raster::extract(pressure_stack, offshore_3nm_poly, na.rm=TRUE, normalizeWeights=FALSE, fun=mean, df=TRUE, progress="text")
+data2 <- cbind(data, offshore_3nm_poly@data) 
+write.csv(data2, file.path(save_loc, "tmp/nutrients_plume_data_offshore_3nm.csv"), row.names=FALSE)
+
+data <- read.csv(file.path(save_loc, "tmp/nutrients_plume_data_offshore_3nm.csv")) 
+data <- gather(data, "year", "pressure_score", starts_with("global"))
+data <- data %>%
+  mutate(year = gsub("global_plumes_fert_", "", year)) %>%
+  mutate(year = gsub("_raw_log_extend_scaled", "", year)) %>%
+  mutate(year = as.numeric(as.character(year))) %>%
+  dplyr::select(rgn_id, rgn_name, year, pressure_score) %>%
+  filter(!is.na(pressure_score))#NA is Antarctica - this is fine
+
+
+# calculate pressure data for each year
+## trend should be calculated on 3nm (not eez)
+for(scenario_year in 2012:2015){ #scenario_year=2015
+    #calculate/save trend data
+    trend_data <- data %>%
+      filter(year %in% (scenario_year-7):(scenario_year-3)) %>%
+      group_by(rgn_id) %>%
+      do(mdl = lm(pressure_score ~ year, data = .)) %>%
+      summarize(rgn_id,
+                trend = coef(mdl)['year'] * 5) %>%
+      ungroup()
+    write.csv(trend_data, file.path(save_loc, sprintf('data/cw_fertilizers_trend_%s.csv', scenario_year)), row.names=FALSE)
+  
+  #calculate/save pressure score data
+  score_data <- data %>%
+    filter(year == (scenario_year-3)) %>%
+    dplyr::select(rgn_id, pressure_score)
+  write.csv(score_data, file.path(save_loc, sprintf('data/cw_fertilizers_score_3nm_%s.csv', scenario_year)), row.names=FALSE)
+}
+
+#############################
+## pesticides ----
+#############################
+
+## scaling coefficient for pesticides = 1.91788700716876 (file with these values: ohiprep/globalprep/PressuresRegionExtract/land_based_quantiles.csv)
+pest_scalar <- 1.91788700716876
+
+list_pest <- grep("_pest", list.files(file.path(rast_locs, "Frazier")), value=TRUE)
+
+for(pest in list_pest){ #pest="global_plumes_pest_2007_raw_log_extend.tif"
+  tmp <- raster(file.path(rast_locs, "Frazier", pest))
+  saveName <- gsub('.tif', '', pest)
+  calc(tmp, fun=function(x){ifelse(x>pest_scalar, 1, x/pest_scalar)},
+       progress='text',
+       filename=file.path(rast_locs, sprintf("Frazier/%s_scaled.tif", saveName)), overwrite=TRUE)
+}
+
+##################
+## to get the chemical pressure: pesticides + ocean pollution + inorganic pollution
+
+## need to make the op and ip rasters have the same extent:
+pest_rast <- raster(file.path(rast_locs, "Frazier", "global_plumes_pest_2007_raw_log_extend_scaled.tif"))
+
+# only one ocean pollution raster for both time periods (so only normalized by one time period)
+library(spatial.tools)
+op <- raster('/var/cache/halpern-et-al/mnt/storage/marine_threats/impact_layers_2013_redo/impact_layers/final_impact_layers/threats_2013_final/normalized_by_one_time_period/ocean_pollution.tif')
+op_extend <- modify_raster_margins(op, extent_delta=c(1,0,1,0))
+extent(op_extend) = extent(pest_rast)
+writeRaster(op_extend, file.path(rast_locs, "Frazier/ocean_pollution_extend.tif"), overwrite=TRUE)
+
+# two rasters for inorganic pollution (2003-2006 and 2007-2010)
+# I used the 2007-2010 raster (normalized by both time periods):
+# ip_07_10 <- raster('/var/cache/halpern-et-al/mnt/storage/marine_threats/impact_layers_2013_redo/impact_layers/final_impact_layers/threats_2013_final/normalized_by_two_time_periods/inorganic.tif')
+# extend(ip_07_10, pest_rast, filename=file.path(rast_locs, "Frazier/inorganic_pollution_07_10_extend.tif"), progress='text')
+ip_07_10_extend <- raster(file.path(rast_locs, "Frazier/inorganic_pollution_07_10_extend.tif"))
+
+# but, it might be better to use the earlier raster for some time periods, if so, here is the link:
+#ip_03_06 <- raster('/var/cache/halpern-et-al/mnt/storage/marine_threats/impact_layers_2013_redo/impact_layers/final_impact_layers/threats_2008_final/normalized_by_two_time_periods/inorganic.tif')
+
+
+for(pest_year in 2007:2012){ #pest_year = 2007 
+  pest_rast <- raster(file.path(rast_locs, "Frazier", sprintf("global_plumes_pest_%s_raw_log_extend_scaled.tif", pest_year)))
+  chem_stack <- stack(pest_rast, op_extend, ip_07_10_extend)
+  calc(chem_stack, 
+       sum, na.rm=TRUE,
+       progress='text',
+       filename=file.path(rast_locs, sprintf("Frazier/chemical_pollution_%s.tif", pest_year)), overwrite=TRUE)
+}
+
+## take a look at the distribution of scores 
+raster <- raster(file.path(rast_locs, "Frazier/chemical_pollution_2007.tif"))
+quantile(raster, c(0.25, 0.50, 0.75, 0.9, 0.99, 0.999, 0.9999))
+raster <- raster(file.path(rast_locs, "Frazier/chemical_pollution_2012.tif"))
+quantile(raster, c(0.25, 0.50, 0.75, 0.9, 0.99, 0.999, 0.9999))
+
+for(chem_year in 2007:2012){ #chem_year=2012
+  tmp <- raster(file.path(rast_locs, sprintf("Frazier/chemical_pollution_%s.tif", chem_year)))
+  calc(tmp, fun=function(x){ifelse(x>1, 1, x)},
+       progress='text',
+       filename=file.path(rast_locs, sprintf("Frazier/chemical_pollution_%s_scaled.tif", chem_year)), overwrite=TRUE)
+}
+
+## delete intermediate files due to lack of space on neptune:
+for(delete_year in 2007:2012){
+  unlink(file.path(rast_locs, sprintf("Frazier/chemical_pollution_%s.tif", delete_year)))
+}
+
+list_chem <- files <- grep("chemical_pollution", list.files(file.path(rast_locs, "Frazier")), value=TRUE)
+list_chem_scaled <- grep("_scaled", list_chem, value=TRUE)
+
+
+pressure_stack <- stack()
+for(rast in list_chem_scaled){
+  tmp <- raster(file.path(rast_locs, "Frazier", rast))
+  pressure_stack <- stack(pressure_stack, tmp)
+}
+
+
+# extract data for each eez region:
+regions_stats <- zonal(pressure_stack,  zones, fun="mean", na.rm=TRUE, progress="text")
+regions_stats2 <- data.frame(regions_stats)
+setdiff(regions_stats2$zone, rgn_data$sp_id) #should be none
+setdiff(rgn_data$sp_id, regions_stats2$zone) #should be none
+
+data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
+write.csv(data, file.path(save_loc, "tmp/chemical_plume_data.csv"), row.names=FALSE)
+
+
+data <- read.csv(file.path(save_loc, "tmp/chemical_plume_data.csv"))
+data <- gather(data, "year", "pressure_score", starts_with("chemical"))
+data <- data %>%
+  mutate(year = gsub("chemical_pollution_", "", year)) %>%
+  mutate(year = gsub("_scaled", "", year)) %>%
+  mutate(year = as.numeric(as.character(year))) %>% 
+  filter(sp_type == "eez") %>%   # this doesn't really apply to high seas regions and Antarctica is all zeros
+  dplyr::select(rgn_id, rgn_name, year, pressure_score)
+
+# calculate pressure data for each year
+## trend should be calculated on 3nm (not eez)
+for(scenario_year in 2012:2015){ #scenario_year=2015
+  #calculate/save pressure score data
+  score_data <- data %>%
+    filter(year == (scenario_year-3)) %>%
+    dplyr::select(rgn_id, pressure_score)
+  write.csv(score_data, file.path(save_loc, sprintf('data/cw_chemical_score_%s.csv', scenario_year)), row.names=FALSE)
+}
+
+## extract at 3 nm (in addition to a pressure, this will be used for CW and the CW trend)
+# (going to try using the polygon, rather than converting to raster)
+offshore_3nm_poly <- readOGR(dsn="/var/data/ohi/git-annex/Global/NCEAS-Regions_v2014/data", "rgn_offshore3nm_mol")
+offshore_3nm_poly <- offshore_3nm_poly[offshore_3nm_poly@data$rgn_type == "eez", ]
+
+# this is here in case I decide to use this method instead of using the polygons to extract the data:
+# tmp <- raster(file.path(rast_locs, "Frazier/global_plumes_fert_2007_raw_log_extend.tif"))
+# rasterize(inland_3nm_poly, tmp, field='rgn_id', 
+#           filename=file.path(rast_locs, "Frazier/inland_3nm.tif"), overwrite=TRUE,
+#           progress='text')
+
+data <- raster::extract(pressure_stack, offshore_3nm_poly, na.rm=TRUE, normalizeWeights=FALSE, fun=mean, df=TRUE, progress="text")
+data2 <- cbind(data, offshore_3nm_poly@data) 
+write.csv(data2, file.path(save_loc, "tmp/chemical_plume_data_offshore_3nm.csv"), row.names=FALSE)
+
+data <- read.csv(file.path(save_loc, "tmp/chemical_plume_data_offshore_3nm.csv")) 
+data <- gather(data, "year", "pressure_score", starts_with("chemical"))
+data <- data %>%
+  mutate(year = gsub("chemical_pollution_", "", year)) %>%
+  mutate(year = gsub("_scaled", "", year)) %>%
+  mutate(year = as.numeric(as.character(year))) %>%
+  dplyr::select(rgn_id, rgn_name, year, pressure_score) %>%
+  filter(!is.na(pressure_score))#NA is Antarctica - this is fine
+
+
+# calculate pressure data for each year
+## trend should be calculated on 3nm (not eez)
+for(scenario_year in 2012:2015){ #scenario_year=2015
+  #calculate/save trend data
+  trend_data <- data %>%
+    filter(year %in% (scenario_year-7):(scenario_year-3)) %>%
+    group_by(rgn_id) %>%
+    do(mdl = lm(pressure_score ~ year, data = .)) %>%
+    summarize(rgn_id,
+              trend = coef(mdl)['year'] * 5) %>%
+    ungroup()
+  write.csv(trend_data, file.path(save_loc, sprintf('data/cw_chemical_trend_%s.csv', scenario_year)), row.names=FALSE)
+  
+  #calculate/save pressure score data
+  score_data <- data %>%
+    filter(year == (scenario_year-3)) %>%
+    dplyr::select(rgn_id, pressure_score)
+  write.csv(score_data, file.path(save_loc, sprintf('data/cw_chemical_score_3nm_%s.csv', scenario_year)), row.names=FALSE)
+}
+
+
+## Visualizing the data using GoogleVis
+### visualizing the data using googleVis plot
+plume_files <- grep("cw_", list.files(file.path(save_loc, 'data')), value=TRUE)
+
+plume_types <- c('cw_chemical_score',
+                 'cw_chemical_score_3nm',
+                 'cw_chemical_trend',
+                 'cw_fertilizers_score',
+                 'cw_fertilizers_score_3nm',
+                 'cw_fertilizers_trend')
+
+rgns <- read.csv(file.path(save_loc, "data/cw_chemical_score_2015.csv")) %>%
+  dplyr::select(rgn_id)
+
+allData <- expand.grid(rgn_id = rgns$rgn_id, year=2012:2015) 
+
+for(plume in plume_types) { #plume = 'cw_chemical_score'
+data <- data.frame()  
+    for(year in 2012:2015){#year = 2012
+    tmp <- read.csv(file.path(save_loc, 'data', paste0(plume, sprintf("_%s.csv", year))))
+    tmp$year <- year
+    names(tmp)[which(names(tmp)=="pressure_score" | names(tmp)=="trend")] <- plume
+    data <- rbind(data, tmp)
+  }
+allData <- left_join(allData, data, by=c('rgn_id', 'year'))  
+}
+
+regions <- rgn_data %>%
+  dplyr::select(rgn_id, rgn_name)
+  
+allData <- left_join(allData, regions, by="rgn_id") %>%
+  dplyr::select(-rgn_id)
+
+library(googleVis)
+
+Motion=gvisMotionChart(allData, 
+                       idvar="rgn_name", 
+                       timevar="year")
+plot(Motion)
+
+print(Motion, file=file.path(save_loc, 'plumes.html'))
+
