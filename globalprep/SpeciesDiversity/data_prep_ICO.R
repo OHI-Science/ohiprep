@@ -17,6 +17,8 @@ goal     <- 'globalprep/SpeciesDiversity'
 scenario <- 'v2015'
 dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal) 
 dir_git  <- file.path('~/github/ohiprep', goal)
+dir_data_am    <- file.path(dir_neptune_data, 'git-annex/_raw_data', 'aquamaps/v2014') 
+dir_data_iucn  <- file.path(dir_neptune_data, 'git-annex/_raw_data', 'iucn_spp') 
 
 source(file.path(dir_git, 'R/spp_fxn.R'))
 source(file.path(dir_git, 'R/ico_fxn.R'))
