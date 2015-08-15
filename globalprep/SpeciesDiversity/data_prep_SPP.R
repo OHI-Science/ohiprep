@@ -119,13 +119,15 @@ spp_all <- create_spp_master_lookup(reload = FALSE)
 ##############################################################################=
 ### Edit subpop/parent entries and synonyms ----
 ##############################################################################=
-spp_all <- spp_all %>%
-  fix_am_subpops() %>%
-  fix_iucn_subpops()
+# spp_all <- spp_all %>%
+#   fix_am_subpops() %>%
+#   fix_iucn_subpops()
+# 
+# spp_all <- spp_all %>% remove_iucn_synonyms()
+# 
+# write_csv(spp_all, file.path(dir_anx, scenario, 'intermediate/spp_all_cleaned.csv'))
 
-spp_all <- spp_all %>% remove_iucn_synonyms()
-
-write_csv(spp_all, file.path(dir_anx, scenario, 'intermediate/spp_all_cleaned.csv'))
+spp_all <- read.csv(file.path(dir_anx, scenario, 'intermediate/spp_all_cleaned.csv'), stringsAsFactors = FALSE)
 
 ### Explore duplicate records between AM and IUCN 
 

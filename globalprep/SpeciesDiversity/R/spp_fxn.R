@@ -21,7 +21,7 @@ get_loiczid_raster <- function(reload = FALSE) {
     hcaf_file <- file.path(dir_data_am, 'tables/hcaf.csv')
     cat(sprintf('Loading AquaMaps cell data.  Less than 1 minute.\n  %s \n', file_loc))
     am_cells <- fread(hcaf_file, header = TRUE, stringsAsFactors = FALSE) %>%
-      select(csq = CsquareCode, LOICZID, CenterLat, CenterLong, CellArea)
+      dplyr::select(csq = CsquareCode, LOICZID, CenterLat, CenterLong, CellArea)
     
     stopifnot(sum(duplicated(am_cells$LOICZID)) == 0) #key numeric ID for raster generation.... check for dups
     
@@ -116,7 +116,7 @@ extract_cell_id_per_region <- function(reload       = FALSE,
     cat(sprintf('Loading AquaMaps half-degree cell authority file.  Less than 1 minute.\n  %s \n', file_loc))
     am_cells <- fread(file_loc, header = TRUE, stringsAsFactors = FALSE) %>%
       as.data.frame() %>%
-      select(csq = CsquareCode, loiczid = LOICZID, cell_area = CellArea)
+      dplyr::select(csq = CsquareCode, loiczid = LOICZID, cell_area = CellArea)
     stopifnot(sum(duplicated(am_cells$csq)) == 0)
     
     cat('Joining csq values and cell areas to loiczid values.\n')
@@ -224,7 +224,7 @@ generate_iucn_map_list <- function(reload = FALSE) {
       cat('binding to list...\n')
     }
     spp_iucn_maps <- spp_iucn_maps %>%
-      select(spp_group, id_no, objectid, binomial) %>% # other fields?
+      dplyr::select(spp_group, id_no, objectid, binomial) %>% # other fields?
       mutate(spatial_source = 'iucn') %>%
       unique()
     
@@ -306,7 +306,7 @@ create_spp_master_lookup <- function(reload = FALSE) {
     cat(sprintf('Reading AquaMaps species list from: \n  %s\n', spp_am_file))
     
     spp_am <- fread(spp_am_file) %>%
-      select(am_sid = SPECIESID, Genus, Species, am_category = iucn_code) %>%
+      dplyr::select(am_sid = SPECIESID, Genus, Species, am_category = iucn_code) %>%
       unite(sciname, Genus, Species, sep = ' ') %>%
       mutate(am_category = ifelse(am_category ==  'N.E.',   NA, am_category), # not evaluated -> NA
              am_category = ifelse(am_category == 'LR/nt', 'NT', am_category), # update 1994 category
@@ -318,7 +318,7 @@ create_spp_master_lookup <- function(reload = FALSE) {
     
     cat(sprintf('Reading IUCN marine species list from: \n  %s\n', iucn_list_file))
     spp_iucn_marine <- read.csv(iucn_list_file, stringsAsFactors = FALSE) %>%
-      select(sciname, iucn_sid, iucn_category = category, popn_trend, parent_sid, subpop_sid) 
+      dplyr::select(sciname, iucn_sid, iucn_category = category, popn_trend, parent_sid, subpop_sid) 
     
     spp_all <- spp_am %>%
       mutate(sciname = str_trim(sciname)) %>%
@@ -348,7 +348,7 @@ create_spp_master_lookup <- function(reload = FALSE) {
     #   (e.g. REPTILES, SEASNAKES, and non-homolopsids)
     #   - choose one and drop the others.  Which to choose? let R decide.
     dupes <- spp_all %>% 
-      select(sciname, iucn_sid, iucn_category, objectid) %>% 
+      dplyr::select(sciname, iucn_sid, iucn_category, objectid) %>% 
       duplicated()
     spp_all <- spp_all[!dupes, ]
     # * Multiple IUCN id_no from IUCN shapefiles, but no corresponding differentiation in spreadsheet
@@ -409,7 +409,7 @@ fix_am_subpops <- function(spp_all) {
                popn_trend    = 'Unknown', 
                category_score = NA,
                trend_score   = NA)
-      print(spp_no_parent %>% select(sciname:popn_category, spatial_source))
+      print(spp_no_parent %>% dplyr::select(sciname:popn_category, spatial_source))
       ### See list below: all parent populations are DD/unknown.
       #   sciname am_category iucn_sid iucn_category popn_trend parent_sid
       #   1     Polyprion americanus          DD    43973            CR Decreasing      43972: Brazilian subpop.        Parent pop is DD/unknown.
@@ -503,13 +503,13 @@ remove_iucn_synonyms <- function(spp_all) {
 # * filter spp_all to instances where alias_name == NA (no alias) or sciname == alias_name (so the correct )
 # * also filter out spp_all any instances where sciname == ''
   dupe_names <- read.csv(file.path(dir_anx, 'tmp/dupe_names_edit.csv'), stringsAsFactors = FALSE) %>%
-    select(iucn_sid, alias_name = alias) %>%
+    dplyr::select(iucn_sid, alias_name = alias) %>%
     filter(!alias_name %in% c('ok', 'OK', ''))
   spp_all <- spp_all %>% left_join(dupe_names, by = 'iucn_sid') %>%
     filter(is.na(alias_name) | sciname == alias_name) %>%
     filter(sciname != '') %>%
     filter(popn_category != 'DD') %>%
-    select(-alias_name) %>%
+    dplyr::select(-alias_name) %>%
     unique()
   return(spp_all)
 }
@@ -535,7 +535,7 @@ extract_loiczid_per_spp <- function(groups_override = NULL, reload = FALSE) {
   spp_all <- read.csv(spp_all_file, stringsAsFactors = FALSE)
   iucn_range_maps <- spp_all %>%
     filter(spatial_source == 'iucn') %>%
-    select(sciname, iucn_sid, id_no, spp_group)
+    dplyr::select(sciname, iucn_sid, id_no, spp_group)
   
   # Import LOICZID raster
   raster_file <- file.path(dir_anx, 'rgns/loiczid_raster')
@@ -643,7 +643,7 @@ process_am_summary_per_cell <- function(reload = FALSE) {
       filter(spatial_source == 'am' | spatial_source == 'am_parent') %>%
       ### NOTE: as of 2015, AM data does not include spatially distinct subpops, so OK to cut 'am_subpops'
       filter(!is.na(category_score) & !(category_score == 'DD')) %>%
-      select(am_sid, sciname, category_score, trend_score) 
+      dplyr::select(am_sid, sciname, category_score, trend_score) 
     cat(sprintf('Length of Aquamaps species list: %d\n', nrow(spp_am_info)))
     spp_am_info <- spp_am_info %>% unique()
     cat(sprintf('Length of Aquamaps species list, unique: %d\n', nrow(spp_am_info)))
@@ -685,21 +685,21 @@ get_am_cells_spp <- function(n_max = -1, reload = FALSE) {
     # filter out below probability threshold; 39 M to 29 M observations.
     am_cells_spp <- am_cells_spp %>%
       filter(prob >= .40) %>%
-      select(-prob)
+      dplyr::select(-prob)
     
     cat('Joining to region <-> cell lookup table to attach LOICZID, region ID, and cell area.\n')
     # then join to am_cells (from hcaf.csv) to attach loiczid
     cell_file <- file.path(dir_data_am, 'tables/hcaf.csv')
     cat(sprintf('Loading AquaMaps cell data.  Less than 1 minute.\n  %s \n', file_loc))
     am_cells <- fread(cell_file, header = TRUE, stringsAsFactors = FALSE) %>%
-      select(csq = CsquareCode, loiczid = LOICZID)
+      dplyr::select(csq = CsquareCode, loiczid = LOICZID)
 
     # merge() faster than inner_join()?
     #     am_cells_spp <- am_cells_spp %>%
     #       inner_join(am_cells, by = 'csq') %>%
-    #       select(-csq)
+    #       dplyr::select(-csq)
     am_cells_spp <- merge(am_cells_spp, am_cells, by = 'csq') %>%
-      select(-csq)
+      dplyr::select(-csq)
     
     
     cat(sprintf('Writing Aquamaps species per cell file to: \n  %s\n', am_cells_spp_file))
@@ -758,7 +758,7 @@ process_iucn_summary_per_cell <- function(reload = FALSE) {
       ### NOTE: for 2015, no IUCN subpops with spatially explicit shapefiles, so OK to cut all 'iucn_subpop' observations.
       ### Other values in this field: 'iucn_subpop' and 'iucn_alias' (for duped records due to species aliases)
       filter(!is.na(category_score) & !(category_score == 'DD')) %>%
-      select(iucn_sid, sciname, category_score, trend_score)
+      dplyr::select(iucn_sid, sciname, category_score, trend_score)
     cat(sprintf('Length of IUCN species list: %d\n', nrow(spp_iucn_info)))
     spp_iucn_info <- spp_iucn_info %>% unique()
     cat(sprintf('Length of IUCN species list, unique: %d\n', nrow(spp_iucn_info)))
@@ -815,7 +815,7 @@ process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup, rgn_note 
   ### accounted for by multiplying cell area * proportionArea from rgn_cell_lookup.
   
   rgn_weighted_sums <- summary_by_loiczid %>%
-    inner_join(rgn_cell_lookup %>% select(-csq),
+    inner_join(rgn_cell_lookup %>% dplyr::select(-csq),
                by = 'loiczid') %>%
     mutate(rgn_area = cell_area * proportionArea,
            area_weighted_mean_cat   = weighted_mean_cat   * rgn_area,
@@ -848,40 +848,40 @@ check_sim_names <- function(spp_all, num_letters = 5) {
   iucn_spp_file <- file.path(dir_anx, scenario, 'intermediate/spp_iucn_marine_global.csv')
   cat(sprintf('Reading in Aquamaps species from: \n  %s\n', am_spp_file))
   spp_am <- fread(am_spp_file) %>%
-    select(common_name = FBname, am_sid = SPECIESID, genus = Genus, species = Species)
+    dplyr::select(common_name = FBname, am_sid = SPECIESID, genus = Genus, species = Species)
   cat(sprintf('Reading in IUCN species from: \n  %s\n', iucn_spp_file))
-  spp_iucn_marine = read.csv(iucn_spp_file), stringsAsFactors = FALSE) %>%
-    select(sciname, iucn_sid = sid) %>%
+  spp_iucn_marine = read.csv(iucn_spp_file, stringsAsFactors = FALSE) %>%
+    dplyr::select(sciname, iucn_sid = sid) %>%
     separate(sciname, c('genus', 'species'), sep = ' ', remove = TRUE, extra = 'drop')
-  iucn_names <- data.frame(unique(spp_iucn_marine %>% select(g = genus, s = species))) %>%
+  iucn_names <- data.frame(unique(spp_iucn_marine %>% dplyr::select(g = genus, s = species))) %>%
     mutate(g = tolower(g),
            s = tolower(s),
            g_x = str_sub(g, 1, num_letters),
            s_x = str_sub(s, 1, num_letters))
-  am_names   <- data.frame(unique(spp_am %>% select(g = genus, s = species, common_name))) %>%
+  am_names   <- data.frame(unique(spp_am %>% dplyr::select(g = genus, s = species, common_name))) %>%
     mutate(g   = tolower(g),
            s = tolower(s),
            g_x = str_sub(g, 1, num_letters),
            s_x = str_sub(s, 1, num_letters))
-  iucn_unmatched <- setdiff(iucn_names, am_names %>% select(-common_name))
+  iucn_unmatched <- setdiff(iucn_names, am_names %>% dplyr::select(-common_name))
   iucn_similar   <- am_names %>% 
     rename(am_s = s, am_g = g) %>%
     inner_join(iucn_unmatched %>%
                  rename(iucn_s = s, iucn_g = g),
                by = c('g_x', 's_x')) %>%
     filter(am_g == iucn_g | am_s == iucn_s) %>%
-    select(-g_x, -s_x)
-  am_unmatched   <- setdiff(am_names %>% select(-common_name), iucn_names)
+    dplyr::select(-g_x, -s_x)
+  am_unmatched   <- setdiff(am_names %>% dplyr::select(-common_name), iucn_names)
   am_similar   <- iucn_names %>% 
     rename(iucn_s = s, iucn_g = g) %>%
     inner_join(am_unmatched %>%
                  rename(am_s = s, am_g = g),
                by = c('g_x', 's_x')) %>%
     filter(am_g == iucn_g | am_s == iucn_s) %>%
-    select(-g_x, -s_x)
+    dplyr::select(-g_x, -s_x)
   
   spp_maps <- spp_all %>%
-    select(sciname, spatial_source) %>%
+    dplyr::select(sciname, spatial_source) %>%
     separate(sciname, c('iucn_g', 'iucn_s'), sep = ' ', remove = FALSE, extra = 'drop') %>%
     mutate(iucn_g = tolower(iucn_g),
            iucn_s = tolower(iucn_s))
