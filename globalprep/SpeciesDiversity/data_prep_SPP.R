@@ -162,12 +162,12 @@ extract_loiczid_per_spp(groups_override = NULL, reload = FALSE)
 ##############################################################################=
 ### SPP - Generate species per cell tables for Aquamaps and IUCN -----
 ##############################################################################=
-am_cells_spp_sum <- process_am_summary_per_cell(reload = TRUE)
-### NOTE: the inner_join in here takes a while... 
+am_cells_spp_sum <- process_am_summary_per_cell(reload = FALSE)
+### NOTE: keyed data.table works way faster than the old inner_join or merge.
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### AM does not include subspecies: every am_sid corresponds to exactly one sciname.
 
-iucn_cells_spp_sum <- process_iucn_summary_per_cell(reload = TRUE)
+iucn_cells_spp_sum <- process_iucn_summary_per_cell(reload = FALSE)
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### IUCN includes subspecies - one sciname corresponds to multiple iucn_sid values.
 
