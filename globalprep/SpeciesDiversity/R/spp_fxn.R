@@ -678,38 +678,45 @@ get_am_cells_spp <- function(n_max = -1, reload = FALSE) {
     cat('Creating Aquamaps species per cell file\n')
     ### Load Aquamaps species per cell table
     spp_cell_file <- file.path(dir_data_am, 'tables/ohi_hcaf_species_native.csv')
-    cat(sprintf('Loading AquaMaps cell-species data.  Large file! \n  %s \n', file_loc))
+    cat(sprintf('Loading AquaMaps cell-species data.  Large file! \n  %s \n', spp_cell_file))
     am_cells_spp <- read_csv(spp_cell_file, col_types = '_ccn__', n_max = n_max) %>%
       rename(am_sid = SpeciesID, csq = CsquareCode, prob = probability)
         
-    # filter out below probability threshold; 39 M to 29 M observations.
+    # filter out below probability threshold; 78 M to 56 M observations.
     am_cells_spp <- am_cells_spp %>%
       filter(prob >= .40) %>%
       dplyr::select(-prob)
     
-    cat('Joining to region <-> cell lookup table to attach LOICZID, region ID, and cell area.\n')
     # then join to am_cells (from hcaf.csv) to attach loiczid
     cell_file <- file.path(dir_data_am, 'tables/hcaf.csv')
-    cat(sprintf('Loading AquaMaps cell data.  Less than 1 minute.\n  %s \n', file_loc))
+    cat(sprintf('Loading AquaMaps cell data.  Less than 1 minute.\n  %s \n', cell_file))
     am_cells <- fread(cell_file, header = TRUE, stringsAsFactors = FALSE) %>%
       dplyr::select(csq = CsquareCode, loiczid = LOICZID)
 
-    # merge() faster than inner_join()?
-    #     am_cells_spp <- am_cells_spp %>%
-    #       inner_join(am_cells, by = 'csq') %>%
-    #       dplyr::select(-csq)
-    am_cells_spp <- merge(am_cells_spp, am_cells, by = 'csq') %>%
-      dplyr::select(-csq)
+    cat('Joining cell spp table to cell lookup table to attach LOICZID (by CSquareCode).\n')
+    # inner_join() faster than merge()? according to here: http://zevross.com/blog/2014/04/30/mini-post-for-large-tables-in-r-dplyrs-function-inner_join-is-much-faster-than-merge/
+#     am_cells_spp <- am_cells_spp %>%
+#       inner_join(am_cells, by = 'csq') %>%
+#       dplyr::select(-csq)
+#     am_cells_spp <- merge(am_cells_spp, am_cells, by = 'csq') %>%
+#       dplyr::select(-csq)
+    # Keyed data frame method might be way faster? check here: http://stackoverflow.com/questions/1299871/how-to-join-merge-data-frames-inner-outer-left-right
+    # note: WAAAAAYYYYY faster - a few seconds, vs crashing R
+    acs_keyed <- data.table(am_cells_spp, key = "csq") 
+    ac_keyed  <- data.table(am_cells, key = "csq")
     
+    am_cells_spp1 <- acs_keyed[ac_keyed, allow.cartesian= TRUE] %>%
+      dplyr::select(-csq) %>%
+      filter(!is.na(am_sid))
     
     cat(sprintf('Writing Aquamaps species per cell file to: \n  %s\n', am_cells_spp_file))
-    write_csv(am_cells_spp, am_cells_spp_file)
+    write_csv(am_cells_spp1, am_cells_spp_file)
   } else {
     cat(sprintf('Reading Aquamaps species per cell file from: \n  %s\n', am_cells_spp_file))
-    am_cells_spp <- read_csv(am_cells_spp_file)
+    am_cells_spp1 <- read_csv(am_cells_spp_file)
   }
   
-  return(am_cells_spp)
+  return(am_cells_spp1)
 }
 
 
