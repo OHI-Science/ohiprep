@@ -648,12 +648,19 @@ process_am_summary_per_cell <- function(reload = FALSE) {
     spp_am_info <- spp_am_info %>% unique()
     cat(sprintf('Length of Aquamaps species list, unique: %d\n', nrow(spp_am_info)))
     
-    cat('Inner-joining cell/species IDs to master species list (filtered for just spatial_source == am or am_parent).\n')
-    am_cells_spp <- am_cells_spp %>% 
-      inner_join(spp_am_info, by = 'am_sid')
+    cat('Keyed data frame join cell/species IDs to master species list (filtered for just spatial_source == am or am_parent).\n')
+    #     am_cells_spp <- am_cells_spp %>% 
+    #       inner_join(spp_am_info, by = 'am_sid')
+    
+    acs_keyed <- data.table(am_cells_spp, key = "am_sid") 
+    sai_keyed <- data.table(spp_am_info, key = "am_sid")
+    
+    am_cells_spp1 <- acs_keyed[sai_keyed, allow.cartesian= TRUE]
+    cat('Converting back to data frame...\n')
+    am_cells_spp1 <- as.data.frame(am_cells_spp1)
     
     cat('Grouping by cell and summarizing by mean category, mean trend, and n_spp for each, for AM spatial info.\n')
-    am_cells_spp_sum <- am_cells_spp %>%
+    am_cells_spp_sum <- am_cells_spp1 %>%
       group_by(loiczid) %>%
       summarize(mean_cat_score        = mean(category_score),     # no na.rm needed; already filtered
                 mean_popn_trend_score = mean(trend_score, na.rm = TRUE), 
