@@ -735,6 +735,7 @@ get_iucn_cells_spp <- function() {
   iucn_cells_spp      <- bind_rows(iucn_cells_spp_list)   # combine list of dataframes to single dataframe
   # This creates a full data frame of all IUCN species, across all species groups, for all cells.
   # Probably big...
+  names(iucn_cells_spp) <- tolower(names(iucn_cells_spp))
   
   return(iucn_cells_spp)
 }
@@ -778,11 +779,19 @@ process_iucn_summary_per_cell <- function(reload = FALSE) {
     cat(sprintf('Length of IUCN species list, unique: %d\n', nrow(spp_iucn_info)))
 
 
-    cat('Joining to species master list (filtered for spatial_source == iucn or iucn_parent).\n')
-    iucn_cells_spp1 <- iucn_cells_spp %>% 
-      inner_join(spp_iucn_info, by = c('sciname')) %>%
+    cat('Keyed joining to species master list (filtered for spatial_source == iucn or iucn_parent).\n')
+    ics_keyed <- data.table(iucn_cells_spp, key = "sciname") 
+    sii_keyed <- data.table(spp_iucn_info,  key = "sciname")
+#     iucn_cells_spp1 <- iucn_cells_spp %>% 
+#       inner_join(spp_iucn_info, by = c('sciname')) %>%
+#       group_by(sciname, iucn_sid, loiczid, category_score, trend_score) %>%
+#       summarize(prop_area = max(prop_area))
+    iucn_cells_spp1 <- ics_keyed[sii_keyed, allow.cartesian= TRUE] %>%
+      as.data.frame() %>%
+      # this next part to collapse any duplicated cells (overlapping polygons)
       group_by(sciname, iucn_sid, loiczid, category_score, trend_score) %>%
       summarize(prop_area = max(prop_area))
+    
         
     cat('Grouping by cell and summarizing mean category/trend and n_spp for each, for IUCN spatial info.\n')
     iucn_cells_spp_sum <- iucn_cells_spp1 %>%
