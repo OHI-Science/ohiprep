@@ -1,30 +1,41 @@
 ### Compare status and trend 
 
 setwd('~/github/ohiprep')
-source('src/R/common.R')
 library(ggplot2)
+source('src/R/common.R')
 
 dir_global <- ('~/github/ohi-global')
 comp_scenario  <- 'eez2013'
 
 goal     <- 'globalprep/SpeciesDiversity'
 scenario <- 'v2015'
-dir_git  <- file.path('~/github/ohiprep', goal) 
+dir_data  <- file.path('~/github/ohiprep', goal, scenario, 'data') 
  
+dir_hs <- file.path(dir_global, 'highseas2014/layers')
+dir_aq <- file.path(dir_global, 'antarctica2014/layers')
+dir2013 <- file.path(dir_global, 'eez2013/layers')
 
 hs_st_old <- (file.path(dir_hs, 'spp_status.csv'))
 hs_tr_old <- (file.path(dir_hs, 'spp_trend.csv'))
-aq_st_old <- (file.path(dir_aq, 'spp_status.csv'))
-aq_tr_old <- (file.path(dir_aq, 'spp_trend.csv'))
 hs_st_new <- (file.path(dir_data, 'spp_status_hs.csv'))
 hs_tr_new <- (file.path(dir_data, 'spp_trend_hs.csv'))
+
+aq_st_old <- (file.path(dir_aq, 'spp_status.csv'))
+aq_tr_old <- (file.path(dir_aq, 'spp_trend.csv'))
 aq_st_new <- (file.path(dir_data, 'spp_status_aq.csv'))
 aq_tr_new <- (file.path(dir_data, 'spp_trend_aq.csv'))
 
-scatterPlot(hs_st_old, hs_st_new, 'High Seas SPP status')
+gl_3nm_old <- file.path(dir2013, 'species_diversity_3nm.csv')
+gl_st_old <- file.path(dir2013, 'spp_status.csv')
+gl_tr_old <- file.path(dir2013, 'spp_trend.csv')
+gl_3nm_new <- file.path(dir_data, 'spp_status_3nm.csv')
+gl_st_new <- file.path(dir_data, 'spp_status_global.csv')
+gl_tr_new <- file.path(dir_data, 'spp_trend_global.csv')
+
+
 #############################################################################=
-scatterPlot <- function(csv_orig, csv_new, title_text,
-                        fig_save = file.path(dir_git, scenario, paste0(title_text, '_scatterPlot.png'))) {
+scatterPlot <- function(csv_orig, csv_new, title_text, zero_one_new = FALSE, zero_one_old = FALSE,
+                        fig_save = file.path(dir_data, 'graphs', paste0(title_text, '_scatterPlot.png'))) {
   
   require(git2r)
   require(ggplot2)
@@ -34,22 +45,31 @@ scatterPlot <- function(csv_orig, csv_new, title_text,
     filter(type=="eez") %>%
     select(rgn_id, label)
   
+  data_orig <- read.csv(csv_orig)
+  names(data_orig) <- c('rgn_id', 'score')
+  data_new <- read.csv(csv_new)
+  names(data_new) <- c('rgn_id', 'score')
+  if(zero_one_old) data_orig$score = data_orig$score*100
+  if(zero_one_new) data_new$score = data_new$score*100
   
-  data_combo <- read.csv(csv_orig) %>%
+  data_combo <- data_orig %>%
     dplyr::rename(scores_old = score) %>%
-    left_join(read.csv(csv_new) %>%
+    left_join(data_new %>%
                 dplyr::rename(scores_new = score), 
               by=c('rgn_id')) %>%
-    mutate(change = scores_new - scores_old) %>%
-    mutate(mean = mean(change, na.rm=TRUE),
+    dplyr::mutate(change = scores_new - scores_old) %>%
+    dplyr::mutate(mean = mean(change, na.rm=TRUE),
            sd =  sd(change, na.rm=TRUE)) %>%
     ungroup() %>%
-    mutate(z_score = (change-mean)/sd) %>%
-    mutate(z_greater_1 = ifelse(abs(z_score) > 1, "yes", "no")) %>%
+    dplyr::mutate(z_score = (change-mean)/sd) %>%
+    dplyr::mutate(z_greater_1 = ifelse(abs(z_score) > 1, "yes", "no")) %>%
     left_join(names, by='rgn_id') %>%
     filter(rgn_id != 0) %>%
-    mutate(plotLabel = ifelse(z_greater_1=="yes", as.character(label), NA)) 
-  
+    dplyr::mutate(
+#      label     = ifelse(is.na(label), as.character(rgn_id), label),
+      plotLabel = ifelse(z_greater_1=="yes", as.character(label), NA)
+    ) 
+    
   ggplot(data_combo, aes(x = scores_old, y = scores_new)) +
     geom_point(shape = 19) +
     theme_bw() + 
@@ -59,21 +79,29 @@ scatterPlot <- function(csv_orig, csv_new, title_text,
     geom_abline(slope = 1, intercept = 0, color = "red") +
     geom_text(aes(label = plotLabel), vjust = 1.5, size = 3)
   
-#  ggsave(fig_save, width = 10, height = 8)
+  ggsave(fig_save, width = 10, height = 8)
 }
 
 #############################################################################=
 ### SPP Comparison Graphs -----
 #############################################################################=
 
-scatterPlot(csv_orig = file.path(dir_global, comp_scenario, 'layers/spp_status.csv'),
-            csv_new  = file.path(dir_git, scenario, 'data/spp_status.csv'),
-            title_text = 'spp_status')
+csv_orig <- gl_3nm_old
+csv_new  <- gl_3nm_new
+title_text <- 'Global 3nm SPP status'
+zero_one_new = TRUE
+zero_one_old = TRUE
 
-scatterPlot(csv_orig = file.path(dir_global, comp_scenario, 'layers/spp_trend.csv'),
-            csv_new  = file.path(dir_git, scenario, 'data/spp_trend.csv'),
-            title_text = 'spp_trend')
+scatterPlot(hs_st_old, hs_st_new, 'High Seas SPP status', zero_one_new = TRUE)
+scatterPlot(hs_tr_old, hs_tr_new, 'High Seas SPP trend')
 
+scatterPlot(aq_st_old, aq_st_new, 'Antarctica SPP status', zero_one_new = TRUE)
+scatterPlot(aq_tr_old, aq_tr_new, 'Antarctica SPP trend')
+
+scatterPlot(gl_3nm_old, gl_3nm_new, 'Global 3nm SPP status', zero_one_new = TRUE, zero_one_old = TRUE)
+
+scatterPlot(gl_st_old, gl_st_new, 'Global SPP status', zero_one_new = TRUE, zero_one_old = TRUE)
+scatterPlot(gl_tr_old, gl_tr_new, 'Global SPP trend')
 
 #############################################################################=
 ### ICO Comparison Graphs -----
