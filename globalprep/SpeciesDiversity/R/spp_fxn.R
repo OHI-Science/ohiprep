@@ -634,7 +634,7 @@ process_am_summary_per_cell <- function(reload = FALSE) {
   if(!file.exists(am_cells_spp_sum_file) | reload) {
     cat('Generating cell-by-cell summary for Aquamaps species.\n')
     
-    am_cells_spp <- get_am_cells_spp()
+    am_cells_spp <- get_am_cells_spp(reload = reload)
     
     # filter species info to just Aquamaps species with category info, and bind to 
     # am_cells_spp to attach category_score and trend_score.
@@ -655,10 +655,10 @@ process_am_summary_per_cell <- function(reload = FALSE) {
     acs_keyed <- data.table(am_cells_spp, key = "am_sid") 
     sai_keyed <- data.table(spp_am_info, key = "am_sid")
     
-    am_cells_spp1 <- acs_keyed[sai_keyed, allow.cartesian= TRUE]
+    am_cells_spp1 <- acs_keyed[sai_keyed]
     cat('Converting back to data frame...\n')
     am_cells_spp1 <- as.data.frame(am_cells_spp1)
-    
+
     cat('Grouping by cell and summarizing by mean category, mean trend, and n_spp for each, for AM spatial info.\n')
     am_cells_spp_sum <- am_cells_spp1 %>%
       group_by(loiczid) %>%
@@ -701,20 +701,12 @@ get_am_cells_spp <- function(n_max = -1, reload = FALSE) {
       dplyr::select(csq = CsquareCode, loiczid = LOICZID)
 
     cat('Joining cell spp table to cell lookup table to attach LOICZID (by CSquareCode).\n')
-    # inner_join() faster than merge()? according to here: http://zevross.com/blog/2014/04/30/mini-post-for-large-tables-in-r-dplyrs-function-inner_join-is-much-faster-than-merge/
-#     am_cells_spp <- am_cells_spp %>%
-#       inner_join(am_cells, by = 'csq') %>%
-#       dplyr::select(-csq)
-#     am_cells_spp <- merge(am_cells_spp, am_cells, by = 'csq') %>%
-#       dplyr::select(-csq)
-    # Keyed data frame method might be way faster? check here: http://stackoverflow.com/questions/1299871/how-to-join-merge-data-frames-inner-outer-left-right
-    # note: WAAAAAYYYYY faster - a few seconds, vs crashing R
+    # Keyed data frame method faster than dplyr! check here: http://stackoverflow.com/questions/1299871/how-to-join-merge-data-frames-inner-outer-left-right
     acs_keyed <- data.table(am_cells_spp, key = "csq") 
     ac_keyed  <- data.table(am_cells, key = "csq")
     
-    am_cells_spp1 <- acs_keyed[ac_keyed, allow.cartesian= TRUE] %>%
-      dplyr::select(-csq) %>%
-      filter(!is.na(am_sid))
+    am_cells_spp1 <- ac_keyed[acs_keyed] %>%
+      dplyr::select(-csq)
     
     cat(sprintf('Writing Aquamaps species per cell file to: \n  %s\n', am_cells_spp_file))
     write_csv(am_cells_spp1, am_cells_spp_file)
@@ -786,13 +778,14 @@ process_iucn_summary_per_cell <- function(reload = FALSE) {
 #       inner_join(spp_iucn_info, by = c('sciname')) %>%
 #       group_by(sciname, iucn_sid, loiczid, category_score, trend_score) %>%
 #       summarize(prop_area = max(prop_area))
-    iucn_cells_spp1 <- ics_keyed[sii_keyed, allow.cartesian= TRUE] %>%
+
+    iucn_cells_spp1 <- ics_keyed[sii_keyed] %>%
       as.data.frame() %>%
       # this next part to collapse any duplicated cells (overlapping polygons)
       group_by(sciname, iucn_sid, loiczid, category_score, trend_score) %>%
       summarize(prop_area = max(prop_area))
     
-        
+
     cat('Grouping by cell and summarizing mean category/trend and n_spp for each, for IUCN spatial info.\n')
     iucn_cells_spp_sum <- iucn_cells_spp1 %>%
       group_by(loiczid) %>%
