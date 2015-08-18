@@ -649,15 +649,15 @@ process_am_summary_per_cell <- function(reload = FALSE) {
     cat(sprintf('Length of Aquamaps species list, unique: %d\n', nrow(spp_am_info)))
     
     cat('Keyed data frame join cell/species IDs to master species list (filtered for just spatial_source == am or am_parent).\n')
-    #     am_cells_spp <- am_cells_spp %>% 
-    #       inner_join(spp_am_info, by = 'am_sid')
-    
     acs_keyed <- data.table(am_cells_spp, key = "am_sid") 
     sai_keyed <- data.table(spp_am_info, key = "am_sid")
-    
-    am_cells_spp1 <- sai_keyed[acs_keyed]
-    cat('Converting back to data frame...\n')
-    am_cells_spp1 <- as.data.frame(am_cells_spp1)
+    am_cells_spp1 <- acs_keyed[sai_keyed] %>%
+      as.data.frame(am_cells_spp1)
+    # z <- x[y] is analogous to z <- left_join(y, x, by = 'key'), so the y variable determines which
+    # rows to keep (non-matching rows in x will be discarded).  In this case, all species must be on the spp_am_info list
+    # (to learn IUCN cat/trend info); and species not on the list will be discarded.  So: acs_keyed is x, and sai_keyed is y.
+    # Somehow, after this step, there is one instance of Clupea harengus (Fis-29344) that has no LOICZID.  It appears on
+    # the spp_all list, but has no associated cells.  Weird.    
     
     cat('Grouping by cell and summarizing by mean category, mean trend, and n_spp for each, for AM spatial info.\n')
     am_cells_spp_sum <- am_cells_spp1 %>%
@@ -707,6 +707,10 @@ get_am_cells_spp <- function(n_max = -1, reload = FALSE) {
     
     am_cells_spp1 <- ac_keyed[acs_keyed] %>%
       dplyr::select(-csq)
+    # z <- x[y] is analogous to z <- left_join(y, x, by = 'key'), so the y variable determines which
+    # rows to keep (non-matching rows in x will be discarded).  In this case, we only care about cells with 
+    # species listed (all species observations will necessarily have a cell ID); and cells with no 
+    # match in the species list will be discarded.  So: ac_keyed is x, and acs_keyed is y.
     
     cat(sprintf('Writing Aquamaps species per cell file to: \n  %s\n', am_cells_spp_file))
     write_csv(am_cells_spp1, am_cells_spp_file)
@@ -774,12 +778,17 @@ process_iucn_summary_per_cell <- function(reload = FALSE) {
     cat('Keyed joining to species master list (filtered for spatial_source == iucn or iucn_parent).\n')
     ics_keyed <- data.table(iucn_cells_spp, key = "sciname") 
     sii_keyed <- data.table(spp_iucn_info,  key = "sciname")
-#     iucn_cells_spp1 <- iucn_cells_spp %>% 
-#       inner_join(spp_iucn_info, by = c('sciname')) %>%
-#       group_by(sciname, iucn_sid, loiczid, category_score, trend_score) %>%
-#       summarize(prop_area = max(prop_area))
+    iucn_cells_spp1 <- ics_keyed[sii_keyed] 
+    # z <- x[y] is analogous to z <- left_join(y, x, by = 'key'), so the y variable determines which
+    # rows to keep (non-matching rows in x will be discarded).  In this case, all species must be on the spp_iucn_info list
+    # (to learn IUCN cat/trend info); and species not on the list will be discarded.  So: ics_keyed is x, and sii_keyed is y.
+    # The following species are dropped; they have shapefile info but no IUCN ID number according to this analysis:
+    #   Alopex lagopus, Conus eduardi, Conus evansi, Conus hypochlorus, Conus luteus, Conus moncuri, Conus moylani,
+    #   Conus sartii, Conus subulatus, Diplodus argenteus, Diplodus sargus, Eptatretus fernholmi, Halichoeres bleekeri,
+    #   Holothuria squamifera, Sarda chiliensis chiliensis, Scyphiphora hydrophyllacea, Tetrapturus albidus
+    
     cat('Eliminating species double-counting due to overlapping polygons in IUCN shapefiles.\n')
-    iucn_cells_spp1 <- sii_keyed[ics_keyed] %>%
+    iucn_cells_spp1 <- iucn_cells_spp1 %>%
       as.data.frame() %>%
       # this next part to collapse any duplicated cells (overlapping polygons)
       group_by(sciname, iucn_sid, loiczid, category_score, trend_score) %>%
