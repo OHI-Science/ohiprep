@@ -179,20 +179,20 @@ write_csv(spp_trend_aq,  file.path(dir_git, scenario, 'data/spp_trend_aq.csv'))
 scenario <- 'vAM_IUCN'
 
 pref_flag <- '_AMpref'
-prob_filter <- 0.0
+prob_filter <- 0.05
 
 spp_all <- create_spp_master_lookup(source_pref = 'am', fn_tag = pref_flag, reload = FALSE)
 # only affected by am/iucn preference
 
-am_cells_spp_sum <- process_am_summary_per_cell(fn_tag = fn_tag, reload = FALSE)
-# only affected by prob filter
+am_cells_spp_sum <- process_am_summary_per_cell(fn_tag = sprintf('%s_prob%s', pref_flag, prob_filter), prob_filter = prob_filter, reload = TRUE)
+# affected by prob filter and preference flag
 
-iucn_cells_spp_sum <- process_iucn_summary_per_cell(fn_tag = fn_tag, reload = FALSE)
-# affected by neither preference nor probability flags
+iucn_cells_spp_sum <- process_iucn_summary_per_cell(fn_tag = sprintf('_pref%s', pref_flag), reload = TRUE)
+# affected by preference flag
 
-summary_by_loiczid <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum)
+summary_by_loiczid <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum, fn_tag = sprintf('%s_%s', pref_flag, prob_filter))
 rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
-summary_by_rgn     <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup)
+summary_by_rgn     <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup, rgn_note = sprintf('%s_%s', pref_flag, prob_filter))
 ### This returns dataframe with variables:
 ### sp_id | rgn_mean_cat | rgn_mean_trend | status
 
