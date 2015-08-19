@@ -644,7 +644,7 @@ process_am_summary_per_cell <- function(fn_tag = '', prob_filter = .40, reload =
   if(!file.exists(am_cells_spp_sum_file) | reload) {
     cat('Generating cell-by-cell summary for Aquamaps species.\n')
     
-    am_cells_spp <- get_am_cells_spp(prob_filter = prob_filter, reload = reload)
+    am_cells_spp <- get_am_cells_spp(prob_filter = prob_filter)
     
     # filter species info to just Aquamaps species with category info, and bind to 
     # am_cells_spp to attach category_score and trend_score.
@@ -689,8 +689,8 @@ process_am_summary_per_cell <- function(fn_tag = '', prob_filter = .40, reload =
 
 
 ##############################################################################=
-get_am_cells_spp <- function(n_max = -1, prob_filter = .40, reload = FALSE) {
-  am_cells_spp_file <- file.path(dir_anx, scenario, 'intermediate/am_cells_spp.csv')
+get_am_cells_spp <- function(n_max = -1, prob_filter = .40, reload = TRUE) {
+  am_cells_spp_file <- file.path(dir_anx, scenario, sprintf('intermediate/am_cells_spp_prob%s.csv', prob_filter))
   if(!file.exists(am_cells_spp_file) | reload) {
     cat('Creating Aquamaps species per cell file\n')
     ### Load Aquamaps species per cell table
@@ -824,7 +824,7 @@ process_iucn_summary_per_cell <- function(fn_tag = '', reload = FALSE) {
 
 
 ##############################################################################=
-process_means_per_cell <- function(am_cell_summary, iucn_cell_summary) { 
+process_means_per_cell <- function(am_cell_summary, iucn_cell_summary, fn_tag = '') { 
   ### 2 input data frames:
   ### loiczid | mean_cat_score | mean_popn_trend_score | n_cat_species | n_trend_species | source
   ### calcs weighted score for each cell (by loiczid) from:
@@ -836,13 +836,13 @@ process_means_per_cell <- function(am_cell_summary, iucn_cell_summary) {
               weighted_mean_trend = sum(n_trend_species * mean_popn_trend_score, na.rm = TRUE)/sum(n_trend_species)) %>%
     arrange(loiczid)
   
-  write_csv(summary_by_loiczid, file.path(dir_git, scenario, 'summary/cell_spp_summary_by_loiczid.csv'))
+  write_csv(summary_by_loiczid, file.path(dir_git, scenario, sprintf('summary/cell_spp_summary_by_loiczid%s.csv', fn_tag)))
   return(summary_by_loiczid)
 }
 
 
 ##############################################################################=
-process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup, rgn_note = NULL) {  
+process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup, rgn_note = 'NULL') {  
   ### Joins region-cell info to mean cat & trend per cell.
   ### Groups by region IDs, and calcs area-weighted mean category and trend values
   ### for all cells across entire region.  Cells only partly within a region are
