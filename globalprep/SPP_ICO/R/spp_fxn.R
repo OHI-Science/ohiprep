@@ -63,7 +63,7 @@ extract_cell_id_per_region <- function(reload       = FALSE,
   rgn_prop_file <- file.path(dir_anx, sprintf('rgns/cellID_%s_%s.csv', rgn_layer, ohi_type))
   
   if(!file.exists(rgn_prop_file) | reload) {
-    
+
     cat(sprintf('Reading regions shape file %s - come back in about 4 minutes.\n  %s/%s\n', rgn_layer, ogr_location, rgn_layer))
     regions        <- readOGR(dsn = ogr_location, layer = rgn_layer)
     # slow command... ~ 4 minutes
@@ -122,7 +122,6 @@ extract_cell_id_per_region <- function(reload       = FALSE,
     cat('Joining csq values and cell areas to loiczid values.\n')
     region_prop_df <- region_prop_df %>%
       left_join(am_cells, by = 'loiczid')
-    
     
     cat(sprintf('Writing loiczid/csq/cell proportions/cell areas by region to: \n  %s\n', rgn_prop_file))
     write.csv(region_prop_df, rgn_prop_file, row.names = FALSE)
@@ -282,7 +281,7 @@ check_name_matches <- function(spp_all, spp_all_file) {
 
 
 ##############################################################################=
-create_spp_master_lookup <- function(reload = FALSE) {
+create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload = FALSE) {
   ### Create lookup: species <-> popn_category/popn_trend and spatial_source.
   ### Output is data frame with these fields:
   ### * sciname  iucn_sid  am_sid  popn_category  popn_trend info_source  spatial_source
@@ -299,7 +298,7 @@ create_spp_master_lookup <- function(reload = FALSE) {
   ###   Or leave in for future filtering?
   ###   - ??? test how many get filtered out and how big is the file.
   ##############################################################################=
-  spp_all_file <- file.path(dir_anx, scenario, 'intermediate/spp_all.csv')
+  spp_all_file <- file.path(dir_anx, scenario, sprintf('intermediate/spp_all%s.csv', fn_tag))
   
   if(!file.exists(spp_all_file) | reload) {
     spp_am_file <- file.path(dir_data_am, 'tables/ohi_speciesoccursum.csv')
@@ -329,8 +328,7 @@ create_spp_master_lookup <- function(reload = FALSE) {
       # create single 'category' field, and flag 'info_source' to indicate iucn or am.
       # For species with subpopulations and both AM and IUCN categories - use the IUCN.  Later, if using AM
       #   spatial data, we'll just use the parent IUCN info.
-      mutate(iucn_category = as.character(iucn_category),
-             am_category   = as.character(am_category),
+      dplyr::mutate(
              popn_category = ifelse(!is.na(iucn_category), iucn_category, am_category),
              info_source   = ifelse(!is.na(iucn_category), 'iucn',
                                     ifelse(!is.na(am_category), 'am',   NA)))
@@ -338,8 +336,15 @@ create_spp_master_lookup <- function(reload = FALSE) {
     spp_iucn_maps <- generate_iucn_map_list()
     
     spp_all <- spp_all %>% 
-      left_join(spp_iucn_maps, by = c('sciname' = 'binomial')) %>% 
-      mutate(spatial_source = ifelse((is.na(spatial_source) & !is.na(am_sid)), 'am', spatial_source))
+      left_join(spp_iucn_maps, by = c('sciname' = 'binomial'))
+    
+    if(source_pref == 'am') {
+      spp_all <- spp_all %>%
+        mutate(spatial_source = ifelse(!is.na(am_sid), 'am', spatial_source))
+    } else {
+      spp_all <- spp_all %>%
+        mutate(spatial_source = ifelse(is.na(spatial_source) & !is.na(am_sid), 'am', spatial_source))
+    }
     # is.na(spatial_source) means it wasn't in the IUCN maps list;
     # !is.na(am_sid) means it is an aquamaps species.
     
@@ -369,6 +374,11 @@ create_spp_master_lookup <- function(reload = FALSE) {
     spp_all <- spp_all %>%
       left_join(popn_cat,   by = 'popn_category') %>%
       left_join(popn_trend, by = 'popn_trend') 
+    
+    spp_all <- spp_all %>%
+      fix_am_subpops() %>%
+      fix_iucn_subpops() %>% 
+      remove_iucn_synonyms()
     
     cat(sprintf('Writing full species lookup table to: \n  %s\n', spp_all_file))
     write.csv(spp_all, spp_all_file, row.names = FALSE)
@@ -620,7 +630,7 @@ extract_loiczid_per_spp <- function(groups_override = NULL, reload = FALSE) {
 
 
 ##############################################################################=
-process_am_summary_per_cell <- function(reload = FALSE) {
+process_am_summary_per_cell <- function(fn_tag = '', prob_filter = .40, reload = FALSE) {
   # Calculate category and trend scores per cell for Aquamaps species.
   # * load AM species <-> cell lookup
   # * filter to appropriate cells (in regions, meets probability threshold)
@@ -629,12 +639,12 @@ process_am_summary_per_cell <- function(reload = FALSE) {
   # * filter by cat score != NA
   # * summarize by loiczid - mean category_score, mean trend_score, count
   
-  am_cells_spp_sum_file <- file.path(dir_git, scenario, 'summary/spp_sum_am_cells_new.csv')
+  am_cells_spp_sum_file <- file.path(dir_git, scenario, sprintf('summary/spp_sum_am_cells%s.csv', fn_tag))
   
   if(!file.exists(am_cells_spp_sum_file) | reload) {
     cat('Generating cell-by-cell summary for Aquamaps species.\n')
     
-    am_cells_spp <- get_am_cells_spp()
+    am_cells_spp <- get_am_cells_spp(prob_filter = prob_filter, reload = reload)
     
     # filter species info to just Aquamaps species with category info, and bind to 
     # am_cells_spp to attach category_score and trend_score.
@@ -679,8 +689,8 @@ process_am_summary_per_cell <- function(reload = FALSE) {
 
 
 ##############################################################################=
-get_am_cells_spp <- function(n_max = -1, reload = FALSE) {
-  am_cells_spp_file <- file.path(dir_anx, scenario, 'intermediate/am_cells_spp_new.csv')
+get_am_cells_spp <- function(n_max = -1, prob_filter = .40, reload = FALSE) {
+  am_cells_spp_file <- file.path(dir_anx, scenario, 'intermediate/am_cells_spp.csv')
   if(!file.exists(am_cells_spp_file) | reload) {
     cat('Creating Aquamaps species per cell file\n')
     ### Load Aquamaps species per cell table
@@ -691,7 +701,7 @@ get_am_cells_spp <- function(n_max = -1, reload = FALSE) {
         
     # filter out below probability threshold; 78 M to 56 M observations.
     am_cells_spp <- am_cells_spp %>%
-      filter(prob >= .40) %>%
+      filter(prob >= prob_filter) %>%
       dplyr::select(-prob)
     
     # then join to am_cells (from hcaf.csv) to attach loiczid
@@ -738,7 +748,7 @@ get_iucn_cells_spp <- function() {
 
 
 ##############################################################################=
-process_iucn_summary_per_cell <- function(reload = FALSE) {
+process_iucn_summary_per_cell <- function(fn_tag = '', reload = FALSE) {
   # Calculate category and trend scores per cell for IUCN species.
   # * For each IUCN species group:
   #   * load IUCN species <-> cell lookup
@@ -750,7 +760,7 @@ process_iucn_summary_per_cell <- function(reload = FALSE) {
   # * Each summary data frame should be saved to a list, to be eventually rbind_all'ed
   
   
-  iucn_cells_spp_sum_file <- file.path(dir_git, scenario, 'summary/spp_sum_iucn_cells_new.csv')
+  iucn_cells_spp_sum_file <- file.path(dir_git, scenario, sprintf('summary/spp_sum_iucn_cells%s.csv', fn_tag))
   
   if(!file.exists(iucn_cells_spp_sum_file) | reload) {
     cat('Generating cell-by-cell summary for IUCN range-map species.\n')

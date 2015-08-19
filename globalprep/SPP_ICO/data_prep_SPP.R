@@ -28,65 +28,7 @@ source(file.path(dir_git, 'R/spp_fxn.R'))
 ##############################################################################=
 ### Ingest Aquamaps data to .csv from .sql ----
 ##############################################################################=
-# get R version of SQL extract code from Melanie?
-# ??? updated aquamaps data?  incorporate export.sql into R code?
-# ??? This is probably just reading database and assigning variable names,
-# ??? there may be better ways of doing this.  
-# ??? In future, consider doing this using rodbc.
-# ingest_aquamaps.R reads in data from sql files, and converts to .csvs?
-# - ohi_speciesoccursum.sql
-# - ohi_hcaf_species_native.sql: this is the big one, spatial locations for each species
-# - hcaf.sql: hcaf stands for half-degree cells authority file.
-# the harder part is probably extracting the data from the sql files.
-
-ingest_aquamaps <- function() {
-  library(logging)
-  
-  # Read in csv outputs from running raw\AquaMaps_OHI_082013\export.sql
-  #   See raw\AquaMaps_OHI_082013\README.txt on a running instance of AquaMaps MySQL
-  
-  # set working directory
-  orig_wd <- getwd()
-  wd = 'N:/model/GL-NCEAS-SpeciesDiversity_v2013a' # ??? is this the right place to be?
-  setwd(file.path(wd, 'raw/AquaMaps_OHI_082013'))  # ??? set up a variable for it rather than moving?
-  
-  # setup logging
-  basicConfig()
-  addHandler(writeToFile, logger='', file=file.path(wd,'cache','ingest_aquamaps.log'))
-  
-  # ??? Jamie's script combining_files.R already combined the headers and data for 2014 data - either use that, or combine it here, figure it out.
-  # read in aquamaps header column names (hdr_*.csv) # ??? are these headers separate from the data? weird.
-  loginfo('read in aquamaps header column names (hdr_*.csv)')
-  cells.hdr     = read.csv('hdr_hcaf.csv'               , stringsAsFactors=F, header=F)[ , 1]
-  cells_spp.hdr = read.csv('hdr_hcaf_species_native.csv', stringsAsFactors=F, header=F)[ , 1]
-  spp.hdr       = read.csv('hdr_speciesoccursum.csv'    , stringsAsFactors=F, header=F)[ , 1] # use readr::read_csv() or data.table::fread()
-  
-  # read in aquamaps data (tbl_*.csv)
-  loginfo('read in aquamaps data (tbl_*.csv)\n  cells')
-  cells     = read.csv('tbl_hcaf.csv'               , header=F, col.names=cells.hdr    , na.strings='\\N')
-  loginfo('  cells_spp')
-  cells_spp = read.csv('tbl_hcaf_species_native.csv', header=F, col.names=cells_spp.hdr, na.strings='\\N')
-  loginfo('  spp')
-  spp       = read.csv('tbl_speciesoccursum.csv'    , header=F, col.names=spp.hdr      , na.strings='\\N')
-  
-  # write out to tmp
-  setwd(file.path(wd, 'tmp')) 
-  # ??? create loop for csvs
-  #       e.g.  for x in c(cells, cells_spp, spp) {
-  #               write file and log
-  #             }
-  loginfo('write out to tmp\n  am_cells_data.csv')
-  write.csv(cells    , 'am_cells_data.csv'    , row.names=F, na='')
-  loginfo('  am_cells_spp_data.csv')
-  write.csv(cells_spp, 'am_cells_spp_data.csv', row.names=F, na='')
-  loginfo('  am_spp_data.csv')
-  write.csv(spp      , 'am_spp_data.csv'      , row.names=F, na='')
-  loginfo('finished!')
-  
-  setwd(orig_wd)
-  
-  return(TRUE)
-}
+source(file.path(dir_git, 'R/ingest_aquamaps.R'))
 ingest_aquamaps()
 
 
@@ -109,43 +51,13 @@ source(file.path(goal, 'R/ingest_iucn.R'))
 ##############################################################################=
 ### Generate lookup - species <-> category/trend and spatial_source ----
 ##############################################################################=
-spp_all <- create_spp_master_lookup(reload = FALSE)
+spp_all <- create_spp_master_lookup(reload = TRUE)
 ### | am_sid | sciname | am_category | iucn_sid | iucn_category | popn_trend | popn_category | 
 ### | info_source | spp_group | id_no | objectid | spatial_source | category_score | trend_score |
-### Outputs saved to:
-### * v201X/intermediate/spp_iucn_maps_all.csv (list of all species represented in the IUCN shape files)
-### * v201X/intermediate/spp_all.csv (complete data frame)
-
-##############################################################################=
-### Edit subpop/parent entries and synonyms ----
-##############################################################################=
-# spp_all <- spp_all %>%
-#   fix_am_subpops() %>%
-#   fix_iucn_subpops()
 # 
-# spp_all <- spp_all %>% remove_iucn_synonyms()
+# # write_csv(spp_all, file.path(dir_anx, scenario, 'intermediate/spp_all_cleaned.csv'))
 # 
-# write_csv(spp_all, file.path(dir_anx, scenario, 'intermediate/spp_all_cleaned.csv'))
-
-spp_all <- read.csv(file.path(dir_anx, scenario, 'intermediate/spp_all_cleaned.csv'), stringsAsFactors = FALSE)
-
-### Explore duplicate records between AM and IUCN 
-
-# > y <- spp_all %>% filter(!is.na(am_sid)) %>% unique()
-# > sum(duplicated(y$am_sid))
-# [1] 184
-# > sum(duplicated(y$sciname))
-# [1] 184
-# y_dupes <- show_dupes(y, 'sciname') # all dupes are subpops or iucn_alias flags
-
-# > x <- spp_all %>% filter(!(spatial_source %in% c('iucn_alias', 'iucn_subpop', 'am_subpop')) & !is.na(spatial_source)) %>% unique()
-# > sum(duplicated(x$iucn_sid))
-# [1] 115
-# > sum(duplicated(x$sciname))
-# [1] 2 # both 'DD' status.
-
-# NOTE: Still some duplicated IUCN species IDs on the list; treated separately in Aquamaps data,
-#       so spatial information is differentiated.  Leave in for 2015...
+# spp_all <- read.csv(file.path(dir_anx, scenario, 'intermediate/spp_all_cleaned.csv'), stringsAsFactors = FALSE)
 
 ##############################################################################=
 ### Generate lookup - IUCN species to LOICZID ----
@@ -172,7 +84,7 @@ iucn_cells_spp_sum <- process_iucn_summary_per_cell(reload = TRUE)
 ### IUCN includes subspecies - one sciname corresponds to multiple iucn_sid values.
 
 ##############################################################################=
-### SPP - Summarize mean category and trend per cell and per region -----
+### SPP Global - Summarize mean category and trend per cell and per region -----
 ##############################################################################=
 summary_by_loiczid <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum)
 ### This returns dataframe with variables:
@@ -260,7 +172,39 @@ spp_trend_aq <- summary_by_rgn_aq %>%
 write_csv(spp_status_aq, file.path(dir_git, scenario, 'data/spp_status_aq.csv'))
 write_csv(spp_trend_aq,  file.path(dir_git, scenario, 'data/spp_trend_aq.csv'))
 
+
 ##############################################################################=
+### SPP global, swapping priority on AM and IUCN spatial source -----
+##############################################################################=
+scenario <- 'vAM_IUCN'
+
+pref_flag <- '_AMpref'
+prob_filter <- 0.0
+
+spp_all <- create_spp_master_lookup(source_pref = 'am', fn_tag = pref_flag, reload = FALSE)
+# only affected by am/iucn preference
+
+am_cells_spp_sum <- process_am_summary_per_cell(fn_tag = fn_tag, reload = FALSE)
+# only affected by prob filter
+
+iucn_cells_spp_sum <- process_iucn_summary_per_cell(fn_tag = fn_tag, reload = FALSE)
+# affected by neither preference nor probability flags
+
+summary_by_loiczid <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum)
+rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
+summary_by_rgn     <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup)
+### This returns dataframe with variables:
+### sp_id | rgn_mean_cat | rgn_mean_trend | status
+
+### Create final outputs:
+if(!exists('summary_by_rgn')) 
+  summary_by_rgn <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary.csv'))
+spp_status <- summary_by_rgn %>%
+  select(rgn_id, score = status)
+spp_trend <- summary_by_rgn %>%
+  select(rgn_id, score = rgn_mean_trend)
+write_csv(spp_status, file.path(dir_git, scenario, sprintf('data/spp_status_global%s_prob%s.csv', pref_flag, prob_filter)))
+write_csv(spp_trend,  file.path(dir_git, scenario, sprintf('data/spp_trend_global%s_prob%s.csv', pref_flag, prob_filter)))
 
 
 # TO DO: deal with populations for IUCN species.
