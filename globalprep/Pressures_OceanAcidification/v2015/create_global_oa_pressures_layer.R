@@ -44,7 +44,7 @@
 
 
     # set working directory
-    wd = file.path(dir_N,'git-annex/globalprep/Pressures_acid/v2015')
+    wd = file.path(dir_N,'git-annex/globalprep/Pressures_OceanAcidification/v2015')
     setwd(wd)
 
 
