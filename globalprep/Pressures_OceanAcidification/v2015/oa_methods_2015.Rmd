@@ -5,12 +5,13 @@ date: "5/14/2015"
 output: html_document
 ---
 
+This script uses the global ocean acidification data from 2011-2014, prepped in 'oa_dataprep.R', to develop the rescaled pressures layer for OHI 2015.
 
-###Procedure overview
+###Methods overview
 
 **Scripts**
 
-`oa_dataprep.R` created the following:
+`dataprep.Rmd` created the following:
 
    a. Calculates the historical global mean for the decade 1880-1889 (1 raster layer as output)
    b. Calculates the annual mean for each of the 10 years in 2005-2014 (10 raster layers as output)
