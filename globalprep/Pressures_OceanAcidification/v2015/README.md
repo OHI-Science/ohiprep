@@ -11,12 +11,14 @@ Raw data was provided by Woods Hole on December 16, 2014. This data is an update
 
 ### Scripts
 
-1. `oa_dataprep.R` takes raw NetCDF data and creates annual mean rasters (.tif) for all years
-2. `create_global_oa_pressures_layer` creates final pressures layer used in OHI 2015
+1. `dataprep.Rmd` takes raw NetCDF data and creates annual mean rasters (.tif) for all years
+2. `oa_create_layer_2015.Rmd` creates final pressures layer used in OHI 2015
 3. `OA_interpolation.py` uses arcpy to interpolate the raster to fill in NA cells
 4. `interpolated_cells.R` creates a single raster that shows all interpolated raster cells
 
 `run_python_script.txt` explains how to run the python script (OA_interpolation.py)
+
+**You will also see `oa_dataprep.R` and `create_global_oa_pressures_layer.R` in this folder. These two scripts are the same as `dataprep.Rmd` and `oa_create_layer_2015.Rmd` respectively. This redundancy is a result of OHI trying to move towards using .Rmd files instead of .R files.**
 
 ### Updates from previous assessment
 
