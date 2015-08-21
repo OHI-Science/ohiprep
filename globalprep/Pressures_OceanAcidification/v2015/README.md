@@ -28,7 +28,7 @@ This dataset provides more detailed temporal changes and includes more recent ye
   
 ### Methods Overview
   
-  For full methods download [oa_methods_2015.html](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/Pressures_acid/v2015/oa_methods_2015.html)
+  For full methods download [oa_methods_2015.html](http://htmlpreview.github.io/?https://github.com/OHI-Science/ohiprep/blob/master/globalprep/Pressures_OceanAcidification/v2015/oa_methods_2015.html)
 
 For each year in the dataset provided, an average annual aragonite saturation state layer was created. Using these annual averages, a decadal average for both 1880-1889 and 2005-2014 was calculated.
 
