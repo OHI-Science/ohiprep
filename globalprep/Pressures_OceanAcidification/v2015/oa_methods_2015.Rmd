@@ -1,7 +1,6 @@
 ---
 title: "Ocean Acidification pressure procedure"
 author: "Jamie Afflerbach"
-date: "5/14/2015"
 output: html_document
 ---
 
@@ -30,7 +29,7 @@ This script uses the global ocean acidification data from 2011-2014, prepped in 
 
 ***
 
-```{r setup,echo=FALSE}
+```{r setup,message=F,warning=F}
 
 #libraries
 
@@ -55,47 +54,53 @@ This script uses the global ocean acidification data from 2011-2014, prepped in 
     cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
 
 #set root directory
-
-   knitr::opts_knit$set(root.dir = file.path(dir_N,'git-annex/globalprep/Pressures_OceanAcidification/v2015'))
+require("knitr")
+    
+   opts_knit$set(root.dir = file.path(dir_N,'git-annex/globalprep/Pressures_OceanAcidification/v2015'))
 
 
 # read in data
 
- #  hist_mean = raster('working/global_oa_1880_1889_arag_mean_moll.tif') # historical decadal mean of aragonite saturation state from 1880-1889
+   hist_mean = raster(file.path(dir_N,'git-annex/globalprep/Pressures_OceanAcidification/v2015/working/global_oa_1880_1889_arag_mean_moll.tif')) # historical decadal mean of aragonite saturation state from 1880-1889
 
     files = list.files('working/annualmean_2005-2014/moll',full.names=TRUE,recursive=TRUE) # list the annual mean raster files for each year in 2005-2014
 
     #ocean is a raster with all land clipped out - at 1km with value of 1
     ocean = raster(file.path(dir_N,'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
-
+```
+```{r}
     plot(ocean,col=cols,main='Ocean Raster Mask')
 ```
 ***
 
 **(Step 1): Create function that subtracts annual mean from historical decadal mean and outputs raster to specified folder**
-```{r,warning=FALSE,message=FALSE}
+```{r,warning=FALSE,message=FALSE,eval=F}
     annual_change = function(file){
     
       yr = substr(file,56,59)         #use substr to grab the year out of the filename
       out = hist_mean - raster(file)  #subtract current from historical. Although this is counterintuitive, it results in the 
                                       #correct scaling of values (higher values = more acidification)
       
-      writeRaster(out,filename=paste0('working/annualchange_2005-2014/difference_from_hist_mean_',yr,sep=""),format='GTiff',overwrite=T)
+#      writeRaster(out,filename=paste0('working/annualchange_2005-2014/difference_from_hist_mean_',yr,sep=""),format='GTiff',overwrite=T)
 
     }
 
- #   sapply(files,annual_change) # apply function across all files using sapply
-
-    newfiles = list.files('working/annualchange_2005-2014',full.names=TRUE,recursive=TRUE) #list the new raster files (difference from historical mean)
-
-plot(raster('working/annualchange_2005-2014/difference_from_hist_mean_2014.tif'),col=cols,main='Change in aragonite saturation state\n from 1880s to 2014')
+  sapply(files,annual_change) # apply function across all files using sapply
+   
+  newfiles = list.files('working/annualchange_2005-2014',full.names=TRUE,recursive=TRUE) #list the new raster files (difference from historical mean)
 ```
-***
+
+```{r}
+plot(raster('working/annualchange_2005-2014/difference_from_hist_mean_2014.tif'),col=cols,main='Change in aragonite saturation state\n from 1880s to 2014')
+```  
+
+***  
+
 **Step (2): Rescale values**  
 
 For each year between 2005 and 2014, look at the mean annual aragonite saturation state rasters (annualmean_2005-2014). All values at or below the threshold (<=1) are set to 1 (highest pressure value). All cells with aragonite saturation state values >1, will be scaled based on their change relative to historical levels (calculated above). 
 
-```{r}
+```{r,eval=FALSE,message=F,warning=F}
 
     rescale = function(file){
   
@@ -106,20 +111,21 @@ For each year between 2005 and 2014, look at the mean annual aragonite saturatio
         mean[mean>1] = diff[mean>1]  # all cells with values greater than 1 are swapped out with their amount of change 
         mean[mean<0]<-0   #all values less than 0 (indicating a decrease in acidity) are capped at 0
         
-        writeRaster(mean,filename=paste0('working/annual_oa_rescaled/oa_rescaled_',yr,sep=""),format='GTiff',overwrite=T)
+     #   writeRaster(mean,filename=paste0('working/annual_oa_rescaled/oa_rescaled_',yr,sep=""),format='GTiff',overwrite=T)
         
 }
 
-  #sapply(files,rescale)
+  sapply(files,rescale)
 
   rescaled = list.files('working/annual_oa_rescaled',full.names=T)
-
+```
+```{r}
   plot(raster('working/annual_oa_rescaled/oa_rescaled_2014.tif'),col=cols,main='Rescaled data for 2014')
 ```
 ***  
 
 **(Step 3): Resample to 1km**
-```{r}
+```{r,eval=FALSE}
 
     resample = function(file){
   
@@ -127,13 +133,13 @@ For each year between 2005 and 2014, look at the mean annual aragonite saturatio
         r   = raster(file)
         out = raster::resample(r,ocean,method='ngb',progress='text') # resample r to the resolution of 'ocean' (~1km)
     
-        writeRaster(out,filename=paste0('working/annual_oa_rescaled_1km/annual_oa_rescaled_1km_',yr,sep=''),format='GTiff',overwrite=T)
+     #   writeRaster(out,filename=paste0('working/annual_oa_rescaled_1km/annual_oa_rescaled_1km_',yr,sep=''),format='GTiff',overwrite=T)
 }
 
- # sapply(rescaled,resample)
-
+  sapply(rescaled,resample)
+```
+```{r}
   plot(raster('working/annual_oa_rescaled_1km/annual_oa_rescaled_1km_2014.tif'),col=cols,main='Rescaled to 1km (2014)')
-
 
 ```
 ***
@@ -141,9 +147,10 @@ For each year between 2005 and 2014, look at the mean annual aragonite saturatio
 **(Step 4): Interpolate to coast**
 
 Interpolation to fill in NA cells with values of the nearest neighbor is done within the 'OA_interpolation.py' python script, which relies on arcpy (ArcGIS)
-```{r}
+```{r,eval=FALSE}
 interpolated = list.files('working/annual_oa_rescaled_1km_int',full.names=T)
-
+```  
+```{r}
 plot(raster('working/annual_oa_rescaled_1km_int/annual_oa_rescaled_1km_2014_int.tif'),col=cols,main='Interpolation to fill in NAs')
 ```
 ***
@@ -151,19 +158,20 @@ plot(raster('working/annual_oa_rescaled_1km_int/annual_oa_rescaled_1km_2014_int.
 **(Step 5): Clip out ocean**
 
 Each interpolated raster needs to have all land cells clipped out. Using the ocean raster again, mask the interpolated rasters to select just those in the oceanic regions.
-```{r}
+```{r,eval=F}
     ocean_clip = function(file){
   
           yr  = substr(file,59,62)
           r   = raster(file)
           out = mask(r,ocean,progress='text')
   
-          writeRaster(out,filename=paste0('output/annual_oa_rescaled_1km_int_clip_',yr,sep=''),format='GTiff',overwrite=T)
+   #       writeRaster(out,filename=paste0('output/annual_oa_rescaled_1km_int_clip_',yr,sep=''),format='GTiff',overwrite=T)
   
     }
 
-    #sapply(interpolated,ocean_clip)
-
+    sapply(interpolated,ocean_clip)
+```
+```{r}
 plot(raster('output/annual_oa_rescaled_1km_int_clip_2014.tif'),col=cols,main='Final Ocean Acidification\n Pressure Layer for 2014')
 ```
 ***
@@ -171,7 +179,7 @@ plot(raster('output/annual_oa_rescaled_1km_int_clip_2014.tif'),col=cols,main='Fi
 **(Step 6): Create a raster showing what cells were interpolated**
 
 All ten output OA rasters have the same cells interpolated
-```{r}
+```{r,eval=F}
     #original data rescaled and resampled, before interpolation
 
       r_1km = raster('working/annual_oa_rescaled_1km/annual_oa_rescaled_1km_2014.tif')
@@ -182,7 +190,8 @@ All ten output OA rasters have the same cells interpolated
 
 
     interp_cells = mask(r_c,r_1km,inverse=TRUE)
-  
+```
+```{r}
     plot(raster('output/oa_interpolated_cells.tif'),col=cols,main='Interpolated cells')
 
 ```
