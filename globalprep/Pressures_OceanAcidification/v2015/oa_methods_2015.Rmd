@@ -1,10 +1,10 @@
 ---
-title: "Ocean Acidification pressure procedure"
+title: "Ocean Acidification pressure layer for OHI 2015"
 author: "Jamie Afflerbach"
 output: html_document
 ---
 
-This script uses the global ocean acidification data from 2011-2014, prepped in 'oa_dataprep.R', to develop the rescaled pressures layer for OHI 2015.
+This script uses the global ocean acidification data from 2011-2014, prepped in `dataprep.Rmd`, to develop the rescaled pressures layer for OHI 2015.
 
 ###Methods overview
 
