@@ -2,6 +2,8 @@
 
 # Jamie Afflerbach
 
+# This is the same code as in 'oa_methods_2015.Rmd'. Keeping both this script and the Rmd in this folder for now. In the future for 
+#OHI we will only use .Rmds as scripts for dataprep/layer creation
 #-----------------------------------------
 
 #   'oa_dataprep.R' created the following:
