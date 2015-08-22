@@ -17,15 +17,14 @@ library(shapefiles)
 
 dir_rgn  <- file.path(dir_neptune_data, 'git-annex/globalprep/spatial/v2015/data')
 poly_layer <- file.path(dir_rgn, 'regions_gcs')
-dir_git  <- file.path('~/github/ohiprep/spatial/downres')
+dir_git  <- file.path('~/github/ohiprep/globalprep/spatial/downres')
 
 
-rgn_poly      <- readShapePoly(poly_layer)
-
-rgn_poly_orig <- rgn_poly 
+rgn_poly_orig <- readShapePoly(poly_layer) 
 # original .shp: 308 MB
 
 # examine structure of region polygons
+rgn_poly <- rgn_poly_orig # create working copy
 str(rgn_poly, max.level = 3)
 
 sapply(rgn_poly@polygons, function(x) length(x@Polygons))
@@ -60,28 +59,45 @@ for(i in 1:length(mainPolys)){
 }
 # after this step, should still be the same number of elements (551) but each
 # element should have fewer polygons within it (minimum of 1).
-rgn_poly_trunc <- rgn_poly
 
+# num elements
+#  [1]    2    1    1    1    1    1    1    1    3    2    5    4    2    1    1    1    1    1    2
+# [20]    1    2    1   39   38    9    8   44   43    4    3    5    5    3    3    8    7    4    3
+# [39]    2    1    3    2    1    2    3    2    2    1    2    1    2    1    2    1    3    2    3
+# [58]    2    3    2   19   20    9    8    6    5    6    3   25   22    8    7    5    5   45   43
+# [77]    2    1   36   35    4    4   29   29    7    6    5    4   16   15    7    6    2    1  542
+# [96]  541    2    1   32   31    6    5    1    1  159  158    4    3    3    2    3    2    6    5
+# quantile...
+#     0%          25%          50%          75%         100% 
+# 3.706605e-07 1.449631e-03 2.994446e-03 1.145120e-02 2.819291e+03 
+
+
+
+rgn_poly_trunc <- rgn_poly
+res_list = c(low = 0.1, med = 0.01, hi = 0.001)
+res_list = c(med = 0.01, hi = 0.001)
 num_poly <- length(rgn_poly@polygons)
-for(res in c(0.1, 0.01, 0.001)) { # res = 0.01 
+for(k in 1:length(res_list)) { # res = 0.01 
   # res is the resolution for the dp() call
   rgn_poly <- rgn_poly_trunc
-    # set working rgn_poly to truncated original rgn_poly
+  # set working rgn_poly to truncated original rgn_poly
   for(i in 1:num_poly){ # i <- 1
-    cat(sprintf('Poly %s out of %s... res = %s...\n', i, num_poly, res))
+    cat(sprintf('Poly %s out of %s... %s res = %s...\n', i, num_poly, names(res_list[k]), res_list[k]))
     for(j in 1:length(rgn_poly@polygons[[i]]@Polygons)){ # j <- 1
       temp <- as.data.frame(rgn_poly@polygons[[i]]@Polygons[[j]]@coords)
-        # data frame of coordinates for subpoly j within poly i
+      # data frame of coordinates for subpoly j within poly i
       names(temp) <- c("x", "y")
-      temp2 <- dp(temp, res)
-        # this is the function that actually performs the Douglas–Peucker algorithm
+      temp2 <- dp(temp, res_list[k])
+      # this is the function that actually performs the Douglas–Peucker algorithm
       rgn_poly@polygons[[i]]@Polygons[[j]]@coords <- as.matrix(cbind(temp2$x, temp2$y))
-        # put the simplified coordinate set values into the place of the original coordinate sets
+      # put the simplified coordinate set values into the place of the original coordinate sets
     }
   }
-  output_file <- file.path(dir_git, sprintf('regions_gcs_res%s', res))
-  cat(sprintf('Writing %s...  ', output_file))
-  write.shapefile(rgn_poly, output_file)
-  cat(sprintf('Shapefile size: %.3f\n', 1e-6*(file.size(paste(output_file, '.shp', sep = '')))))
+  output_layer <- sprintf('regions_gcs_trunc_%s_res', names(res_list[k]))
+  cat(sprintf('Writing %s to %s  ', output_layer, dir_git))
+  writePolyShape(rgn_poly, file.path(dir_git, output_layer))
+  #writeOGR(rgn_poly, dsn = dir_git, layer = output_layer, driver = 'ESRI Shapefile', overwrite_layer = TRUE, verbose = TRUE)
+  cat(sprintf('Shapefile size: %.3f MB\n', 
+              1e-6*(file.size(file.path(dir_git, paste(output_layer, '.shp', sep = ''))))))
 }
 
