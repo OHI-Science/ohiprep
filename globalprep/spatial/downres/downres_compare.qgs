@@ -9,7 +9,7 @@
         <layer-tree-layer expanded="1" checked="Qt::Unchecked" id="regions_gcs_trunc_hi_res20150821223937960" name="regions_gcs_trunc_hi_res">
             <customproperties/>
         </layer-tree-layer>
-        <layer-tree-layer expanded="1" checked="Qt::Unchecked" id="regions_gcs_trunc_med_res20150821223942471" name="regions_gcs_trunc_med_res">
+        <layer-tree-layer expanded="1" checked="Qt::Checked" id="regions_gcs_trunc_med_res20150821223942471" name="regions_gcs_trunc_med_res">
             <customproperties/>
         </layer-tree-layer>
     </layer-tree-group>
@@ -17,10 +17,10 @@
     <mapcanvas>
         <units>degrees</units>
         <extent>
-            <xmin>-188.99998796866501038</xmin>
-            <ymin>-94.49966308675887205</ymin>
-            <xmax>188.99998796812568003</xmax>
-            <ymax>94.49965618327537697</ymax>
+            <xmin>-124.00576100073779173</xmin>
+            <ymin>-66.89342032265929561</ymin>
+            <xmax>29.88735897352816551</xmax>
+            <ymax>23.17125548925208278</ymax>
         </extent>
         <projections>0</projections>
         <destinationsrs>
@@ -56,9 +56,9 @@
                 <legendlayerfile isInOverview="0" layerid="regions_gcs_trunc_hi_res20150821223937960" visible="0"/>
             </filegroup>
         </legendlayer>
-        <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="regions_gcs_trunc_med_res" showFeatureCount="0">
+        <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="regions_gcs_trunc_med_res" showFeatureCount="0">
             <filegroup open="true" hidden="false">
-                <legendlayerfile isInOverview="0" layerid="regions_gcs_trunc_med_res20150821223942471" visible="0"/>
+                <legendlayerfile isInOverview="0" layerid="regions_gcs_trunc_med_res20150821223942471" visible="1"/>
             </filegroup>
         </legendlayer>
     </legend>
@@ -85,7 +85,7 @@
                 </spatialrefsys>
             </srs>
             <provider encoding="System">ogr</provider>
-            <previewExpression></previewExpression>
+            <previewExpression>COALESCE( "SP_ID", '&lt;NULL>' )</previewExpression>
             <vectorjoins/>
             <expressionfields/>
             <edittypes>
@@ -218,7 +218,7 @@
                 </spatialrefsys>
             </srs>
             <provider encoding="System">ogr</provider>
-            <previewExpression></previewExpression>
+            <previewExpression>COALESCE( "SP_ID", '&lt;NULL>' )</previewExpression>
             <vectorjoins/>
             <expressionfields/>
             <edittypes>
