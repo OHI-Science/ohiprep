@@ -74,10 +74,11 @@ for(i in 1:length(mainPolys)){
 
 
 rgn_poly_trunc <- rgn_poly
-res_list = c(low = 0.1, med = 0.01, hi = 0.001)
-res_list = c(med = 0.01, hi = 0.001)
+#res_list = c(low = 0.1, med = 0.01, hi = 0.001, verylow = 0.5)
+res_list = c(verylow = 0.5)
 num_poly <- length(rgn_poly@polygons)
 for(k in 1:length(res_list)) { # res = 0.01 
+  if()
   # res is the resolution for the dp() call
   rgn_poly <- rgn_poly_trunc
   # set working rgn_poly to truncated original rgn_poly
@@ -114,7 +115,7 @@ for (i in res_list2) { # i = 'low_res'
   # plot
   # plot world map on top
   layers_eez <- rgn_layers[rgn_layers@data$rgn_typ %in% c('eez'), ]
-  cat(sprintf('There are %s EEZ entities in this layer nrow(layers_eez)
+  cat(sprintf('There are %s EEZ entities in this layer.\n', nrow(layers_eez)))
   
   ptm <- proc.time()
   plot(layers_eez, border = 'blue', col = 'cyan')
