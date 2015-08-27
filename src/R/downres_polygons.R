@@ -74,10 +74,11 @@ for(i in 1:length(mainPolys)){
 
 
 rgn_poly_trunc <- rgn_poly
-res_list = c(low = 0.1, med = 0.01, hi = 0.001)
-res_list = c(med = 0.01, hi = 0.001)
+#res_list = c(low = 0.1, med = 0.01, hi = 0.001, verylow = 0.5)
+res_list = c(verylow = 0.5)
 num_poly <- length(rgn_poly@polygons)
 for(k in 1:length(res_list)) { # res = 0.01 
+  if()
   # res is the resolution for the dp() call
   rgn_poly <- rgn_poly_trunc
   # set working rgn_poly to truncated original rgn_poly
@@ -99,5 +100,27 @@ for(k in 1:length(res_list)) { # res = 0.01
   #writeOGR(rgn_poly, dsn = dir_git, layer = output_layer, driver = 'ESRI Shapefile', overwrite_layer = TRUE, verbose = TRUE)
   cat(sprintf('Shapefile size: %.3f MB\n', 
               1e-6*(file.size(file.path(dir_git, paste(output_layer, '.shp', sep = ''))))))
+}
+
+res_list2 <- c('low_res', 'med_res', 'hi_res')
+for (i in res_list2) { # i = 'low_res'
+  fn <- sprintf('regions_gcs_trunc_%s', i)
+  poly_layer <- file.path(dir_git, fn)
+  cat(sprintf('Reading %s file: \n  %s\n', fn, poly_layer))
+  ptm <- proc.time()
+  rgn_layers <- readShapePoly(poly_layer)
+  print(proc.time() - ptm)
+  
+  # cut down to just EEZ
+  # plot
+  # plot world map on top
+  layers_eez <- rgn_layers[rgn_layers@data$rgn_typ %in% c('eez'), ]
+  cat(sprintf('There are %s EEZ entities in this layer.\n', nrow(layers_eez)))
+  
+  ptm <- proc.time()
+  plot(layers_eez, border = 'blue', col = 'cyan')
+  map('world', add = TRUE)
+  print(proc.time() - ptm)
+
 }
 
