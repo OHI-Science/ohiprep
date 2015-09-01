@@ -41,7 +41,7 @@ rgn_poly <- readShapePoly(poly_layer)
     # [96]     1 18222 18222    16    15  1577  1576    71    70     2     1  3404  3403     8     7    19    18    14    13
     
 ### Exclude land polygons
-rgn_mar <- rgn_poly[(rgn_poly@data$rgn_typ %in% c('land', 'land-disputed', 'land-noeez')), ]
+rgn_mar <- rgn_poly[!(rgn_poly@data$rgn_typ %in% c('land', 'land-disputed', 'land-noeez')), ]
 rgn_mar_orig <- rgn_mar
 
     sapply(rgn_mar@polygons, function(x) length(x@Polygons))
@@ -136,7 +136,7 @@ for(k in 1:length(res_list)) { # k = 1
   rgn_fao   <- rgn_mar_temp[rgn_mar_temp@data$rgn_typ == 'fao', ]
   rgn_fao@plotOrder <- 1:length(rgn_fao@polygons)
   
-  output_all <- sprintf('rgn_land_%s_%s_res', proj_type, names(res_list[k]))
+  output_all <- sprintf('rgn_all_%s_%s_res', proj_type, names(res_list[k]))
   cat(sprintf('Writing %s to %s  ', output_all, dir_git))
   writeOGR(rgn_mar_temp, dsn = dir_git, layer = output_all, driver = 'ESRI Shapefile', overwrite_layer = TRUE, morphToESRI = TRUE)
   cat(sprintf('Shapefile size: %.3f MB\n', 1e-6*(file.size(file.path(dir_git, paste(output_all, '.shp', sep = ''))))))
@@ -194,3 +194,72 @@ for (i in res_list2) { # i = 'low_res'
 
 # Reading/Plotting rgn_all_gcs_low_res file: 
 # elapsed: 0.416 / 0.975 
+
+### create land layer in Mollweide projection
+
+proj_type  <- 'mol'
+poly_layer <- file.path(dir_rgn, sprintf('regions_%s', proj_type))
+
+rgn_poly <- readShapePoly(poly_layer) 
+
+rgn_terr <- rgn_poly[(rgn_poly@data$rgn_typ %in% c('land', 'land-disputed', 'land-noeez')), ]
+
+area_threshold <- switch(proj_type,
+                         'gcs' = 0.001,
+                         'mol' = 1e5)
+mainPolys <- lapply(area, function(x) which(x > area_threshold))
+
+for(i in 1:length(mainPolys)){
+  if(length(mainPolys[[i]]) >= 1 && mainPolys[[i]][1] >= 1){
+    rgn_terr@polygons[[i]]@Polygons  <- rgn_terr@polygons[[i]]@Polygons[mainPolys[[i]]]
+    rgn_terr@polygons[[i]]@plotOrder <- 1:length(rgn_terr@polygons[[i]]@Polygons)
+  }
+}
+
+rgn_terr@plotOrder <- 1:length(rgn_terr@polygons)
+# is plotOrder necessary to be continuous?  that would explain this line.
+
+table(rgn_terr@data$rgn_typ)
+# eez                eez-disputed    eez-inland           fao          land land-disputed    land-noeez 
+# 239                          15             5            15             0             0             0 
+table(rgn_terr@data$ant_typ)
+# eez    eez-ccamlr  eez-disputed    eez-inland           fao          land   land-ccamlr land-disputed    land-noeez 
+# 220            19            15             5            15             0             0             0             0 
+
+
+### The threshold for resolution in the dp() function:
+### Appears to be basically in same units of shapefile - the minimum deviation of a point between two
+### other points, to be saved rather than deleted in simplifying.
+res_list <- switch(proj_type,
+                   'gcs' = c(low = 0.1),
+                   'mol' = c(low = 10000))
+
+
+num_poly <- length(rgn_terr@polygons)
+for(k in 1:length(res_list)) { # k = 1
+  # res is the resolution for the dp() call
+  rgn_terr_temp <- rgn_terr
+  # set working rgn_terr_temp to original rgn_terr
+  for(i in 1:num_poly){ # i <- 1
+    cat(sprintf('Poly %s out of %s... %s res = %s...\n', i, num_poly, names(res_list[k]), res_list[k]))
+    for(j in 1:length(rgn_terr_temp@polygons[[i]]@Polygons)){ # j <- 1
+      temp <- as.data.frame(rgn_terr_temp@polygons[[i]]@Polygons[[j]]@coords)
+      # data frame of coordinates for subpoly j within poly i
+      names(temp) <- c("x", "y")
+      temp2 <- dp(temp, res_list[k])
+      # this is the function that actually performs the Douglas–Peucker algorithm
+      rgn_terr_temp@polygons[[i]]@Polygons[[j]]@coords <- as.matrix(cbind(temp2$x, temp2$y))
+      # put the simplified coordinate set values into the place of the original coordinate sets
+    }
+  }
+  
+  area <- lapply(rgn_terr_temp@polygons, function(x) sapply(x@Polygons, function(y) y@area))
+  print(quantile(unlist(area)))
+  
+  rgn_terr_temp@plotOrder <- 1:length(rgn_mar@polygons)
+  
+  output_all <- sprintf('rgn_land_%s_%s_res', proj_type, names(res_list[k]))
+  cat(sprintf('Writing %s to %s  ', output_all, dir_git))
+  writeOGR(rgn_terr_temp, dsn = dir_git, layer = output_all, driver = 'ESRI Shapefile', overwrite_layer = TRUE, morphToESRI = TRUE)
+  cat(sprintf('Shapefile size: %.3f MB\n', 1e-6*(file.size(file.path(dir_git, paste(output_all, '.shp', sep = ''))))))
+  
