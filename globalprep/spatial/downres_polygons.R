@@ -262,4 +262,4 @@ for(k in 1:length(res_list)) { # k = 1
   cat(sprintf('Writing %s to %s  ', output_all, dir_git))
   writeOGR(rgn_terr_temp, dsn = dir_git, layer = output_all, driver = 'ESRI Shapefile', overwrite_layer = TRUE, morphToESRI = TRUE)
   cat(sprintf('Shapefile size: %.3f MB\n', 1e-6*(file.size(file.path(dir_git, paste(output_all, '.shp', sep = ''))))))
-  
+}
