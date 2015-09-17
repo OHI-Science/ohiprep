@@ -62,7 +62,7 @@ spp_all <- create_spp_master_lookup(reload = TRUE)
 ##############################################################################=
 ### Generate lookup - IUCN species to LOICZID ----
 ##############################################################################=
-extract_loiczid_per_spp(groups_override = NULL, reload = FALSE)
+extract_loiczid_per_spp(groups_override = MAMMMARINE, reload = TRUE)
 ### Extract loiczid cell IDs for each species within each species group.  Save 
 ### a .csv file for that group, with fields:
 ###       sciname | iucn_sid | LOICZID | prop_area
