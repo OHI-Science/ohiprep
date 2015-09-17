@@ -12,6 +12,8 @@
 setwd('~/github/ohiprep')
 source('src/R/common.R')
 
+library(sp)
+library(rgdal)
 library(maptools)
 library(shapefiles)
 
@@ -100,12 +102,12 @@ table(rgn_mar@data$ant_typ)
 ### Appears to be basically in same units of shapefile - the minimum deviation of a point between two
 ### other points, to be saved rather than deleted in simplifying.
 res_list <- switch(proj_type,
-                   'gcs' = c(low = 0.1),
-                   'mol' = c(low = 10000))
+                   'gcs' = c(low = 0.1,   med = .005),
+                   'mol' = c(low = 10000, med = 500))
 
 
 num_poly <- length(rgn_mar@polygons)
-for(k in 1:length(res_list)) { # k = 1
+for(k in 1:length(res_list)) { # k = 2
   # res is the resolution for the dp() call
   rgn_mar_temp <- rgn_mar
   # set working rgn_mar_temp to original rgn_mar
@@ -157,16 +159,6 @@ for(k in 1:length(res_list)) { # k = 1
   cat(sprintf('Shapefile size: %.3f MB\n', 1e-6*(file.size(file.path(dir_git, paste(output_fao, '.shp', sep = ''))))))
 }
 
-#   rgn_all_gcs_ultralow_res  Shapefile size: 0.356 MB
-#   rgn_eez_gcs_ultralow_res  Shapefile size: 0.328 MB
-#   rgn_ant_gcs_ultralow_res  Shapefile size: 0.013 MB
-#   rgn_fao_gcs_ultralow_res  Shapefile size: 0.016 MB
-#   
-#   rgn_all_gcs_verylow_res   Shapefile size: 0.437 MB
-#   rgn_eez_gcs_verylow_res   Shapefile size: 0.398 MB
-#   rgn_ant_gcs_verylow_res   Shapefile size: 0.018 MB
-#   rgn_fao_gcs_verylow_res   Shapefile size: 0.021 MB
-#   
 #   rgn_all_gcs_low_res       Shapefile size: 0.700 MB
 #   rgn_eez_gcs_low_res       Shapefile size: 0.635 MB
 #   rgn_ant_gcs_low_res       Shapefile size: 0.031 MB
