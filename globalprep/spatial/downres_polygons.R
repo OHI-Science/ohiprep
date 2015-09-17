@@ -1,13 +1,24 @@
-# From: http://stackoverflow.com/questions/20976449/r-simplify-shapefile
+### downres_polygons.R
+### 20150914 - Casey O'Hara
 
-# There is still a lot of detail in the edges of the main polygons that is unecessary 
-# for my requirements. This detail can be simplified using the dp() function in the 
-# shapefiles package. Once again, we create a loop that goes through the object 
-# simplifying each of the polygons within it. dp() works only on dataframes, so we 
-# need to break each @coords matrix into a dataframe, run dp(), then convert it back 
-# into a matrix.
+### Simplifies geometry of polygons to create smaller shapefiles; the main
+### idea is to use the simplified shapefiles exclusively for plotting
+### global maps quickly at a scale where the simplified geometry is
+### acceptable.
 
-# Note: can also cut smaller polygons if necessary... 
+
+### From: http://stackoverflow.com/questions/20976449/r-simplify-shapefile
+
+### There is still a lot of detail in the edges of the main polygons that is unecessary 
+### for my requirements. This detail can be simplified using the dp() function in the 
+### shapefiles package. Once again, we create a loop that goes through the object 
+### simplifying each of the polygons within it. dp() works only on dataframes, so we 
+### need to break each @coords matrix into a dataframe, run dp(), then convert it back 
+### into a matrix.
+
+### Note: can also cut smaller polygons if necessary... 
+### Note: the dp() function in the shapefiles package looks similar to the
+###   gSimplify() function in the rgeos package... didn't try that one out.
 
 setwd('~/github/ohiprep')
 source('src/R/common.R')
@@ -58,7 +69,7 @@ rgn_mar_orig <- rgn_mar
     # [233]     1   112    22     9    45    13    45    40    15     6  1380   510    21    39  4758     1    20   249   443    16    82     8   115  1621    25    27   141     3     4
     # [262]    16    99   458     9    22     4   365    13   503   115    32     1     2
 
-### filter out tiny sub-polygons?
+### filter out tiny sub-polygons -----
 ### create area list for filtering.  Area will be in square degrees... 
 area <- lapply(rgn_mar@polygons, function(x) sapply(x@Polygons, function(y) y@area))
     quantile(unlist(area))
