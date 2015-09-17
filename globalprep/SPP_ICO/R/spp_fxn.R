@@ -580,7 +580,7 @@ extract_loiczid_per_spp <- function(groups_override = NULL, reload = FALSE) {
       # field but case varies from file to file.
       cat(colnames(spp_shp@data)); cat('\n')
       # find binomial name in here; test in tolower, find the index number, and use that instead?
-      binom_index <- which(colnames(spp_shp@data) %in% c('binomial', 'BINOMIAL'))
+      binom_index <- which(tolower(colnames(spp_shp@data)) =='binomial')
       if(binom_index > 0) {
         cat(sprintf('Filtering features by %s field in %s.\n', colnames(spp_shp@data)[binom_index], spp_gp))
         spp_shp <- spp_shp[spp_shp@data[ , binom_index] %in% maps_in_group$sciname, ]
@@ -600,17 +600,25 @@ extract_loiczid_per_spp <- function(groups_override = NULL, reload = FALSE) {
       
       # find id_no in the shapefile, and if it exists, use it to create id_field for dataframe column names.
       # If the field doesn't exist, assign it NAs so at least the column will be created.
-      id_no_index <- which(colnames(spp_shp@data) %in% c('id_no', 'ID_NO'))
+      id_no_index <- which(tolower(colnames(spp_shp@data)) == 'id_no')
       if(length(id_no_index) == 0) {
         cat(sprintf('No id_no field found in species group %s.\n', spp_gp))
         id_field <- NA
       } else id_field <- spp_shp@data[ , id_no_index]
       
+      # find presence field in the shapefile, and if it exists, use it to create pres_field for dataframe column names.
+      # If the field doesn't exist, assign it NAs so at least the column will be created.
+      pres_index <- which(tolower(colnames(spp_shp@data)) == 'presence')
+      if(length(pres_index) == 0) {
+        cat(sprintf('No presence field found in species group %s.\n', spp_gp))
+        pres_field <- NA
+      } else pres_field <- spp_shp@data[ , pres_index]
+
       # combines sciname and id_no for unique identifier
-      sciname_sid <- data.frame(spp_shp@data[ , binom_index], id_field)
-      names(sciname_sid) <- c('sciname', 'id_no')
+      sciname_sid <- data.frame(spp_shp@data[ , binom_index], id_field, pres_field)
+      names(sciname_sid) <- c('sciname', 'id_no', 'presence')
       sciname_sid <- sciname_sid %>%
-        unite(name_id, sciname, id_no, sep = '_')
+        unite(name_id, sciname, id_no, pres_field, sep = '_')
       
       # uses unique identifier to name the list; converts list to data frame.
       names(spp_shp_prop) <- sciname_sid$name_id
@@ -619,7 +627,7 @@ extract_loiczid_per_spp <- function(groups_override = NULL, reload = FALSE) {
         rename(name_id = .id,
                LOICZID = value, 
                prop_area = weight) %>%
-        separate(name_id, c('sciname', 'id_no'), sep = '_')
+        separate(name_id, c('sciname', 'id_no', 'presence'), sep = '_')
       
       # save .csv for this species group
       cat(sprintf('Writing IUCN<->LOICZID intersection file for %s to:\n  %s\n', spp_gp, cache_file))
