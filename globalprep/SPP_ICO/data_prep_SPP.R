@@ -10,6 +10,7 @@ library(data.table) # for fread()
 library(sp)
 library(rgdal)
 library(raster)
+library(maptools)
 library(readr)      # for read_csv()
 
 setwd('~/github/ohiprep')
@@ -62,10 +63,26 @@ spp_all <- create_spp_master_lookup(reload = TRUE)
 ##############################################################################=
 ### Generate lookup - IUCN species to LOICZID ----
 ##############################################################################=
-extract_loiczid_per_spp(groups_override = MAMMMARINE, reload = TRUE)
+x <- c('ANGELFISH',
+       'BONEFISH_TARPONS',
+       'BUTTERFLYFISH',
+       'CORALS1',
+       'CORALS2',
+       'CORALS3',
+       'DAMSELFISH',
+       'GROUPERS',
+       'PUFFERFISH',
+       'REPTILES',
+       'SEABREAMS_PORGIES',
+       'SURGEONFISH_TANGS_UNICORNFISH',
+       'TUNAS_BILLFISHES')
+
+extract_loiczid_per_spp(groups_override = x, reload = TRUE)
 ### Extract loiczid cell IDs for each species within each species group.  Save 
 ### a .csv file for that group, with fields:
-###       sciname | iucn_sid | LOICZID | prop_area
+###       sciname | iucn_sid | presence | LOICZID | prop_area
+### * presence codes: 1 extant; 2 prob extant (discontinued); 3 Possibly Extant;
+###                   4 Possibly Extinct; 5 Extinct (post 1500); 6 Presence Uncertain
 ### NOTES: this takes a long time - multiple hours for some of the shape files.  
 ### * reload = FALSE allows it to skip extraction on groups with files already present.
 ### * use groups_override argument to run function on partial list of species groups.
