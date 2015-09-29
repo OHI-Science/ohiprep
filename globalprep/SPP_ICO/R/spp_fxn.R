@@ -189,7 +189,7 @@ generate_iucn_map_list <- function(reload = FALSE) {
   ### support function for create_spp_master_lookup.  Interrogates each shapefile
   ### in raw/iucn_shp/ (for each species group) to determine which species are
   ### present.  Creates and returns output of:
-  ###     spp_group | id_no | objectid | binomial | spatial_source
+  ###     spp_group | id_no | binomial | spatial_source
   iucn_map_list_file <- file.path(dir_anx, scenario, 'intermediate/spp_iucn_maps_all.csv')
   if(!file.exists(iucn_map_list_file) | reload) {
     if(!file.exists(iucn_map_list_file)) cat('No file found for list of available IUCN range maps.  ')
@@ -223,7 +223,7 @@ generate_iucn_map_list <- function(reload = FALSE) {
       cat('binding to list...\n')
     }
     spp_iucn_maps <- spp_iucn_maps %>%
-      dplyr::select(spp_group, id_no, objectid, binomial) %>% # other fields?
+      dplyr::select(spp_group, id_no, binomial) %>% # other fields?
       mutate(spatial_source = 'iucn') %>%
       unique()
     
@@ -353,7 +353,7 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
     #   (e.g. REPTILES, SEASNAKES, and non-homolopsids)
     #   - choose one and drop the others.  Which to choose? let R decide.
     dupes <- spp_all %>% 
-      dplyr::select(sciname, iucn_sid, iucn_category, objectid) %>% 
+      dplyr::select(sciname, iucn_sid, iucn_category) %>% 
       duplicated()
     spp_all <- spp_all[!dupes, ]
     # * Multiple IUCN id_no from IUCN shapefiles, but no corresponding differentiation in spreadsheet

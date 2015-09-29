@@ -52,7 +52,7 @@ source(file.path(goal, 'R/ingest_iucn.R'))
 ##############################################################################=
 ### Generate lookup - species <-> category/trend and spatial_source ----
 ##############################################################################=
-spp_all <- create_spp_master_lookup(reload = TRUE)
+spp_all <- create_spp_master_lookup(reload = FALSE)
 ### | am_sid | sciname | am_category | iucn_sid | iucn_category | popn_trend | popn_category | 
 ### | info_source | spp_group | id_no | objectid | spatial_source | category_score | trend_score |
 # 
@@ -63,21 +63,8 @@ spp_all <- create_spp_master_lookup(reload = TRUE)
 ##############################################################################=
 ### Generate lookup - IUCN species to LOICZID ----
 ##############################################################################=
-x <- c('ANGELFISH',
-       'BONEFISH_TARPONS',
-       'BUTTERFLYFISH',
-       'CORALS1',
-       'CORALS2',
-       'CORALS3',
-       'DAMSELFISH',
-       'GROUPERS',
-       'PUFFERFISH',
-       'REPTILES',
-       'SEABREAMS_PORGIES',
-       'SURGEONFISH_TANGS_UNICORNFISH',
-       'TUNAS_BILLFISHES')
 
-extract_loiczid_per_spp(groups_override = x, reload = TRUE)
+extract_loiczid_per_spp(groups_override = NULL, reload = FALSE)
 ### Extract loiczid cell IDs for each species within each species group.  Save 
 ### a .csv file for that group, with fields:
 ###       sciname | iucn_sid | presence | LOICZID | prop_area
