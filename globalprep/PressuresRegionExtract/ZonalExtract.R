@@ -1,6 +1,9 @@
 ### zonal extraction and summary of pressure data
 ### MRF: Feb 25 2015
 
+########## NOTE: For future versions make rgn_id into sp_id for CCAMLR regions!!!
+
+
 tmpdir <- '~/big/R_raster_tmp'
 rasterOptions(tmpdir=tmpdir)
 
