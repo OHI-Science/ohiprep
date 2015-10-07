@@ -76,7 +76,7 @@ agg_gap_fill <- read.csv('../ohi-global/global2015/gapFilling/dissaggregated_gap
   left_join(health) %>%
   filter(!(is.na(health)))
 
-tmp <- all %>%
+tmp <- all %>%      #eliminates the regions with health scores but no mangroves
   left_join(health)  
 
 
@@ -94,6 +94,7 @@ tmp  <- tmp %>%
   mutate(gap_fill = ifelse(is.na(health), "r2_gap_fill", NA)) %>%
   mutate(gap_fill = ifelse(is.na(health) & is.na(avg_health_r2), "r1_gap_fill", gap_fill)) %>%
   mutate(gap_fill = ifelse(rgn_id %in% agg_gap_fill$rgn_id, "disagg2012_gap_fill", gap_fill)) %>%
+  mutate(gap_fill = ifelse(is.na(gap_fill), 0, gap_fill)) %>%
   select(rgn_id, habitat, gap_fill, health=health3)
 summary(tmp)
 
