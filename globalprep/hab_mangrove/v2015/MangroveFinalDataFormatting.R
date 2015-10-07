@@ -28,6 +28,7 @@ regions <- read.csv('src/LookupTables/rgn_georegions_wide_2013b.csv')
 ## so I am going to assume that our 0 value is in fact correct.
 
 
+
 for(year in 2012:2015){ #year <- '2012'
 trend <- read.csv(sprintf('globalprep/hab_mangrove/v2015/tmp/habitat_trend_mangrove_v%s.csv', year))
 
@@ -47,7 +48,7 @@ trend_gaps <- tmp %>%
   mutate(type = ifelse(rgn_id %in% c(29, 140, 169), "three countries combined", type)) %>%
   mutate(habitat="mangrove") %>%
   select(rgn_id, habitat, gap_fill, type)
-write.csv(trend_gaps, sprintf('globalprep/hab_mangrove/v2015/data/trend_gap_fill_v%s.csv', year), row.names=FALSE)
+write.csv(trend_gaps, 'globalprep/hab_mangrove/v2015/data/trend_gap_fill_v%s.csv',  row.names=FALSE)  #same for all years, so save only one
 
 tmp  <- tmp %>%
   left_join(regions) %>%
