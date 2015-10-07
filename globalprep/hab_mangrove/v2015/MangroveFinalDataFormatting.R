@@ -48,7 +48,7 @@ trend_gaps <- tmp %>%
   mutate(type = ifelse(rgn_id %in% c(29, 140, 169), "three countries combined", type)) %>%
   mutate(habitat="mangrove") %>%
   select(rgn_id, habitat, gap_fill, type)
-write.csv(trend_gaps, 'globalprep/hab_mangrove/v2015/data/trend_gap_fill_v%s.csv',  row.names=FALSE)  #same for all years, so save only one
+write.csv(trend_gaps, 'globalprep/hab_mangrove/v2015/data/trend_gap_fill.csv',  row.names=FALSE)  #same for all years, so save only one
 
 tmp  <- tmp %>%
   left_join(regions) %>%
@@ -111,10 +111,14 @@ write.csv(tmp, 'globalprep/hab_mangrove/v2015/data/habitat_health_mangrove.csv',
 
 
 ####################################
-## extent data
+## extent data and gap-filling
 
 all <- read.csv('globalprep/hab_mangrove/v2015/tmp/eez_and_land_km2.csv') %>%
   select(rgn_id = zone, mangrove = sum)
+
+extent_gf <- all %>%
+  mutate(gap_fill = ifelse(mangrove > 0, 0, NA)) 
+write.csv(extent_gf, 'globalprep/hab_mangrove/v2015/data/extent_gap_fill.csv', row.names=FALSE)
 
 inland1km <- read.csv('globalprep/hab_mangrove/v2015/tmp/inland_1km_km2.csv') %>%
   select(rgn_id, mangrove_inland1km = inland_1k) %>%

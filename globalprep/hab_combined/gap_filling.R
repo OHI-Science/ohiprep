@@ -5,7 +5,9 @@ library(dplyr)
 library(tidyr)
 
 # mangrove gap-filling is done here: ohiprep/globalprep/hab_mangrove/v2015/MangroveFinalDataFormatting.R
-# sea ice had no gap-filling
+# not sure where rocky reef is used.....don't have gap-filling data
+
+## Bottom of script combines the habitat-gapfilling so it corresponds to the habitat layer
 
 ## regions
 regions <- read.csv('../ohiprep/src/LookupTables/eez_rgn_2013master.csv') %>%
@@ -299,15 +301,29 @@ write.csv(trend, 'globalprep/hab_saltmarsh/v2012/data/trend_gap_fill_saltmarsh.c
 ############################################################################
 ## sea ice ----
 ############################################################################
+extent <- read.csv('globalprep/NSIDC_SeaIce/v2015/data/hab_ice_extent_eez.csv')
+
+extent_gf <- extent %>%
+  mutate(variable = "extent") %>%
+  mutate(gap_fill = ifelse(km2>0, 0, NA)) %>%
+  select(rgn_id, habitat, variable, gap_fill)
+write.csv(extent_gf, 'globalprep/NSIDC_SeaIce/v2015/data/extent_gap_fill_seaice.csv', row.names=FALSE)
+
+health_gf <- extent %>%
+  mutate(variable = "health") %>%
+  mutate(gap_fill = ifelse(km2>0, 0, NA)) %>%
+  select(rgn_id, habitat, variable, gap_fill)
+write.csv(health_gf, 'globalprep/NSIDC_SeaIce/v2015/data/health_gap_fill_seaice.csv', row.names=FALSE)
+
+trend_gf <- extent %>%
+  mutate(variable = "trend") %>%
+  mutate(gap_fill = ifelse(km2>0, 0, NA)) %>%
+  select(rgn_id, habitat, variable, gap_fill)
+write.csv(trend_gf, 'globalprep/NSIDC_SeaIce/v2015/data/trend_gap_fill_seaice.csv', row.names=FALSE)
 
 
-table(whence$salt_marshes)
-table(whence$salt_marshes[whence$metric == "extent"])
-table(whence$salt_marshes[whence$metric == "trend"])
-table(whence$salt_marshes[whence$metric == "condition"])
+############################################################################
+## Combining gap-filling data for habitats ----
+############################################################################
 
-sm_whence <- whence %>%
-  select(rgn_id, region_id_2012, metric, salt_marshes) %>%
-  spread(metric, salt_marshes) %>%
-  select(rgn_id, region_id_2012, extent, condition, trend_gaps=trend) %>%
-  left_join(d_regions)
+extent <- 
