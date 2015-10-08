@@ -304,8 +304,9 @@ sg_extent <- read.csv('globalprep/hab_seagrass/v2012/data/extent_gap_fill_seagra
 sb_extent <- read.csv('globalprep/hab_soft_bottom/v2012/data/extent_gap_fill.csv')
 
 extent_gf <- rbind(mangrove_extent, si_extent, coral_extent, sm_extent, sg_extent, sb_extent)
-
+summary(extent_gf)
 table(extent_gf$gap_fill)
+table(extent_gf$variable)
 
 write.csv(extent_gf, 'globalprep/hab_combined/v2015/data/habitat_extent_gap_fill.csv', row.names = FALSE)
 
@@ -319,6 +320,7 @@ sb <- read.csv('globalprep/hab_soft_bottom/v2012/data/health_gap_fill.csv')
 
 health_gf <- rbind(mangrove, si, coral, sm, sg, sb)
 summary(health_gf)
+table(health_gf$gap_fill)
 
 write.csv(health_gf, 'globalprep/hab_combined/v2015/data/habitat_health_gap_fill.csv', row.names = FALSE)
 
