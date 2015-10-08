@@ -1,0 +1,1027 @@
+"rgn_id","habitat","variable","gap_fill"
+5,"mangrove","trend","0"
+6,"mangrove","trend","0"
+7,"mangrove","trend","0"
+8,"mangrove","trend","0"
+9,"mangrove","trend","0"
+14,"mangrove","trend","0"
+15,"mangrove","trend","0"
+16,"mangrove","trend","0"
+17,"mangrove","trend","0"
+18,"mangrove","trend","0"
+24,"mangrove","trend","0"
+25,"mangrove","trend","0"
+26,"mangrove","trend","regional (r2) mean"
+28,"mangrove","trend","0"
+29,"mangrove","trend","three countries combined"
+31,"mangrove","trend","0"
+39,"mangrove","trend","0"
+40,"mangrove","trend","0"
+41,"mangrove","trend","0"
+42,"mangrove","trend","0"
+43,"mangrove","trend","0"
+44,"mangrove","trend","0"
+45,"mangrove","trend","0"
+46,"mangrove","trend","0"
+47,"mangrove","trend","0"
+48,"mangrove","trend","0"
+49,"mangrove","trend","0"
+50,"mangrove","trend","0"
+52,"mangrove","trend","regional (r2) mean"
+53,"mangrove","trend","0"
+54,"mangrove","trend","0"
+62,"mangrove","trend","0"
+65,"mangrove","trend","0"
+66,"mangrove","trend","0"
+96,"mangrove","trend","0"
+97,"mangrove","trend","0"
+98,"mangrove","trend","0"
+99,"mangrove","trend","0"
+102,"mangrove","trend","0"
+104,"mangrove","trend","0"
+106,"mangrove","trend","0"
+108,"mangrove","trend","0"
+110,"mangrove","trend","0"
+111,"mangrove","trend","0"
+112,"mangrove","trend","0"
+113,"mangrove","trend","0"
+114,"mangrove","trend","0"
+115,"mangrove","trend","0"
+116,"mangrove","trend","0"
+117,"mangrove","trend","0"
+118,"mangrove","trend","0"
+119,"mangrove","trend","0"
+120,"mangrove","trend","0"
+122,"mangrove","trend","0"
+124,"mangrove","trend","0"
+125,"mangrove","trend","0"
+126,"mangrove","trend","0"
+127,"mangrove","trend","0"
+129,"mangrove","trend","0"
+130,"mangrove","trend","0"
+131,"mangrove","trend","0"
+132,"mangrove","trend","0"
+133,"mangrove","trend","0"
+134,"mangrove","trend","0"
+135,"mangrove","trend","0"
+136,"mangrove","trend","0"
+137,"mangrove","trend","0"
+138,"mangrove","trend","0"
+139,"mangrove","trend","0"
+140,"mangrove","trend","three countries combined"
+162,"mangrove","trend","0"
+163,"mangrove","trend","0"
+164,"mangrove","trend","0"
+166,"mangrove","trend","0"
+167,"mangrove","trend","0"
+168,"mangrove","trend","0"
+169,"mangrove","trend","three countries combined"
+171,"mangrove","trend","0"
+190,"mangrove","trend","0"
+191,"mangrove","trend","0"
+193,"mangrove","trend","0"
+194,"mangrove","trend","0"
+195,"mangrove","trend","0"
+196,"mangrove","trend","0"
+197,"mangrove","trend","0"
+198,"mangrove","trend","0"
+199,"mangrove","trend","0"
+200,"mangrove","trend","0"
+202,"mangrove","trend","0"
+203,"mangrove","trend","0"
+204,"mangrove","trend","0"
+205,"mangrove","trend","0"
+206,"mangrove","trend","0"
+207,"mangrove","trend","0"
+208,"mangrove","trend","0"
+209,"mangrove","trend","0"
+210,"mangrove","trend","0"
+214,"mangrove","trend","0"
+216,"mangrove","trend","0"
+221,"mangrove","trend","0"
+231,"mangrove","trend","0"
+237,"mangrove","trend","regional (r2) mean"
+244,"mangrove","trend","0"
+245,"mangrove","trend","0"
+247,"mangrove","trend","0"
+250,"mangrove","trend","0"
+21,"seaice_edge","trend","0"
+69,"seaice_edge","trend","0"
+70,"seaice_edge","trend","0"
+73,"seaice_edge","trend","0"
+143,"seaice_edge","trend","0"
+144,"seaice_edge","trend","0"
+145,"seaice_edge","trend","0"
+163,"seaice_edge","trend","0"
+174,"seaice_edge","trend","0"
+175,"seaice_edge","trend","0"
+176,"seaice_edge","trend","0"
+177,"seaice_edge","trend","0"
+178,"seaice_edge","trend","0"
+179,"seaice_edge","trend","0"
+180,"seaice_edge","trend","0"
+189,"seaice_edge","trend","0"
+209,"seaice_edge","trend","0"
+210,"seaice_edge","trend","0"
+218,"seaice_edge","trend","0"
+222,"seaice_edge","trend","0"
+223,"seaice_edge","trend","0"
+89,"seaice_edge","trend","0"
+21,"seaice_shoreline","trend","0"
+69,"seaice_shoreline","trend","0"
+70,"seaice_shoreline","trend","0"
+73,"seaice_shoreline","trend","0"
+143,"seaice_shoreline","trend","0"
+145,"seaice_shoreline","trend","0"
+163,"seaice_shoreline","trend","0"
+174,"seaice_shoreline","trend","0"
+175,"seaice_shoreline","trend","0"
+176,"seaice_shoreline","trend","0"
+179,"seaice_shoreline","trend","0"
+180,"seaice_shoreline","trend","0"
+189,"seaice_shoreline","trend","0"
+209,"seaice_shoreline","trend","0"
+210,"seaice_shoreline","trend","0"
+218,"seaice_shoreline","trend","0"
+222,"seaice_shoreline","trend","0"
+223,"seaice_shoreline","trend","0"
+1,"coral","trend","disagg2012_gap_fill"
+2,"coral","trend","disagg2012_gap_fill"
+3,"coral","trend",NA
+4,"coral","trend",NA
+5,"coral","trend","0"
+6,"coral","trend","mean of other habitats"
+7,"coral","trend","0"
+8,"coral","trend","0"
+9,"coral","trend","0"
+10,"coral","trend","mean of other habitats"
+11,"coral","trend","mean of other habitats"
+12,"coral","trend","mean of other habitats"
+13,"coral","trend","disagg2012_gap_fill"
+14,"coral","trend","0"
+15,"coral","trend","0"
+16,"coral","trend","0"
+17,"coral","trend","0"
+18,"coral","trend","0"
+19,"coral","trend","0"
+20,"coral","trend",NA
+21,"coral","trend",NA
+24,"coral","trend","0"
+25,"coral","trend","0"
+26,"coral","trend","disagg2012_gap_fill"
+28,"coral","trend","mean of other habitats"
+29,"coral","trend","disagg2012_gap_fill"
+30,"coral","trend","disagg2012_gap_fill"
+31,"coral","trend","0"
+32,"coral","trend","disagg2012_gap_fill"
+33,"coral","trend","disagg2012_gap_fill"
+34,"coral","trend","disagg2012_gap_fill"
+35,"coral","trend","disagg2012_gap_fill"
+36,"coral","trend","disagg2012_gap_fill"
+37,"coral","trend","0"
+38,"coral","trend","mean of other habitats"
+39,"coral","trend","0"
+40,"coral","trend","0"
+41,"coral","trend","0"
+42,"coral","trend","0"
+43,"coral","trend","0"
+44,"coral","trend","mean of other habitats"
+45,"coral","trend","mean of other habitats"
+46,"coral","trend","mean of other habitats"
+47,"coral","trend","0"
+48,"coral","trend","mean of other habitats"
+49,"coral","trend","mean of other habitats"
+50,"coral","trend","mean of other habitats"
+51,"coral","trend","mean of other habitats"
+52,"coral","trend","0"
+53,"coral","trend",NA
+54,"coral","trend","mean of other habitats"
+55,"coral","trend",NA
+56,"coral","trend",NA
+57,"coral","trend",NA
+58,"coral","trend",NA
+59,"coral","trend",NA
+60,"coral","trend",NA
+61,"coral","trend",NA
+62,"coral","trend",NA
+63,"coral","trend",NA
+64,"coral","trend",NA
+65,"coral","trend",NA
+66,"coral","trend",NA
+67,"coral","trend",NA
+68,"coral","trend",NA
+69,"coral","trend",NA
+70,"coral","trend",NA
+71,"coral","trend",NA
+72,"coral","trend",NA
+73,"coral","trend",NA
+74,"coral","trend",NA
+75,"coral","trend",NA
+76,"coral","trend",NA
+77,"coral","trend",NA
+78,"coral","trend",NA
+79,"coral","trend","mean of other habitats"
+80,"coral","trend",NA
+81,"coral","trend",NA
+82,"coral","trend",NA
+84,"coral","trend",NA
+85,"coral","trend",NA
+86,"coral","trend",NA
+88,"coral","trend",NA
+89,"coral","trend",NA
+90,"coral","trend",NA
+91,"coral","trend",NA
+92,"coral","trend",NA
+93,"coral","trend",NA
+94,"coral","trend",NA
+95,"coral","trend",NA
+96,"coral","trend",NA
+97,"coral","trend",NA
+98,"coral","trend",NA
+99,"coral","trend",NA
+100,"coral","trend",NA
+101,"coral","trend",NA
+102,"coral","trend","0"
+103,"coral","trend",NA
+104,"coral","trend",NA
+105,"coral","trend",NA
+106,"coral","trend",NA
+107,"coral","trend",NA
+108,"coral","trend","disagg2012_gap_fill"
+110,"coral","trend","0"
+111,"coral","trend","disagg2012_gap_fill"
+112,"coral","trend","0"
+113,"coral","trend","disagg2012_gap_fill"
+114,"coral","trend","mean of other habitats"
+115,"coral","trend","0"
+116,"coral","trend","0"
+117,"coral","trend","disagg2012_gap_fill"
+118,"coral","trend","disagg2012_gap_fill"
+119,"coral","trend","mean of other habitats"
+120,"coral","trend","0"
+121,"coral","trend",NA
+122,"coral","trend","0"
+123,"coral","trend","0"
+124,"coral","trend","0"
+125,"coral","trend","mean of other habitats"
+126,"coral","trend","0"
+127,"coral","trend","0"
+129,"coral","trend","0"
+130,"coral","trend","0"
+131,"coral","trend","0"
+132,"coral","trend","0"
+133,"coral","trend","0"
+134,"coral","trend",NA
+135,"coral","trend","0"
+136,"coral","trend",NA
+137,"coral","trend","mean of other habitats"
+138,"coral","trend",NA
+139,"coral","trend","0"
+140,"coral","trend","disagg2012_gap_fill"
+141,"coral","trend",NA
+143,"coral","trend",NA
+144,"coral","trend",NA
+145,"coral","trend",NA
+146,"coral","trend","mean of other habitats"
+147,"coral","trend","disagg2012_gap_fill"
+148,"coral","trend","mean of other habitats"
+149,"coral","trend",NA
+150,"coral","trend","mean of other habitats"
+151,"coral","trend","disagg2012_gap_fill"
+152,"coral","trend","0"
+153,"coral","trend","disagg2012_gap_fill"
+154,"coral","trend","disagg2012_gap_fill"
+155,"coral","trend","mean of other habitats"
+156,"coral","trend","disagg2012_gap_fill"
+157,"coral","trend","mean of other habitats"
+158,"coral","trend","disagg2012_gap_fill"
+159,"coral","trend","mean of other habitats"
+161,"coral","trend","disagg2012_gap_fill"
+162,"coral","trend",NA
+163,"coral","trend","0"
+164,"coral","trend","0"
+166,"coral","trend","0"
+167,"coral","trend",NA
+168,"coral","trend",NA
+169,"coral","trend",NA
+171,"coral","trend","0"
+172,"coral","trend",NA
+173,"coral","trend",NA
+174,"coral","trend",NA
+175,"coral","trend",NA
+176,"coral","trend",NA
+177,"coral","trend",NA
+178,"coral","trend",NA
+179,"coral","trend",NA
+180,"coral","trend",NA
+181,"coral","trend",NA
+182,"coral","trend",NA
+183,"coral","trend",NA
+184,"coral","trend",NA
+186,"coral","trend",NA
+187,"coral","trend",NA
+188,"coral","trend",NA
+189,"coral","trend",NA
+190,"coral","trend","mean of other habitats"
+191,"coral","trend","mean of other habitats"
+192,"coral","trend",NA
+193,"coral","trend",NA
+194,"coral","trend",NA
+195,"coral","trend",NA
+196,"coral","trend",NA
+197,"coral","trend",NA
+198,"coral","trend",NA
+199,"coral","trend",NA
+200,"coral","trend",NA
+202,"coral","trend","0"
+203,"coral","trend","0"
+204,"coral","trend","mean of other habitats"
+205,"coral","trend","0"
+206,"coral","trend","0"
+207,"coral","trend","0"
+208,"coral","trend","0"
+209,"coral","trend","0"
+210,"coral","trend","0"
+212,"coral","trend","mean of other habitats"
+213,"coral","trend",NA
+214,"coral","trend","0"
+215,"coral","trend","0"
+216,"coral","trend","0"
+218,"coral","trend",NA
+219,"coral","trend",NA
+220,"coral","trend","disagg2012_gap_fill"
+221,"coral","trend","disagg2012_gap_fill"
+222,"coral","trend",NA
+223,"coral","trend",NA
+224,"coral","trend",NA
+227,"coral","trend",NA
+228,"coral","trend",NA
+231,"coral","trend","mean of other habitats"
+232,"coral","trend",NA
+237,"coral","trend","mean of other habitats"
+244,"coral","trend","disagg2012_gap_fill"
+245,"coral","trend","disagg2012_gap_fill"
+247,"coral","trend","0"
+248,"coral","trend","disagg2012_gap_fill"
+249,"coral","trend","disagg2012_gap_fill"
+250,"coral","trend","disagg2012_gap_fill"
+1,"salt_marsh","trend",NA
+2,"salt_marsh","trend",NA
+3,"salt_marsh","trend",NA
+4,"salt_marsh","trend",NA
+5,"salt_marsh","trend",NA
+6,"salt_marsh","trend",NA
+7,"salt_marsh","trend",NA
+8,"salt_marsh","trend",NA
+9,"salt_marsh","trend",NA
+10,"salt_marsh","trend",NA
+11,"salt_marsh","trend",NA
+12,"salt_marsh","trend",NA
+13,"salt_marsh","trend",NA
+14,"salt_marsh","trend",NA
+15,"salt_marsh","trend",NA
+16,"salt_marsh","trend","0"
+17,"salt_marsh","trend",NA
+18,"salt_marsh","trend",NA
+19,"salt_marsh","trend",NA
+20,"salt_marsh","trend",NA
+21,"salt_marsh","trend",NA
+24,"salt_marsh","trend",NA
+25,"salt_marsh","trend",NA
+26,"salt_marsh","trend",NA
+28,"salt_marsh","trend",NA
+29,"salt_marsh","trend",NA
+30,"salt_marsh","trend",NA
+31,"salt_marsh","trend",NA
+32,"salt_marsh","trend",NA
+33,"salt_marsh","trend",NA
+34,"salt_marsh","trend",NA
+35,"salt_marsh","trend",NA
+36,"salt_marsh","trend",NA
+37,"salt_marsh","trend",NA
+38,"salt_marsh","trend",NA
+39,"salt_marsh","trend",NA
+40,"salt_marsh","trend",NA
+41,"salt_marsh","trend",NA
+42,"salt_marsh","trend",NA
+43,"salt_marsh","trend",NA
+44,"salt_marsh","trend",NA
+45,"salt_marsh","trend",NA
+46,"salt_marsh","trend",NA
+47,"salt_marsh","trend",NA
+48,"salt_marsh","trend",NA
+49,"salt_marsh","trend",NA
+50,"salt_marsh","trend",NA
+51,"salt_marsh","trend",NA
+52,"salt_marsh","trend",NA
+53,"salt_marsh","trend",NA
+54,"salt_marsh","trend",NA
+55,"salt_marsh","trend",NA
+56,"salt_marsh","trend",NA
+57,"salt_marsh","trend",NA
+58,"salt_marsh","trend",NA
+59,"salt_marsh","trend","0"
+60,"salt_marsh","trend",NA
+61,"salt_marsh","trend",NA
+62,"salt_marsh","trend",NA
+63,"salt_marsh","trend",NA
+64,"salt_marsh","trend",NA
+65,"salt_marsh","trend",NA
+66,"salt_marsh","trend",NA
+67,"salt_marsh","trend",NA
+68,"salt_marsh","trend",NA
+69,"salt_marsh","trend","0"
+70,"salt_marsh","trend","0"
+71,"salt_marsh","trend",NA
+72,"salt_marsh","trend",NA
+73,"salt_marsh","trend",NA
+74,"salt_marsh","trend",NA
+75,"salt_marsh","trend",NA
+76,"salt_marsh","trend",NA
+77,"salt_marsh","trend",NA
+78,"salt_marsh","trend",NA
+79,"salt_marsh","trend",NA
+80,"salt_marsh","trend",NA
+81,"salt_marsh","trend",NA
+82,"salt_marsh","trend",NA
+84,"salt_marsh","trend",NA
+85,"salt_marsh","trend",NA
+86,"salt_marsh","trend",NA
+88,"salt_marsh","trend",NA
+89,"salt_marsh","trend",NA
+90,"salt_marsh","trend",NA
+91,"salt_marsh","trend",NA
+92,"salt_marsh","trend",NA
+93,"salt_marsh","trend",NA
+94,"salt_marsh","trend",NA
+95,"salt_marsh","trend",NA
+96,"salt_marsh","trend",NA
+97,"salt_marsh","trend",NA
+98,"salt_marsh","trend",NA
+99,"salt_marsh","trend",NA
+100,"salt_marsh","trend",NA
+101,"salt_marsh","trend",NA
+102,"salt_marsh","trend",NA
+103,"salt_marsh","trend",NA
+104,"salt_marsh","trend",NA
+105,"salt_marsh","trend",NA
+106,"salt_marsh","trend",NA
+107,"salt_marsh","trend",NA
+108,"salt_marsh","trend",NA
+110,"salt_marsh","trend",NA
+111,"salt_marsh","trend",NA
+112,"salt_marsh","trend",NA
+113,"salt_marsh","trend",NA
+114,"salt_marsh","trend",NA
+115,"salt_marsh","trend",NA
+116,"salt_marsh","trend",NA
+117,"salt_marsh","trend",NA
+118,"salt_marsh","trend",NA
+119,"salt_marsh","trend",NA
+120,"salt_marsh","trend",NA
+121,"salt_marsh","trend",NA
+122,"salt_marsh","trend",NA
+123,"salt_marsh","trend",NA
+124,"salt_marsh","trend",NA
+125,"salt_marsh","trend",NA
+126,"salt_marsh","trend",NA
+127,"salt_marsh","trend",NA
+129,"salt_marsh","trend",NA
+130,"salt_marsh","trend",NA
+131,"salt_marsh","trend",NA
+132,"salt_marsh","trend",NA
+133,"salt_marsh","trend",NA
+134,"salt_marsh","trend",NA
+135,"salt_marsh","trend",NA
+136,"salt_marsh","trend",NA
+137,"salt_marsh","trend",NA
+138,"salt_marsh","trend",NA
+139,"salt_marsh","trend",NA
+140,"salt_marsh","trend",NA
+141,"salt_marsh","trend",NA
+143,"salt_marsh","trend",NA
+144,"salt_marsh","trend",NA
+145,"salt_marsh","trend",NA
+146,"salt_marsh","trend",NA
+147,"salt_marsh","trend",NA
+148,"salt_marsh","trend",NA
+149,"salt_marsh","trend",NA
+150,"salt_marsh","trend",NA
+151,"salt_marsh","trend",NA
+152,"salt_marsh","trend",NA
+153,"salt_marsh","trend","disagg2012_gap_fill"
+154,"salt_marsh","trend","disagg2012_gap_fill"
+155,"salt_marsh","trend",NA
+156,"salt_marsh","trend","disagg2012_gap_fill"
+157,"salt_marsh","trend",NA
+158,"salt_marsh","trend",NA
+159,"salt_marsh","trend",NA
+161,"salt_marsh","trend",NA
+162,"salt_marsh","trend","0"
+163,"salt_marsh","trend","0"
+164,"salt_marsh","trend",NA
+166,"salt_marsh","trend",NA
+167,"salt_marsh","trend",NA
+168,"salt_marsh","trend",NA
+169,"salt_marsh","trend",NA
+171,"salt_marsh","trend",NA
+172,"salt_marsh","trend",NA
+173,"salt_marsh","trend",NA
+174,"salt_marsh","trend",NA
+175,"salt_marsh","trend",NA
+176,"salt_marsh","trend","0"
+177,"salt_marsh","trend","0"
+178,"salt_marsh","trend","0"
+179,"salt_marsh","trend","0"
+180,"salt_marsh","trend","0"
+181,"salt_marsh","trend","0"
+182,"salt_marsh","trend",NA
+183,"salt_marsh","trend",NA
+184,"salt_marsh","trend","0"
+186,"salt_marsh","trend",NA
+187,"salt_marsh","trend",NA
+188,"salt_marsh","trend",NA
+189,"salt_marsh","trend",NA
+190,"salt_marsh","trend",NA
+191,"salt_marsh","trend",NA
+192,"salt_marsh","trend",NA
+193,"salt_marsh","trend",NA
+194,"salt_marsh","trend",NA
+195,"salt_marsh","trend",NA
+196,"salt_marsh","trend",NA
+197,"salt_marsh","trend",NA
+198,"salt_marsh","trend",NA
+199,"salt_marsh","trend",NA
+200,"salt_marsh","trend",NA
+202,"salt_marsh","trend",NA
+203,"salt_marsh","trend",NA
+204,"salt_marsh","trend",NA
+205,"salt_marsh","trend",NA
+206,"salt_marsh","trend",NA
+207,"salt_marsh","trend",NA
+208,"salt_marsh","trend",NA
+209,"salt_marsh","trend","0"
+210,"salt_marsh","trend",NA
+212,"salt_marsh","trend",NA
+213,"salt_marsh","trend",NA
+214,"salt_marsh","trend",NA
+215,"salt_marsh","trend",NA
+216,"salt_marsh","trend",NA
+218,"salt_marsh","trend","0"
+219,"salt_marsh","trend",NA
+220,"salt_marsh","trend",NA
+221,"salt_marsh","trend",NA
+222,"salt_marsh","trend","0"
+223,"salt_marsh","trend",NA
+224,"salt_marsh","trend",NA
+227,"salt_marsh","trend","disagg2012_gap_fill"
+228,"salt_marsh","trend","disagg2012_gap_fill"
+231,"salt_marsh","trend",NA
+232,"salt_marsh","trend",NA
+237,"salt_marsh","trend",NA
+244,"salt_marsh","trend",NA
+245,"salt_marsh","trend",NA
+247,"salt_marsh","trend",NA
+248,"salt_marsh","trend",NA
+249,"salt_marsh","trend",NA
+250,"salt_marsh","trend",NA
+1,"seagrasses","trend","mean of other habitats"
+2,"seagrasses","trend","mean of other habitats"
+3,"seagrasses","trend",NA
+4,"seagrasses","trend",NA
+5,"seagrasses","trend","mean of other habitats"
+6,"seagrasses","trend","mean of other habitats"
+7,"seagrasses","trend","mean of other habitats"
+8,"seagrasses","trend","0"
+9,"seagrasses","trend","0"
+10,"seagrasses","trend",NA
+11,"seagrasses","trend","mean of other habitats"
+12,"seagrasses","trend",NA
+13,"seagrasses","trend","mean of other habitats"
+14,"seagrasses","trend","mean of other habitats"
+15,"seagrasses","trend","0"
+16,"seagrasses","trend","0"
+17,"seagrasses","trend","0"
+18,"seagrasses","trend","0"
+19,"seagrasses","trend",NA
+20,"seagrasses","trend",NA
+21,"seagrasses","trend",NA
+24,"seagrasses","trend",NA
+25,"seagrasses","trend","0"
+26,"seagrasses","trend","mean of other habitats"
+28,"seagrasses","trend","mean of other habitats"
+29,"seagrasses","trend","mean of other habitats"
+30,"seagrasses","trend",NA
+31,"seagrasses","trend",NA
+32,"seagrasses","trend",NA
+33,"seagrasses","trend",NA
+34,"seagrasses","trend",NA
+35,"seagrasses","trend",NA
+36,"seagrasses","trend",NA
+37,"seagrasses","trend","mean of other habitats"
+38,"seagrasses","trend",NA
+39,"seagrasses","trend","mean of other habitats"
+40,"seagrasses","trend","mean of other habitats"
+41,"seagrasses","trend","mean of other habitats"
+42,"seagrasses","trend","0"
+43,"seagrasses","trend","mean of other habitats"
+44,"seagrasses","trend",NA
+45,"seagrasses","trend","mean of other habitats"
+46,"seagrasses","trend",NA
+47,"seagrasses","trend","mean of other habitats"
+48,"seagrasses","trend",NA
+49,"seagrasses","trend","mean of other habitats"
+50,"seagrasses","trend","mean of other habitats"
+51,"seagrasses","trend","mean of other habitats"
+52,"seagrasses","trend","mean of other habitats"
+53,"seagrasses","trend",NA
+54,"seagrasses","trend","mean of other habitats"
+55,"seagrasses","trend",NA
+56,"seagrasses","trend",NA
+57,"seagrasses","trend",NA
+58,"seagrasses","trend","mean of other habitats"
+59,"seagrasses","trend",NA
+60,"seagrasses","trend",NA
+61,"seagrasses","trend",NA
+62,"seagrasses","trend",NA
+63,"seagrasses","trend",NA
+64,"seagrasses","trend",NA
+65,"seagrasses","trend",NA
+66,"seagrasses","trend","mean of other habitats"
+67,"seagrasses","trend",NA
+68,"seagrasses","trend","mean of other habitats"
+69,"seagrasses","trend",NA
+70,"seagrasses","trend",NA
+71,"seagrasses","trend",NA
+72,"seagrasses","trend",NA
+73,"seagrasses","trend","mean of other habitats"
+74,"seagrasses","trend",NA
+75,"seagrasses","trend","mean of other habitats"
+76,"seagrasses","trend",NA
+77,"seagrasses","trend",NA
+78,"seagrasses","trend",NA
+79,"seagrasses","trend","0"
+80,"seagrasses","trend",NA
+81,"seagrasses","trend",NA
+82,"seagrasses","trend",NA
+84,"seagrasses","trend",NA
+85,"seagrasses","trend",NA
+86,"seagrasses","trend",NA
+88,"seagrasses","trend",NA
+89,"seagrasses","trend",NA
+90,"seagrasses","trend",NA
+91,"seagrasses","trend",NA
+92,"seagrasses","trend",NA
+93,"seagrasses","trend",NA
+94,"seagrasses","trend",NA
+95,"seagrasses","trend",NA
+96,"seagrasses","trend","mean of other habitats"
+97,"seagrasses","trend",NA
+98,"seagrasses","trend","mean of other habitats"
+99,"seagrasses","trend","mean of other habitats"
+100,"seagrasses","trend",NA
+101,"seagrasses","trend",NA
+102,"seagrasses","trend","mean of other habitats"
+103,"seagrasses","trend",NA
+104,"seagrasses","trend",NA
+105,"seagrasses","trend",NA
+106,"seagrasses","trend","mean of other habitats"
+107,"seagrasses","trend",NA
+108,"seagrasses","trend",NA
+110,"seagrasses","trend","mean of other habitats"
+111,"seagrasses","trend","disagg2012_gap_fill"
+112,"seagrasses","trend","mean of other habitats"
+113,"seagrasses","trend","disagg2012_gap_fill"
+114,"seagrasses","trend","mean of other habitats"
+115,"seagrasses","trend","mean of other habitats"
+116,"seagrasses","trend","mean of other habitats"
+117,"seagrasses","trend","disagg2012_gap_fill"
+118,"seagrasses","trend","disagg2012_gap_fill"
+119,"seagrasses","trend","mean of other habitats"
+120,"seagrasses","trend","mean of other habitats"
+121,"seagrasses","trend","disagg2012_gap_fill"
+122,"seagrasses","trend","mean of other habitats"
+123,"seagrasses","trend","mean of other habitats"
+124,"seagrasses","trend","mean of other habitats"
+125,"seagrasses","trend","mean of other habitats"
+126,"seagrasses","trend",NA
+127,"seagrasses","trend",NA
+129,"seagrasses","trend","mean of other habitats"
+130,"seagrasses","trend",NA
+131,"seagrasses","trend","mean of other habitats"
+132,"seagrasses","trend","0"
+133,"seagrasses","trend","mean of other habitats"
+134,"seagrasses","trend",NA
+135,"seagrasses","trend","0"
+136,"seagrasses","trend",NA
+137,"seagrasses","trend",NA
+138,"seagrasses","trend",NA
+139,"seagrasses","trend","mean of other habitats"
+140,"seagrasses","trend","mean of other habitats"
+141,"seagrasses","trend",NA
+143,"seagrasses","trend",NA
+144,"seagrasses","trend",NA
+145,"seagrasses","trend",NA
+146,"seagrasses","trend",NA
+147,"seagrasses","trend","mean of other habitats"
+148,"seagrasses","trend",NA
+149,"seagrasses","trend",NA
+150,"seagrasses","trend",NA
+151,"seagrasses","trend","mean of other habitats"
+152,"seagrasses","trend","mean of other habitats"
+153,"seagrasses","trend",NA
+154,"seagrasses","trend",NA
+155,"seagrasses","trend","mean of other habitats"
+156,"seagrasses","trend",NA
+157,"seagrasses","trend",NA
+158,"seagrasses","trend",NA
+159,"seagrasses","trend",NA
+161,"seagrasses","trend",NA
+162,"seagrasses","trend",NA
+163,"seagrasses","trend","0"
+164,"seagrasses","trend","0"
+166,"seagrasses","trend","mean of other habitats"
+167,"seagrasses","trend",NA
+168,"seagrasses","trend",NA
+169,"seagrasses","trend",NA
+171,"seagrasses","trend","0"
+172,"seagrasses","trend",NA
+173,"seagrasses","trend",NA
+174,"seagrasses","trend",NA
+175,"seagrasses","trend","mean of other habitats"
+176,"seagrasses","trend",NA
+177,"seagrasses","trend",NA
+178,"seagrasses","trend","mean of other habitats"
+179,"seagrasses","trend","0"
+180,"seagrasses","trend",NA
+181,"seagrasses","trend",NA
+182,"seagrasses","trend","mean of other habitats"
+183,"seagrasses","trend",NA
+184,"seagrasses","trend","mean of other habitats"
+186,"seagrasses","trend",NA
+187,"seagrasses","trend",NA
+188,"seagrasses","trend",NA
+189,"seagrasses","trend",NA
+190,"seagrasses","trend","mean of other habitats"
+191,"seagrasses","trend","mean of other habitats"
+192,"seagrasses","trend","mean of other habitats"
+193,"seagrasses","trend","mean of other habitats"
+194,"seagrasses","trend","mean of other habitats"
+195,"seagrasses","trend",NA
+196,"seagrasses","trend","mean of other habitats"
+197,"seagrasses","trend",NA
+198,"seagrasses","trend",NA
+199,"seagrasses","trend",NA
+200,"seagrasses","trend","mean of other habitats"
+202,"seagrasses","trend","0"
+203,"seagrasses","trend","mean of other habitats"
+204,"seagrasses","trend",NA
+205,"seagrasses","trend","mean of other habitats"
+206,"seagrasses","trend","0"
+207,"seagrasses","trend","mean of other habitats"
+208,"seagrasses","trend","mean of other habitats"
+209,"seagrasses","trend","0"
+210,"seagrasses","trend","mean of other habitats"
+212,"seagrasses","trend","mean of other habitats"
+213,"seagrasses","trend",NA
+214,"seagrasses","trend","mean of other habitats"
+215,"seagrasses","trend","mean of other habitats"
+216,"seagrasses","trend","0"
+218,"seagrasses","trend","mean of other habitats"
+219,"seagrasses","trend",NA
+220,"seagrasses","trend","mean of other habitats"
+221,"seagrasses","trend","mean of other habitats"
+222,"seagrasses","trend","mean of other habitats"
+223,"seagrasses","trend",NA
+224,"seagrasses","trend",NA
+227,"seagrasses","trend",NA
+228,"seagrasses","trend",NA
+231,"seagrasses","trend","mean of other habitats"
+232,"seagrasses","trend",NA
+237,"seagrasses","trend",NA
+244,"seagrasses","trend",NA
+245,"seagrasses","trend","mean of other habitats"
+247,"seagrasses","trend",NA
+248,"seagrasses","trend","mean of other habitats"
+249,"seagrasses","trend","mean of other habitats"
+250,"seagrasses","trend","mean of other habitats"
+1,"soft_bottom","trend","disagg2012_gap_fill"
+2,"soft_bottom","trend","disagg2012_gap_fill"
+3,"soft_bottom","trend","disagg2012_gap_fill"
+4,"soft_bottom","trend","disagg2012_gap_fill"
+5,"soft_bottom","trend","0"
+6,"soft_bottom","trend","0"
+7,"soft_bottom","trend","0"
+8,"soft_bottom","trend","0"
+9,"soft_bottom","trend","0"
+10,"soft_bottom","trend","0"
+11,"soft_bottom","trend","0"
+12,"soft_bottom","trend",NA
+13,"soft_bottom","trend","disagg2012_gap_fill"
+14,"soft_bottom","trend","0"
+15,"soft_bottom","trend","0"
+16,"soft_bottom","trend","0"
+17,"soft_bottom","trend","0"
+18,"soft_bottom","trend","0"
+19,"soft_bottom","trend","0"
+20,"soft_bottom","trend","0"
+21,"soft_bottom","trend","0"
+24,"soft_bottom","trend","0"
+25,"soft_bottom","trend","0"
+26,"soft_bottom","trend","disagg2012_gap_fill"
+28,"soft_bottom","trend","0"
+29,"soft_bottom","trend","disagg2012_gap_fill"
+30,"soft_bottom","trend","disagg2012_gap_fill"
+31,"soft_bottom","trend","0"
+32,"soft_bottom","trend","disagg2012_gap_fill"
+33,"soft_bottom","trend","disagg2012_gap_fill"
+34,"soft_bottom","trend","disagg2012_gap_fill"
+35,"soft_bottom","trend",NA
+36,"soft_bottom","trend",NA
+37,"soft_bottom","trend","0"
+38,"soft_bottom","trend","0"
+39,"soft_bottom","trend","0"
+40,"soft_bottom","trend","0"
+41,"soft_bottom","trend","0"
+42,"soft_bottom","trend","0"
+43,"soft_bottom","trend","0"
+44,"soft_bottom","trend","0"
+45,"soft_bottom","trend","0"
+46,"soft_bottom","trend","0"
+47,"soft_bottom","trend","0"
+48,"soft_bottom","trend","0"
+49,"soft_bottom","trend","0"
+50,"soft_bottom","trend","0"
+51,"soft_bottom","trend","0"
+52,"soft_bottom","trend","0"
+53,"soft_bottom","trend","0"
+54,"soft_bottom","trend","0"
+55,"soft_bottom","trend","disagg2012_gap_fill"
+56,"soft_bottom","trend","0"
+57,"soft_bottom","trend","disagg2012_gap_fill"
+58,"soft_bottom","trend","disagg2012_gap_fill"
+59,"soft_bottom","trend","0"
+60,"soft_bottom","trend","0"
+61,"soft_bottom","trend","0"
+62,"soft_bottom","trend","0"
+63,"soft_bottom","trend","0"
+64,"soft_bottom","trend","0"
+65,"soft_bottom","trend","0"
+66,"soft_bottom","trend","0"
+67,"soft_bottom","trend","0"
+68,"soft_bottom","trend","0"
+69,"soft_bottom","trend","0"
+70,"soft_bottom","trend","0"
+71,"soft_bottom","trend","0"
+72,"soft_bottom","trend","0"
+73,"soft_bottom","trend","0"
+74,"soft_bottom","trend","0"
+75,"soft_bottom","trend","0"
+76,"soft_bottom","trend","0"
+77,"soft_bottom","trend","0"
+78,"soft_bottom","trend","0"
+79,"soft_bottom","trend","0"
+80,"soft_bottom","trend","0"
+81,"soft_bottom","trend","0"
+82,"soft_bottom","trend","0"
+84,"soft_bottom","trend","0"
+85,"soft_bottom","trend","disagg2012_gap_fill"
+86,"soft_bottom","trend","disagg2012_gap_fill"
+88,"soft_bottom","trend","disagg2012_gap_fill"
+89,"soft_bottom","trend","disagg2012_gap_fill"
+90,"soft_bottom","trend","disagg2012_gap_fill"
+91,"soft_bottom","trend",NA
+92,"soft_bottom","trend","disagg2012_gap_fill"
+93,"soft_bottom","trend","disagg2012_gap_fill"
+94,"soft_bottom","trend","disagg2012_gap_fill"
+95,"soft_bottom","trend","disagg2012_gap_fill"
+96,"soft_bottom","trend","0"
+97,"soft_bottom","trend","0"
+98,"soft_bottom","trend","0"
+99,"soft_bottom","trend",NA
+100,"soft_bottom","trend","0"
+101,"soft_bottom","trend","0"
+102,"soft_bottom","trend","0"
+103,"soft_bottom","trend","0"
+104,"soft_bottom","trend","0"
+105,"soft_bottom","trend",NA
+106,"soft_bottom","trend","0"
+107,"soft_bottom","trend","0"
+108,"soft_bottom","trend","disagg2012_gap_fill"
+110,"soft_bottom","trend","0"
+111,"soft_bottom","trend","disagg2012_gap_fill"
+112,"soft_bottom","trend","0"
+113,"soft_bottom","trend","disagg2012_gap_fill"
+114,"soft_bottom","trend","0"
+115,"soft_bottom","trend","0"
+116,"soft_bottom","trend","0"
+117,"soft_bottom","trend","disagg2012_gap_fill"
+118,"soft_bottom","trend","disagg2012_gap_fill"
+119,"soft_bottom","trend","0"
+120,"soft_bottom","trend","0"
+121,"soft_bottom","trend","disagg2012_gap_fill"
+122,"soft_bottom","trend","0"
+123,"soft_bottom","trend","0"
+124,"soft_bottom","trend","0"
+125,"soft_bottom","trend","0"
+126,"soft_bottom","trend","0"
+127,"soft_bottom","trend","0"
+129,"soft_bottom","trend","0"
+130,"soft_bottom","trend","0"
+131,"soft_bottom","trend","0"
+132,"soft_bottom","trend","0"
+133,"soft_bottom","trend","0"
+134,"soft_bottom","trend","0"
+135,"soft_bottom","trend","0"
+136,"soft_bottom","trend","0"
+137,"soft_bottom","trend","0"
+138,"soft_bottom","trend","0"
+139,"soft_bottom","trend","0"
+140,"soft_bottom","trend","disagg2012_gap_fill"
+141,"soft_bottom","trend","disagg2012_gap_fill"
+143,"soft_bottom","trend","0"
+144,"soft_bottom","trend","disagg2012_gap_fill"
+145,"soft_bottom","trend","disagg2012_gap_fill"
+146,"soft_bottom","trend",NA
+147,"soft_bottom","trend","disagg2012_gap_fill"
+148,"soft_bottom","trend","disagg2012_gap_fill"
+149,"soft_bottom","trend","0"
+150,"soft_bottom","trend","disagg2012_gap_fill"
+151,"soft_bottom","trend",NA
+152,"soft_bottom","trend",NA
+153,"soft_bottom","trend","disagg2012_gap_fill"
+154,"soft_bottom","trend","disagg2012_gap_fill"
+155,"soft_bottom","trend","0"
+156,"soft_bottom","trend",NA
+157,"soft_bottom","trend","disagg2012_gap_fill"
+158,"soft_bottom","trend","disagg2012_gap_fill"
+159,"soft_bottom","trend","disagg2012_gap_fill"
+161,"soft_bottom","trend","disagg2012_gap_fill"
+162,"soft_bottom","trend","0"
+163,"soft_bottom","trend","0"
+164,"soft_bottom","trend","0"
+166,"soft_bottom","trend","0"
+167,"soft_bottom","trend","0"
+168,"soft_bottom","trend","0"
+169,"soft_bottom","trend","0"
+171,"soft_bottom","trend","0"
+172,"soft_bottom","trend","0"
+173,"soft_bottom","trend","0"
+174,"soft_bottom","trend","0"
+175,"soft_bottom","trend","0"
+176,"soft_bottom","trend","0"
+177,"soft_bottom","trend","0"
+178,"soft_bottom","trend","0"
+179,"soft_bottom","trend","0"
+180,"soft_bottom","trend","0"
+181,"soft_bottom","trend","0"
+182,"soft_bottom","trend","0"
+183,"soft_bottom","trend","0"
+184,"soft_bottom","trend","0"
+186,"soft_bottom","trend","0"
+187,"soft_bottom","trend","0"
+188,"soft_bottom","trend","0"
+189,"soft_bottom","trend","0"
+190,"soft_bottom","trend","0"
+191,"soft_bottom","trend","0"
+192,"soft_bottom","trend","0"
+193,"soft_bottom","trend","0"
+194,"soft_bottom","trend","0"
+195,"soft_bottom","trend","0"
+196,"soft_bottom","trend","0"
+197,"soft_bottom","trend","0"
+198,"soft_bottom","trend","0"
+199,"soft_bottom","trend","0"
+200,"soft_bottom","trend","0"
+202,"soft_bottom","trend","0"
+203,"soft_bottom","trend","0"
+204,"soft_bottom","trend","0"
+205,"soft_bottom","trend","0"
+206,"soft_bottom","trend","0"
+207,"soft_bottom","trend","0"
+208,"soft_bottom","trend","0"
+209,"soft_bottom","trend","0"
+210,"soft_bottom","trend","0"
+212,"soft_bottom","trend","0"
+213,"soft_bottom","trend","0"
+214,"soft_bottom","trend","0"
+215,"soft_bottom","trend",NA
+216,"soft_bottom","trend","0"
+218,"soft_bottom","trend","0"
+219,"soft_bottom","trend","0"
+220,"soft_bottom","trend","disagg2012_gap_fill"
+221,"soft_bottom","trend","disagg2012_gap_fill"
+222,"soft_bottom","trend","0"
+223,"soft_bottom","trend","0"
+224,"soft_bottom","trend","0"
+227,"soft_bottom","trend","disagg2012_gap_fill"
+228,"soft_bottom","trend","disagg2012_gap_fill"
+231,"soft_bottom","trend","0"
+232,"soft_bottom","trend","0"
+237,"soft_bottom","trend","disagg2012_gap_fill"
+244,"soft_bottom","trend",NA
+245,"soft_bottom","trend",NA
+247,"soft_bottom","trend","0"
+248,"soft_bottom","trend","disagg2012_gap_fill"
+249,"soft_bottom","trend","disagg2012_gap_fill"
+250,"soft_bottom","trend",NA
