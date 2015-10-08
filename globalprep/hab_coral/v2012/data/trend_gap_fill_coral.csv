@@ -1,221 +1,221 @@
-"rgn_id","region_id_2012","extent","condition","trend_gaps","gap_fill_1","habitat","km2","health","trend","variable","gap_fill"
-1,1,"actuals","adjacent",0,"disagg2012_gap_fill","coral",102.17,1,0.0681151579033718,"trend","disagg2012_gap_fill"
-2,1,"actuals","adjacent",0,"disagg2012_gap_fill","coral",1.7465,1,0.0681151579033718,"trend","disagg2012_gap_fill"
-3,1,"actuals","adjacent",0,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-4,2,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-5,3,"actuals","adjacent",0,NA,"coral",4381.1,0.730957557997747,-0.0786428796215429,"trend","0"
-6,4,"actuals","georegion",NA,NA,"coral",459.33,0.964113890082612,NA,"trend","mean of other habitats"
-7,5,"actuals","adjacent",0,NA,"coral",2197.97,0.730957557997747,0.208180059523813,"trend","0"
-8,6,"actuals","adjacent",0,NA,"coral",496.006,1,-0.0445193452381374,"trend","0"
-9,7,"actuals","georegion",0,NA,"coral",3060.74,0.964113890082612,-0.0252867870223818,"trend","0"
-10,8,"actuals","georegion",NA,NA,"coral",3.493,0.964113890082612,NA,"trend","mean of other habitats"
-11,9,"actuals","georegion",NA,NA,"coral",1789.29,0.964113890082612,NA,"trend","mean of other habitats"
-12,114,"actuals","georegion",NA,"disagg2012_gap_fill","coral",7.85926,0.743013670160413,NA,"trend","mean of other habitats"
-13,111,"actuals","adjacent",0,"disagg2012_gap_fill","coral",169.411,1,-0.0245904234417265,"trend","disagg2012_gap_fill"
-14,10,"actuals","adjacent",0,NA,"coral",330.962,1,-0.0139744103773616,"trend","0"
-15,11,"actuals","prediction",0,NA,"coral",9668.63,1,0.00811643101027029,"trend","0"
-16,12,"actuals","prediction",0,NA,"coral",31682.4,0.730957557997747,-0.0190278366425452,"trend","0"
-17,13,"actuals","adjacent",0,NA,"coral",6471.66,0.953679013210641,-0.158933368978923,"trend","0"
-18,14,"actuals","adjacent",0,NA,"coral",3011.84,1,0.0546468300233814,"trend","0"
-19,15,"actuals","adjacent",0,NA,"coral",889.843,1,0.0550549450549175,"trend","0"
-20,16,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-21,17,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-24,18,"actuals","adjacent",0,NA,"coral",29.6905,1,-0.212525000000005,"trend","0"
-25,19,"actuals","prediction",0,NA,"coral",155.439,1,0.0134611882146353,"trend","0"
-26,153,"actuals","adjacent",0,"disagg2012_gap_fill","coral",645.332,1,0.178472979597135,"trend","disagg2012_gap_fill"
-28,20,"actuals","georegion",NA,NA,"coral",160.678,0.755307777337641,NA,"trend","mean of other habitats"
-29,21,"actuals","adjacent",0,"disagg2012_gap_fill","coral",280.314,0.855746556788467,0.0923117094017261,"trend","disagg2012_gap_fill"
-30,21,"actuals","adjacent",0,"disagg2012_gap_fill","coral",165.918,0.855746556788467,0.0923117094017261,"trend","disagg2012_gap_fill"
-31,22,"actuals","adjacent",0,NA,"coral",1428.64,0.855746556788467,-0.163570313720881,"trend","0"
-32,21,"actuals","adjacent",0,"disagg2012_gap_fill","coral",9.60576,0.855746556788467,0.0923117094017261,"trend","disagg2012_gap_fill"
-33,21,"actuals","adjacent",0,"disagg2012_gap_fill","coral",50.6485,0.855746556788467,0.0923117094017261,"trend","disagg2012_gap_fill"
-34,21,"actuals","adjacent",0,"disagg2012_gap_fill","coral",31.437,0.855746556788467,0.0923117094017261,"trend","disagg2012_gap_fill"
-35,21,"actuals","adjacent",0,"disagg2012_gap_fill","coral",6.11276,0.855746556788467,0.0923117094017261,"trend","disagg2012_gap_fill"
-36,21,"actuals","adjacent",0,"disagg2012_gap_fill","coral",6.11276,0.855746556788467,0.0923117094017261,"trend","disagg2012_gap_fill"
-37,23,"actuals","prediction",0,NA,"coral",654.065,0.855746556788467,-0.0146613433666986,"trend","0"
-38,24,"actuals","georegion",NA,NA,"coral",1767.46,1,NA,"trend","mean of other habitats"
-39,25,"actuals","georegion",0,NA,"coral",2634.6,1,0.0257243055555461,"trend","0"
-40,26,"actuals","georegion",0,NA,"coral",96.0576,1,0.834249999998065,"trend","0"
-41,27,"actuals","georegion",0,NA,"coral",1496.75,0.755307777337641,-0.196947089947181,"trend","0"
-42,28,"actuals","georegion",0,NA,"coral",2066.98,0.755307777337641,0.357142857142641,"trend","0"
-43,29,"actuals","prediction",0,NA,"coral",385.977,0.580673354488477,-0.0235814793334537,"trend","0"
-44,30,"actuals","adjacent",NA,NA,"coral",341.441,0.580673354488477,NA,"trend","mean of other habitats"
-45,31,"actuals","georegion",NA,NA,"coral",1323.85,0.984538344672957,NA,"trend","mean of other habitats"
-46,32,"actuals","georegion",NA,NA,"coral",126.621,0.984538344672957,NA,"trend","mean of other habitats"
-47,33,"actuals","georegion",0,NA,"coral",574.599,0.984538344672957,0.328166666666776,"trend","0"
-48,34,"actuals","georegion",NA,NA,"coral",227.045,0.984538344672957,NA,"trend","mean of other habitats"
-49,35,"actuals","adjacent",NA,NA,"coral",602.543,0.984538344672957,NA,"trend","mean of other habitats"
-50,36,"actuals","adjacent",NA,NA,"coral",2712.32,0.984538344672957,NA,"trend","mean of other habitats"
-51,37,"actuals","georegion",NA,NA,"coral",41.0428,0.984538344672957,NA,"trend","mean of other habitats"
-52,38,"actuals","georegion",0,NA,"coral",199.101,0.984538344672957,-0.320940000000064,"trend","0"
-53,39,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-54,40,"actuals","georegion",NA,NA,"coral",121.382,0.984538344672957,NA,"trend","mean of other habitats"
-55,134,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-56,41,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-57,134,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-58,133,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-59,42,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-60,43,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-61,44,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-62,45,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-63,46,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-64,47,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-65,48,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-66,49,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-67,50,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-68,51,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-69,52,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-70,53,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-71,54,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-72,55,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-73,56,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-74,57,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-75,58,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-76,59,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-77,60,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-78,61,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-79,62,NA,NA,NA,NA,"coral",0.873251,NA,NA,"trend","mean of other habitats"
-80,63,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-81,64,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-82,65,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-84,66,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-85,68,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-86,68,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-88,68,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-89,68,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-90,75,"actuals","georegion",0,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-91,67,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-92,67,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-93,67,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-94,2,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-95,68,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-96,69,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-97,70,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-98,71,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-99,72,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-100,73,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-101,74,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-102,75,"actuals","georegion",0,NA,"coral",0.873251,0.755307777337641,0.222089285714203,"trend","0"
-103,76,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-104,77,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-105,169,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-106,78,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-107,79,"actuals","georegion",NA,NA,"coral",NA,NA,NA,"trend",NA
-108,85,"actuals","prediction",0,"disagg2012_gap_fill","coral",525.697,0.517296486375576,-0.0315922209767727,"trend","disagg2012_gap_fill"
-110,80,"actuals","prediction",0,NA,"coral",1944.73,0.397647968195135,-0.0293598722376578,"trend","0"
-111,85,"actuals","prediction",0,"disagg2012_gap_fill","coral",159.805,0.517296486375576,-0.0315922209767727,"trend","disagg2012_gap_fill"
-112,81,"actuals","prediction",0,NA,"coral",2484.4,0,0.0826310208803699,"trend","0"
-113,85,"actuals","prediction",0,"disagg2012_gap_fill","coral",100.424,0.517296486375576,-0.0315922209767727,"trend","disagg2012_gap_fill"
-114,82,"actuals","adjacent",NA,NA,"coral",246.257,0.422740366276086,NA,"trend","mean of other habitats"
-115,83,"actuals","prediction",0,NA,"coral",259.355,1,0.0266580554041881,"trend","0"
-116,84,"actuals","prediction",0,NA,"coral",177.27,0.595384173926359,-0.0205423856133308,"trend","0"
-117,85,"actuals","prediction",0,"disagg2012_gap_fill","coral",124.875,0.517296486375576,-0.0315922209767727,"trend","disagg2012_gap_fill"
-118,85,"actuals","prediction",0,"disagg2012_gap_fill","coral",20.0848,0.517296486375576,-0.0315922209767727,"trend","disagg2012_gap_fill"
-119,86,"actuals","adjacent",NA,NA,"coral",34.0568,0.725611882724082,NA,"trend","mean of other habitats"
-120,87,"actuals","adjacent",0,NA,"coral",38.423,0.517296486375576,-0.218499999999722,"trend","0"
-121,85,"actuals","prediction",0,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-122,88,"actuals","adjacent",0,NA,"coral",15.7185,0.715200330885569,-0.0441202256944334,"trend","0"
-123,89,"actuals","adjacent",0,NA,"coral",8.73251,0.567313208117372,-0.265625000000114,"trend","0"
-124,90,"actuals","prediction",0,NA,"coral",19.2115,1,0.0417666882711084,"trend","0"
-125,91,"actuals","adjacent",NA,NA,"coral",41.0428,0.567313208117372,NA,"trend","mean of other habitats"
-126,92,"actuals","adjacent",0,NA,"coral",13.0988,0.715200330885569,0.0953357142856735,"trend","0"
-127,93,"actuals","adjacent",0,NA,"coral",21.8313,0.715200330885569,-0.0468161962365435,"trend","0"
-129,95,"actuals","prediction",0,NA,"coral",510.852,1,0.0466194567949854,"trend","0"
-130,96,"actuals","prediction",0,NA,"coral",55.888,1,0.0290404985306396,"trend","0"
-131,97,"actuals","adjacent",0,NA,"coral",456.71,1,0.00186016096581048,"trend","0"
-132,98,"actuals","prediction",0,NA,"coral",882.857,0.850910287291316,-0.0093518584187365,"trend","0"
-133,99,"actuals","adjacent",0,NA,"coral",626.994,0.975251135882013,0.0564644076135952,"trend","0"
-134,100,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-135,101,"actuals","prediction",0,NA,"coral",907.308,1,0.0307504109245894,"trend","0"
-136,102,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-137,103,"actuals","adjacent",NA,NA,"coral",71.6066,1,NA,"trend","mean of other habitats"
-138,104,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-139,105,"actuals","prediction",0,NA,"coral",308.258,0.567313208117372,-0.0352240933408147,"trend","0"
-140,106,"actuals","adjacent",0,"disagg2012_gap_fill","coral",128.368,0.76285514465227,0.0368142857142718,"trend","disagg2012_gap_fill"
-141,126,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-143,107,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-144,169,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-145,126,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-146,108,"actuals","adjacent",NA,NA,"coral",30.5638,1,NA,"trend","mean of other habitats"
-147,109,"actuals","prediction",0,"disagg2012_gap_fill","coral",2537.67,1,0.0073649118829262,"trend","disagg2012_gap_fill"
-148,161,"actuals","adjacent",NA,"disagg2012_gap_fill","coral",135.354,1,NA,"trend","mean of other habitats"
-149,110,"actuals","georegion",NA,NA,"coral",NA,NA,NA,"trend",NA
-150,114,"actuals","georegion",NA,"disagg2012_gap_fill","coral",63.7473,0.743013670160413,NA,"trend","mean of other habitats"
-151,111,"actuals","adjacent",0,"disagg2012_gap_fill","coral",34.0568,1,-0.0245904234417265,"trend","disagg2012_gap_fill"
-152,112,"actuals","adjacent",0,NA,"coral",138.847,1,0.0793965517241931,"trend","0"
-153,115,"actuals","adjacent",0,"disagg2012_gap_fill","coral",220.932,1,-0.42666666666643,"trend","disagg2012_gap_fill"
-154,115,"actuals","adjacent",0,"disagg2012_gap_fill","coral",5.2395,1,-0.42666666666643,"trend","disagg2012_gap_fill"
-155,113,"actuals","adjacent",NA,NA,"coral",898.575,1,NA,"trend","mean of other habitats"
-156,115,"actuals","adjacent",0,"disagg2012_gap_fill","coral",76.8461,1,-0.42666666666643,"trend","disagg2012_gap_fill"
-157,161,"actuals","adjacent",NA,"disagg2012_gap_fill","coral",48.902,1,NA,"trend","mean of other habitats"
-158,111,"actuals","adjacent",0,"disagg2012_gap_fill","coral",7.85926,1,-0.0245904234417265,"trend","disagg2012_gap_fill"
-159,114,"actuals","georegion",NA,"disagg2012_gap_fill","coral",72.4798,0.743013670160413,NA,"trend","mean of other habitats"
-161,109,"actuals","prediction",0,"disagg2012_gap_fill","coral",378.118,1,0.0073649118829262,"trend","disagg2012_gap_fill"
-162,115,"actuals","adjacent",0,NA,"coral",NA,NA,NA,"trend",NA
-163,116,"actuals","prediction",0,NA,"coral",3968.92,0.422873323253544,-0.0265959528457377,"trend","0"
-164,117,"actuals","prediction",0,NA,"coral",863.645,0.0199508481299071,-0.12937610998057,"trend","0"
-166,118,"actuals","prediction",0,NA,"coral",351.92,0.226458805310968,-0.0392247938682406,"trend","0"
-167,119,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-168,120,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-169,121,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-171,122,"actuals","georegion",0,NA,"coral",664.544,0.923285557938854,0.0706861848858446,"trend","0"
-172,123,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-173,124,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-174,125,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-175,126,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-176,127,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-177,128,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-178,129,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-179,130,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-180,131,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-181,132,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-182,133,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-183,134,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-184,135,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-186,137,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-187,138,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-188,139,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-189,140,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-190,141,"actuals","georegion",NA,NA,"coral",155.439,0.984538344672957,NA,"trend","mean of other habitats"
-191,142,"actuals","georegion",NA,NA,"coral",103.917,0.984538344672957,NA,"trend","mean of other habitats"
-192,143,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-193,144,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-194,145,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-195,146,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-196,147,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-197,148,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-198,149,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-199,150,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-200,151,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-202,152,"actuals","adjacent",0,NA,"coral",1559.63,0.580673354488477,0.22124531624698,"trend","0"
-203,153,"actuals","adjacent",0,NA,"coral",1212.95,1,0.178472979597135,"trend","0"
-204,154,"actuals","adjacent",NA,NA,"coral",3.493,1,NA,"trend","mean of other habitats"
-205,155,"actuals","prediction",0,NA,"coral",538.796,1,0.0327347217528618,"trend","0"
-206,156,"actuals","prediction",0,NA,"coral",1408.55,1,0.0277553993947816,"trend","0"
-207,157,"actuals","adjacent",0,NA,"coral",364.146,1,-0.011148287522031,"trend","0"
-208,158,"actuals","adjacent",0,NA,"coral",3.493,1,-0.00190384615385623,"trend","0"
-209,159,"actuals","prediction",0,NA,"coral",261.102,0.811450896179176,-0.0211565702096627,"trend","0"
-210,160,"actuals","prediction",0,NA,"coral",845.307,1,0.0182854236195413,"trend","0"
-212,161,"actuals","adjacent",NA,NA,"coral",1501.99,1,NA,"trend","mean of other habitats"
-213,162,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-214,163,"actuals","prediction",0,NA,"coral",1576.22,0.984538344672957,-0.000941042544469324,"trend","0"
-215,164,"actuals","adjacent",0,NA,"coral",1.7465,0.984538344672957,-0.240237499999694,"trend","0"
-216,165,"actuals","prediction",0,NA,"coral",15690.6,1,0.0148389229099957,"trend","0"
-218,166,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-219,167,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-220,94,"actuals","prediction",0,"disagg2012_gap_fill","coral",1.7465,1,0.0328218143293433,"trend","disagg2012_gap_fill"
-221,106,"actuals","adjacent",0,"disagg2012_gap_fill","coral",9.60576,0.76285514465227,0.0368142857142718,"trend","disagg2012_gap_fill"
-222,168,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-223,169,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-224,170,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-227,131,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-228,131,NA,NA,NA,"disagg2012_gap_fill","coral",NA,NA,NA,"trend",NA
-231,171,"actuals","adjacent",NA,NA,"coral",16.5918,1,NA,"trend","mean of other habitats"
-232,172,NA,NA,NA,NA,"coral",NA,NA,NA,"trend",NA
-237,171,"actuals","adjacent",NA,"disagg2012_gap_fill","coral",1.7465,1,NA,"trend","mean of other habitats"
-244,94,"actuals","prediction",0,"disagg2012_gap_fill","coral",17.465,1,0.0328218143293433,"trend","disagg2012_gap_fill"
-245,94,"actuals","prediction",0,"disagg2012_gap_fill","coral",12.2255,1,0.0328218143293433,"trend","disagg2012_gap_fill"
-247,156,"actuals","prediction",0,NA,"coral",67.2403,1,0.0277553993947816,"trend","0"
-248,94,"actuals","prediction",0,"disagg2012_gap_fill","coral",161.551,1,0.0328218143293433,"trend","disagg2012_gap_fill"
-249,94,"actuals","prediction",0,"disagg2012_gap_fill","coral",10.479,1,0.0328218143293433,"trend","disagg2012_gap_fill"
-250,94,"actuals","prediction",0,"disagg2012_gap_fill","coral",46.2823,1,0.0328218143293433,"trend","disagg2012_gap_fill"
+"rgn_id","habitat","variable","gap_fill"
+1,"coral","trend","disagg2012_gap_fill"
+2,"coral","trend","disagg2012_gap_fill"
+3,"coral","trend",NA
+4,"coral","trend",NA
+5,"coral","trend","0"
+6,"coral","trend","mean of other habitats"
+7,"coral","trend","0"
+8,"coral","trend","0"
+9,"coral","trend","0"
+10,"coral","trend","mean of other habitats"
+11,"coral","trend","mean of other habitats"
+12,"coral","trend","mean of other habitats"
+13,"coral","trend","disagg2012_gap_fill"
+14,"coral","trend","0"
+15,"coral","trend","0"
+16,"coral","trend","0"
+17,"coral","trend","0"
+18,"coral","trend","0"
+19,"coral","trend","0"
+20,"coral","trend",NA
+21,"coral","trend",NA
+24,"coral","trend","0"
+25,"coral","trend","0"
+26,"coral","trend","disagg2012_gap_fill"
+28,"coral","trend","mean of other habitats"
+29,"coral","trend","disagg2012_gap_fill"
+30,"coral","trend","disagg2012_gap_fill"
+31,"coral","trend","0"
+32,"coral","trend","disagg2012_gap_fill"
+33,"coral","trend","disagg2012_gap_fill"
+34,"coral","trend","disagg2012_gap_fill"
+35,"coral","trend","disagg2012_gap_fill"
+36,"coral","trend","disagg2012_gap_fill"
+37,"coral","trend","0"
+38,"coral","trend","mean of other habitats"
+39,"coral","trend","0"
+40,"coral","trend","0"
+41,"coral","trend","0"
+42,"coral","trend","0"
+43,"coral","trend","0"
+44,"coral","trend","mean of other habitats"
+45,"coral","trend","mean of other habitats"
+46,"coral","trend","mean of other habitats"
+47,"coral","trend","0"
+48,"coral","trend","mean of other habitats"
+49,"coral","trend","mean of other habitats"
+50,"coral","trend","mean of other habitats"
+51,"coral","trend","mean of other habitats"
+52,"coral","trend","0"
+53,"coral","trend",NA
+54,"coral","trend","mean of other habitats"
+55,"coral","trend",NA
+56,"coral","trend",NA
+57,"coral","trend",NA
+58,"coral","trend",NA
+59,"coral","trend",NA
+60,"coral","trend",NA
+61,"coral","trend",NA
+62,"coral","trend",NA
+63,"coral","trend",NA
+64,"coral","trend",NA
+65,"coral","trend",NA
+66,"coral","trend",NA
+67,"coral","trend",NA
+68,"coral","trend",NA
+69,"coral","trend",NA
+70,"coral","trend",NA
+71,"coral","trend",NA
+72,"coral","trend",NA
+73,"coral","trend",NA
+74,"coral","trend",NA
+75,"coral","trend",NA
+76,"coral","trend",NA
+77,"coral","trend",NA
+78,"coral","trend",NA
+79,"coral","trend","mean of other habitats"
+80,"coral","trend",NA
+81,"coral","trend",NA
+82,"coral","trend",NA
+84,"coral","trend",NA
+85,"coral","trend",NA
+86,"coral","trend",NA
+88,"coral","trend",NA
+89,"coral","trend",NA
+90,"coral","trend",NA
+91,"coral","trend",NA
+92,"coral","trend",NA
+93,"coral","trend",NA
+94,"coral","trend",NA
+95,"coral","trend",NA
+96,"coral","trend",NA
+97,"coral","trend",NA
+98,"coral","trend",NA
+99,"coral","trend",NA
+100,"coral","trend",NA
+101,"coral","trend",NA
+102,"coral","trend","0"
+103,"coral","trend",NA
+104,"coral","trend",NA
+105,"coral","trend",NA
+106,"coral","trend",NA
+107,"coral","trend",NA
+108,"coral","trend","disagg2012_gap_fill"
+110,"coral","trend","0"
+111,"coral","trend","disagg2012_gap_fill"
+112,"coral","trend","0"
+113,"coral","trend","disagg2012_gap_fill"
+114,"coral","trend","mean of other habitats"
+115,"coral","trend","0"
+116,"coral","trend","0"
+117,"coral","trend","disagg2012_gap_fill"
+118,"coral","trend","disagg2012_gap_fill"
+119,"coral","trend","mean of other habitats"
+120,"coral","trend","0"
+121,"coral","trend",NA
+122,"coral","trend","0"
+123,"coral","trend","0"
+124,"coral","trend","0"
+125,"coral","trend","mean of other habitats"
+126,"coral","trend","0"
+127,"coral","trend","0"
+129,"coral","trend","0"
+130,"coral","trend","0"
+131,"coral","trend","0"
+132,"coral","trend","0"
+133,"coral","trend","0"
+134,"coral","trend",NA
+135,"coral","trend","0"
+136,"coral","trend",NA
+137,"coral","trend","mean of other habitats"
+138,"coral","trend",NA
+139,"coral","trend","0"
+140,"coral","trend","disagg2012_gap_fill"
+141,"coral","trend",NA
+143,"coral","trend",NA
+144,"coral","trend",NA
+145,"coral","trend",NA
+146,"coral","trend","mean of other habitats"
+147,"coral","trend","disagg2012_gap_fill"
+148,"coral","trend","mean of other habitats"
+149,"coral","trend",NA
+150,"coral","trend","mean of other habitats"
+151,"coral","trend","disagg2012_gap_fill"
+152,"coral","trend","0"
+153,"coral","trend","disagg2012_gap_fill"
+154,"coral","trend","disagg2012_gap_fill"
+155,"coral","trend","mean of other habitats"
+156,"coral","trend","disagg2012_gap_fill"
+157,"coral","trend","mean of other habitats"
+158,"coral","trend","disagg2012_gap_fill"
+159,"coral","trend","mean of other habitats"
+161,"coral","trend","disagg2012_gap_fill"
+162,"coral","trend",NA
+163,"coral","trend","0"
+164,"coral","trend","0"
+166,"coral","trend","0"
+167,"coral","trend",NA
+168,"coral","trend",NA
+169,"coral","trend",NA
+171,"coral","trend","0"
+172,"coral","trend",NA
+173,"coral","trend",NA
+174,"coral","trend",NA
+175,"coral","trend",NA
+176,"coral","trend",NA
+177,"coral","trend",NA
+178,"coral","trend",NA
+179,"coral","trend",NA
+180,"coral","trend",NA
+181,"coral","trend",NA
+182,"coral","trend",NA
+183,"coral","trend",NA
+184,"coral","trend",NA
+186,"coral","trend",NA
+187,"coral","trend",NA
+188,"coral","trend",NA
+189,"coral","trend",NA
+190,"coral","trend","mean of other habitats"
+191,"coral","trend","mean of other habitats"
+192,"coral","trend",NA
+193,"coral","trend",NA
+194,"coral","trend",NA
+195,"coral","trend",NA
+196,"coral","trend",NA
+197,"coral","trend",NA
+198,"coral","trend",NA
+199,"coral","trend",NA
+200,"coral","trend",NA
+202,"coral","trend","0"
+203,"coral","trend","0"
+204,"coral","trend","mean of other habitats"
+205,"coral","trend","0"
+206,"coral","trend","0"
+207,"coral","trend","0"
+208,"coral","trend","0"
+209,"coral","trend","0"
+210,"coral","trend","0"
+212,"coral","trend","mean of other habitats"
+213,"coral","trend",NA
+214,"coral","trend","0"
+215,"coral","trend","0"
+216,"coral","trend","0"
+218,"coral","trend",NA
+219,"coral","trend",NA
+220,"coral","trend","disagg2012_gap_fill"
+221,"coral","trend","disagg2012_gap_fill"
+222,"coral","trend",NA
+223,"coral","trend",NA
+224,"coral","trend",NA
+227,"coral","trend",NA
+228,"coral","trend",NA
+231,"coral","trend","mean of other habitats"
+232,"coral","trend",NA
+237,"coral","trend","mean of other habitats"
+244,"coral","trend","disagg2012_gap_fill"
+245,"coral","trend","disagg2012_gap_fill"
+247,"coral","trend","0"
+248,"coral","trend","disagg2012_gap_fill"
+249,"coral","trend","disagg2012_gap_fill"
+250,"coral","trend","disagg2012_gap_fill"
