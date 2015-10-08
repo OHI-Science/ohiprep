@@ -296,10 +296,12 @@ write.csv(trend_gf, 'globalprep/NSIDC_SeaIce/v2015/data/trend_gap_fill_seaice.cs
 ############################################################################
 
 # Extent:
-## mangrove 
 
 mangrove_extent <- read.csv('globalprep/hab_mangrove/v2015/data/extent_gap_fill.csv')
 si_extent <- read.csv('globalprep/NSIDC_SeaIce/v2015/data/extent_gap_fill_seaice.csv')
 coral_extent <- read.csv('globalprep/hab_coral/v2012/data/extent_gap_fill_coral.csv')
 sm_extent <- read.csv('globalprep/hab_saltmarsh/v2012/data/extent_gap_fill_saltmarsh.csv')
-sg_extent <- read.csv('globalprep/habitat_')
+sg_extent <- read.csv('globalprep/hab_seagrass/v2012/data/extent_gap_fill_seagrass.csv')
+sb_extent <- read.csv('globalprep/hab_soft_bottom/v2012/data/extent_gap_fill.csv')
+
+extent_gf <- rbind(mangrove_extent, si_extent, coral_extent, sm_extent, sg_extent, sb_extent)
