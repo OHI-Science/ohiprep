@@ -45,9 +45,10 @@ trend_gaps <- tmp %>%
   mutate(gap_fill = ifelse(is.na(trend), 1, 0)) %>%   # these have extent data, but no trend data. Will use mean trend to gapfill
   mutate(type = ifelse(gap_fill==1, 'regional (r2) mean', NA)) %>%
   mutate(gap_fill = ifelse(rgn_id %in% c(29, 140, 169), 1, gap_fill)) %>% # these regions' trends were reported as one trend
-  mutate(type = ifelse(rgn_id %in% c(29, 140, 169), "three countries combined", type)) %>%
+  mutate(gap_fill = ifelse(rgn_id %in% c(29, 140, 169), "three countries combined", gap_fill)) %>%
   mutate(habitat="mangrove") %>%
-  select(rgn_id, habitat, gap_fill, type)
+  mutate(variable="trend") %>%
+  select(rgn_id, habitat, variable, gap_fill)
 write.csv(trend_gaps, 'globalprep/hab_mangrove/v2015/data/trend_gap_fill.csv',  row.names=FALSE)  #same for all years, so save only one
 
 tmp  <- tmp %>%
@@ -101,7 +102,8 @@ summary(tmp)
 
 ### save summary of gap-filling:
 health_gaps <- tmp %>%
-  select(rgn_id, habitat, gap_fill)
+  mutate(variable = "health") %>%
+  select(rgn_id, habitat, variable, gap_fill)
 write.csv(health_gaps, 'globalprep/hab_mangrove/v2015/data/health_gap_fill.csv', row.names=FALSE)
 
 ### save health data:
@@ -117,7 +119,10 @@ all <- read.csv('globalprep/hab_mangrove/v2015/tmp/eez_and_land_km2.csv') %>%
   select(rgn_id = zone, mangrove = sum)
 
 extent_gf <- all %>%
-  mutate(gap_fill = ifelse(mangrove > 0, 0, NA)) 
+  mutate(gap_fill = ifelse(mangrove > 0, 0, NA)) %>%
+  mutate(habitat = "mangrove") %>%
+  mutate(variable = "extent") %>%
+  select(rgn_id, habitat, variable, gap_fill)
 write.csv(extent_gf, 'globalprep/hab_mangrove/v2015/data/extent_gap_fill.csv', row.names=FALSE)
 
 inland1km <- read.csv('globalprep/hab_mangrove/v2015/tmp/inland_1km_km2.csv') %>%
