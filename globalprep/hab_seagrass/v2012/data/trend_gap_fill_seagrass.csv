@@ -1,30 +1,30 @@
 "rgn_id","habitat","variable","gap_fill"
-1,"seagrasses","trend","georegion and disagg2012_gap_fill"
-2,"seagrasses","trend","georegion and disagg2012_gap_fill"
+1,"seagrasses","trend","mean of other habitats"
+2,"seagrasses","trend","mean of other habitats"
 3,"seagrasses","trend",NA
 4,"seagrasses","trend",NA
-5,"seagrasses","trend","georegion and NA"
-6,"seagrasses","trend","georegion and NA"
-7,"seagrasses","trend","georegion and NA"
-8,"seagrasses","trend","0 and NA"
-9,"seagrasses","trend","0 and NA"
+5,"seagrasses","trend","mean of other habitats"
+6,"seagrasses","trend","mean of other habitats"
+7,"seagrasses","trend","mean of other habitats"
+8,"seagrasses","trend","0"
+9,"seagrasses","trend","0"
 10,"seagrasses","trend",NA
-11,"seagrasses","trend","georegion and NA"
+11,"seagrasses","trend","mean of other habitats"
 12,"seagrasses","trend",NA
-13,"seagrasses","trend","georegion and disagg2012_gap_fill"
-14,"seagrasses","trend","georegion and NA"
-15,"seagrasses","trend","0 and NA"
-16,"seagrasses","trend","0 and NA"
-17,"seagrasses","trend","0 and NA"
-18,"seagrasses","trend","0 and NA"
+13,"seagrasses","trend","mean of other habitats"
+14,"seagrasses","trend","mean of other habitats"
+15,"seagrasses","trend","0"
+16,"seagrasses","trend","0"
+17,"seagrasses","trend","0"
+18,"seagrasses","trend","0"
 19,"seagrasses","trend",NA
 20,"seagrasses","trend",NA
 21,"seagrasses","trend",NA
 24,"seagrasses","trend",NA
-25,"seagrasses","trend","0 and NA"
-26,"seagrasses","trend","georegion and disagg2012_gap_fill"
-28,"seagrasses","trend","georegion and NA"
-29,"seagrasses","trend","georegion and disagg2012_gap_fill"
+25,"seagrasses","trend","0"
+26,"seagrasses","trend","mean of other habitats"
+28,"seagrasses","trend","mean of other habitats"
+29,"seagrasses","trend","mean of other habitats"
 30,"seagrasses","trend",NA
 31,"seagrasses","trend",NA
 32,"seagrasses","trend",NA
@@ -32,28 +32,28 @@
 34,"seagrasses","trend",NA
 35,"seagrasses","trend",NA
 36,"seagrasses","trend",NA
-37,"seagrasses","trend","georegion and NA"
+37,"seagrasses","trend","mean of other habitats"
 38,"seagrasses","trend",NA
-39,"seagrasses","trend","georegion and NA"
-40,"seagrasses","trend","georegion and NA"
-41,"seagrasses","trend","georegion and NA"
-42,"seagrasses","trend","0 and NA"
-43,"seagrasses","trend","georegion and NA"
+39,"seagrasses","trend","mean of other habitats"
+40,"seagrasses","trend","mean of other habitats"
+41,"seagrasses","trend","mean of other habitats"
+42,"seagrasses","trend","0"
+43,"seagrasses","trend","mean of other habitats"
 44,"seagrasses","trend",NA
-45,"seagrasses","trend","georegion and NA"
+45,"seagrasses","trend","mean of other habitats"
 46,"seagrasses","trend",NA
-47,"seagrasses","trend","georegion and NA"
+47,"seagrasses","trend","mean of other habitats"
 48,"seagrasses","trend",NA
-49,"seagrasses","trend","georegion and NA"
-50,"seagrasses","trend","georegion and NA"
-51,"seagrasses","trend","georegion and NA"
-52,"seagrasses","trend","georegion and NA"
+49,"seagrasses","trend","mean of other habitats"
+50,"seagrasses","trend","mean of other habitats"
+51,"seagrasses","trend","mean of other habitats"
+52,"seagrasses","trend","mean of other habitats"
 53,"seagrasses","trend",NA
-54,"seagrasses","trend","georegion and NA"
+54,"seagrasses","trend","mean of other habitats"
 55,"seagrasses","trend",NA
 56,"seagrasses","trend",NA
 57,"seagrasses","trend",NA
-58,"seagrasses","trend","georegion and disagg2012_gap_fill"
+58,"seagrasses","trend","mean of other habitats"
 59,"seagrasses","trend",NA
 60,"seagrasses","trend",NA
 61,"seagrasses","trend",NA
@@ -61,20 +61,20 @@
 63,"seagrasses","trend",NA
 64,"seagrasses","trend",NA
 65,"seagrasses","trend",NA
-66,"seagrasses","trend","georegion and NA"
+66,"seagrasses","trend","mean of other habitats"
 67,"seagrasses","trend",NA
-68,"seagrasses","trend","georegion and NA"
+68,"seagrasses","trend","mean of other habitats"
 69,"seagrasses","trend",NA
 70,"seagrasses","trend",NA
 71,"seagrasses","trend",NA
 72,"seagrasses","trend",NA
-73,"seagrasses","trend","georegion and NA"
+73,"seagrasses","trend","mean of other habitats"
 74,"seagrasses","trend",NA
-75,"seagrasses","trend","georegion and NA"
+75,"seagrasses","trend","mean of other habitats"
 76,"seagrasses","trend",NA
 77,"seagrasses","trend",NA
 78,"seagrasses","trend",NA
-79,"seagrasses","trend","0 and NA"
+79,"seagrasses","trend","0"
 80,"seagrasses","trend",NA
 81,"seagrasses","trend",NA
 82,"seagrasses","trend",NA
@@ -89,133 +89,133 @@
 93,"seagrasses","trend",NA
 94,"seagrasses","trend",NA
 95,"seagrasses","trend",NA
-96,"seagrasses","trend","georegion and NA"
+96,"seagrasses","trend","mean of other habitats"
 97,"seagrasses","trend",NA
-98,"seagrasses","trend","georegion and NA"
-99,"seagrasses","trend","georegion and NA"
+98,"seagrasses","trend","mean of other habitats"
+99,"seagrasses","trend","mean of other habitats"
 100,"seagrasses","trend",NA
 101,"seagrasses","trend",NA
-102,"seagrasses","trend","georegion and NA"
+102,"seagrasses","trend","mean of other habitats"
 103,"seagrasses","trend",NA
 104,"seagrasses","trend",NA
 105,"seagrasses","trend",NA
-106,"seagrasses","trend","georegion and NA"
+106,"seagrasses","trend","mean of other habitats"
 107,"seagrasses","trend",NA
 108,"seagrasses","trend",NA
-110,"seagrasses","trend","georegion and NA"
+110,"seagrasses","trend","mean of other habitats"
 111,"seagrasses","trend","disagg2012_gap_fill"
-112,"seagrasses","trend","georegion and NA"
+112,"seagrasses","trend","mean of other habitats"
 113,"seagrasses","trend","disagg2012_gap_fill"
-114,"seagrasses","trend","georegion and NA"
-115,"seagrasses","trend","georegion and NA"
-116,"seagrasses","trend","georegion and NA"
+114,"seagrasses","trend","mean of other habitats"
+115,"seagrasses","trend","mean of other habitats"
+116,"seagrasses","trend","mean of other habitats"
 117,"seagrasses","trend","disagg2012_gap_fill"
 118,"seagrasses","trend","disagg2012_gap_fill"
-119,"seagrasses","trend","georegion and NA"
-120,"seagrasses","trend","georegion and NA"
+119,"seagrasses","trend","mean of other habitats"
+120,"seagrasses","trend","mean of other habitats"
 121,"seagrasses","trend","disagg2012_gap_fill"
-122,"seagrasses","trend","georegion and NA"
-123,"seagrasses","trend","georegion and NA"
-124,"seagrasses","trend","georegion and NA"
-125,"seagrasses","trend","georegion and NA"
+122,"seagrasses","trend","mean of other habitats"
+123,"seagrasses","trend","mean of other habitats"
+124,"seagrasses","trend","mean of other habitats"
+125,"seagrasses","trend","mean of other habitats"
 126,"seagrasses","trend",NA
 127,"seagrasses","trend",NA
-129,"seagrasses","trend","georegion and NA"
+129,"seagrasses","trend","mean of other habitats"
 130,"seagrasses","trend",NA
-131,"seagrasses","trend","georegion and NA"
-132,"seagrasses","trend","0 and NA"
-133,"seagrasses","trend","georegion and NA"
+131,"seagrasses","trend","mean of other habitats"
+132,"seagrasses","trend","0"
+133,"seagrasses","trend","mean of other habitats"
 134,"seagrasses","trend",NA
-135,"seagrasses","trend","0 and NA"
+135,"seagrasses","trend","0"
 136,"seagrasses","trend",NA
 137,"seagrasses","trend",NA
 138,"seagrasses","trend",NA
-139,"seagrasses","trend","georegion and NA"
-140,"seagrasses","trend","georegion and disagg2012_gap_fill"
+139,"seagrasses","trend","mean of other habitats"
+140,"seagrasses","trend","mean of other habitats"
 141,"seagrasses","trend",NA
 143,"seagrasses","trend",NA
 144,"seagrasses","trend",NA
 145,"seagrasses","trend",NA
 146,"seagrasses","trend",NA
-147,"seagrasses","trend","georegion and disagg2012_gap_fill"
+147,"seagrasses","trend","mean of other habitats"
 148,"seagrasses","trend",NA
 149,"seagrasses","trend",NA
 150,"seagrasses","trend",NA
-151,"seagrasses","trend","georegion and disagg2012_gap_fill"
-152,"seagrasses","trend","georegion and NA"
+151,"seagrasses","trend","mean of other habitats"
+152,"seagrasses","trend","mean of other habitats"
 153,"seagrasses","trend",NA
 154,"seagrasses","trend",NA
-155,"seagrasses","trend","georegion and NA"
+155,"seagrasses","trend","mean of other habitats"
 156,"seagrasses","trend",NA
 157,"seagrasses","trend",NA
 158,"seagrasses","trend",NA
 159,"seagrasses","trend",NA
 161,"seagrasses","trend",NA
 162,"seagrasses","trend",NA
-163,"seagrasses","trend","0 and NA"
-164,"seagrasses","trend","0 and NA"
-166,"seagrasses","trend","georegion and NA"
+163,"seagrasses","trend","0"
+164,"seagrasses","trend","0"
+166,"seagrasses","trend","mean of other habitats"
 167,"seagrasses","trend",NA
 168,"seagrasses","trend",NA
 169,"seagrasses","trend",NA
-171,"seagrasses","trend","0 and NA"
+171,"seagrasses","trend","0"
 172,"seagrasses","trend",NA
 173,"seagrasses","trend",NA
 174,"seagrasses","trend",NA
-175,"seagrasses","trend","georegion and NA"
+175,"seagrasses","trend","mean of other habitats"
 176,"seagrasses","trend",NA
 177,"seagrasses","trend",NA
-178,"seagrasses","trend","georegion and NA"
-179,"seagrasses","trend","0 and NA"
+178,"seagrasses","trend","mean of other habitats"
+179,"seagrasses","trend","0"
 180,"seagrasses","trend",NA
 181,"seagrasses","trend",NA
-182,"seagrasses","trend","georegion and NA"
+182,"seagrasses","trend","mean of other habitats"
 183,"seagrasses","trend",NA
-184,"seagrasses","trend","georegion and NA"
+184,"seagrasses","trend","mean of other habitats"
 186,"seagrasses","trend",NA
 187,"seagrasses","trend",NA
 188,"seagrasses","trend",NA
 189,"seagrasses","trend",NA
-190,"seagrasses","trend","georegion and NA"
-191,"seagrasses","trend","georegion and NA"
-192,"seagrasses","trend","georegion and NA"
-193,"seagrasses","trend","georegion and NA"
-194,"seagrasses","trend","georegion and NA"
+190,"seagrasses","trend","mean of other habitats"
+191,"seagrasses","trend","mean of other habitats"
+192,"seagrasses","trend","mean of other habitats"
+193,"seagrasses","trend","mean of other habitats"
+194,"seagrasses","trend","mean of other habitats"
 195,"seagrasses","trend",NA
-196,"seagrasses","trend","georegion and NA"
+196,"seagrasses","trend","mean of other habitats"
 197,"seagrasses","trend",NA
 198,"seagrasses","trend",NA
 199,"seagrasses","trend",NA
-200,"seagrasses","trend","georegion and NA"
-202,"seagrasses","trend","0 and NA"
-203,"seagrasses","trend","georegion and NA"
+200,"seagrasses","trend","mean of other habitats"
+202,"seagrasses","trend","0"
+203,"seagrasses","trend","mean of other habitats"
 204,"seagrasses","trend",NA
-205,"seagrasses","trend","georegion and NA"
-206,"seagrasses","trend","0 and NA"
-207,"seagrasses","trend","georegion and NA"
-208,"seagrasses","trend","georegion and NA"
-209,"seagrasses","trend","0 and NA"
-210,"seagrasses","trend","georegion and NA"
-212,"seagrasses","trend","georegion and NA"
+205,"seagrasses","trend","mean of other habitats"
+206,"seagrasses","trend","0"
+207,"seagrasses","trend","mean of other habitats"
+208,"seagrasses","trend","mean of other habitats"
+209,"seagrasses","trend","0"
+210,"seagrasses","trend","mean of other habitats"
+212,"seagrasses","trend","mean of other habitats"
 213,"seagrasses","trend",NA
-214,"seagrasses","trend","georegion and NA"
-215,"seagrasses","trend","georegion and NA"
-216,"seagrasses","trend","0 and NA"
-218,"seagrasses","trend","georegion and NA"
+214,"seagrasses","trend","mean of other habitats"
+215,"seagrasses","trend","mean of other habitats"
+216,"seagrasses","trend","0"
+218,"seagrasses","trend","mean of other habitats"
 219,"seagrasses","trend",NA
-220,"seagrasses","trend","georegion and disagg2012_gap_fill"
-221,"seagrasses","trend","georegion and disagg2012_gap_fill"
-222,"seagrasses","trend","georegion and NA"
+220,"seagrasses","trend","mean of other habitats"
+221,"seagrasses","trend","mean of other habitats"
+222,"seagrasses","trend","mean of other habitats"
 223,"seagrasses","trend",NA
 224,"seagrasses","trend",NA
 227,"seagrasses","trend",NA
 228,"seagrasses","trend",NA
-231,"seagrasses","trend","georegion and NA"
+231,"seagrasses","trend","mean of other habitats"
 232,"seagrasses","trend",NA
 237,"seagrasses","trend",NA
 244,"seagrasses","trend",NA
-245,"seagrasses","trend","georegion and disagg2012_gap_fill"
+245,"seagrasses","trend","mean of other habitats"
 247,"seagrasses","trend",NA
-248,"seagrasses","trend","georegion and disagg2012_gap_fill"
-249,"seagrasses","trend","georegion and disagg2012_gap_fill"
-250,"seagrasses","trend","georegion and disagg2012_gap_fill"
+248,"seagrasses","trend","mean of other habitats"
+249,"seagrasses","trend","mean of other habitats"
+250,"seagrasses","trend","mean of other habitats"
