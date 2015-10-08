@@ -125,7 +125,7 @@ write.csv(sb_health, 'globalprep/hab_soft_bottom/v2012/data/health_gap_fill.csv'
 
 sb_trend <- gap_fill_function(var="trend", no_gap_fill = "actuals", data=tmp) %>%
   select(rgn_id, habitat, variable, gap_fill)
-write.csv(sb_health, 'globalprep/hab_soft_bottom/v2012/data/trend_gap_fill.csv', row.names=FALSE)
+write.csv(sb_trend, 'globalprep/hab_soft_bottom/v2012/data/trend_gap_fill.csv', row.names=FALSE)
 
 ############################################################################
 ##corals ----
@@ -296,7 +296,6 @@ write.csv(trend_gf, 'globalprep/NSIDC_SeaIce/v2015/data/trend_gap_fill_seaice.cs
 ############################################################################
 
 # Extent:
-
 mangrove_extent <- read.csv('globalprep/hab_mangrove/v2015/data/extent_gap_fill.csv')
 si_extent <- read.csv('globalprep/NSIDC_SeaIce/v2015/data/extent_gap_fill_seaice.csv')
 coral_extent <- read.csv('globalprep/hab_coral/v2012/data/extent_gap_fill_coral.csv')
@@ -305,3 +304,33 @@ sg_extent <- read.csv('globalprep/hab_seagrass/v2012/data/extent_gap_fill_seagra
 sb_extent <- read.csv('globalprep/hab_soft_bottom/v2012/data/extent_gap_fill.csv')
 
 extent_gf <- rbind(mangrove_extent, si_extent, coral_extent, sm_extent, sg_extent, sb_extent)
+
+table(extent_gf$gap_fill)
+
+write.csv(extent_gf, 'globalprep/hab_combined/v2015/data/habitat_extent_gap_fill.csv', row.names = FALSE)
+
+# Health:
+mangrove <- read.csv('globalprep/hab_mangrove/v2015/data/health_gap_fill.csv')
+si <- read.csv('globalprep/NSIDC_SeaIce/v2015/data/health_gap_fill_seaice.csv')
+coral <- read.csv('globalprep/hab_coral/v2012/data/health_gap_fill_coral.csv')
+sm <- read.csv('globalprep/hab_saltmarsh/v2012/data/health_gap_fill_saltmarsh.csv')
+sg <- read.csv('globalprep/hab_seagrass/v2012/data/health_gap_fill_seagrass.csv')
+sb <- read.csv('globalprep/hab_soft_bottom/v2012/data/health_gap_fill.csv')
+
+health_gf <- rbind(mangrove, si, coral, sm, sg, sb)
+summary(health_gf)
+
+write.csv(health_gf, 'globalprep/hab_combined/v2015/data/habitat_health_gap_fill.csv', row.names = FALSE)
+
+# Trend:
+mangrove <- read.csv('globalprep/hab_mangrove/v2015/data/trend_gap_fill.csv')
+si <- read.csv('globalprep/NSIDC_SeaIce/v2015/data/trend_gap_fill_seaice.csv')
+coral <- read.csv('globalprep/hab_coral/v2012/data/trend_gap_fill_coral.csv')
+sm <- read.csv('globalprep/hab_saltmarsh/v2012/data/trend_gap_fill_saltmarsh.csv')
+sg <- read.csv('globalprep/hab_seagrass/v2012/data/trend_gap_fill_seagrass.csv')
+sb <- read.csv('globalprep/hab_soft_bottom/v2012/data/trend_gap_fill.csv')
+
+trend_gf <- rbind(mangrove, si, coral, sm, sg, sb)
+summary(trend_gf)
+
+write.csv(trend_gf, 'globalprep/hab_combined/v2015/data/habitat_trend_gap_fill.csv', row.names = FALSE)
