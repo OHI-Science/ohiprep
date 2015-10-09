@@ -205,7 +205,7 @@ left_join(d_regions, sm_trend) #yes
 tmp <- left_join(sm_whence, sm_extent) %>%
   left_join(sm_health) %>%
   left_join(sm_trend) %>%
-  mutate(habitat="salt_marsh")
+  mutate(habitat="saltmarsh")
 
 
 sm_extent <- gap_fill_function(var="extent", no_gap_fill = "actuals", data=tmp) %>%
@@ -251,7 +251,7 @@ left_join(d_regions, sg_trend) #yes
 tmp <- left_join(sg_whence, sg_extent) %>%
   left_join(sg_health) %>%
   left_join(sg_trend) %>%
-  mutate(habitat="seagrasses")
+  mutate(habitat="seagrass")
 
 
 sg_extent <- gap_fill_function(var="extent", no_gap_fill = "actuals", data=tmp) %>%
