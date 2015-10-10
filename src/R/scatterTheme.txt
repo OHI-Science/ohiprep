@@ -1,3 +1,5 @@
+## This theme works well for scatterplots
+
 require(grid) #used for plot margin
 
 scatterTheme <- theme_bw() + theme(axis.text=element_text(size=20),
