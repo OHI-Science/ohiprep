@@ -1,4 +1,4 @@
-library(grid) #used for plot margin
+require(grid) #used for plot margin
 
 scatterTheme <- theme_bw() + theme(axis.text=element_text(size=20),
                               axis.title=element_text(size=20, vjust=.15),
