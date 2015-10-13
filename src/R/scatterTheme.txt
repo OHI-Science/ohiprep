@@ -1,0 +1,11 @@
+## This theme works well for scatterplots
+
+require(grid) #used for plot margin
+
+scatterTheme <- theme_bw() + theme(axis.text=element_text(size=20),
+                              axis.title=element_text(size=20, vjust=.15),
+                              plot.margin=unit(c(1,1,1,1), "lines"),
+                              legend.title = element_text(size=20),
+                              legend.text= element_text(size=20),
+                              plot.title = element_text(lineheight=.8, size=20),
+                              strip.text.x = element_text(size = 18))
