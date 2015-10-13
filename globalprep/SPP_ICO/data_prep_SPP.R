@@ -10,6 +10,7 @@ library(data.table) # for fread()
 library(sp)
 library(rgdal)
 library(raster)
+library(maptools)
 library(readr)      # for read_csv()
 
 setwd('~/github/ohiprep')
@@ -51,7 +52,7 @@ source(file.path(goal, 'R/ingest_iucn.R'))
 ##############################################################################=
 ### Generate lookup - species <-> category/trend and spatial_source ----
 ##############################################################################=
-spp_all <- create_spp_master_lookup(reload = TRUE)
+spp_all <- create_spp_master_lookup(reload = FALSE)
 ### | am_sid | sciname | am_category | iucn_sid | iucn_category | popn_trend | popn_category | 
 ### | info_source | spp_group | id_no | objectid | spatial_source | category_score | trend_score |
 # 
@@ -62,10 +63,13 @@ spp_all <- create_spp_master_lookup(reload = TRUE)
 ##############################################################################=
 ### Generate lookup - IUCN species to LOICZID ----
 ##############################################################################=
+
 extract_loiczid_per_spp(groups_override = NULL, reload = FALSE)
 ### Extract loiczid cell IDs for each species within each species group.  Save 
 ### a .csv file for that group, with fields:
-###       sciname | iucn_sid | LOICZID | prop_area
+###       sciname | iucn_sid | presence | LOICZID | prop_area
+### * presence codes: 1 extant; 2 prob extant (discontinued); 3 Possibly Extant;
+###                   4 Possibly Extinct; 5 Extinct (post 1500); 6 Presence Uncertain
 ### NOTES: this takes a long time - multiple hours for some of the shape files.  
 ### * reload = FALSE allows it to skip extraction on groups with files already present.
 ### * use groups_override argument to run function on partial list of species groups.
@@ -178,10 +182,10 @@ write_csv(spp_trend_aq,  file.path(dir_git, scenario, 'data/spp_trend_aq.csv'))
 ##############################################################################=
 scenario <- 'vAM_IUCN'
 
-pref_flag <- '_AMpref'
-prob_filter <- 0.05
+pref_flag <- '_IUCNpref'
+prob_filter <- 0.40
 
-spp_all <- create_spp_master_lookup(source_pref = 'am', fn_tag = pref_flag, reload = FALSE)
+spp_all <- create_spp_master_lookup(source_pref = 'iucn', fn_tag = pref_flag, reload = FALSE)
 # only affected by am/iucn preference
 
 am_cells_spp_sum <- process_am_summary_per_cell(fn_tag = sprintf('%s_prob%s', pref_flag, prob_filter), prob_filter = prob_filter, reload = TRUE)
@@ -197,8 +201,6 @@ summary_by_rgn     <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup,
 ### sp_id | rgn_mean_cat | rgn_mean_trend | status
 
 ### Create final outputs:
-if(!exists('summary_by_rgn')) 
-  summary_by_rgn <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary.csv'))
 spp_status <- summary_by_rgn %>%
   select(rgn_id, score = status)
 spp_trend <- summary_by_rgn %>%
