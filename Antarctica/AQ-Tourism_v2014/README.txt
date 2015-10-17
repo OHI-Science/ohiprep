@@ -2,7 +2,13 @@ The R files for preparing the data and calculating status/trend are located: htt
 
 ## Notes about data and processing
 
-Raw data?: raw/ATCM35_att068_e.doc
+Raw data: 
+The data came from: http://iaato.org/tourism-statistics
+
+I used the "Number of Visits per Site/per Activity" dataset for the 2013-2014 and the 2014-2015 years. The data have several tabs, and the summary is on the first tab, labeled "all-alpha", which is just the data sorted in alphabetical order by location. This shows the total number of "tourists" by location, and also breaks it down to individual activities as well. The data came from the "Total" column.
+
+
+for site information: raw/ATCM35_att068_e.doc
 Description of data processing: AQ_Tourism&Recreation.png
 
 CalculatingFinalData.R = script to calculate status and trend data
