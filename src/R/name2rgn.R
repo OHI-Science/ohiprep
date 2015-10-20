@@ -20,10 +20,6 @@
 #' @keywords ohi
 #' @export
 
-# library(tidyr)
-# library(dplyr)
-# library(stringr)
-
 
 name2rgn <- function(df_in, 
                      fld_name      = 'country', 
@@ -57,19 +53,7 @@ name2rgn <- function(df_in,
     rbind_list(syns) %>% 
     group_by(tmp_name) %>% 
     summarize(rgn_id = first(rgn_id), tmp_type = first(tmp_type)) 
-  # these are the ones that get cut by the summarize?
-  #           tmp_name rgn_id   tmp_type
-  #     1      Reunion     32 ohi_region
-  #     2      Curacao    244 ohi_region
-  #     3 Sint Maarten    220 ohi_region
-  #     4      Ecuador    137 ohi_region
-  #     5       Brazil    171 ohi_region
-  #     6        Chile    224 ohi_region
-  #     7   Azerbaijan    255 landlocked
-  # ??? why is Azerbaijan both eez and landlocked?
-  # ??? are others on there because the "official" OHI name ('eez') is also 
-  #   on the "synonyms" list?
-  
+
   ### create a temp field in the target data frame, for the field that is being combined.
   df_in['tmp_name'] <- df_in[fld_name]
   
@@ -82,7 +66,7 @@ name2rgn <- function(df_in,
            tmp_name = str_replace(tmp_name, "R.+union", "Reunion"), 
            tmp_name = str_replace(tmp_name, "R.+publique", "Republique"), 
            tmp_name = str_replace(tmp_name, "Cura.+ao", "Curacao"), 
-           tmp_name = str_replace(tmp_name, "Saint Barth.+lemy", "Saint Barthelemy"), 
+           tmp_name = str_replace(tmp_name, "S.+lemy", "Saint Barthelemy"), 
            tmp_name = str_replace(tmp_name, "S.+Principe", "Sao Tome and Principe"))
 
   ### combine target data frame with region name data frame;
@@ -107,9 +91,8 @@ name2rgn <- function(df_in,
     cat("\nThese data were removed for not having any match in the lookup tables:\n")
     print(table(as.character(unique(toprint$country))))
   }
-  ### !!! from CIA database - drops Saint Helena/Ascension/Tristan da Cunha combo
-  
-  # print out the full table of removed names.
+
+  ### print out the full table of removed names.
   if (nrow(df_removed) > 0) {
     cat("\nThese data were removed for not being of the proper rgn_type (eez,ohi_region) or mismatching region names in the lookup tables:\n")
     print(table(select(df_removed, tmp_name, tmp_type), useNA = "ifany"))
@@ -124,18 +107,14 @@ name2rgn <- function(df_in,
     stop("FIX region lookups; one or more rows missing rgn_id values.")
   }
   
-  ### !!! Here's where the collapsing begins.  
-  ### Idea: just report duplicated rgn_ids here, and set up a new
-  ### function to collapse them?
-
-  ### Drop fld_name column if desired. If kept, and == 'rgn_name',
-  ### rename it so it doesn't conflict with new 'rgn_name'
+  ### Drop fld_name column ('country' e.g.) if desired. If kept, 
+  ### and == 'rgn_name', rename so it doesn't conflict with new 'rgn_name'
   if(!keep_fld_name) {
     df_matched <- df_matched[ , -which(names(df_in_matched) == fld_name)]
   } else {
     if(fld_name == 'rgn_name') {
       df_matched <- df_matched %>%
-        rename(rgn_id_orig = rgn_id)
+        rename(rgn_name_orig = rgn_name)
     }
   }
   
@@ -148,7 +127,7 @@ name2rgn <- function(df_in,
   i_dupes <- duplicated(df_out$rgn_id, fromLast = FALSE) | 
     duplicated(df_out$rgn_id, fromLast = TRUE)
   if(sum(i_dupes) > 0) {
-    cat(sprintf("\nDUPLICATES found. Consider using ??? to collapse duplicates.\n"))
+    message(sprintf("\nDUPLICATES found. Consider using collapse2rgn to collapse duplicates.\n"))
     df_out_dupes <- df_out[i_dupes, ] %>%
       arrange(rgn_id, rgn_name)
     print(df_out_dupes)
@@ -279,17 +258,12 @@ name_to_rgn1 <- function(df_in,
   
   message('name_to_rgn is old school; please use name2rgn and collapse2rgn\n')
 
-  rgn_master.csv
-  
   df_named <- df_in %>% 
     name2rgn(fld_name      = fld_name, 
              dir_lookup    = dir_lookup,
              rgn_master    = rgn_master.csv,
              rgn_synonyms  = rgn_synonyms.csv,
              keep_fld_name = TRUE)
-  
-  message(sprintf('Length of df_named = %s\n', nrow(df_named)))
-  message(sprintf('Columns in df_named = %s\n', paste(names(df_named), collapse = ', ')))
   
   df_collapsed <- df_named %>% 
     collapse2rgn(fld_value = fld_value,
@@ -301,9 +275,6 @@ name_to_rgn1 <- function(df_in,
                                        'weighted.mean' = 'weighted_mean',
                                        collapse_fxn),
                  collapse_wts = collapse_csv)
-  
-  message(sprintf('Length of df_collapsed = %s\n', nrow(df_collapsed)))
-  message(sprintf('Columns in df_collapsed = %s\n', paste(names(df_collapsed), collapse = ', ')))
   
   fld_keep_rgn_id <- c('rgn_id', setdiff(c(flds_unique), c('rgn_id', fld_name)))
   
@@ -333,57 +304,3 @@ name_to_rgn1 <- function(df_in,
   return(as.data.frame(df_out))
 }
 
-
-
-# df_in1 <- read.csv('~/github/ohiprep/globalprep/TourismRecreation/raw/cia_gdp_pc_ppp.csv',
-#                    stringsAsFactors = FALSE, header = FALSE)
-# names(df_in1) = c('num', 'country', 'units', 'pc_gdp')
-# df_in1 <- df_in1 %>% mutate(
-#   country = str_replace(country, 'Ivory Coast', "Côte d'Ivoire"),
-#   country = str_replace(country, ', Republic of the', ', République du'),
-#   country = str_replace(country, 'Curacao', 'Curaçao'),
-#   country = str_replace(country, 'Sao Tome', 'São Tomé'),
-#   pc_gdp  = as.numeric(str_replace(pc_gdp, ',', ''))) %>%
-#   select(-num)
-# 
-# df_in2 <- read.csv('~/github/ohiprep/globalprep/TourismRecreation/raw/imf_gdp_pc_ppp.csv',
-#                    stringsAsFactors = FALSE) %>%
-#   select(country = Country, units = Units, pc_gdp = X2015)
-# df_in2 <- df_in2 %>% mutate(
-#   country = str_replace(country, 'Ivory Coast', "Côte d'Ivoire"),
-#   country = str_replace(country, ', Republic of the', ', République du'),
-#   country = str_replace(country, 'Curacao', 'Curaçao'),
-#   country = str_replace(country, 'Sao Tome', 'São Tomé'),
-#   pc_gdp  = as.numeric(str_replace(pc_gdp, ',', '')))
-# 
-# wts_csv <- 'src/LookupTables/blerg.csv'
-# wts_df <- read.csv(wts_csv, stringsAsFactors = FALSE)
-# wts_csv2 <- 'src/LookupTables/blerg1.csv'
-# wts_df2 <- read.csv(wts_csv2, stringsAsFactors = FALSE)
-
-# library(ohicore)
-# 
-# df_out_test2_new <- name_to_rgn1(df_in2, 
-#                              fld_name         = 'country', 
-# #                             flds_unique      = fld_name, 
-#                              fld_value        = 'pc_gdp', 
-#                              collapse_fxn     = c('sum_na','mean','weighted.mean')[3],
-#                              collapse_csv     = wts_df2,
-#                              # dir_lookup       = '~/github/ohiprep/src/LookupTables',
-#                              # rgn_master.csv   = file.path(dir_lookup, 'eez_rgn_2013master.csv'),
-#                              # rgn_synonyms.csv = file.path(dir_lookup, 'rgn_eez_v2013a_synonyms.csv'),
-#                              add_rgn_name     = TRUE, 
-#                              add_rgn_type     = FALSE)
-# 
-# df_out_test2_old <- name_to_rgn(df_in2, 
-#                                  fld_name         = 'country', 
-# #                                 flds_unique      = fld_name, 
-#                                  fld_value        = 'pc_gdp', 
-#                                  collapse_fxn     = c('sum_na','mean','weighted.mean')[3],
-#                                  collapse_csv     = wts_csv2,
-#                                  # dir_lookup       = '~/github/ohiprep/src/LookupTables',
-#                                  # rgn_master.csv   = file.path(dir_lookup, 'eez_rgn_2013master.csv'),
-#                                  # rgn_synonyms.csv = file.path(dir_lookup, 'rgn_eez_v2013a_synonyms.csv'),
-#                                  add_rgn_name     = TRUE, 
-#                                  add_rgn_type     = FALSE)
-# 
