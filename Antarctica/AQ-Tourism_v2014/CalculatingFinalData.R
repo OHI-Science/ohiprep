@@ -10,15 +10,24 @@
 library(dplyr)
 library(tidyr)
 
-status.year <- 2013
+status.year <- 2015
 trend.years <- (status.year-4):status.year
 
 # Load in data ----
 sites <- read.csv("Antarctica/AQ-Tourism_v2014/tmp/Sites_CCAMLR.csv")
-tourists <- read.csv("Antarctica/AQ-Tourism_v2014/raw/TR_data.csv")
+tourists <- read.csv("Antarctica/AQ-Tourism_v2014/tmp/TR_data.csv")
 
 sites <- sites %>%
   select("Site_Name"=Site_name, sp_id)
+
+## check that no new sites have been added
+setdiff(sites$Site_Name, tourists$Site_Name)
+tmp <- setdiff(tourists$Site_Name, sites$Site_Name)
+sites2 <- read.csv('Antarctica/AQ-Tourism_v2014/tmp/sites_dd.csv')
+filter(tourists, Site_Name %in% tmp)
+tmp2 <- data.frame(site_name = setdiff(tmp, sites2$Site_name))
+write.csv(tmp2, 'Antarctica/AQ-Tourism_v2014/dataPrep/newSites_2014_2015.csv', row.names=FALSE)
+
 
 # determine number of tourist days per region
 tourist_days <- tourists %>%
