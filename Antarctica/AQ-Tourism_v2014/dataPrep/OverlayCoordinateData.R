@@ -6,18 +6,19 @@
 # these got cut for not being in the CCAMLR region:
 # South Bay, Trinity Island-Mikkelsen Hrbr, Campbell Island
 
+# Sites with no coordinates: Chutney Cove and Stony Point
+
 library(sp)
 library(rgdal)
+library(dplyr)
 library(RColorBrewer)
 library(colorspace)
 
-rm(list = ls())
-
-setwd("/var/data/ohi/model/GL-AQ-Tourism_v2013")
-
-
 # Load in data ----
-sites <- read.csv("tmp/sites_dd.csv")
+sites <- read.csv("Antarctica/AQ-Tourism_v2014/tmp/sites_dd.csv")
+sites <- sites %>%
+  filter(!is.na(latitude_dd))
+
 map <- readOGR(dsn="/var/data/ohi/git-annex/Global/NCEAS-Regions_v2014/data", layer="sp_gcs")
 map <- map[map@data$sp_type %in% c("eez-ccamlr", "land-ccamlr"), ]
 plot(map)
@@ -26,9 +27,12 @@ plot(map)
 coordinates(sites) <- ~longitude_dd+latitude_dd
 proj4string(sites) <- CRS(proj4string(map))
 
+plot(sites, add=TRUE, col="red", pch=as.character(sites@data$Site_name))
+identify(sites)
+
 
 # Check by plotting ----
-png("AntarcticaMap_points.png", units="cm", width=15, height=15, res=300)
+png("Antarctica/AQ-Tourism_v2014/dataPrep/AntarcticaMap_points.png", units="cm", width=15, height=15, res=300)
 plot(map)
 plot(sites, add=TRUE, cex=.5, col="red", pch=16)
 dev.off()
@@ -52,16 +56,5 @@ sites_CCAMLR <- sites_CCAMLR[!is.na(sites_CCAMLR$sp_id), ]
 
 sites_CCAMLR <- subset(sites_CCAMLR, select=c(Site_name, sp_id, latitude_dd, longitude_dd, rgn_type))
 
-write.csv(sites_CCAMLR, "tmp/Sites_CCAMLR.csv", row.names=FALSE)
+write.csv(sites_CCAMLR, "Antarctica/AQ-Tourism_v2014/tmp/Sites_CCAMLR.csv", row.names=FALSE)
 
-########################################
-## Obtaining global reference points
-########################################
-gl_tr<-read.csv('raw/global_arrivals.csv') # load file with n tourists/country area from international arrivals 2009
-
-# calculate summary statistics from global density data: median, 90%ile
-gl_median<-quantile(gl_tr$tourist_days_area[gl_tr$tourist_days_area>0],probs=0.5,names = F)
-gl_90ile<-quantile(gl_tr$tourist_days_area[gl_tr$tourist_days_area>0],probs=0.90,names = F)
-
-gl_median
-gl_90ile
