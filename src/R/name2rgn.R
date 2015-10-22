@@ -136,7 +136,15 @@ name2rgn <- function(df_in,
   return(df_out)
 }
   
-
+complete2rgn <- function(df_in,
+                         fld_name = 'rgn_name',
+                         fld_id   = 'rgn_id') {
+  rgn_names <- read.csv('~/github/ohi-global/eez2013/layers/rgn_global.csv', stringsAsFactors = FALSE) %>%
+    rename(rgn_name = label)
+  
+  df_out <- df_in %>% 
+    full_join(rgn_names, by = c(fld_id, fld_name))
+}
 
 collapse2rgn <- function(df_in, 
                          fld_value,

@@ -1,4 +1,4 @@
-### data_prep_2015.R
+### data_prep_NP.R
 ### Prepare FAO commodities data for Natural Products goal. 
 
 ### Provenance:
@@ -113,7 +113,7 @@ for (f in list.files(dir_fao_data, pattern=glob2rx('*.csv'), full.names=T)) {
   ### Add region ID, summarize by region/product/year, save output
   m <- m %>% 
     name_to_rgn(fld_name='country', flds_unique=c('country', 'commodity', 'product', 'year'), 
-                fld_value='value', add_rgn_name=T)
+                fld_value='value', add_rgn_name = T)
     ### ???: name_to_rgn has some old code?  (%.% -> %>%, regroup -> group_by) Update to dplyr/tidyr functions
   
   
