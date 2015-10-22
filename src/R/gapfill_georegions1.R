@@ -144,18 +144,27 @@ library(dplyr); library(tidyr); library(stringr)
 ### Sample code/data from whounicef sanitation data
 data <- read.csv('src/gapfill_georegion_sampledata.csv', stringsAsFactors = FALSE)
 
-georegions <- read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %>%
-  spread(level, georgn_id) 
+get_georegions <- function() {
+  ### quick function to get and arrange dataframes for georegions and 
+  ### georegion labels.  
+  georegions <- read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %>%
+    spread(level, georgn_id) 
+  return(georegions)
+}
 
-georegion_labels <- read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv') %>%    
-  mutate(level_label = sprintf('%s_label', level)) %>%
-  select(-level) %>%
-  spread(level_label, label) %>%
-  left_join(
-    read.csv('../ohi-global/eez2013/layers/rgn_labels.csv') %>%
-      select(rgn_id, v_label=label),
-    by='rgn_id') %>%
-  arrange(r0_label, r1_label, r2_label, rgn_id); head(georegion_labels)
+get_georegion_labels <- function() {
+  georegion_labels <- read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv') %>%    
+    mutate(level_label = sprintf('%s_label', level)) %>%
+    select(-level) %>%
+    spread(level_label, label) %>%
+    left_join(
+      read.csv('../ohi-global/eez2013/layers/rgn_labels.csv') %>%
+        select(rgn_id, v_label=label),
+      by='rgn_id') %>%
+    arrange(r0_label, r1_label, r2_label, rgn_id)
+  return(georegion_labels)
+}
+
 
 # attrsave  <- file.path(dir_int, 'rgn_jmp_san_2015a_attr.csv')
 
@@ -176,10 +185,11 @@ georegion_labels <- read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.
 gapfill_georegions <- function(
   data, 
   georegions        = NULL, ### !!! added default; if NULL, load the layers/rgn_georegions.csv and process accordingly
+                            ### !!! maybe add a 'sovereign' code too?
   fld_id            = 'rgn_id', ### was intersect(names(data), names(georegions)), 
                         ### !!! error check and return useful message; fld_id must be in georegions as well, so rgn_id is a good default
   fld_year          = ifelse('year' %in% names(data), 'year', NA),
-  fld_value         = setdiff(names(data), c(fld_id, fld_weight, 'year')), 
+  fld_value, # no default? this is important for the user to pay attention to         = setdiff(names(data), c(fld_id, fld_weight, 'year')), 
                         ### !!! error check and return useful message
   georegion_labels  = NULL, 
                         ### !!! keep default; if georegions is NULL and this is TRUE, load layers/rgn_georegion_labels.csv
@@ -200,44 +210,38 @@ gapfill_georegions <- function(
   # TODO: provide gapfilling with category data
   
   # check arguments
-  stopifnot(length(fld_id) == 1, fld_id %in% names(data), fld_id %in% names(georegions), !fld_id %in% c('r0','r1','r2'))
-    ### make sure fld_id is valid, and present in both dataframes, and not one of the georegion groupings
+  stopifnot(length(fld_id) == 1, fld_id %in% names(data), !fld_id %in% c('r0','r1','r2'))
+    ### make sure fld_id is valid, and present in dataframe (georegions data
+    ### frame is checked later), and not one of the georegion groupings
   stopifnot( is.null(fld_weight) || (!is.null(fld_weight) && fld_weight %in% names(data)) )
     ### if weighted, make sure field weighting column is present in data.  What is field weight???
   if (!is.null(rgn_weights)) stopifnot(ncol(rgn_weights) == 2 & names(rgn_weights)[1] == 'rgn_id')
     ### rgn_weights is data frame, 2 columns, first = rgn_id.  Seems restrictive or untransparent?
   stopifnot(length(fld_value) == 1, fld_value %in% names(data))
     ### fld_value can only be one column; must be in data
-  stopifnot(all(c('r0', 'r1', 'r2') %in% names(georegions)))
-    ### make sure all groupings in georegions
-  stopifnot(all(data[[fld_id]] %in% georegions[[fld_id]]))
-    ### if some of the fld_id instances don't show up in georegions, stop
   stopifnot( is.na(fld_year) || (!is.na(fld_year) && fld_year %in% names(data)) )
     ### if fld_year used, make sure it's in the data frame
   stopifnot(!(!is.null(fld_weight) & !is.null(rgn_weights))) 
     ### can't weight both ways by georegion and data.frame
-  stopifnot( ratio_weights==F | (ratio_weights==T & !is.null(rgn_weights)) )  
+  stopifnot( ratio_weights == F | (ratio_weights == T & !is.null(rgn_weights)) )  
     ### need rgn_weights if applying ratio_weights
   
   if(is.null(georegions)) {
     ### no georegions passed to function; use default
-    georegions <- read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %>%
-      spread(level, georgn_id) 
+    georegions <- get_georegions()
+    stopifnot(fld_id %in% names(georegions), !fld_id %in% c('r0','r1','r2'))
+    stopifnot(all(c('r0', 'r1', 'r2') %in% names(georegions)))
+      ### make sure all groupings in georegions
+    stopifnot(all(data[[fld_id]] %in% georegions[[fld_id]]))
+      ### if some of the fld_id instances in the dataframe don't show up in georegions, stop
+    ### !!! put error message that tells which rgn_ids are in dataframe but not georegions
   }
   if(is.null(georegions) & georegion_labels == TRUE) {
     ### no georegions object passed to function, but labels requested; use default
-    georegion_labels <- read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv') %>%    
-      mutate(level_label = sprintf('%s_label', level)) %>%
-      select(-level) %>%
-      spread(level_label, label) %>%
-      left_join(
-        read.csv('../ohi-global/eez2013/layers/rgn_labels.csv') %>%
-          select(rgn_id, v_label=label),
-        by='rgn_id') %>%
-      arrange(r0_label, r1_label, r2_label, rgn_id); head(georegion_labels)
+    georegion_labels <- get_georegion_labels()
   }
   
-  ### rename fields (using dplyr alternative evaluation, rename_())
+  ### rename fields for easy manipulation (using dplyr alternative evaluation, rename_())
   georgn <- georegions %>% 
     dplyr::rename_(.dots = setNames(fld_id, 'id'))
   df_in <- data %>%
@@ -268,7 +272,7 @@ gapfill_georegions <- function(
   
   ### add weights to data ----
   ### options:
-  ### * no fld_weight and no rgn_weights, so use default (wts = 1)
+  ### * no fld_weight and no rgn_weights, so use default of unweighted (wts = 1)
   ### * fld_weight is set; use weights included in dataframe
   ### * rgn_weights is set; use weights from rgn_weights object.
   ### !!! use a single argument to function: 
@@ -312,8 +316,8 @@ gapfill_georegions <- function(
   }
   
   ### remove NAs from value field
-  if (sum(is.na(df_in$val)) > 0){
-    message(sprintf('\n  data values are NA so removed: %d of %d rows', 
+  if (sum(is.na(df_in$val)) > 0) {
+    message(sprintf('Removed %d of %d rows, with data value == NA\n', 
                     sum(is.na(df_in$val)), nrow(df_in) ))
     df_in <- df_in %>%
       filter(!is.na(val))
@@ -325,24 +329,23 @@ gapfill_georegions <- function(
     stopifnot(anyDuplicated(df_in$id) == 0)
     
     ### merge georegions with data
-    ### !!! How are x, y, and z related and used? argh!
     ###   x is the basic df_in with georegions attached.
-    ###   y is x, NAs filtered out, for grouping and summarizing at each georegion level
-    ###   z is x, with summarized ys for each georegion.  z is the final product.
     x <- georgn %>%
       left_join(df_in, by = 'id') %>%
       arrange(id)
-    
-    # georegion means
+
+    ###   y is x, NAs filtered out, for grouping and summarizing at each georegion level
     y <- x %>%
       filter(!is.na(val), !is.na(wts))
+
+    ###   z is x, with summarized y for each georegion.  z is the dataframe used for gapfilling.
     z <- x %>%
       left_join(
         y %>% 
           group_by(r2) %>%
           summarise(
-            r2_val       = weighted.mean(val, wts),
-            r2_wts_avg   = mean(wts),
+            r2_val     = weighted.mean(val, wts),
+            r2_wts_avg = mean(wts),
             r2_n_notna = n(),
             r2_ids     = paste(id, collapse=',')),
         by='r2') %>%
@@ -350,8 +353,8 @@ gapfill_georegions <- function(
         y %>% 
           group_by(r1) %>%
           summarise(
-            r1_val       = weighted.mean(val, wts),
-            r1_wts_avg   = mean(wts),
+            r1_val     = weighted.mean(val, wts),
+            r1_wts_avg = mean(wts),
             r1_n_notna = n(),
             r1_ids     = paste(id, collapse=',')),
         by='r1') %>%
@@ -359,57 +362,54 @@ gapfill_georegions <- function(
         y %>% 
           group_by(r0) %>%
           summarise(
-            r0_val       = weighted.mean(val, wts),
-            r0_wts_avg   = mean(wts),
+            r0_val     = weighted.mean(val, wts),
+            r0_wts_avg = mean(wts),
             r0_n_notna = n(),
             r0_ids     = paste(id, collapse=',')),
         by='r0') %>%
       arrange(r0, r1, r2, id) %>%
       select(r0, r1, r2, id, wts, val, r2_val, r1_val, r0_val, 
-             r2_wts_avg,   r1_wts_avg,   r0_wts_avg, 
+             r2_wts_avg, r1_wts_avg, r0_wts_avg, 
              r2_n,       r1_n,       r0_n, 
              r2_n_notna, r1_n_notna, r0_n_notna, 
              r2_ids,     r1_ids,     r0_ids)    
   } else {    
     ### Create dataframe of georegion summaries, *with* year -----
     df_in <- df_in %>%
-      dplyr::rename_(.dots = setNames(fld_yr, 'yr'))
+      dplyr::rename_(.dots = setNames(fld_year, 'yr'))
     
-    # check for duplicates
+    ### check for duplicates of rgn id and year
     stopifnot(anyDuplicated(df_in[,c('id','yr')]) == 0)
     
     # TODO: expand gapfill_georegions to use rgn_weights with year to match data
     
-    # expand georegions to every possible year in data
-    georgn_yr <- expand.grid(list(
-      yr = sort(unique(d$yr)),
-      id = georgn$id)) %>%
-      merge(
-        georgn, 
-        by='id') %>%
-      #select(yr, id, r0, r1, r2, r2_n, r1_n, r0_n, wts) %>%
+    ### expand georegions to every possible year in data
+    georgn_yr <- 
+      expand.grid(list(
+        yr = sort(unique(df_in$yr)),
+        id = georgn$id)) %>%
+      inner_join(georgn, by = 'id') %>%
       arrange(yr, id)
     
-    # merge with data
+    ### merge georegions with data, incl years
+    ###   x is the basic df_in with georegions attached.
     x <- georgn_yr %>%
-      merge(
-        df_in, 
-        by=c('yr','id'), all.x=T) %>%      
+      left_join(df_in, by = c('yr', 'id')) %>%
       arrange(yr, id) %>%
       select(yr, id, r0, r1, r2, r2_n, r1_n, r0_n, val, wts)
-    
-    # get rows with val and wts
+
+    ###   y is x, NAs filtered out, for grouping and summarizing at each georegion level
     y <- x %>%
       filter(!is.na(val), !is.na(wts))
     
-    # calculate georegion means
+    ###   z is x, with summarized y for each georegion/yr.  z is the dataframe used for gapfilling.
     z <- x %>%
       left_join(
         y %>% 
           group_by(yr, r2) %>%
           summarise(
-            r2_val       = weighted.mean(val, wts),
-            r2_wts_avg   = mean(wts),
+            r2_val     = weighted.mean(val, wts),
+            r2_wts_avg = mean(wts),
             r2_n_notna = n(),
             r2_ids     = paste(id, collapse=',')),
         by=c('yr','r2')) %>%
@@ -417,8 +417,8 @@ gapfill_georegions <- function(
         y %>% 
           group_by(yr, r1) %>%
           summarise(
-            r1_val       = weighted.mean(val, wts),
-            r1_wts_avg   = mean(wts),
+            r1_val     = weighted.mean(val, wts),
+            r1_wts_avg = mean(wts),
             r1_n_notna = n(),
             r1_ids     = paste(id, collapse=',')),
         by=c('yr','r1')) %>%
@@ -426,15 +426,15 @@ gapfill_georegions <- function(
         y %>% 
           group_by(yr, r0) %>%
           summarise(
-            r0_val       = weighted.mean(val, wts),
-            r0_wts_avg   = mean(wts),
+            r0_val     = weighted.mean(val, wts),
+            r0_wts_avg = mean(wts),
             r0_n_notna = n(),
             r0_ids     = paste(id, collapse=',')),
         by=c('yr','r0')) %>%
       arrange(yr, r0, r1, r2, id) %>%
       select(yr, r0, r1, r2, id, wts, val, 
-             r2_val,       r1_val,       r0_val, 
-             r2_wts_avg,   r1_wts_avg,   r0_wts_avg, 
+             r2_val,     r1_val,     r0_val, 
+             r2_wts_avg, r1_wts_avg, r0_wts_avg, 
              r2_n,       r1_n,       r0_n, 
              r2_n_notna, r1_n_notna, r0_n_notna, 
              r2_ids,     r1_ids,     r0_ids)    
@@ -442,8 +442,7 @@ gapfill_georegions <- function(
   
   # select best available value and calculate gapfilling score  
   z <- z %>%
-    mutate(
-      z_level = ifelse(!is.na(val), 'val',
+    mutate(z_level = ifelse(!is.na(val), 'val',
                        ifelse(!is.na(r2_val), 'r2',
                               ifelse(!is.na(r1_val), 'r1',
                                      ifelse(!is.na(r0_val), 'r0', NA)))))
@@ -451,9 +450,9 @@ gapfill_georegions <- function(
   # assign attributes by georegion level (r#)
   z  <- 
   rbind_list(
-    # rgn
+    # rgn has value
     z %>%
-      filter(z_level=='val') %>%
+      filter(z_level == 'val') %>%
       mutate(
         z_ids     = as.character(id),
         z_wts_avg   = wts,
@@ -461,9 +460,9 @@ gapfill_georegions <- function(
         z_n_pct   = 1,
         z_g_score = 0,
         z         = val),
-    # r2
+    # gapfill using r2 average
     z %>%
-      filter(z_level=='r2') %>%
+      filter(z_level == 'r2') %>%
       mutate(
         z_ids     = r2_ids,
         z_wts_avg   = r2_wts_avg,
@@ -473,7 +472,7 @@ gapfill_georegions <- function(
         z         = r2_val),
     # r1
     z %>%
-      filter(z_level=='r1') %>%
+      filter(z_level == 'r1') %>%
       mutate(
         z_ids     = r1_ids,
         z_wts_avg   = r1_wts_avg,
@@ -483,7 +482,7 @@ gapfill_georegions <- function(
         z         = r1_val),
     # r0
     z %>%
-      filter(z_level=='r0') %>%
+      filter(z_level == 'r0') %>%
       mutate(
         z_ids     = r0_ids,
         z_wts_avg   = r0_wts_avg,
@@ -503,7 +502,7 @@ gapfill_georegions <- function(
 
 
   # if r0_to_NA, assign value of NA if only georegional average available at the global level (r0)
-  if (r0_to_NA) z$z <- ifelse(z$z_level=='r0', NA, z$z)
+  if (r0_to_NA) z$z <- ifelse(z$z_level == 'r0', NA, z$z)
   
   # add labels if provided
   if (!is.null(georegion_labels)){
