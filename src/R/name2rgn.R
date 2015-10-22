@@ -233,10 +233,10 @@ collapse2rgn <- function(df_in,
                     df_in_collapsed)
   }
   
-  # limit to same subset of fields for consistent behavior regardless of duplicates presents
+  ### limit to same subset of fields for consistent behavior regardless of duplicates presents
   df_out <- df_out[, c(fld_keep_rgn_id, fld_value)]
   
-  # check to ensure no duplicates !!! but maybe want dupes, e.g. units?
+  ### check to ensure no duplicates remaining in kept fields
   stopifnot(duplicated(df_out[, c(fld_keep_rgn_id)]) == 0) 
   
   return(as.data.frame(df_out))
