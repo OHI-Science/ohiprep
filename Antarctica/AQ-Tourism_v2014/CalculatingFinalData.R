@@ -53,7 +53,8 @@ write.csv(gap_fill, 'Antarctica/AQ-Tourism_v2014/data/gap_fill.csv')
 ## final toolbox data:
 tourist_days <- tourist_days %>%
   gather('year', 'days', -1) %>%
-  mutate(days = ifelse(is.na(days), 0, days))
+  mutate(days = ifelse(is.na(days), 0, days)) %>%
+  mutate(year = as.numeric(gsub("X", "", year)))
 
 write.csv(tourist_days, 'Antarctica/AQ-Tourism_v2014/data/tr_days.csv')
 
