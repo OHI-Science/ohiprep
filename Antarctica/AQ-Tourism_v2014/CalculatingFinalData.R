@@ -23,10 +23,10 @@ sites <- sites %>%
 ## check that no new sites have been added
 setdiff(sites$Site_Name, tourists$Site_Name)
 tmp <- setdiff(tourists$Site_Name, sites$Site_Name)
-sites2 <- read.csv('Antarctica/AQ-Tourism_v2014/tmp/sites_dd.csv')
-filter(tourists, Site_Name %in% tmp)
-tmp2 <- data.frame(site_name = setdiff(tmp, sites2$Site_name))
-write.csv(tmp2, 'Antarctica/AQ-Tourism_v2014/dataPrep/newSites_2014_2015.csv', row.names=FALSE)
+tmp
+## these got cut for not being in the CCAMLR region:
+# South Bay, Trinity Island-Mikkelsen Hrbr, Campbell Island
+# Sites with no coordinates we could find: Chutney Cove and Stony Point
 
 
 # determine number of tourist days per region
@@ -37,13 +37,9 @@ tourist_days <- tourists %>%
   ungroup() 
 
 # filling in missing data with zero values:
-tourist_days <- spread(tourist_days, year, days)
-tourist_days <- tourist_days %>%
-  gather('year', 'days', -1) %>%
-  mutate(days = ifelse(is.na(days), 0, days))
-
-write.csv(tourist_days, 'Antarctica/AQ-Tourism_v2014/data/tr_days.csv')
-
+tourist_days <- spread(tourist_days, year, days) %>%
+  data.frame()
+write.csv(tourist_days, "Antarctica/AQ-Tourism_v2014/tmp/tourists_spread.csv", row.names=FALSE)
 # generate gap_filled data (in this case, missing values are assumed to be zero)
 gap_fill <- ifelse(is.na(tourist_days[, -1]), "missing data - presumed zero", 'NA')
 gap_fill <- cbind(sp_id = tourist_days$sp_id, gap_fill)
@@ -52,5 +48,14 @@ gap_fill <- gather(gap_fill, "year", "gap_fill", 2:(dim(gap_fill)[2]))
 gap_fill$year <- as.numeric(gsub("X", "", gap_fill$year))
 
 write.csv(gap_fill, 'Antarctica/AQ-Tourism_v2014/data/gap_fill.csv')
+
+
+## final toolbox data:
+tourist_days <- tourist_days %>%
+  gather('year', 'days', -1) %>%
+  mutate(days = ifelse(is.na(days), 0, days))
+
+write.csv(tourist_days, 'Antarctica/AQ-Tourism_v2014/data/tr_days.csv')
+
 
 
