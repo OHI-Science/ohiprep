@@ -144,26 +144,6 @@ library(dplyr); library(tidyr); library(stringr)
 ### Sample code/data from whounicef sanitation data
 data <- read.csv('src/gapfill_georegion_sampledata.csv', stringsAsFactors = FALSE)
 
-get_georegions <- function() {
-  ### quick function to get and arrange dataframes for georegions and 
-  ### georegion labels.  
-  georegions <- read.csv('../ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %>%
-    spread(level, georgn_id) 
-  return(georegions)
-}
-
-get_georegion_labels <- function() {
-  georegion_labels <- read.csv('../ohi-global/eez2013/layers/rgn_georegion_labels.csv') %>%    
-    mutate(level_label = sprintf('%s_label', level)) %>%
-    select(-level) %>%
-    spread(level_label, label) %>%
-    left_join(
-      read.csv('../ohi-global/eez2013/layers/rgn_labels.csv') %>%
-        select(rgn_id, v_label=label),
-      by='rgn_id') %>%
-    arrange(r0_label, r1_label, r2_label, rgn_id)
-  return(georegion_labels)
-}
 
 
 # attrsave  <- file.path(dir_int, 'rgn_jmp_san_2015a_attr.csv')
@@ -182,85 +162,166 @@ get_georegion_labels <- function() {
 # head(attr(r_g_a, 'gapfill_georegions'))  # or to open in excel: system(sprintf('open %s', attrsave))
 
 
-gapfill_georegions <- function(
-  data, 
-  georegions        = NULL, ### !!! added default; if NULL, load the layers/rgn_georegions.csv and process accordingly
-                            ### !!! maybe add a 'sovereign' code too?
-  fld_id            = 'rgn_id', ### was intersect(names(data), names(georegions)), 
-                        ### !!! error check and return useful message; fld_id must be in georegions as well, so rgn_id is a good default
+georegions        = NULL
+fld_id            = 'rgn_id'
+fld_year          = ifelse('year' %in% names(data), 'year', NA)
+fld_value = 'access_pct'
+georegion_labels  = TRUE
+fld_weight        = NULL
+ratio_weights     = FALSE
+gapfill_scoring_weights = c('r0' = 1, 'r1' = 0.8, 'r2' = 0.5, 'val' = 0)
+r0_to_NA          = TRUE
+attributes_csv    = NULL 
+
+
+
+gapfill_georegions1 <- function(
+  data,                       ### data.frame to be gapfilled
+  fld_value,                  ### field name of value to be gapfilled
+                              ### removed default: this is important for the user to pay attention to
+                              ###   was: fld_value = setdiff(names(data), c(fld_id, fld_weight, 'year'))
+
+  fld_id            = 'rgn_id', ### was intersect(names(data), names(georegions)); just hard code it!
   fld_year          = ifelse('year' %in% names(data), 'year', NA),
-  fld_value, # no default? this is important for the user to pay attention to         = setdiff(names(data), c(fld_id, fld_weight, 'year')), 
-                        ### !!! error check and return useful message
-  georegion_labels  = NULL, 
-                        ### !!! keep default; if georegions is NULL and this is TRUE, load layers/rgn_georegion_labels.csv
-                        ###     possible values: TRUE (only if georegions default), FALSE or NULL (no labels), pathname (for override)
-  fld_weight        = NULL, ### ??? difference between this and rgn_weights and ratio_weights?
-  rgn_weights       = NULL, ### ???
-  ratio_weights     = FALSE, ### ???
+  georegions        = NULL,   ### added default: if NULL, load the layers/rgn_georegions.csv and process accordingly
+                              ###   allowed values: NULL (default georegions), 'sovereign' or 'sov' (use sovereign regions), 
+                              ###   data.frame (to override default georegions)
+  georegion_labels  = FALSE,  ### keep default; if georegions is NULL and this is TRUE, load layers/rgn_georegion_labels.csv
+                              ###   allowed values: TRUE (only if georegions default), FALSE (no labels), 
+                              ###   data.frame (required if labeling override georegions)
+  fld_weight        = NULL,   ### accepts NULL (no weights), a character string (for field name) or data.frame (rgn_id and weight field)
+  ratio_weights     = FALSE,  ### multiply the gapfilled value by the ratio of the region's weight to the regional average weight.
   gapfill_scoring_weights = c('r0' = 1, 'r1' = 0.8, 'r2' = 0.5, 'val' = 0), ### ???
-  r0_to_NA          = TRUE, ### ???
-  attributes_csv    = NULL ### ??? what is being saved here?
-){
+  r0_to_NA          = TRUE,   ### gapfill using only levels r2 and r1
+  attributes_csv    = NULL) {
   
-  ### !!! no default for georegions input?
-  ### !!! fld_id a little bit of crapshoot - intersecting names(data) with 
-  ###     names(georegions) could produce unintended results?  Can only use
-  ###     one fld_id? what about rgn_name and rgn_id for instance
+  ### check input arguments -----
+  if(length(fld_id) != 1 || !fld_id %in% names(data) || fld_id %in% c('r0','r1','r2'))
+    stop('"fld_id" must be a single column name that is present in the data set, and cannot be "r0", "r1", or "r2"')
+  if(length(fld_value) != 1 || !fld_value %in% names(data))
+    stop('"fld_value" must be a single column name that is present in the data set')
+  if(!is.na(fld_year) && !fld_year %in% names(data))
+    stop('"fld_year" must be a column name that is present in the data set')
+  if(ratio_weights == T & is.null(fld_weight))
+     stop('If using "ratio_weights", a "fld_weight" column or data frame must be provided')
+    ### need fld_weights if applying ratio_weight
   
-  # TODO: provide gapfilling with category data
-  
-  # check arguments
-  stopifnot(length(fld_id) == 1, fld_id %in% names(data), !fld_id %in% c('r0','r1','r2'))
-    ### make sure fld_id is valid, and present in dataframe (georegions data
-    ### frame is checked later), and not one of the georegion groupings
-  stopifnot( is.null(fld_weight) || (!is.null(fld_weight) && fld_weight %in% names(data)) )
-    ### if weighted, make sure field weighting column is present in data.  What is field weight???
-  if (!is.null(rgn_weights)) stopifnot(ncol(rgn_weights) == 2 & names(rgn_weights)[1] == 'rgn_id')
-    ### rgn_weights is data frame, 2 columns, first = rgn_id.  Seems restrictive or untransparent?
-  stopifnot(length(fld_value) == 1, fld_value %in% names(data))
-    ### fld_value can only be one column; must be in data
-  stopifnot( is.na(fld_year) || (!is.na(fld_year) && fld_year %in% names(data)) )
-    ### if fld_year used, make sure it's in the data frame
-  stopifnot(!(!is.null(fld_weight) & !is.null(rgn_weights))) 
-    ### can't weight both ways by georegion and data.frame
-  stopifnot( ratio_weights == F | (ratio_weights == T & !is.null(rgn_weights)) )  
-    ### need rgn_weights if applying ratio_weights
-  
-  if(is.null(georegions)) {
-    ### no georegions passed to function; use default
-    georegions <- get_georegions()
-    stopifnot(fld_id %in% names(georegions), !fld_id %in% c('r0','r1','r2'))
-    stopifnot(all(c('r0', 'r1', 'r2') %in% names(georegions)))
-      ### make sure all groupings in georegions
-    stopifnot(all(data[[fld_id]] %in% georegions[[fld_id]]))
-      ### if some of the fld_id instances in the dataframe don't show up in georegions, stop
-    ### !!! put error message that tells which rgn_ids are in dataframe but not georegions
+  ### set up functions to get georegions and labels for default cases
+  get_georegions <- function(sov = FALSE) {
+    ### quick function to get and arrange dataframes for georegions and 
+    ### georegion labels.  Sovereign regions code taken from WGI data_prep
+    if(!sov) {
+      georegions <- read.csv('~/github/ohi-global/eez2013/layers/rgn_georegions.csv', na.strings='') %>%
+        spread(level, georgn_id) 
+      return(georegions)
+    } else {
+      sovregions = read.csv('~/github/ohiprep/src/LookupTables/eez_rgn_2013master.csv', na.strings='') %>%  ## Mel on Neptune
+        #sovregions = read.csv('~/github/ohiprep/src/LookupTables/eez_rgn_2013master.csv', na.strings='') %>% 
+        select(rgn_id = rgn_id_2013,
+               r2 = sov_id) %>%               # r2 is actually rgn_ids of sovereign regions
+        group_by(rgn_id) %>%                  # remove duplicated countries from this rgn_id list                    
+        summarize(r2 = mean(r2, na.rm=T)) %>% # duplicates always have the same sov_id (r2 value)
+        mutate(r1 = r2, 
+               r0 = r2,
+               fld_wt = as.integer(rgn_id == r2)) %>%  # flag the 'parent' rgn_id with 1, others with 0 
+        filter(rgn_id < 255, rgn_id != 213)
+      return(sovregions)
+    }
   }
-  if(is.null(georegions) & georegion_labels == TRUE) {
-    ### no georegions object passed to function, but labels requested; use default
-    georegion_labels <- get_georegion_labels()
+  
+  get_georegion_labels <- function() {
+    georgn_lbls <- read.csv('~/github/ohi-global/eez2013/layers/rgn_georegion_labels.csv') %>%    
+      mutate(level_label = sprintf('%s_label', level)) %>%
+      select(-level) %>%
+      spread(level_label, label) %>%
+      left_join(
+        read.csv('~/github/ohi-global/eez2013/layers/rgn_labels.csv') %>%
+          select(rgn_id, v_label=label),
+        by='rgn_id') %>%
+      arrange(r0_label, r1_label, r2_label, rgn_id)
+    return(georgn_lbls)
+  }
+  
+  ### Get georegions and georegion labels based on arguments -----
+  ### * NULL        = default georegions
+  ### * 'sovereign' = use sovereign country definitions
+  ### * data.frame  = override defaults for custom georegions
+  if(is.null(georegions)) {
+    georgn <- get_georegions()
+    message('Using default georegions definitions')
+    if(georegion_labels == TRUE) {
+      georgn_lbls <- get_georegion_labels()
+      message('Loading default georegion labels')
+    } else georgn_lbls <- NULL
+  } else if(is.character(georegions)) {
+    if(georegions %in% c('sovereign', 'sov')) {
+      georgn <- get_georegions(sov = TRUE)
+      message('Using sovereign country definitions as georegions')
+      ### The following adjustments to data and georgn emulate commands from data_prep_wgi.R...
+      data <- data %>% 
+        left_join(georgn %>% select(rgn_id, fld_wt), by = 'rgn_id')
+      georgn <- georgn %>% select(-fld_wt)
+      georgn_lbls <- NULL
+      if(georegion_labels == TRUE) {
+        warning('"georegion_labels" set to TRUE, but sovereign georegion labels are currently unavailable, sorry!')
+      }
+    } else {
+      stop('Unrecognized character string argument to "georegions"; use NULL, "sovereign", or a data.frame')
+    }
+  } else if(is.data.frame(georegions)) {
+    georgn      <- georegions
+    message(sprintf('Overriding default georegions using "georegions" object of class %s', class(georegions)))
+    if (is.data.frame(georegion_labels)) {
+      georgn_lbls <- georegion_labels
+      message('Using provided georegions labels')
+    } else if(georegion_labels == FALSE) {
+      georgn_lbls <- NULL
+    } else stop ('To add labels to a non-default georegion, please pass an object of class data.frame (or set georegion_labels == FALSE)')
+  } else {
+    stop('Unrecognized format for argument "georegions": should be NULL (for default), "sovereign", or a data.frame object')
+  }
+
+  ### check for possible errors with georgn dataframe -----
+  if(!fld_id %in% names(georgn) | fld_id %in% c('r0','r1','r2')) {
+    stop(sprintf('"%s" must be found in the georegions dataframe, and cannot be any of: "r0", "r1", "r2".\n', fld_id))
+    ### unique region ID field must be in georegions dataframe
+  }
+  if(!all(c('r0', 'r1', 'r2') %in% names(georgn))) {
+    stop('georegions dataframe must contain columns designating "r0", "r1", "r2"')
+    ### make sure all groupings are present in georegions df
+  }
+  if(!all(data[[fld_id]] %in% georgn[[fld_id]])) {
+    id_missing <- data[[fld_id]][!(data[[fld_id]] %in% georgn[[fld_id]])]
+    warning(sprintf('The following values of "%s" in data are not found in the georegions dataframe: \n  %s \n  %s observations will be removed.',
+                    fld_id, paste(unique(id_missing), collapse = ', '), length(id_missing)))
+    data <- data[data[[fld_id]] %in% georgn[[fld_id]], ]
+    ### Provide warning if some of the fld_id instances in the dataframe don't show up in georegions,
+    ### and then delete the offending ones (things like disputed regions etc.)
+  }
+  
+  ### check for possible errors with georgn_lbls dataframe -----
+  if (!is.null(georgn_lbls)){
+    if (!fld_id %in% names(georgn_lbls)) 
+      stop(sprintf('Georegion labels dataframe does not contain region ID field %s.\n', fld_id))
+    if (!all(c('r0_label', 'r1_label', 'r2_label') %in% names(georgn_lbls)))
+      stop('Georegion labels dataframe does not contain all of the fields: "r0_label", "r1_label", "r2_label"')
+    if(nrow(georgn_lbls) != nrow(georgn))
+      stop(sprintf('Georegion labels dataframe (%s rows) and georegions dataframe (%s rows) must contain same number of rows.\n',
+                   nrow(georgn_lbls), nrow(georgn)))
+    georgn_lbls <- georgn_lbls %>% 
+      dplyr::rename_(.dots = setNames(fld_id, 'id'))
+    stopifnot(anyDuplicated(georgn_lbls$id) == 0)
   }
   
   ### rename fields for easy manipulation (using dplyr alternative evaluation, rename_())
-  georgn <- georegions %>% 
+  georgn <- georgn %>% 
     dplyr::rename_(.dots = setNames(fld_id, 'id'))
   df_in <- data %>%
     dplyr::rename_(.dots = setNames(c(fld_id, fld_value), c('id', 'val')))
   
   ### check for duplicate georegion id entries
-  stopifnot(anyDuplicated(georgn$id) == 0)
-  
-  ### georegion_labels - error checking -----
-  if (!is.null(georegion_labels)){
-    stopifnot(fld_id %in% names(georegion_labels)) ### ??? need rgn_id (or id?) field
-    stopifnot(all(c('r0_label', 'r1_label', 'r2_label') %in% names(georegion_labels)))
-      ### !!! this forces a specific format for georegion_labels - dislike?
-    stopifnot(nrow(georegion_labels) == nrow(georegions))
-    gr_labs <- georegion_labels %>% 
-      dplyr::rename_(.dots = setNames(fld_id, 'id'))
-    stopifnot(anyDuplicated(gr_labs$id) == 0)
-  }
-  
+  if(anyDuplicated(georgn$id)) stop('Georegions dataframe contains duplicate region ID entries')
+
   ### get n regions per georegion for later calculating gapfill score
   georgn <- georgn %>%
     group_by(r0) %>%
@@ -270,41 +331,42 @@ gapfill_georegions <- function(
     group_by(r2) %>%
     mutate(r2_n = n())
   
-  ### add weights to data ----
+  ### add weights to data -----
   ### options:
-  ### * no fld_weight and no rgn_weights, so use default of unweighted (wts = 1)
-  ### * fld_weight is set; use weights included in dataframe
-  ### * rgn_weights is set; use weights from rgn_weights object.
-  ### !!! use a single argument to function: 
-  ### * if character string, use as field name (or if ends in .csv, maybe read.csv?)
-  ### * if dataframe, use as dataframe
-  
-  if (is.null(fld_weight) & is.null(rgn_weights)){
-    ### default weights
+  ### * no fld_weight, so use default of unweighted (wts = 1)
+  ### * fld_weight is character; use weights included named in dataframe column
+  ### * fld_weight is data.frame; use weights included in new data.frame
+
+  if (is.null(fld_weight)){
+    message('No weighting info provided; default to equal weighting')
     df_in$wts <- 1
-    
-  } else if (!is.null(fld_weight)){
+  } else if (is.character(fld_weight)){
     ### use weights in data frame fld_weight column
+    if (!fld_weight %in% names(data)) stop(sprintf('Weights field %s not found in data set', fld_weight))
+    ### if weighted, make sure field weighting column is present in data.
+    message(sprintf('Weighting by defined field; using "%s" for weights field', fld_weight))
     df_in <- df_in %>% 
       dplyr::rename_(.dots = setNames(fld_weight, 'wts'))
-
     if (sum(is.na(df_in$wts)) > 0){
       ### weights variable contains NAs; remove NA occurrences
-      message(sprintf('\n  data[[fld_weights]] are NA (where values reported) so removed: %d of %d rows\n    %s', 
+      message(sprintf('\n  data[[fld_weight]] are NA (where values reported) so removed: %d of %d rows\n    %s', 
                       sum(is.na(df_in$wts)), nrow(df_in), 
                       paste(unique(df_in$id[is.na(df_in$wts)]), collapse=',') ))
       df_in <- df_in %>%
         filter(!is.na(wts))      
     }    
-  } else if(!is.null(rgn_weights)){
-    ### use rgn_weights object
+  } else if(is.data.frame(fld_weight)){
+    if (!ncol(fld_weight) == 2 & !names(fld_weight)[1] == 'rgn_id')
+      stop('If using a data.frame for weights, please include only two columns, with first column named "rgn_id."')
+    ### use fld_weight object
+    message(sprintf('Using weights data.frame for weighting; field "%s" will be renamed to "wts".', 
+                    names(fld_weight)[1]))
     georgn <- georgn %>%
       left_join(
-        rgn_weights %>%
-          dplyr::rename_(.dots = setNames(names(rgn_weights)[2], 'wts')) %>%
+        fld_weight %>%
+          dplyr::rename_(.dots = setNames(names(fld_weight)[2], 'wts')) %>%
           select(id=rgn_id, wts),
         by='id')
-    
     if (sum(is.na(georgn$wts)) > 0){
       message(sprintf('\n  georegions[[weights]] are NA (where georegions with rgn_id exist) so removed: %d of %d rows\n    %s', 
                       sum(is.na(georgn$wts)), nrow(georgn), 
@@ -312,7 +374,7 @@ gapfill_georegions <- function(
       georgn <- subset(georgn, !is.na(georgn))
     }
   } else {
-    stop('weights setting options exhausted: logical impossibility!')
+    stop('Unrecognized format for argument "fld_weights": please use NULL (unweighted), character string (for column in current data set), or data.frame (two columns: "rgn_id" and weight)')
   }
   
   ### remove NAs from value field
@@ -381,8 +443,6 @@ gapfill_georegions <- function(
     ### check for duplicates of rgn id and year
     stopifnot(anyDuplicated(df_in[,c('id','yr')]) == 0)
     
-    # TODO: expand gapfill_georegions to use rgn_weights with year to match data
-    
     ### expand georegions to every possible year in data
     georgn_yr <- 
       expand.grid(list(
@@ -450,42 +510,42 @@ gapfill_georegions <- function(
   # assign attributes by georegion level (r#)
   z  <- 
   rbind_list(
-    # rgn has value
+    ### rgn has value, so no gapfill: filter and assign values
     z %>%
       filter(z_level == 'val') %>%
       mutate(
         z_ids     = as.character(id),
-        z_wts_avg   = wts,
+        z_wts_avg = wts,
         z_n       = 1,
         z_n_pct   = 1,
         z_g_score = 0,
         z         = val),
-    # gapfill using r2 average
+    ### gapfill using r2 average
     z %>%
       filter(z_level == 'r2') %>%
       mutate(
         z_ids     = r2_ids,
-        z_wts_avg   = r2_wts_avg,
+        z_wts_avg = r2_wts_avg,
         z_n       = r2_n_notna,
         z_n_pct   = r2_n_notna/r2_n,
         z_g_score = gapfill_scoring_weights['r2'] - z_n_pct * diff(gapfill_scoring_weights[c('val','r2')]),
         z         = r2_val),
-    # r1
+    ### gapfill using r1 average
     z %>%
       filter(z_level == 'r1') %>%
       mutate(
         z_ids     = r1_ids,
-        z_wts_avg   = r1_wts_avg,
+        z_wts_avg = r1_wts_avg,
         z_n       = r1_n_notna,
         z_n_pct   = r1_n_notna/r1_n,
         z_g_score = gapfill_scoring_weights['r1'] - z_n_pct * diff(gapfill_scoring_weights[c('val','r1')]),
         z         = r1_val),
-    # r0
+    ### gapfill using r0 average
     z %>%
       filter(z_level == 'r0') %>%
       mutate(
         z_ids     = r0_ids,
-        z_wts_avg   = r0_wts_avg,
+        z_wts_avg = r0_wts_avg,
         z_n       = r0_n_notna,
         z_n_pct   = r0_n_notna/r0_n,
         z_g_score = gapfill_scoring_weights['r0'] - z_n_pct * diff(gapfill_scoring_weights[c('val','r0')]),
@@ -493,7 +553,7 @@ gapfill_georegions <- function(
   ) %>%
   select(-r2_ids, -r1_ids, -r0_ids)
   
-  # multiply by ratio if argument
+  ### multiply by ratio if argument
   if (ratio_weights){  
     z <- z %>% mutate(
       z_orig = z,
@@ -501,15 +561,15 @@ gapfill_georegions <- function(
   }
 
 
-  # if r0_to_NA, assign value of NA if only georegional average available at the global level (r0)
+  ### if r0_to_NA, assign value of NA if only georegional average available at the global level (r0)
   if (r0_to_NA) z$z <- ifelse(z$z_level == 'r0', NA, z$z)
   
-  # add labels if provided
-  if (!is.null(georegion_labels)){
+  ### add georegion labels if provided
+  if (!is.null(georgn_lbls)){
     z <- z %>%
       left_join(
-        gr_labs %>%
-          select(id=id, r0_label, r1_label, r2_label, v_label),
+        georgn_lbls %>%
+          select(id, r0_label, r1_label, r2_label, v_label),
         by='id') %>%
       arrange(r0_label, r1_label, r2_label, v_label) 
     if (is.na(fld_year)){
@@ -525,26 +585,26 @@ gapfill_georegions <- function(
     }
   }
   
-  # return result
+  ### Rename columns back to original names
   if (is.na(fld_year)){
-    r <- z %>%
+    df_out <- z %>%
       select(id, z) %>%
       arrange(id) %>%
       dplyr::rename_(.dots = setNames(c('id','z'), c(fld_id, fld_value)))
-      
   } else {
-    r <- z %>%
+    df_out <- z %>%
       select(yr, id, z) %>%
       arrange(yr, id) %>%
       dplyr::rename_(.dots = setNames(c('yr', 'id', 'z'), c(fld_year, fld_id, fld_value)))
   }
   
-  # store attributes, with option to save as .csv
-  attr(r, 'gapfill_georegions') <- z
+  ### store attributes, with option to save as .csv
+  attr(df_out, 'gapfill_georegions') <- z
   
   if (!is.null(attributes_csv)){
     write.csv(z, attributes_csv, na = '', row.names=FALSE)   
   }
   
-  return(r)
+  return(df_out)
 }
+
