@@ -1,26 +1,3 @@
-#' Get scenarios
-#' 
-#' Get scenarios from Github.
-#' 
-#' @param df_in dataset
-#' @param fld_name field name of the region from the dataset
-#' @param flds_unique field name for the dataset
-#' @param fld_value field with value, defaults to 'value'
-#' @param collapse_fxn function to collapse duplicate regions into one (example: China, Macau, Hong Kong)
-#' @param collapse_csv optional .csv file provided to collapse duplicate regions
-#' @param collapse_flds_join optional list of fields identified to collapse duplicate regions
-#' @param dir_lookup directory of name-to-region look up tables
-#' @param rgn_master.csv .csv file of eez-to-region combinations
-#' @param rgn_synonyms.csv .csv file of synonyms of eez-to-region combinations
-#' @param add_rgn_name TRUE or FALSE whether to include a column with the region name
-#' @param add_rgn_type TRUE of FALSE whether to include the region type (eez...)
-#' 
-#' @details This function translates name to region id with a lookup.
-#'  
-#' @keywords ohi
-#' @export
-
-
 name2rgn <- function(df_in, 
                      fld_name      = 'country', 
                      dir_lookup    = '~/github/ohiprep/src/LookupTables',
@@ -173,13 +150,16 @@ collapse2rgn <- function(df_in,
   
   fld_keep_rgn_id <- c(fld_id, setdiff(c(fld_keep), fld_id))
   
+  ### are there duplicates? create index of duplicated records
   i_dupes <- duplicated(df_in[, fld_keep_rgn_id], fromLast = FALSE) | 
     duplicated(df_in[, fld_keep_rgn_id], fromLast = TRUE)
   
   if (sum(i_dupes) == 0) {
+    ### No duplicates - return dataframe as is.
     cat(sprintf('No duplicates found in %s. \n', paste(fld_keep_rgn_id, collapse = ', ')))
     df_out <- df_in
   } else {
+    ### Duplicates found; collapse using function
     cat(sprintf('\nDuplicate values found for %s. \n', paste(fld_keep_rgn_id, collapse = ', ')))
     cat(sprintf('Resolving by collapsing %s with collapse_fxn: %s after first removing all NAs from duplicates...\n', 
                 fld_id, collapse_fxn))
@@ -188,16 +168,12 @@ collapse2rgn <- function(df_in,
     message(sprintf('Dropping variables: %s\n', paste(fld_dropped, collapse = ', ')))
     message('  Use argument fld_keep to prevent variables from being dropped.\n')
     
+    ### create a data.frame of just the duplicated records, for collapsing
     df_in_dup <- df_in[i_dupes, ] %>%
       arrange(rgn_id, rgn_name)
     print(df_in_dup)
 
-    # n2r_sum <- function(x) {
-    #   if (sum(is.na(x)) == length(x)) 
-    #     return(NA)
-    #   return(sum(x, na.rm = TRUE))
-    # }
-
+    ### set tmp_value to be the value, to protect original value
     df_in_dup$tmp_value <- df_in_dup[[fld_value]]
     
     if (collapse_fxn == "sum") {
@@ -261,6 +237,8 @@ name_to_rgn1 <- function(df_in,
                          rgn_synonyms.csv = file.path(dir_lookup, 'rgn_eez_v2013a_synonyms.csv'),
                          add_rgn_name     = FALSE, 
                          add_rgn_type     = FALSE) {
+  ### This function is intended to replace original name_to_rgn() by calling
+  ### name2rgn() and collapse2rgn() sequentially.
   
   require(dplyr); require(tidyr); require(stringr)
   
@@ -288,13 +266,14 @@ name_to_rgn1 <- function(df_in,
   
   df_out = df_collapsed[, c(fld_keep_rgn_id, fld_value)]
   
-  rgns <- read.csv(rgn_master.csv, na = "", stringsAsFactors = FALSE) %>% 
-    select(rgn_id = rgn_id_2013, rgn_name = rgn_nam_2013, rgn_type = rgn_typ) %>% 
-    arrange(rgn_type, rgn_id, rgn_name) %>% 
-    group_by(rgn_id) %>% 
-    summarize(rgn_name = first(rgn_name), rgn_type = first(rgn_type)) %>% 
-    ungroup()
-  
+  if(add_rgn_type | add_rgn_name) {
+    rgns <- read.csv(rgn_master.csv, na = "", stringsAsFactors = FALSE) %>% 
+      select(rgn_id = rgn_id_2013, rgn_name = rgn_nam_2013, rgn_type = rgn_typ) %>% 
+      arrange(rgn_type, rgn_id, rgn_name) %>% 
+      group_by(rgn_id) %>% 
+      summarize(rgn_name = first(rgn_name), rgn_type = first(rgn_type)) %>% 
+      ungroup()
+  }
   if (add_rgn_type) {
     df_out <- df_out %>% 
       left_join(rgns %>% 
