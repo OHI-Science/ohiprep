@@ -1,4 +1,8 @@
-The Sea Level Rise pressure layer was updated with new data for years through 2014. Previous data went through 2012.  
+##Sea Level Rise Pressure Layer for OHI 2015 
+
+If the data produced here is used in publication, please make attribution clear. For citation see the most current release [here](#releasesite)
+
+This layer was updated with new data for years through 2014. Previous data went through 2012.  
 
 
 ###Data
@@ -19,7 +23,7 @@ The original sea level rise data (plotted above) was prepped for OHI 2015 as fol
 - All NA cells were filled in through nearest neighbor interpolation
 
 
-For full procedure and code see [slr_procedure.html](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/AVISO-SeaLevelRise/v2015/slr_procedure.html)
+For full procedure and code see [slr_procedure.html](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/AVISO-SeaLevelRise/v2015/slr_create_layer.html)
 
 ### Final Layer
 
