@@ -1,12 +1,14 @@
-##Ocean Acidification Pressures Layer for OHI 2015
+##Ocean Acidification Pressure Layer for OHI 2015
+
+If the data produced here is used in publication, please make attribution clear. For citation see the most current release [here](https://github.com/OHI-Science/ohiprep/releases)
 
 ### Data
 
 Raw data was provided by Woods Hole on December 16, 2014. This data is an update to the work done by [Feely et al. (2009)](http://www.tos.org/oceanography/archive/22-4_feely.pdf).  
 
-**Resolution**: 1 degree  
+**Native Data Resolution**: 1 degree  
 **Values**: Surface &#937; aragonite saturation state  
-  **Time Range**: 1880-1889 and 2005-2014 (monthly data was provided for each year)  
+**Time Range**: 1880-1889 and 2005-2014 (monthly data was provided for each year)  
 **Format**: NetCDF
 
 ### Scripts
