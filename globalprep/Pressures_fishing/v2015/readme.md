@@ -26,3 +26,5 @@ This data comes from the [Sea Around Us Project](http://www.seaaroundus.org/)
 For full procedure see [create_fish_pressure_layers.html]():
 
 **References**
+
+See full citation [here](http://www.seaaroundus.org/citation-policy/)
