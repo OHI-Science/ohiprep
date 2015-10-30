@@ -6,11 +6,11 @@ If the data produced here is used in publication, please make attribution clear.
   
 Data for mean sea level rise (in mm) is an [AVISO](http://www.aviso.altimetry.fr/en/data/products/ocean-indicators-products/mean-sea-level/products-images.html) product.
 
-**Native Data Resolution**: 0.25 degrees
-**Values**: Annual rate of sea level rise in mm 
-**Time Range**: January 1993 - June 2014
-**Format**: NetCDF 
-**Downloaded**: January 12, 2015
+**Native Data Resolution**: 0.25 degrees  
+**Values**: Annual rate of sea level rise in mm   
+**Time Range**: January 1993 - June 2014  
+**Format**: NetCDF   
+**Downloaded**: January 12, 2015  
 
 
 ![](./images/slr_mm_raster_93_14.png)
