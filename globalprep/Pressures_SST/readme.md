@@ -4,7 +4,7 @@ If the data produced here is used in publication, please make attribution clear.
 
 ### Data
 
-Data comes from [CoRTAD version 5](https://data.noaa.gov/dataset/the-coral-reef-temperature-anomaly-database-cortad-version-5-global-4-km-sea-surface-temperatub705f)
+Data comes from [CoRTAD version 5](http://www.nodc.noaa.gov/sog/cortad/)
 
 **Native Data Resolution**: 4km   
 **Values**: Temperature in Kelvin  
@@ -54,5 +54,5 @@ This layer was rescaled from 0 to 1 using the 99.99th quantile as a reference po
 
 **References**
 
-CoRTAD v5
+Selig, E.R., K.S. Casey, and J.F. Bruno (2010), New insights into global patterns of ocean temperature anomalies: implications for coral reef health and management, Global Ecology and Biogeography, DOI: 10.1111/j.1466-8238.2009.00522.x.
 
