@@ -2,9 +2,6 @@
 
 If the data produced here is used in publication, please make attribution clear. For citation see the most current release [here](https://github.com/OHI-Science/ohiprep/releases)
 
-This layer was updated with new data for years through 2014. Previous data went through 2012.  
-
-
 ###Data
   
 Data for mean sea level rise (in mm) between January 1993 and June 2014 was downloaded on 1/12/15 from [AVISO](http://www.aviso.altimetry.fr/en/data/products/ocean-indicators-products/mean-sea-level/products-images.html). These raw products came as NetCDFs.
@@ -12,8 +9,16 @@ Data for mean sea level rise (in mm) between January 1993 and June 2014 was down
 
 ![](./images/slr_mm_raster_93_14.png)
 
+### Scripts
 
-#### Data prep for OHI 2015
+
+### Updates from previous assessment
+
+This layer was updated with new data for years through 2014. Previous data went through 2012.  
+
+***
+
+### Methods Overview
 
 The original sea level rise data (plotted above) was prepped for OHI 2015 as follows:
 
