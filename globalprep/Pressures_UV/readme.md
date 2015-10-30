@@ -4,7 +4,12 @@ If the data produced here is used in publication, please make attribution clear.
 
 ###Data
 
-The Ultraviolet Radiation pressures layer uses the [Aura OMI GLobal Surface UVB Data Product](http://disc.sci.gsfc.nasa.gov/Aura/data-holdings/OMI/omuvbd_v003.shtml) which has a resolution of 1x1 degrees and *daily* data from 2004 to 2014.
+The Ultraviolet Radiation pressures layer uses the [Aura OMI GLobal Surface UVB Data Product](http://disc.sci.gsfc.nasa.gov/Aura/data-holdings/OMI/omuvbd_v003.shtml).
+
+**Native Data Resolution**: 1 degree
+**Values**: Level-3 OMI Surface UV Irradiance and Erythemal Dose- OMUVBd 
+**Time Range**: Daily data from 2004 - 2014
+**Format**: HDF5
 
 ### Scripts
 
