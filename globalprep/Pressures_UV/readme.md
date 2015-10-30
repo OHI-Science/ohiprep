@@ -1,12 +1,25 @@
-UV Pressures Layer
+##UV Pressures Layer for OHI 2015
+
+If the data produced here is used in publication, please make attribution clear. For citation see the most current release [here](https://github.com/OHI-Science/ohiprep/releases)
+
+###Data
 
 The Ultraviolet Radiation pressures layer uses the [Aura OMI GLobal Surface UVB Data Product](http://disc.sci.gsfc.nasa.gov/Aura/data-holdings/OMI/omuvbd_v003.shtml) which has a resolution of 1x1 degrees and *daily* data from 2004 to 2014.
 
+### Scripts
+
+1. `exploring_past_uv_data.R` is an exploratory script - not used in final dataprep
+2. `create_uv_layer.R` creates the final pressure layer
+
+### Updates from previous assessment
+
 Previous assessments used data up to 2012. For OHI 2015, data for 2013 and 2014 were included.
+
 
 ***
 
-**Overview**
+### Methods Overview
+The majority of this data was prepared by Dan Yocum in python.
 
 Daily data was used to create monthly averages of UVB irradiance for each year. These monthly rasters were then averaged for the 5 most recent years (2010-2014) and 5 historical years (1997-2001). 
 
