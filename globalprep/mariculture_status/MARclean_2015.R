@@ -1,4 +1,10 @@
 
+#### Future improvments:
+# 1) the FAO clean function should now work with these data due to Casey's updates
+# 2) Update the "updated 2014_sp_list_v2: get rid of alias variables and make new.name the alias when necessary, 
+#    combine with MAR_species_seaweeds (for some reason seaweeds are not excluded here)
+# 3) name to rgn for both FAO and Trujillo data...rather than changing some country names after name to rgn.
+
 ############################## MARICULTURE LAYERS PREP #######################################################################
 # load libraries, set directories
 # source('../ohiprep/src/R/common.R') # set dir_neptune_data
