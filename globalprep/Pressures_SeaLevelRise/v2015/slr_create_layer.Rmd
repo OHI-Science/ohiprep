@@ -1,16 +1,21 @@
 ---
-title: "Sea level rise pressure procedure"
+title: "Sea Level Rise Pressure Layer for OHI 2015"
 author: "Jamie Afflerbach"
 date: "4/15/2015"
 output: html_document
+  toc: true
 ---
 
 **General Update**  
 
 The Sea Level Rise pressure layer was updated with new data for the year 2013. Previous data went through 2012. In addition, the rescaling of this pressure was recalculated to use the 99.99th percentile of raw data as the maximum. All values at or above the 99.99th percentile are given a value of 1.
 
+**Attribution and Citation Information**
 
-## Procedure
+If this methodology or data is used in publication, please make attribution clear by using the citation found in the release for OHI 2015.
+
+
+## Steps
  1. Create raster of original data (came as .nc)
  2. Reproject to mollweide
  3. Calculate cumulative sea level rise over all years
@@ -21,13 +26,13 @@ The Sea Level Rise pressure layer was updated with new data for the year 2013. P
  8. Clip out ocean using ocean raster at 1km cell size
  9. Create raster of just the interpolated cells
 
-
+***  
 
 ###Data
   
 Data for mean sea level rise (in mm) between January 1993 and June 2014 was downloaded on 1/12/15 from [AVISO](http://www.aviso.altimetry.fr/en/data/products/ocean-indicators-products/mean-sea-level/products-images.html).
 
-```{r setup,echo=FALSE}
+```{r setup, warning=F, message=F}
 
     dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
               'Darwin'  = '/Volumes/data_edit',
@@ -35,10 +40,7 @@ Data for mean sea level rise (in mm) between January 1993 and June 2014 was down
 
 
 knitr::opts_knit$set(root.dir = file.path(dir_N,'git-annex/globalprep/Pressures_SeaLevelRise'))
-```
 
-
-```{r,echo=FALSE,message=FALSE,warning=FALSE}
 #libraries
 
 library(raster)
@@ -56,12 +58,12 @@ rasterOptions(tmpdir=tmpdir)
 
 #set colors for plotting
 
-    cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
+cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
 
 ```
 
 
-**1. Create raster from original NetCDF file**
+###1. Create raster from original NetCDF file
 ```{r,warning=FALSE,message=FALSE}
 
 # The following 3 lines were done once to create raster from downloaded NetCDF. 
@@ -80,7 +82,7 @@ rasterOptions(tmpdir=tmpdir)
     plot(r,col=cols,main='Mean Annual Sea Level Rise (mm)\n1993-2014')
 ```
 
-**2. Reproject raster to mollweide and rotate to extent -180 to 180 degrees**
+###2. Reproject raster to mollweide and rotate to extent -180 to 180 degrees
 
 ```{r,warning=FALSE,message=FALSE}
 
@@ -96,7 +98,7 @@ rasterOptions(tmpdir=tmpdir)
   plot(slr_moll,main='Sea Level Rise - Mollweide',col=cols)
 ```
 
-**3. Multiply mean annual sea level rise by number of years in dataset to get a total change in mm between 1993-2014**
+###3. Multiply mean annual sea level rise by number of years in dataset to get a total change in mm between 1993-2014
 ```{r,warning=FALSE,message=FALSE}
 # (3) Multiply annual rate by all years in dataset
 
@@ -111,7 +113,7 @@ rasterOptions(tmpdir=tmpdir)
 
 ```
 
-**4. All values below zero indicate a decrease in sea level rise.**  
+###4. All values below zero indicate a decrease in sea level rise.  
 
 We choose to disregard these as the impact of sea level rise is focused only on the increase in sea level
 ```{r,message=FALSE,warning=FALSE}
@@ -124,7 +126,7 @@ We choose to disregard these as the impact of sea level rise is focused only on 
       histogram(slr_moll,main ='Distribution of data after removing negative values')
 ```
 
-**5. Resample layer to 1km resolution**
+###5. Resample layer to 1km resolution
 
 Original resolution of the data is 0.25 degrees. To resample the data to 1km resolution, a template ocean raster that is at the desired resolution (~1km) and contains all cells included within OHI regions, is used.
 ```{r,message=FALSE,warning=FALSE}
@@ -138,7 +140,7 @@ Original resolution of the data is 0.25 degrees. To resample the data to 1km res
     plot(slr_1km,main='SLR resampled to 1km' ,col=cols)
 ```
 
-**6. Rescale using the reference point (99.99 quantile)**
+###6. Rescale using the reference point (99.99 quantile)
 
 All values at or above the 99.99th quantile (512.8) are set to equal 1.
 ```{r,warning=FALSE,message=FALSE}
@@ -153,30 +155,30 @@ All values at or above the 99.99th quantile (512.8) are set to equal 1.
     plot(r_resc,main='Rescaled Sea Level Rise Pressure',col=cols)
 ```
 
-**7. Interpolation**  
+###7. Interpolation  
 
 Interpolating the data was done using ArcGIS. All NA cells were interpolated using nearest neighbor. The python script can be found [here](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/Pressures_SeaLevelRise/scripts/SLR_interpolation.py)  
-```{r,message=FALSE,warning=FALSE}
+```{r interpolation,message=FALSE,warning=FALSE}
 
   r_int = raster('tmp/slr_moll_nonlog_1km_resc_int.tif')
   plot(r_int,main='Sea level rise interpolation with nearest neighbor',col=cols)
 ```
 
 
-**8. Clip out ocean & Finalize layer**
+###8. Clip out ocean & Finalize layer
 
 Using the same ocean template raster as in step 6, all land is clipped out after interpolation.
-```{r,message=FALSE,warning=FALSE}
+```{r clip ocean,message=FALSE,warning=FALSE}
 
   r_final = mask(r_int,ocean)
 
   plot(r_final,main='Sea Level Rise \n Final layer',col=cols)
 ```
 
-**9. Create interpolated cells raster**
+###9. Create interpolated cells raster
 
 The cells that were filled in using the nearest neighbor interpolation are identified in a single raster.
-```{r,message=FALSE,warning=FALSE}
+```{r interpolate,message=FALSE,warning=FALSE}
 
 interp = mask(r_final,slr_1km,inverse=TRUE)
 
