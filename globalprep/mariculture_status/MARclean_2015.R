@@ -357,7 +357,9 @@ mar_sustainability_score = m4 %>%
   unique()
 anyDuplicated(mar_sustainability_score)
 
+
 # save outputs
 write.csv(mar_harvest_species, file.path(dir_d, 'data/mar_harvest_species_2015a_lyr.csv'), row.names=F)
 write.csv(mar_sustainability_score, file.path(dir_d, 'data/mar_sustainability_score_2015a_lyr.csv'), row.names=F)
 write.csv(mar_harvest_tonnes, file.path(dir_d, 'data/mar_harvest_tonnes_2015a_lyr.csv'), row.names=F)
+write.csv(m4, file.path(dir_d, 'data/mar_sustainability_gap_filling.csv'), row.names = FALSE)
