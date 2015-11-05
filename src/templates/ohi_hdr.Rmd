@@ -1,0 +1,11 @@
+---
+output: html_fragment
+---
+<p align = 'center'>
+<a href = 'http://ohi-science.org/', target = '_blank'>
+<img src = 'ohi_banner1.png', alt = 'ohi logo'>
+</a>
+<br>
+[OHI Science](http://ohi-science.org) |
+[Citation policy](https://github.com/OHI-Science/ohiprep/releases)
+</p>

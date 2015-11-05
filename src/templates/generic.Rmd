@@ -1,0 +1,33 @@
+---
+title: 'OHI: [NAME OF GOAL/DATA LAYER] '
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: ../src/templates/ohi_hdr.html 
+  pdf_document:
+    toc: true
+---
+#Summary
+
+#Updates from previous assessment
+
+***
+
+#Data
+**Native Data Resolution**:   
+**Values**:  
+**Time Range**:  
+**Format**:  
+
+***
+  
+#Methods
+
+***
+
+**References**  
