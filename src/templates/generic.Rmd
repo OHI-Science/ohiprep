@@ -1,5 +1,5 @@
 ---
-title: 'OHIBC: data_prep_spp.Rmd'
+title: 'OHI: [NAME OF GOAL/DATA LAYER] '
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
@@ -8,7 +8,26 @@ output:
     theme: cerulean
     highlight: haddock
     includes: 
-      in_header: ../src/templates/ohi_hdr.html
+      in_header: ../src/templates/ohi_hdr.html 
   pdf_document:
     toc: true
 ---
+#Summary
+
+#Updates from previous assessment
+
+***
+
+#Data
+**Native Data Resolution**:   
+**Values**:  
+**Time Range**:  
+**Format**:  
+
+***
+  
+#Methods
+
+***
+
+**References**  
