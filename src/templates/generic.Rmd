@@ -8,7 +8,7 @@ output:
     theme: cerulean
     highlight: haddock
     includes: 
-      in_header: ../src/templates/ohi_hdr.html 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
   pdf_document:
     toc: true
 ---
