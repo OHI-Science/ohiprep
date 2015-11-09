@@ -1,8 +1,8 @@
 ### CITATION POLICY	
 You may freely download and use any data, code, or instructional guides created for the Ocean Health Index project.  In exchange, please credit our work as described below.
 
-To cite the Ocean Health Index and/or general results from global analyses, please use the following:
-##Halpern BS, Longo C, Lowndes JSS, Best BD, Frazier M, Katona SK, et al. (2015) Patterns and Emerging Trends in Global Ocean Health. PLoS ONE 10(3): e0117863. doi:10.1371/journal.pone.0117863##
+If you reference the Ocean Health Index and/or general results from global analyses, please use the following citation:
+**Halpern BS, Longo C, Lowndes JSS, Best BD, Frazier M, Katona SK, et al. (2015) Patterns and Emerging Trends in Global Ocean Health. PLoS ONE 10(3): e0117863. doi:10.1371/journal.pone.0117863**
 
 To cite other aspects of our work, please choose the type of citation/s that seems most appropriate:
 
@@ -13,7 +13,7 @@ To cite other aspects of our work, please choose the type of citation/s that see
   Ocean Health Index. 2015. ohiprep v2015.1: Preparation of data for global scenarios of the Ocean Health Index, [date downloaded]. National Center for Ecological Analysis and Synthesis, University of California, Santa Barbara. Available at: https://github.com/OHI-Science/ohiprep/releases/edit/v2015.1
 - If relevant: Please follow further citation information provided in specific individual documents/website pages of interest. 
 
-#### If you conduct an OHI+ analyses, please cite:
+#### If you conduct an OHI+ analyses:
 - Halpern BS, Longo C, Lowndes JSS, Best BD, Frazier M, Katona SK, et al. (2015) Patterns and Emerging Trends in Global Ocean Health. PLoS ONE 10(3): e0117863. doi:10.1371/journal.pone.0117863
 - The ohicore package used to generate the data:
   Ocean Health Index. 2015. ohicore v2015.1: core Ocean Health Index functions, [date downloaded]. National Center for Ecological Analysis and Synthesis, University of California, Santa Barbara. Available at: https://github.com/OHI-Science/ohicore/releases/edit/v2015.1
