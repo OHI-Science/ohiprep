@@ -17,14 +17,8 @@ This data comes from the [Sea Around Us Project](http://www.seaaroundus.org/)
 2. `dataprep.R`
 3. `create_fish_pressure_layers.Rmd`
 
-### Updates from previous assessment
-
 ***
 
 ### Methods Overview
 
 For full procedure see [create_fish_pressure_layers.html]():
-
-**References**
-
-See full citation [here](http://www.seaaroundus.org/citation-policy/)
