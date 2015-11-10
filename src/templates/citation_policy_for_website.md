@@ -2,13 +2,15 @@
 You may freely download and use any data, code, or instructional guides created for the Ocean Health Index project.  In exchange, please credit our work as described below.
 
 #### General references to the Ocean Health Index
-If you reference the Ocean Health Index (OHI) and/or general results from the global analysis, please cite our most recent publication:
+If you reference the Ocean Health Index (OHI) and/or general results from the global analysis, please cite the original publication describing the OHI framework:
+*Halpern BS, Longo C, Hardy D, McLeod KL, Samhouri JF, Katona SK, et al. (2012) An index to assess the health and benefits of the global ocean. Nature. 2012;488: 615–620. doi:10.1038/nature11397*
+
+And, if relevant, the most recent OHI publication which updates some of the goal models and provides updated country scores: 
 *Halpern BS, Longo C, Lowndes JSS, Best BD, Frazier M, Katona SK, et al. (2015) Patterns and Emerging Trends in Global Ocean Health. PLoS ONE 10(3): e0117863. doi:10.1371/journal.pone.0117863*
+
 
 #### If you are conducting an OHI+ assessment, please cite:
-- **Most recent OHI publication** This manuscript describes the general theory and models used in the calculation of the Ocean Health Index:
-*Halpern BS, Longo C, Lowndes JSS, Best BD, Frazier M, Katona SK, et al. (2015) Patterns and Emerging Trends in Global Ocean Health. PLoS ONE 10(3): e0117863. doi:10.1371/journal.pone.0117863*
-
+- **Primary OHI publications** See above
 - **Github repository: ohicore** The R package used to generate the scores:
   *Ocean Health Index. 2015. ohicore v2015.1: core Ocean Health Index functions, [date downloaded]. National Center for Ecological Analysis and Synthesis, University of California, Santa Barbara. Available at: https://github.com/OHI-Science/ohicore/releases/edit/v2015.1*
 
