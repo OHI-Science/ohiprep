@@ -16,7 +16,7 @@ If you reference the Ocean Health Index (OHI) and/or general results from the gl
 *Ocean Health Index. 2015. Ocean Health Index Toolbox Manual [date]. National Center for Ecological Analysis and Synthesis, University of California, Santa Barbara. Available at: http://ohi-science.org/manual* 
 
 
-#### For those who are diving deeper and using the global datasets (or, the methods to obtain these data):
+#### If you are diving deeper and using global datasets or methods:
 - **Github repository: ohi-global** The final data and methods (i.e., code) used in the global analysis are available from [Github]( https://github.com/OHI-Science/ohi-global/releases). If these data are used, please cite:
   *Ocean Health Index. 2015. ohi-global v2015.1: Global scenarios data for Ocean Health Index, [date downloaded]. National Center for Ecological Analysis and Synthesis, University of California, Santa Barbara. Available at: https://github.com/OHI-Science/ohi-global/releases/edit/v2015.1*
 
