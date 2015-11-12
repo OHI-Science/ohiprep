@@ -1,19 +1,49 @@
 ---
-title: "Sea Level Rise Pressure Layer for OHI 2015"
-author: "Jamie Afflerbach"
-date: "4/15/2015"
-output: html_document
-  toc: true
+title: 'OHI: Sea Level Rise Pressure Layer 2015 '
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: ../../../src/templates/ohi_hdr.html
+  pdf_document:
+    toc: true
 ---
 
-**General Update**  
+#Summary
 
+This script creates the **sea level rise** pressure layer used for OHI 2015 global assessment.  
+
+**Overview:**
+
+- All negative values, indicating decreases in sea level, were set to zero  
+- Data was resampled from the native cell resolution (0.25 degrees) to ~ 1km
+- The reference point was set as the 99.99th quantile of the data distribution to rescale all values from 0 to 1
+- All NA cells were filled in through nearest neighbor interpolation
+
+
+#Updates from previous assessment
 The Sea Level Rise pressure layer was updated with new data for the year 2013. Previous data went through 2012. In addition, the rescaling of this pressure was recalculated to use the 99.99th percentile of raw data as the maximum. All values at or above the 99.99th percentile are given a value of 1.
 
-**Attribution and Citation Information**
+***
+#Data Source
 
-If this methodology or data is used in publication, please make attribution clear by using the citation found in the release for OHI 2015.
+**Reference**:  The altimeter products were produced and distributed by Aviso (http://www.aviso.altimetry.fr/), as part of the Ssalto ground processing segment. [AVISO](http://www.aviso.altimetry.fr/en/data/products/ocean-indicators-products/mean-sea-level/products-images.html)
 
+**Downloaded**: January 12, 2015  
+
+**Description**:  Annual rate of sea level rise in mm
+
+**Native data resolution**: 0.25 degree grid cells
+
+**Time range**: January 1993 - June 2014  
+
+**Format**:  NetCDF
+
+***
 
 ## Steps
  1. Create raster of original data (came as .nc)
@@ -28,9 +58,7 @@ If this methodology or data is used in publication, please make attribution clea
 
 ***  
 
-###Data
-  
-Data for mean sea level rise (in mm) between January 1993 and June 2014 was downloaded on 1/12/15 from [AVISO](http://www.aviso.altimetry.fr/en/data/products/ocean-indicators-products/mean-sea-level/products-images.html).
+###Setup
 
 ```{r setup, warning=F, message=F}
 
