@@ -5,12 +5,12 @@ library(dplyr)
 library(tidyr)
 
 # mangrove gap-filling is done here: ohiprep/globalprep/hab_mangrove/v2015/MangroveFinalDataFormatting.R
-# not sure where rocky reef is used.....don't have gap-filling data
+# rocky reef is used for NP risk data
 ## Bottom of script combines the habitat-gapfilling so it corresponds to the habitat layer
 
 
 ### General gap-fill function
-gap_fill_function <- function(var, no_gap_fill, data){
+gap_fill_function <- function(var, no_gap_fill, data, disag=TRUE){
   
   if(var=="health"){
     health <- data %>%
@@ -30,9 +30,13 @@ gap_fill_function <- function(var, no_gap_fill, data){
     extent <- tmp %>%
       select(rgn_id, habitat, km2) %>%
       mutate(variable = var) %>%
-      mutate(gap_fill = ifelse(km2>0, 0, NA)) %>%   # all actual data, so anything with a value is 0, others are NA
-      mutate(gap_fill = ifelse(rgn_id %in% d_regions$rgn_id & !is.na(km2), "disagg2012_gap_fill", gap_fill))
+      mutate(gap_fill = ifelse(km2>0, 0, NA))  # all actual data, so anything with a value is 0, others are NA
+      
+      if(disag){
+      extent <- extent %>%
+        mutate(gap_fill = ifelse(rgn_id %in% d_regions$rgn_id & !is.na(km2), "disagg2012_gap_fill", gap_fill))}
       #select(rgn_id, habitat, variable, gap_fill)
+    
     return(extent)
   }
   
@@ -103,7 +107,7 @@ summary(sb_trend)
 
 # step 1: see if there was gap-filling due to disaggregation:
 left_join(d_regions, sb_extent) %>%
-  arrange(rgn_id) #I believe so, scaled by eez area
+  arrange(rgn_id) # Doesn't appear to be
 left_join(d_regions, sb_health) %>%#yes
   arrange(region_id_2012)
 left_join(d_regions, sb_trend) #yes
@@ -115,7 +119,7 @@ tmp <- left_join(sb_whence, sb_extent) %>%
   mutate(habitat="soft_bottom")
 
 
-sb_extent <- gap_fill_function(var="extent", no_gap_fill = "actuals", data=tmp) %>%
+sb_extent <- gap_fill_function(var="extent", no_gap_fill = "actuals", data=tmp, disag=FALSE) %>%
   select(rgn_id, habitat, variable, gap_fill)
 write.csv(sb_extent, 'globalprep/hab_soft_bottom/v2012/data/extent_gap_fill.csv', row.names=FALSE)
 
@@ -150,7 +154,7 @@ summary(coral_trend)
 
 # step 1: see if there was gap-filling due to disaggregation:
 left_join(d_regions, coral_extent) %>%
-  arrange(rgn_id) #I believe so, scaled by eez area
+  arrange(rgn_id) #doesn't appear to be
 left_join(d_regions, coral_health) %>%#yes
   arrange(region_id_2012)
 left_join(d_regions, coral_trend) #yes
@@ -161,7 +165,7 @@ tmp <- left_join(c_whence, coral_extent) %>%
   left_join(coral_trend) %>%
   mutate(habitat="coral")
 
-c_extent <- gap_fill_function(var="extent", no_gap_fill = "actuals", data=tmp) %>%
+c_extent <- gap_fill_function(var="extent", no_gap_fill = "actuals", data=tmp, disag=FALSE) %>%
   select(rgn_id, habitat, variable, gap_fill)
 write.csv(c_extent, 'globalprep/hab_coral/v2012/data/extent_gap_fill_coral.csv', row.names=FALSE)
 
@@ -197,7 +201,7 @@ sm_trend <- read.csv('globalprep/hab_saltmarsh/v2012/data/habitat_trend_saltmars
 summary(sm_trend)
 
 # step 1: see if there was gap-filling due to disaggregation:
-left_join(d_regions, sm_extent) #yes...I believe scaled to eez area
+left_join(d_regions, sm_extent) #no (doesn't appear to be)
 left_join(d_regions, sm_health) #yes
 left_join(d_regions, sm_trend) #yes
 
@@ -208,7 +212,7 @@ tmp <- left_join(sm_whence, sm_extent) %>%
   mutate(habitat="saltmarsh")
 
 
-sm_extent <- gap_fill_function(var="extent", no_gap_fill = "actuals", data=tmp) %>%
+sm_extent <- gap_fill_function(var="extent", no_gap_fill = "actuals", data=tmp, disag=FALSE) %>%
   select(rgn_id, habitat, variable, gap_fill)
 write.csv(sm_extent, 'globalprep/hab_saltmarsh/v2012/data/extent_gap_fill_saltmarsh.csv', row.names=FALSE)
 
@@ -243,7 +247,7 @@ sg_trend <- read.csv('globalprep/hab_seagrass/v2012/data/habitat_trend_seagrass.
 summary(sg_trend)
 
 # step 1: see if there was gap-filling due to disaggregation:
-left_join(d_regions, sg_extent) #yes, but scaled to eez area (?)
+left_join(d_regions, sg_extent) #no, doesn't appear to be the case
 left_join(d_regions, sg_health) #yes
 left_join(d_regions, sg_trend) #yes
 
@@ -254,7 +258,7 @@ tmp <- left_join(sg_whence, sg_extent) %>%
   mutate(habitat="seagrass")
 
 
-sg_extent <- gap_fill_function(var="extent", no_gap_fill = "actuals", data=tmp) %>%
+sg_extent <- gap_fill_function(var="extent", no_gap_fill = "actuals", data=tmp, disag = FALSE) %>%
   select(rgn_id, habitat, variable, gap_fill)
 write.csv(sg_extent, 'globalprep/hab_seagrass/v2012/data/extent_gap_fill_seagrass.csv', row.names=FALSE)
 
@@ -292,6 +296,29 @@ write.csv(trend_gf, 'globalprep/NSIDC_SeaIce/v2015/data/trend_gap_fill_seaice.cs
 
 
 ############################################################################
+##  rocky reef ----
+## only variable of importance is extent
+## this habitat only used in NP calculation
+## no gap-filling is evident
+## 
+############################################################################
+rr_extent <- read.csv('globalprep/hab_rockyreef/v2012/data/habitat_extent_rocky_reef.csv')
+summary(rr_extent)
+
+# step 1: see if there was gap-filling due to disaggregation:
+left_join(d_regions, rr_extent) %>%
+  arrange(rgn_id) #doesn't appear to be any gap-filling
+
+rr_extent <- rr_extent %>%
+  mutate(gap_fill = ifelse(!is.na(km2) & km2>0, 0, NA)) %>%
+  mutate(variable = "extent") %>%
+  select(rgn_id, habitat, variable, gap_fill)
+write.csv(rr_extent, 'globalprep/hab_rockyreef/v2012/data/extent_gap_fill_rr.csv', row.names=FALSE)
+
+
+
+
+############################################################################
 ## Combining gap-filling data for habitats ----
 ############################################################################
 
@@ -302,8 +329,9 @@ coral_extent <- read.csv('globalprep/hab_coral/v2012/data/extent_gap_fill_coral.
 sm_extent <- read.csv('globalprep/hab_saltmarsh/v2012/data/extent_gap_fill_saltmarsh.csv')
 sg_extent <- read.csv('globalprep/hab_seagrass/v2012/data/extent_gap_fill_seagrass.csv')
 sb_extent <- read.csv('globalprep/hab_soft_bottom/v2012/data/extent_gap_fill.csv')
+rr_extent <- read.csv('globalprep/hab_rockyreef/v2012/data/extent_gap_fill_rr.csv')
 
-extent_gf <- rbind(mangrove_extent, si_extent, coral_extent, sm_extent, sg_extent, sb_extent)
+extent_gf <- rbind(mangrove_extent, si_extent, coral_extent, sm_extent, sg_extent, sb_extent, rr_extent)
 summary(extent_gf)
 table(extent_gf$gap_fill)
 table(extent_gf$variable)
