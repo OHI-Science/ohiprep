@@ -13,14 +13,15 @@ am_file_hcaf <- file.path(am_dir, 'hcaf_ohi.sql')
 am_file_sp_occur <- file.path(am_dir, 'speciesoccursum_ohi.sql')
 am_file_sp_native <- file.path(am_dir, 'hcaf_species_native_ohi.sql')
 
-read.table(am_file, header = FALSE, sep = "", quote = '"',
-           dec = ".", numerals = c("allow.loss", "warn.loss", "no.loss"),
-           as.is = TRUE, skip = 18,
-           na.strings = "NA", colClasses = NA, nrows = 1)
-
-x <- data.frame('raw' = scan(file = am_file_hcaf,      what = 'character', nmax = 2000, sep = '\n'))
-y <- data.frame('raw' = scan(file = am_file_sp_occur,  what = 'character', nmax = 2000, sep = '\n'))
-z <- data.frame('raw' = scan(file = am_file_sp_native, what = 'character', nmax = 2000, sep = '\n'))
+x <- data.frame('raw' = scan(file = am_file_hcaf,      
+                             what = 'character', 
+                             nmax = 2000, sep = '\n'))
+y <- data.frame('raw' = scan(file = am_file_sp_occur,  
+                             what = 'character', 
+                             nmax = 2000, sep = '\n'))
+z <- data.frame('raw' = scan(file = am_file_sp_native, 
+                             what = 'character', 
+                             nmax = 2000, sep = '\n'))
 
 ### scan file in; maybe a few thousand lines at a time, to keep within memory? 
 ### use 'CREATE TABLE' to identify column names
