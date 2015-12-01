@@ -17,9 +17,9 @@ setwd('~/github/ohiprep')
 source('src/R/common.R')
 
 goal     <- 'globalprep/SPP_ICO'
-scenario <- 'v2015'
+scenario <- 'v2016'
 dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal) 
-dir_data_am    <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'aquamaps/v2014') 
+dir_data_am    <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'aquamaps/v2015') 
 dir_data_iucn  <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'iucn_spp') 
 dir_git  <- file.path('~/github/ohiprep', goal)
 
@@ -52,7 +52,7 @@ source(file.path(goal, 'R/ingest_iucn.R'))
 ##############################################################################=
 ### Generate lookup - species <-> category/trend and spatial_source ----
 ##############################################################################=
-spp_all <- create_spp_master_lookup(reload = FALSE)
+spp_all <- create_spp_master_lookup(source_pref = 'iucn', fn_tag = '', reload = FALSE)
 ### | am_sid | sciname | am_category | iucn_sid | iucn_category | popn_trend | popn_category | 
 ### | info_source | spp_group | id_no | objectid | spatial_source | category_score | trend_score |
 # 
