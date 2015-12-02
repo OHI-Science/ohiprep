@@ -1,0 +1,334 @@
+---
+title: 'OHI: data_prep_ico_aq.Rmd'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+``` {r setup, echo = FALSE, message = FALSE, warning = FALSE}
+library(sp)        # the classes and methods that make up spatial ops in R
+library(rgdal)
+library(raster)
+library(data.table)
+library(readr)
+
+dir_git <- '~/github/ohiprep'
+
+source(file.path(dir_git, 'src/R/common.R'))  
+
+dir_anx <- file.path(dir_neptune_data, 'git-annex/globalprep/SPP_ICO')
+dir_spp <- file.path(dir_git, 'globalprep/SPP_ICO')
+
+dir_data_am    <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'aquamaps/v2014') 
+dir_data_iucn  <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'iucn_spp') 
+
+scenario <- 'v2015'
+
+source(file.path('~/github/ohibc', 'src/R/poly_plot_scores.R'))
+### for plotting final scores
+
+source(file.path(dir_spp, 'R/spp_fxn.R'))
+source(file.path(dir_spp, 'R/ico_fxn.R'))
+### SPP-specific and ICO-specific functions
+
+```
+
+
+# OHI Iconic Species Subgoal (Sense of Place)
+
+This script prepares scores (status and trend) for Iconic Species in 
+Antarctica's coastal regions.  Spatial data from IUCN and Aquamaps is
+combined with extinction risk information from IUCN.
+
+Currently, the Iconic Species sub-goal model is identical to the OHI Global 
+model: a region's status is based upon an unweighted average of species
+health for all 'iconic' species found within each CCAMLR reporting region.
+
+From Halpern et al (2012):
+
+> Iconic species are those that are relevant to local cultural identity through a species’ relationship to one or more of the following: 1) traditional activities such as fishing, hunting or commerce; 2) local ethnic or religious practices; 3) existence value; and 4) locally-recognized aesthetic value (e.g., touristic attractions/common subjects for art such as whales). Habitat-forming species are not included in this definition of iconic species, nor are species that are harvested solely for economic or utilitarian purposes (even though they may be iconic to a sector or individual). ...
+
+> Ultimately, almost any species can be iconic to someone, and so the intent with this goal was to focus on those species widely seen as iconic within a country, and iconic from a cultural or existence value (rather than for a livelihoods or extractive reason). ...
+
+> The reference point is to have the risk status of all assessed species as Least Concern (i.e., a goal score = 1.0)
+
+The Status of this sub-goal (X~ICO~) is then the % of iconic species in each threat category (as defined by the IUCN Red List), such that:
+
+$$X_{ICO} = \frac{\displaystyle\sum_{category}S_{cat}*w_{cat}}{\displaystyle\sum_{category}S_{cat}}$$
+
+where for each IUCN threat category (or analogous NatureServe conservation rank):
+
+* *S~cat~* is the number of assessed species in the category
+* *w~cat~* is the status weight assigned for that category (note, these are the inverse of the risk value used in the SPP calculations):
+    * 'LC' = 1.0, 'NT' = 0.8, 'VU' = 0.6, 'EN' = 0.4, 'CR' = 0.2, 'EX' = 0.0
+
+
+ICO trend is calculated in a similar manner, but weightings are assigned according to IUCN population trend: 'Decreasing' = -0.5, 'Stable' = 0.0, 'Increasing' = +0.5.  
+
+# Data Preparation
+
+## Data Sources
+
+Iconic Species List:
+
+* The OHI global iconic species list was created by combining three species lists from WWF Global: global priorities, regional and local priorities, and flagship species
+* <citation>
+
+-----
+
+## Prepare master list of Iconic Species
+
+Get list of all species listed as "iconic" for Antarctica.  For now, the analysis is based on the global list of Iconic Species, filtered to just the species that occur in CCAMLR regions.
+
+To this global ICO species list, we attach `spp_all` df to acquire IUCN category & trend.
+
+``` {r read iconic species list, echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE}
+
+ico_list <- get_ico_list()
+
+ico_list <- ico_list %>%
+  select(sciname, iucn_sid) %>%
+  unique()
+
+spp_all <- read.csv(file.path(dir_anx, scenario, 'int/spp_all.csv'), 
+                    stringsAsFactors = FALSE)
+
+# join ico_list to spp_all to incorporate category info and parent/subpop info.
+ico_list <- ico_list %>%
+  left_join(spp_all %>%
+              select(sciname, am_sid, iucn_sid, 
+                     popn_trend, popn_category, category_score, trend_score),
+            by = c('sciname', 'iucn_sid'))
+
+```
+
+-----
+
+## Find AQ-specific cell locations for all species on ICO list
+
+Using same raster method as for SPP, identify .5 deg cells within AQ regions.
+Then filter IUCN and AM lists to just species on ico_list, and just cells within AQ regions.
+
+``` {r set up BC rasters, echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE}
+
+### Read in global regions polygons, in WGS84 CRS
+dir_rgn <- file.path(dir_neptune_data, 'git-annex/globalprep/spatial/v2015/data')
+rgn_lyr <- 'regions_gcs'
+
+message(sprintf('Reading global regions shapefile...\n  %s/%s.shp', dir_rgn, rgn_lyr))
+rgn_poly <- readShapePoly(fn = file.path(dir_rgn, rgn_lyr))
+rgn_poly@proj4string <- CRS('+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0')
+
+rgn2cell_df <- extract_cell_id_per_region(reload = FALSE, 
+                                          ogr_location = file.path(dir_neptune_data, 'git-annex/globalprep/spatial/v2015/data'),
+                                          rgn_layer    = 'regions_gcs', 
+                                          ohi_type     = 'AQ')
+
+```
+
+``` {r Get spatial distributions, echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE}
+
+### Get spatial distributions of species from both Aquamaps and IUCN shps
+
+am_cells_spp_0  <- get_am_cells_spp(n_max = -1, prob_filter = 0,   reload = FALSE)
+am_cells_spp_40 <- get_am_cells_spp(n_max = -1, prob_filter = .40, reload = FALSE)
+iucn_cells_spp  <- get_iucn_cells_spp(rgn2cell_df)
+
+iucn_ico_bc <- iucn_cells_spp %>%
+  filter(sciname %in% ico_list$sciname) %>%
+  select(rgn_id, loiczid, rgn_name, sciname) %>%
+  mutate(sp_source = 'iucn') %>%
+  unique()
+### 3413 species/cell combinations
+
+am_ico_bc <- am_cells_spp %>%  
+  left_join(spp_all %>% 
+              select(am_sid, sciname), 
+            by = 'am_sid') %>%
+  filter(sciname %in% ico_list$sciname) %>%
+  select(rgn_id, loiczid, rgn_name, sciname) %>%
+  mutate(sp_source = 'am') %>%
+  unique()
+```
+
+At this point we have `r nrow(iucn_ico_bc)` species/cell instances based on IUCN spatial data, and `r nrow(am_ico_bc)` species/cell instances based on AM spatial data.
+
+**NOTE:** Unlike the SPP goal, in which IUCN data was preferentially used to identify cell locations for a species, for ICO I am allowing both IUCN and Aquamaps datasets to indicate presence of an iconic species in a given cell.  
+
+For example, if in cell #65000, for Tursiops truncatus, IUCN indicates presence and Aquamaps does not, it will be registered as present.  But if in cell #65001, Aquamaps indicates presence and IUCN does not, it will also by registered as present (whereas in SPP it would register as NOT present).
+
+Because the spatially explicit range is not critical, but rather just whether the species is present or absent within a give assessment region, it seems reasonable to consider both spatial sources.
+
+``` {r find ico by cell, echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE}
+
+ico_bc_cell_rgn <- rbind(iucn_ico_bc, am_ico_bc) %>%
+  left_join(spp_all %>%
+              filter(!str_detect(spatial_source, 'subpop') &
+                     !str_detect(spatial_source, 'alias')) %>%
+              select(sciname, category_score, trend_score),
+            by = 'sciname')
+
+```
+
+Iconic Species currently identified within British Columbia waters: 
+*`r paste(ico_bc_cell_rgn$sciname %>% unique(), collapse = ', ')`*.
+
+### Map of species count by cell
+
+``` {r ico plot species count raster, echo = FALSE, message = FALSE, warning = FALSE, cache = TRUE, fig.height = 4, fig.width = 6, fig.align = 'center'}
+ico_bc_cells <- ico_bc_cell_rgn %>%
+  select(-rgn_id, -rgn_name, -sp_source) %>%
+  unique()
+
+ico_summary_cells <- ico_bc_cells %>%
+  group_by(loiczid) %>%
+  summarize(n_ico = n(), 
+            mean_cat = mean(category_score, na.rm = TRUE), 
+            mean_trend = mean(trend_score, na.rm = TRUE)) %>%
+  as.data.frame()
+
+spp_plot_raster(ico_summary_cells, loiczid_rast, which_id = 'n_ico', 
+                poly_rgn = poly_bc_rgn,
+                title = 'Iconic Species count', scale_label = 'ico count', 
+                scale_limits = c(0, max(ico_summary_cells$n_ico)))
+
+
+```
+
+-----
+
+# Calculate Goal Model
+
+## Summarize mean category/trend per cell/region, IUCN
+
+For each raster cell, we generate a summary of number of species included, average extinction risk score of all species in cell, and average trend score of all species in cell with population trend information.  This section calculates extinction risk score based solely on IUCN category ranks, which excludes subpopulation scores due to lack of spatially explicit distribution info for subpopulations.
+
+From raster-level summaries, we generate a region-level summary based on area-weighted average extinction risk and population trend.
+
+``` {r iconic species by rgn, echo = FALSE, message = FALSE, warning = FALSE}
+ico_bc_rgn <- ico_bc_cell_rgn %>%
+  select(-loiczid, -sp_source) %>%
+  unique()
+
+ico_summary_rgn <- ico_bc_rgn %>%
+  group_by(rgn_id, rgn_name) %>%
+  summarize(n_ico = n(), 
+            mean_cat = mean(category_score, na.rm = TRUE), 
+            mean_trend = mean(trend_score, na.rm = TRUE)) %>%
+  as.data.frame()
+
+DT::datatable(ico_bc_rgn %>% arrange(rgn_id),
+              caption = 'Iconic Species by region',
+              rownames = FALSE,
+              class = 'stripe hover compact',
+              options  = list(dom = 'tp'))
+
+```
+
+``` {r summing by cells and rgn, echo = FALSE, message = FALSE, warning = FALSE}
+
+DT::datatable(ico_summary_rgn,
+              caption = 'summary by region',
+              rownames = FALSE,
+              class = 'stripe hover compact',
+              options  = list(dom = 'tp'))
+
+# DT::datatable(ico_summary_cells,
+#               caption = 'summary by cell (LOICZID)',
+#               rownames = FALSE,
+#               class = 'stripe hover compact',
+#               options  = list(dom = 'tp'))
+```
+
+
+### Map of mean extinction risk category and population trend by cell
+
+*Category value range: least concern = 0, extinct = 1*
+
+*Trend value range: population increasing = +0.5, stable = 0, decreasing = -0.5*
+
+``` {r ico plot cell score raster, echo = FALSE, message = FALSE, warning = FALSE, cache = TRUE,  fig.height = 4, fig.width = 6, fig.align = 'center'}
+
+spp_plot_raster(ico_summary_cells, loiczid_rast, which_id = 'mean_cat', 
+                poly_rgn = poly_bc_rgn,
+                title = 'Iconic Species mean rank', scale_label = 'ico rank', 
+                scale_limits = c(min(ico_summary_cells$mean_cat), 
+                                 max(ico_summary_cells$mean_cat)),
+                rev_scale = TRUE)
+
+spp_plot_raster(ico_summary_cells, loiczid_rast, which_id = 'mean_trend', 
+                poly_rgn = poly_bc_rgn,
+                title = 'Iconic Species mean trend', scale_label = 'ico trend', 
+                scale_limits = c(min(ico_summary_cells$mean_trend), 
+                                 max(ico_summary_cells$mean_trend)))
+
+```
+
+-----
+  
+## Create final output files
+
+From the region-level summaries of extinction risk and population trend, we calculate regional status and trend scores, and save as .csv.
+
+`r sprintf('Writing ICO status and trend to:\n  %s\n  %s\n', 
+            file.path(dir_spp, scenario, 'data/ico_status.csv'),
+            file.path(dir_spp, scenario, 'data/ico_trend.csv'))`
+
+``` {r save status and trend, echo = FALSE, message = FALSE, warning = FALSE}
+
+ico_status <- ico_summary_rgn %>%
+  mutate(score = 1 - mean_cat) %>%
+  select(rgn_id, score)
+ico_trend <- ico_summary_rgn %>%
+  select(rgn_id, score = mean_trend)
+
+write_csv(ico_status, file.path(dir_spp, scenario, 'data/ico_status.csv'))
+git_prov(file.path(dir_spp, scenario, 'data/ico_status.csv'), type = 'output')
+write_csv(ico_trend,  file.path(dir_spp, scenario, 'data/ico_trend.csv'))
+git_prov(file.path(dir_spp, scenario, 'data/ico_trend.csv'), type = 'output')
+
+```
+
+## Compare status and trend by region
+
+``` {r Compare status and trend, echo = FALSE, message = FALSE, fig.height = 4, fig.width = 6, fig.align = 'center'}
+
+ico_status_100 <- ico_status %>% 
+  mutate(score = round(score*100, 2))
+
+poly_plot_scores(ico_status_100, 
+                 scale_label = 'ICO Status', 
+                 title = 'OHIBC ICO Status')
+
+poly_plot_scores(ico_trend, 
+                 scale_label = 'ICO Trend', 
+                 title = 'OHIBC ICO Trend', 
+                 scale_limits = c(min(ico_trend$score, 0), 
+                                  max(ico_trend$score, 0)))
+
+DT::datatable(ico_status_100 %>% 
+                mutate(status = score) %>%
+                left_join(ico_trend %>%
+                            mutate(trend = round(score, 3)), 
+                          by = 'rgn_id') %>%
+                left_join(poly_bc_rgn@data, by = 'rgn_id') %>%
+                dplyr::select(rgn_id, rgn_name, status, trend),
+              caption = 'ICO Status and Trend by region',
+              rownames = FALSE,
+              class = 'stripe hover compact',
+              options  = list(dom = 't'))
+
+```
+
+
+
+``` {r child = file.path(dir_git, 'src/templates/ohibc_prov_ftr.Rmd')}
+```

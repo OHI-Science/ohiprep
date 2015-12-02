@@ -40,7 +40,7 @@ get_ico_list <- function() {
     select(-ico_global, -ico_local, -ico_flag) 
 
   # load IUCN list - does this contain year? does it matter? if fast, just reload all data
-  spp_all <- read.csv(file.path(dir_anx, scenario, 'intermediate/spp_all_cleaned.csv'), 
+  spp_all <- read.csv(file.path(dir_anx, scenario, 'int/spp_all.csv'), 
                      stringsAsFactors = FALSE)
 
   # join ico_list to spp_all to incorporate category info and parent/subpop info.
