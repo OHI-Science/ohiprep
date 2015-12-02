@@ -4,9 +4,9 @@
 # functions are also used from the spp_fxn.R script, so that must be loaded as well.
 
 
-cat('NOTE: ico_fxn.R requires that the following variables be set in the global environment (main script):\n')
-cat(sprintf('dir_anx:  currently set to \'%s\'\n', dir_anx))
-cat(sprintf('scenario: currently set to \'%s\'\n\n', scenario))
+message('NOTE: ico_fxn.R requires that the following variables be set in the global environment (main script):\n')
+message(sprintf('dir_anx:  currently set to \'%s\'\n', dir_anx))
+message(sprintf('scenario: currently set to \'%s\'\n\n', scenario))
 
 
 #############################################################################=
@@ -16,7 +16,7 @@ get_ico_list <- function() {
 ### this ICO species list to the IUCN master species list.  
 
   ico_list_file <- file.path(dir_anx, 'ico/ico_global_list.csv')
-  cat(sprintf('Reading raw iconic species list from: \n  %s\n', ico_list_file))
+  message(sprintf('Reading raw iconic species list from: \n  %s\n', ico_list_file))
   ico_list_raw <- read.csv(ico_list_file, stringsAsFactors = FALSE) %>%
     select(rgn_name   = Country, 
            comname    = Specie.Common.Name,  
@@ -122,24 +122,24 @@ get_ico_details_all <- function(ico_spp_list, reload = FALSE) {
   
   ico_rgns_file <- file.path(dir_anx, 'tmp/ico_rgns.csv')
   if(!file.exists(ico_rgns_file) | reload == TRUE) {
-    cat('Creating temporary ICO regions list.\n')
+    message('Creating temporary ICO regions list.\n')
     ico_rgns <- data.frame() # initialize
     
     for (sid in ico_spp_list$iucn_sid) { # sid = ico_spp_list$iucn_sid[3]
       region_list <-  get_ico_details(sid)
       # subpop
       if (length(region_list) > 0) {
-        cat(sprintf('Found native regions for species %d: %s\n', sid, paste(region_list[region_list$rgn_type == 'native', 1], collapse = ' ')))
-        cat(sprintf('Possibly/regionally extinct regions for species %d: %s\n', sid, paste(region_list[region_list$rgn_type != 'native', 1], collapse = ' ')))
+        message(sprintf('Found native regions for species %d: %s\n', sid, paste(region_list[region_list$rgn_type == 'native', 1], collapse = ' ')))
+        message(sprintf('Possibly/regionally extinct regions for species %d: %s\n', sid, paste(region_list[region_list$rgn_type != 'native', 1], collapse = ' ')))
         ico_regions_sid <- data.frame(sid, region_list)
         ico_rgns     <- rbind(ico_rgns, ico_regions_sid)
       }
     }
     
-    cat(sprintf('Writing temporary ICO regions file to: \n  %s\n', ico_rgns_file))
+    message(sprintf('Writing temporary ICO regions file to: \n  %s\n', ico_rgns_file))
     write_csv(ico_rgns, ico_rgns_file)
   } else {
-    cat(sprintf('Reading parent/subpop countries file from: \n  %s\n', ico_rgns_file))
+    message(sprintf('Reading parent/subpop countries file from: \n  %s\n', ico_rgns_file))
     ico_rgns <- read.csv(ico_rgns_file, stringsAsFactors = FALSE)
   }
   ico_rgns <- ico_rgn_name_to_number(ico_rgns)
@@ -198,7 +198,7 @@ process_ico_rgn <- function(ico_rgn_list) {
     summarize(mean_cat = mean(category_score), mean_trend = mean(trend_score, na.rm = TRUE))
   
   ico_rgn_sum_file <- file.path(dir_git, scenario, 'summary/ico_rgn_sum.csv')
-  cat(sprintf('Writing file for iconic species summary by region: \n  %s\n', ico_rgn_sum_file))
+  message(sprintf('Writing file for iconic species summary by region: \n  %s\n', ico_rgn_sum_file))
   write_csv(ico_rgn_sum, ico_rgn_sum_file)
   
   return(invisible(ico_rgn_sum))
