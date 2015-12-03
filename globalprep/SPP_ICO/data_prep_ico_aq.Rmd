@@ -196,7 +196,7 @@ ico_aq_all_0 <- bind_rows(ico_aq_iucn, ico_aq_am_0) %>%
   unique()
 
 ### Identify and present parent/subpop species listings
-parent_subpops <- ico_aq_all %>%
+parent_subpops <- ico_aq_all_0 %>%
   group_by(rgn_id, sciname) %>%
   filter(n() > 1)
 
@@ -206,8 +206,10 @@ DT::datatable(parent_subpops, caption = 'Occurrences of parent/subpop species')
 # Write outputs to file
 
 ``` {r write outputs}
-write.csv(ico_aq_all %>% select(rgn_id, sciname, category), 
-          file.path(dir_git, 'globalprep/SPP_ICO/v2015/data/ico_status_aq.csv'))
-write.csv(ico_aq_all %>% select(rgn_id, sciname, popn_trend), 
-          file.path(dir_git, 'globalprep/SPP_ICO/v2015/data/ico_trend_aq.csv'))
+write.csv(ico_aq_all_0 %>% select(rgn_id, sciname, category), 
+          file.path(dir_git, 'globalprep/SPP_ICO/v2015/data/ico_status_0_aq.csv'),
+          row.names = FALSE)
+write.csv(ico_aq_all_0 %>% select(rgn_id, sciname, popn_trend), 
+          file.path(dir_git, 'globalprep/SPP_ICO/v2015/data/ico_trend_0_aq.csv'),
+          row.names = FALSE)
 ```
