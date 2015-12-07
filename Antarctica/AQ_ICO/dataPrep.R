@@ -34,7 +34,7 @@ grep('Catharacta', status$sciname, value=TRUE) # Catharacta antarctica and Catha
 ### Subset data to include only iconics:
 ico_status <- status %>%
   filter(sciname %in% ico$sciname) %>%
-  select(rgn_id, sciname, category) %>%
+  select(sp_id = rgn_id, sciname, category) %>%
   unique()
 
 write.csv(ico_status, 'Antarctica/AQ_ICO/data/ico_status.csv', row.names=FALSE)
@@ -45,6 +45,6 @@ trend <- read.csv('globalprep/SPP_ICO/v2015/data/ico_trend_aq.csv')
 
 ico_trend <- trend %>%
   filter(sciname %in% ico$sciname) %>%
-  select(rgn_id, sciname, popn_trend) %>%
+  select(sp_id = rgn_id, sciname, popn_trend) %>%
   unique()
 write.csv(ico_trend, 'Antarctica/AQ_ICO/data/ico_trend.csv', row.names=FALSE)
