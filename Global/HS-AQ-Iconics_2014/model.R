@@ -48,6 +48,9 @@ iconSp <- icons %>%
   unique()
 dim(iconSp) 
 
+### save master list to new folder:
+write.csv(iconSp, "Antarctica/AQ_ICO/raw/ICO_master.csv", row.names=FALSE)
+
 # subset species lists to include only iconics ---- 
 length(intersect(spp$sciname, iconSp$sciname)) #N=99: looks correct
 spp <- spp[spp$sciname %in% iconSp$sciname, ]
