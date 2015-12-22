@@ -5,6 +5,7 @@
 ### Jun 1, 2015 - CCO.  Combining many different scripts into one data_prep.R
 ###   that calls functions and sources code within R/spp_fxn.R
 ##############################################################################=
+
 library(foreign)
 library(data.table) # for fread()
 library(sp)
@@ -46,13 +47,13 @@ source(file.path(goal, 'R/ingest_iucn.R'))
 ### Main outputs, saved to git-annex/globalprep/SPP_ICO/v201x/intermediate: 
 ### * spp_iucn_all.csv      - full list of IUCN species pulled from web, some cleaning.
 ### * spp_iucn_habitats.csv - list of IUCN species (by iucn_sid) and corresponding habitat.
-### * spp_iucn_mar.csv      - prepped list: cleaned marine list with subpops and trends.
+### * spp_iucn_marine.csv   - prepped list: cleaned marine list with subpops and trends.
 
 
 ##############################################################################=
 ### Generate lookup - species <-> category/trend and spatial_source ----
 ##############################################################################=
-spp_all <- create_spp_master_lookup(source_pref = 'iucn', fn_tag = '', reload = FALSE)
+spp_all <- create_spp_master_lookup(source_pref = 'iucn', fn_tag = '', reload = TRUE)
 ### | am_sid | sciname | am_category | iucn_sid | iucn_category | popn_trend | popn_category | 
 ### | info_source | spp_group | id_no | objectid | spatial_source | category_score | trend_score |
 # 
@@ -73,7 +74,6 @@ extract_loiczid_per_spp(groups_override = NULL, reload = FALSE)
 ### NOTES: this takes a long time - multiple hours for some of the shape files.  
 ### * reload = FALSE allows it to skip extraction on groups with files already present.
 ### * use groups_override argument to run function on partial list of species groups.
-
 
 ##############################################################################=
 ### SPP - Generate species per cell tables for Aquamaps and IUCN -----
