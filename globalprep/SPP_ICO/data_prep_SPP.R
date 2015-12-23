@@ -53,7 +53,7 @@ source(file.path(goal, 'R/ingest_iucn.R'))
 ##############################################################################=
 ### Generate lookup - species <-> category/trend and spatial_source ----
 ##############################################################################=
-spp_all <- create_spp_master_lookup(source_pref = 'iucn', fn_tag = '', reload = TRUE)
+spp_all <- create_spp_master_lookup(source_pref = 'iucn', fn_tag = '', reload = FALSE)
 ### | am_sid | sciname | am_category | iucn_sid | iucn_category | popn_trend | popn_category | 
 ### | info_source | spp_group | id_no | objectid | spatial_source | category_score | trend_score |
 # 
@@ -64,8 +64,16 @@ spp_all <- create_spp_master_lookup(source_pref = 'iucn', fn_tag = '', reload = 
 ##############################################################################=
 ### Generate lookup - IUCN species to LOICZID ----
 ##############################################################################=
+# y <- c("DAMSELFISH", "WRASSE", "SEABREAMS_PORGIES", "SURGEONFISH_TANGS_UNICORNFISH", 
+#        "COMBTOOTHBLENNIES", "TUNAS_BILLFISHES", "GROUPERS", "PUFFERFISH", "BUTTERFLYFISH", 
+#        "ANGELFISH", "BONEFISH_TARPONS", "LOBSTERS", "CONESNAILS", "CORALS_Part3", 
+#        "CORALS_Part1", "SEACUCUMBERS", "MARINE_MAMMALS", "REPTILES", "SEAGRASSES", "MANGROVES",
+#        "TERRESTRIAL_MAMMALS", "CORALS_Part2")
+  
+y <- c("SEABREAMS_PORGIES", "ANGELFISH", "BONEFISH_TARPONS", "CORALS_Part2", 
+       "REPTILES", "SEAGRASSES", "MANGROVES", "TERRESTRIAL_MAMMALS")
 
-extract_loiczid_per_spp(groups_override = NULL, reload = FALSE)
+extract_loiczid_per_spp(groups_override = y, reload = FALSE)
 ### Extract loiczid cell IDs for each species within each species group.  Save 
 ### a .csv file for that group, with fields:
 ###       sciname | iucn_sid | presence | LOICZID | prop_area

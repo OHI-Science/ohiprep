@@ -30,6 +30,19 @@ generate_iucn_all_spp_list <- function(reload = FALSE) {
     spp_iucn_all <- unique(spp_iucn_all)
     names(spp_iucn_all) = tolower(names(spp_iucn_all))
     
+    ### clean up odd formatting: html tags, extra spaces, punctuation, incorrect capitalization
+    spp_iucn_all <- spp_iucn_all %>% 
+      mutate(sciname = str_replace_all(sciname, '<i>', ''),       # ditch HTML italics tags...
+             sciname = str_replace_all(sciname, '</i>', ''),      # ditch HTML italics tags...
+             sciname = str_replace_all(sciname, '[ ]{2,}', ' '),  # ditch multiple spaces into single space
+             sciname = str_replace_all(sciname, '"', ''),         # ditch unfortunate quote marks
+             sciname = str_replace_all(sciname, '\\?', ''),         # ditch unfortunate question marks
+             sciname = str_trim(sciname),                         # ditch start and end spaces
+             sciname = paste(toupper(substr(sciname, 1, 1)), 
+                             tolower(substr(sciname, 2, nchar(sciname))), 
+                             sep = ""))                           # initial cap and rest lower case
+    ### Some of the listings on this file include html tags, extra spaces, and messed up capitalization...
+    
     message(sprintf('Writing full IUCN redlist species list to: %s\n', all_spp_file))
     write_csv(spp_iucn_all, all_spp_file)
   } else {
@@ -101,8 +114,8 @@ get_mar_spp <- function(reload = FALSE) {
 ### Cleans up pre-2001 IUCN categories into current categories.
 ### Removes infrarank listings, and drops those columns.
     # get distinct marine species
-  spp_iucn_all      <- generate_iucn_all_spp_list()
-  spp_iucn_habitats <- generate_iucn_habitat_list() %>%
+  spp_iucn_all      <- generate_iucn_all_spp_list(reload = reload)
+  spp_iucn_habitats <- generate_iucn_habitat_list(reload = reload) %>%
     as.data.frame() %>%
     mutate(iucn_sid = as.integer(iucn_sid))
   
@@ -160,6 +173,7 @@ getDetails = function(sid, download_tries = 10) {
   return(list(subpops = subpops, popn_trend = popn_trend))
 }
 
+
 #############################################################################=
 get_trend_and_subpops <- function(df = spp_iucn_mar, reload = FALSE) {
 ### Create dataframes for subpopulation info and population trend info,
@@ -209,9 +223,9 @@ get_trend_and_subpops <- function(df = spp_iucn_mar, reload = FALSE) {
 }
 
 
-spp_iucn_mar <- get_mar_spp()
+spp_iucn_mar <- get_mar_spp(reload = TRUE)
 
-spp_trend_subpops <- get_trend_and_subpops(spp_iucn_mar)
+spp_trend_subpops <- get_trend_and_subpops(spp_iucn_mar, reload = TRUE)
 
 spp_iucn_mar <- spp_iucn_mar %>%
   left_join(spp_trend_subpops, 
