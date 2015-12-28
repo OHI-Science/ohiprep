@@ -223,7 +223,7 @@ get_trend_and_subpops <- function(df = spp_iucn_mar, reload = FALSE) {
 }
 
 
-spp_iucn_mar <- get_mar_spp(reload = TRUE)
+spp_iucn_mar <- get_mar_spp(reload = FALSE)
 
 spp_trend_subpops <- get_trend_and_subpops(spp_iucn_mar, reload = TRUE)
 

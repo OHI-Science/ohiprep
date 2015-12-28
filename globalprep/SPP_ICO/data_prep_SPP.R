@@ -53,30 +53,49 @@ source(file.path(goal, 'R/ingest_iucn.R'))
 ##############################################################################=
 ### Generate lookup - species <-> category/trend and spatial_source ----
 ##############################################################################=
-spp_all <- create_spp_master_lookup(source_pref = 'iucn', fn_tag = '', reload = FALSE)
+spp_all <- create_spp_master_lookup(source_pref = 'iucn', fn_tag = '', reload = TRUE)
 ### | am_sid | sciname | am_category | iucn_sid | iucn_category | popn_trend | popn_category | 
 ### | info_source | spp_group | id_no | objectid | spatial_source | category_score | trend_score |
-# 
-# # write_csv(spp_all, file.path(dir_anx, scenario, 'intermediate/spp_all_cleaned.csv'))
-# 
-# spp_all <- read.csv(file.path(dir_anx, scenario, 'intermediate/spp_all_cleaned.csv'), stringsAsFactors = FALSE)
+### NOTE: as currently stands, ignores AquaMaps-mapped species with 
+###   subpopulations (fix_am_subpops() is disabled)
+
+spp_all <- spp_all %>%
+  filter(!str_detect(spp_group, 'MARINEFISH_Part') | is.na(spp_group))
+### For some reason, the MARINEFISH_Part1 and _Part2 shapefiles contain a bunch
+### of mammals; and the .shp of _Part1 has no polygons.  These are suspect
+### files so I'm ignoring them for now. is.na() will keep the AquaMaps species.
+
+spp_all <- spp_all %>%
+  filter(!(str_detect(spatial_source, 'iucn_subpop') & is.na(iucn_subpop))  |    ### subpop tag with no subpop location = FALSE
+         is.na(spatial_source)) %>%                                              ### spatial_source is NA = TRUE (keep NAs in for now)
+  filter(!(str_detect(spatial_source, 'iucn_parent') & !is.na(iucn_subpop)) |    ### parent tag with no subpop location = TRUE
+         is.na(spatial_source))                                                  ### spatial_source is NA = TRUE (keep NAs in for now)
+  ### This gets rid of any subpops that don't have identified shapefiles... 
+  ### NOTE: this still doesn't uniquely identify which ID number goes with
+  ### which subpopulation though!
+
+spp_subpops_parents <- spp_all %>% 
+  filter(str_detect(spatial_source, 'subpop') | str_detect(spatial_source, 'parent'))
+unique(spp_subpops_parents$spp_group)
+
+write_csv(spp_all, file.path(dir_anx, scenario, 'int/spp_all.csv'))
 
 ##############################################################################=
 ### Generate lookup - IUCN species to LOICZID ----
 ##############################################################################=
-# y <- c("DAMSELFISH", "WRASSE", "SEABREAMS_PORGIES", "SURGEONFISH_TANGS_UNICORNFISH", 
+# x <- c("DAMSELFISH", "WRASSE", "SURGEONFISH_TANGS_UNICORNFISH", 
 #        "COMBTOOTHBLENNIES", "TUNAS_BILLFISHES", "GROUPERS", "PUFFERFISH", "BUTTERFLYFISH", 
-#        "ANGELFISH", "BONEFISH_TARPONS", "LOBSTERS", "CONESNAILS", "CORALS_Part3", 
-#        "CORALS_Part1", "SEACUCUMBERS", "MARINE_MAMMALS", "REPTILES", "SEAGRASSES", "MANGROVES",
-#        "TERRESTRIAL_MAMMALS", "CORALS_Part2")
-  
-y <- c("SEABREAMS_PORGIES", "ANGELFISH", "BONEFISH_TARPONS", "CORALS_Part2", 
-       "REPTILES", "SEAGRASSES", "MANGROVES", "TERRESTRIAL_MAMMALS")
+#        "LOBSTERS", "CONESNAILS", "CORALS_Part3", 
+#        "CORALS_Part1", "SEACUCUMBERS", "MARINE_MAMMALS")
+#   
+# y <- c("SEABREAMS_PORGIES", "ANGELFISH", "BONEFISH_TARPONS", "CORALS_Part2", 
+#        "REPTILES", "SEAGRASSES", "MANGROVES", "TERRESTRIAL_MAMMALS")
+# z <- c("TUNAS_BILLFISHES", "MARINE_MAMMALS", "REPTILES", "SEABREAMS_PORGIES")
 
-extract_loiczid_per_spp(groups_override = y, reload = FALSE)
+extract_loiczid_per_spp(spp_all, groups_override = z, reload = TRUE)
 ### Extract loiczid cell IDs for each species within each species group.  Save 
 ### a .csv file for that group, with fields:
-###       sciname | iucn_sid | presence | LOICZID | prop_area
+###       sciname | iucn_sid | presence | subpop | LOICZID | prop_area
 ### * presence codes: 1 extant; 2 prob extant (discontinued); 3 Possibly Extant;
 ###                   4 Possibly Extinct; 5 Extinct (post 1500); 6 Presence Uncertain
 ### NOTES: this takes a long time - multiple hours for some of the shape files.  
@@ -89,11 +108,11 @@ extract_loiczid_per_spp(groups_override = y, reload = FALSE)
 am_cells_spp_sum <- process_am_summary_per_cell(reload = TRUE)
 ### NOTE: keyed data.table works way faster than the old inner_join or merge.
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
-### AM does not include subspecies: every am_sid corresponds to exactly one sciname.
+### AM does not include subspecies or subpops: every am_sid corresponds to exactly one sciname.
 
 iucn_cells_spp_sum <- process_iucn_summary_per_cell(reload = TRUE)
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
-### IUCN includes subspecies - one sciname corresponds to multiple iucn_sid values.
+### IUCN includes subpops - one sciname corresponds to multiple iucn_sid values.
 
 ##############################################################################=
 ### SPP Global - Summarize mean category and trend per cell and per region -----
