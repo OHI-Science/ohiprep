@@ -135,7 +135,7 @@ extract_cell_id_per_region <- function(reload       = FALSE,
 
 
 ##############################################################################=
-iucn_shp_info <- function() {
+iucn_shp_info <- function(reload = TRUE) {
   ### Queries shapefiles and extracts column headers.  Use to help identify which
   ### species groups have no id_no field, and possibly other fields to help 
   ### differentiate.
@@ -165,11 +165,14 @@ iucn_shp_info <- function() {
       n_spp    <- nrow(spp_dbf)
       name_tmp <- names(spp_dbf)
       # determine whether binomial and id_no are present;
-      binom <- ifelse('binomial' %in% tolower(names(spp_dbf)), T, F)
-      id_no <- ifelse('id_no'    %in% tolower(names(spp_dbf)), T, F)
+      binom  <- ifelse('binomial' %in% tolower(names(spp_dbf)), T, F)
+      id_no  <- ifelse('id_no'    %in% tolower(names(spp_dbf)), T, F)
+      subpop <- ifelse('subpop'   %in% tolower(names(spp_dbf)), T, F)
       # determine column names
       fields <- paste(name_tmp, collapse = ' | ')
-      spp_dbf_tmp <- data.frame('spp_gp' = spp_gp, 'shp_MB' = fsize, 'n_spp' = n_spp, 'binomialTF' = binom, 'id_noTF' = id_no, 'fields' = fields)
+      spp_dbf_tmp <- data.frame('spp_gp' = spp_gp, 'shp_MB' = fsize, 'n_spp' = n_spp, 
+                                'binomialTF' = binom, 'id_noTF' = id_no, 'subpopTF' = subpop,
+                                'fields' = fields)
       iucn_shp_info <- bind_rows(iucn_shp_info, spp_dbf_tmp)
       message('binding to list...\n')
     }
@@ -223,7 +226,10 @@ generate_iucn_map_list <- function(reload = FALSE) {
       message('binding to list...\n')
     }
     spp_iucn_maps <- spp_iucn_maps %>%
-      dplyr::select(spp_group, id_no, binomial) %>% # other fields?
+      dplyr::select(spp_group, id_no, 
+                    sciname = binomial, 
+#                    iucn_subspecies = subspecies, iucn_class = class_name, iucn_order = order_name, iucn_family = family_nam,
+                    iucn_subpop = subpop) %>% # other fields?
       mutate(spatial_source = 'iucn') %>%
       unique()
     
@@ -254,16 +260,16 @@ check_name_matches <- function(spp_all, spp_all_file) {
     simpleCap <- function(x) {
       s <- strsplit(x, " ")[[1]]
       paste(toupper(substring(s, 1,1)), substring(s, 2),
-            sep="", collapse=" ")
+            sep = "", collapse = " ")
     }
     name_matches$am_g_cap <- sapply(name_matches$am_g, simpleCap)
     name_matches2 <- name_matches %>%
       unite(am_sciname, am_g_cap, am_s, sep = ' ')
     name_match_am <- spp_all %>%
-      filter(sciname %in% name_matches2$am_sciname & spatial_source != 'iucn')
+      filter(sciname %in% name_matches2$am_sciname & !str_detect(spatial_source, 'iucn'))
     if(nrow(name_match_am) > 0) {
       message('Force-matched names with both IUCN maps and AM maps: \n')
-      print(as.matrix(name_match_am),quote=F) 
+      print(as.matrix(name_match_am), quote = FALSE) 
       spp_all <- spp_all %>%
         filter(!(sciname %in% name_match_am$sciname))
       message(sprintf('Forcing matches and writing modified species lookup table to: \n  %s\n', spp_all_file))
@@ -336,7 +342,7 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
     spp_iucn_maps <- generate_iucn_map_list(reload = reload)
     
     spp_all <- spp_all %>% 
-      left_join(spp_iucn_maps, by = c('sciname' = 'binomial'))
+      left_join(spp_iucn_maps, by = 'sciname')
     
     if(source_pref == 'am') {
       spp_all <- spp_all %>%
@@ -353,9 +359,11 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
     #   (e.g. REPTILES, SEASNAKES, and non-homolopsids)
     #   - choose one and drop the others.  Which to choose? let R decide.
     dupes <- spp_all %>% 
+      arrange(spp_group) %>%      ### REPTILES before SEASNAKES
       dplyr::select(sciname, iucn_sid, iucn_category) %>% 
-      duplicated()
+      duplicated(fromLast = TRUE) ### This will identify the REPTILES instance as the duplicated row
     spp_all <- spp_all[!dupes, ]
+    
     # * Multiple IUCN id_no from IUCN shapefiles, but no corresponding differentiation in spreadsheet
     #   - 92 instances, but all are either DD or NA for category.  Filter out.
     spp_all <- spp_all %>% 
@@ -396,59 +404,63 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
 
 
 ##############################################################################=
-fix_am_subpops <- function(spp_all) {
-  ### Identify and create 
-  ### Filter out just the species with parent or subpop IDs according to IUCN:
-  am_subpops <- spp_all %>% filter(spatial_source == 'am' & (!is.na(parent_sid) | !is.na(subpop_sid)))
-  am_subpop_spp <- unique(am_subpops$sciname)
-  
-  ### Loop over all subpop/parent records, one species at a time:
-  for (spp in am_subpop_spp) {
-    ### Parents will have a non-NA subpop ID number, basically the parent's child.
-    ### Subpops will have a non-NA parent ID number
-    spp_parent <- spp_all %>% 
-      filter(sciname == spp & !is.na(subpop_sid))
-    spp_subpop <- spp_all %>% 
-      filter(sciname == spp & !is.na(parent_sid))
+fix_am_subpops <- function(spp_all, use_am_subpops = FALSE) {
+  if(use_am_subpops) {
+    ### Identify and create 
+    ### Filter out just the species with parent or subpop IDs according to IUCN:
+    am_subpops <- spp_all %>% filter(spatial_source == 'am' & (!is.na(parent_sid) | !is.na(subpop_sid)))
+    am_subpop_spp <- unique(am_subpops$sciname)
     
-    if(nrow(spp_parent) == 0) {
-      ### This situation includes orphan subpopulations (subpops but no parent)
-      message(sprintf('No parent info found for %s:  Parent id: %d, subpops = %s.\n', 
-                      spp, spp_subpop$parent_sid[1], 
-                      paste(unlist(spp_subpop$iucn_sid), collapse = ', ')))
+    ### Loop over all subpop/parent records, one species at a time:
+    for (spp in am_subpop_spp) {
+      ### Parents will have a non-NA subpop ID number, basically the parent's child.
+      ### Subpops will have a non-NA parent ID number
+      spp_parent <- spp_all %>% 
+        filter(sciname == spp & !is.na(subpop_sid))
+      spp_subpop <- spp_all %>% 
+        filter(sciname == spp & !is.na(parent_sid))
       
-      ### create a parent entry from the subpop entries, then bind to master list.  Because
-      ### we don't know the info, assign it values of DD and unknown.
-      spp_no_parent <- spp_all %>%
-        filter(sciname == spp) %>%
-        mutate(subpop_sid = iucn_sid,
-               iucn_sid   = parent_sid,
-               parent_sid = NA,
-               iucn_category = 'DD',
-               popn_category = 'DD',
-               popn_trend    = 'Unknown', 
-               category_score = NA,
-               trend_score   = NA)
-      print(spp_no_parent %>% dplyr::select(sciname:popn_category, spatial_source))
-      ### See list below: all parent populations are DD/unknown.
-      #                      sciname am_category iucn_sid iucn_category popn_trend parent_sid
-      #   1     Polyprion americanus          DD    43973            CR Decreasing      43972: Brazilian subpop.        Parent pop is DD/unknown.
-      #   2 Carcharhinus amboinensis          DD    39543            NT    Unknown      39366: SW Indian Ocean subpop.  Parent pop is DD/unknown.
-      #   3   Ginglymostoma cirratum          DD    60224            NT Decreasing      60223: W. Atlantic subpop.      Parent pop is DD/unknown.
-      #   4   Notorynchus cepedianus          DD    39541            NT    Unknown      39324: E. Pacific subpop.       Parent pop is DD/unknown.
-      #   5     Eurypegasus draconis          DD     8409            VU Decreasing       8407: Philippines subpop.      Parent pop is DD/unknown.
-      #   6 Centrophorus moluccensis          DD 16727330            LC     Stable      42838: E/W Australian subpop.   Parent pop is DD/unknown.
-      #   7         Pegasus volitans          DD    16477            VU Decreasing      16476: Phil, S. China subpops.  Parent pop is DD/unknown.
+      if(nrow(spp_parent) == 0) {
+        ### This situation includes orphan subpopulations (subpops but no parent)
+        message(sprintf('No parent info found for %s:  Parent id: %d, subpops = %s.\n', 
+                        spp, spp_subpop$parent_sid[1], 
+                        paste(unlist(spp_subpop$iucn_sid), collapse = ', ')))
+        
+        ### create a parent entry from the subpop entries, then bind to master list.  Because
+        ### we don't know the info, assign it values of DD and unknown.
+        spp_no_parent <- spp_all %>%
+          filter(sciname == spp) %>%
+          mutate(subpop_sid = iucn_sid,
+                 iucn_sid   = parent_sid,
+                 spatial_source = 'am_parent_orphan',
+                 parent_sid = NA,
+                 iucn_category = 'fix manually',
+                 popn_category = 'fix manually',
+                 popn_trend    = 'fix manually', 
+                 category_score = NA,
+                 trend_score   = NA)
+        print(spp_no_parent %>% dplyr::select(sciname:popn_category, spatial_source))
+        ### See list below: all parent populations are DD/unknown.
+        #                      sciname am_category iucn_sid iucn_category popn_trend parent_sid
+        #   1     Polyprion americanus          DD    43973            CR Decreasing      43972: Brazilian subpop.        Parent pop is DD/unknown.
+        #   2 Carcharhinus amboinensis          DD    39543            NT    Unknown      39366: SW Indian Ocean subpop.  Parent pop is DD/unknown.
+        #   3   Ginglymostoma cirratum          DD    60224            NT Decreasing      60223: W. Atlantic subpop.      Parent pop is DD/unknown.
+        #   4   Notorynchus cepedianus          DD    39541            NT    Unknown      39324: E. Pacific subpop.       Parent pop is DD/unknown.
+        #   5     Eurypegasus draconis          DD     8409            VU Decreasing       8407: Philippines subpop.      Parent pop is DD/unknown.
+        #   6 Centrophorus moluccensis          DD 16727330            LC     Stable      42838: E/W Australian subpop.   Parent pop is DD/unknown.
+        #   7         Pegasus volitans          DD    16477            VU Decreasing      16476: Phil, S. China subpops.  Parent pop is DD/unknown.
+        
+        spp_all <- rbind(spp_all, spp_no_parent)
+      } # end 'if no parent' section
       
-      spp_all <- rbind(spp_all, spp_no_parent)
-    } # end 'if no parent' section
+      spp_all <- spp_all %>%
+        mutate(spatial_source = ifelse(sciname == spp & !is.na(parent_sid) & !str_detect(spatial_source, 'orphan'), 'am_subpop', spatial_source),
+               spatial_source = ifelse(sciname == spp & !is.na(subpop_sid) & !str_detect(spatial_source, 'orphan'), 'am_parent', spatial_source))
+    }   # end for loop
+    ### for all species within the list (aquamaps w/parent or subpop), amend spatial source for subpops - so subpops can be ignored for spatial analysis.
+    print(head(spp_all %>% filter(sciname %in% am_subpop_spp)))
     
-    spp_all <- spp_all %>%
-      mutate(spatial_source = ifelse(sciname == spp & !is.na(parent_sid), 'am_subpop', spatial_source),
-             spatial_source = ifelse(sciname == spp & !is.na(subpop_sid), 'am_parent', spatial_source))
-  }   # end for loop
-  ### for all species within the list (aquamaps w/parent or subpop), amend spatial source for subpops - so subpops can be ignored for spatial analysis.
-  print(head(spp_all %>% filter(sciname %in% am_subpop_spp)))
+  }
   return(spp_all)
 }
 
@@ -456,13 +468,25 @@ fix_am_subpops <- function(spp_all) {
 ##############################################################################=
 fix_iucn_subpops <- function(spp_all) {
   ### Identify IUCN subpops and parents, and note in spatial_source.
+ 
+  ### Any mismatch between IUCN species ID and shapefile ID number gets
+  ### labeled as an alias first;
+  spp_all_dupes <- show_dupes(spp_all, 'sciname')
+  spp_all <- spp_all %>%
+    mutate(spatial_source = ifelse((sciname %in% spp_all_dupes$sciname) &   ### duplicated scientific name
+                                     (iucn_sid != id_no) &                  ### mismatch between iucn_sid and id_no
+                                     (!is.na(iucn_sid) & !is.na(id_no)),    ### no NAs in iucn_sid or id_no
+                                   ### New data (as of Dec 2015) should have id_no for all species?
+                                   'iucn_alias',
+                                   spatial_source))
+  print(head(spp_all %>% filter(sciname %in% spp_all_dupes$sciname)))
   
   ### ID subpops and parents:
-  iucn_subpops <- spp_all %>% filter(str_detect(spatial_source, 'iucn') & (!is.na(parent_sid) | !is.na(subpop_sid)))
+  iucn_subpops    <- spp_all %>% filter(str_detect(spatial_source, 'iucn') & (!is.na(parent_sid) | !is.na(subpop_sid)))
   iucn_subpop_spp <- unique(iucn_subpops$sciname)
   
   ### Loop over list of parent/subpop species names
-  for (spp in iucn_subpop_spp) {
+  for (spp in iucn_subpop_spp) { ### spp = 'Tursiops truncatus'
     spp_parent <- spp_all %>% 
       filter(sciname == spp & !is.na(subpop_sid))
     spp_subpop <- spp_all %>% 
@@ -472,14 +496,17 @@ fix_iucn_subpops <- function(spp_all) {
       message(sprintf('No parent info found for %s:  Parent id: %d, subpops = %s.\n', spp, spp_subpop$parent_sid[1], paste(unlist(spp_subpop$iucn_sid), collapse = ', ')))
       ### No instances of subpops without parent info, for IUCN listings.  But for future reference:
       ### create a parent entry from the subpop entries, then bind to master list
-      spp_no_parent <- spp_all %>%
+      spp_no_parent <- spp_all %>% 
+        ### can this be done by looking up species on IUCN site? maybe manually
+        ### - would need to flag this added row somehow
         filter(sciname == spp) %>%
         mutate(subpop_sid = iucn_sid,
                iucn_sid   = parent_sid,
+               spatial_source = 'iucn_parent_orphan',
                parent_sid = NA,
-               iucn_category = 'DD',
-               popn_category = 'DD',
-               popn_trend    = 'Unknown', 
+               iucn_category = 'fix manually',
+               popn_category = 'fix manually',
+               popn_trend    = 'fix manually', 
                category_score = NA,
                trend_score   = NA)
       spp_all <- rbind(spp_all, spp_no_parent)
@@ -490,9 +517,10 @@ fix_iucn_subpops <- function(spp_all) {
     ### Exception is two species in SEABREAMS_PORGIES, noted as parents, and whose subpops are actually subspecies,
     ### which have been filtered out.  So not a problem at this time.
     spp_all <- spp_all %>%
-      mutate(spatial_source = ifelse(sciname == spp & !is.na(parent_sid), 'iucn_subpop', spatial_source),
-             spatial_source = ifelse(sciname == spp & !is.na(subpop_sid), 'iucn_parent', spatial_source))
+      mutate(spatial_source = ifelse(sciname == spp & !is.na(parent_sid) & !str_detect(spatial_source, 'orphan'), 'iucn_subpop', spatial_source),
+             spatial_source = ifelse(sciname == spp & !is.na(subpop_sid) & !str_detect(spatial_source, 'orphan'), 'iucn_parent', spatial_source))
   }   # end for loop
+  
   print(head(spp_all %>% filter(sciname %in% iucn_subpop_spp)))
   ### There are a large number of duplicated scinames still - some of these seem to be IUCN ID#s with multiple
   ### aliases.  Example: 
@@ -507,14 +535,6 @@ fix_iucn_subpops <- function(spp_all) {
   ### For observations where iucn_sid and id_no are both present, and match, use the spatial data.
   ### For obs where both are present but don't match, don't use spatial data - mutate the spatial_source field
   ### to something that can be filtered out later.
-  spp_all_dupes <- show_dupes(spp_all, 'sciname')
-  spp_all <- spp_all %>%
-    mutate(spatial_source = ifelse((sciname %in% spp_all_dupes$sciname) & 
-                                     (iucn_sid != id_no) &
-                                     (!is.na(iucn_sid) & !is.na(id_no)), ### New data (as of Dec 2015) should have id_no for all species?
-                                   'iucn_alias',
-                                   spatial_source))
-  print(head(spp_all %>% filter(sciname %in% spp_all_dupes$sciname)))
   
   return(spp_all)
 }
@@ -544,7 +564,7 @@ remove_iucn_synonyms <- function(spp_all) {
 
 
 ##############################################################################=
-extract_loiczid_per_spp <- function(groups_override = NULL, reload = FALSE) {
+extract_loiczid_per_spp <- function(spp_all, groups_override = NULL, reload = FALSE) {
   ### Determine intersections of IUCN maps with Aquamaps half-degree cells
   ### 
   ### * from the spp_all.csv, extract the species with IUCN range maps.  Use this file
@@ -558,9 +578,6 @@ extract_loiczid_per_spp <- function(groups_override = NULL, reload = FALSE) {
   ### * Use groups_override argument to pass a partial list of species groups, for testing/debugging.
   
   ### create list of all marine species with IUCN maps.
-  spp_all_file <- file.path(dir_anx, scenario, 'int/spp_all.csv')
-  message(sprintf('Reading full species lookup table from: \n  %s\n', spp_all_file))
-  spp_all <- read.csv(spp_all_file, stringsAsFactors = FALSE)
   iucn_range_maps <- spp_all %>%
     filter(str_detect(spatial_source, 'iucn')) %>%
     dplyr::select(sciname, iucn_sid, id_no, spp_group)
@@ -601,19 +618,15 @@ extract_loiczid_per_spp <- function(groups_override = NULL, reload = FALSE) {
       ptm <- proc.time() - ptm
       message(sprintf('Elapsed read time: %.2f seconds\n', ptm[3]))
       
-      ### Filter shape file to polygons with species names that match our list of
-      ### marine species with IUCN maps.  Shape files seem to contain a 'binomial' 
-      ### field but case varies from file to file.
-      message(paste(colnames(spp_shp@data), collapse = ', '))
-      ### find binomial name in here; test in tolower, find the index number, and use that instead?
-      binom_index <- which(tolower(colnames(spp_shp@data)) == 'binomial')
-      if(binom_index > 0) {
-        message(sprintf('Filtering features by %s field in %s.\n', colnames(spp_shp@data)[binom_index], spp_gp))
-        spp_shp <- spp_shp[spp_shp@data[ , binom_index] %in% maps_in_group$sciname, ]
-      } else {
-        message(sprintf('Couldn\'t find binomial field for species group %s.\n', spp_gp))
-      }
+      ### lower-case all the names for convenience...
+      names(spp_shp@data) <- tolower(names(spp_shp@data))
+      message(paste(names(spp_shp@data), collapse = ', '))
       
+      ### Filter shape file to polygons with species ID numbers that match
+      ### our list of maps.
+      message(sprintf('Filtering features by id_no field in %s.\n', spp_gp))
+      spp_shp <- spp_shp[spp_shp@data$id_no %in% maps_in_group$iucn_sid, ]
+
       ### Extract the proportions of each species polygon within each LOICZID cell
       ptm <- proc.time()
       spp_shp_prop <- raster::extract(loiczid_raster, spp_shp, weights = TRUE, normalizeWeights = FALSE, progress = 'text')
@@ -621,28 +634,16 @@ extract_loiczid_per_spp <- function(groups_override = NULL, reload = FALSE) {
       message(sprintf('Elapsed process time: %.2f minutes\n', ptm[3]/60))
       
       
-      ### find id_no in the shapefile, and if it exists, use it to create id_field for dataframe column names.
-      ### If the field doesn't exist, assign it NAs so at least the column will be created.
-      id_no_index <- which(tolower(colnames(spp_shp@data)) == 'id_no')
-      if(length(id_no_index) == 0) {
-        message(sprintf('No id_no field found in species group %s.\n', spp_gp))
-        id_field <- NA
-      } else id_field <- spp_shp@data[ , id_no_index]
-      
-      ### find presence field in the shapefile, and if it exists, use it to create pres_field for dataframe column names.
-      ### If the field doesn't exist, assign it NAs so at least the column will be created.
-      pres_index <- which(tolower(colnames(spp_shp@data)) == 'presence')
-      if(length(pres_index) == 0) {
-        message(sprintf('No presence field found in species group %s.\n', spp_gp))
-        pres_field <- NA
-      } else pres_field <- spp_shp@data[ , pres_index]
 
       ### combine sciname, id_no, and presence code for a single unique identifier
-      sciname_sid_pres <- data.frame(spp_shp@data[ , binom_index], id_field, pres_field)
-      names(sciname_sid_pres) <- c('sciname', 'id_no', 'presence')
+      sciname_sid_pres <- data.frame('sciname'  = spp_shp@data$binomial, 
+                                     'id_no'    = spp_shp@data$id_no, 
+                                     'presence' = spp_shp@data$presence,
+                                     'subpop'   = spp_shp@data$subpop)
+
       print(head(sciname_sid_pres))
       sciname_sid_pres <- sciname_sid_pres %>%
-          unite(name_id, sciname, id_no, presence, sep = '_')
+          unite(name_id, sciname, id_no, presence, subpop, sep = '_')
 
       ### use unique identifier to name the items in list
       names(spp_shp_prop) <- sciname_sid_pres$name_id
@@ -653,7 +654,7 @@ extract_loiczid_per_spp <- function(groups_override = NULL, reload = FALSE) {
         rename(name_id_pres = .id,
                LOICZID = value, 
                prop_area = weight) %>%
-        separate(name_id_pres, c('sciname', 'id_no', 'presence'), sep = '_')
+        separate(name_id_pres, c('sciname', 'id_no', 'presence', 'subpop'), sep = '_')
 
       ### save .csv for this species group
       message(sprintf('%s: %s species maps, %s total cells in output file', spp_gp, length(unique(spp_shp_prop_df$id_no)), nrow(spp_shp_prop_df)))
@@ -920,41 +921,52 @@ process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup, rgn_note 
 
 ##############################################################################=
 check_sim_names <- function(spp_all, num_letters = 5) {
-  am_spp_file   <- file.path(dir_data_am, 'tables/speciesoccursum.csv')
-  iucn_spp_file <- file.path(dir_anx, scenario, 'int/spp_iucn_marine_global.csv')
+  am_spp_file   <- file.path(dir_data_am, 'csv/speciesoccursum.csv')
+  iucn_spp_file <- file.path(dir_anx, scenario, 'int/spp_iucn_marine.csv')
   message(sprintf('Reading in Aquamaps species from: \n  %s\n', am_spp_file))
   spp_am <- fread(am_spp_file) %>%
-    dplyr::select(common_name = FBname, am_sid = SPECIESID, genus = Genus, species = Species)
+    dplyr::select(common_name = fbname, am_sid = speciesid, 
+                  genus = genus, species = species, family, order, class)
   message(sprintf('Reading in IUCN species from: \n  %s\n', iucn_spp_file))
   spp_iucn_marine <- read.csv(iucn_spp_file, stringsAsFactors = FALSE) %>%
-    dplyr::select(sciname, iucn_sid = sid) %>%
+    dplyr::select(sciname, iucn_sid, family, order, class) %>%
     separate(sciname, c('genus', 'species'), sep = ' ', remove = TRUE, extra = 'drop')
-  iucn_names <- data.frame(unique(spp_iucn_marine %>% dplyr::select(g = genus, s = species))) %>%
+  
+  ### create truncated genus and species lists for each source
+  iucn_names <- data.frame(unique(spp_iucn_marine %>% 
+                                    dplyr::select(g = genus, s = species, f = family))) %>%
     mutate(g = tolower(g),
            s = tolower(s),
+           f = tolower(f),
            g_x = str_sub(g, 1, num_letters),
-           s_x = str_sub(s, 1, num_letters))
-  am_names   <- data.frame(unique(spp_am %>% dplyr::select(g = genus, s = species, common_name))) %>%
-    mutate(g   = tolower(g),
+           s_x = str_sub(s, 1, num_letters),
+           f_x = str_sub(f, 1, num_letters))
+  am_names   <- data.frame(unique(spp_am %>% 
+                                    dplyr::select(g = genus, s = species, f = family, common_name))) %>%
+    mutate(g = tolower(g),
            s = tolower(s),
+           f = tolower(f),
            g_x = str_sub(g, 1, num_letters),
-           s_x = str_sub(s, 1, num_letters))
+           s_x = str_sub(s, 1, num_letters),
+           f_x = str_sub(f, 1, num_letters))
+  
+  ### find similarities between two name sets
   iucn_unmatched <- setdiff(iucn_names, am_names %>% dplyr::select(-common_name))
   iucn_similar   <- am_names %>% 
-    rename(am_s = s, am_g = g) %>%
+    rename(am_s = s, am_g = g, am_f = f) %>%
     inner_join(iucn_unmatched %>%
-                 rename(iucn_s = s, iucn_g = g),
-               by = c('g_x', 's_x')) %>%
-    filter(am_g == iucn_g | am_s == iucn_s) %>%
-    dplyr::select(-g_x, -s_x)
+                 rename(iucn_s = s, iucn_g = g, iucn_f = f),
+               by = c('f_x', 'g_x', 's_x')) %>%
+    filter((am_g == iucn_g | am_s == iucn_s) & (am_f == iucn_f)) %>%
+    dplyr::select(-g_x, -s_x, -f_x)
   am_unmatched   <- setdiff(am_names %>% dplyr::select(-common_name), iucn_names)
   am_similar   <- iucn_names %>% 
-    rename(iucn_s = s, iucn_g = g) %>%
+    rename(iucn_s = s, iucn_g = g, iucn_f = f) %>%
     inner_join(am_unmatched %>%
-                 rename(am_s = s, am_g = g),
-               by = c('g_x', 's_x')) %>%
-    filter(am_g == iucn_g | am_s == iucn_s) %>%
-    dplyr::select(-g_x, -s_x)
+                 rename(am_s = s, am_g = g, am_f = f),
+               by = c('f_x', 'g_x', 's_x')) %>%
+    filter((am_g == iucn_g | am_s == iucn_s) & am_f == iucn_f) %>%
+    dplyr::select(-g_x, -s_x, -f_x)
   
   spp_maps <- spp_all %>%
     dplyr::select(sciname, spatial_source) %>%
