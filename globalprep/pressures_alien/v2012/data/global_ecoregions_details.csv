@@ -1,0 +1,233 @@
+ecoregion_id,label,prov_code,rlm_code,lat_zone
+192,Agulhas Bank,51,10,Temperate
+53,Aleutian Islands,10,3,Temperate
+72,Amazonia,13,4,Tropical
+194,Amsterdam-St Paul,52,10,Temperate
+228,Amundsen/Bellingshausen Sea,61,12,Polar
+109,Andaman and Nicobar Islands,24,5,Tropical
+110,Andaman Sea Coral Coast,24,5,Tropical
+223,Antarctic Peninsula,60,12,Polar
+90,Arabian (Persian) Gulf,19,5,Tropical
+178,Araucanian,45,9,Temperate
+140,Arnhem Coast to Gulf of Carpenteria,32,6,Tropical
+139,Arafura Sea,32,6,Tropical
+232,Auckland Island,62,12,Polar
+29,Azores Canaries Madeira,3,2,Temperate
+7,Baffin Bay - Davis Strait,1,1,Polar
+63,Bahamian,12,4,Tropical
+24,Baltic Sea,2,2,Temperate
+131,Banda Sea,30,6,Tropical
+205,Bassian,56,11,Temperate
+11,Beaufort-Amundsen-Viscount Melville-Queen Maud,1,1,Polar
+12,Beaufort Sea - continental coast and shelf,1,1,Polar
+62,Bermuda,12,4,Tropical
+134,Bismarck Sea,31,6,Tropical
+44,Black Sea,7,2,Temperate
+141,Bonaparte Coast,32,6,Tropical
+230,Bounty and Antipodes Islands,62,12,Polar
+217,Bouvet Island,59,12,Polar
+231,Campbell Island,62,12,Polar
+204,Cape Howe,56,11,Temperate
+79,Cape Verde,16,4,Tropical
+97,Cargados Carajos/Tromelin Island,20,5,Tropical
+42,Carolinian,6,2,Temperate
+26,Celtic Seas,2,2,Temperate
+177,Central Chile,45,9,Temperate
+51,Central Kuroshio Current,9,3,Temperate
+199,Central New Zealand,54,11,Temperate
+175,Central Peru,45,9,Temperate
+93,Central Somali Coast,19,5,Tropical
+106,Chagos,22,5,Tropical
+187,Channels and Fjords of Southern Chile,48,9,Temperate
+198,Chatham Island,54,11,Temperate
+167,Chiapas-Nicaragua,43,8,Tropical
+188,Chiloense,48,9,Temperate
+13,Chukchi Sea,1,1,Polar
+165,Clipperton,43,8,Tropical
+120,Cocos-Keeling/Christmas Island,27,6,Tropical
+169,Cocos Islands,43,8,Tropical
+150,Coral Sea,35,6,Tropical
+60,Cortezian,11,3,Temperate
+215,Crozet Islands,59,12,Polar
+102,Delagoa,20,5,Tropical
+124,East Caroline Islands,29,6,Tropical
+225,East Antarctic Enderby Land,61,12,Polar
+224,East Antarctic Wilkes Land,61,12,Polar
+226,East Antarctic Dronning Maud Land,61,12,Polar
+52,East China Sea,9,3,Temperate
+3,East Greenland Shelf,1,1,Polar
+15,East Siberian Sea,1,1,Polar
+163,Easter Island,42,7,Tropical
+14,Eastern Bering Sea,1,1,Polar
+76,Eastern Brazil,14,4,Tropical
+64,Eastern Caribbean,12,4,Tropical
+173,Eastern Galapagos Islands,44,8,Tropical
+107,Eastern India,23,5,Tropical
+127,Eastern Philippines,30,6,Tropical
+144,Exmouth to Broome,34,6,Tropical
+21,Faroe Plateau,2,2,Temperate
+74,Fernando de Naronha and Atoll das Rocas,14,4,Tropical
+147,Fiji Islands,35,6,Tropical
+70,Floridian,12,4,Tropical
+154,Gilbert/Ellis Islands,38,7,Tropical
+208,Great Australian Bight,57,11,Temperate
+171,Guayaquil,43,8,Tropical
+71,Guianan,13,4,Tropical
+89,Gulf of Aden,18,5,Tropical
+54,Gulf of Alaska,10,3,Temperate
+83,Gulf of Guinea Central,17,4,Tropical
+84,Gulf of Guinea Islands,17,4,Tropical
+82,Gulf of Guinea Upwelling,17,4,Tropical
+81,Gulf of Guinea West,17,4,Tropical
+40,Gulf of Maine/Bay of Fundy,5,2,Temperate
+91,Gulf of Oman,19,5,Tropical
+138,Gulf of Papua,32,6,Tropical
+37,Gulf of St. Lawrence - Eastern Scotian Shelf,5,2,Temperate
+115,Gulf of Thailand,26,6,Tropical
+112,Gulf of Tonkin,25,6,Tropical
+129,Halmahera,30,6,Tropical
+152,Hawaii,37,7,Tropical
+213,Heard and Macdonald Islands,59,12,Polar
+211,Houtman,58,11,Temperate
+8,Hudson Complex,1,1,Polar
+176,Humboldtian,45,9,Temperate
+179,Juan Fernandez and Desventuradas,46,9,Temperate
+46,Kamchatka Shelf and Coast,8,3,Temperate
+17,Kara Sea,1,1,Polar
+214,Kerguelen Islands,59,12,Polar
+195,Kermadec Island,53,11,Temperate
+9,Lancaster Sound,1,1,Polar
+16,Laptev Sea,1,1,Polar
+209,Leeuwin,57,11,Temperate
+132,Lesser Sunda,30,6,Tropical
+155,Line Islands,39,7,Tropical
+151,Lord Howe and Norfolk Islands,36,6,Tropical
+212,Macquarie Island,59,12,Polar
+61,Magdalena Transition,11,3,Temperate
+118,Malacca Strait,26,6,Tropical
+105,Maldives,22,5,Tropical
+186,Malvinas/Falklands,48,9,Temperate
+203,Manning-Hawkesbury,55,11,Temperate
+123,Mariana Islands,29,6,Tropical
+158,Tuamotus,40,7,Tropical
+153,Marshall Islands,38,7,Tropical
+98,Mascarene Islands,20,5,Tropical
+166,Mexican Tropical Pacific,43,8,Tropical
+191,Namaqua,50,10,Temperate
+190,Namib,50,10,Temperate
+193,Natal,51,10,Temperate
+149,New Caledonia,35,6,Tropical
+168,Nicoya,43,8,Tropical
+145,Ningaloo,34,6,Tropical
+55,North American Pacific Fijordland,10,3,Temperate
+1,North Greenland,1,1,Polar
+184,North Patagonian Gulfs,48,9,Temperate
+133,Northeast Sulawesi,30,6,Tropical
+75,Northeastern Brazil,14,4,Tropical
+48,Northeastern Honshu,8,3,Temperate
+196,Northeastern New Zealand,53,11,Temperate
+87,Northern and Central Red Sea,18,5,Tropical
+108,Northern Bay of Bengal,23,5,Tropical
+58,Northern California,10,3,Temperate
+172,Northern Galapagos Islands,44,8,Tropical
+5,Northern Grand Banks - Southern Labrador,1,1,Polar
+43,Northern Gulf of Mexico,6,2,Temperate
+6,Northern Labrador,1,1,Polar
+122,Ogasawara Islands,29,6,Tropical
+57,"Oregon, Washington, Vancouver Coast and Shelf",10,3,Temperate
+47,Oyashio Current,8,3,Temperate
+126,Palawan/North Borneo,30,6,Tropical
+170,Panama Bight,43,8,Tropical
+130,Papua,30,6,Tropical
+185,Patagonian Shelf,48,9,Temperate
+218,Peter the First Island,59,12,Polar
+156,Phoenix/Tokelau/Northern Cook Islands,39,7,Tropical
+216,Prince Edward Islands,59,12,Polar
+56,Puget Trough/Georgia Basin,10,3,Temperate
+159,Rapa-Pitcairn,40,7,Tropical
+164,Revillagigedos,43,8,Tropical
+182,Rio de la Plata,47,9,Temperate
+181,Rio Grande,47,9,Temperate
+229,Ross Sea,61,12,Polar
+28,Saharan Upwelling,3,2,Temperate
+157,Samoa Islands,39,7,Tropical
+73,Sao Pedro and Sao Paulo Islands,14,4,Tropical
+39,Scotian Shelf,5,2,Temperate
+49,Sea of Japan/East Sea,8,3,Temperate
+45,Sea of Okhotsk,8,3,Temperate
+96,Seychelles,20,5,Tropical
+210,Shark Bay,58,11,Temperate
+201,Snares Island,54,11,Temperate
+161,Society Islands,40,7,Tropical
+135,Solomon Archipelago,31,6,Tropical
+136,Solomon Sea,31,6,Tropical
+207,South Australian Gulfs,57,11,Temperate
+114,South China Sea Oceanic Islands,25,6,Tropical
+27,South European Atlantic Shelf,3,2,Temperate
+220,South Georgia,60,12,Polar
+104,South India and Sri Lanka,21,5,Tropical
+121,South Kuroshio,28,6,Tropical
+221,South Orkney Islands,60,12,Polar
+219,South Sandwich Islands,60,12,Polar
+222,South Shetland Islands,60,12,Polar
+99,Southeast Madagascar,20,5,Tropical
+137,Southeast Papua New Guinea,31,6,Tropical
+180,Southeastern Brazil,47,9,Temperate
+59,Southern California Bight,11,3,Temperate
+66,Southern Caribbean,12,4,Tropical
+113,Southern China,25,6,Tropical
+38,Southern Grand Banks - South Newfoundland,5,2,Temperate
+69,Southern Gulf of Mexico,12,4,Tropical
+200,South New Zealand,54,11,Temperate
+88,Southern Red Sea,18,5,Tropical
+116,Southern Vietnam,26,6,Tropical
+67,Southwestern Caribbean,12,4,Tropical
+78,St. Helena and Ascension Islands,15,4,Tropical
+128,Sulawesi Sea/Makassar Strait,30,6,Tropical
+95,East African Coral Coast,20,5,Tropical
+94,Northern Monsoon Current Coast,20,5,Tropical
+101,Bight of Sofala/Swamp Coast,20,5,Tropical
+197,Three Kings-North Cape,53,11,Temperate
+146,Tonga Islands,35,6,Tropical
+77,Trindade and Martin Vaz Islands,14,4,Tropical
+189,Tristan Gough,49,9,Temperate
+162,Marquesas,41,7,Tropical
+202,Tweed-Moreton,55,11,Temperate
+183,Uruguay-Buenos Aires Shelf,47,9,Temperate
+148,Vanuatu,35,6,Tropical
+41,Virginian,5,2,Temperate
+125,West Caroline Islands,29,6,Tropical
+227,Weddell Sea,61,12,Polar
+4,West Greenland Shelf,1,1,Polar
+100,Western and Northern Madagascar,20,5,Tropical
+92,Western Arabian Sea,19,5,Tropical
+206,Western Bassian,56,11,Temperate
+68,Western Caribbean,12,4,Tropical
+174,Western Galapagos Islands,44,8,Tropical
+103,Western India,21,5,Tropical
+50,Yellow Sea,8,3,Temperate
+119,Southern Java,27,6,Tropical
+111,Western Sumatra,24,5,Tropical
+142,Torres Strait Northern Great Barrier Reef,33,6,Tropical
+143,Central and Southern Great Barrier Reef,33,6,Tropical
+117,Sunda Shelf/Java Sea,26,6,Tropical
+2,North and East Iceland,1,1,Polar
+20,South and West Iceland,2,2,Temperate
+25,North Sea,2,2,Temperate
+22,Southern Norway,2,2,Temperate
+23,Northern Norway and Finnmark,2,2,Temperate
+18,North and East Barents Sea,1,1,Polar
+19,White Sea,1,1,Polar
+65,Greater Antilles,12,4,Tropical
+160,Southern Cook/Austral Islands,40,7,Tropical
+85,Gulf of Guinea South,17,4,Tropical
+86,Angolan,17,4,Temperate
+80,Sahelian Upwelling,16,4,Tropical
+30,Adriatic Sea,4,2,Temperate
+32,Levantine Sea,4,2,Temperate
+33,Tunisian Plateau/Gulf of Sidra,4,2,Temperate
+34,Ionian Sea,4,2,Temperate
+31,Aegean Sea,4,2,Temperate
+36,Alboran Sea,4,2,Temperate
+35,Western Mediterranean,4,2,Temperate
+10,High Arctic Archipelago,1,1,Polar
