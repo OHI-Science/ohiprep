@@ -1,3 +1,10 @@
+## MRF NOTE: Feb 2 2016:
+
+## These data were moved to Github from this location: Neptune/model/GL-NCEAS-Resilience_Mora (now deleted)
+## These notes for missing regions do not seem correct based on:
+## The data from v2012 (_output_actuals and _output_scores), and the whence data in v2013 does seem accurate
+## although it does not take into account the downscaling that occurred from the 2012 to 2013 analysis
+
 Source: GL-Scripps-Mora2009, GL-NCEAS-ArtisanalFishing
 
 We use the Mora data (Oaf) from the Artisanal Fishing goal, and 

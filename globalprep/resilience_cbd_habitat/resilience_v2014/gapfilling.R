@@ -69,7 +69,7 @@ write.csv(aliens_gf,
 ## habitat_combo (combines the CBD habitat and MPAs)
 ## No gapfilling for MPAs:
 ## the habitat_combo layer uses MPAs in 3km off coast
-## the habtitat_combo_eez uses MPAs in eez
+## the habitat_combo_eez uses MPAs in eez
 ## gapfilling is the same for both of these (50% of values gapfilled if CBD habitat is gapfilled)
 
 hab_combo <- aliens_gf %>%
@@ -83,25 +83,46 @@ write.csv(hab_combo,
           'globalprep/resilience_cbd_habitat/resilience_v2014/data/r_habitat_combo_eez_2014a_gf.csv',
           row.names=FALSE)
 
+
+#################################################################
 ### Mora data: this is needed to get gapfilling for fishing resilience layers
+## These use Mora or Mora S4 data which have the same gapfilling
 
+mora <- read.csv('globalprep/resilience_mora/v2013/data/r_mora_2013a_gf.csv') %>%
+  select(rgn_id, mora = value)
+mora4 <- read.csv('globalprep/resilience_mora/v2013/data/r_mora_s4_2013a_gf.csv') %>%
+  select(rgn_id, mora4 = value)
+habitat <- read.csv('globalprep/resilience_cbd_habitat/resilience_v2014/data/r_habitat_2013a_gf.csv')
 
+fish_v1 <- mora %>%
+  left_join(habitat) %>%
+  mutate(score = (mora + resilience.score)/3) %>%
+  select(rgn_id, resilience.score = score)
 
+write.csv(fish_v1, "globalprep/resilience_cbd_habitat/resilience_v2014/data/r_fishing_v1_2014a_gf.csv",
+          row.names = FALSE)
 
-### look at others...
-hab <- read.csv('globalprep/resilience_cbd_habitat/resilience_v2014/tmp/r_habitat_2013a.csv') %>%
-  left_join(d_regions) %>%
-  arrange(region_id_2012)
+write.csv(fish_v1, "globalprep/resilience_cbd_habitat/resilience_v2014/data/r_fishing_v1_eez_2014a_gf.csv",
+          row.names = FALSE)
 
+# Fish V2
+fish_v2 <- mora %>%
+  left_join(mora4) %>%
+  left_join(habitat) %>%
+  mutate(score = (mora + mora4 + resilience.score)/4) %>%
+  select(rgn_id, resilience.score = score)
 
-aliens <- aliens %>%
-  mutate(whencev01 = ifelse(rgn_id == 163, "OD", as.character(whencev01))) %>%  # going to assume US is not gapfilled
-  filter(rgn_id != 213)  # cut antarctica
+write.csv(fish_v2, "globalprep/resilience_cbd_habitat/resilience_v2014/data/r_fishing_v2_eez_2014a_gf.csv",
+          row.names = FALSE)
 
-aliens_gf <- aliens %>%
-  mutate(resilience.score = ifelse(whencev01 == 'SG', 1, 0)) %>%
-  select(rgn_id, resilience.score)
+# Fish V3
+fish_v3 <- mora4 %>%
+  left_join(habitat) %>%
+  mutate(score = (mora4 + resilience.score)/3) %>%
+  select(rgn_id, resilience.score = score)
 
-write.csv(aliens_gf, 
-          'globalprep/resilience_cbd_habitat/resilience_v2013/data/r_alien_species_Nature2012disaggregated_gf.csv',
-          row.names=FALSE)
+write.csv(fish_v3, "globalprep/resilience_cbd_habitat/resilience_v2014/data/r_fishing_v3_2014a_gf.csv",
+          row.names = FALSE)
+write.csv(fish_v3, "globalprep/resilience_cbd_habitat/resilience_v2014/data/r_fishing_v3_eez_2014a_gf.csv",
+          row.names = FALSE)
+
