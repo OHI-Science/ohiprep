@@ -1,5 +1,14 @@
-Moved from ohiprep/Global/GL-Resilience_Fish_Hab_2014a
+Notes from MRF (Feb 2 2016)
 
+Moved from ohiprep/Global/GL-Resilience_Fish_Hab_2014a (now deleted)
+Resilience_2014a.R: describes how the fishing_v1 and habitat_combo resilience layers
+are created using a combination of data (described in HAB_resilience_guide.pdf)
+
+Other potentially relevant files include:
+neptune: model/GL-CBD-Survey
+neptune: model/GL-NCEAS-Resilience_Mora
+
+****
 
 Source: GL-CBD-Survey 
 
