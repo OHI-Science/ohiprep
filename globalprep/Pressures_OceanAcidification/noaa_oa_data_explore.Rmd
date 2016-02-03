@@ -1,0 +1,43 @@
+---
+title: 'Exploring new OA data: OHI 2016'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: ../../../src/templates/ohi_hdr.html 
+  pdf_document:
+    toc: true
+---
+
+For OHI 2015 we used data from [Feely et al. (2009)](http://www.tos.org/oceanography/archive/22-4_feely.pdf) but updated to 2014 and provided by WHOI.
+
+In 2015 a [new paper](https://www.researchgate.net/publication/283938912_Climatological_distribution_of_aragonite_saturation_state_in_the_global_oceans) came out with global aragonite saturation state at multiple depths. Data is publicly available in NetCDF format. This data claims to be an improvement on Feely et al. 2009. 
+
+Here is an initial exploration to see if it should be used instead of the 2014 data.
+
+```{r setup}
+source('src/R/common.R')
+
+library(raster)
+
+data = stack(file.path(dir_neptune_data,'git-annex/globalprep/_raw_data/NOAA_OA/Aragonite.nc'),varname="Aragonite")
+data
+```
+
+There are 9 layers in the file. One for each depth (0,50,100,200, 500, 1000, 2000, 3000, and 4000 meters).
+
+**Surface Aragonite Saturation State**
+
+```{r surface}
+
+sur = data[[1]]%>%
+        t(.) #transpose 
+
+```
+
+Off the bat I don't think there is any temporal information for this data....
+

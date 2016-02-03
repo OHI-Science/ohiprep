@@ -6,7 +6,6 @@
 # This method is based on explorations from: gap_fill_explore.R and Issue #397 and this document:
 # https://www.lucidchart.com/documents/edit/20f29b5a-4a15-4128-ac40-9f14a7f1ccdc?shared=true
 
-## NOTE: These data have since been updated....the data would need to be updated if reran
 #####################################################################
 ### setup ---- libraries, pathnames, etc
 #####################################################################
@@ -19,474 +18,253 @@ library(stringr)
 library(ggplot2)
 
 
-dir_d <- 'globalprep/FAO_Commodities'
+dir_d <- 'globalprep/FAO_commodities'
 source(sprintf('%s/R/np_fxn.R', dir_d))
 
+h_tonnes <- read.csv(file.path(dir_d, 'v2014_test/intermediate/tonnes.csv'))
+h_usd    <- read.csv(file.path(dir_d, 'v2014_test/intermediate/usd.csv'))
 
 
-# ####################################################3
-# ### Organizing data - realized that in previous analysis I included a lot of 
-# #### zeros that probably aren't legit
-# #######################################################
-# data <- read.csv(file.path(dir_d, "gap_fill_explore/cv_data.csv"))
-# 
-# data <- data %>%
-#   rowwise() %>%
-#   mutate(NAnum= sum(c(is.na(tonnes), is.na(usd)))) %>%
-#   group_by(rgn_name, commodity) %>%
-#   mutate(N_reg = sum(NAnum==0)) %>%
-#   mutate(N_gap = sum(NAnum==1)) %>%
-#   na.omit()
-# 
-# 
-# 
-# data <- na.omit(data)
-# set.seed(227)
-# randSamp <- sample(1:length(data$usd), length(data$usd)*.05)
-# length(randSamp)
-# 
-# data_test <- data[randSamp,]
-# write.csv(data_test, 'globalprep/FAO_commodities/gap_fill_explore/cv_data_test.csv', row.names=FALSE)
-# data_train <- data[-randSamp,]
-# write.csv(data_train, 'globalprep/FAO_commodities/gap_fill_explore/cv_data_train.csv', row.names=FALSE)
-
-############# Read in test/mod data ----
-
-data_test <- read.csv('globalprep/FAO_commodities/gap_fill_explore/cv_data_test.csv', stringsAsFactors=FALSE) %>%
-  select(rgn_id, country=rgn_name, commodity, year, tonnes, usd, NAnum, N_reg, N_gap)
-data_train <- read.csv('globalprep/FAO_commodities/gap_fill_explore/cv_data_train.csv', stringsAsFactors=FALSE) %>%
-  select(rgn_id, country=rgn_name, commodity, year, tonnes, usd, NAnum, N_reg, N_gap)
+h <- np_harvest_cat(h_tonnes, h_usd)
+### concatenates h_tonnes and h_usd data
+### h includes rgn_name, rgn_id, commodity, product, year, tonnes, usd.
 
 
-############# Model 1: lm with year/country
+h <- h %>% np_harvest_preclip
+### clips out years prior to first reporting year, for each commodity per region
 
-coms <- unique(data_train$commodity)
-predict_tonnes <- data.frame()
+h <- h %>% np_harvest_gapflag  
+### Adds flag for required gap-filling, based upon NAs in data. 
+### NOTE: Does not perform any gap-filling.
+### At this point, h includes: 
+###   rgn_name   rgn_id   commodity   product   year   tonnes   usd   gapfill
+### 'gapfill' will be in (zerofill, endfill, tbd, none)
 
-for(i in 1:length(coms)){ 
-  #i=1
-data_train_sub <- data_train %>%
-  filter(commodity==coms[i]) 
-predict_tonnes_sub <- data_test %>%
-  filter(commodity==coms[i]) %>%
-  filter(country %in% unique(data_train_sub$country)) %>% # only include if country is in training dataset, otherwise function breaks
-  select(country, year, commodity, usd)
+data_check <- h %>% np_datacheck()
+### for each commodity within each region, creates (but doesn't save...) summary info:
+###   num_years:        the length of the data series for this commodity in this region
+###   usd_unique_nz:    (or 'tns') number of unique non-zero values for usd or tonnes 
+###   usd_na & tns_na:  number of NA occurrences
+###   paired_obs:       number of non-zero paired observations
+###   usd_unique_pairs: (or 'tns') within set of paired observations, count of unique usd and tonnes
+###   unique_pairs:     lesser of usd_unique_pairs and tns_unique_pairs
+###   count_no_data:    number of paired NAs - years with no value reported
 
-if(length(predict_tonnes_sub$usd)==0 |sum(data_train_sub$usd)==0 | length(unique(data_train_sub$country))<2){ #move to next if there are if resulting testing data is N=0
-  predict_tonnes <- predict_tonnes
-  cat(i)
-} else {
-mod <- lm(tonnes~usd + year + country, data=data_train_sub)
+h <- h %>% np_zerofill
+### for post-reporting years with NA for both tonnes and USD, fill zero - 
+### assumes that non-reporting indicates zero harvest to report.
+### Also cross-fills zeros where one side is 0, other is NA (not flagged as gapfill)
 
-predict_tonnes_sub$full_model_predict <- predict(mod, newdata=predict_tonnes_sub)
-predict_tonnes_sub$full_model_predict <- round(predict_tonnes_sub$full_model_predict, 0)
-predict_tonnes_sub$full_model_predict <- ifelse(predict_tonnes_sub$usd==0, 
-                                                0,
-                                                predict_tonnes_sub$full_model_predict)
-predict_tonnes_sub$full_model_predict <- ifelse(predict_tonnes_sub$full_model_predict<0, 
-                                                1,
-                                                predict_tonnes_sub$full_model_predict)
-predict_tonnes <- rbind(predict_tonnes, predict_tonnes_sub)
-cat(i)
+h <- h %>% np_lowdata_filter()
+### Exclude commodities (within a region) that have few non-zero data points.
+### Optional parameter with default: nonzero_h_yr_min = 4
+### NOTE: This filter has consequences for the regression, but also has meaning in terms of 
+###       not inflicting a penalty on regions trying, and then stopping, an experimental harvest.
+
+h <- h %>% add_georegion_id()
+### Melanie's script to add a georegional ID tag based on country keys and IDs.
+
+
+h <- h %>%
+  filter(usd>0)
+# eliminates samples where both values are 0
+
+
+#####################################################
+## Calculate error for within country relationships
+#####################################################
+
+## within country relationship:
+years_back <- 10 
+lower_bound_year <- max(h$year) - years_back
+
+## min number of paired data:
+min_pairs <- 4
+
+rgn_data <- h %>%
+  filter(year > lower_bound_year) %>%
+  filter(!(is.na(tonnes))) %>%
+  group_by(rgn_name, commodity) %>%
+  mutate(pairs = length(!is.na(tonnes))) %>%
+  ungroup() %>%
+  filter(pairs >= min_pairs) %>%
+  mutate(rgn_com = paste(rgn_id, commodity, sep="_")) %>%
+  mutate(predict_rgn_loo = NA) %>%
+  mutate(predict_rgn = NA) %>%
+  mutate(predict_rgn_year_loo = NA) %>%
+  mutate(predict_rgn_year = NA)
+
+units <- unique(rgn_data$rgn_com)
+
+for(unit in units){
+#unit <- '5_Miscellaneous corals and shells'
+
+tmp <- rgn_data[rgn_data$rgn_com == unit, ]
+years_tmp <- unique(tmp$year)
+
+for(year_loo in years_tmp){
+#year_loo <- 2003
+pred <- subset(tmp, year == year_loo) 
+
+## leave one out model, rgn only:
+mod_loo <- lm(tonnes ~ usd, data = subset(tmp, year != year_loo))
+rgn_data$predict_rgn_loo[rgn_data$rgn_com == unit & rgn_data$year == year_loo] <- predict(mod_loo, newdata=pred)
+
+## standard model, rgn only:
+mod <- lm(tonnes ~ usd, data = tmp)
+rgn_data$predict_rgn[rgn_data$rgn_com == unit & rgn_data$year == year_loo] <- predict(mod, newdata=pred)
+
+## leave one out model, rgn and year:
+mod_loo_yr <- lm(tonnes ~ usd + year, data = subset(tmp, year != year_loo))
+rgn_data$predict_rgn_year_loo[rgn_data$rgn_com == unit & rgn_data$year == year_loo] <- predict(mod_loo_yr, newdata=pred)
+
+## standard model, rgn only:
+mod_yr <- lm(tonnes ~ usd + year, data = tmp)
+rgn_data$predict_rgn_year[rgn_data$rgn_com == unit & rgn_data$year == year_loo] <- predict(mod_yr, newdata=pred)
 }
 }
 
-
-data_test_pred <- data_test %>%
-  left_join(predict_tonnes)
-
-ggplot(data_test_pred, aes(y=log(full_model_predict), x=log(tonnes))) +
-  geom_point(shape=19, alpha=0.2) +
-  labs(x="tonnes_observed, ln", y="tonnes_predicted, ln") + 
-  theme_bw()
-
-mod <- lm(full_model_predict ~ tonnes, data=data_test_pred)
-summary(mod)
-
-
-
-############# Model 2: lm with year (no country)
-
-coms <- unique(data_train$commodity)
-predict_tonnes <- data.frame()
-
-for(i in 1:length(coms)){ 
-  #i=241
-  data_train_sub <- data_train %>%
-    filter(commodity==coms[i]) 
-  predict_tonnes_sub <- data_test %>%
-    filter(commodity==coms[i]) %>%
-    select(country, year, commodity, usd)
-  
-  if(length(predict_tonnes_sub$usd)==0 |sum(data_train_sub$usd)==0 ){ #move to next if there are if resulting testing data is N=0
-    predict_tonnes <- predict_tonnes
-    cat(i)
-  } else {
-    mod <- lm(tonnes~ usd + year, data=data_train_sub)
-    
-    predict_tonnes_sub$full_model_predict <- predict(mod, newdata=predict_tonnes_sub)
-    predict_tonnes_sub$full_model_predict <- round(predict_tonnes_sub$full_model_predict, 0)
-    predict_tonnes_sub$full_model_predict <- ifelse(predict_tonnes_sub$usd==0, 
-                                                    0,
-                                                    predict_tonnes_sub$full_model_predict)
-    predict_tonnes_sub$full_model_predict <- ifelse(predict_tonnes_sub$full_model_predict<0, 
-                                                    1,
-                                                    predict_tonnes_sub$full_model_predict)
-    predict_tonnes <- rbind(predict_tonnes, predict_tonnes_sub)
-    cat(i)
-  }
-}
-
-
-data_test_pred <- data_test %>%
-  left_join(predict_tonnes)
-
-ggplot(data_test_pred, aes(y=log(full_model_predict), x=log(tonnes))) +
-  labs(x="tonnes_observed, ln", y="tonnes_predicted, ln") + 
-  geom_point(shape=19, alpha=0.2) +
-  theme_bw()
-
-mod <- lm(full_model_predict ~ tonnes, data=data_test_pred)
-summary(mod)
-
-
-############# Model 2b: only tonnes and usd
-
-coms <- unique(data_train$commodity)
-predict_tonnes <- data.frame()
-
-for(i in 1:length(coms)){ 
-  #i=241
-  data_train_sub <- data_train %>%
-    filter(commodity==coms[i]) 
-  predict_tonnes_sub <- data_test %>%
-    filter(commodity==coms[i]) %>%
-    select(country, year, commodity, usd)
-  
-  if(length(predict_tonnes_sub$usd)==0 |sum(data_train_sub$usd)==0 ){ #move to next if there are if resulting testing data is N=0
-    predict_tonnes <- predict_tonnes
-    cat(i)
-  } else {
-    mod <- lm(tonnes~ usd, data=data_train_sub)
-    
-    predict_tonnes_sub$full_model_predict <- predict(mod, newdata=predict_tonnes_sub)
-    predict_tonnes_sub$full_model_predict <- round(predict_tonnes_sub$full_model_predict, 0)
-    predict_tonnes_sub$full_model_predict <- ifelse(predict_tonnes_sub$usd==0, 
-                                                    0,
-                                                    predict_tonnes_sub$full_model_predict)
-    predict_tonnes_sub$full_model_predict <- ifelse(predict_tonnes_sub$full_model_predict<0, 
-                                                    1,
-                                                    predict_tonnes_sub$full_model_predict)
-    predict_tonnes <- rbind(predict_tonnes, predict_tonnes_sub)
-    cat(i)
-  }
-}
-
-
-data_test_pred <- data_test %>%
-  left_join(predict_tonnes)
-
-ggplot(data_test_pred, aes(y=log(full_model_predict), x=log(tonnes))) +
-  labs(x="tonnes_observed, ln", y="tonnes_predicted, ln") + 
-  geom_point(shape=19, alpha=0.2) +
-  theme_bw()
-
-mod <- lm(full_model_predict ~ tonnes, data=data_test_pred)
-summary(mod)
-
-
-############# Model 3: country (no year)
-
-coms <- unique(data_train$commodity)
-predict_tonnes <- data.frame()
-
-for(i in 1:length(coms)){ 
-  #i=241
-  data_train_sub <- data_train %>%
-    filter(commodity==coms[i]) 
-  predict_tonnes_sub <- data_test %>%
-    filter(commodity==coms[i]) %>%
-    filter(country %in% unique(data_train_sub$country)) %>% # only include if country is in training dataset, otherwise function breaks
-    select(country, commodity, year, usd)
-  
-  if(length(predict_tonnes_sub$usd)==0 |sum(data_train_sub$usd)==0 | length(unique(data_train_sub$country))<2){ #move to next if there are if resulting testing data is N=0
-    predict_tonnes <- predict_tonnes
-    cat(i)
-  } else {
-    mod <- lm(tonnes~usd + country, data=data_train_sub)
-    
-    predict_tonnes_sub$full_model_predict <- predict(mod, newdata=predict_tonnes_sub)
-    predict_tonnes_sub$full_model_predict <- round(predict_tonnes_sub$full_model_predict, 0)
-    predict_tonnes_sub$full_model_predict <- ifelse(predict_tonnes_sub$usd==0, 
-                                                    0,
-                                                    predict_tonnes_sub$full_model_predict)
-    predict_tonnes_sub$full_model_predict <- ifelse(predict_tonnes_sub$full_model_predict<0, 
-                                                    1,
-                                                    predict_tonnes_sub$full_model_predict)
-    predict_tonnes <- rbind(predict_tonnes, predict_tonnes_sub)
-    cat(i)
-  }
-}
-
-
-data_test_pred <- data_test %>%
-  left_join(predict_tonnes)
-
-ggplot(data_test_pred, aes(y=log(full_model_predict), x=log(tonnes))) +
-  geom_point(shape=19, alpha=0.2) +
-  labs(x="tonnes_observed, ln", y="tonnes_predicted, ln") + 
-  theme_bw()
-
-mod <- lm(full_model_predict ~ tonnes, data=data_test_pred)
-summary(mod)
-
-
-
-############# Model 4: linear interpolation based on surrounding values
-data_train$cat <- "train"
-data_test$cat <- "test"
-
-data_zoo <- rbind(data_train, data_test)
-
-## trying another method (I think I was skipping a few years, which might make the weighting different)
-data_zoo_lm <- data_zoo %>%
-#   filter(country=="Philippines", commodity=="Oyster meat, prepared or preserved, nei") %>%
-  arrange(country, commodity, year) %>%
-  group_by(country, commodity) %>%
- filter(N_reg>3) %>% #N_reg is sample size, need surrounding values for na.fill
-  mutate(tonnes_test = ifelse(cat=="test", NA, tonnes)) %>%
-  do({
-    tonnes_zoo <- zoo(.[["tonnes_test"]], .[["year"]])
-    tonnes_pred <- na.fill(tonnes_zoo, "extend")
-    data.frame(., tonnes_pred)
-  })
-
-
-data_zoo_lm_test  <- data_zoo_lm %>%
-  filter(cat=="test") %>%
-  mutate(tonnes_pred = round(tonnes_pred, 0)) %>%
-  mutate(tonnes_pred = ifelse(usd==0, 0, tonnes_pred)) %>%
-  mutate(tonnes_pred = ifelse(tonnes_pred<0, 1, tonnes_pred))         
-
-
-ggplot(data_zoo_lm_test, aes(y=log(tonnes_pred), x=log(tonnes))) +
-  geom_point(shape=19, alpha=0.2) +
-  labs(x="tonnes_observed, ln", y="tonnes_predicted, ln") + 
-  theme_bw()
-
-
-mod <- lm(tonnes_pred ~ tonnes, data=data_zoo_lm_test)
-summary(mod)
-
-
-############# Model 5: splinal interpolation based on surrounding values
-data_train$cat <- "train"
-data_test$cat <- "test"
-
-data_zoo <- rbind(data_train, data_test)
-
-data_zoo_sp <- data_zoo %>%
-  #   filter(country=="Philippines", commodity=="Oyster meat, prepared or preserved, nei") %>%
-  arrange(country, commodity, year) %>%
-  group_by(country, commodity) %>%
-  filter(N_reg>3) %>% #N_reg is sample size, need surrounding values for na.fill
-  mutate(tonnes_test = ifelse(cat=="test", NA, tonnes)) %>%
-  do({
-    tonnes_zoo <- zoo(.[["tonnes_test"]], .[["year"]])
-    tonnes_pred <- na.spline(tonnes_zoo)
-    data.frame(., tonnes_pred)
-  })
-
-
-# data_zoo_sp  <- data_zoo %>%
-#   filter(N_reg>3) %>%
-#   mutate(tonnes_test = ifelse(cat=="test", NA, tonnes)) %>%
-#   arrange(country, commodity, year) %>%
-#   group_by(country, commodity) %>%
-#   mutate(tonnes_pred = zoo::na.spline(tonnes_test)) 
-
-
-data_zoo_sp_test  <- data_zoo_sp %>%
-  filter(cat=="test") %>%
-  mutate(tonnes_pred = round(tonnes_pred, 0)) %>%
-  mutate(tonnes_pred = ifelse(usd==0, 0, tonnes_pred)) %>%
-  mutate(tonnes_pred = ifelse(tonnes_pred<0, 1, tonnes_pred))         
-
-
-ggplot(data_zoo_sp_test, aes(y=log(tonnes_pred), x=log(tonnes))) +
-  geom_point(shape=19, alpha=0.2) +
-  labs(x="tonnes_observed, ln", y="tonnes_predicted, ln") + 
-  theme_bw()
-
-
-mod <- lm(tonnes_pred ~ tonnes, data=data_zoo_sp_test)
-summary(mod)
-
-
-
-
-############# Model 6: within country/commodity linear model
-data_train$cat <- "train"
-data_test$cat <- "test"
-
-data_zoo <- rbind(data_train, data_test)
-
-data_mod_country_lm <- data_zoo %>%
-#   filter(country=="Philippines",
-#          commodity=="Oyster meat, prepared or preserved, nei") %>%
-  filter(N_reg>=4) %>%
-  group_by(country, commodity) %>%
-  mutate(sum_usd=sum(usd)) %>%
-  filter(sum_usd>0) %>% 
-  mutate(tonnes_mod = ifelse(cat=="test", NA, tonnes)) %>%
-  do({
-    mod <- lm(tonnes_mod ~ usd, data=.)
-    tonnes_pred <- predict(mod, newdata=.['usd'])
-    data.frame(., tonnes_pred)
-  })
-
-
-data_mod_country_lm  <- data_mod_country_lm %>%
-  filter(cat=="test") %>%
-  mutate(tonnes_pred = round(tonnes_pred, 0)) %>%
-  mutate(tonnes_pred = ifelse(usd==0, 0, tonnes_pred)) %>%
-  mutate(tonnes_pred = ifelse(tonnes_pred<0, 1, tonnes_pred))         
-
-
-ggplot(data_mod_country_lm, aes(y=log(tonnes_pred), x=log(tonnes))) +
-  geom_point(shape=19, alpha=0.2) +
-  labs(x="tonnes_observed, ln", y="tonnes_predicted, ln") + 
-  theme_bw()
-
-
-mod <- lm(tonnes_pred ~ tonnes, data=data_mod_country_lm)
-summary(mod)
-
-
-
-############# Model 7: within georegion/commodity linear model including time
-data_train$cat <- "train"
-data_test$cat <- "test"
-
-data_zoo <- rbind(data_train, data_test)
-
-key <- read.csv("../ohi-global/eez2014/layers/cntry_rgn.csv")
-dups <- key$rgn_id[duplicated(key$rgn_id)]
-key[key$rgn_id %in% dups, ]
-
-key  <- key %>%
-  filter(!(cntry_key %in% c('Galapagos Islands', 'Alaska',
-                          'Hawaii', 'Trindade', 'Easter Island',
-                          'PRI', 'GLP', 'MNP')))  #PRI (Puerto Rico) and VIR (Virgin Islands) in the same r2 zone (just selected one), 
-                                     #GLP (Guadalupe) and MTQ (Marinique) in the same r2 zone (just selected one),  
-                                #MNP (Northern Mariana Islands) and GUM (Guam)
-
-
-
-georegion <- read.csv("../ohi-global/eez2014/layers/cntry_georegions.csv")
-unique(georegion$georgn_id[georegion$level=="r0"])  # 1 level
-unique(georegion$georgn_id[georegion$level=="r1"])  # 7 levels
-unique(georegion$georgn_id[georegion$level=="r2"])  # 22 levels
-
-georegion <- georegion %>%
-  filter(level == "r2")
-
-data_zoo  <- data_zoo %>%
-  left_join(key) %>%
-  left_join(georegion) %>%
-  rowwise() %>%
-  mutate(non_zero_num = sum(c(tonnes>0, usd>0))) %>%
-  group_by(commodity, georgn_id) %>%
-  mutate(reg_num_geo=sum(non_zero_num>=2))  ### not sure I did my filter variable exactly like I wanted...
-
-data_mod_country_lm <- data_zoo %>%
-  #   filter(country=="Philippines",
-  #          commodity=="Oyster meat, prepared or preserved, nei") %>%
+plot(tonnes ~ predict_rgn_loo, data=rgn_data)
+plot(tonnes ~ predict_rgn, data=rgn_data)
+plot(tonnes ~ predict_rgn_year_loo, data=rgn_data)
+plot(tonnes ~ predict_rgn_year, data=rgn_data)
+
+### RMSE calculations
+sqrt(mean((rgn_data$predict_rgn_loo - rgn_data$tonnes)^2))
+sqrt(mean((rgn_data$predict_rgn - rgn_data$tonnes)^2))
+sqrt(mean((rgn_data$predict_rgn_year_loo - rgn_data$tonnes)^2))
+sqrt(mean((rgn_data$predict_rgn_year - rgn_data$tonnes)^2))
+
+
+#####################################################
+## Calculate error for within georegion relationships
+#####################################################
+
+## within country relationship:
+years_back <- 10 
+lower_bound_year <- max(h$year) - years_back
+
+## min number of paired data:
+min_pairs <- 4
+
+georgn_data <- h %>%
+  filter(year > lower_bound_year) %>%
+  filter(!(is.na(tonnes))) %>%
   group_by(georgn_id, commodity) %>%
-  mutate(tonnes_mod = ifelse(cat=="test", NA, tonnes)) %>%
-  filter(reg_num_geo>=4) %>%
-  do({
-    mod <- lm(tonnes_mod ~ usd + year, data=.)
-    tonnes_pred <- predict(mod, newdata=.[c('usd', 'year')])
-    data.frame(., tonnes_pred)
-  })
+  mutate(pairs = length(!is.na(tonnes))) %>%
+  ungroup() %>%
+  filter(pairs >= min_pairs) %>%
+  mutate(georgn_com = paste(georgn_id, commodity, sep="_")) %>%
+  mutate(predict_id = paste(rgn_id, year, sep="_")) %>%
+  mutate(predict_rgn_loo = NA) %>%
+  mutate(predict_rgn = NA) %>%
+  mutate(predict_rgn_year_loo = NA) %>%
+  mutate(predict_rgn_year = NA)
+
+units <- unique(georgn_data$georgn_com)
+
+for(unit in units){
+  # unit <- "54_Miscellaneous corals and shells"
+  
+  tmp <- georgn_data[georgn_data$georgn_com == unit, ]
+  id_tmp <- unique(tmp$predict_id)
+  
+  for(id in id_tmp){
+  #  id <- '5_2002'
+    pred <- subset(tmp, predict_id == id) 
+    
+    ## leave one out model, rgn only:
+    mod_loo <- lm(tonnes ~ usd, data = subset(tmp, predict_id != id))
+    georgn_data$predict_rgn_loo[georgn_data$georgn_com == unit & georgn_data$predict_id == id] <- predict(mod_loo, newdata=pred)
+    
+    ## standard model, rgn only:
+    mod <- lm(tonnes ~ usd, data = tmp)
+    georgn_data$predict_rgn[georgn_data$georgn_com == unit & georgn_data$predict_id == id] <- predict(mod, newdata=pred)
+
+    ## leave one out model, rgn and year:
+    mod_loo_yr <- lm(tonnes ~ usd + year, data = subset(tmp, year != year_loo))
+    georgn_data$predict_rgn_year_loo[georgn_data$georgn_com == unit & georgn_data$predict_id == id] <- predict(mod_loo_yr, newdata=pred)
+
+    ## standard model, rgn only:
+    mod_yr <- lm(tonnes ~ usd + year, data = tmp)
+    georgn_data$predict_rgn_year[georgn_data$georgn_com == unit & georgn_data$predict_id == id] <- predict(mod_yr, newdata=pred)
+  }
+}
+
+plot(tonnes ~ predict_rgn_loo, data=georgn_data)
+plot(tonnes ~ predict_rgn, data=georgn_data)
+plot(tonnes ~ predict_rgn_year_loo, data=georgn_data)
+plot(tonnes ~ predict_rgn_year, data=georgn_data)
+
+### RMSE calculations
+sqrt(mean((georgn_data$predict_rgn_loo - georgn_data$tonnes)^2))
+sqrt(mean((georgn_data$predict_rgn - georgn_data$tonnes)^2))
+sqrt(mean((georgn_data$predict_rgn_year_loo - georgn_data$tonnes)^2))
+sqrt(mean((georgn_data$predict_rgn_year - georgn_data$tonnes)^2))
 
 
-data_mod_country_lm  <- data_mod_country_lm %>%
-  filter(cat=="test") %>%
-  mutate(tonnes_pred = round(tonnes_pred, 0)) %>%
-  mutate(tonnes_pred = ifelse(usd==0, 0, tonnes_pred)) %>%
-  mutate(tonnes_pred = ifelse(tonnes_pred<0, 1, tonnes_pred))         
+#####################################################
+## Calculate error for global relationships
+#####################################################
 
+## within country relationship:
+years_back <- 10 
+lower_bound_year <- max(h$year) - years_back
 
-ggplot(data_mod_country_lm, aes(y=log(tonnes_pred), x=log(tonnes))) +
-  geom_point(shape=19, alpha=0.2) +
-  labs(x="tonnes_observed, ln", y="tonnes_predicted, ln") + 
-  theme_bw()
+## min number of paired data:
+min_pairs <- 4
 
-
-mod <- lm(tonnes_pred ~ tonnes, data=data_mod_country_lm)
-summary(mod)
-
-############# Model 8: within georegion/commodity linear model no time
-data_mod_country_lm <- data_zoo %>%
-  #   filter(country=="Philippines",
-  #          commodity=="Oyster meat, prepared or preserved, nei") %>%
-  group_by(georgn_id, commodity) %>%
-  mutate(tonnes_mod = ifelse(cat=="test", NA, tonnes)) %>%
-  filter(reg_num_geo>=4) %>%
-  do({
-    mod <- lm(tonnes_mod ~ usd, data=.)
-    tonnes_pred <- predict(mod, newdata=.[c('usd')])
-    data.frame(., tonnes_pred)
-  })
-
-
-data_mod_country_lm  <- data_mod_country_lm %>%
-  filter(cat=="test") %>%
-  mutate(tonnes_pred = round(tonnes_pred, 0)) %>%
-  mutate(tonnes_pred = ifelse(usd==0, 0, tonnes_pred)) %>%
-  mutate(tonnes_pred = ifelse(tonnes_pred<0, 1, tonnes_pred))         
-
-
-ggplot(data_mod_country_lm, aes(y=log(tonnes_pred), x=log(tonnes))) +
-  geom_point(shape=19, alpha=0.2) +
-  labs(x="tonnes_observed, ln", y="tonnes_predicted, ln") + 
-  theme_bw()
-
-
-mod <- lm(tonnes_pred ~ tonnes, data=data_mod_country_lm)
-summary(mod)
-
-
-
-############# Model 9: Most general model
-
-data_mod_country_lm <- data_zoo %>%
-  mutate(tonnes_mod = ifelse(cat=="test", NA, tonnes)) %>%
+global_data <- h %>%
+  filter(year > lower_bound_year) %>%
+  filter(!(is.na(tonnes))) %>%
   group_by(commodity) %>%
-  do({
-    mod <- lm(tonnes_mod ~ usd, data=.)
-    tonnes_pred <- predict(mod, newdata=.[c('usd')])
-    data.frame(., tonnes_pred)
-  })
+  mutate(pairs = length(!is.na(tonnes))) %>%
+  ungroup() %>%
+  filter(pairs >= min_pairs) %>%
+  mutate(predict_id = paste(rgn_id, year, sep="_")) %>%
+  mutate(predict_rgn_loo = NA) %>%
+  mutate(predict_rgn = NA) %>%
+  mutate(predict_rgn_year_loo = NA) %>%
+  mutate(predict_rgn_year = NA)
 
+units <- unique(global_data$commodity)
 
-data_mod_country_lm  <- data_mod_country_lm %>%
-  filter(cat=="test") %>%
-  mutate(tonnes_pred = round(tonnes_pred, 0)) %>%
-  mutate(tonnes_pred = ifelse(usd==0, 0, tonnes_pred)) %>%
-  mutate(tonnes_pred = ifelse(tonnes_pred<0, 1, tonnes_pred))         
+for(unit in units){
+   #unit <- "Miscellaneous corals and shells"
+  
+  tmp <- global_data[global_data$commodit == unit, ]
+  id_tmp <- unique(tmp$predict_id)
+  
+  for(id in id_tmp){
+    #  id <- '5_2002'
+    pred <- subset(tmp, predict_id == id) 
+    
+    ## leave one out model, rgn only:
+    mod_loo <- lm(tonnes ~ usd, data = subset(tmp, predict_id != id))
+    global_data$predict_rgn_loo[global_data$commodity == unit & global_data$predict_id == id] <- predict(mod_loo, newdata=pred)
+    
+    ## standard model, rgn only:
+    mod <- lm(tonnes ~ usd, data = tmp)
+    global_data$predict_rgn[global_data$commodity == unit & global_data$predict_id == id] <- predict(mod, newdata=pred)
+    
+    ## leave one out model, rgn and year:
+    mod_loo_yr <- lm(tonnes ~ usd + year, data = subset(tmp, year != year_loo))
+    global_data$predict_rgn_year_loo[global_data$commodity == unit & global_data$predict_id == id] <- predict(mod_loo_yr, newdata=pred)
+    
+    ## standard model, rgn only:
+    mod_yr <- lm(tonnes ~ usd + year, data = tmp)
+    global_data$predict_rgn_year[global_data$commodity == unit & global_data$predict_id == id] <- predict(mod_yr, newdata=pred)
+  }
+}
 
+plot(tonnes ~ predict_rgn_loo, data=global_data)
+plot(tonnes ~ predict_rgn, data=global_data)
+plot(tonnes ~ predict_rgn_year_loo, data=global_data)
+plot(tonnes ~ predict_rgn_year, data=global_data)
 
-ggplot(data_mod_country_lm, aes(y=log(tonnes_pred), x=log(tonnes))) +
-  geom_point(shape=19, alpha=0.2) +
-  labs(x="tonnes_observed, ln", y="tonnes_predicted, ln") + 
-  theme_bw()
-
-
-mod <- lm(tonnes_pred ~ tonnes, data=data_mod_country_lm)
-summary(mod)
-
-
+### RMSE calculations
+sqrt(mean((global_data$predict_rgn_loo - global_data$tonnes)^2))
+sqrt(mean((global_data$predict_rgn - global_data$tonnes)^2))
+sqrt(mean((global_data$predict_rgn_year_loo - global_data$tonnes)^2))
+sqrt(mean((global_data$predict_rgn_year - global_data$tonnes)^2))
 

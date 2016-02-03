@@ -5,5 +5,5 @@ output: html_fragment
 [![ohi logo](ohi_banner.png)](http://ohi-science.org)
 <br>
 [OHI Science](http://ohi-science.org) |
-[Citation policy](https://github.com/OHI-Science/ohiprep/releases)
+[Citation policy](http://ohi-science.org/citation-policy/)
 </p>
