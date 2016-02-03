@@ -17,6 +17,7 @@ REFERENCE RMD FILE: https://rawgit.com/OHI-Science/ohiprep/master/globalprep/hab
 
 ``` {r setup, echo = FALSE, message = FALSE, warning = FALSE}
 library(readr)      # for read_csv()
+library(raster)
 
 source('~/github/ohiprep/src/R/common.R')
 
@@ -103,7 +104,7 @@ if(!file.exists(data_waycott_file)) {
   write.csv(waycott_df, data_waycott_file, row.names = FALSE)
 }
 
-waycott_df <- read.csv(data_waycott_file, stringsAsFactors = FALSE)
+waycott_df <- read.csv(data_waycott_file, stringsAsFactors = FALSE) %>% unique()
 
 waycott_df_mdl <- waycott_df %>%
   group_by(site_name) %>%
@@ -114,16 +115,16 @@ waycott_df_mdl <- waycott_df %>%
 waycott_df_mdl2 <- waycott_df %>%
   group_by(site_name) %>%
   arrange(site_name, year) %>%
-  mutate(exp_mdl_r = round(log(last(area_ha) / first(area_ha)) / (last(year) - first(year)) * 100, 3))
+  summarize(exp_mdl_r = round(log(last(area_ha) / first(area_ha)) / (last(year) - first(year)) * 100, 3))
 
-waycott_df <- waycott_df %>%
+waycott_df1 <- waycott_df %>%
   left_join(waycott_df_mdl %>% select(-mdl),
             by = 'site_name') %>%
   left_join(waycott_df_mdl2 %>% 
-              select(site_name, year, exp_mdl_r),
-            by = c('site_name', 'year'))
+              select(site_name, exp_mdl_r),
+            by = 'site_name')
 
-DT::datatable(waycott_df %>% select(-site_id, -yr_start, -yr_end, -pub),
+DT::datatable(waycott_df1 %>% select(-site_id, -yr_start, -yr_end, -pub),
               caption = 'Waycott seagrass extent data over time')
 ```
 
@@ -167,6 +168,55 @@ DT::datatable(short_df %>% select(site_name, country, year, yr_day = day, sg_pct
               caption = 'Short seagrass coverage data over time')
 ```
 
+## Aquamaps data
+
+``` {r}
+am_sg_cells   <- read_csv(file.path(dir_git, 'am_data/seagrass_am.csv'), progress = TRUE) %>%
+  as.data.frame()
+
+### These are taken from speciesoccursum.csv, phylum Plantae, order Alismatales
+sg_list <- c('Thalassia testudinum'     = 'Kew-308879',
+             'Syringodium	filiforme'    = 'Kew-288211',
+             'Halodule wrightii'        = 'SLB-173431',
+             'Thalassodendron	ciliatum' = 'Kew-293259',
+             'Halophila	spinulosa'      = 'Kew-308090',
+             'Halophila	decipiens'      = 'SLB-159390',
+             'Ruppia maritima'          = 'Kew-308804')
+
+### others to look for in AM: 
+# Phyllospadix spp (nope)
+# Zostera marina (nope)
+# Posidonia oceanica (nope)
+# Cymodocea spp (syringodium, thalassodendron, and haloduleis of family Cymodoceaceae; not found as genus)
+# Enhalus acoroides (nope)
+# Amphibolis antarctica et al. (nope)
+
+
+### LOICZID cell ID numbers - used in plotting rasters
+loiczid_raster_file  <- file.path(dir_git, 'am_data/loiczid_raster.grd')
+loiczid_raster       <- raster(loiczid_raster_file)
+names(loiczid_raster) <- 'loiczid'
+
+sg_rast_list <- list()
+
+for (i in 1:length(sg_list)) { # i = 1
+  sg_rast_list[[i]] <- raster::subs(loiczid_raster, am_sg_cells %>% 
+                                      filter(speciesid == sg_list[i]) %>%
+                                      select(loiczid, probability),
+                                    by = 'loiczid',
+                                    which = 'probability', 
+                                    subsWithNA = TRUE)
+  
+}
+names(sg_rast_list) <- names(sg_list)
+
+sg_rast_brick <- brick(sg_rast_list)
+
+writeRaster(sg_rast_brick, file.path(dir_git, 'am_data/am_rast.tif'), 
+            bylayer = TRUE, suffix = 'names',
+            overwrite = TRUE)
+
+```
 
 #Summary
 [general description: What data are being generated? Why (what project, etc.)? Upstream/downstream processing information that might be helpful?  Other information?]
