@@ -1,19 +1,51 @@
 ---
 title: "Prepping global Ocean Acidification data for OHI 2015"
-author: "Jamie Afflerbach"
-output: html_document
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: ../../../src/templates/ohi_hdr.html 
+  pdf_document:
+    toc: true
 ---
+
+#Summary
 
 This script takes the raw data, shared by Woods Hole Institute for Oceanography, and does the following:
 
    a. Calculates the historical global mean for the decade 1880-1889 (1 raster layer as output)
    b. Calculates the annual mean for each of the 10 years in 2005-2014 (10 raster layers as output)
+   
+   **This is a dataprep script. The data processed here is used to create the Ocean Acidification Pressures layer. Full methods of the next step can be found [here](http://htmlpreview.github.io/?https://github.com/OHI-Science/ohiprep/blob/master/globalprep/Pressures_OceanAcidification/v2015/oa_create_layer_2015.html)
 
 **Notes about the data:**  
 This data was shared with us by Ivan Lima from Woods Hole Institue for Oceanography in December 2014. The data came as NetCDFs in an irregular grid format with a resolution of about 1 degree. The data values are monthly average surface &#937; aragonite saturation state.
 
 
-###SETUP
+#Updates from previous assessment
+
+***
+
+#Data Source
+**Reference**: [Feely et al.] 2009(https://darchive.mblwhoilibrary.org/bitstream/handle/1912/3180/22-4_feely.pdf?sequence=1&isAllowed=y)
+
+**Downloaded**: December 8, 2014 by email from Ivan Lima at WHOI
+
+**Description**:  Aragonite Saturation State
+
+**Native data resolution**: 1 degree
+
+**Time range**: 1880-1889 and 2005-2014, monthly data provided for each year
+
+**Format**:  NetCDF
+
+***
+
+# Methods
 
 ```{r,message=FALSE,warning=FALSE,verbose=FALSE,eval=FALSE}
 # set tmp directory
@@ -37,7 +69,7 @@ wd = file.path(dir_N,'git-annex/globalprep/Pressures_OceanAcidification/v2015')
 setwd(wd)
 ```
 
-####Step One:  
+## Step One:  
 Read in raw data to get lat and long information and monthly aragonite saturation state values
 
 ```{r,message=FALSE,warning=FALSE,eval=FALSE}
@@ -73,7 +105,7 @@ Read in raw data to get lat and long information and monthly aragonite saturatio
       arag_20[arag_20==9969209968386869046778552952102584320]<-NA 
 ```
 
-#### Step Two  
+## Step Two  
 Get annual averages for each year in the 2 decades
 
 ```{r,message=FALSE,warning=FALSE,eval=FALSE}
@@ -149,7 +181,7 @@ for(i in seq(1,120,by=12)){
   annual_arag(arag_20,'20th')
 ```
 
-###Step Three  
+## Step Three  
 Get the decadal mean (across all months/years)
 ```{r,message=FALSE,warning=FALSE,eval=FALSE}
   
@@ -217,7 +249,7 @@ decadal_arag<-function(data){
 ```
 
 
-###Step Four  
+## Step Four  
 Calculate difference between 2 decadal averages
 
 ```{r,message=FALSE,warning=FALSE,eval=FALSE}
