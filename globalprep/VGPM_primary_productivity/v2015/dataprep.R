@@ -1,4 +1,4 @@
-# Getting primary productivity data from VGPM: http://orca.science.oregonstate.edu/1080.by.2160.monthly.xyz.vgpm.m.chl.m.sst4.php
+# Getting primary productivity data from VGPM: http://orca.science.oregonstate.edu/1080.by.2160.monthly.hdf.vgpm.m.chl.m.sst.php
 # for 2009-2013 and creating annual average rasters
 
 # This code was adapted from Luke Miller: http://lukemiller.org/index.php/2011/12/loading-osus-vgpm-ocean-productivity-data-in-r/
