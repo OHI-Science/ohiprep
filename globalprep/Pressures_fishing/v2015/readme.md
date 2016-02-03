@@ -21,4 +21,4 @@ This data comes from the [Sea Around Us Project](http://www.seaaroundus.org/)
 
 ### Methods Overview
 
-For full procedure see [create_fish_pressure_layers.html]():
+For full methods see [here](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/Pressures_fishing/v2015/fishing_pressure_layers.html)
