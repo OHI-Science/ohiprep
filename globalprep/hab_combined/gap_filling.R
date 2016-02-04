@@ -4,6 +4,14 @@
 library(dplyr)
 library(tidyr)
 
+######NOTE:
+## NOTE:
+## NOTE:
+## NOTE:
+## I changed the list of gapfilled regions, should now select
+## only the regions that are territories and were not individually reported in 2012
+
+
 # mangrove gap-filling is done here: ohiprep/globalprep/hab_mangrove/v2015/MangroveFinalDataFormatting.R
 # rocky reef is used for NP risk data
 ## Bottom of script combines the habitat-gapfilling so it corresponds to the habitat layer
@@ -364,3 +372,32 @@ trend_gf <- rbind(mangrove, si, coral, sm, sg, sb)
 summary(trend_gf)
 
 write.csv(trend_gf, 'globalprep/hab_combined/v2015/data/habitat_trend_gap_fill.csv', row.names = FALSE)
+
+
+
+
+
+
+###############checking on missing trend data...how it effects scores
+
+extent <- read.csv('globalprep/hab_combined/v2015/data/habitat_extent_v2015.csv')
+trend <- read.csv('globalprep/hab_combined/v2015/data/habitat_trend_2013.csv')
+scores <- read.csv('../ohi-global/eez2015/scores.csv')
+
+filter(extent, rgn_id==11)
+filter(trend, rgn_id==11)
+filter(scores, region_id==11 & goal == "CP")
+filter(scores, region_id==11 & goal == "CS")
+filter(scores, region_id==11 & goal == "HAB")
+
+filter(extent, rgn_id==6)
+filter(trend, rgn_id==6)
+filter(scores, region_id==6 & goal == "CP")
+filter(scores, region_id==6 & goal == "CS")
+filter(scores, region_id==6 & goal == "HAB")
+
+filter(extent, rgn_id==50)
+filter(trend, rgn_id==50)
+filter(scores, region_id==50 & goal == "CP")
+filter(scores, region_id==50 & goal == "CS")
+filter(scores, region_id==50 & goal == "HAB")
