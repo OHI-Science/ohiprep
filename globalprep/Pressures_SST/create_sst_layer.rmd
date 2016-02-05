@@ -1,14 +1,45 @@
 ---
-title: "Sea Surface Temperature Layer for OHI 2015"
-author: "Jamie Afflerbach"
-output: html_document
+title: 'OHI: Sea Surface Temperature Pressure Layer 2015 '
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/GitHub/ohiprep/src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
 ---
+
+
+#Summary
 
 This script creates the Sea Surface Temperature (SST) layer for the 2015 global Ocean Health Index assessment.
 
 ***  
 
-##(1) Setup
+#Updates from previous assessment
+
+The  data was updated using the same data source as previous assessments, but new years of data. CoRTAD v5 now has data from 1982 through 2012. Previous assessments used SST anomaly data up to 2010. The climatological mean for SST anomalies in previous asssessments used all years 1982-2010, and in this assessment we used the mean across all 30 years (1982-2012).
+
+***
+
+#Data Source
+
+Data comes from [CoRTAD version 5](http://www.nodc.noaa.gov/sog/cortad/)
+
+**Native Data Resolution**: 4km   
+**Description**: Temperature in Kelvin  
+**Time Range**: 1982 - 2012 (weekly averages across all years)  
+**Format**: NetCDF  
+
+***  
+
+#Methods
+
+## Setup
 ```{r setup, message=F,warning=F}
 library(raster)
 library(RColorBrewer)
@@ -36,9 +67,10 @@ cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color sc
 
 ```
 
+***
 
-##(2) Create 5 year averages and calculate difference from historical mean
-```{r, message=F,warning=F}
+## Create 5 year averages and calculate difference from historical mean
+```{r, message=F,warning=F, eval=F}
 
   l   <- list.files(file.path(dir_N,'git-annex/globalprep/Pressures_SST/v2015/tmp'),pattern='annual_pos_anomalies',full.names=TRUE)
   
@@ -71,8 +103,10 @@ for(i in 2005:2008){ #i=2005
 }
 ```
 
-##(3) Rescale rasters by 99.99th quantile
-```{r, message=F,warning=F}    
+***  
+
+## Rescale rasters by 99.99th quantile
+```{r, message=F,warning=F, eval=F}    
   ## figure out the scaling value:
   rast_2012 <- raster(file.path(dir_N, 'git-annex/globalprep/Pressures_SST/v2015/output/sst_2005_2009-1985_1989.tif'))
   quantile(rast_2012,prob=0.9999)  #118.4027
@@ -84,12 +118,13 @@ for(i in 2005:2008){ #i=2005
   quantile(rast_2015,prob=0.9999)  #130.5288
 ```
  
- 
-##(4) Rescale using maximum value across rasters   
+*** 
+
+## Rescale using maximum value across rasters   
 
 This is an alternate option to the 99.99th quantile
 
-```{r,message=F,warning=F}
+```{r,message=F,warning=F, eval=F}
   ref <- 133.0371 # maximum value across rasters
   
   for(i in 2005:2008){ #i=2005
@@ -103,4 +138,10 @@ This is an alternate option to the 99.99th quantile
                      filename=paste0(dir_N,'git-annex/globalprep/Pressures_SST/v2015/output/sst_',i,'_',final_yr,'-1985_1989_rescaled_v2.tif',sep=""),overwrite=T)
   }
 ```
+
+***
+
+# Citation information  
+
+Selig, E.R., K.S. Casey, and J.F. Bruno (2010), New insights into global patterns of ocean temperature anomalies: implications for coral reef health and management, Global Ecology and Biogeography, DOI: 10.1111/j.1466-8238.2009.00522.x.
 
