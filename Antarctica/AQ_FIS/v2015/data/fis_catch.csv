@@ -1,4 +1,4 @@
-"sp_id","SpeciesCode","year","catch"
+"sp_id","species_code","year","catch"
 248100,"KRI",1976,389
 248100,"TOP",1979,100
 248100,"KRI",1980,49508
