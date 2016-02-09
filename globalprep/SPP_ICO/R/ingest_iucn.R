@@ -175,7 +175,7 @@ getDetails = function(sid, download_tries = 10) {
 
 
 #############################################################################=
-get_trend_and_subpops <- function(df = spp_iucn_mar, reload = FALSE) {
+get_trend_and_subpops <- function(df = spp_iucn_marine, reload = FALSE) {
 ### Create dataframes for subpopulation info and population trend info,
 ### from IUCN info scraped from web.  
 ### Subpops frame correlates parent ID with subpopulation IDs.  Trend frame includes
@@ -223,24 +223,30 @@ get_trend_and_subpops <- function(df = spp_iucn_mar, reload = FALSE) {
 }
 
 
-spp_iucn_mar <- get_mar_spp(reload = FALSE)
+spp_iucn_marine <- get_mar_spp(reload = FALSE)
 
-spp_trend_subpops <- get_trend_and_subpops(spp_iucn_mar, reload = TRUE)
+spp_trend_subpops <- get_trend_and_subpops(spp_iucn_marine, reload = TRUE)
 
-spp_iucn_mar <- spp_iucn_mar %>%
+spp_iucn_marine <- spp_iucn_marine %>%
   left_join(spp_trend_subpops, 
             by = 'iucn_sid')
-spp_iucn_mar <- spp_iucn_mar %>%
+spp_iucn_marine <- spp_iucn_marine %>%
   left_join(spp_trend_subpops %>%
               filter(!is.na(subpop_sid)) %>%
               dplyr::select(-popn_trend) %>%
               rename(parent_sid = iucn_sid),
             by = c('iucn_sid' = 'subpop_sid'))
 
-summary(as.factor(spp_iucn_mar$popn_trend))
+### recreate scinames from genus and species, if blank
+# for testing: spp_iucn_marine <- read.csv(iucn_list_file, stringsAsFactors = FALSE)
+spp_iucn_marine <- spp_iucn_marine %>%
+  mutate(sciname = ifelse(!str_detect(sciname, '[a-zA-Z]'), paste(str_trim(genus), str_trim(species), sep = ' '), sciname),
+         sciname = str_trim(sciname))
+
+summary(as.factor(spp_iucn_marine$popn_trend))
 # Decreasing Increasing     Stable    Unknown       NA's 
 #       2511        368       4362      17611        377 
 
-spp_iucn_mar_file <- file.path(dir_anx, scenario, 'int/spp_iucn_marine.csv')
-message(sprintf('Writing IUCN marine species file to: \n  %s\n', spp_iucn_mar_file))
-write_csv(spp_iucn_mar, spp_iucn_mar_file)
+spp_iucn_marine_file <- file.path(dir_anx, scenario, 'int/spp_iucn_marine.csv')
+message(sprintf('Writing IUCN marine species file to: \n  %s\n', spp_iucn_marine_file))
+write_csv(spp_iucn_marine, spp_iucn_marine_file)
