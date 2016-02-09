@@ -1,6 +1,6 @@
 ##Commercial Fishing Pressures Layers for OHI 2015
 
-If the data produced here is used in publication, please make attribution clear. For citation see the most current release [here](https://github.com/OHI-Science/ohiprep/releases)
+If the methods or data produced here is used in publication, please make attribution clear. Please see our [citation policy](http://ohi-science.org/citation-policy/).
 
 ### Data
 
@@ -21,4 +21,4 @@ This data comes from the [Sea Around Us Project](http://www.seaaroundus.org/)
 
 ### Methods Overview
 
-For full procedure see [create_fish_pressure_layers.html]():
+For full methods see [here](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/Pressures_fishing/v2015/fishing_pressure_layers.html)

@@ -1,6 +1,10 @@
 GL-NCEAS-Fisheries_2014a
 ====
 
+## Other files
+Global/FIS_Bbmsy
+Global/NCEAS-Fisheries_2014a/tmp/CMSY data prep.R  = data used to prepare the B/Bmsy data
+
 ## Data
 Some of the larger datasets are located on Neptune: model/GL-NCEAS-FIS_2014a/raw
 

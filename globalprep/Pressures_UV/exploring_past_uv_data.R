@@ -1,5 +1,7 @@
 # Understanding the global UV pressures data 
 
+library(raster)
+
 
 dir_halpern2008 = c('Windows' = '//neptune.nceas.ucsb.edu/halpern2008_edit',
                     'Darwin'  = '/Volumes/halpern2008_edit',
