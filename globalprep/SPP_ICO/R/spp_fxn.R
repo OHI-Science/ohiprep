@@ -731,7 +731,7 @@ get_am_cells_spp <- function(n_max = -1, prob_filter = .40, reload = TRUE) {
   if(!file.exists(am_cells_spp_file) | reload) {
     message('Creating Aquamaps species per cell file\n')
     ### Load Aquamaps species per cell table
-    spp_cell_file <- file.path(dir_data_am, 'tables/ohi_hcaf_species_native.csv')
+    spp_cell_file <- file.path(dir_data_am, 'csv/ohi_hcaf_species_native.csv')
     message(sprintf('Loading AquaMaps cell-species data.  Large file! \n  %s \n', spp_cell_file))
     am_cells_spp <- read_csv(spp_cell_file, col_types = '_ccn__', n_max = n_max) %>%
       rename(am_sid = SpeciesID, csq = CsquareCode, prob = probability)
@@ -742,7 +742,7 @@ get_am_cells_spp <- function(n_max = -1, prob_filter = .40, reload = TRUE) {
       dplyr::select(-prob)
     
     # then join to am_cells (from hcaf.csv) to attach loiczid
-    cell_file <- file.path(dir_data_am, 'tables/hcaf.csv')
+    cell_file <- file.path(dir_data_am, 'csv/hcaf.csv')
     message(sprintf('Loading AquaMaps cell data.  Less than 1 minute.\n  %s \n', cell_file))
     am_cells <- fread(cell_file, header = TRUE, stringsAsFactors = FALSE) %>%
       dplyr::select(csq = CsquareCode, loiczid = LOICZID)
