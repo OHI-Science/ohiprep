@@ -1,6 +1,10 @@
 ##Ocean Acidification Pressure Layer for OHI 2015
 
+If the methodology or data produced here is used in publication, please make attribution clear. Please see our [citation policy](http://ohi-science.org/citation-policy/).
+
 See full data prep details [here](http://htmlpreview.github.io/?https://github.com/OHI-Science/ohiprep/blob/master/globalprep/Pressures_OceanAcidification/v2015/dataprep.html) and creation of the final pressures layer of OHI 2015 [here](http://htmlpreview.github.io/?https://github.com/OHI-Science/ohiprep/blob/master/globalprep/Pressures_OceanAcidification/v2015/oa_create_layer_2015.html).
+
+
 
 ### Scripts
 

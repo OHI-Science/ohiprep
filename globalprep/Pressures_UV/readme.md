@@ -1,6 +1,6 @@
 ##UV Pressures Layer for OHI 2015
 
-If the data produced here is used in publication, please make attribution clear. For citation see the most current release [here](https://github.com/OHI-Science/ohiprep/releases)
+If the methodology or data produced here is used in publication, please make attribution clear. Please see our [citation policy](http://ohi-science.org/citation-policy/).
 
 ###Data
 
@@ -21,22 +21,3 @@ The Ultraviolet Radiation pressures layer uses the [Aura OMI GLobal Surface UVB 
 Previous assessments used data up to 2012. For OHI 2015, data for 2013 and 2014 were included.
 
 
-***
-
-### Methods Overview
-The majority of this data was prepared by Dan Yocum in python.
-
-Daily data was used to create monthly averages of UVB irradiance for each year. These monthly rasters were then averaged for the 5 most recent years (2010-2014) and 5 historical years (1997-2001). 
-
-
-![](./images/mean_anom_2010_2014.png)
-
-![](./images/mean_anom_97-01.png)
-
-The change in these two datasets is what is used as our pressure layer. Only increases in anomalies were included, all negative values were set to 0.
-
-![](./images/change_with_negatives.png)
-
-After all negative values were set to 0, the data was log transformed and the **reference point** was set at the 99.99th quantile. This is consistent with other pressure layers for OHI 2015. 
-
-![](./images/final.png)
