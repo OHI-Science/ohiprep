@@ -8,7 +8,7 @@ output:
     theme: cerulean
     highlight: haddock
     includes: 
-      in_header: ../../../src/templates/ohi_hdr.html 
+      in_header: '~/GitHub/ohiprep/src/templates/ohi_hdr.html'
   pdf_document:
     toc: true
 ---
@@ -35,8 +35,8 @@ This data was used in the Clean Waters goal in OHI 2015
 
 ***
 
-#Methods
-```{r setup, echo=F, message=F,warning=F}
+# Methods
+```{r setup, message=F,warning=F}
 # set tmp directory
 
 tmpdir='~/big/R_raster_tmp'
@@ -66,9 +66,9 @@ mytheme <- rasterTheme(region = rev(colorRampPalette(brewer.pal(11, 'Spectral'))
 data_wd = file.path(dir_N,'git-annex/globalprep/CW_pressure_trash')
 ```
 
-## Step One: Read in data
+## Read in data
 
-```{r read data, echo=F,warning=F,message=F}
+```{r read data, warning=F,message=F}
 #bring in ocean raster to clip out land
 ocean = raster(file.path(dir_N,'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
 
@@ -86,11 +86,11 @@ raster(file.path(data_wd,'v2015/globalplastic_wd_cd_rasters_180/weight_density_s
 # which appears to work
 ```
 
-## Step Two: Unlog data
+## Unlog data
 
 Data came to use logged (using base 10 log) so need to 'unlog' the data first 
 
-```{r unlog, message=F,warning=F,echo=F,eval=F}
+```{r unlog, message=F,warning=F,eval=F}
 
   unlog = function(file){
 
@@ -105,21 +105,21 @@ Data came to use logged (using base 10 log) so need to 'unlog' the data first
     sapply(weight,unlog)
 ```
 
-## Step Three: Stack all rasters within weight and count
-```{r stack, message=F,warning=F,echo=F}
+## Stack all rasters within weight and count
+```{r stack, message=F,warning=F}
     weight = stack(list.files(file.path(data_wd,'v2015/tmp/unlog'),'unlog_weight_*',full.names=T))
     count  = stack(list.files(file.path(data_wd,'v2015/tmp/unlog'),'unlog_count_*',full.names=T))
 
 ```
 
-## Step Four: Sum across 4 datasets
-```{r sum, message=F,warning=F,echo=F}
+## Sum across 4 datasets
+```{r sum, message=F,warning=F}
     w_sum = calc(weight,fun=sum)
     c_sum = calc(count,fun=sum)
 ```
 
-## Step Five: Reproject to mollweide
-```{r reproject, message=F, warning=F,echo=F, eval=F}
+## Reproject to mollweide
+```{r reproject, message=F, warning=F, eval=F}
 
     projection(w_sum) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"    #define initial projection. Helps avoid errors when reprojecting to mollweide
     projection(c_sum) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"  
@@ -132,16 +132,16 @@ Data came to use logged (using base 10 log) so need to 'unlog' the data first
 
 ```
 
-## Step Six: Resample to 1km 
-```{r resample, message=F,warning=F,echo=F,eval=F}
+## Resample to 1km 
+```{r resample, message=F,warning=F,eval=F}
     resamp_w   <- resample(w_moll,ocean,progress='text',filename=file.path(data_wd,'v2015/tmp/weight_sum_moll_1km.tif'),overwrite=T,method='ngb')
 
     resamp_c   <- resample(c_moll,ocean,progress='text',filename=file.path(data_wd,'v2015/tmp/count_sum_moll_1km.tif'),overwrite=T,method='ngb')
 
 ```
 
-## Step Seven: Read in mollweide rasters
-```{r moll rasters, echo=F, message=F, warning=F}
+## Read in mollweide rasters
+```{r moll rasters,  message=F, warning=F}
 count_moll      = raster(file.path(data_wd,'v2015/tmp/count_sum_moll.tif'))
 count_moll_1km  = raster(file.path(data_wd,'v2015/tmp/count_sum_moll_1km.tif'))
 weight_moll     = raster(file.path(data_wd,'v2015/tmp/weight_sum_moll_1km.tif'))
@@ -149,27 +149,33 @@ weight_moll_1km = raster(file.path(data_wd,'v2015/tmp/weight_sum_moll_1km.tif'))
 
 ```
 
-## Step Eight: Mask out ocean
-```{r mask ocean, echo=F,warning=F,message=F}
-    count_mask = mask(count_moll_1km,ocean,progress='text',filename = file.path(data_wd,'v2015/tmp/count_sum_moll_1km_clip.tif'),overwrite=T)
-    weight_mask = mask(weight_moll_1km,ocean,progress='text',filename=file.path(data_wd,'v2015/tmp/weight_sum_moll_1km_clip.tif'),overwrite=T)
+## Mask out ocean
+```{r mask ocean,warning=F,message=F}
+     count_mask = mask(count_moll_1km,ocean,progress='text',filename = file.path(data_wd,'v2015/tmp/count_sum_moll_1km_clip.tif'),overwrite=T)
+#     weight_mask = mask(weight_moll_1km,ocean,progress='text',filename=file.path(data_wd,'v2015/tmp/weight_sum_moll_1km_clip.tif'),overwrite=T)
 
+    count_mask = raster(file.path(data_wd,'v2015/tmp/count_sum_moll_1km_clip.tif'))
+    weight_mask = raster(file.path(data_wd,'v2015/tmp/weight_sum_moll_1km_clip.tif'))
+    
     plot(count_mask,col=cols,main='Count density (pieces/km2)')
     plot(weight_mask,col=cols,main='Weight density (g/km2)')
 ```
 
-## Step Nine: Log Transform
-```{r log, echo=F,warning=F,message=F}
+## Log Transform
+```{r log, warning=F,message=F}
 
-    w_log = calc(weight_mask,fun=function(x){log(x+1)},filename=file.path(data_wd,'v2015/tmp/weight_sum_moll_1km_clip_log.tif'),overwrite=T)
-    c_log = calc(count_mask,fun=function(x){log(x+1)},filename=file.path(data_wd,'v2015/tmp/count_sum_moll_1km_clip_log.tif'),overwrite=T)
+#     w_log = calc(weight_mask,fun=function(x){log(x+1)},filename=file.path(data_wd,'v2015/tmp/weight_sum_moll_1km_clip_log.tif'),overwrite=T)
+#     c_log = calc(count_mask,fun=function(x){log(x+1)},filename=file.path(data_wd,'v2015/tmp/count_sum_moll_1km_clip_log.tif'),overwrite=T)
 
+    w_log = raster(file.path(data_wd,'v2015/tmp/weight_sum_moll_1km_clip_log.tif'))
+    c_log = raster(file.path(data_wd,'v2015/tmp/count_sum_moll_1km_clip_log.tif'))
+    
     plot(w_log,col=cols,main='Weight density\nlog(g/km2)')
     plot(c_log,col=cols,main='Count density\nlog(pieces/km2)')
 ```
 
-## Step Ten: Get 99.99th quantile
-```{r quantile, echo=F,message=F,warning=F}
+## Get 99.99th quantile
+```{r quantile,message=F,warning=F}
 w_ref = quantile(w_log,prob=c(0.001,0.01,0.1,0.25,0.5,0.75,0.9,0.99,0.999,0.9999))
 c_ref = quantile(c_log,prob=c(0.001,0.01,0.1,0.25,0.5,0.75,0.9,0.99,0.999,0.9999))
 
@@ -180,23 +186,26 @@ histogram(w_log,main='Weight density (log(g/km2))')
 histogram(c_log,main='Count density (log(pieces/km2))')
 ```
 
-## Step Eleven: rescale to 99.99th quantile
-```{r rescale, message=F,warning=F,echo=F}
-w_rescale = calc(w_log,fun=function(x){ifelse(x>w_99,1,x/w_99)},filename=file.path(data_wd,'v2015/output/weight_rescale.tif'),overwrite=T)
+## Rescale to 99.99th quantile
+```{r rescale, message=F,warning=F}
+# w_rescale = calc(w_log,fun=function(x){ifelse(x>w_99,1,x/w_99)},filename=file.path(data_wd,'v2015/output/weight_rescale.tif'),overwrite=T)
 
-plot(w_rescale,main='Pressure layer: weight density (g/km2)',col=cols)
+w_rescale = raster(file.path(data_wd,'v2015/output/weight_rescale.tif'))
+#raster:plot(w_rescale,main='Pressure layer: weight density (g/km2)',col=cols)
 
-c_rescale = calc(c_log,fun=function(x){ifelse(x>c_99,1,x/c_99)},filename=file.path(data_wd,'v2015/output/count_rescale.tif'),overwrite=T)
-plot(c_rescale,main='Pressure layer: count density (pieces/km2)',col=cols)
+# c_rescale = calc(c_log,fun=function(x){ifelse(x>c_99,1,x/c_99)},filename=file.path(data_wd,'v2015/output/count_rescale.tif'),overwrite=T)
+
+c_rescale = raster(file.path(data_wd,'v2015/output/count_rescale.tif'))
+#raster:plot(c_rescale,main='Pressure layer: count density (pieces/km2)',col=cols)
 ```
 
-## Step Twelve: Compare count vs weight
-```{r compare, echo=F,message=F,warning=FALSE}
+## Compare count vs weight
+```{r compare,message=F,warning=FALSE}
 
 # This provides some general statistics and visualizations:
 compare <- stack(w_rescale, c_rescale) 
 pairs(compare)    
 
 ## Here is a scatter plot comparison:
-raster:plot(w_rescale, c_rescale, ylab="Count", xlab="Weight", maxpixels=10000000, col=rgb(0,0,0,0.2))   
+#plot(w_rescale, c_rescale, ylab="Count", xlab="Weight", maxpixels=10000000, col=rgb(0,0,0,0.2))   
 ```
