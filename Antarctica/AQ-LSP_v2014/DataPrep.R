@@ -1,33 +1,36 @@
 ##################################################
 ## Antarctica: LSP
-## Creating data for the inland protected area 
-## (all get a score of 1)
 ## May 1 2014
+## Updated Feb 4 2016
 ## MRF
 ##################################################
 
+## Creating data for the inland protected area 
+## (all get a score of 1)
+
 library(dplyr)
 
+#### inland (1km) data prep
+#### all inland is considered protected
+#### Start data in 1974 (earliest MPA for Antarctica)
 
-rm(list = ls())
+inland <- read.csv('Antarctica/Other_v2014/rgn_area_ccamlr_inland_1km_lyr.csv')
+tmp <- expand.grid(sp_id = inland$sp_id, year = 1975:2015) %>%
+  left_join(inland, by="sp_id") %>%
+  mutate(area_km2 = ifelse(area_km2==0, NA, area_km2))
+write.csv(tmp, "Antarctica/AQ-LSP_v2014/data/lsp_prot_area_inland_1km.csv", row.names=FALSE)
 
-setwd("N://model/GL-AQ-LSP_v2013")
+### offshore ccamlr protected areas
 
+# convert region names:
+area_ccamlr <- read.csv("Antarctica/Other_v2014/rgn_area_ccamlr_eez.csv") %>%
+  select(CCAMLR_AREA = ccamlr_id2, sp_id) %>%
+  mutate(CCAMLR_AREA = as.character(CCAMLR_AREA)) 
 
-## 
-all_ccamlr <- read.csv("N://git-annex/Global/NCEAS-Antarctica-Other_v2014/rgn_labels_ccamlr.csv")
-
-land_ccamlr <- read.csv("N:/git-annex/Global/NCEAS-Regions_v2014/data/sp_inland1km_ccamlr_gcs_data.csv")
-land_ccamlr <- land_ccamlr %.%
-  select(sp_id, ccamlr_area = area_km2)
-
-
-## add zeros for years/regions without data
-gaps <- expand.grid(type="cp", sp_id=all_ccamlr$sp_id, year=seq(1975,2012), score=1)
-pa <- merge(gaps, land_ccamlr, by=c("sp_id"), all=TRUE)
-pa <- pa %.%
-  select(type, sp_id, year, score, ccamlr_area) 
-
-pa$ccamlr_area <- ifelse(is.na(pa$ccamlr_area), 0, pa$ccamlr_area)
-write.csv(pa, "tmp\\Antarctica_PA.csv", row.names=F)
+offshore <- read.csv('Antarctica/AQ-LSP_v2014/raw/Antarctica_MPAs.csv') %>% 
+  mutate(CCAMLR_AREA = as.character(CCAMLR_AREA)) %>%
+  left_join(area_ccamlr, by='CCAMLR_AREA') %>%
+  select(sp_id, year=year_established, area_km2 = Area_Km2)
+  
+write.csv(offshore, "Antarctica/AQ-LSP_v2014/data/lsp_prot_area_offshore.csv", row.names=FALSE)
 

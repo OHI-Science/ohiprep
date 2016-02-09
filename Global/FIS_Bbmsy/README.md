@@ -14,6 +14,7 @@ cmsy_mpi_ohi_v0_FinalBio2CT_uniformPrior2_OHIrun.R is the script from Kristin.  
 
 stock_resil_06cutoff.... files used to assign b/bmsy scores per stock based on regions resilience scores
 
+compareCMSYmodels.R --- used to take 5 year running mean
 
 
 R files
