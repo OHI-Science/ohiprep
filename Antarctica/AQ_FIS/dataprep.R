@@ -41,7 +41,7 @@ data <- data_cut %>%
   ungroup() %>%
   mutate(catch = catch*0.001) %>%
   left_join(rgn_labels, by="ASD") %>%
-  select(sp_id, SpeciesCode, year=SeasonYear, catch)
+  select(sp_id, species_code = SpeciesCode, year=SeasonYear, catch)
 
 write.csv(data, "Antarctica/AQ_FIS/v2015/data/catch.csv", row.names=FALSE)
 
