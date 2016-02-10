@@ -41,8 +41,13 @@ data <- data_cut %>%
   ungroup() %>%
   mutate(catch = catch*0.001) %>%
   left_join(rgn_labels, by="ASD") %>%
-  select(sp_id, species_code = SpeciesCode, year=SeasonYear, catch)
+  select(sp_id, species_code = SpeciesCode, year=SeasonYear, catch) 
 
-write.csv(data, "Antarctica/AQ_FIS/v2015/data/catch.csv", row.names=FALSE)
+## fill in missing years with 0
+data <- spread(data, year, catch) 
+data[is.na(data)] <- 0
+data <- gather(data, "year", "catch", 3:length(names(data)))
+
+write.csv(data, "Antarctica/AQ_FIS/v2015/data/fis_catch.csv", row.names=FALSE)
 
 
