@@ -63,16 +63,16 @@ extract_cell_id_per_region <- function(reload       = FALSE,
   rgn_prop_file <- file.path(dir_anx, sprintf('rgns/cellID_%s_%s.csv', rgn_layer, ohi_type))
   
   if(!file.exists(rgn_prop_file) | reload) {
-
+    
     message(sprintf('Reading regions shape file %s - come back in about 4 minutes.\n  %s/%s\n', rgn_layer, ogr_location, rgn_layer))
     regions        <- readOGR(dsn = ogr_location, layer = rgn_layer)
     # slow command... ~ 4 minutes
     
     regions <- switch(ohi_type,
-                        global = regions[regions@data$rgn_typ %in% c('eez', 'eez-disputed', 'eez-inland'), ],
-                        HS     = regions[regions@data$rgn_typ %in% c('fao'), ],
-                        AQ     = regions[regions@data$ant_typ %in% c('eez-ccamlr'), ],
-                        regions[regions@data$rgn_typ %in% c('eez', 'eez-disputed', 'eez-inland'), ]) #default to same as global
+                      global = regions[regions@data$rgn_typ %in% c('eez', 'eez-disputed', 'eez-inland'), ],
+                      HS     = regions[regions@data$rgn_typ %in% c('fao'), ],
+                      AQ     = regions[regions@data$ant_typ %in% c('eez-ccamlr'), ],
+                      regions[regions@data$rgn_typ %in% c('eez', 'eez-disputed', 'eez-inland'), ]) #default to same as global
     
     raster_file    <- file.path(dir_anx, 'rgns/loiczid_raster')
     loiczid_raster <- get_loiczid_raster(reload = FALSE)
@@ -186,7 +186,6 @@ iucn_shp_info <- function(reload = TRUE) {
   return(iucn_shp_info)
 }
 
-
 ##############################################################################=
 generate_iucn_map_list <- function(reload = FALSE) {
   ### support function for create_spp_master_lookup.  Interrogates each shapefile
@@ -206,7 +205,7 @@ generate_iucn_map_list <- function(reload = FALSE) {
     
     spp_iucn_maps <- data.frame()
     
-    for (spp_group in groups_list$shp_fn) { 
+    for (spp_group in groups_list$shp_fn) { # spp_group <- groups_list$shp_fn[1]
       message(sprintf('Processing species group: %s... \n', tolower(spp_group)))
       spp_dbf <- read.dbf(file.path(dir_iucn_shp, sprintf('%s.dbf', spp_group)))
       message('file read successfully... ')
@@ -217,74 +216,152 @@ generate_iucn_map_list <- function(reload = FALSE) {
       message('converted to data frame... ')
       
       # add group name to the database for future reference
-      spp_dbf <- data.frame(spp_group, spp_dbf)
+      spp_dbf <- data.frame(spp_group, spp_dbf, stringsAsFactors = FALSE)
       
-      if('id_no' %in% names(spp_dbf))
-        spp_dbf <- spp_dbf %>% 
-        mutate(id_no = as.integer(id_no))
+      spp_dbf <- spp_dbf %>% 
+        dplyr::select(spp_group, id_no, 
+                      sciname = binomial, 
+                      #iucn_subspecies = subspecies, iucn_class = class_name, iucn_order = order_name, iucn_family = family_nam,
+                      iucn_subpop = subpop) %>% 
+        mutate(id_no       = as.integer(id_no),
+               spp_group   = as.character(spp_group),
+               sciname     = as.character(sciname),
+               iucn_subpop = as.character(iucn_subpop))# other fields?
+        
       spp_iucn_maps <- bind_rows(spp_iucn_maps, spp_dbf)
       message('binding to list...\n')
     }
     spp_iucn_maps <- spp_iucn_maps %>%
-      dplyr::select(spp_group, id_no, 
-                    sciname = binomial, 
-#                    iucn_subspecies = subspecies, iucn_class = class_name, iucn_order = order_name, iucn_family = family_nam,
-                    iucn_subpop = subpop) %>% # other fields?
       mutate(spatial_source = 'iucn') %>%
       unique()
+    ### NOTE: This includes all terrestrial mammals(?) and reptiles(?),
+    ### not just those in marine species list.
     
+    ### Compare to name check file for IUCN (based on IUCN marine list)
+    
+    nm_chk_file <- file.path(dir_anx, scenario, 'int/namecheck_iucn.csv')
+    nm_chk <- read.csv(nm_chk_file, stringsAsFactors = FALSE)
+    if(!'force_match' %in% names(nm_chk)) {
+      stop(sprintf('Check name file %s: create a "force_match" column;\n', nm_chk_file),
+           '  then set "force_match" to TRUE to use suggested name for unmatched names.') 
+    } else {
+      ### use nm_chk to assign matched = TRUE to good matches and forced matches, FALSE for names left as default
+      message(sprintf('Verifying names against %s.\n', nm_chk_file))
+      nm_chk <- nm_chk %>%
+        mutate(force_match = ifelse(is.na(force_match) | !force_match, FALSE, TRUE),
+               sciname = ifelse(force_match, sciname2, sciname),
+               name_verified = (matched | force_match)) %>%
+        select(-data_source_title, -score, -sciname2, -matched, -force_match) %>%
+        unique()
+    }
+      
+    iucn_duped_sid  <- nm_chk$iucn_sid[duplicated(nm_chk$iucn_sid)] %>%
+      unique()
+    nm_chk1 <- nm_chk %>%
+      group_by(iucn_sid) %>%
+      mutate(any_verified = any(name_verified)) %>%
+      ungroup() %>%
+      filter(!iucn_sid %in% iucn_duped_sid | name_verified == TRUE | !any_verified) %>%
+      select(-any_verified)
+    spp_iucn_maps1 <- spp_iucn_maps %>%
+      select(-sciname) %>%
+      unique() %>%
+      inner_join(nm_chk1 %>% rename(id_no = iucn_sid), by = c('id_no'))
+    ### using inner_join, so species NOT on the nm_chk list (which is marine species)
+    ### get dropped - lose the terrestrial critters
+      
     message(sprintf('Writing list of available IUCN range maps to: \n  %s\n', iucn_map_list_file))
-    write.csv(spp_iucn_maps, iucn_map_list_file, row.names = FALSE)
+    write.csv(spp_iucn_maps1, iucn_map_list_file, row.names = FALSE)
   } else {
     message(sprintf('Reading list of available IUCN range maps from: \n  %s\n', iucn_map_list_file))
-    spp_iucn_maps <- read.csv(iucn_map_list_file, stringsAsFactors = FALSE)
+    spp_iucn_maps1 <- read.csv(iucn_map_list_file, stringsAsFactors = FALSE)
   }
-  return(spp_iucn_maps)
+  return(spp_iucn_maps1)
 }
-
 
 ##############################################################################=
-check_name_matches <- function(spp_all, spp_all_file) {
-  ### support function for create_master_spp_lookup.  Using the list of close matches
-  ### from name_matches.csv, and removes any Aquamaps lines for species determined
-  ### to match with an IUCN range map.
-  name_match_file <- file.path(dir_anx, scenario, 'int/name_matches.csv')
-  if(file.exists(name_match_file)) {
-    message(sprintf('Checking against list of AM <-> IUCN unmatched names to fix: \n  %s.\n', name_match_file))
-    name_matches <- read_csv(name_match_file)
+read_spp_am <- function(reload = FALSE) {
+  spp_am_processed_file <- file.path(dir_anx, scenario, 'int/spp_am_cleaned.csv')
+  if(!file.exists(spp_am_processed_file) | reload) {
+    spp_am_raw_file <- file.path(dir_data_am, 'csv/speciesoccursum.csv')
+    message(sprintf('Reading raw AquaMaps species list from: \n  %s\n', spp_am_raw_file))
     
-    # keep IUCN listings
-    name_match_iucn <- spp_all %>%
-      filter(sciname %in% name_matches$sciname)
-    # discard AM listings
-    simpleCap <- function(x) {
-      s <- strsplit(x, " ")[[1]]
-      paste(toupper(substring(s, 1,1)), substring(s, 2),
-            sep = "", collapse = " ")
-    }
-    name_matches$am_g_cap <- sapply(name_matches$am_g, simpleCap)
-    name_matches2 <- name_matches %>%
-      unite(am_sciname, am_g_cap, am_s, sep = ' ')
-    name_match_am <- spp_all %>%
-      filter(sciname %in% name_matches2$am_sciname & !str_detect(spatial_source, 'iucn'))
-    if(nrow(name_match_am) > 0) {
-      message('Force-matched names with both IUCN maps and AM maps: \n')
-      print(as.matrix(name_match_am), quote = FALSE) 
-      spp_all <- spp_all %>%
-        filter(!(sciname %in% name_match_am$sciname))
-      message(sprintf('Forcing matches and writing modified species lookup table to: \n  %s\n', spp_all_file))
-      write.csv(spp_all, spp_all_file, row.names = FALSE)
-    }
-    else message('No force-matched species to drop that haven\'t already been taken care of.\n')
-    # OK fine.  Four species dropped; none have category info anyway.
+    ### Read AquaMaps list, and fix improper popn categories
+    spp_am <- read_csv(spp_am_raw_file) %>%
+      dplyr::select(am_sid = speciesid, genus, species, am_category = iucn_code, reviewed) %>%
+      mutate(genus = str_trim(genus),
+             species = str_trim(species)) %>%
+      unite(sciname, genus, species, sep = ' ') %>%
+      mutate(am_category = ifelse(am_category ==  'N.E.',   NA, am_category), # not evaluated -> NA
+             am_category = ifelse(am_category == 'LR/nt', 'NT', am_category), # update 1994 category
+             am_category = ifelse(am_category == 'LR/lc', 'LC', am_category), # update 1994 category
+             am_category = ifelse(am_category ==   '\\N',   NA, am_category)) %>%
+      as.data.frame()
+    
+    ### Check names against databases via taxize package.
+    am_names_good <- verify_scinames(spp_am %>% select(sciname, am_sid), fn_tag = 'am')
+    
+    ### ditch unverified names for am_sids with verified names
+    am_duped_sid  <- am_names_good$am_sid[duplicated(am_names_good$am_sid)] %>%
+      unique()
+    am_names_good1 <- am_names_good %>%
+      group_by(am_sid) %>%
+      mutate(any_verified = any(name_verified)) %>%
+      ungroup() %>%
+      filter(!am_sid %in% am_duped_sid | name_verified == TRUE | !any_verified) %>%
+      select(-any_verified)
+
+    spp_am <- spp_am %>%
+      select(-sciname) %>%
+      unique() %>%
+      left_join(am_names_good1, by = c('am_sid'))
+    
+    message(sprintf('Writing processed AquaMaps species list to: \n  %s\n', spp_am_processed_file))
+    write_csv(spp_am, spp_am_processed_file)
+    
   } else {
-    message('No file available with lookup table of near-matches to be fixed between AM and IUCN scientific names.\n')
-    message('Run the check_sim_names() function, and if any legitimate matches come up, make sure to fix them.\n')
-    message(sprintf('Save the lookup table here so this function can find it:\n  %s\n', name_match_file))
+    message(sprintf('Reading processed AquaMaps species list from: \n  %s\n', spp_am_processed_file))
+    spp_am <- read_csv(spp_am_processed_file)
   }
-  return(spp_all)
+  return(spp_am)
 }
 
+##############################################################################=
+read_spp_iucn <- function(reload = FALSE) {
+  spp_iucn_processed_file <- file.path(dir_anx, scenario, 'int/spp_iucn_cleaned.csv')
+  if(!file.exists(spp_iucn_processed_file) | reload) {
+    ### pull the IUCN data from the git-annex file for this year - output from ingest_iucn.R
+    iucn_marine_raw_file <- file.path(dir_anx, scenario, 'int/spp_iucn_marine.csv')
+  
+    message(sprintf('Reading IUCN marine species list (generated by ingest_iucn.R) from: \n  %s\n', iucn_marine_raw_file))
+    spp_iucn <- read_csv(iucn_marine_raw_file) %>%
+      dplyr::select(sciname, iucn_sid, iucn_category = category, popn_trend, parent_sid, subpop_sid) 
+  
+    iucn_names_good   <- verify_scinames(spp_iucn %>% select(sciname, iucn_sid), fn_tag = 'iucn')
+    ### duplicate iucn_sid with different names.  For duped iucn_sid, select
+    ### only verified scinames (or all, for iucn_sid with no verified names at all)
+    iucn_duped_sid  <- iucn_names_good$iucn_sid[duplicated(iucn_names_good$iucn_sid)] %>%
+      unique()
+    iucn_names_good1 <- iucn_names_good %>%
+      group_by(iucn_sid) %>%
+      mutate(any_verified = any(name_verified)) %>%
+      ungroup() %>%
+      filter(!iucn_sid %in% iucn_duped_sid | name_verified == TRUE | !any_verified) %>%
+      select(-any_verified)
+    spp_iucn <- spp_iucn %>%
+      select(-sciname) %>%
+      unique() %>%
+      left_join(iucn_names_good1, by = c('iucn_sid'))
+    
+    message(sprintf('Writing processed IUCN marine species list to: \n  %s\n', spp_iucn_processed_file))
+    write_csv(spp_iucn, spp_iucn_processed_file)
+  
+  } else {
+    message(sprintf('Reading processed IUCN species list from: \n  %s\n', spp_iucn_processed_file))
+    spp_iucn <- read_csv(spp_iucn_processed_file)
+  }
+  return(spp_iucn)
+}
 
 ##############################################################################=
 create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload = FALSE) {
@@ -307,53 +384,30 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
   spp_all_file <- file.path(dir_anx, scenario, sprintf('int/spp_all%s.csv', fn_tag))
   
   if(!file.exists(spp_all_file) | reload) {
-    spp_am_file <- file.path(dir_data_am, 'csv/speciesoccursum.csv')
-    message(sprintf('Reading AquaMaps species list from: \n  %s\n', spp_am_file))
     
-    ### Read AquaMaps list, and fix improper popn categories
-    spp_am <- fread(spp_am_file) %>%
-      dplyr::select(am_sid = speciesid, genus, species, am_category = iucn_code, reviewed) %>%
-      mutate(genus = str_trim(genus),
-             species = str_trim(species)) %>%
-      unite(sciname, genus, species, sep = ' ') %>%
-      mutate(am_category = ifelse(am_category ==  'N.E.',   NA, am_category), # not evaluated -> NA
-             am_category = ifelse(am_category == 'LR/nt', 'NT', am_category), # update 1994 category
-             am_category = ifelse(am_category == 'LR/lc', 'LC', am_category), # update 1994 category
-             am_category = ifelse(am_category ==   '\\N',   NA, am_category)) %>%
-      as.data.frame()
+    spp_am <- read_spp_am(reload) 
     
-    ### pull the IUCN data from the git-annex file for this year - output from ingest_iucn.R
-    iucn_list_file <- file.path(dir_anx, scenario, 'int/spp_iucn_marine.csv')
-    
-    message(sprintf('Reading IUCN marine species list (generated by ingest_iucn.R) from: \n  %s\n', iucn_list_file))
-    spp_iucn_marine <- read.csv(iucn_list_file, stringsAsFactors = FALSE) %>%
-      dplyr::select(sciname, iucn_sid, iucn_category = category, popn_trend, parent_sid, subpop_sid) 
-    
-    am_name_check <- verify_scinames(spp_am %>% select(sciname, am_sid))
-    iucn_name_check <- verify_scinames(spp_iucn %>% select(sciname, iucn_sid))
+    spp_iucn <- read_spp_iucn(reload)
     
     ### To the AquaMaps list (speciesoccursum) bind the IUCN marine species list
     spp_all <- spp_am %>%
-      full_join(spp_iucn_marine, by = 'sciname') %>%
-      mutate(sciname = ifelse(!str_detect(sciname, '[:alpha:]'), ' no name', sciname))
-### that last bit is to fill something in for species where no sciname was available from the
-### spp_iucn_marine list.  This can be fixed later - in the ingest_iucn.R, find the blank
-### scinames, open up the scraped metadata, and pull the sciname that way?
+      full_join(spp_iucn, by = c('sciname', 'name_verified'))
     
     spp_all <- spp_all %>%
       # create single 'category' field, and flag 'info_source' to indicate iucn or am.
       # For species with subpopulations and both AM and IUCN categories - use the IUCN.  Later, if using AM
       #   spatial data, we'll just use the parent IUCN info.
       dplyr::mutate(
-             popn_category = ifelse(!is.na(iucn_category), iucn_category, am_category),
-             info_source   = ifelse(!is.na(iucn_category), 'iucn',
-                                    ifelse(!is.na(am_category), 'am',   NA)))
+        popn_category = ifelse(!is.na(iucn_category), iucn_category, am_category),
+        info_source   = ifelse(!is.na(iucn_category), 'iucn',
+                               ifelse(!is.na(am_category), 'am',   NA)))
     
     spp_iucn_maps <- generate_iucn_map_list(reload = reload)
     ### This function returns a dataframe with the following columns: 
     ### | spp_group | id_no | sciname | iucn_subpop | spatial_source
     ### where iucn_subpop is a text name for the subpop (why not ID? dammit) and
     ### spatial_source is 'iucn'
+    
     
     ### join spp_iucn_maps info to spp_all dataframe, using the 
     ### map ID number (rather than sciname as in the past)
@@ -362,8 +416,8 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
     spp_all <- spp_all %>% 
       left_join(spp_iucn_maps %>%
                   mutate(iucn_sid = id_no),     ### want both iucn_sid and id_no separate - helps to later determine IUCN aliases and subpops
-                by = c('iucn_sid', 'sciname'))
-
+                by = c('iucn_sid', 'sciname', 'name_verified'))
+    
     
     ### toggle the spatial_source variable for aquamaps, based on source_pref
     ### and whether there is already an IUCN range map available.
@@ -387,7 +441,7 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
       duplicated(fromLast = TRUE) ### This will identify the REPTILES instance as the duplicated row
     spp_all <- spp_all[!dupes, ]
     
-
+    
     # to overall lookup table, join scores for population category and trend.
     popn_cat    <- data.frame(popn_category  = c("LC", "NT", "VU", "EN", "CR", "EX"), 
                               category_score = c(   0,  0.2,  0.4,  0.6,  0.8,   1))
@@ -401,17 +455,13 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
     spp_all <- spp_all %>%
       fix_am_subpops() %>%
       fix_iucn_subpops(spp_iucn_maps) 
-
+    
     message(sprintf('Writing full species lookup table to: \n  %s\n', spp_all_file))
-    write.csv(spp_all, spp_all_file, row.names = FALSE)
+    write_csv(spp_all, spp_all_file)
   } else {
     message(sprintf('Full species lookup table already exists.  Reading from: \n  %s\n', spp_all_file))
     spp_all <- read.csv(spp_all_file, stringsAsFactors = FALSE)
   }
-  
-  spp_all <- check_name_matches(spp_all, spp_all_file)
-  # checks species master list against list of close-match names; forces
-  # matches, keeping only IUCN and omitting Aquamaps.  Re-saves file.
   
   return(invisible(spp_all))
 }
@@ -433,6 +483,7 @@ fix_am_subpops <- function(spp_all, use_am_subpops = FALSE) {
         filter(sciname == spp & !is.na(subpop_sid))
       spp_subpop <- spp_all %>% 
         filter(sciname == spp & !is.na(parent_sid))
+      
       
       if(nrow(spp_parent) == 0) {
         ### This situation includes orphan subpopulations (subpops but no parent)
@@ -482,7 +533,7 @@ fix_am_subpops <- function(spp_all, use_am_subpops = FALSE) {
 ##############################################################################=
 fix_iucn_subpops <- function(spp_all, spp_iucn_maps) {
   ### Identify IUCN subpops and parents, and note in spatial_source.
- 
+  
   ### Any mismatch between IUCN species ID and shapefile ID number gets
   ### labeled as an alias first;
   spp_all_dupes <- show_dupes(spp_all, 'sciname')
@@ -538,13 +589,13 @@ fix_iucn_subpops <- function(spp_all, spp_iucn_maps) {
   print(head(spp_all %>% filter(sciname %in% iucn_subpop_spp)))
   ### There are a large number of duplicated scinames still - some of these seem to be IUCN ID#s with multiple
   ### aliases.  Example: 
-    #        am_sid          sciname iucn_sid  id_no popn_category popn_trend
-    #   1 ITS-75291  Conus jaspideus   192338 192637            LC    Unknown
-    #   2 ITS-75291  Conus jaspideus   192637 192637            LC    Unknown
-    #   3 ITS-75352 Conus granulatus   192590 192624            LC    Unknown
-    #   4 ITS-75352 Conus granulatus   192624 192624            LC    Unknown
-    #   5 ITS-75376     Conus regius   192869 192869            LC    Unknown
-    #   6 ITS-75376     Conus regius   192452 192869            LC       <NA>
+  #        am_sid          sciname iucn_sid  id_no popn_category popn_trend
+  #   1 ITS-75291  Conus jaspideus   192338 192637            LC    Unknown
+  #   2 ITS-75291  Conus jaspideus   192637 192637            LC    Unknown
+  #   3 ITS-75352 Conus granulatus   192590 192624            LC    Unknown
+  #   4 ITS-75352 Conus granulatus   192624 192624            LC    Unknown
+  #   5 ITS-75376     Conus regius   192869 192869            LC    Unknown
+  #   6 ITS-75376     Conus regius   192452 192869            LC       <NA>
   ### This may be an artifact of matching by sciname rather than species IDs - how to get around it?
   ### For observations where iucn_sid and id_no are both present, and match, use the spatial data.
   ### For obs where both are present but don't match, don't use spatial data - mutate the spatial_source field
@@ -618,7 +669,7 @@ extract_loiczid_per_spp <- function(spp_all, groups_override = NULL, reload = FA
       ### our list of maps.
       message(sprintf('Filtering features by id_no field in %s.\n', spp_gp))
       spp_shp <- spp_shp[spp_shp@data$id_no %in% maps_in_group$iucn_sid, ]
-
+      
       ### Extract the proportions of each species polygon within each LOICZID cell
       ptm <- proc.time()
       spp_shp_prop <- raster::extract(loiczid_raster, spp_shp, weights = TRUE, normalizeWeights = FALSE, progress = 'text')
@@ -626,20 +677,20 @@ extract_loiczid_per_spp <- function(spp_all, groups_override = NULL, reload = FA
       message(sprintf('Elapsed process time: %.2f minutes\n', ptm[3]/60))
       
       
-
+      
       ### combine sciname, id_no, presence, and subpop code for a single unique identifier
       sciname_sid_pres <- data.frame('sciname'  = spp_shp@data$binomial, 
                                      'id_no'    = spp_shp@data$id_no, 
                                      'presence' = spp_shp@data$presence,
                                      'subpop'   = spp_shp@data$subpop)
-
+      
       print(head(sciname_sid_pres))
       sciname_sid_pres <- sciname_sid_pres %>%
-          unite(name_id, sciname, id_no, presence, subpop, sep = '_')
-
+        unite(name_id, sciname, id_no, presence, subpop, sep = '_')
+      
       ### use unique identifier to name the items in list
       names(spp_shp_prop) <- sciname_sid_pres$name_id
-
+      
       ### convert list to data frame.
       spp_shp_prop_df     <- plyr::ldply(spp_shp_prop, rbind)
       spp_shp_prop_df <- spp_shp_prop_df %>%
@@ -647,7 +698,7 @@ extract_loiczid_per_spp <- function(spp_all, groups_override = NULL, reload = FA
                LOICZID = value, 
                prop_area = weight) %>%
         separate(name_id_pres, c('sciname', 'id_no', 'presence', 'subpop'), sep = '_')
-
+      
       ### save .csv for this species group
       message(sprintf('%s: %s species maps, %s total cells in output file', spp_gp, length(unique(spp_shp_prop_df$id_no)), nrow(spp_shp_prop_df)))
       print(head(spp_shp_prop_df))
@@ -727,7 +778,7 @@ get_am_cells_spp <- function(n_max = -1, prob_filter = .40, reload = TRUE) {
     message(sprintf('Loading AquaMaps cell-species data.  Large file! \n  %s \n', spp_cell_file))
     am_cells_spp <- read_csv(spp_cell_file, col_types = '_ccn__', n_max = n_max) %>%
       rename(am_sid = SpeciesID, csq = CsquareCode, prob = probability)
-        
+    
     # filter out below probability threshold; 78 M to 56 M observations.
     am_cells_spp <- am_cells_spp %>%
       filter(prob >= prob_filter) %>%
@@ -738,7 +789,7 @@ get_am_cells_spp <- function(n_max = -1, prob_filter = .40, reload = TRUE) {
     message(sprintf('Loading AquaMaps cell data.  Less than 1 minute.\n  %s \n', cell_file))
     am_cells <- fread(cell_file, header = TRUE, stringsAsFactors = FALSE) %>%
       dplyr::select(csq = CsquareCode, loiczid = LOICZID)
-
+    
     message('Keyed joining cell spp table to cell lookup table to attach LOICZID (by CSquareCode).\n')
     # Keyed data frame method faster than dplyr... check here: http://stackoverflow.com/questions/1299871/how-to-join-merge-data-frames-inner-outer-left-right
     acs_keyed <- data.table(am_cells_spp, key = "csq") 
@@ -818,8 +869,8 @@ process_iucn_summary_per_cell <- function(fn_tag = '', reload = FALSE) {
     message(sprintf('Length of IUCN species list: %d\n', nrow(spp_iucn_info)))
     spp_iucn_info <- spp_iucn_info %>% unique()
     message(sprintf('Length of IUCN species list, unique: %d\n', nrow(spp_iucn_info)))
-
-
+    
+    
     message('Keyed joining to species master list (filtered for spatial_source == iucn or iucn_parent).\n')
     ics_keyed <- data.table(iucn_cells_spp, key = "sciname") 
     sii_keyed <- data.table(spp_iucn_info,  key = "sciname")
@@ -912,78 +963,75 @@ process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup, rgn_note 
 
 
 ##############################################################################=
-check_sim_names <- function(spp_all, num_letters = 5) {
-  am_spp_file   <- file.path(dir_data_am, 'csv/speciesoccursum.csv')
-  iucn_spp_file <- file.path(dir_anx, scenario, 'int/spp_iucn_marine.csv')
-  message(sprintf('Reading in Aquamaps species from: \n  %s\n', am_spp_file))
-  spp_am <- fread(am_spp_file) %>%
-    dplyr::select(common_name = fbname, am_sid = speciesid, 
-                  genus = genus, species = species, family, order, class)
-  message(sprintf('Reading in IUCN species from: \n  %s\n', iucn_spp_file))
-  spp_iucn_marine <- read.csv(iucn_spp_file, stringsAsFactors = FALSE) %>%
-    dplyr::select(sciname, iucn_sid, family, order, class) %>%
-    separate(sciname, c('genus', 'species'), sep = ' ', remove = TRUE, extra = 'drop')
-  
-  ### create truncated genus and species lists for each source
-  iucn_names <- data.frame(unique(spp_iucn_marine %>% 
-                                    dplyr::select(g = genus, s = species, f = family))) %>%
-    mutate(g = tolower(g),
-           s = tolower(s),
-           f = tolower(f),
-           g_x = str_sub(g, 1, num_letters),
-           s_x = str_sub(s, 1, num_letters),
-           f_x = str_sub(f, 1, num_letters))
-  am_names   <- data.frame(unique(spp_am %>% 
-                                    dplyr::select(g = genus, s = species, f = family, common_name))) %>%
-    mutate(g = tolower(g),
-           s = tolower(s),
-           f = tolower(f),
-           g_x = str_sub(g, 1, num_letters),
-           s_x = str_sub(s, 1, num_letters),
-           f_x = str_sub(f, 1, num_letters))
-  
-  ### find similarities between two name sets
-  iucn_unmatched <- setdiff(iucn_names, am_names %>% dplyr::select(-common_name))
-  iucn_similar   <- am_names %>% 
-    rename(am_s = s, am_g = g, am_f = f) %>%
-    inner_join(iucn_unmatched %>%
-                 rename(iucn_s = s, iucn_g = g, iucn_f = f),
-               by = c('f_x', 'g_x', 's_x')) %>%
-    filter((am_g == iucn_g | am_s == iucn_s) & (am_f == iucn_f)) %>%
-    dplyr::select(-g_x, -s_x, -f_x)
-  am_unmatched   <- setdiff(am_names %>% dplyr::select(-common_name), iucn_names)
-  am_similar   <- iucn_names %>% 
-    rename(iucn_s = s, iucn_g = g, iucn_f = f) %>%
-    inner_join(am_unmatched %>%
-                 rename(am_s = s, am_g = g, am_f = f),
-               by = c('f_x', 'g_x', 's_x')) %>%
-    filter((am_g == iucn_g | am_s == iucn_s) & am_f == iucn_f) %>%
-    dplyr::select(-g_x, -s_x, -f_x)
-  
-  spp_maps <- spp_all %>%
-    dplyr::select(sciname, spatial_source) %>%
-    separate(sciname, c('iucn_g', 'iucn_s'), sep = ' ', remove = FALSE, extra = 'drop') %>%
-    mutate(iucn_g = tolower(iucn_g),
-           iucn_s = tolower(iucn_s))
-  
-  sim_names <- am_similar %>%
-    full_join(iucn_similar) %>%
-    left_join(spp_maps, by = c('iucn_g', 'iucn_s'))
-  
-  it_goes_here <- file.path(dir_anx, sprintf('tmp/sim_names_%d_letters.csv', num_letters))
-  message(sprintf('Identified %d similar species names, based on first %d letters of Genus or species.\n', nrow(sim_names), num_letters))
-  message(sprintf('Writing similar names file to: \n  %s\n', it_goes_here))
-  write_csv(sim_names, it_goes_here)
-  return(sim_names)
-}
-
 show_dupes <- function(x, y) {
   # x is data frame, y is field within that dataframe
   z <- x %>% filter(x[[y]] %in% x[[y]][duplicated(x[[y]])])
 }
 
-verify_scinames <- function(names_df) {
-  names_checked <- taxize::gnr_resolve(names = names_df$sciname)
-  head(names_checked)
-  names_checked <- names_checked %>% mutate(match = )
+##############################################################################=
+verify_scinames <- function(names_df, fn_tag) {
+  ### First: check to see if there's already a non-match file.
+  ### If so, see if there is a 'force_match' column.
+  ### If not, run against gnr_resolve and message that the user
+  ###   should check that list and tell which matches to make.
+  ### If so, skip gnr_resolve and update the names based on
+  ### the force_match column; use original otherwise.
+  nm_chk_file <- file.path(dir_anx, scenario, sprintf('int/namecheck_%s.csv',  fn_tag))
+  if(file.exists(nm_chk_file)) {
+    nm_chk <- read.csv(nm_chk_file, stringsAsFactors = FALSE)
+    if(!'force_match' %in% names(nm_chk)) {
+      stop(sprintf('Check name file %s: create a "force_match" column;\n', nm_chk_file),
+           '  then set "force_match" to TRUE to use suggested name for unmatched names.') 
+      return(NULL)
+    } else {
+      ### use nm_chk to assign matched = TRUE to good matches and forced matches, FALSE for names left as default
+      message(sprintf('Found "force_match" column in %s;\n', nm_chk_file),
+              '  using this as verified name list')
+      nm_chk <- nm_chk %>%
+        mutate(force_match = ifelse(is.na(force_match) | !force_match, FALSE, TRUE),
+               sciname = ifelse(force_match, sciname2, sciname),
+               name_verified = (matched | force_match)) %>%
+        select(-data_source_title, -score, -sciname2, -matched, -force_match) %>%
+        unique()
+      
+      return(nm_chk)
+    }
+  } else {
+    ### create the file of non-matched names
+    message('No verified name list found.  Generating using taxize::gnr_resolve()')
+    nm_chk <- taxize::gnr_resolve(names = names_df$sciname,
+                                  canonical = TRUE,
+                                  best_match_only = TRUE,
+                                  preferred_data_sources = c(12, 4),
+                                  http = "post") %>%
+      mutate(match = (submitted_name == matched_name2))
+    nm_chk <- names_df %>%
+      left_join(nm_chk %>%
+                  rename(sciname = submitted_name,
+                         sciname2 = matched_name2),
+                by = 'sciname') %>%
+      group_by(sciname) %>%
+      mutate(match_count = sum(match, na.rm = TRUE)) %>%
+      ungroup()
+    
+    nm_res_good <- nm_chk %>%
+      filter(match_count > 0 & match == TRUE) %>%
+      mutate(data_source_title = NA,
+             score = NA) %>%
+      mutate(matched = TRUE) %>%
+      unique()
+    nm_res_bad  <- nm_chk %>%
+      filter(match_count == 0) %>%
+      mutate(matched = FALSE)
+    nm_res <- rbind(nm_res_good, nm_res_bad) %>%
+      select(-match, -match_count)
+    message(sprintf('Found %s instances of unrecognized sci names', length(unique(nm_res_bad$sciname))))
+    message('Writing list to: ', nm_chk_file)
+    write_csv(nm_res,  nm_chk_file)
+    stop('Check non-matched names in name check file, then run again...\n',
+         sprintf('  %s', nm_chk_file))
+    return(NULL)
+  }
+
 }
+
