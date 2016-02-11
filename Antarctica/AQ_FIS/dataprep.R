@@ -33,6 +33,24 @@ summary <- data_cut %>%
 summary
 7358173085/(7358173085 + 1675615172) # ~81% of catch is those 4 species.  Pretty good!
 
+## Tooth without Krill
+summary_tooth <- data_cut %>%
+  filter(SpeciesCode != "KRI") %>%
+  mutate(assessed = ifelse(SpeciesCode %in% c("TOA", "TOP"), "yes", "no")) %>%
+  group_by(assessed) %>%
+  summarize(totalCatch = sum(CatchWeight, na.rm=TRUE))
+summary_tooth
+151648479/(151648479 + 8882139778) # ~2% of catch is toothfish (with Krill)
+151648479/(1675615172+151648479) # ~ 8% of the catch is toothfish (minus Krill)
+
+
+summary_krill <- data_cut %>%
+  mutate(assessed = ifelse(SpeciesCode %in% c("KRI"), "yes", "no")) %>%
+  group_by(assessed) %>%
+  summarize(totalCatch = sum(CatchWeight, na.rm=TRUE))
+summary_krill
+7206524606/(7206524606 + 1827263651) # 80% of catch is Krill
+
 
 data <- data_cut %>%
   filter(SpeciesCode %in% c('KRI', 'TOA', 'TOP')) %>%
@@ -41,13 +59,8 @@ data <- data_cut %>%
   ungroup() %>%
   mutate(catch = catch*0.001) %>%
   left_join(rgn_labels, by="ASD") %>%
-  select(sp_id, species_code = SpeciesCode, year=SeasonYear, catch) 
+  select(sp_id, species_code = SpeciesCode, year=SeasonYear, catch)
 
-## fill in missing years with 0
-data <- spread(data, year, catch) 
-data[is.na(data)] <- 0
-data <- gather(data, "year", "catch", 3:length(names(data)))
-
-write.csv(data, "Antarctica/AQ_FIS/v2015/data/fis_catch.csv", row.names=FALSE)
+write.csv(data, "Antarctica/AQ_FIS/v2015/data/catch.csv", row.names=FALSE)
 
 
