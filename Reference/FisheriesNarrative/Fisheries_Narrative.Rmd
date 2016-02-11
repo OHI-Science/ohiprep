@@ -1,0 +1,43 @@
+---
+title: 'OHI: Calculating fisheries (FIS) status and trend'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '../../src/templates/ohi_hdr.html'
+---
+
+## Overview
+Obtaining and synthesizing the data can be complicated, but the actual calculation of fisheries status is actually simple. At its core, fisheries status is the average of the stock status scores (e.g., B/Bmsy) weighted by the stock’s catch (e.g., tonnes) within a region. 
+
+## STEP 1: Procure the data
+Two datasets are needed:
+1. Fisheries catch data over time (used to weight the stock status scores).  Here is an example of these data:
+
+year   |   region    |  taxon     | catch_tonnes
+------ | ----------- | ---------- | ------------
+1980   | Alaska      | Patinopecten caurinus  | 1.253413e+03
+1980   | Alaska      | Cancer magister        | 2.865936e+03
+2011   | Alaska      | Pandalus jordani       | 2.765942e+04
+...    |             |                        |
+
+2. Stock status data for each year/region/taxon (e.g. B/Bmsy, F/Fmsy, etc.)
+
+We have used two general methods to obtain stock assessment data: 1) Catch reconstruction data from reports, websites, or publications (see, [RAM database](http://ramlegacy.org/) for example). This is the best option, and we used this type of data for estimating fisheries status along the US West Coast (Halpern et al. 2014). 2) We have also used catch data to estimate B/Bmsy values using the data-poor catch-MSY method ([Martell & Froese, 2012](http://onlinelibrary.wiley.com/doi/10.1111/j.1467-2979.2012.00485.x/abstract)).  We have used this method for global assessments conducted after 2013 (Halpern et al. 2015). For these calculations, we define a stock as a species occurring within a single [FAO major fishing region](http://www.fao.org/fishery/area/search/en) and use the catch data for each species within an FAO region to estimate yearly B/Bmsy values.
+
+### Questions about data
+*Question* Is there a good general reference to learn more about stock assessments?
+*Answer* Need help here!
+
+*Question* Is it possible to use more than one type of stock assessment to estimate status?  
+*Answer* Yes! The more information that is available the better.  For the US West Coast analysis we averaged both B/Bmsy and F/Fmsy scores (after standardizing to values to be between 0-1) to obtain the final status scores.
+
+*Question* How do you calculate B/Bmsy values from catch data?
+*Answer* We need to determine if we can make these methods available! (Jamie?) CMSY code.  Priors...etc.
+
+*Question* What if stock assessment data is available for only a subset of the catch taxa?
+*Answer* This is likely to be the case, and there are several options: (1) Only include taxa with stock assessments.  This is a particularly good option if the bulk of the catch has B/Bmsy values. (2) Use some sort of gap-filling to estimate the taxa without stock assessments.  We use this method for the global analyses:  We estimate the B/Bmsy values for the stocks without these data using the median B/Bmsy values for the assessed species from the same region/year (see [this part](https://github.com/OHI-Science/ohi-global/blob/draft/eez2013/conf/functions.R#L64-L82) of the code).  We then apply a penalty to taxa that are not reported to species-level, as an indicator of poor management (see [this part](https://github.com/OHI-Science/ohi-global/blob/draft/eez2013/conf/functions.R#L88-L98) of the code)

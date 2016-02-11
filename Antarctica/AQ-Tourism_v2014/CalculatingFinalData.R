@@ -47,7 +47,7 @@ gap_fill <- data.frame(gap_fill)
 gap_fill <- gather(gap_fill, "year", "gap_fill", 2:(dim(gap_fill)[2]))
 gap_fill$year <- as.numeric(gsub("X", "", gap_fill$year))
 
-write.csv(gap_fill, 'Antarctica/AQ-Tourism_v2014/data/gap_fill.csv')
+write.csv(gap_fill, 'Antarctica/AQ-Tourism_v2014/data/gap_fill.csv', row.names=FALSE)
 
 
 ## final toolbox data:
@@ -56,7 +56,7 @@ tourist_days <- tourist_days %>%
   mutate(days = ifelse(is.na(days), 0, days)) %>%
   mutate(year = as.numeric(gsub("X", "", year)))
 
-write.csv(tourist_days, 'Antarctica/AQ-Tourism_v2014/data/tr_days.csv')
+write.csv(tourist_days, 'Antarctica/AQ-Tourism_v2014/data/tr_days.csv', row.names=FALSE)
 
 
 
