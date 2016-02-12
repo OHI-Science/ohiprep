@@ -14,11 +14,11 @@ library(dplyr)
 #### all inland is considered protected
 #### Start data in 1974 (earliest MPA for Antarctica)
 
-inland <- read.csv('Antarctica/Other_v2014/rgn_area_ccamlr_inland_1km_lyr.csv')
+inland <- read.csv('Antarctica/Other/rgn_area_ccamlr_inland_1km_lyr.csv')
 tmp <- expand.grid(sp_id = inland$sp_id, year = 1975:2015) %>%
   left_join(inland, by="sp_id") %>%
   mutate(area_km2 = ifelse(area_km2==0, NA, area_km2))
-write.csv(tmp, "Antarctica/AQ-LSP_v2014/data/lsp_prot_area_inland_1km.csv", row.names=FALSE)
+write.csv(tmp, "Antarctica/AQ_LSP/v2015/data/lsp_prot_area_inland_1km.csv", row.names=FALSE)
 
 ### offshore ccamlr protected areas
 
