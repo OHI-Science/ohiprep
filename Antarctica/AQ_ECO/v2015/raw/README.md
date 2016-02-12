@@ -1,0 +1,4 @@
+=The fisheries employment numbers are also crew members on commercial ships, and these data came from CCAMLR's historic vessel registry. Information is available for each individual vessel at this site: http://www.ccamlr.org/en/compliance/licensed-vessels
+I had to request the data from David Ramm, the CCAMLR data manager, because the website only reported data after 2011 (and it's painful to click on each individual vessel). Each vessel has a fixed number of crew members, but the yearly data vary because vessels aren't present in all years and also the regions where they operate can vary from year to year. The data end in 2014, but the website has now data for 2015 (and 2016 as well, although that might be incomplete so perhaps best not to use it yet).
+It would be possible to add an extra year to the existing dataset by inputting information by hand from the website, or perhaps emailing David again for the update. 
+
