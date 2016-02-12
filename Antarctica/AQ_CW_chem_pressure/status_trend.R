@@ -41,6 +41,29 @@ for(a_year in assess_years){
 ####################################
 chem <- read.csv("globalprep/PressuresRegionExtract/tmp/chemical_data.csv") %>%
   filter(sp_type == "eez-ccamlr") %>%
-  gather("year", "pollution", starts_with("chemical"))
+  gather("year", "pressure_score", starts_with("chemical")) %>%
+  mutate(year = as.numeric(substring(year, 20, 23))) %>%
+  select(sp_id, year, pressure_score)
 
+assess_years <- data.frame(data_year = c(max(chem$year), max(chem$year)-1),
+                           assess_year = c(2015, 2014))
 
+for(a_year in assess_years$data_year){
+  # a_year = 2012
+  data <- chem[chem$year %in% (a_year-4):a_year, ]
+  pressure <- data[data$year == a_year, ] %>%
+    select(-year)
+  write.csv(pressure, sprintf("Antarctica/AQ_CW_chem_pressure/data/po_chemicals_v%s.csv", 
+                              assess_years$assess_year[assess_years$data_year==a_year]), row.names=FALSE, quote=FALSE)
+  
+  trend <- data %>%
+    group_by(sp_id) %>%
+    do(mdl = lm(pressure_score ~ year, data = .)) %>%
+    summarize(sp_id = sp_id,
+              trend = coef(mdl)['year'] * 5) %>%
+    mutate(trend = round(trend, 4)) %>%
+    ungroup()
+  
+  write.csv(trend, sprintf("Antarctica/AQ_CW_chem_pressure/data/cw_chem_trend_v%s.csv", 
+                           assess_years$assess_year[assess_years$data_year==a_year]), row.names=FALSE, quote=FALSE)
+}
