@@ -832,10 +832,10 @@ setdiff(regions_stats2$zone, rgn_data$sp_id) #should be none
 setdiff(rgn_data$sp_id, regions_stats2$zone) #should be none
 
 data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") 
-write.csv(data, file.path(save_loc, "tmp/chemical_plume_data.csv"), row.names=FALSE)
+write.csv(data, file.path(save_loc, "tmp/chemical_data.csv"), row.names=FALSE)
 
 
-data <- read.csv(file.path(save_loc, "tmp/chemical_plume_data.csv"))
+data <- read.csv(file.path(save_loc, "tmp/chemical_data.csv"))
 data <- gather(data, "year", "pressure_score", starts_with("chemical"))
 data <- data %>%
   mutate(year = gsub("chemical_pollution_", "", year)) %>%
@@ -867,9 +867,9 @@ offshore_3nm_poly <- offshore_3nm_poly[offshore_3nm_poly@data$rgn_type == "eez",
 
 data <- raster::extract(pressure_stack, offshore_3nm_poly, na.rm=TRUE, normalizeWeights=FALSE, fun=mean, df=TRUE, progress="text")
 data2 <- cbind(data, offshore_3nm_poly@data) 
-write.csv(data2, file.path(save_loc, "tmp/chemical_plume_data_offshore_3nm.csv"), row.names=FALSE)
+write.csv(data2, file.path(save_loc, "tmp/chemical_data_offshore_3nm.csv"), row.names=FALSE)
 
-data <- read.csv(file.path(save_loc, "tmp/chemical_plume_data_offshore_3nm.csv")) 
+data <- read.csv(file.path(save_loc, "tmp/chemical_data_offshore_3nm.csv")) 
 data <- gather(data, "year", "pressure_score", starts_with("chemical"))
 data <- data %>%
   mutate(year = gsub("chemical_pollution_", "", year)) %>%
