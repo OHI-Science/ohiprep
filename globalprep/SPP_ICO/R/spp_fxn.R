@@ -815,7 +815,7 @@ get_am_cells_spp <- function(n_max = -1, prob_filter = .40, reload = TRUE) {
 
 ##############################################################################=
 get_iucn_cells_spp <- function(reload = FALSE) {
-  iucn_cells_file <- file.path(dir_data_iucn, 'iucn_cells_2015.csv')
+  iucn_cells_file <- file.path(dir_data_iucn, sprintf('iucn_cells_%s.csv', scenario))
   if(!file.exists(iucn_cells_file) | reload) {
     message(sprintf('Building IUCN species to cell table.  This might take a few minutes.\n'))
     iucn_map_files      <- file.path(dir_anx, 'iucn_intersections', list.files(file.path(dir_anx, 'iucn_intersections')))
@@ -824,8 +824,9 @@ get_iucn_cells_spp <- function(reload = FALSE) {
     # This creates a full data frame of all IUCN species, across all species groups, for all cells.
     # Probably big...
     names(iucn_cells_spp) <- tolower(names(iucn_cells_spp))
+    write_csv(iucn_cells_spp, iucn_cells_file)
   } else {
-    iucn_cells_spp <- fread(iucn_cells_file) %>%
+    iucn_cells_spp <- read_csv(iucn_cells_file, col_types = 'cddddc') %>%
       as.data.frame(stringsAsFactors = FALSE)
   }
   
