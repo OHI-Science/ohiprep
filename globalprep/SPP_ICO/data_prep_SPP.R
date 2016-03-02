@@ -76,7 +76,7 @@ spp_all <- spp_all %>%
 
 spp_subpops_parents <- spp_all %>% 
   filter(str_detect(spatial_source, 'subpop') | str_detect(spatial_source, 'parent'))
-unique(spp_subpops_parents$spp_group)
+table(spp_subpops_parents$spp_group)
 
 write_csv(spp_all, file.path(dir_anx, scenario, 'int/spp_all.csv'))
 
@@ -92,7 +92,7 @@ write_csv(spp_all, file.path(dir_anx, scenario, 'int/spp_all.csv'))
 #        "REPTILES", "SEAGRASSES", "MANGROVES", "TERRESTRIAL_MAMMALS")
 # z <- c("TUNAS_BILLFISHES", "MARINE_MAMMALS", "REPTILES", "SEABREAMS_PORGIES")
 
-extract_loiczid_per_spp(spp_all, groups_override = z, reload = TRUE)
+extract_loiczid_per_spp(spp_all, groups_override = z, fn_tag = NULL, reload = TRUE)
 ### Extract loiczid cell IDs for each species within each species group.  Save 
 ### a .csv file for that group, with fields:
 ###       sciname | iucn_sid | presence | subpop | LOICZID | prop_area
@@ -101,6 +101,16 @@ extract_loiczid_per_spp(spp_all, groups_override = z, reload = TRUE)
 ### NOTES: this takes a long time - multiple hours for some of the shape files.  
 ### * reload = FALSE allows it to skip extraction on groups with files already present.
 ### * use groups_override argument to run function on partial list of species groups.
+
+### Adding back in the missing species - most due to DD designation.
+### 'y' here is the 'missing' list from IUCN-AquaMaps, with spp_all left-joined
+### to it to capture the other columns as needed...
+# extract_loiczid_per_spp(y, groups_override = NULL, fn_tag = 'missing', reload = TRUE)
+### NOTES FOR CATCHING DD AND MISSING SPP:
+### When processing bonefish/tarpons:
+###   Error in vapply(x[[col]], `[`, 0, 1) : values must be type 'double',
+###     but FUN(X[[1]]) result is type 'character'
+###   (check to make sure 12 species are represented in this file?)
 
 ##############################################################################=
 ### SPP - Generate species per cell tables for Aquamaps and IUCN -----
