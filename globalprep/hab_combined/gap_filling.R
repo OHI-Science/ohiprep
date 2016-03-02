@@ -73,8 +73,9 @@ regions <- read.csv('../ohiprep/src/LookupTables/eez_rgn_2013master.csv') %>%
 
 ## disaggregation regions
 d_regions <- read.csv('../ohi-global/global2015/gapFilling/dissaggregated_gap_fill.csv') %>%
+  filter(description == "Territories, disaggregated in 2013") %>%
   select(rgn_id = rgn_id_2013, region_id_2012) %>%
-  mutate(gap_fill_1 = "disagg2012_gap_fill")
+  mutate(gap_fill_1 = "disagg2012_gap_fill") 
 
 ## general information on what was gap-filled and how
 ## NOTE: 2012 region ids are reported here:
@@ -265,12 +266,16 @@ tmp <- left_join(sg_whence, sg_extent) %>%
   left_join(sg_trend) %>%
   mutate(habitat="seagrass")
 
+tmp <- tmp %>%
+  mutate(extent = as.character(extent)) %>%
+  mutate(condition = as.character(condition)) %>%
+  mutate(trend_gaps = as.character(trend_gaps))
 
 sg_extent <- gap_fill_function(var="extent", no_gap_fill = "actuals", data=tmp, disag = FALSE) %>%
   select(rgn_id, habitat, variable, gap_fill)
 write.csv(sg_extent, 'globalprep/hab_seagrass/v2012/data/extent_gap_fill_seagrass.csv', row.names=FALSE)
 
-sg_health <- gap_fill_function(var="health", no_gap_fill = c('actuals-mixed', 'prediction'), data=tmp) %>%
+sg_health <- gap_fill_function(var="health", no_gap_fill = c('actuals-mixed'), data=tmp) %>%
   select(rgn_id, habitat, variable, gap_fill)
 write.csv(sg_health, 'globalprep/hab_seagrass/v2012/data/health_gap_fill_seagrass.csv', row.names=FALSE)
 

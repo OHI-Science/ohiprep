@@ -245,6 +245,8 @@ table(t_lab$gapfill, t_lab$match_type)
 filter(t_lab, species_fao=="Barramundi" & country=='Taiwan Province of China')
 data.frame(filter(m3, species=="Barramundi" & id==14))
 
+Escapees <- m3
+
 ## b) match sustainability scores for every combination
 # 1) first match all the country-species-env combos, 
 c_sp_env = t_lab %>% 
@@ -338,6 +340,114 @@ test2 = test[duplicated(test[,1:2]),]; test2
 test[test$species == 'Barramundi' & test$id==14,]
 test[test$species == 'Atlantic salmon' & test$id==218,]
 
+
+
+###########################################################
+#####  PART 3b: Genetic escapes
+###########################################################
+
+
+## b) match sustainability scores for every combination
+# 1) first match all the country-species-env combos, 
+c_sp_env = t_lab %>% 
+  filter(match_type == 'c_sp_env') %>% 
+  select(label_fao, c_sp_env_Esc = Genetic.escapees) ; head(c_sp_env)
+
+#these mismatches do not appear in the data (are ok)
+setdiff(c_sp_env$label_fao, m3$c_sp_env)
+sort(setdiff(m3$c_sp_env, c_sp_env$label_fao))
+
+Escapees = left_join(Escapees, c_sp_env, by=c('c_sp_env' = 'label_fao') )
+
+Escapees = Escapees %>% 
+  select(id, species, species_code, year, value, Taxon_code, c_sp_env,c_sp_rgn,c_sp,c_sp_env_Esc)
+
+# 2) then match the country-species-fao combos
+c_sp_rgn = t_lab %>% 
+  filter(match_type == 'c_sp_rgn') %>% 
+  select(label_fao, c_sp_rgn_Esc = Genetic.escapees) ; head(c_sp_rgn)
+
+#these mismatches do not appear in the data (are ok)
+setdiff(c_sp_rgn$label_fao, m3$c_sp_rgn)
+sort(setdiff(m3$c_sp_rgn, c_sp_env$label_fao))
+
+Escapees = left_join(Escapees, c_sp_rgn, by=c('c_sp_rgn' = 'label_fao') )
+
+# 3) then match the remaining country-species combos
+c_sp = t_lab %>% 
+  filter(match_type == 'c_sp') %>% 
+  select(label_fao, c_sp_Esc = Genetic.escapees) %>%
+  unique(); head(c_sp)
+
+setdiff(c_sp$label_fao, m3$c_sp)
+sort(setdiff(m3$c_sp, c_sp$label_fao))
+
+Escapees = left_join(Escapees, c_sp, by=c('c_sp' = 'label_fao') )
+
+# 4) merge all the sustainability scores based on actual values into the same column
+Escapees = Escapees %>% 
+  mutate(Escapees = ifelse(is.na(c_sp_env_Esc), 
+                       ifelse (is.na(c_sp_rgn_Esc), c_sp_Esc, c_sp_rgn_Esc),
+                       c_sp_env_Esc)) %>% 
+  select(id, species, species_code, year, value, Taxon_code, Escapees)
+
+# 5) match gapfilling values by species
+sp = t_lab %>% 
+  filter(match_type == 'species'& gapfill == 'sp_average') %>% 
+  select(species = species_fao, sp_Esc = Genetic.escapees) ; head(sp)
+Escapees = left_join(Escapees, sp, by=c('species' = 'species') )
+
+# 6)  match gapfilling values by genus
+gen = t_lab %>% 
+  filter(match_type == 'species' & gapfill == 'genus_average') %>% 
+  select(species = species_fao, gen_Esc = Genetic.escapees) ; head(gen)
+
+Escapees = left_join(Escapees, gen, by=c('species' = 'species') ) ; head(Escapees)
+
+# 7)  match gapfilling values by coarse taxon
+tax =  t_lab %>% 
+  filter(match_type == 'taxon') %>% 
+  select(Taxon_code = taxon, tax_Esc = Genetic.escapees) ; head(tax)
+Escapees = left_join(Escapees,tax, by = c('Taxon_code' = 'Taxon_code') ) 
+
+# c) obtain a sustainability score for each record, and a book-keeping column of whether it's actual or gap-filled
+Escapees = Escapees %>% 
+  mutate( 
+    gapfill = ifelse(is.na(Escapees), 
+                     ifelse(is.na(sp_Esc),
+                            ifelse(is.na(gen_Esc), 'tax_average', 'gen_average'),
+                            'sp_average'),
+                     'actuals'),
+    Escapees_all =  ifelse(is.na(Escapees), 
+                       ifelse(is.na(sp_Esc),
+                              ifelse(is.na(gen_Esc), tax_Esc, gen_Esc),
+                              sp_Esc),
+                       Escapees)
+  )
+
+
+# d) sum duplicate records (don't need to separate by fao area or envrionment anymore, now that I matched with sust scores)
+Escapees <- Escapees %>% 
+  group_by(id, species, species_code, year, Escapees_all, gapfill) %>% 
+  summarize( tonnes = sum(value)) %>% 
+  ungroup()
+
+genEscapes <- Escapees %>%
+  group_by(id, year) %>%
+  summarize(genEscapes = weighted.mean(Escapees_all, tonnes, na.rm=TRUE))
+
+genEscapes_gf <- Escapees %>%
+  mutate(gapfill = ifelse(gapfill=="actuals", 1, 0)) %>%
+  group_by(id, year) %>%
+  summarize(genEscapes = weighted.mean(gapfill, tonnes, na.rm=TRUE)) %>%
+  ungroup() %>%
+  filter(year==2013) %>%
+  select(rgn_id=id, pressures.score=genEscapes) %>%
+  mutate(pressures.score=ifelse(pressures.score=="NaN", NA, pressures.score)) %>%
+  data.frame()
+write.csv(genEscapes_gf, 'globalprep/mariculture_status/data/GenEsc_v2013a_gf.csv')
+
+write.csv(genEscapes_gf, 'globalprep/mariculture_status/raw/')
 
 
 ###################################################################
