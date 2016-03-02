@@ -607,7 +607,7 @@ fix_iucn_subpops <- function(spp_all, spp_iucn_maps) {
 
 
 ##############################################################################=
-extract_loiczid_per_spp <- function(spp_all, groups_override = NULL, reload = FALSE) {
+extract_loiczid_per_spp <- function(spp_all, groups_override = NULL, fn_tag = NULL, reload = FALSE) {
   ### Determine intersections of IUCN maps with Aquamaps half-degree cells
   ### 
   ### * from the spp_all.csv, extract the species with IUCN range maps.  Use this file
@@ -643,7 +643,11 @@ extract_loiczid_per_spp <- function(spp_all, groups_override = NULL, reload = FA
       filter(spp_group == spp_gp)
     
     ### set file path for output file from this species group.
-    cache_file <- file.path(dir_anx, 'iucn_intersections', sprintf('%s.csv', spp_gp))
+    if(is.null(fn_tag)) {
+      cache_file <- file.path(dir_anx, 'iucn_intersections', sprintf('%s.csv', spp_gp))
+    } else {
+      cache_file <- file.path(dir_anx, 'iucn_intersections', sprintf('%s_%s.csv', spp_gp, fn_tag))
+    }
     
     ### if reload == FALSE, and the file exists, don't waste your friggin' time here, move on to next group.
     if(file.exists(cache_file) & reload == FALSE) {   
@@ -652,8 +656,8 @@ extract_loiczid_per_spp <- function(spp_all, groups_override = NULL, reload = FA
       ptm <- proc.time()
       fsize <- round(file.size(file.path(ogr_location, sprintf('%s.shp', spp_gp)))/1e6, 2)
       message(sprintf('\nReading species group shapefile %s, %.2f MB\n  %s/%s\n', spp_gp, fsize, ogr_location, spp_gp))
-      # spp_shp <- readOGR(dsn = ogr_location, layer= spp_gp)
-      ### Because the IUCN metadata states that shapefiles are unprojected lat-long with WGS84, I
+
+            ### Because the IUCN metadata states that shapefiles are unprojected lat-long with WGS84, I
       ### will use the faster readShapePoly (rather than readOGR) and manually tell it the projection...
       spp_shp <- readShapePoly(fn = file.path(ogr_location, spp_gp), 
                                proj4string = CRS('+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'),
@@ -668,21 +672,26 @@ extract_loiczid_per_spp <- function(spp_all, groups_override = NULL, reload = FA
       ### Filter shape file to polygons with species ID numbers that match
       ### our list of maps.
       message(sprintf('Filtering features by id_no field in %s.\n', spp_gp))
-      spp_shp <- spp_shp[spp_shp@data$id_no %in% maps_in_group$iucn_sid, ]
+      spp_shp_filter <- spp_shp@data$id_no %in% maps_in_group$iucn_sid
+      spp_shp1 <- spp_shp[spp_shp_filter, ]
+      message(sprintf('... selecting %s species out of %s', 
+                      length(unique(spp_shp1@data$id_no)), 
+                      length(unique(spp_shp@data$id_no))))
+      message('In this grouping, breakdown of IUCN categories:')
+      print(table(spp_shp1@data$code))
       
       ### Extract the proportions of each species polygon within each LOICZID cell
       ptm <- proc.time()
-      spp_shp_prop <- raster::extract(loiczid_raster, spp_shp, weights = TRUE, normalizeWeights = FALSE, progress = 'text')
+      spp_shp_prop <- raster::extract(loiczid_raster, spp_shp1, weights = TRUE, normalizeWeights = FALSE, progress = 'text')
       ptm <- proc.time() - ptm
       message(sprintf('Elapsed process time: %.2f minutes\n', ptm[3]/60))
       
       
-      
       ### combine sciname, id_no, presence, and subpop code for a single unique identifier
-      sciname_sid_pres <- data.frame('sciname'  = spp_shp@data$binomial, 
-                                     'id_no'    = spp_shp@data$id_no, 
-                                     'presence' = spp_shp@data$presence,
-                                     'subpop'   = spp_shp@data$subpop)
+      sciname_sid_pres <- data.frame('sciname'  = spp_shp1@data$binomial, 
+                                     'id_no'    = spp_shp1@data$id_no, 
+                                     'presence' = spp_shp1@data$presence,
+                                     'subpop'   = spp_shp1@data$subpop)
       
       print(head(sciname_sid_pres))
       sciname_sid_pres <- sciname_sid_pres %>%
@@ -703,7 +712,7 @@ extract_loiczid_per_spp <- function(spp_all, groups_override = NULL, reload = FA
       message(sprintf('%s: %s species maps, %s total cells in output file', spp_gp, length(unique(spp_shp_prop_df$id_no)), nrow(spp_shp_prop_df)))
       print(head(spp_shp_prop_df))
       message(sprintf('Writing IUCN<->LOICZID intersection file for %s to:\n  %s\n', spp_gp, cache_file))
-      write.csv(spp_shp_prop_df, cache_file, row.names = FALSE)
+      write_csv(spp_shp_prop_df, cache_file)
     }
   }
 }
@@ -824,6 +833,7 @@ get_iucn_cells_spp <- function(reload = FALSE) {
     # This creates a full data frame of all IUCN species, across all species groups, for all cells.
     # Probably big...
     names(iucn_cells_spp) <- tolower(names(iucn_cells_spp))
+    message('Writing IUCN species-cell file to ', iucn_cells_file)
     write_csv(iucn_cells_spp, iucn_cells_file)
   } else {
     iucn_cells_spp <- read_csv(iucn_cells_file, col_types = 'cddddc') %>%
