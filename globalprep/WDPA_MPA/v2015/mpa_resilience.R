@@ -20,7 +20,7 @@ lsp_3nm <- read.csv('globalprep/WDPA_MPA/v2015/data/lsp_protarea_offshore3nm.csv
 area_3nm <- read.csv('../ohi-global/eez2013/layers/rgn_area_offshore3nm.csv') %>%
   select(rgn_id, area_km2_3nm = area_km2)
 
-status_years = max(lsp_3nm$year)
+status_year = max(lsp_3nm$year)
 
 # fill in time series for all regions and generate cumulative sum
 r.yrs <- expand.grid(rgn_id = unique(lsp_3nm$rgn_id),
@@ -39,7 +39,7 @@ r.yrs = r.yrs %>%
   mutate(pct_cmpa  = pmin(cmpa_cumsum / area_km2_3nm * 100, 100),
          prop_protected    = ( pmin(pct_cmpa / ref_pct_cmpa, 1))) %>%
   filter(!is.na(prop_protected)) %>%
-  select(rgn_id, year, pressure.score = prop_protected)
+  select(rgn_id, year, resilience.score = prop_protected)
 
 for(time in 0:3){  #time = 0
 scen_year <- scenario_year - time
@@ -47,7 +47,7 @@ stat_year <- status_year - time
   
 tmp <- r.yrs %>%
   filter(year == stat_year) %>%
-  select(rgn_id, pressure.score) %>%
+  select(rgn_id, resilience.score) %>%
   data.frame()
 
 write.csv(tmp, sprintf('globalprep/WDPA_MPA/v2015/data/resilience_lsp_score_offshore3nm_%s.csv',
@@ -83,7 +83,7 @@ r.yrs = r.yrs %>%
   mutate(pct_cmpa  = pmin(cmpa_cumsum / area_km2_eez * 100, 100),
          prop_protected    = ( pmin(pct_cmpa / ref_pct_cmpa, 1))) %>%
   filter(!is.na(prop_protected)) %>%
-  select(rgn_id, year, pressure.score = prop_protected)
+  select(rgn_id, year, resilience.score = prop_protected)
 
 for(time in c(1,2,3)){  #time = 0
   scen_year <- scenario_year - time
@@ -91,10 +91,21 @@ for(time in c(1,2,3)){  #time = 0
   
   tmp <- r.yrs %>%
     filter(year == stat_year) %>%
-    select(rgn_id, pressure.score) %>%
+    select(rgn_id, resilience.score) %>%
     data.frame()
   
   write.csv(tmp, sprintf('globalprep/WDPA_MPA/v2015/data/resilience_lsp_score_eez_%s.csv',
                          scen_year), row.names=FALSE)
 }  
 
+#################################################
+# gapfilling data
+#################################################
+# No gapfilling this file should be used for every instance of gapfilling for these data
+
+gf <- read.csv("globalprep/WDPA_MPA/v2015/data/lsp_protarea_offshore3nm.csv") %>%
+  select(rgn_id) %>%
+  unique()
+
+gf$gapfill <- 0
+write.csv(gf, "globalprep/WDPA_MPA/v2015/data/lsp_protarea_gf.csv", row.names=FALSE)
