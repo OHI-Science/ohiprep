@@ -12,12 +12,18 @@
 library(dplyr)
 
 d_regions <- read.csv('../ohi-global/global2015/gapFilling/dissaggregated_gap_fill.csv') %>%
-  filter(description == "Territories, disaggregated in 2013") %>%
+  filter(description == "Territories, disaggregated in 2013, probably gapfilled") %>%
   select(rgn_id = rgn_id_2013, region_id_2012) %>%
   mutate(gap_fill_1 = "disagg2012_gap_fill") %>%
   arrange(region_id_2012)
 
-mora <- read.csv('globalprep/resilience_mora/v2013/whence_2013a/mora_whence.csv')
+# checking:
+data <- read.csv('globalprep/resilience_mora/v2013/data/r_mora_s4_2013a.csv') %>%
+  left_join(d_regions) %>%
+  arrange(region_id_2012)
+
+mora <- read.csv('globalprep/resilience_mora/v2013/whence_2013a/mora_whence.csv') 
+
 
 mora <- mora %>%
   mutate(value = ifelse(whencev01=="SG", 1, 0)) %>%
