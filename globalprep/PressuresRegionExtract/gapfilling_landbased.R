@@ -113,3 +113,10 @@ pest_trend <- pest %>%
 write.csv(pest_trend, 
           "globalprep/PressuresRegionExtract/data/cw_pesticide_trend_2015_gf.csv",
           row.names=FALSE)
+
+### chemical: combination of pesticide, shipping, land-based inorganic - only pesticide is gapfilled
+chem_status <- pest_status %>%
+  mutate(gapfill = gapfill/3)
+write.csv(chem_status, 
+          "globalprep/PressuresRegionExtract/data/cw_chemical_score_2015_gf.csv",
+          row.names=FALSE)
