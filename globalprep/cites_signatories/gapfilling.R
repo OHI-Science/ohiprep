@@ -16,4 +16,4 @@ data <- read.csv('globalprep/cites_signatories/v2015/data/rgn_cites_eez2015.csv'
 
 data <- read.csv('globalprep/cites_signatories/v2015/data/rgn_cites_eez2015.csv') %>%
   mutate(resilience_score = 0)
-write.csv(data, 'globalprep/cites_signatories/v2015/data/rgn_cites_eez2015_gf.csv')
+write.csv(data, 'globalprep/cites_signatories/v2015/data/rgn_cites_eez2015_gf.csv', row.names=FALSE)
