@@ -38,5 +38,5 @@ msi <- read.csv('/var/data/ohi/model/GL-NCEAS-Resilience_v2013a/data/r_msi_gov_2
   mutate(resilience.score = ifelse(is.na(description), 0, 1)) %>%
   select(rgn_id = rgn_id_2013, resilience.score)
   
-write.csv(msi, 'globalprep/resilience_msi/r_msi_gov_2013a_gf.csv')
+write.csv(msi, 'globalprep/resilience_msi/r_msi_gov_2013a_gf.csv', row.names=FALSE)
 

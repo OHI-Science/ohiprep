@@ -445,9 +445,7 @@ genEscapes_gf <- Escapees %>%
   select(rgn_id=id, pressures.score=genEscapes) %>%
   mutate(pressures.score=ifelse(pressures.score=="NaN", NA, pressures.score)) %>%
   data.frame()
-write.csv(genEscapes_gf, 'globalprep/mariculture_status/data/GenEsc_v2013a_gf.csv')
-
-write.csv(genEscapes_gf, 'globalprep/mariculture_status/raw/')
+write.csv(genEscapes_gf, 'globalprep/mariculture_status/data/GenEsc_v2013a_gf.csv', row.names=FALSE)
 
 
 ###################################################################
