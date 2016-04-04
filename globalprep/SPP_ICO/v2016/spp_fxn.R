@@ -206,14 +206,12 @@ generate_iucn_map_list <- function(reload = FALSE) {
     spp_iucn_maps <- data.frame()
     
     for (spp_group in groups_list$shp_fn) { # spp_group <- groups_list$shp_fn[1]
-      message(sprintf('Processing species group: %s... \n', tolower(spp_group)))
+      message(sprintf('Processing species group: %s...', tolower(spp_group)))
       spp_dbf <- read.dbf(file.path(dir_iucn_shp, sprintf('%s.dbf', spp_group)))
-      message('file read successfully... ')
       
       # convert to data frame, lower-case the column names
       spp_dbf <- as.data.frame(spp_dbf)
       names(spp_dbf) <- tolower(names(spp_dbf))
-      message('converted to data frame... ')
       
       # add group name to the database for future reference
       spp_dbf <- data.frame(spp_group, spp_dbf, stringsAsFactors = FALSE)
@@ -229,7 +227,6 @@ generate_iucn_map_list <- function(reload = FALSE) {
                iucn_subpop = as.character(iucn_subpop))# other fields?
         
       spp_iucn_maps <- bind_rows(spp_iucn_maps, spp_dbf)
-      message('binding to list...\n')
     }
     spp_iucn_maps <- spp_iucn_maps %>%
       mutate(spatial_source = 'iucn') %>%
@@ -270,10 +267,10 @@ generate_iucn_map_list <- function(reload = FALSE) {
     ### using inner_join, so species NOT on the nm_chk list (which is marine species)
     ### get dropped - lose the terrestrial critters
       
-    message(sprintf('Writing list of available IUCN range maps to: \n  %s\n', iucn_map_list_file))
+    message(sprintf('Writing list of available IUCN range maps to: \n  %s', iucn_map_list_file))
     write.csv(spp_iucn_maps1, iucn_map_list_file, row.names = FALSE)
   } else {
-    message(sprintf('Reading list of available IUCN range maps from: \n  %s\n', iucn_map_list_file))
+    message(sprintf('Reading list of available IUCN range maps from: \n  %s', iucn_map_list_file))
     spp_iucn_maps1 <- read.csv(iucn_map_list_file, stringsAsFactors = FALSE)
   }
   return(spp_iucn_maps1)
@@ -457,10 +454,10 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
       fix_am_subpops() %>%
       fix_iucn_subpops(spp_iucn_maps) 
     
-    message(sprintf('Writing full species lookup table to: \n  %s\n', spp_all_file))
+    message(sprintf('Writing full species lookup table to: \n  %s', spp_all_file))
     write_csv(spp_all, spp_all_file)
   } else {
-    message(sprintf('Full species lookup table already exists.  Reading from: \n  %s\n', spp_all_file))
+    message(sprintf('Full species lookup table already exists.  Reading from: \n  %s', spp_all_file))
     spp_all <- read.csv(spp_all_file, stringsAsFactors = FALSE)
   }
   
@@ -524,7 +521,7 @@ fix_am_subpops <- function(spp_all, use_am_subpops = FALSE) {
                spatial_source = ifelse(sciname == spp & !is.na(subpop_sid) & !str_detect(spatial_source, 'orphan'), 'am_parent', spatial_source))
     }   # end for loop
     ### for all species within the list (aquamaps w/parent or subpop), amend spatial source for subpops - so subpops can be ignored for spatial analysis.
-    print(head(spp_all %>% filter(sciname %in% am_subpop_spp)))
+    # print(head(spp_all %>% filter(sciname %in% am_subpop_spp)))
     
   }
   return(spp_all)

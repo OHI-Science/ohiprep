@@ -110,6 +110,7 @@ scenario <- 'v2016'
 dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal) 
 dir_data_am    <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'aquamaps/v2015') 
 dir_data_iucn  <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'iucn_spp') 
+dir_data_bird  <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'birdlife_intl') 
 dir_git  <- file.path('~/github/ohiprep', goal)
 
 source(file.path(dir_git, scenario, 'spp_fxn.R'))
@@ -126,6 +127,20 @@ ingest_aquamaps()
 ``` {r Ingest IUCN species list, eval = FALSE}
 
 source(file.path(goal, 'R/ingest_iucn.R'))
+### Pulls species list from IUCN
+### Scrapes data from iucn site for each species on the list; saves to cache directory.
+### Extracts habitats from cached files; filters IUCN list down to just marine species.
+### Fixes older IUCN codes, cleans up scinames, gets rid of infraranks (subspecies).
+### Determines subpopulations/parents and population trends from scraped files.
+### Main outputs, saved to git-annex/globalprep/SPP_ICO/v201x/intermediate: 
+### * spp_iucn_all.csv      - full list of IUCN species pulled from web, some cleaning.
+### * spp_iucn_habitats.csv - list of IUCN species (by iucn_sid) and corresponding habitat.
+### * spp_iucn_marine.csv   - prepped list: cleaned marine list with subpops and trends.
+```
+
+``` {r Ingest BirdLife International species list, eval = FALSE}
+ogrListLayers(dsn = file.path(path.expand(dir_data_bird), 'BOTW.gdb'))
+spp_birdlife <- readOGR(dsn = file.path(path.expand(dir_data_bird), 'BOTW.gdb'))
 ### Pulls species list from IUCN
 ### Scrapes data from iucn site for each species on the list; saves to cache directory.
 ### Extracts habitats from cached files; filters IUCN list down to just marine species.
@@ -165,6 +180,8 @@ spp_subpops_parents <- spp_all %>%
 table(spp_subpops_parents$spp_group)
 
 write_csv(spp_all, file.path(dir_anx, scenario, 'int/spp_all.csv'))
+```
+
 
 ``` {r Generate lookup IUCN species to LOICZID, eval = FALSE}
 
@@ -264,6 +281,7 @@ write_csv(spp_trend_3nm,  file.path(dir_git, scenario, 'data/spp_trend_3nm.csv')
 ```
 
 ``` {R SPP HS and Antarctic}
+
 ###Summarize mean category and trend per region -----
 ##############################################################################=
 ### create final outputs for HS zone:
@@ -302,7 +320,7 @@ write_csv(spp_status_aq, file.path(dir_git, scenario, 'data/spp_status_aq.csv'))
 write_csv(spp_trend_aq,  file.path(dir_git, scenario, 'data/spp_trend_aq.csv'))
 ```
 
-``` {r SPP swapping priority on AM and IUCN spatial source}
+``` {r SPP swapping priority on AM and IUCN spatial source, eval = FALSE}
 
 ### for AquaMaps/IUCN paper, using OHI case study
 scenario <- 'vAM_IUCN'
