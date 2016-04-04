@@ -69,7 +69,7 @@ tr_assemble_layers <- function(tr_layers) {
   tr_jobs_pct_tour <- read.csv(tr_layers[['jobs_pct_tour']], stringsAsFactors = FALSE)
   tr_jobs_tot      <- read.csv(tr_layers[['jobs_tot']],      stringsAsFactors = FALSE)
   
-  rgn_names        <- read_csv('~/github/ohi-global/eez2013/layers/rgn_global.csv', stringsAsFactors = FALSE) %>%
+  rgn_names        <- read.csv('../ohi-global/eez2013/layers/rgn_global.csv', stringsAsFactors = FALSE) %>%
     rename(rgn_name = label)
   
   rgn_names <- rgn_names %>%
@@ -130,7 +130,7 @@ gdp_gapfill <- function(data) {
   # Myanmar | New Caledonia | North Korea | Northern Mariana Islands and Guam | Oman | R_union
   # Somalia | Syria | Taiwan | United Arab Emirates
   
-  gdp_cia <- read.csv(file.path(dir_git, 'raw/cia_gdp_pc_ppp.csv'), stringsAsFactors = FALSE, header = FALSE)
+  gdp_cia <- read.csv('globalprep/TourismRecreation/raw/cia_gdp_pc_ppp.csv', stringsAsFactors = FALSE, header = FALSE)
   
   gdp_cia <- gdp_cia %>%
     select(rgn_name = V2, pcgdp_cia = V4) %>%
@@ -139,7 +139,8 @@ gdp_gapfill <- function(data) {
   gdp_cia1 <- name_to_rgn(gdp_cia, 
                           fld_name='rgn_name', flds_unique = c('rgn_name'), 
                           fld_value='pcgdp_cia', add_rgn_name = TRUE, 
-                          collapse_fxn = 'mean') %>%
+                          collapse_fxn = 'mean',
+                          dir_lookup = '../ohiprep/src/LookupTables') %>%
     mutate(year = year_max)  # technically, 2014 estimates, but call it 2013
   
   data <- data %>%
