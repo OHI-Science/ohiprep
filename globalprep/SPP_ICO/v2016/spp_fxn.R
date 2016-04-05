@@ -191,7 +191,8 @@ generate_iucn_map_list <- function(reload = FALSE) {
   ### support function for create_spp_master_lookup.  Interrogates each shapefile
   ### in raw/iucn_shp/ (for each species group) to determine which species are
   ### present.  Creates and returns output of:
-  ###     spp_group | id_no | binomial | spatial_source
+  ###    spp_group | id_no | iucn_subpop | cat_map | spatial_source | sciname | name_verified
+  
   iucn_map_list_file <- file.path(dir_anx, scenario, 'int/spp_iucn_maps_all.csv')
   if(!file.exists(iucn_map_list_file) | reload) {
     if(!file.exists(iucn_map_list_file)) message('No file found for list of available IUCN range maps.  ')
@@ -217,14 +218,17 @@ generate_iucn_map_list <- function(reload = FALSE) {
       spp_dbf <- data.frame(spp_group, spp_dbf, stringsAsFactors = FALSE)
       
       spp_dbf <- spp_dbf %>% 
-        dplyr::select(spp_group, id_no, 
-                      sciname = binomial, 
-                      #iucn_subspecies = subspecies, iucn_class = class_name, iucn_order = order_name, iucn_family = family_nam,
-                      iucn_subpop = subpop) %>% 
+        dplyr::select(spp_group, 
+                      id_no, 
+                      # sciname = binomial, 
+                      # iucn_subspecies = subspecies, iucn_class = class_name, iucn_order = order_name, iucn_family = family_nam,
+                      iucn_subpop = subpop,
+                      # cat_map = code,
+                      presence) %>% 
         mutate(id_no       = as.integer(id_no),
                spp_group   = as.character(spp_group),
-               sciname     = as.character(sciname),
-               iucn_subpop = as.character(iucn_subpop))# other fields?
+               iucn_subpop = as.character(iucn_subpop),
+               presence    = as.integer(presence)) # other fields?
         
       spp_iucn_maps <- bind_rows(spp_iucn_maps, spp_dbf)
     }
@@ -234,46 +238,46 @@ generate_iucn_map_list <- function(reload = FALSE) {
     ### NOTE: This includes all terrestrial mammals(?) and reptiles(?),
     ### not just those in marine species list.
     
-    ### Compare to name check file for IUCN (based on IUCN marine list)
-    
-    nm_chk_file <- file.path(dir_anx, scenario, 'int/namecheck_iucn.csv')
-    nm_chk <- read.csv(nm_chk_file, stringsAsFactors = FALSE)
-    if(!'force_match' %in% names(nm_chk)) {
-      stop(sprintf('Check name file %s: create a "force_match" column;\n', nm_chk_file),
-           '  then set "force_match" to TRUE to use suggested name for unmatched names.') 
-    } else {
-      ### use nm_chk to assign matched = TRUE to good matches and forced matches, FALSE for names left as default
-      message(sprintf('Verifying names against %s.\n', nm_chk_file))
-      nm_chk <- nm_chk %>%
-        mutate(force_match = ifelse(is.na(force_match) | !force_match, FALSE, TRUE),
-               sciname = ifelse(force_match, sciname2, sciname),
-               name_verified = (matched | force_match)) %>%
-        select(-data_source_title, -score, -sciname2, -matched, -force_match) %>%
-        unique()
-    }
-      
-    iucn_duped_sid  <- nm_chk$iucn_sid[duplicated(nm_chk$iucn_sid)] %>%
-      unique()
-    nm_chk1 <- nm_chk %>%
-      group_by(iucn_sid) %>%
-      mutate(any_verified = any(name_verified)) %>%
-      ungroup() %>%
-      filter(!iucn_sid %in% iucn_duped_sid | name_verified == TRUE | !any_verified) %>%
-      select(-any_verified)
-    spp_iucn_maps1 <- spp_iucn_maps %>%
-      select(-sciname) %>%
-      unique() %>%
-      inner_join(nm_chk1 %>% rename(id_no = iucn_sid), by = c('id_no'))
+#     ### Compare to name check file for IUCN (based on IUCN marine list)
+#     
+#     nm_chk_file <- file.path(dir_anx, scenario, 'int/namecheck_iucn.csv')
+#     nm_chk <- read.csv(nm_chk_file, stringsAsFactors = FALSE)
+#     if(!'force_match' %in% names(nm_chk)) {
+#       stop(sprintf('Check name file %s: create a "force_match" column;\n', nm_chk_file),
+#            '  then set "force_match" to TRUE to use suggested name for unmatched names.') 
+#     } else {
+#       ### use nm_chk to assign matched = TRUE to good matches and forced matches, FALSE for names left as default
+#       message(sprintf('Verifying names against %s.\n', nm_chk_file))
+#       nm_chk <- nm_chk %>%
+#         mutate(force_match = ifelse(is.na(force_match) | !force_match, FALSE, TRUE),
+#                sciname = ifelse(force_match, sciname2, sciname),
+#                name_verified = (matched | force_match)) %>%
+#         select(-data_source_title, -score, -sciname2, -matched, -force_match) %>%
+#         unique()
+#     }
+#       
+#     iucn_duped_sid  <- nm_chk$iucn_sid[duplicated(nm_chk$iucn_sid)] %>%
+#       unique()
+#     nm_chk1 <- nm_chk %>%
+#       group_by(iucn_sid) %>%
+#       mutate(any_verified = any(name_verified)) %>%
+#       ungroup() %>%
+#       filter(!iucn_sid %in% iucn_duped_sid | name_verified == TRUE | !any_verified) %>%
+#       select(-any_verified)
+#     spp_iucn_maps1 <- spp_iucn_maps %>%
+#       select(-sciname) %>%
+#       unique() %>%
+#       inner_join(nm_chk1 %>% rename(id_no = iucn_sid), by = c('id_no'))
     ### using inner_join, so species NOT on the nm_chk list (which is marine species)
     ### get dropped - lose the terrestrial critters
       
     message(sprintf('Writing list of available IUCN range maps to: \n  %s', iucn_map_list_file))
-    write.csv(spp_iucn_maps1, iucn_map_list_file, row.names = FALSE)
+    write.csv(spp_iucn_maps, iucn_map_list_file, row.names = FALSE)
   } else {
     message(sprintf('Reading list of available IUCN range maps from: \n  %s', iucn_map_list_file))
-    spp_iucn_maps1 <- read.csv(iucn_map_list_file, stringsAsFactors = FALSE)
+    spp_iucn_maps <- read.csv(iucn_map_list_file, stringsAsFactors = FALSE)
   }
-  return(spp_iucn_maps1)
+  return(spp_iucn_maps)
 }
 
 ##############################################################################=
@@ -386,6 +390,7 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
     
     spp_iucn <- read_spp_iucn(reload)
     
+    
     ### To the AquaMaps list (speciesoccursum) bind the IUCN marine species list
     spp_all <- spp_am %>%
       full_join(spp_iucn, by = c('sciname', 'name_verified'))
@@ -414,11 +419,24 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
     spp_all <- spp_all %>% 
       left_join(spp_iucn_maps %>%
                   mutate(iucn_sid = id_no),     ### want both iucn_sid and id_no separate - helps to later determine IUCN aliases and subpops
-                by = c('iucn_sid', 'sciname', 'name_verified'))
+                by = 'iucn_sid')
     
+    ### query birdlife international .dbf, using the ID number, left join
+    ### to spp_all which already filters to marine species.
+    spp_birds <- foreign::read.dbf(file.path(dir_data_bird, 'BOTW.dbf')) %>%
+      setNames(tolower(names(.))) %>%
+      select(iucn_sid = sisid, sciname, presence) %>%
+      unique()
+    ### NOTE: this loses info on 'origin' and 'seasonal' fields
+    
+    ### toggle the spatial_source variable for bird species; set to 'iucn-bli' for
+    ### same handling as IUCN generally, but identifiable as a birdlife int'l
+    spp_all <- spp_all %>%
+      mutate(spatial_source = ifelse(!is.na(iucn_sid) & iucn_sid %in% spp_birds$iucn_sid, 'iucn-bli', spatial_source),
+             spp_group      = ifelse(str_detect(spatial_source, 'bli'), 'BIRDS', spp_group))
     
     ### toggle the spatial_source variable for aquamaps, based on source_pref
-    ### and whether there is already an IUCN range map available.
+    ### and whether there is already an IUCN range map (or birdlife range map) available.
     if(source_pref == 'am') {
       spp_all <- spp_all %>%
         mutate(spatial_source = ifelse(!is.na(am_sid), 'am', spatial_source))
@@ -431,28 +449,22 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
     
     # duplicates of sciname need to be dealt with. Some cases:
     # * sciname duped, due to same sciname/id_no polygons within multiple IUCN shapefiles 
-    #   (e.g. REPTILES, SEASNAKES, and non-homolopsids)
-    #   - choose one and drop the others.  Which to choose? let R decide.
+    #   (e.g. REPTILES, SEASNAKES)
     dupes <- spp_all %>% 
       arrange(spp_group) %>%      ### REPTILES before SEASNAKES
       dplyr::select(sciname, iucn_sid, id_no, iucn_category, iucn_subpop) %>% 
       duplicated(fromLast = TRUE) ### This will identify the REPTILES instance as the duplicated row
     spp_all <- spp_all[!dupes, ]
     
-    
     # to overall lookup table, join scores for population category and trend.
     popn_cat    <- data.frame(popn_category  = c("LC", "NT", "VU", "EN", "CR", "EX"), 
                               category_score = c(   0,  0.2,  0.4,  0.6,  0.8,   1))
-    popn_trend  <- data.frame(popn_trend=c("Decreasing", "Stable", "Increasing"), 
-                              trend_score=c(-0.5, 0, 0.5))
+    popn_trend  <- data.frame(popn_trend  = c("Decreasing", "Stable", "Increasing"), 
+                              trend_score = c(-0.5, 0, 0.5))
     
     spp_all <- spp_all %>%
       left_join(popn_cat,   by = 'popn_category') %>%
       left_join(popn_trend, by = 'popn_trend') 
-    
-    spp_all <- spp_all %>%
-      fix_am_subpops() %>%
-      fix_iucn_subpops(spp_iucn_maps) 
     
     message(sprintf('Writing full species lookup table to: \n  %s', spp_all_file))
     write_csv(spp_all, spp_all_file)
@@ -537,9 +549,7 @@ fix_iucn_subpops <- function(spp_all, spp_iucn_maps) {
   spp_all_dupes <- show_dupes(spp_all, 'sciname')
   spp_all <- spp_all %>%
     mutate(spatial_source = ifelse((sciname %in% spp_all_dupes$sciname) &   ### duplicated scientific name
-                                     (sciname %in% spp_iucn_maps$sciname) & ### sciname in species map list
-                                     (is.na(id_no)),                  ### mismatch between iucn_sid and id_no
-                                   ### New data (as of Dec 2015) should have id_no for all species?
+                                     (sciname %in% spp_iucn_maps$sciname),  ### sciname in species map list
                                    'iucn_alias',
                                    spatial_source))
   print(head(spp_all %>% filter(sciname %in% spp_all_dupes$sciname)))
@@ -603,13 +613,13 @@ fix_iucn_subpops <- function(spp_all, spp_iucn_maps) {
 }
 
 
-
 ##############################################################################=
-extract_loiczid_per_spp <- function(spp_all, groups_override = NULL, fn_tag = NULL, reload = FALSE) {
+extract_loiczid_per_spp <- function(map_list, 
+                                    shp_dir = file.path(dir_data_iucn, 'iucn_shp'), 
+                                    fn_tag = NULL, reload = FALSE) {
   ### Determine intersections of IUCN maps with Aquamaps half-degree cells
-  ### 
-  ### * from the spp_all.csv, extract the species with IUCN range maps.  Use this file
-  ###   rather than the spp_iucn_maps_all because it is truncated to just species on spp_iucn_marine_global.csv list.
+  ### * map_list is dataframe of mapped species, with variables:
+  ###   sciname | iucn_sid | id_no (opt) | spp_group
   ### * for each species group (spp_group), open parent shape file
   ### * select by attribute - binomial == sciname in the list
   ### * use raster::extract, lay the selected polygons over the LOICZID raster.
@@ -617,27 +627,19 @@ extract_loiczid_per_spp <- function(spp_all, groups_override = NULL, fn_tag = NU
   ###       We're looking at ~ 4000 complicated polygons.
   ### * when finished with each spp_group, save a file of sciname | id_no | LOICZID | prop_area for that group.
   ### * Use groups_override argument to pass a partial list of species groups, for testing/debugging.
-  
   ### create list of all marine species with IUCN maps.
-  iucn_range_maps <- spp_all %>%
-    filter(str_detect(spatial_source, 'iucn')) %>%
-    dplyr::select(sciname, iucn_sid, id_no, spp_group)
+
+  if(!'id_no' %in% names(map_list)) 
+    map_list$id_no <- map_list$iucn_sid
   
   ### Import LOICZID raster
   raster_file <- file.path(dir_anx, 'rgns/loiczid_raster')
   loiczid_raster <- get_loiczid_raster(reload = FALSE)
   
-  ### create list of groups (i.e. shape files) to be analyzed
-  if(is.null(groups_override)) {
-    spp_gp_list <- unique(iucn_range_maps$spp_group)
-  } else {
-    spp_gp_list <- groups_override
-  }
-  
-  ogr_location <- file.path(dir_data_iucn, 'iucn_shp')
-  
+  spp_gp_list <- unique(map_list$spp_group)
+
   for(spp_gp in spp_gp_list) { # spp_gp <- 'LOBSTERS' # spp_gp <- 'CORAL3'   spp_gp <- 'MAMMMARINE'
-    maps_in_group <- iucn_range_maps %>%
+    maps_in_group <- map_list %>%
       filter(spp_group == spp_gp)
     
     ### set file path for output file from this species group.
@@ -649,15 +651,15 @@ extract_loiczid_per_spp <- function(spp_all, groups_override = NULL, fn_tag = NU
     
     ### if reload == FALSE, and the file exists, don't waste your friggin' time here, move on to next group.
     if(file.exists(cache_file) & reload == FALSE) {   
-      message(sprintf('\nIUCN <-< LOICZID lookup file already exists for species group %s; file location:\n  %s\n', spp_gp, cache_file))
+      message(sprintf('IUCN <-< LOICZID lookup file already exists for species group %s; file location:\n  %s', spp_gp, cache_file))
     } else {
       ptm <- proc.time()
-      fsize <- round(file.size(file.path(ogr_location, sprintf('%s.shp', spp_gp)))/1e6, 2)
-      message(sprintf('\nReading species group shapefile %s, %.2f MB\n  %s/%s\n', spp_gp, fsize, ogr_location, spp_gp))
+      fsize <- round(file.size(file.path(shp_dir, sprintf('%s.shp', spp_gp)))/1e6, 2)
+      message(sprintf('Reading species group shapefile %s, %.2f MB\n  %s/%s', spp_gp, fsize, shp_dir, spp_gp))
 
-            ### Because the IUCN metadata states that shapefiles are unprojected lat-long with WGS84, I
-      ### will use the faster readShapePoly (rather than readOGR) and manually tell it the projection...
-      spp_shp <- readShapePoly(fn = file.path(ogr_location, spp_gp), 
+      ### Because the IUCN metadata states that shapefiles are unprojected lat-long with WGS84,
+      ### use readShapePoly (rather than readOGR) and manually tell it the projection...
+      spp_shp <- readShapePoly(fn = file.path(shp_dir, spp_gp), 
                                proj4string = CRS('+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'),
                                delete_null_obj = TRUE)
       ptm <- proc.time() - ptm
@@ -677,8 +679,11 @@ extract_loiczid_per_spp <- function(spp_all, groups_override = NULL, fn_tag = NU
                       length(unique(spp_shp@data$id_no))))
       message('In this grouping, breakdown of IUCN categories:')
       print(table(spp_shp1@data$code))
+      message('In this grouping, breakdown of "presence" values:')
+      print(table(spp_shp1@data$presence))
       
       ### Extract the proportions of each species polygon within each LOICZID cell
+      message('Extracting polygons to LOICZID cells...')
       ptm <- proc.time()
       spp_shp_prop <- raster::extract(loiczid_raster, spp_shp1, weights = TRUE, normalizeWeights = FALSE, progress = 'text')
       ptm <- proc.time() - ptm

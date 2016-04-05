@@ -21,14 +21,15 @@ generate_iucn_all_spp_list <- function(reload = FALSE) {
   all_spp_url  <- 'http://api.iucnredlist.org/index/all.csv'
   if (!file.exists(all_spp_file) | reload){
     message(sprintf('Reading remote full IUCN redlist species from: %s\n', all_spp_url))
-    spp_iucn_all <- read.csv(all_spp_url, stringsAsFactors = FALSE) 
-    spp_iucn_all <- spp_iucn_all[!duplicated(spp_iucn_all), ] 
+    spp_iucn_all <- read_csv(all_spp_url) 
+    names(spp_iucn_all) <- tolower(names(spp_iucn_all))
+    names(spp_iucn_all) <- str_replace_all(names(spp_iucn_all), ' ', '_')
+    
     spp_iucn_all <- spp_iucn_all %>%
-      rename(sciname  = Scientific.Name,
-             iucn_sid = Red.List.Species.ID) %>%
-      dplyr::select(-Primary)
-    spp_iucn_all <- unique(spp_iucn_all)
-    names(spp_iucn_all) = tolower(names(spp_iucn_all))
+      rename(sciname  = scientific_name,
+             iucn_sid = red_list_species_id) %>%
+      dplyr::select(-primary) %>%
+      unique()
     
     ### clean up odd formatting: html tags, extra spaces, punctuation, incorrect capitalization
     spp_iucn_all <- spp_iucn_all %>% 
@@ -67,7 +68,7 @@ getHabitats <- function(sid, download_tries = 10) {
   # else message(sprintf('.htm file found for %s.  No need to download. \n', htm))
   while (!file.exists(htm) | (file.info(htm)$size == 0 & i < download_tries)) {
     download.file(url, htm, method = 'auto', quiet = TRUE, mode = 'wb')
-    i=i+1
+    i <- i + 1
     message(sprintf('%d... ', i))
   }
   if (file.info(htm)$size == 0) stop(sprintf('Only getting empty file for: %s \n', url))
@@ -86,21 +87,26 @@ generate_iucn_habitat_list <- function(spp_list = spp_iucn_all, reload = FALSE) 
 ### otherwise reads from git-annex and returns.
   spp_hab_file <- file.path(dir_anx, scenario, 'int/spp_iucn_habitats.csv')
   if (!file.exists(spp_hab_file) | reload) {
-    if(!file.exists(spp_hab_file)) message(sprintf('No species-habitat file found at %s. ', spp_hab_file))
+    if(!file.exists(spp_hab_file)) 
+      message(sprintf('No species-habitat file found at: \n  %s', spp_hab_file))
     message(sprintf('Generating species habitat list from IUCN scraped data.\n', spp_hab_file))
 
+    sids <- spp_list$iucn_sid %>% unique()
+    
     ptm <- proc.time()   
-    r <- mclapply(spp_list$iucn_sid, getHabitats, mc.cores = detectCores(), mc.preschedule = FALSE) 
+    r <- mclapply(sids, getHabitats, mc.cores = detectCores(), mc.preschedule = FALSE) 
           # runs faster across multiple cores, but no reporting out from within getHabitats()
     message(sprintf('Elapsed time: %s minutes', round((proc.time() - ptm)[3]/60, 1)))
     
     r <- unlist(r)
-    spp_iucn_habitats <- data.frame(iucn_sid = r, habitat = names(r))
+    spp_iucn_habitats <- data.frame(iucn_sid = r, habitat = names(r)) %>%
+    mutate(iucn_sid = as.integer(iucn_sid))
+    
     message(sprintf('Writing species-habitat list to:\n  %s\n', spp_hab_file))
     write_csv(spp_iucn_habitats, spp_hab_file)
   } else {
     message(sprintf('Reading local species-habitat list from:\n  %s\n', spp_hab_file))
-    spp_iucn_habitats <- read.csv(spp_hab_file, stringsAsFactors = FALSE)
+    spp_iucn_habitats <- read_csv(spp_hab_file)
   }
   return(invisible(spp_iucn_habitats))
 }
@@ -115,13 +121,11 @@ get_mar_spp <- function(reload = FALSE) {
 ### Removes infrarank listings, and drops those columns.
     # get distinct marine species
   spp_iucn_all      <- generate_iucn_all_spp_list(reload = reload)
-  spp_iucn_habitats <- generate_iucn_habitat_list(reload = reload) %>%
-    as.data.frame() %>%
-    mutate(iucn_sid = as.integer(iucn_sid))
+  spp_iucn_habitats <- generate_iucn_habitat_list(reload = reload)
   
   df <- spp_iucn_all %>%
     inner_join(spp_iucn_habitats %>% 
-                 filter(habitat == 'Marine'),
+                 filter(str_detect(tolower(habitat), 'marine')),
                by = 'iucn_sid') %>%
     unique()
   ### clean whitespace from ends and middle:
@@ -131,8 +135,8 @@ get_mar_spp <- function(reload = FALSE) {
   # remove infraranks: 30 subspecies records ('ssp.')
   #d = subset(d, infrarank.type!='ssp.', !names(d) %in% c('infrarank','infrarank.type','infrarank.authority'))
   df <- df %>%
-    filter(infrarank.type != 'ssp.') %>%
-    dplyr::select(-infrarank, -infrarank.type, -infrarank.authority)
+    filter(is.na(infrarank_type) | infrarank_type != 'ssp.') %>%
+    dplyr::select(-infrarank, -infrarank_type, -infrarank_authority)
   
   # convert IUCN category from IUCN Red List Categories & Criteria v2.3 (1994-2000) to v3.1 (since 2001)
   df <- df %>%
