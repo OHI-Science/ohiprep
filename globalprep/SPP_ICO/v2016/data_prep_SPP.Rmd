@@ -132,21 +132,7 @@ source(file.path(goal, 'R/ingest_iucn.R'))
 ### Extracts habitats from cached files; filters IUCN list down to just marine species.
 ### Fixes older IUCN codes, cleans up scinames, gets rid of infraranks (subspecies).
 ### Determines subpopulations/parents and population trends from scraped files.
-### Main outputs, saved to git-annex/globalprep/SPP_ICO/v201x/intermediate: 
-### * spp_iucn_all.csv      - full list of IUCN species pulled from web, some cleaning.
-### * spp_iucn_habitats.csv - list of IUCN species (by iucn_sid) and corresponding habitat.
-### * spp_iucn_marine.csv   - prepped list: cleaned marine list with subpops and trends.
-```
-
-``` {r Ingest BirdLife International species list, eval = FALSE}
-ogrListLayers(dsn = file.path(path.expand(dir_data_bird), 'BOTW.gdb'))
-spp_birdlife <- readOGR(dsn = file.path(path.expand(dir_data_bird), 'BOTW.gdb'))
-### Pulls species list from IUCN
-### Scrapes data from iucn site for each species on the list; saves to cache directory.
-### Extracts habitats from cached files; filters IUCN list down to just marine species.
-### Fixes older IUCN codes, cleans up scinames, gets rid of infraranks (subspecies).
-### Determines subpopulations/parents and population trends from scraped files.
-### Main outputs, saved to git-annex/globalprep/SPP_ICO/v201x/intermediate: 
+### Main outputs, saved to git-annex/globalprep/SPP_ICO/v201x/int: 
 ### * spp_iucn_all.csv      - full list of IUCN species pulled from web, some cleaning.
 ### * spp_iucn_habitats.csv - list of IUCN species (by iucn_sid) and corresponding habitat.
 ### * spp_iucn_marine.csv   - prepped list: cleaned marine list with subpops and trends.
@@ -160,13 +146,19 @@ spp_all <- create_spp_master_lookup(source_pref = 'iucn', fn_tag = '', reload = 
 ### NOTE: as currently stands, ignores AquaMaps-mapped species with 
 ###   subpopulations (fix_am_subpops() is disabled)
 
-spp_all <- spp_all %>%
-  filter(!str_detect(spp_group, 'MARINEFISH_Part') | is.na(spp_group))
-### For some reason, the MARINEFISH_Part1 and _Part2 shapefiles contain a bunch
-### of mammals; and the .shp of _Part1 has no polygons.  These are suspect
-### files so I'm ignoring them for now. is.na() will keep the AquaMaps species.
+spp_all_subpops1 <- spp_all %>%
+  filter(!is.na(iucn_subpop)) %>%
+  unique()
+spp_all_subpops2 <- spp_all %>%
+  filter(str_detect(spatial_source, 'subpop') | str_detect(spatial_source, 'parent')) %>%
+  group_by(sciname) %>%
+  filter(sum(!is.na(iucn_subpop)) > 0) %>%
+  unique()
 
-spp_all <- spp_all %>%
+spp_all_spatially_extinct <- spp_all %>%
+  filter(presence == 5)
+
+spp_all1 <- spp_all %>%
   filter(!(str_detect(spatial_source, 'iucn_subpop') & is.na(iucn_subpop))  |    ### subpop tag with no subpop location = FALSE
          is.na(spatial_source)) %>%                                              ### spatial_source is NA = TRUE (keep NAs in for now)
   filter(!(str_detect(spatial_source, 'iucn_parent') & !is.na(iucn_subpop)) |    ### parent tag with no subpop location = TRUE
@@ -178,6 +170,12 @@ spp_all <- spp_all %>%
 spp_subpops_parents <- spp_all %>% 
   filter(str_detect(spatial_source, 'subpop') | str_detect(spatial_source, 'parent'))
 table(spp_subpops_parents$spp_group)
+
+spp_all <- spp_all %>%
+  fix_am_subpops() %>%
+  fix_iucn_subpops(spp_iucn_maps) 
+
+
 
 write_csv(spp_all, file.path(dir_anx, scenario, 'int/spp_all.csv'))
 ```
@@ -194,7 +192,12 @@ write_csv(spp_all, file.path(dir_anx, scenario, 'int/spp_all.csv'))
 #        "REPTILES", "SEAGRASSES", "MANGROVES", "TERRESTRIAL_MAMMALS")
 # z <- c("TUNAS_BILLFISHES", "MARINE_MAMMALS", "REPTILES", "SEABREAMS_PORGIES")
 
-extract_loiczid_per_spp(spp_all, groups_override = z, fn_tag = NULL, reload = TRUE)
+maps_list <- spp_all %>%
+  filter(str_detect(spatial_source, 'iucn') & !str_detect(spatial_source, 'bli')) %>%
+  select(sciname | iucn_sid | id_no (opt) | spp_group) %>%
+  unique()
+
+extract_loiczid_per_spp(maps_list, fn_tag = NULL, reload = TRUE)
 ### Extract loiczid cell IDs for each species within each species group.  Save 
 ### a .csv file for that group, with fields:
 ###       sciname | iucn_sid | presence | subpop | LOICZID | prop_area
@@ -202,17 +205,7 @@ extract_loiczid_per_spp(spp_all, groups_override = z, fn_tag = NULL, reload = TR
 ###                   4 Possibly Extinct; 5 Extinct (post 1500); 6 Presence Uncertain
 ### NOTES: this takes a long time - multiple hours for some of the shape files.  
 ### * reload = FALSE allows it to skip extraction on groups with files already present.
-### * use groups_override argument to run function on partial list of species groups.
 
-### Adding back in the missing species - most due to DD designation.
-### 'y' here is the 'missing' list from IUCN-AquaMaps, with spp_all left-joined
-### to it to capture the other columns as needed...
-# extract_loiczid_per_spp(y, groups_override = NULL, fn_tag = 'missing', reload = TRUE)
-### NOTES FOR CATCHING DD AND MISSING SPP:
-### When processing bonefish/tarpons:
-###   Error in vapply(x[[col]], `[`, 0, 1) : values must be type 'double',
-###     but FUN(X[[1]]) result is type 'character'
-###   (check to make sure 12 species are represented in this file?)
 ```
 
 ``` {r SPP Generate species per cell tables for Aquamaps and IUCN }
