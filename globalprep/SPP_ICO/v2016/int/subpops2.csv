@@ -1,0 +1,133 @@
+am_sid,am_category,reviewed,sciname,name_verified,iucn_sid,iucn_category,popn_trend,parent_sid,subpop_sid,popn_category,info_source,spp_group,id_no,iucn_subpop,presence,spatial_source,category_score,trend_score
+ITS-Mam-180533,LC,1,Balaena mysticetus,TRUE,2468,NT,NA,2467,NA,NT,iucn,MARINE_MAMMALS,2468,Bering-Chukchi-Beaufort Sea,1,iucn,0.2,NA
+ITS-Mam-180533,LC,1,Balaena mysticetus,TRUE,2469,EN,Unknown,2467,NA,EN,iucn,MARINE_MAMMALS,2469,Okhotsk Sea,1,iucn,0.6,NA
+ITS-Mam-180533,LC,1,Balaena mysticetus,TRUE,2472,CR,Unknown,2467,NA,CR,iucn,MARINE_MAMMALS,2472,Svalbard-Barents Sea (Spitsbergen),1,iucn,0.8,NA
+Rep-2666,EN,1,Caretta caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Pacific South,1,iucn,0.4,NA
+Rep-2666,EN,1,Caretta caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Pacific North,1,iucn,0.4,NA
+Rep-2666,EN,1,Caretta caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Mediterranean,1,iucn,0.4,NA
+Rep-2666,EN,1,Caretta caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Indian Southwest,1,iucn,0.4,NA
+Rep-2666,EN,1,Caretta caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Indian Southeast,1,iucn,0.4,NA
+Rep-2666,EN,1,Caretta caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Indian Northwest,1,iucn,0.4,NA
+Rep-2666,EN,1,Caretta caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Indian Northeast,1,iucn,0.4,NA
+Rep-2666,EN,1,Caretta caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Atlantic Southwest,1,iucn,0.4,NA
+Rep-2666,EN,1,Caretta caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Atlantic Notheast,1,iucn,0.4,NA
+Rep-2666,EN,1,Caretta caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Atlantic Northwest,1,iucn,0.4,NA
+Rep-2941,EN,1,Chelonia mydas,TRUE,16285718,LC,Increasing,4615,NA,LC,iucn,REPTILES,16285718,Chelonia mydas Hawaiian,1,iucn,0,0.5
+ITS-Mam-180483,NT,1,Delphinapterus leucas,TRUE,61442,CR,Decreasing,6335,NA,CR,iucn,MARINE_MAMMALS,61442,Cook Inlet,1,iucn,0.8,-0.5
+ITS-Mam-180438,LC,1,Delphinus delphis,TRUE,6336,LC,Unknown,NA,41762,LC,iucn,MARINE_MAMMALS,6336,Mediterranean,1,iucn,0,NA
+ITS-Mam-180438,LC,1,Delphinus delphis,TRUE,6336,LC,Unknown,NA,133729,LC,iucn,MARINE_MAMMALS,6336,Mediterranean,1,iucn,0,NA
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967807,VU,iucn,REPTILES,6494,West Pacific,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967807,VU,iucn,REPTILES,6494,Southwest Indian,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967807,VU,iucn,REPTILES,6494,Southwest Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967807,VU,iucn,REPTILES,6494,Southeast Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967807,VU,iucn,REPTILES,6494,Northwest Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967807,VU,iucn,REPTILES,6494,Northeast Indian,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967807,VU,iucn,REPTILES,6494,East Pacific,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967873,VU,iucn,REPTILES,6494,West Pacific,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967873,VU,iucn,REPTILES,6494,Southwest Indian,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967873,VU,iucn,REPTILES,6494,Southwest Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967873,VU,iucn,REPTILES,6494,Southeast Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967873,VU,iucn,REPTILES,6494,Northwest Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967873,VU,iucn,REPTILES,6494,Northeast Indian,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967873,VU,iucn,REPTILES,6494,East Pacific,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967827,VU,iucn,REPTILES,6494,West Pacific,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967827,VU,iucn,REPTILES,6494,Southwest Indian,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967827,VU,iucn,REPTILES,6494,Southwest Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967827,VU,iucn,REPTILES,6494,Southeast Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967827,VU,iucn,REPTILES,6494,Northwest Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967827,VU,iucn,REPTILES,6494,Northeast Indian,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967827,VU,iucn,REPTILES,6494,East Pacific,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967848,VU,iucn,REPTILES,6494,West Pacific,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967848,VU,iucn,REPTILES,6494,Southwest Indian,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967848,VU,iucn,REPTILES,6494,Southwest Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967848,VU,iucn,REPTILES,6494,Southeast Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967848,VU,iucn,REPTILES,6494,Northwest Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967848,VU,iucn,REPTILES,6494,Northeast Indian,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967848,VU,iucn,REPTILES,6494,East Pacific,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967838,VU,iucn,REPTILES,6494,West Pacific,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967838,VU,iucn,REPTILES,6494,Southwest Indian,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967838,VU,iucn,REPTILES,6494,Southwest Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967838,VU,iucn,REPTILES,6494,Southeast Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967838,VU,iucn,REPTILES,6494,Northwest Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967838,VU,iucn,REPTILES,6494,Northeast Indian,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967838,VU,iucn,REPTILES,6494,East Pacific,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967863,VU,iucn,REPTILES,6494,West Pacific,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967863,VU,iucn,REPTILES,6494,Southwest Indian,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967863,VU,iucn,REPTILES,6494,Southwest Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967863,VU,iucn,REPTILES,6494,Southeast Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967863,VU,iucn,REPTILES,6494,Northwest Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967863,VU,iucn,REPTILES,6494,Northeast Indian,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967863,VU,iucn,REPTILES,6494,East Pacific,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967817,VU,iucn,REPTILES,6494,West Pacific,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967817,VU,iucn,REPTILES,6494,Southwest Indian,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967817,VU,iucn,REPTILES,6494,Southwest Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967817,VU,iucn,REPTILES,6494,Southeast Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967817,VU,iucn,REPTILES,6494,Northwest Atlantic,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967817,VU,iucn,REPTILES,6494,Northeast Indian,1,iucn,0.4,-0.5
+Rep-4381,VU,1,Dermochelys coriacea,TRUE,6494,VU,Decreasing,NA,46967817,VU,iucn,REPTILES,6494,East Pacific,1,iucn,0.4,-0.5
+ITS-Mam-180521,LC,1,Eschrichtius robustus,TRUE,8099,CR,Increasing,8097,NA,CR,iucn,MARINE_MAMMALS,8099,Western,2,iucn,0.8,0.5
+ITS-Mam-180521,LC,1,Eschrichtius robustus,TRUE,8099,CR,Increasing,8097,NA,CR,iucn,MARINE_MAMMALS,8099,Western,1,iucn,0.8,0.5
+ITS-Mam-180471,VU,1,Orcaella brevirostris,TRUE,44187,CR,Decreasing,15419,NA,CR,iucn,MARINE_MAMMALS,44187,Malampaya Sound,1,iucn,0.8,-0.5
+ITS-Mam-180473,LC,1,Phocoena phocoena,TRUE,17031,CR,Decreasing,17027,NA,CR,iucn,MARINE_MAMMALS,17031,Baltic Sea,1,iucn,0.8,-0.5
+ITS-Mam-180411,VU,1,Pontoporia blainvillei,TRUE,17978,VU,Decreasing,NA,41761,VU,iucn,MARINE_MAMMALS,17978,Rio Grande do Sul/Uruguay,1,iucn,0.4,-0.5
+ITS-Mam-180426,LC,1,Tursiops truncatus,TRUE,194300,CR,Decreasing,22563,NA,CR,iucn,MARINE_MAMMALS,194300,Fiordland,1,iucn,0.8,-0.5
+ITS-180419,NT,1,Sousa chinensis,TRUE,133710,CR,Decreasing,20424,NA,CR,iucn,MARINE_MAMMALS,133710,Eastern Taiwan Strait,1,iucn,0.8,-0.5
+NA,NA,NA,Testudo caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Pacific South,1,iucn,0.4,NA
+NA,NA,NA,Testudo caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Pacific North,1,iucn,0.4,NA
+NA,NA,NA,Testudo caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Mediterranean,1,iucn,0.4,NA
+NA,NA,NA,Testudo caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Indian Southwest,1,iucn,0.4,NA
+NA,NA,NA,Testudo caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Indian Southeast,1,iucn,0.4,NA
+NA,NA,NA,Testudo caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Indian Northwest,1,iucn,0.4,NA
+NA,NA,NA,Testudo caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Indian Northeast,1,iucn,0.4,NA
+NA,NA,NA,Testudo caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Atlantic Southwest,1,iucn,0.4,NA
+NA,NA,NA,Testudo caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Atlantic Notheast,1,iucn,0.4,NA
+NA,NA,NA,Testudo caretta,TRUE,3897,VU,NA,NA,NA,VU,iucn,REPTILES,3897,Atlantic Northwest,1,iucn,0.4,NA
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967807,VU,iucn,REPTILES,6494,West Pacific,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967807,VU,iucn,REPTILES,6494,Southwest Indian,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967807,VU,iucn,REPTILES,6494,Southwest Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967807,VU,iucn,REPTILES,6494,Southeast Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967807,VU,iucn,REPTILES,6494,Northwest Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967807,VU,iucn,REPTILES,6494,Northeast Indian,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967807,VU,iucn,REPTILES,6494,East Pacific,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967873,VU,iucn,REPTILES,6494,West Pacific,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967873,VU,iucn,REPTILES,6494,Southwest Indian,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967873,VU,iucn,REPTILES,6494,Southwest Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967873,VU,iucn,REPTILES,6494,Southeast Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967873,VU,iucn,REPTILES,6494,Northwest Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967873,VU,iucn,REPTILES,6494,Northeast Indian,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967873,VU,iucn,REPTILES,6494,East Pacific,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967827,VU,iucn,REPTILES,6494,West Pacific,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967827,VU,iucn,REPTILES,6494,Southwest Indian,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967827,VU,iucn,REPTILES,6494,Southwest Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967827,VU,iucn,REPTILES,6494,Southeast Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967827,VU,iucn,REPTILES,6494,Northwest Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967827,VU,iucn,REPTILES,6494,Northeast Indian,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967827,VU,iucn,REPTILES,6494,East Pacific,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967848,VU,iucn,REPTILES,6494,West Pacific,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967848,VU,iucn,REPTILES,6494,Southwest Indian,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967848,VU,iucn,REPTILES,6494,Southwest Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967848,VU,iucn,REPTILES,6494,Southeast Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967848,VU,iucn,REPTILES,6494,Northwest Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967848,VU,iucn,REPTILES,6494,Northeast Indian,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967848,VU,iucn,REPTILES,6494,East Pacific,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967838,VU,iucn,REPTILES,6494,West Pacific,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967838,VU,iucn,REPTILES,6494,Southwest Indian,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967838,VU,iucn,REPTILES,6494,Southwest Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967838,VU,iucn,REPTILES,6494,Southeast Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967838,VU,iucn,REPTILES,6494,Northwest Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967838,VU,iucn,REPTILES,6494,Northeast Indian,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967838,VU,iucn,REPTILES,6494,East Pacific,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967863,VU,iucn,REPTILES,6494,West Pacific,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967863,VU,iucn,REPTILES,6494,Southwest Indian,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967863,VU,iucn,REPTILES,6494,Southwest Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967863,VU,iucn,REPTILES,6494,Southeast Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967863,VU,iucn,REPTILES,6494,Northwest Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967863,VU,iucn,REPTILES,6494,Northeast Indian,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967863,VU,iucn,REPTILES,6494,East Pacific,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967817,VU,iucn,REPTILES,6494,West Pacific,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967817,VU,iucn,REPTILES,6494,Southwest Indian,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967817,VU,iucn,REPTILES,6494,Southwest Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967817,VU,iucn,REPTILES,6494,Southeast Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967817,VU,iucn,REPTILES,6494,Northwest Atlantic,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967817,VU,iucn,REPTILES,6494,Northeast Indian,1,iucn,0.4,-0.5
+NA,NA,NA,Testudo coriacea,TRUE,6494,VU,Decreasing,NA,46967817,VU,iucn,REPTILES,6494,East Pacific,1,iucn,0.4,-0.5

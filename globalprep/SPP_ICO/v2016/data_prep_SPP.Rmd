@@ -140,23 +140,23 @@ source(file.path(goal, 'R/ingest_iucn.R'))
 
 ``` {r Generate spp lookup}
 
+### NOTE: Manually set up the subpopulations for 2016: see subpops_list.csv
+
+
 spp_all <- create_spp_master_lookup(source_pref = 'iucn', fn_tag = '', reload = TRUE)
 ### | am_sid | sciname | am_category | iucn_sid | iucn_category | popn_trend | popn_category | 
 ### | info_source | spp_group | id_no | objectid | spatial_source | category_score | trend_score |
 ### NOTE: as currently stands, ignores AquaMaps-mapped species with 
 ###   subpopulations (fix_am_subpops() is disabled)
 
+spp_all <- spp_all %>%
+  # fix_am_subpops() %>% ### currently does nothing...
+  fix_iucn_subpops() 
+
+
 spp_all_subpops1 <- spp_all %>%
   filter(!is.na(iucn_subpop)) %>%
   unique()
-spp_all_subpops2 <- spp_all %>%
-  filter(str_detect(spatial_source, 'subpop') | str_detect(spatial_source, 'parent')) %>%
-  group_by(sciname) %>%
-  filter(sum(!is.na(iucn_subpop)) > 0) %>%
-  unique()
-
-spp_all_spatially_extinct <- spp_all %>%
-  filter(presence == 5)
 
 spp_all1 <- spp_all %>%
   filter(!(str_detect(spatial_source, 'iucn_subpop') & is.na(iucn_subpop))  |    ### subpop tag with no subpop location = FALSE
@@ -171,9 +171,6 @@ spp_subpops_parents <- spp_all %>%
   filter(str_detect(spatial_source, 'subpop') | str_detect(spatial_source, 'parent'))
 table(spp_subpops_parents$spp_group)
 
-spp_all <- spp_all %>%
-  fix_am_subpops() %>%
-  fix_iucn_subpops(spp_iucn_maps) 
 
 
 

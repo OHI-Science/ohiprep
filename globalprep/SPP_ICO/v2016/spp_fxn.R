@@ -238,39 +238,6 @@ generate_iucn_map_list <- function(reload = FALSE) {
     ### NOTE: This includes all terrestrial mammals(?) and reptiles(?),
     ### not just those in marine species list.
     
-#     ### Compare to name check file for IUCN (based on IUCN marine list)
-#     
-#     nm_chk_file <- file.path(dir_anx, scenario, 'int/namecheck_iucn.csv')
-#     nm_chk <- read.csv(nm_chk_file, stringsAsFactors = FALSE)
-#     if(!'force_match' %in% names(nm_chk)) {
-#       stop(sprintf('Check name file %s: create a "force_match" column;\n', nm_chk_file),
-#            '  then set "force_match" to TRUE to use suggested name for unmatched names.') 
-#     } else {
-#       ### use nm_chk to assign matched = TRUE to good matches and forced matches, FALSE for names left as default
-#       message(sprintf('Verifying names against %s.\n', nm_chk_file))
-#       nm_chk <- nm_chk %>%
-#         mutate(force_match = ifelse(is.na(force_match) | !force_match, FALSE, TRUE),
-#                sciname = ifelse(force_match, sciname2, sciname),
-#                name_verified = (matched | force_match)) %>%
-#         select(-data_source_title, -score, -sciname2, -matched, -force_match) %>%
-#         unique()
-#     }
-#       
-#     iucn_duped_sid  <- nm_chk$iucn_sid[duplicated(nm_chk$iucn_sid)] %>%
-#       unique()
-#     nm_chk1 <- nm_chk %>%
-#       group_by(iucn_sid) %>%
-#       mutate(any_verified = any(name_verified)) %>%
-#       ungroup() %>%
-#       filter(!iucn_sid %in% iucn_duped_sid | name_verified == TRUE | !any_verified) %>%
-#       select(-any_verified)
-#     spp_iucn_maps1 <- spp_iucn_maps %>%
-#       select(-sciname) %>%
-#       unique() %>%
-#       inner_join(nm_chk1 %>% rename(id_no = iucn_sid), by = c('id_no'))
-    ### using inner_join, so species NOT on the nm_chk list (which is marine species)
-    ### get dropped - lose the terrestrial critters
-      
     message(sprintf('Writing list of available IUCN range maps to: \n  %s', iucn_map_list_file))
     write.csv(spp_iucn_maps, iucn_map_list_file, row.names = FALSE)
   } else {
@@ -544,18 +511,10 @@ fix_am_subpops <- function(spp_all, use_am_subpops = FALSE) {
 fix_iucn_subpops <- function(spp_all, spp_iucn_maps) {
   ### Identify IUCN subpops and parents, and note in spatial_source.
   
-  ### Any mismatch between IUCN species ID and shapefile ID number gets
-  ### labeled as an alias first;
-  spp_all_dupes <- show_dupes(spp_all, 'sciname')
-  spp_all <- spp_all %>%
-    mutate(spatial_source = ifelse((sciname %in% spp_all_dupes$sciname) &   ### duplicated scientific name
-                                     (sciname %in% spp_iucn_maps$sciname),  ### sciname in species map list
-                                   'iucn_alias',
-                                   spatial_source))
-  print(head(spp_all %>% filter(sciname %in% spp_all_dupes$sciname)))
-  
   ### ID subpops and parents:
-  iucn_subpops    <- spp_all %>% filter(str_detect(spatial_source, 'iucn') & (!is.na(parent_sid) | !is.na(subpop_sid)))
+  iucn_subpops    <- spp_all %>% 
+    filter(str_detect(spatial_source, 'iucn')) %>%
+    filter(!is.na(parent_sid) | !is.na(subpop_sid))
   iucn_subpop_spp <- unique(iucn_subpops$sciname)
   
   ### Loop over list of parent/subpop species names
