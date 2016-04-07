@@ -55,6 +55,9 @@ Changes since 2015 SPP subgoal for global OHI:
 * Previous assessments counted overlapping species as any species with a binomial included in both data sets (AquaMaps and IUCN/BirdLife).  Synonyms were matched and typos were fixed manually where possible.  This assessment takes advantage of the `taxize` package to identify and match synonyms for better match rate.
 * Previous assessments used an AquaMaps threshold of 40% to determine whether a species counted as "present" within a cell.  Based on the IUCN/AquaMaps manuscript, we are now using a 0% threshold for AquaMaps as it more closely resembles the "limits of distribution" criterion used for IUCN inclusion.
 * Previous assessments ignored subpopulations for SPP; with IUCN's newest data, a subpopulation field identifies distinct subpopulations (and IUCN risk codes) for a number of species (mostly mammals, but a handful of others as well).  This allows us to incorporate subpopulation scores in the global assessment.
+    * From http://www.iucnredlist.org/details/3897/0 (Loggerhead sea turtle):
+        * Rationale: The global population of the Loggerhead Turtle (Caretta caretta) comprises 10 subpopulations (see Figure 2 in the Supplementary Material) that vary widely in population size, geographic range, and population trends, and are the appropriate units for assessment of global conservation status for this species (Wallace et al. 2010, 2011). As such, assessments have been completed for each of the 10 subpopulations, in addition to the combined global population assessment required by the IUCN (see Table 1 in the Supplementary Material). At the global level, both geographic distribution and population size are much larger than required to qualify for a threatened category. The available long-term series of nest counts (used as an index of population abundance) show an important decrease in the past (47%). Therefore, the Loggerhead Turtle is considered as Vulnerable under current IUCN Red List Criteria (criterion A2b). The previous listing, published in 1996, was Endangered under criterion A1bd (Marine Turtle Specialist Group 1996).
+        * __Results indicate that the Loggerhead Turtle, as a single taxonomic entity, will not go extinct globally in the next generation according to any Red List criteria. However, the global listing is not an appropriate representation of the conservation status__ of the biologically relevant subpopulations that make up the global Loggerhead Turtle population. Subpopulation assessments demonstrated wide variation not only in status of individual subpopulations (as indicated by IUCN Red List Categories), but also in the criteria under which the individual subpopulations qualified for a threatened category (see Table 1 in the Supplementary Material). For these reasons, the __subpopulation-level assessments for the Loggerhead Turtle should be given priority in evaluating the true global conservation status__ of this species. __This conclusion follows the precedent for other long-lived, widely distributed species,__ including the Leatherback Turtle (Wallace et al. 2013).
 
 ***
 
@@ -142,59 +145,30 @@ source(file.path(goal, 'R/ingest_iucn.R'))
 
 ### NOTE: Manually set up the subpopulations for 2016: see subpops_list.csv
 
-
 spp_all <- create_spp_master_lookup(source_pref = 'iucn', fn_tag = '', reload = TRUE)
 ### | am_sid | sciname | am_category | iucn_sid | iucn_category | popn_trend | popn_category | 
 ### | info_source | spp_group | id_no | objectid | spatial_source | category_score | trend_score |
-### NOTE: as currently stands, ignores AquaMaps-mapped species with 
-###   subpopulations (fix_am_subpops() is disabled)
 
-spp_all <- spp_all %>%
-  # fix_am_subpops() %>% ### currently does nothing...
-  fix_iucn_subpops() 
-
-
+### check subpops 1: all spp with an IUCN subpop code
 spp_all_subpops1 <- spp_all %>%
   filter(!is.na(iucn_subpop)) %>%
   unique()
 
-spp_all1 <- spp_all %>%
-  filter(!(str_detect(spatial_source, 'iucn_subpop') & is.na(iucn_subpop))  |    ### subpop tag with no subpop location = FALSE
-         is.na(spatial_source)) %>%                                              ### spatial_source is NA = TRUE (keep NAs in for now)
-  filter(!(str_detect(spatial_source, 'iucn_parent') & !is.na(iucn_subpop)) |    ### parent tag with no subpop location = TRUE
-         is.na(spatial_source))                                                  ### spatial_source is NA = TRUE (keep NAs in for now)
-  ### This gets rid of any subpops that don't have identified shapefiles... 
-  ### NOTE: this still doesn't uniquely identify which ID number goes with
-  ### which subpopulation though!
+### check subpops 2: all spp with a parent_sid or subpop_sid code
+spp_all_subpops2 <- spp_all %>%
+  filter(!is.na(parent_sid) | !is.na(subpop_sid))
 
-spp_subpops_parents <- spp_all %>% 
-  filter(str_detect(spatial_source, 'subpop') | str_detect(spatial_source, 'parent'))
-table(spp_subpops_parents$spp_group)
+spp_all <- spp_all %>%
+  filter(!(!is.na(parent_sid) & is.na(iucn_subpop)))
+  ### parent_sid tag with no subpop location = FALSE.
+  ### This gets rid of any subpops (spp with parent_sid) that don't have identified shapefiles... 
 
-
-
-
-write_csv(spp_all, file.path(dir_anx, scenario, 'int/spp_all.csv'))
+write_csv(spp_all, file.path(dir_anx, scenario, 'int/spp_all_cleaned.csv'))
 ```
 
 
 ``` {r Generate lookup IUCN species to LOICZID, eval = FALSE}
 
-# x <- c("DAMSELFISH", "WRASSE", "SURGEONFISH_TANGS_UNICORNFISH", 
-#        "COMBTOOTHBLENNIES", "TUNAS_BILLFISHES", "GROUPERS", "PUFFERFISH", "BUTTERFLYFISH", 
-#        "LOBSTERS", "CONESNAILS", "CORALS_Part3", 
-#        "CORALS_Part1", "SEACUCUMBERS", "MARINE_MAMMALS")
-#   
-# y <- c("SEABREAMS_PORGIES", "ANGELFISH", "BONEFISH_TARPONS", "CORALS_Part2", 
-#        "REPTILES", "SEAGRASSES", "MANGROVES", "TERRESTRIAL_MAMMALS")
-# z <- c("TUNAS_BILLFISHES", "MARINE_MAMMALS", "REPTILES", "SEABREAMS_PORGIES")
-
-maps_list <- spp_all %>%
-  filter(str_detect(spatial_source, 'iucn') & !str_detect(spatial_source, 'bli')) %>%
-  select(sciname | iucn_sid | id_no (opt) | spp_group) %>%
-  unique()
-
-extract_loiczid_per_spp(maps_list, fn_tag = NULL, reload = TRUE)
 ### Extract loiczid cell IDs for each species within each species group.  Save 
 ### a .csv file for that group, with fields:
 ###       sciname | iucn_sid | presence | subpop | LOICZID | prop_area
@@ -202,6 +176,61 @@ extract_loiczid_per_spp(maps_list, fn_tag = NULL, reload = TRUE)
 ###                   4 Possibly Extinct; 5 Extinct (post 1500); 6 Presence Uncertain
 ### NOTES: this takes a long time - multiple hours for some of the shape files.  
 ### * reload = FALSE allows it to skip extraction on groups with files already present.
+
+### set up maps_list for all standard (non-bird) IUCN species...
+maps_list_iucn <- spp_all %>%
+  filter(str_detect(spatial_source, 'iucn') & !str_detect(spatial_source, 'bli')) %>%
+  select(sciname, iucn_sid, spp_group) %>%
+  unique()
+
+extract_loiczid_per_spp(maps_list_iucn,
+                        shp_dir = file.path(dir_data_iucn, 'iucn_shp'), 
+                        fn_tag = scenario, 
+                        reload = FALSE)
+
+### set up maps_list for all bird IUCN species...
+maps_list_bli <- spp_all %>%
+  filter(str_detect(spatial_source, 'bli')) %>%
+  select(sciname, iucn_sid, spp_group) %>%
+  mutate(spp_group = 'BOTW') %>%
+  unique()
+
+extract_loiczid_per_spp(maps_list_bli,
+                        shp_dir = dir_data_bird, 
+                        fn_tag = scenario, 
+                        reload = TRUE)
+
+### set up maps_list for DD species...
+### go into all intersection .csvs, and pull all iucn_sid, and see which
+### spp still aren't accounted for?
+### also fix col names to new: iucn_sid instead of id_no? add subpop col?
+cache_dir <- file.path(dir_anx, 'iucn_intersections')
+intsx_files <- list.files(cache_dir)
+y <- c()
+for(fn in intsx_files) { # fn <- intsx_files[1]
+  x <- read_csv(file.path(cache_dir, fn))
+  message(fn, ': ', paste(names(x), sep = ', '))
+  if('id_no' in names(x)) x <- x %>% rename(iucn_sid = id_no)
+  if(!'subpop' in names(x)) x <- x %>% mutate(subpop = NA)
+  message('Writing ', fn, ': ', paste(names(x), sep = ', '))
+  write_csv(x, file.path(cache_dir, fn))
+  x_sid <- x$iucn_sid %>% unique()
+  y <- c(y, x_sid)
+}
+
+z <- spp_all %>%
+  filter(!iucn_sid %in% y) %>%
+  filter(str_detect(spatial_source, 'iucn'))
+
+maps_list_dd <- spp_all %>%
+  filter(str_detect(spatial_source, 'iucn') & !str_detect(spatial_source, 'bli')) %>%
+  filter(popn_category == 'DD') %>%
+  select(sciname, iucn_sid, spp_group) %>%
+  unique()
+
+extract_loiczid_per_spp(maps_list_dd,
+                        fn_tag = paste('dd_', scenario, sep = ''),
+                        reload = TRUE)
 
 ```
 
