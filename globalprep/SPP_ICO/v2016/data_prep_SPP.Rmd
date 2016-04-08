@@ -142,28 +142,33 @@ source(file.path(goal, 'R/ingest_iucn.R'))
 ```
 
 ``` {r Generate spp lookup}
+reload <- TRUE
 
 ### NOTE: Manually set up the subpopulations for 2016: see subpops_list.csv
+if(reload == TRUE) {
+  spp_all <- create_spp_master_lookup(source_pref = 'iucn', fn_tag = '', reload = TRUE)
+  ### | am_sid | sciname | am_category | iucn_sid | iucn_category | popn_trend | popn_category | 
+  ### | info_source | spp_group | id_no | objectid | spatial_source | category_score | trend_score |
+  
+  ### check subpops 1: all spp with an IUCN subpop code
+  spp_all_subpops1 <- spp_all %>%
+    filter(!is.na(iucn_subpop)) %>%
+    unique()
+  
+  ### check subpops 2: all spp with a parent_sid or subpop_sid code
+  spp_all_subpops2 <- spp_all %>%
+    filter(!is.na(parent_sid) | !is.na(subpop_sid))
+  
+  spp_all <- spp_all %>%
+    filter(!(!is.na(parent_sid) & is.na(iucn_subpop)))
+    ### parent_sid tag with no subpop location = FALSE.
+    ### This gets rid of any subpops (spp with parent_sid) that don't have identified shapefiles... 
+  
+  write_csv(spp_all, file.path(dir_anx, scenario, 'int/spp_all_cleaned.csv'))
+} else {
+  spp_all <- read_csv(file.path(dir_anx, scenario, 'int/spp_all_cleaned.csv'))
+}
 
-spp_all <- create_spp_master_lookup(source_pref = 'iucn', fn_tag = '', reload = TRUE)
-### | am_sid | sciname | am_category | iucn_sid | iucn_category | popn_trend | popn_category | 
-### | info_source | spp_group | id_no | objectid | spatial_source | category_score | trend_score |
-
-### check subpops 1: all spp with an IUCN subpop code
-spp_all_subpops1 <- spp_all %>%
-  filter(!is.na(iucn_subpop)) %>%
-  unique()
-
-### check subpops 2: all spp with a parent_sid or subpop_sid code
-spp_all_subpops2 <- spp_all %>%
-  filter(!is.na(parent_sid) | !is.na(subpop_sid))
-
-spp_all <- spp_all %>%
-  filter(!(!is.na(parent_sid) & is.na(iucn_subpop)))
-  ### parent_sid tag with no subpop location = FALSE.
-  ### This gets rid of any subpops (spp with parent_sid) that don't have identified shapefiles... 
-
-write_csv(spp_all, file.path(dir_anx, scenario, 'int/spp_all_cleaned.csv'))
 ```
 
 
@@ -208,12 +213,21 @@ cache_dir <- file.path(dir_anx, 'iucn_intersections')
 intsx_files <- list.files(cache_dir)
 y <- c()
 for(fn in intsx_files) { # fn <- intsx_files[1]
+  write_flag <- FALSE
   x <- read_csv(file.path(cache_dir, fn))
-  message(fn, ': ', paste(names(x), sep = ', '))
-  if('id_no' in names(x)) x <- x %>% rename(iucn_sid = id_no)
-  if(!'subpop' in names(x)) x <- x %>% mutate(subpop = NA)
-  message('Writing ', fn, ': ', paste(names(x), sep = ', '))
-  write_csv(x, file.path(cache_dir, fn))
+  message(fn, ': ', paste(names(x), collapse = ', '))
+  if('id_no' %in% names(x)) {
+    x <- x %>% rename(iucn_sid = id_no)
+    write_flag <- TRUE
+  }
+  if(!'subpop' %in% names(x)) {
+    x <- x %>% mutate(subpop = NA)
+    write_flag <- TRUE
+  }
+  if(write_flag) {
+    message('Writing ', fn, ': ', paste(names(x), collapse = ', '))
+    write_csv(x, file.path(cache_dir, fn))
+  }
   x_sid <- x$iucn_sid %>% unique()
   y <- c(y, x_sid)
 }
@@ -222,14 +236,17 @@ z <- spp_all %>%
   filter(!iucn_sid %in% y) %>%
   filter(str_detect(spatial_source, 'iucn'))
 
+zz <- spp_all %>% filter(popn_category != 'DD') %>%
+  filter(str_detect(spp_group, 'SEABREAM'))
+
 maps_list_dd <- spp_all %>%
   filter(str_detect(spatial_source, 'iucn') & !str_detect(spatial_source, 'bli')) %>%
   filter(popn_category == 'DD') %>%
   select(sciname, iucn_sid, spp_group) %>%
   unique()
 
-extract_loiczid_per_spp(maps_list_dd,
-                        fn_tag = paste('dd_', scenario, sep = ''),
+extract_loiczid_per_spp(zz,
+                        fn_tag = scenario,
                         reload = TRUE)
 
 ```
