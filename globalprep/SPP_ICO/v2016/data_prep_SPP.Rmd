@@ -64,6 +64,7 @@ Changes since 2015 SPP subgoal for global OHI:
 #Data Source
 
 IUCN:
+
 * __Reference__: 
     * IUCN 2015. The IUCN Red List of Threatened Species. Version 2015-4. <http://www.iucnredlist.org>.
         * Shapefiles available from: http://www.iucnredlist.org/technical-documents/spatial-data
@@ -77,6 +78,7 @@ IUCN:
 * __Format__:  Shapefile
 
 AquaMaps:
+
 * __Reference__: 
     * Kaschner, K., J. Rius-Barile, K. Kesner-Reyes, C.Garilao, S.O. Kullander, T. Rees and R. Froese (2013). AquaMaps: Predicted range maps for aquatic species. World wide web electronic publication, www.aquamaps.org, Version 08/2015.
         * __Downloaded__: August 2015.
@@ -365,52 +367,6 @@ for (pref_flag in pref_flag_vec) {   ### pref_flag  <- pref_flag_vec[1]
 
 ```
 
-# TO DO: deal with populations for IUCN species.
-#   examine range maps - are there overlaps between parent and subspecies/subpops?
-#   - if not - no need to worry.
-#   - if so  - worry!  once extracted, overlap info is lost.
-#     - do a difference between parent and each subpop, and then use that for extract?
-#     - if overlap is consistent (i.e. parent fully covers each subpop), just subtract prop_area?
-#       - what if two subpopulations in same cell - might not overlap; so subtract won't work.
-#   ??? are parents already taken out of the iucn_spp_marine_global? that's what it seems like.
-#       In ingest_iucn script, looks like subpops are subsetted OUT of the main list.
-#       But then merged back in, and then parents subsetted out.
-#   TO DO: confirm that this is the right way to do things?  Does 'parent' really just consist
-#       of sum of 'subpopulations' or could it encompass other areas?
-#     * find the full list of parents and subpopulations for marine species, and see how
-#       many are IUCN range map species.  Select by sci name, spot check a few in QGIS or ArcGIS.
-# subpops <- read_csv(file.path(dir_anx, scenario, 'intermediate/spp_iucn_marine_subpopulations.csv')) %>% 
-#   rename(parent = sid)
-# spp_all_subpops <- spp_all %>%
-#   filter(spatial_source == 'iucn') %>%
-#   left_join(subpops,
-#             by = c('iucn_sid' = 'subpopulations')) %>%
-#   filter(!is.na(parent)) %>%
-#   select(iucn_sid, parent, sciname, iucn_category, spp_group, spatial_source)
-
-# NOTES ON model.R - should be covered in the above code.
-# ??? compare BB and MF versions - BB version involves 3nm regions? MF version is for AQ and HS
-# Averages IUCN score per cell for all species in that cell; then takes area-weighted average of those scores for each region
-# .csv of score and trend output.
-# ??? calculate this for both SPP and ICO - SPP is area-weighted (so rare species don't count as much), but ICO is not (rare species count just as much as common)
-
-# some checks: 
-
-# examine species names for mismatches/typos/name variations.  Similar defined as:
-# * first five letters of one field (genus or species) match for both AM and IUCN.
-# * exact match for other field.
-sim_names <- check_sim_names(spp_all)
-
-# check to see how closely IUCN category info matches between IUCN data and AM data
-category_check <- spp_all %>% 
-  filter(!is.na(iucn_category) & !is.na(am_category)) %>%
-  select(sciname, am_category, iucn_category) %>%
-  mutate(am_category   = as.character(am_category),
-         iucn_category = as.character(iucn_category),
-         cat_match = (am_category == iucn_category))
-sum(category_check$cat_match)/nrow(category_check)
-# Out of 2962 species that include IUCN category from both AM and IUCN,
-# 2862 of them are matches.  96.6% match.
 
 ``` {r species_by_region}
 
@@ -499,7 +455,8 @@ st_2016v2015 <- ggplot(status_df, aes(x = st_2015, y = st_2016)) +
   geom_point() +
   geom_abline(slope = 1, intercept = 0, color = 'red') +
   scale_x_continuous(limits = c(0, 1)) +
-  scale_y_continuous(limits = c(0, 1))
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(title = 'Status: 2016 vs 2015')
 
 print(st_2016v2015)
 
@@ -507,7 +464,8 @@ tr_2016v2015 <- ggplot(status_df, aes(x = tr_2015, y = tr_2016)) +
   geom_point() +
   geom_abline(slope = 1, intercept = 0, color = 'red') +
   scale_x_continuous(limits = c(-1, 1)) +
-  scale_y_continuous(limits = c(-1, 1))
+  scale_y_continuous(limits = c(-1, 1)) +
+  labs(title = 'Trend: 2016 vs 2015')
 
 print(tr_2016v2015)
 ```
