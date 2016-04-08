@@ -484,3 +484,30 @@ write_csv(rgn_spp_aq, file.path(dir_git, scenario, 'output/rgn_spp_aq.csv'))
 write_csv(rgn_spp_hs, file.path(dir_git, scenario, 'output/rgn_spp_hs.csv'))
 ```
 
+``` {r plot_scores_vs_2015}
+library(ggplot2)
+status_2016 <- read_csv(file.path(dir_git, scenario, 'output/spp_status_global.csv'))
+trend_2016  <- read_csv(file.path(dir_git, scenario, 'output/spp_trend_global.csv'))
+status_2015 <- read_csv(file.path(dir_git, 'v2015', 'data/spp_status_global.csv'))
+trend_2015  <- read_csv(file.path(dir_git, 'v2015', 'data/spp_trend_global.csv'))
+
+status_df <- status_2016 %>% rename(st_2016 = score) %>%
+  full_join(status_2015 %>% rename(st_2015 = score), by = 'rgn_id') %>%
+  full_join(trend_2016 %>% rename(tr_2016 = score), by = 'rgn_id') %>%
+  full_join(trend_2015 %>% rename(tr_2015 = score), by = 'rgn_id')
+st_2016v2015 <- ggplot(status_df, aes(x = st_2015, y = st_2016)) + 
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  scale_x_continuous(limits = c(0, 1)) +
+  scale_y_continuous(limits = c(0, 1))
+
+print(st_2016v2015)
+
+tr_2016v2015 <- ggplot(status_df, aes(x = tr_2015, y = tr_2016)) + 
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  scale_x_continuous(limits = c(-1, 1)) +
+  scale_y_continuous(limits = c(-1, 1))
+
+print(tr_2016v2015)
+```
