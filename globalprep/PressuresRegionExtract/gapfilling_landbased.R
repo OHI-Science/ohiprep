@@ -24,10 +24,6 @@ tmp$year <- year
 all <- rbind(all, tmp)
 }
 
-all_max_year <- all %>%
-  filter(year == max(year))
-model <- lm(fert_all ~ pest_all, data=all_max_year)
-summary(model)
 
 codes <- read.csv('/var/cache/halpern-et-al/mnt/storage/marine_threats/impact_layers_2013_redo/impact_layers/work/land_based/before_2007/step1/input/country_codes_fao.csv') %>%
   select(country.code.fao=country.codes, Area)
