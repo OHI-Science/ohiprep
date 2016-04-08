@@ -634,20 +634,15 @@ get_iucn_cells_spp <- function(reload = FALSE) {
   return(iucn_cells_spp)
 }
 
-
 ##############################################################################=
-process_iucn_summary_per_cell <- function(fn_tag = '', reload = FALSE) {
-  # Calculate category and trend scores per cell for IUCN species.
-  # * For each IUCN species group:
-  #   * load IUCN species <-> cell lookup
-  #   * filter to appropriate cells (in regions, meets probability threshold)
-  #   * join spatial info: loiczid, region ID, cell area
-  #   * join species info: category score and trend score
-  #   * filter by cat score != NA
-  #   * summarize by loiczid - mean category_score, mean trend_score, count
-  # * Each summary data frame should be saved to a list, to be eventually rbind_all'ed
-  
-  
+process_iucn_summary_per_cell <- function(spp_all, fn_tag = '', reload = FALSE) {
+  # Calculate mean category and trend scores per cell for IUCN species.
+  # * spp_all is df filtered to desired species (e.g. no DD? no subpops?)
+  # * load IUCN species <-> cell lookup
+  # * join species info: category score and trend score
+  # * filter by cat score != NA
+  # * summarize by loiczid:  mean category_score, mean trend_score, count
+
   iucn_cells_spp_sum_file <- file.path(dir_git, scenario, sprintf('summary/spp_sum_iucn_cells%s.csv', fn_tag))
   
   if(!file.exists(iucn_cells_spp_sum_file) | reload) {
@@ -658,6 +653,7 @@ process_iucn_summary_per_cell <- function(fn_tag = '', reload = FALSE) {
       select(-subpop)
     
     # bind to iucn_cells_spp to attach category_score and trend_score.
+
     spp_iucn_info <- spp_all %>% 
       filter(str_detect(spatial_source, 'iucn')) %>% 
       dplyr::select(iucn_sid, category_score, trend_score) %>%
