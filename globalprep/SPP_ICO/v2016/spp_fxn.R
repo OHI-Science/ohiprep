@@ -530,7 +530,7 @@ extract_loiczid_per_spp <- function(map_list,
 
 
 ##############################################################################=
-process_am_summary_per_cell <- function(fn_tag = '', prob_filter = .40, reload = FALSE) {
+process_am_summary_per_cell <- function(spp_all, fn_tag = '', prob_filter = .40, reload = FALSE) {
   # Calculate category and trend scores per cell for Aquamaps species.
   # * load AM species <-> cell lookup
   # * filter to appropriate cells (in regions, meets probability threshold)
@@ -660,7 +660,7 @@ process_iucn_summary_per_cell <- function(spp_all, fn_tag = '', reload = FALSE) 
       unique()
     message(sprintf('Length of IUCN species list: %d\n', nrow(spp_iucn_info)))
     
-    message('Keyed joining to species master list (filtered for spatial_source == iucn or iucn_parent).')
+    message('Keyed joining to species master list (filtered for spatial_source == iucn).')
     ics_keyed <- data.table(iucn_cells_spp,
                             key = "iucn_sid") 
     sii_keyed <- data.table(spp_iucn_info,  

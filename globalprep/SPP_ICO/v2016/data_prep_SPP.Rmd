@@ -213,12 +213,13 @@ extract_loiczid_per_spp(maps_list_bli,
 
 ``` {r SPP Generate species per cell tables for Aquamaps and IUCN }
 
-am_cells_spp_sum <- process_am_summary_per_cell(prob_filter = 0, reload = FALSE)
+am_cells_spp_sum <- process_am_summary_per_cell(spp_all3, fn_tag = '_40_nobirds', prob_filter = 0.4, reload = FALSE)
+am_cells_spp_sum <- process_am_summary_per_cell(fn_tag = '_0', prob_filter = 0, reload = FALSE)
 ### NOTE: keyed data.table works way faster than the old inner_join or merge.
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### AM does not include subspecies or subpops: every am_sid corresponds to exactly one sciname.
 
-iucn_cells_spp_sum <- process_iucn_summary_per_cell(reload = FALSE)
+iucn_cells_spp_sum <- process_iucn_summary_per_cell(spp_all3, fn_tag = '_nobirds', reload = FALSE)
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### IUCN includes subpops - one sciname corresponds to multiple iucn_sid values.
 
@@ -226,7 +227,7 @@ iucn_cells_spp_sum <- process_iucn_summary_per_cell(reload = FALSE)
 
 ``` {r  SPP Global Summarize mean category and trend per cell and per region}
 
-summary_by_loiczid <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum)
+summary_by_loiczid <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum, fn_tag = '_40_nobirds')
 ### This returns dataframe with variables:
 ### loiczid | mean_cat_score | mean_popn_trend_score | n_cat_species | n_trend_species | source
 
@@ -238,7 +239,7 @@ rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
 ### To use a shape file from a different directory (other than git-annex/globalprep/spatial/v2015/data), add an ogr_location argument.
 ### To run a different type of analysis, add an ohi_type argument with global (default), HS, or AQ
 
-summary_by_rgn <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup, rgn_note = 'gl')
+summary_by_rgn <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup, rgn_note = 'gl_40_nobirds')
 ### This returns dataframe with variables:
 ### sp_id | rgn_mean_cat | rgn_mean_trend | status
 
@@ -249,8 +250,8 @@ spp_status <- summary_by_rgn %>%
   select(rgn_id, score = status)
 spp_trend <- summary_by_rgn %>%
   select(rgn_id, score = rgn_mean_trend)
-write_csv(spp_status, file.path(dir_git, scenario, 'output/spp_status_global.csv'))
-write_csv(spp_trend,  file.path(dir_git, scenario, 'output/spp_trend_global.csv'))
+write_csv(spp_status, file.path(dir_git, scenario, 'output/spp_status_global_40_nobirds.csv'))
+write_csv(spp_trend,  file.path(dir_git, scenario, 'output/spp_trend_global_40_nobirds.csv'))
 ```
 
 ``` {r SPP 3nm}
@@ -444,6 +445,10 @@ write_csv(rgn_spp_hs, file.path(dir_git, scenario, 'output/rgn_spp_hs.csv'))
 library(ggplot2)
 status_2016 <- read_csv(file.path(dir_git, scenario, 'output/spp_status_global.csv'))
 trend_2016  <- read_csv(file.path(dir_git, scenario, 'output/spp_trend_global.csv'))
+status_2016 <- read_csv(file.path(dir_git, scenario, 'output/spp_status_global_40.csv'))
+trend_2016  <- read_csv(file.path(dir_git, scenario, 'output/spp_trend_global_40.csv'))
+status_2016 <- read_csv(file.path(dir_git, scenario, 'output/spp_status_global_40_nobirds.csv'))
+trend_2016  <- read_csv(file.path(dir_git, scenario, 'output/spp_trend_global_40_nobirds.csv'))
 status_2015 <- read_csv(file.path(dir_git, 'v2015', 'data/spp_status_global.csv'))
 trend_2015  <- read_csv(file.path(dir_git, 'v2015', 'data/spp_trend_global.csv'))
 
@@ -456,7 +461,7 @@ st_2016v2015 <- ggplot(status_df, aes(x = st_2015, y = st_2016)) +
   geom_abline(slope = 1, intercept = 0, color = 'red') +
   scale_x_continuous(limits = c(0, 1)) +
   scale_y_continuous(limits = c(0, 1)) +
-  labs(title = 'Status: 2016 vs 2015')
+  labs(title = 'Status: 2016 vs 2015 40 nobirds')
 
 print(st_2016v2015)
 
