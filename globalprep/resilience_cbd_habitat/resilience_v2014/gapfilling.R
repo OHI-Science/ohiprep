@@ -14,6 +14,7 @@ library(dplyr)
 
 ## disaggregation regions
 d_regions <- read.csv('../ohi-global/global2015/gapFilling/dissaggregated_gap_fill.csv') %>%
+  filter(description == "Territories, disaggregated in 2013, probably gapfilled") %>%
   select(rgn_id = rgn_id_2013, region_id_2012) %>%
   mutate(gap_fill_1 = "disagg2012_gap_fill") %>%
   arrange(region_id_2012)
@@ -36,7 +37,7 @@ aliens <- aliens %>%
   filter(rgn_id != 213)  # cut antarctica
 
 aliens_gf <- aliens %>%
-  mutate(resilience.score = ifelse(whencev01 == 'SG', 1, 0)) %>%
+  mutate(resilience.score = ifelse(whencev01 %in% 'SG' | gap_fill_1 %in% 'disagg2012_gap_fill', 1, 0)) %>%
   select(rgn_id, resilience.score)
 
 write.csv(aliens_gf, 
