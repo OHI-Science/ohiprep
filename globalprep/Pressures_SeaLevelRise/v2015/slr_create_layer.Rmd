@@ -62,12 +62,11 @@ The Sea Level Rise pressure layer was updated with new data for the year 2013. P
 
 ```{r setup, warning=F, message=F}
 
-    dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
-              'Darwin'  = '/Volumes/data_edit',
-              'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
+    dir_M = c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
+              'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
 
 
-knitr::opts_knit$set(root.dir = file.path(dir_N,'git-annex/globalprep/Pressures_SeaLevelRise'))
+knitr::opts_knit$set(root.dir = file.path(dir_M,'git-annex/globalprep/prs_slr'))
 
 #libraries
 
@@ -99,13 +98,13 @@ cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color sc
 
     #library(ncdf4)
 
-    #r <- raster('raw/MSL_Map_MERGED_Global_IB_RWT_NoGIA_Adjust.nc')
+    #r <- raster('../_raw_data/prs_slr/d2015/MSL_Map_MERGED_Global_IB_RWT_NoGIA_Adjust.nc')
     #writeRaster(r,'tmp/MSL_Map_MERGED_Global_IB_RWT_NoGIA_Adjust.tif')
 
 
 # Read in raw data
 
-    r <- raster('tmp/MSL_Map_MERGED_Global_IB_RWT_NoGIA_Adjust.tif')
+    r <- raster('v2015/tmp/MSL_Map_MERGED_Global_IB_RWT_NoGIA_Adjust.tif')
 
     plot(r,col=cols,main='Mean Annual Sea Level Rise (mm)\n1993-2014')
 ```
@@ -160,7 +159,7 @@ Original resolution of the data is 0.25 degrees. To resample the data to 1km res
 ```{r,message=FALSE,warning=FALSE}
 
     #ocean is a raster with all land clipped out - at 1km with value of 1
-    ocean = raster(file.path(dir_N,'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
+    ocean = raster(file.path(dir_M,'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
     plot(ocean,main='Ocean Raster at 1km resolution \nUsed for resampling and clipping')
 
     slr_1km = resample(slr_moll,ocean,method='ngb')
@@ -188,7 +187,7 @@ All values at or above the 99.99th quantile (512.8) are set to equal 1.
 Interpolating the data was done using ArcGIS. All NA cells were interpolated using nearest neighbor. The python script can be found [here](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/Pressures_SeaLevelRise/scripts/SLR_interpolation.py)  
 ```{r interpolation,message=FALSE,warning=FALSE}
 
-  r_int = raster('tmp/slr_moll_nonlog_1km_resc_int.tif')
+  r_int = raster('v2015/tmp/slr_moll_nonlog_1km_resc_int.tif')
   plot(r_int,main='Sea level rise interpolation with nearest neighbor',col=cols)
 ```
 
