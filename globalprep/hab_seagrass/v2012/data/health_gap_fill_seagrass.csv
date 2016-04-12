@@ -53,7 +53,7 @@
 55,"seagrass","health",NA
 56,"seagrass","health",NA
 57,"seagrass","health",NA
-58,"seagrass","health","disagg2012_gap_fill"
+58,"seagrass","health","prediction and disagg2012_gap_fill"
 59,"seagrass","health",NA
 60,"seagrass","health",NA
 61,"seagrass","health",NA
@@ -103,17 +103,17 @@
 107,"seagrass","health",NA
 108,"seagrass","health",NA
 110,"seagrass","health","adjacent"
-111,"seagrass","health","disagg2012_gap_fill"
+111,"seagrass","health","prediction and disagg2012_gap_fill"
 112,"seagrass","health","adjacent"
-113,"seagrass","health","disagg2012_gap_fill"
+113,"seagrass","health","prediction and disagg2012_gap_fill"
 114,"seagrass","health","adjacent"
 115,"seagrass","health","adjacent"
-116,"seagrass","health","0"
-117,"seagrass","health","disagg2012_gap_fill"
-118,"seagrass","health","disagg2012_gap_fill"
+116,"seagrass","health","prediction"
+117,"seagrass","health","prediction and disagg2012_gap_fill"
+118,"seagrass","health","prediction and disagg2012_gap_fill"
 119,"seagrass","health","adjacent"
 120,"seagrass","health","adjacent"
-121,"seagrass","health","disagg2012_gap_fill"
+121,"seagrass","health","prediction and disagg2012_gap_fill"
 122,"seagrass","health","georegion"
 123,"seagrass","health","georegion"
 124,"seagrass","health","georegion"
@@ -123,7 +123,7 @@
 129,"seagrass","health","adjacent"
 130,"seagrass","health",NA
 131,"seagrass","health","adjacent"
-132,"seagrass","health","0"
+132,"seagrass","health","prediction"
 133,"seagrass","health","adjacent"
 134,"seagrass","health",NA
 135,"seagrass","health","adjacent"
@@ -169,7 +169,7 @@
 179,"seagrass","health","0"
 180,"seagrass","health",NA
 181,"seagrass","health",NA
-182,"seagrass","health","0"
+182,"seagrass","health","prediction"
 183,"seagrass","health",NA
 184,"seagrass","health","adjacent"
 186,"seagrass","health",NA
@@ -195,7 +195,7 @@
 207,"seagrass","health","georegion"
 208,"seagrass","health","georegion"
 209,"seagrass","health","adjacent"
-210,"seagrass","health","0"
+210,"seagrass","health","prediction"
 212,"seagrass","health","georegion"
 213,"seagrass","health",NA
 214,"seagrass","health","georegion"
