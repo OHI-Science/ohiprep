@@ -209,25 +209,20 @@ Now having identified spatial source availability and preference for all species
 reload <- FALSE
 
 if(reload) {
-  ### NOTE: Manually set up the subpopulations for 2016: see subpops_list.csv
+  ### NOTE: Manually set up the subpopulations for 2016: see subpops_list.csv.
+  ### For each of these species, the shapefile was modified so that the id_no
+  ### field related to the subpop iucn_sid instead of the parent iucn_sid.
 
   spp_all <- create_spp_master_lookup(source_pref = 'iucn', fn_tag = '', reload = TRUE)
-  ### | am_sid | sciname | am_category | iucn_sid | iucn_category | popn_trend | popn_category | 
+  ### | am_sid | sciname | am_category | iucn_sid | iucn_category | pop_trend | pop_category | 
   ### | info_source | spp_group | id_no | objectid | spatial_source | category_score | trend_score |
   
-  ### check subpops 1: all spp with an IUCN subpop code
-  spp_all_subpops1 <- spp_all %>%
+  ### check subpops: all spp with an IUCN subpop code
+  spp_all_subpops <- spp_all %>%
     filter(!is.na(iucn_subpop)) %>%
     unique()
   
-  ### check subpops 2: all spp with a parent_sid or subpop_sid code
-  spp_all_subpops2 <- spp_all %>%
-    filter(!is.na(parent_sid) | !is.na(subpop_sid))
-  
-  spp_all <- spp_all %>%
-    filter(!(!is.na(parent_sid) & is.na(iucn_subpop)))
-    ### parent_sid tag with no subpop location = FALSE.
-    ### This gets rid of any subpops (spp with parent_sid) that don't have identified shapefiles... 
+  ### if there is any cleaning to be done, this is where it would go.
   
   write_csv(spp_all, file.path(dir_anx, scenario, 'int/spp_all_cleaned.csv'))
 } else {
@@ -317,7 +312,7 @@ These are then saved to status and trend layer outputs for global (shown in tabl
 
 summary_by_loiczid <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum, fn_tag = '')
 ### This returns dataframe with variables:
-### loiczid | mean_cat_score | mean_popn_trend_score | n_cat_species | n_trend_species | source
+### loiczid | mean_cat_score | mean_pop_trend_score | n_cat_species | n_trend_species | source
 
 rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
 ### | rgn_id | rgn_name | loiczid | proportionArea | csq | cell_area
