@@ -44,7 +44,7 @@ system.time({
     separate(raw, into = hdr_lines$var_name[1:cols_to_keep], sep = ', ', convert = TRUE, remove = TRUE, extra = 'drop')
 }) ### On Neptune: 65.7 seconds with 2014 data; 60.8 for 2015 data
 
-write.csv(hcaf_df, file.path(am_dir_2015, '../csv/hcaf_truncated.csv'), row.names = FALSE)
+write_csv(hcaf_df, file.path(am_dir_2015, '../csv/hcaf_truncated.csv'))
 ### hcaf_df <- read.csv(file.path(am_dir_2015, '../csv/hcaf_truncated.csv'), stringsAsFactors = FALSE)
 
 ### Compare outputs from this script using 2014 MySQL method and R method:
@@ -101,7 +101,7 @@ system.time({
   ### but for the purposes of comparing differences, this became an issue...
 }) ### On Neptune: 1.4 seconds with 2014 data; 2.2 s for 2015 data
 
-write.csv(sp_occur_df, file.path(am_dir_2015, '../csv/speciesoccursum.csv'), row.names = FALSE)
+write_csv(sp_occur_df, file.path(am_dir_2015, '../csv/speciesoccursum.csv'))
 
 ### Check method against 2014 data -----
 ### Compare outputs from this script using 2014 MySQL method and R method:

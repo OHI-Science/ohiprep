@@ -13,9 +13,36 @@ output:
     toc: true
 ---
 
-[REFERENCE RMD FILE: https://rawgit.com/OHI-Science/ohiprep/master/globalprep/Pressures_OceanAcidification/v2015/oa_create_layer_2015.html]
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
 
-#Summary
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
+                      echo = FALSE, message = FALSE, warning = FALSE)
+
+library(foreign)
+library(data.table) # for fread()
+library(sp)
+library(rgdal)
+library(raster)
+library(maptools)
+library(readr)      # for read_csv()
+
+source('~/github/ohiprep/src/R/common.R')
+
+goal     <- 'globalprep/SPP_ICO'
+scenario <- 'v2016'
+dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal) 
+dir_data_am    <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'aquamaps/v2015') 
+dir_data_iucn  <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'iucn_spp') 
+dir_data_bird  <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'birdlife_intl') 
+dir_git  <- file.path('~/github/ohiprep', goal)
+
+source(file.path(dir_git, scenario, 'spp_fxn.R'))
+# SPP-specific and ICO-specific functions
+```
+
+<!--[REFERENCE RMD FILE: https://rawgit.com/OHI-Science/ohiprep/master/globalprep/Pressures_OceanAcidification/v2015/oa_create_layer_2015.html]-->
+
+# Summary
 
 Spatial data from IUCN and Aquamaps is combined with extinction risk information from IUCN to generate regional scores for the Species subgoal.  A region's status is based upon an area-weighted average of species health across each global reporting region.
 
@@ -61,7 +88,7 @@ Changes since 2015 SPP subgoal for global OHI:
 
 ***
 
-#Data Source
+# Data Sources
 
 IUCN:
 
@@ -89,59 +116,93 @@ AquaMaps:
 
 ***
   
-#Methods
-[R code used to generate the data. Or, alternatively, description of the code/data files used to generate the data.]
+# Methods
 
-***
+## Extract AquaMaps data from .sql files
 
-```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+AquaMaps data for the 2016 assessment was provided as .sql files, as in previous years, that can be used to generate an SQL database.  Each line in the .sql is a command to populate the SQL database.
 
-knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
-                      echo = FALSE, message = FALSE, warning = FALSE)
+* Original files extracted from `aquamaps_2015_full_dataset_ohi.zip`:
+    * `hcaf_ohi.sql`
+    * `speciesoccursum_ohi.sql`
+    * `hcaf_species_native_ohi.sql`
+* Processed files saved to git-annex:
+    * `hcaf_truncated.csv`
+    * `speciesoccursum.csv`
+    * `hcaf_sp_native_trunc.csv`
 
-library(foreign)
-library(data.table) # for fread()
-library(sp)
-library(rgdal)
-library(raster)
-library(maptools)
-library(readr)      # for read_csv()
-
-setwd('~/github/ohiprep')
-source('src/R/common.R')
-
-goal     <- 'globalprep/SPP_ICO'
-scenario <- 'v2016'
-dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal) 
-dir_data_am    <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'aquamaps/v2015') 
-dir_data_iucn  <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'iucn_spp') 
-dir_data_bird  <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'birdlife_intl') 
-dir_git  <- file.path('~/github/ohiprep', goal)
-
-source(file.path(dir_git, scenario, 'spp_fxn.R'))
-# SPP-specific and ICO-specific functions
-```
-
+To extract data, we instead scan each line for `CREATE TABLE` and `INSERT INTO` commands to create and save dataframes.  Note that the `am_extract_2015.R` script discards much of the data from these .sqls that is not used within the OHI Species Goal processing (thus "truncated").  This speeds up read time and processing time and avoids parsing issues with some of the rows/columns.
+Note also that the hcaf_species_native_ohi.sql file does not originally contain LOICZID information; this is added in the extract script, since LOICZID as a cell identifier is faster and less memory intensive than CsquareCode (integer vs character string).
 
 ``` {r Ingest Aquamaps data to csv from sql, eval = FALSE}
 
-source(file.path(dir_git, 'R/ingest_aquamaps.R'))
+source(file.path(dir_git, 'R/am_extract_2015.R'))
 ingest_aquamaps()
+
 ```
+
+``` {r pull headers from AquaMaps files}
+hcaf_tmp      <- read_csv(file.path(dir_data_am, 'csv/hcaf_truncated.csv'),       n_max = 5)
+sppoccsum_tmp <- read_csv(file.path(dir_data_am, 'csv/speciesoccursum.csv'),      n_max = 5)
+hcaf_sp_n_tmp <- read_csv(file.path(dir_data_am, 'csv/hcaf_sp_native_trunc.csv'), n_max = 5)
+```
+
+`r knitr::kable(hcaf_tmp,      caption = 'Half-degree cell info from hcaf_truncated.csv (first few rows)')`
+
+`r knitr::kable(sppoccsum_tmp, caption = 'Species info from speciesoccursum.csv (first few rows)')`
+
+`r knitr::kable(hcaf_sp_n_tmp, caption = 'Species-to-cell lookup from hcaf_sp_native_trunc.csv (first few rows)')`
+
+## Ingest IUCN species list
+
+To identify appropriate IUCN species for the analysis, we identified all IUCN Red List species whose habitat included "marine" designation.  The `ingest_iucn.R` script scrapes this data directly from the IUCN Red List website.
+
+* Starting point: Access Red List API at http://api.iucnredlist.org/index/all.csv.  This provides a list of all Red List species, including unique IUCN code, taxonomic nomenclature, and Red List extinction risk.
+* For all identified species, we access species-specific info at http://api.iucnredlist.org/details/X/0 where X is the unique IUCN species ID; this page is saved to a cache directory on git-annex as a .htm file.  At the same time, we scrape the "habitats" field from the saved page using XML tags.
+* All species with "marine" habitat are then scraped to find details on population trend and subpopulation ID numbers.
+* After some cleaning of scientific names (accents, spaces, html tags, etc) the file is saved to git-annex for later use.
+
+Processed files, saved to `git-annex/globalprep/SPP_ICO/v201x/int`: 
+* `spp_iucn_all.csv` - full list of IUCN species pulled from web, some cleaning.
+* `spp_iucn_habitats.csv` - list of IUCN species (by iucn_sid) and corresponding habitat.
+* `spp_iucn_marine.csv` - prepped list: cleaned marine list with subpops and trends.
 
 ``` {r Ingest IUCN species list, eval = FALSE}
 
 source(file.path(goal, 'R/ingest_iucn.R'))
-### Pulls species list from IUCN
-### Scrapes data from iucn site for each species on the list; saves to cache directory.
-### Extracts habitats from cached files; filters IUCN list down to just marine species.
-### Fixes older IUCN codes, cleans up scinames, gets rid of infraranks (subspecies).
-### Determines subpopulations/parents and population trends from scraped files.
-### Main outputs, saved to git-annex/globalprep/SPP_ICO/v201x/int: 
-### * spp_iucn_all.csv      - full list of IUCN species pulled from web, some cleaning.
-### * spp_iucn_habitats.csv - list of IUCN species (by iucn_sid) and corresponding habitat.
-### * spp_iucn_marine.csv   - prepped list: cleaned marine list with subpops and trends.
+
 ```
+
+``` {r pull headers from IUCN marine species list}
+mar_tmp <- read_csv(file.path(dir_anx, scenario, 'int/spp_iucn_marine.csv'), n_max = 5)
+```
+
+`r knitr::kable(mar_tmp, caption = 'IUCN marine species list and info from spp_iucn_marine.csv (first few rows)')`
+
+## Generate full species lookup table
+
+Having processed AquaMaps and IUCN species raw data, we can now prepare a full combined list of all species to be included in the OHI SPP goal.  The function `create_spp_master_lookup()` creates the full lookup table:
+
+* Load AquaMaps species info from `speciesoccursum.csv`
+    * Verify `sciname` field; the `verify_scinames()` function uses `taxize::gnr_resolve()` to compare AM scinames to accepted names from Encyclopedia of Life and NCBI databases - this helps resolve differences in naming conventions and species aliases.
+* Load IUCN species info from `spp_iucn_marine.csv`
+    * Verify `sciname` field as above.
+* Join the two species lists by verified scientific names as the best common identifier.
+* Create an extinction risk category field for each row, using IUCN category, or failing that the category listed in AquaMaps; failing that, assign NA.
+
+At this point, the list is all AquaMaps species and all marine-identified IUCN species.  Next, identify the source of spatial distribution data for each species, if available.
+
+* From the downloaded IUCN shapefiles, determine which species have spatial data.
+* Depending on preference and availability of spatial source (AquaMaps or IUCN), tag each row with a specific `spatial_source` ("am" or "iucn").
+* Follow a similar process for IUCN species included in the BirdLife International geodatabase (tag as "iucn-bli").
+
+Now having identified spatial source availability and preference for all species on the list:
+
+* Clean out duplicated species
+* Assign numeric values to population Red List category and population trend.
+* Save result to `git-annex/globalprep/SPP_ICO/v2016/int/spp_all_raw.csv`
+* Filter out subpop species rows (species with a non-NA `parent_sid`) that do not have a named subpopulation location (i.e. `iucn_subpop` field is NA, instead of the name of a subpopulation)
+* Save final list to `git-annex/globalprep/SPP_ICO/v2016/int/spp_all_cleaned.csv`
 
 ``` {r Generate spp lookup}
 
@@ -175,16 +236,23 @@ if(reload) {
 
 ```
 
+`r knitr::kable(head(spp_all), caption = 'Combined species list from spp_all_cleaned.csv (first few rows)')`
+
+## Spatialize species information using AquaMaps and IUCN spatial data
+
+### Extract IUCN polygons to half-degree cells
+
+We extract IUCN polygon presence to the same half-degree cells as AquaMaps to simplify the analysis.
+* The `spp_all` species list includes a field `spp_group` that identifies which shapefile contains the spatial information for a given species.
+    * for each species group, specific species are identified by comparing `iucn_sid` from dataframe to `id_no` within the shapefile.
+* Extract loiczid cell IDs for each species within each species group.  Save a .csv file for that group, with fields:
+    * sciname | iucn_sid | presence | subpop | LOICZID | prop_area
+    * presence codes: 1 extant; 2 prob extant (discontinued); 3 Possibly Extant; 4 Possibly Extinct; 5 Extinct (post 1500); 6 Presence Uncertain
+* __NOTE:__ this takes a long time - multiple hours for some of the shape files.  
+    * by passing a filtered data frame to the function, you can focus the process only on new or updated shapefiles
+    * reload = FALSE allows the function to skip extraction on groups with files already present.  Set to TRUE if you need to extract an updated shapefile (or change the shapefile name, or delete the previous extraction...)
 
 ``` {r Generate lookup IUCN species to LOICZID, eval = FALSE}
-
-### Extract loiczid cell IDs for each species within each species group.  Save 
-### a .csv file for that group, with fields:
-###       sciname | iucn_sid | presence | subpop | LOICZID | prop_area
-### * presence codes: 1 extant; 2 prob extant (discontinued); 3 Possibly Extant;
-###                   4 Possibly Extinct; 5 Extinct (post 1500); 6 Presence Uncertain
-### NOTES: this takes a long time - multiple hours for some of the shape files.  
-### * reload = FALSE allows it to skip extraction on groups with files already present.
 
 ### set up maps_list for all standard (non-bird) IUCN species...
 maps_list_iucn <- spp_all %>%
@@ -211,6 +279,17 @@ extract_loiczid_per_spp(maps_list_bli,
 
 ```
 
+### Generate cell-by-cell summary of species
+
+For each half-degree cell, tally up the number of species present and determine a mean species risk value and population trend value for the cell.  
+
+* At this point, the species-cell lists are filtered to species with valid extinction risk categories - i.e. not DD and not NA.
+* Since this averaging is done for each data set separately, we also track the species count per cell used to determine both the risk and the trend (separately, since many species with a risk value have no trend information, i.e. NA).  These counts are used to weight the values when the two are combined.
+* Data-set specific idiosyncracies:
+    * For AquaMaps, we apply a threshold to set the minimum probability of occurrence that determines species "presence."
+    * For IUCN, no threshold is needed; but the shapefiles include a "presence" attribute in which a value of 5 indicates a region in which a subpopulation has become extinct.  We use this to manually reset local extinction risk and trend to EX and NA respectively.
+    * Note that for IUCN, we determine the proportional area when extracting polygons; currently we just consider any presence to fill the cell (similar to assuming even a low AquaMaps probability to indicate presence within the entire cell).
+
 ``` {r SPP Generate species per cell tables for Aquamaps and IUCN }
 
 am_cells_spp_sum <- process_am_summary_per_cell(spp_all, fn_tag = '', prob_filter = 0, reload = FALSE)
@@ -223,6 +302,16 @@ iucn_cells_spp_sum <- process_iucn_summary_per_cell(spp_all, fn_tag = '', reload
 ### IUCN includes subpops - one sciname corresponds to multiple iucn_sid values.
 
 ```
+
+`r knitr::kable(head(am_cells_spp_sum), caption = 'AquaMaps cell summary (first few rows)')`
+
+`r knitr::kable(head(iucn_cells_spp_sum), caption = 'IUCN cell summary (first few rows)')`
+
+## Summarize status and trend by region
+
+Finally we take the two cell-by-cell summaries and combine, using a species-count weighting to determine the mean category and trend per cell.  Cells are aggregated to regions, to calculate an area-weighted regional mean category, trend, and status.
+
+These are then saved to status and trend layer outputs for global (shown in table) as well as 3 nautical mile, Antarctic, and High Seas regions.
 
 ``` {r  SPP Global Summarize mean category and trend per cell and per region}
 
@@ -252,6 +341,9 @@ spp_trend <- summary_by_rgn %>%
 write_csv(spp_status, file.path(dir_git, scenario, 'output/spp_status_global.csv'))
 write_csv(spp_trend,  file.path(dir_git, scenario, 'output/spp_trend_global.csv'))
 ```
+
+`r DT::datatable(head(iucn_cells_spp_sum), caption = 'Region summary: mean category, trend, and status')`
+
 
 ``` {r SPP 3nm}
 
@@ -363,84 +455,42 @@ for (pref_flag in pref_flag_vec) {   ### pref_flag  <- pref_flag_vec[1]
                         sprintf('output/spp_trend_global%s_prob%s.csv', pref_flag, prob_filt)))
   }
 }
-  
 
 ```
 
+## Determine species by region
+
+The `calc_rgn_spp()` function takes in lookup tables of species by cell (for both IUCN and AM), a cell-to-region lookup, and a species info lookup.  From this it generates a list of which species occur in which regions, including species information.
 
 ``` {r species_by_region}
 
-
-calc_rgn_spp <- function(ics_keyed, acs_keyed, rgn_keyed) {
-  iucn_rgn_spp <- ics_keyed[rgn_keyed] %>%
-    dplyr::select(iucn_sid, presence, loiczid, rgn_id, rgn_name) %>%
-    unique() %>%
-    group_by(rgn_id, rgn_name, iucn_sid, presence) %>%
-    summarize(n_cells = n())
-  
-  spp_iucn <- spp_all %>%
-    filter(str_detect(spatial_source, 'iucn')) %>%
-    filter(popn_category != 'DD') %>%
-    select(iucn_sid, am_sid, sciname, popn_category, popn_trend) %>%
-    unique() %>%
-    group_by(iucn_sid, popn_category, popn_trend) %>%
-    summarize(sciname = paste(sciname, collapse = ', '),
-              am_sid = paste(am_sid, collapse = ', '))
-  
-  iucn_rgn_spp1 <- spp_iucn %>%
-    left_join(iucn_rgn_spp, by = 'iucn_sid') %>%
-    mutate(spatial_source = 'iucn') %>%
-    filter(!is.na(rgn_id))
-  
-  am_rgn_spp <- acs_keyed[rgn_keyed] %>%
-    dplyr::select(am_sid, loiczid, rgn_id, rgn_name) %>%
-    unique() %>%
-    group_by(rgn_id, rgn_name, am_sid) %>%
-    summarize(n_cells = n())
-  
-  spp_am <- spp_all %>%
-    filter(str_detect(spatial_source, 'am')) %>%
-    filter(popn_category != 'DD') %>%
-    select(am_sid, iucn_sid, sciname, popn_category, popn_trend)
-  
-  am_rgn_spp1 <- spp_am %>%
-    left_join(am_rgn_spp, by = 'am_sid') %>%
-    mutate(presence = NA,
-           spatial_source = 'am') %>%
-    filter(!is.na(rgn_id))
-  
-  rgn_spp_all <- bind_rows(am_rgn_spp1, iucn_rgn_spp1)
-}
-
-
 iucn_cells_spp <- read_csv(file.path(dir_data_iucn, sprintf('iucn_cells_%s.csv', scenario)),
                            col_types = 'cddddc')
-ics_keyed <- data.table(iucn_cells_spp,
-                        key = "loiczid") 
 am_cells_spp   <- read_csv(file.path(dir_anx, scenario, 'int/am_cells_spp_prob0.csv'))
-acs_keyed <- data.table(am_cells_spp,
-                        key = "loiczid") 
-rgn_keyed <- data.table(rgn_cell_lookup,  
-                        key = "loiczid")
-rgn_keyed_3nm <- data.table(rgn_cell_lookup_3nm,  
-                        key = "loiczid")
-rgn_keyed_aq <- data.table(rgn_cell_lookup_aq,  
-                        key = "loiczid")
-rgn_keyed_hs <- data.table(rgn_cell_lookup_hs,  
-                        key = "loiczid")
 
-rgn_spp_gl <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed)
-rgn_spp_3nm <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_3nm)
-rgn_spp_aq <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_aq)
-rgn_spp_hs <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_hs)
+ics_keyed     <- data.table(iucn_cells_spp, key = "loiczid") 
+acs_keyed     <- data.table(am_cells_spp,   key = "loiczid") 
 
-write_csv(rgn_spp_gl, file.path(dir_git, scenario, 'output/rgn_spp_gl.csv'))
+rgn_keyed     <- data.table(rgn_cell_lookup,     key = "loiczid")
+rgn_keyed_3nm <- data.table(rgn_cell_lookup_3nm, key = "loiczid")
+rgn_keyed_aq  <- data.table(rgn_cell_lookup_aq,  key = "loiczid")
+rgn_keyed_hs  <- data.table(rgn_cell_lookup_hs,  key = "loiczid")
+
+rgn_spp_gl  <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed,     spp_all)
+rgn_spp_3nm <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_3nm, spp_all)
+rgn_spp_aq  <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_aq,  spp_all)
+rgn_spp_hs  <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_hs,  spp_all)
+
+write_csv(rgn_spp_gl,  file.path(dir_git, scenario, 'output/rgn_spp_gl.csv'))
 write_csv(rgn_spp_3nm, file.path(dir_git, scenario, 'output/rgn_spp_3nm.csv'))
-write_csv(rgn_spp_aq, file.path(dir_git, scenario, 'output/rgn_spp_aq.csv'))
-write_csv(rgn_spp_hs, file.path(dir_git, scenario, 'output/rgn_spp_hs.csv'))
+write_csv(rgn_spp_aq,  file.path(dir_git, scenario, 'output/rgn_spp_aq.csv'))
+write_csv(rgn_spp_hs,  file.path(dir_git, scenario, 'output/rgn_spp_hs.csv'))
 ```
 
-``` {r plot_scores_vs_2015}
+`r knitr::kable(head(rgn_spp_gl), caption = 'Species by region - first few rows')`
+
+
+``` {r plot_scores_vs_2015, eval = FALSE}
 library(ggplot2)
 status_2016 <- read_csv(file.path(dir_git, scenario, 'output/spp_status_global.csv'))
 trend_2016  <- read_csv(file.path(dir_git, scenario, 'output/spp_trend_global.csv'))

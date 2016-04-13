@@ -425,11 +425,16 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
       left_join(popn_cat,   by = 'popn_category') %>%
       left_join(popn_trend, by = 'popn_trend') 
     
+    ### Ditch some presently unused columns...
+    spp_all <- spp_all %>%
+      select(-am_category, -iucn_category, -reviewed, -name_verified, -presence, -info_source) %>%
+      unique()
+    
     message(sprintf('Writing full species lookup table to: \n  %s', spp_all_file))
     write_csv(spp_all, spp_all_file)
   } else {
     message(sprintf('Full species lookup table already exists.  Reading from: \n  %s', spp_all_file))
-    spp_all <- read.csv(spp_all_file, stringsAsFactors = FALSE)
+    spp_all <- read_csv(spp_all_file)
   }
   
   return(invisible(spp_all))
@@ -678,10 +683,11 @@ process_iucn_summary_per_cell <- function(spp_all, fn_tag = '', reload = FALSE) 
     y <- spp_iucn_info %>% filter(!iucn_sid %in% x$iucn_sid)
     z <- spp_all %>% filter(iucn_sid %in% y$iucn_sid) %>% filter(popn_category != 'DD')
     
-    ### assign proper values for extinct polygons based on presence = 5
+    ### assign proper values for extinct polygons based on presence = 5; category becomes EX
+    ### and trend becomes NA
     iucn_cells_spp1 <- iucn_cells_spp1 %>%
       mutate(category_score = ifelse(presence == 5, 1, category_score),
-             trend_score    = ifelse(presence == 5, 0, trend_score))
+             trend_score    = ifelse(presence == 5, NA, trend_score))
     
     message('Eliminating species double-counting due to overlapping polygons in IUCN shapefiles.')
     iucn_cells_spp1 <- iucn_cells_spp1 %>%
@@ -767,12 +773,11 @@ process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup, rgn_note 
   region_sums <- region_sums %>%
     mutate(status = ((1 - rgn_mean_cat) - 0.25) / 0.75)
   
-  region_summary_file <- file.path(dir_git, 
-                                   scenario, 
+  region_summary_file <- file.path(dir_git, scenario, 
                                    sprintf('summary/rgn_summary%s.csv', ifelse(rgn_note == '', '',
                                                                                sprintf('_%s', rgn_note))))
   
-  message(sprintf('Writing summary file of area-weighted mean category & trend per region:\n  %s\n', region_summary_file))
+  message(sprintf('Writing summary file of area-weighted mean category & trend per region:\n  %s', region_summary_file))
   write_csv(region_sums, region_summary_file)
   
   return(region_sums)
@@ -850,5 +855,51 @@ verify_scinames <- function(names_df, fn_tag) {
     return(NULL)
   }
   
+}
+
+
+##############################################################################=
+calc_rgn_spp <- function(ics_keyed, acs_keyed, rgn_keyed, spp_all) {
+  iucn_rgn_spp <- ics_keyed[rgn_keyed] %>%
+    dplyr::select(iucn_sid, presence, loiczid, rgn_id, rgn_name) %>%
+    unique() %>%
+    group_by(rgn_id, rgn_name, iucn_sid, presence) %>%
+    summarize(n_cells = n())
+  
+  spp_iucn <- spp_all %>%
+    filter(str_detect(spatial_source, 'iucn')) %>%
+    filter(popn_category != 'DD') %>%
+    select(iucn_sid, am_sid, sciname, popn_category, popn_trend) %>%
+    unique() %>%
+    group_by(iucn_sid, popn_category, popn_trend) %>%
+    summarize(sciname = paste(sciname, collapse = ', '),
+              am_sid = paste(am_sid, collapse = ', '))
+  
+  iucn_rgn_spp1 <- spp_iucn %>%
+    left_join(iucn_rgn_spp, by = 'iucn_sid') %>%
+    mutate(spatial_source = 'iucn') %>%
+    filter(!is.na(rgn_id))
+  
+  am_rgn_spp <- acs_keyed[rgn_keyed] %>%
+    dplyr::select(am_sid, loiczid, rgn_id, rgn_name) %>%
+    unique() %>%
+    group_by(rgn_id, rgn_name, am_sid) %>%
+    summarize(n_cells = n())
+  
+  spp_am <- spp_all %>%
+    filter(str_detect(spatial_source, 'am')) %>%
+    filter(popn_category != 'DD') %>%
+    select(am_sid, iucn_sid, sciname, popn_category, popn_trend)
+  
+  am_rgn_spp1 <- spp_am %>%
+    left_join(am_rgn_spp, by = 'am_sid') %>%
+    mutate(presence = NA,
+           spatial_source = 'am') %>%
+    filter(!is.na(rgn_id))
+  
+  rgn_spp_all <- bind_rows(am_rgn_spp1, iucn_rgn_spp1) %>%
+    group_by(rgn_id) %>%
+    mutate(n_spp_rgn = n()) %>%
+    ungroup()
 }
 
