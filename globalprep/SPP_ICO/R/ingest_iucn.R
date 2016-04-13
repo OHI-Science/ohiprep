@@ -48,7 +48,7 @@ generate_iucn_all_spp_list <- function(reload = FALSE) {
     write_csv(spp_iucn_all, all_spp_file)
   } else {
     message(sprintf('Reading local full IUCN redlist species list from: %s\n', all_spp_file))
-    spp_iucn_all <- read.csv(all_spp_file, stringsAsFactors = FALSE)
+    spp_iucn_all <- read_csv(all_spp_file)
   }
   return(invisible(spp_iucn_all))
 }
