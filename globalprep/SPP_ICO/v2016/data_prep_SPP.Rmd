@@ -287,12 +287,12 @@ For each half-degree cell, tally up the number of species present and determine 
 
 ``` {r SPP Generate species per cell tables for Aquamaps and IUCN }
 
-am_cells_spp_sum <- process_am_summary_per_cell(spp_all, fn_tag = '', prob_filter = 0, reload = TRUE)
+am_cells_spp_sum <- process_am_summary_per_cell(spp_all, fn_tag = '', prob_filter = 0, reload = FALSE)
 ### NOTE: keyed data.table works way faster than the old inner_join or merge.
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### AM does not include subspecies or subpops: every am_sid corresponds to exactly one sciname.
 
-iucn_cells_spp_sum <- process_iucn_summary_per_cell(spp_all, fn_tag = '', reload = TRUE)
+iucn_cells_spp_sum <- process_iucn_summary_per_cell(spp_all, fn_tag = '', reload = FALSE)
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### IUCN includes subpops - one sciname corresponds to multiple iucn_sid values.
 
@@ -337,7 +337,7 @@ write_csv(spp_status, file.path(dir_git, scenario, 'output/spp_status_global.csv
 write_csv(spp_trend,  file.path(dir_git, scenario, 'output/spp_trend_global.csv'))
 ```
 
-`r DT::datatable(head(iucn_cells_spp_sum), caption = 'Region summary: mean category, trend, and status')`
+`r DT::datatable(summary_by_rgn, caption = 'Region summary: mean category, trend, and status')`
 
 
 ``` {r SPP 3nm}
