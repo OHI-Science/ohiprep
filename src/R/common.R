@@ -1,6 +1,6 @@
 
 # set the mazu and neptune data_edit share based on operating system
-dir_M             <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi', ### someone on Windows - fix this?
+dir_M             <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
                        'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
                        'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
 
