@@ -2,9 +2,9 @@
 # created Jun2015 by Casey O'Hara
 # functions to support calculations of the species diversity subgoal
 
-message('NOTE: spp_fxn.R requires that the following variables be set in the global environment (main script):\n')
-message(sprintf('dir_anx:  currently set to \'%s\'\n', dir_anx))
-message(sprintf('scenario: currently set to \'%s\'\n\n', scenario))
+message('NOTE: spp_fxn.R requires that the following variables be set in the global environment (main script):')
+message(sprintf('dir_anx:  currently set to "%s"', dir_anx))
+message(sprintf('scenario: currently set to "%s"', scenario))
 
 ##############################################################################=
 get_loiczid_raster <- function(reload = FALSE) {
@@ -19,7 +19,7 @@ get_loiczid_raster <- function(reload = FALSE) {
   if(!file.exists(loiczid_raster_file) | reload) {
     # load and format AquaMaps half-degree cell authority file
     hcaf_file <- file.path(dir_data_am, 'tables/hcaf.csv')
-    message(sprintf('Loading AquaMaps cell data.  Less than 1 minute.\n  %s \n', file_loc))
+    message(sprintf('Loading AquaMaps cell data.  Less than 1 minute.\n  %s ', file_loc))
     am_cells <- fread(hcaf_file, header = TRUE, stringsAsFactors = FALSE) %>%
       dplyr::select(csq = CsquareCode, LOICZID, CenterLat, CenterLong, CellArea)
     
@@ -30,12 +30,12 @@ get_loiczid_raster <- function(reload = FALSE) {
     coordinates(am_cells) <- ~ CenterLong + CenterLat
     proj4string(am_cells) <- CRS(projection(template_raster))
     
-    message(sprintf('Writing LOICZID 0.5° raster to: \n  %s\n', rgn_prop_file))
+    message(sprintf('Writing LOICZID 0.5° raster to: \n  %s', rgn_prop_file))
     rasterize(am_cells, template_raster, field = 'LOICZID', progress = 'text', 
               filename = loiczid_raster_file,
               overwrite = TRUE)
   } else {
-    message(sprintf('Reading LOICZID 0.5° raster from: \n  %s\n', loiczid_raster_file))
+    message(sprintf('Reading LOICZID 0.5° raster from: \n  %s', loiczid_raster_file))
   }
   loiczid_raster <- raster(loiczid_raster_file)
   return(invisible(loiczid_raster))
@@ -58,13 +58,13 @@ extract_cell_id_per_region <- function(reload       = FALSE,
   ### ??? TO DO: compare loiczid regions <-> CenterLong and CenterLat to last year's table, to make sure consistent from year to year.
   ##############################################################################=
   
-  message(sprintf('Getting cell ID per %s region based upon region file: %s\n  %s\n', ohi_type, rgn_layer, file.path(ogr_location, rgn_layer)))
+  message(sprintf('Getting cell ID per %s region based upon region file: %s\n  %s', ohi_type, rgn_layer, file.path(ogr_location, rgn_layer)))
   
   rgn_prop_file <- file.path(dir_anx, sprintf('rgns/cellID_%s_%s.csv', rgn_layer, ohi_type))
   
   if(!file.exists(rgn_prop_file) | reload) {
     
-    message(sprintf('Reading regions shape file %s - come back in about 4 minutes.\n  %s/%s\n', rgn_layer, ogr_location, rgn_layer))
+    message(sprintf('Reading regions shape file %s - come back in about 4 minutes.\n  %s/%s', rgn_layer, ogr_location, rgn_layer))
     regions        <- readOGR(dsn = ogr_location, layer = rgn_layer)
     # slow command... ~ 4 minutes
     
@@ -77,7 +77,7 @@ extract_cell_id_per_region <- function(reload       = FALSE,
     raster_file    <- file.path(dir_anx, 'rgns/loiczid_raster')
     loiczid_raster <- get_loiczid_raster(reload = FALSE)
     
-    message('Extracting proportional area of LOICZID cells per region polygon.  Come back in 15-20 minutes.\n')
+    message('Extracting proportional area of LOICZID cells per region polygon.  Come back in 15-20 minutes.')
     region_prop <- raster::extract(loiczid_raster,  regions, weights = TRUE, normalizeWeights = FALSE, progress = 'text') 
     # small = TRUE returns 1 for rgn_id 232, not what we want.
     # slow command... ~15 minutes (even with the small = TRUE)
@@ -113,20 +113,20 @@ extract_cell_id_per_region <- function(reload       = FALSE,
     # region_prop_df <- rbind(region_prop_df, bih)
     
     file_loc <- file.path(dir_data_am, 'tables/hcaf.csv')
-    message(sprintf('Loading AquaMaps half-degree cell authority file.  Less than 1 minute.\n  %s \n', file_loc))
+    message(sprintf('Loading AquaMaps half-degree cell authority file.  Less than 1 minute.\n  %s ', file_loc))
     am_cells <- fread(file_loc, header = TRUE, stringsAsFactors = FALSE) %>%
       as.data.frame() %>%
       dplyr::select(csq = CsquareCode, loiczid = LOICZID, cell_area = CellArea)
     stopifnot(sum(duplicated(am_cells$csq)) == 0)
     
-    message('Joining csq values and cell areas to loiczid values.\n')
+    message('Joining csq values and cell areas to loiczid values.')
     region_prop_df <- region_prop_df %>%
       left_join(am_cells, by = 'loiczid')
     
-    message(sprintf('Writing loiczid/csq/cell proportions/cell areas by region to: \n  %s\n', rgn_prop_file))
+    message(sprintf('Writing loiczid/csq/cell proportions/cell areas by region to: \n  %s', rgn_prop_file))
     write_csv(region_prop_df, rgn_prop_file)
   } else {
-    message(sprintf('Reading loiczid cell proportions by region from: \n  %s\n', rgn_prop_file))
+    message(sprintf('Reading loiczid cell proportions by region from: \n  %s', rgn_prop_file))
     region_prop_df <- read.csv(rgn_prop_file, stringsAsFactors = FALSE)
   }
   
@@ -142,7 +142,7 @@ iucn_shp_info <- function(reload = TRUE) {
   iucn_shp_info_file <- file.path(dir_anx, scenario, 'int/iucn_shp_info.csv')
   if(!file.exists(iucn_shp_info_file) | reload) {
     if(!file.exists(iucn_shp_info_file)) message('No file found for IUCN shapefile information.  ')
-    message('Generating new list of available IUCN range maps.\n')
+    message('Generating new list of available IUCN range maps.')
     
     dir_iucn_shp <- file.path(dir_data_iucn, 'iucn_shp')
     groups_list <- as.data.frame(list.files(dir_iucn_shp)) %>%
@@ -155,7 +155,7 @@ iucn_shp_info <- function(reload = TRUE) {
     for (spp_gp in groups_list$shp_fn) { # spp_gp <- groups_list$shp_fn[30]
       # determine size;
       fsize <- round(file.size(file.path(dir_iucn_shp, sprintf('%s.shp', spp_gp)))/1e6, 2)
-      message(sprintf('Species group shapefile %s, %.2f MB\n  %s/%s\n', spp_gp, fsize, dir_iucn_shp, spp_gp))
+      message(sprintf('Species group shapefile %s, %.2f MB\n  %s/%s', spp_gp, fsize, dir_iucn_shp, spp_gp))
       # spp_group | .shp size | # species | binomial TF | id_no TF | col_names
       spp_dbf <- read.dbf(file.path(dir_iucn_shp, sprintf('%s.dbf', spp_gp)))
       message('file read successfully... ')
@@ -174,13 +174,13 @@ iucn_shp_info <- function(reload = TRUE) {
                                 'binomialTF' = binom, 'id_noTF' = id_no, 'subpopTF' = subpop,
                                 'fields' = fields)
       iucn_shp_info <- bind_rows(iucn_shp_info, spp_dbf_tmp)
-      message('binding to list...\n')
+      message('binding to list...')
     }
     
-    message(sprintf('Writing list of IUCN range map info to: \n  %s\n', iucn_shp_info_file))
+    message(sprintf('Writing list of IUCN range map info to: \n  %s', iucn_shp_info_file))
     write_csv(iucn_shp_info, iucn_shp_info_file)
   } else {
-    message(sprintf('Reading list of IUCN range map from: \n  %s\n', iucn_shp_info_file))
+    message(sprintf('Reading list of IUCN range map from: \n  %s', iucn_shp_info_file))
     iucn_shp_info <- read.csv(iucn_shp_info_file, stringsAsFactors = FALSE)
   }
   return(iucn_shp_info)
@@ -196,7 +196,7 @@ generate_iucn_map_list <- function(reload = FALSE) {
   iucn_map_list_file <- file.path(dir_anx, scenario, 'int/spp_iucn_maps_all.csv')
   if(!file.exists(iucn_map_list_file) | reload) {
     if(!file.exists(iucn_map_list_file)) message('No file found for list of available IUCN range maps.  ')
-    message('Generating new list of available IUCN range maps.\n')
+    message('Generating new list of available IUCN range maps.')
     
     dir_iucn_shp <- file.path(dir_data_iucn, 'iucn_shp')
     groups_list <- as.data.frame(list.files(dir_iucn_shp)) %>%
@@ -252,7 +252,7 @@ read_spp_am <- function(reload = FALSE) {
   spp_am_processed_file <- file.path(dir_anx, scenario, 'int/spp_am_cleaned.csv')
   if(!file.exists(spp_am_processed_file) | reload) {
     spp_am_raw_file <- file.path(dir_data_am, 'csv/speciesoccursum.csv')
-    message(sprintf('Reading raw AquaMaps species list from: \n  %s\n', spp_am_raw_file))
+    message(sprintf('Reading raw AquaMaps species list from: \n  %s', spp_am_raw_file))
     
     ### Read AquaMaps list, and fix improper pop categories
     spp_am <- read_csv(spp_am_raw_file) %>%
@@ -267,7 +267,7 @@ read_spp_am <- function(reload = FALSE) {
       as.data.frame()
     
     ### Check names against databases via taxize package.
-    am_names_good <- verify_scinames(spp_am %>% select(sciname, am_sid), fn_tag = 'am')
+    am_names_good <- verify_scinames(spp_am %>% dplyr::select(sciname, am_sid), fn_tag = 'am')
     
     ### ditch unverified names for am_sids with verified names
     am_duped_sid  <- am_names_good$am_sid[duplicated(am_names_good$am_sid)] %>%
@@ -277,18 +277,18 @@ read_spp_am <- function(reload = FALSE) {
       mutate(any_verified = any(name_verified)) %>%
       ungroup() %>%
       filter(!am_sid %in% am_duped_sid | name_verified == TRUE | !any_verified) %>%
-      select(-any_verified)
+      dplyr::select(-any_verified)
     
     spp_am <- spp_am %>%
-      select(-sciname) %>%
+      dplyr::select(-sciname) %>%
       unique() %>%
       left_join(am_names_good1, by = c('am_sid'))
     
-    message(sprintf('Writing processed AquaMaps species list to: \n  %s\n', spp_am_processed_file))
+    message(sprintf('Writing processed AquaMaps species list to: \n  %s', spp_am_processed_file))
     write_csv(spp_am, spp_am_processed_file)
     
   } else {
-    message(sprintf('Reading processed AquaMaps species list from: \n  %s\n', spp_am_processed_file))
+    message(sprintf('Reading processed AquaMaps species list from: \n  %s', spp_am_processed_file))
     spp_am <- read_csv(spp_am_processed_file)
   }
   return(spp_am)
@@ -301,14 +301,14 @@ read_spp_iucn <- function(reload = FALSE) {
     ### pull the IUCN data from the git-annex file for this year - output from ingest_iucn.R
     iucn_marine_raw_file <- file.path(dir_anx, scenario, 'int/spp_iucn_marine.csv')
     
-    message(sprintf('Reading IUCN marine species list (generated by ingest_iucn.R) from: \n  %s\n', iucn_marine_raw_file))
+    message(sprintf('Reading IUCN marine species list (generated by ingest_iucn.R) from: \n  %s', iucn_marine_raw_file))
     spp_iucn <- read_csv(iucn_marine_raw_file) %>%
       dplyr::select(sciname, iucn_sid, 
                     iucn_cat  = category, 
                     pop_trend = popn_trend, 
                     parent_sid, subpop_sid) 
     
-    iucn_names_good   <- verify_scinames(spp_iucn %>% select(sciname, iucn_sid), fn_tag = 'iucn')
+    iucn_names_good   <- verify_scinames(spp_iucn %>% dplyr::select(sciname, iucn_sid), fn_tag = 'iucn')
     ### duplicate iucn_sid with different names.  For duped iucn_sid, select
     ### only verified scinames (or all, for iucn_sid with no verified names at all)
     iucn_duped_sid  <- iucn_names_good$iucn_sid[duplicated(iucn_names_good$iucn_sid)] %>%
@@ -319,18 +319,18 @@ read_spp_iucn <- function(reload = FALSE) {
       mutate(any_verified = any(name_verified)) %>%
       ungroup() %>%
       filter(!iucn_sid %in% iucn_duped_sid | name_verified == TRUE | !any_verified) %>%
-      select(-any_verified)
+      dplyr::select(-any_verified)
     
     spp_iucn <- spp_iucn %>%
-      select(-sciname) %>%
+      dplyr::select(-sciname) %>%
       unique() %>%
       left_join(iucn_names_good1, by = c('iucn_sid'))
     
-    message(sprintf('Writing processed IUCN marine species list to: \n  %s\n', spp_iucn_processed_file))
+    message(sprintf('Writing processed IUCN marine species list to: \n  %s', spp_iucn_processed_file))
     write_csv(spp_iucn, spp_iucn_processed_file)
     
   } else {
-    message(sprintf('Reading processed IUCN species list from: \n  %s\n', spp_iucn_processed_file))
+    message(sprintf('Reading processed IUCN species list from: \n  %s', spp_iucn_processed_file))
     spp_iucn <- read_csv(spp_iucn_processed_file)
   }
   return(spp_iucn)
@@ -369,7 +369,7 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
                                ifelse(!is.na(am_cat), 'am',   NA)))
     
     spp_iucn_maps <- generate_iucn_map_list(reload = reload) %>%
-      select(-presence) %>% ### let's leave this out of the species list... save it for the polygons
+      dplyr::select(-presence) %>% ### let's leave this out of the species list... save it for the polygons
       filter(!str_detect(spp_group, 'MARINEFISH')) ### these items are duped in marine mammals
     ### This function returns a dataframe with the following columns: 
     ### | spp_group | id_no | sciname | iucn_subpop | spatial_source
@@ -390,7 +390,7 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
     ### to spp_all which already filters to marine species.
     spp_birds <- foreign::read.dbf(file.path(dir_data_bird, 'BOTW.dbf')) %>%
       setNames(tolower(names(.))) %>%
-      select(iucn_sid = sisid, sciname, presence) %>%
+      dplyr::select(iucn_sid = sisid, sciname, presence) %>%
       unique()
     ### NOTE: this loses info on 'origin' and 'seasonal' fields
     
@@ -430,7 +430,7 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
     
     ### Ditch some presently unused columns...
     spp_all1 <- spp_all1 %>%
-      select(-am_cat, -iucn_cat, -reviewed, -name_verified, -info_source, -parent_sid) %>%
+      dplyr::select(-am_cat, -iucn_cat, -reviewed, -name_verified, -info_source, -parent_sid) %>%
       unique()
     
     message(sprintf('Writing full species lookup table to: \n  %s', spp_all_file))
@@ -462,7 +462,7 @@ ditch_dupes <- function(spp_all) {
   spp_all1 <- spp_all %>% 
     filter(!(!is.na(parent_sid) & is.na(iucn_subpop))) %>% 
     ### this ditches non-named subpops entirely
-    select(-subpop_sid) %>% unique()                   
+    dplyr::select(-subpop_sid) %>% unique()                   
   ### this ditches dupes due to a parent with multiple values in subpop_sid field
   
   spp_all1 <- spp_all1 %>%
@@ -472,7 +472,7 @@ ditch_dupes <- function(spp_all) {
     mutate(n_polys = sum(!is.na(id_no)),
            cull = ifelse(n_polys > 0 &  n_polys < n(), TRUE, FALSE)) %>%
     filter(!(cull == TRUE & is.na(id_no))) %>%
-    select(-cull, -n_polys) %>%
+    dplyr::select(-cull, -n_polys) %>%
     ungroup()
   
   ### The following several steps delete repeats due to polygons in more than
@@ -490,6 +490,7 @@ ditch_dupes <- function(spp_all) {
   
   return(spp_all1)
 }
+
 
 ##############################################################################=
 extract_loiczid_per_spp <- function(map_list, 
@@ -532,7 +533,7 @@ extract_loiczid_per_spp <- function(map_list,
       else  spp_shp <- readShapePoly(fn = file.path(shp_dir, spp_gp), 
                                      proj4string = CRS('+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'),
                                      delete_null_obj = TRUE)
-      message(sprintf('Elapsed read time: %.2f seconds\n', (proc.time() - ptm)[3]))
+      message(sprintf('Elapsed read time: %.2f seconds', (proc.time() - ptm)[3]))
       
       names(spp_shp@data) <- tolower(names(spp_shp@data))
       
@@ -544,7 +545,7 @@ extract_loiczid_per_spp <- function(map_list,
           mutate(subpop = NA)
       }
       
-      message(sprintf('Filtering features by id_no field in %s.\n', spp_gp))
+      message(sprintf('Filtering features by id_no field in %s.', spp_gp))
       spp_shp_filter <- spp_shp@data$id_no %in% maps_in_group$iucn_sid
       message(sprintf('... selecting %s species out of %s', 
                       length(unique(spp_shp@data$id_no[spp_shp_filter])), 
@@ -554,7 +555,7 @@ extract_loiczid_per_spp <- function(map_list,
       message('Extracting polygons to LOICZID cells...')
       ptm <- proc.time()
       spp_shp_prop <- raster::extract(loiczid_raster, spp_shp, weights = TRUE, normalizeWeights = FALSE, progress = 'text')
-      message(sprintf('Elapsed process time: %.2f minutes\n', (proc.time() - ptm)[3]/60))
+      message(sprintf('Elapsed process time: %.2f minutes', (proc.time() - ptm)[3]/60))
       
       ### combine sciname, iucn_sid, presence, and subpop code for a single unique identifier
       shp_id <- data.frame('sciname'  = spp_shp@data$binomial, 
@@ -577,7 +578,7 @@ extract_loiczid_per_spp <- function(map_list,
       message(sprintf('%s: %s species maps, %s total cells in output file', 
                       spp_gp, length(unique(spp_shp_prop_df$iucn_sid)), 
                       nrow(spp_shp_prop_df)))
-      message(sprintf('Writing IUCN<->LOICZID intersection file for %s to:\n  %s\n', spp_gp, cache_file))
+      message(sprintf('Writing IUCN<->LOICZID intersection file for %s to:\n  %s', spp_gp, cache_file))
       write_csv(spp_shp_prop_df, cache_file)
     }
   }
@@ -585,7 +586,7 @@ extract_loiczid_per_spp <- function(map_list,
 
 
 ##############################################################################=
-process_am_summary_per_cell <- function(spp_all, fn_tag = '', prob_filter = .40, reload = FALSE) {
+process_am_summary_per_cell <- function(spp_all, spp_cells = NULL, fn_tag = '', prob_filter = 0, reload = FALSE) {
   # Calculate category and trend scores per cell for Aquamaps species.
   # * load AM species <-> cell lookup
   # * filter to appropriate cells (in regions, meets probability threshold)
@@ -596,14 +597,26 @@ process_am_summary_per_cell <- function(spp_all, fn_tag = '', prob_filter = .40,
   
   am_cells_spp_sum_file <- file.path(dir_git, scenario, sprintf('summary/spp_sum_am_cells%s.csv', fn_tag))
   
-  if(!file.exists(am_cells_spp_sum_file) | reload) {
-    message('Generating cell-by-cell summary for Aquamaps species.\n')
+  if(!file.exists(am_cells_spp_sum_file) | reload | !is.null(spp_cells)) {
+    message('Generating cell-by-cell summary for Aquamaps species.')
     
-    am_cells_spp <- get_am_cells_spp(prob_filter = prob_filter, reload = FALSE)
+    if(!is.null(spp_cells)) {
+      message('using species cell dataframe as provided')
+      if('probability' %in% names(spp_cells)) {
+        spp_cells <- spp_cells %>%
+          rename(prob = probability)
+      }
+      am_cells_spp <- spp_cells %>%
+        filter(prob >= prob_filter)
+    }
+    else {
+      message('loading species cell dataframe')
+      am_cells_spp <- get_am_cells_spp(prob_filter = prob_filter, reload = reload)
+    }
     
     # filter species info to just Aquamaps species with category info, and bind to 
     # am_cells_spp to attach cat_score and trend_score.
-    message('Filtering to just species with non-NA IUCN category scores.\n')
+    message('Filtering to just species with non-NA IUCN category scores.')
     spp_am_info <- spp_all %>% 
       filter(str_detect(spatial_source, 'am')) %>%
       ### NOTE: as of 2015, AM data does not include spatially distinct subpops, so OK to cut 'am_subpops'
@@ -612,11 +625,11 @@ process_am_summary_per_cell <- function(spp_all, fn_tag = '', prob_filter = .40,
       unique()
     message(sprintf('Length of Aquamaps species list: %d', nrow(spp_am_info)))
 
-    message('Keyed data frame join cell/species IDs to master species list (filtered for just spatial_source == am or am_parent).\n')
+    message('Keyed data frame join cell/species IDs to master species list (filtered for just spatial_source == am or am_parent).')
     acs_keyed <- data.table(am_cells_spp, key = "am_sid") 
     sai_keyed <- data.table(spp_am_info,  key = "am_sid")
     am_cells_spp1 <- acs_keyed[sai_keyed] %>%
-      as.data.frame(am_cells_spp1) %>%
+      as.data.frame() %>%
       unique()
     # z <- x[y] is analogous to z <- left_join(y, x, by = 'key'), so the y variable determines which
     # rows to keep (non-matching rows in x will be discarded).  In this case, all species must be on the spp_am_info list
@@ -624,7 +637,7 @@ process_am_summary_per_cell <- function(spp_all, fn_tag = '', prob_filter = .40,
     # Somehow, after this step, there is one instance of Clupea harengus (Fis-29344) that has no LOICZID.  It appears on
     # the spp_all list, but has no associated cells.  Weird.    
     
-    message('Grouping by cell and summarizing by mean category, mean trend, and n_spp for each, for AM spatial info.\n')
+    message('Grouping by cell and summarizing by mean category, mean trend, and n_spp for each, for AM spatial info.')
     am_cells_spp_sum <- am_cells_spp1 %>%
       as.data.frame() %>%
       group_by(loiczid) %>%
@@ -634,10 +647,10 @@ process_am_summary_per_cell <- function(spp_all, fn_tag = '', prob_filter = .40,
                 n_trend_species       = sum(!is.na(trend_score))) %>% # no na.rm needed; count all with cat_score
       mutate(source = 'aquamaps')
     
-    message(sprintf('Writing cell-by-cell summary for Aquamaps species to:\n  %s\n', am_cells_spp_sum_file))
+    message(sprintf('Writing cell-by-cell summary for Aquamaps species to:\n  %s', am_cells_spp_sum_file))
     write_csv(am_cells_spp_sum, am_cells_spp_sum_file)
   } else {
-    message(sprintf('Cell-by-cell summary for Aquamaps species already exists.  Reading from:\n  %s\n', am_cells_spp_sum_file))
+    message(sprintf('Cell-by-cell summary for Aquamaps species already exists.  Reading from:\n  %s', am_cells_spp_sum_file))
     am_cells_spp_sum <- read.csv(am_cells_spp_sum_file, stringsAsFactors = FALSE)
   }
   return(invisible(am_cells_spp_sum))
@@ -648,10 +661,10 @@ process_am_summary_per_cell <- function(spp_all, fn_tag = '', prob_filter = .40,
 get_am_cells_spp <- function(n_max = -1, prob_filter = .40, reload = TRUE) {
   am_cells_spp_file <- file.path(dir_anx, scenario, sprintf('int/am_cells_spp_prob%s.csv', prob_filter))
   if(!file.exists(am_cells_spp_file) | reload) {
-    message('Creating Aquamaps species per cell file\n')
+    message('Creating Aquamaps species per cell file')
     ### Load Aquamaps species per cell table
     spp_cell_file <- file.path(dir_data_am, 'csv/hcaf_sp_native_trunc.csv')
-    message(sprintf('Loading AquaMaps cell-species data.  Large file! \n  %s \n', spp_cell_file))
+    message(sprintf('Loading AquaMaps cell-species data.  Large file! \n  %s ', spp_cell_file))
     am_cells_spp <- read_csv(spp_cell_file, n_max = n_max) %>%
       rename(am_sid = speciesid, prob = probability)
     
@@ -660,10 +673,10 @@ get_am_cells_spp <- function(n_max = -1, prob_filter = .40, reload = TRUE) {
       filter(prob >= prob_filter) %>%
       dplyr::select(-prob)
     
-    message(sprintf('Writing Aquamaps species per cell file to: \n  %s\n', am_cells_spp_file))
+    message(sprintf('Writing Aquamaps species per cell file to: \n  %s', am_cells_spp_file))
     write_csv(am_cells_spp, am_cells_spp_file)
   } else {
-    message(sprintf('Reading Aquamaps species per cell file from: \n  %s\n', am_cells_spp_file))
+    message(sprintf('Reading Aquamaps species per cell file from: \n  %s', am_cells_spp_file))
     am_cells_spp <- read_csv(am_cells_spp_file)
   }
   
@@ -673,9 +686,9 @@ get_am_cells_spp <- function(n_max = -1, prob_filter = .40, reload = TRUE) {
 
 ##############################################################################=
 get_iucn_cells_spp <- function(reload = FALSE) {
-  iucn_cells_file <- file.path(dir_data_iucn, sprintf('iucn_cells_%s.csv', scenario))
+  iucn_cells_file <- file.path(dir_data_iucn, sprintf('iucn_cells_%s.csv', str_replace(scenario, 'v', 'd')))
   if(!file.exists(iucn_cells_file) | reload) {
-    message(sprintf('Building IUCN species to cell table.  This might take a few minutes.\n'))
+    message(sprintf('Building IUCN species to cell table.  This might take a few minutes.'))
     iucn_map_files      <- file.path(dir_anx, 'iucn_intersections', list.files(file.path(dir_anx, 'iucn_intersections')))
     iucn_cells_spp_list <- lapply(iucn_map_files, read.csv) # read each into dataframe within a list
     iucn_cells_spp      <- bind_rows(iucn_cells_spp_list)   # combine list of dataframes to single dataframe
@@ -683,15 +696,16 @@ get_iucn_cells_spp <- function(reload = FALSE) {
     message('Writing IUCN species-cell file to ', iucn_cells_file)
     write_csv(iucn_cells_spp, iucn_cells_file)
   } else {
-    iucn_cells_spp <- read_csv(iucn_cells_file, col_types = 'cddddc') %>%
-      as.data.frame(stringsAsFactors = FALSE) 
+    message('Reading IUCN species-cell file from ', iucn_cells_file)
+    iucn_cells_spp <- read_csv(iucn_cells_file, col_types = 'cddddc')
   }
   
   return(iucn_cells_spp)
 }
 
+
 ##############################################################################=
-process_iucn_summary_per_cell <- function(spp_all, fn_tag = '', reload = FALSE) {
+process_iucn_summary_per_cell <- function(spp_all, spp_cells = NULL, fn_tag = '', reload = FALSE) {
   # Calculate mean category and trend scores per cell for IUCN species.
   # * spp_all is df filtered to desired species (e.g. no DD? no subpops?)
   # * load IUCN species <-> cell lookup
@@ -700,21 +714,30 @@ process_iucn_summary_per_cell <- function(spp_all, fn_tag = '', reload = FALSE) 
   # * summarize by loiczid:  mean cat_score, mean trend_score, count
 
   iucn_cells_spp_sum_file <- file.path(dir_git, scenario, sprintf('summary/spp_sum_iucn_cells%s.csv', fn_tag))
-  
-  if(!file.exists(iucn_cells_spp_sum_file) | reload) {
+
+  if(!file.exists(iucn_cells_spp_sum_file) | reload | !is.null(spp_cells)) {
     message('Generating cell-by-cell summary for IUCN range-map species.')
     
     ### Load IUCN species per cell tables
-    iucn_cells_spp <- get_iucn_cells_spp(reload = reload) %>%
-      select(-subpop)
+    if(!is.null(spp_cells)) {
+      message('using species cell dataframe as provided')
+      iucn_cells_spp <- spp_cells
+    }
+    else {
+      message('loading species cell dataframe')
+      iucn_cells_spp <- get_iucn_cells_spp(reload = reload) %>%
+        dplyr::select(-subpop) %>%
+        unique()
+    }
     
     # bind to iucn_cells_spp to attach cat_score and trend_score.
 
     spp_iucn_info <- spp_all %>% 
       filter(str_detect(spatial_source, 'iucn')) %>% 
       dplyr::select(iucn_sid, cat_score, trend_score) %>%
+      filter(!is.na(cat_score)) %>%
       unique()
-    message(sprintf('Length of IUCN species list: %d\n', nrow(spp_iucn_info)))
+    message(sprintf('Length of IUCN species list: %d', nrow(spp_iucn_info)))
     
     message('Keyed joining to species master list (filtered for spatial_source == iucn).')
     ics_keyed <- data.table(iucn_cells_spp,
@@ -730,42 +753,43 @@ process_iucn_summary_per_cell <- function(spp_all, fn_tag = '', reload = FALSE) 
     #   Conus sartii, Conus subulatus, Diplodus argenteus, Diplodus sargus, Eptatretus fernholmi, Halichoeres bleekeri,
     #   Holothuria squamifera, Sarda chiliensis chiliensis, Scyphiphora hydrophyllacea, Tetrapturus albidus
     
-    x <- ics_keyed %>% select(iucn_sid) %>% unique()
+    x <- ics_keyed %>% dplyr::select(iucn_sid) %>% unique()
     y <- spp_iucn_info %>% filter(!iucn_sid %in% x$iucn_sid)
     z <- spp_all %>% filter(iucn_sid %in% y$iucn_sid) %>% filter(pop_cat != 'DD')
     
     ### assign proper values for extinct polygons based on presence = 5; category becomes EX
     ### and trend becomes NA
+    message('Setting category score to "extinct" for polygons with presence == 5.')
     iucn_cells_spp1 <- iucn_cells_spp1 %>%
       as.data.frame() %>%
-      mutate(cat_score = ifelse(presence == 5, 1, cat_score),
-             trend_score    = ifelse(presence == 5, NA, trend_score))
+      mutate(cat_score   = ifelse(presence == 5, 1, cat_score),
+             trend_score = ifelse(presence == 5, NA, trend_score))
     
-    message('Eliminating species double-counting due to overlapping polygons in IUCN shapefiles.')
-    iucn_cells_spp1 <- iucn_cells_spp1 %>%
+    message('Eliminating IUCN species double-counting due to overlapping polygons in IUCN shapefiles.')
+    iucn_cells_spp2 <- iucn_cells_spp1 %>%
       as.data.frame() %>%
-      # this next part to collapse any duplicated cells (overlapping polygons)
-      group_by(iucn_sid, loiczid, cat_score, trend_score) %>%
-      summarize(prop_area = max(prop_area))
-    
-    message('Eliminating NA category scores (DD, etc)')
-    iucn_cells_spp1 <- iucn_cells_spp1 %>%
-      filter(!is.na(cat_score))
+      # this next part to collapse any duplicated cells (overlapping polygons with same iucn_sid)
+      group_by(iucn_sid, loiczid) %>%
+      summarize(cat_score   = mean(cat_score), 
+                trend_score = mean(trend_score, na.rm = TRUE), 
+                prop_area   = max(prop_area))
+    message('Collapsed ', nrow(iucn_cells_spp1) - nrow(iucn_cells_spp2), ' double-counted cells...')
     
     message('Grouping by cell and summarizing mean category/trend and n_spp for each, for IUCN spatial info.')
-    iucn_cells_spp_sum <- iucn_cells_spp1 %>%
+    iucn_cells_spp_sum <- iucn_cells_spp2 %>%
       group_by(loiczid) %>%
       summarize(mean_cat_score = mean(cat_score),      # no na.rm needed; already filtered.
                 mean_pop_trend_score = mean(trend_score, na.rm = TRUE), 
                 n_cat_species = n(),
                 n_trend_species = sum(!is.na(trend_score))) %>% # no na.rm needed; count all with cat_score
-      mutate(source = 'iucn')
+      mutate(source = 'iucn') %>%
+      filter(!is.na(mean_cat_score))
     
     message(sprintf('Writing cell-by-cell summary for IUCN species to:\n  %s', iucn_cells_spp_sum_file))
     write_csv(iucn_cells_spp_sum, iucn_cells_spp_sum_file)
   } else {
     message(sprintf('Cell-by-cell summary for IUCN species already exists.  Reading from:\n  %s', iucn_cells_spp_sum_file))
-    iucn_cells_spp_sum <- read.csv(iucn_cells_spp_sum_file, stringsAsFactors = FALSE)
+    iucn_cells_spp_sum <- read_csv(iucn_cells_spp_sum_file, col_types = 'dddddc')
   }
   return(invisible(iucn_cells_spp_sum))
 }
@@ -786,14 +810,22 @@ process_means_per_cell <- function(am_cell_summary, iucn_cell_summary, fn_tag = 
     message('NA values for mean category score in iucn cell summary df')
     stop()
   }
-  summary_by_loiczid <- bind_rows(am_cell_summary, iucn_cell_summary) %>%
+  sum_by_loiczid <- bind_rows(am_cell_summary, iucn_cell_summary) %>%
     group_by(loiczid) %>%
-    summarize(weighted_mean_cat   = sum(n_cat_species   * mean_cat_score)/sum(n_cat_species),
-              weighted_mean_trend = sum(n_trend_species * mean_pop_trend_score, na.rm = TRUE)/sum(n_trend_species)) %>%
+    mutate(weighted_cat_score   = n_cat_species * mean_cat_score,
+           weighted_trend_score = n_trend_species * mean_pop_trend_score,
+           n_cat_spp = sum(n_cat_species),
+           n_tr_spp  = sum(n_trend_species),
+           weighted_mean_cat1 = sum(weighted_cat_score)/n_cat_spp,
+           weighted_mean_tr1  = sum(weighted_trend_score)/n_tr_spp) %>%
+    summarize(weighted_mean_cat    = sum(n_cat_species   * mean_cat_score)/sum(n_cat_species),
+              weighted_mean_trend  = sum(n_trend_species * mean_pop_trend_score, na.rm = TRUE)/sum(n_trend_species),
+              weighted_mean_cat1   = first(weighted_mean_cat1),
+              weighted_mean_trend1 = first(weighted_mean_tr1)) %>%
     arrange(loiczid)
   
-  write_csv(summary_by_loiczid, file.path(dir_git, scenario, sprintf('summary/cell_spp_summary_by_loiczid%s.csv', fn_tag)))
-  return(summary_by_loiczid)
+  write_csv(sum_by_loiczid, file.path(dir_git, scenario, sprintf('summary/cell_spp_summary_by_loiczid%s.csv', fn_tag)))
+  return(sum_by_loiczid)
 }
 
 
@@ -865,7 +897,7 @@ verify_scinames <- function(names_df, fn_tag) {
         mutate(force_match = ifelse(is.na(force_match) | !force_match, FALSE, TRUE),
                sciname = ifelse(force_match, sciname2, sciname),
                name_verified = (matched | force_match)) %>%
-        select(-data_source_title, -score, -sciname2, -matched, -force_match) %>%
+        dplyr::select(-data_source_title, -score, -sciname2, -matched, -force_match) %>%
         unique()
       
       return(nm_chk)
@@ -898,7 +930,7 @@ verify_scinames <- function(names_df, fn_tag) {
       filter(match_count == 0) %>%
       mutate(matched = FALSE)
     nm_res <- rbind(nm_res_good, nm_res_bad) %>%
-      select(-match, -match_count)
+      dplyr::select(-match, -match_count)
     message(sprintf('Found %s instances of unrecognized sci names', length(unique(nm_res_bad$sciname))))
     message('Writing list to: ', nm_chk_file)
     write_csv(nm_res,  nm_chk_file)
@@ -921,7 +953,7 @@ calc_rgn_spp <- function(ics_keyed, acs_keyed, rgn_keyed, spp_all) {
   spp_iucn <- spp_all %>%
     filter(str_detect(spatial_source, 'iucn')) %>%
     filter(pop_cat != 'DD') %>%
-    select(iucn_sid, am_sid, sciname, pop_cat, pop_trend) %>%
+    dplyr::select(iucn_sid, am_sid, sciname, pop_cat, pop_trend) %>%
     unique() %>%
     group_by(iucn_sid, pop_cat, pop_trend) %>%
     summarize(sciname = paste(sciname, collapse = ', '),
@@ -941,7 +973,7 @@ calc_rgn_spp <- function(ics_keyed, acs_keyed, rgn_keyed, spp_all) {
   spp_am <- spp_all %>%
     filter(str_detect(spatial_source, 'am')) %>%
     filter(pop_cat != 'DD') %>%
-    select(am_sid, iucn_sid, sciname, pop_cat, pop_trend)
+    dplyr::select(am_sid, iucn_sid, sciname, pop_cat, pop_trend)
   
   am_rgn_spp1 <- spp_am %>%
     left_join(am_rgn_spp, by = 'am_sid') %>%
