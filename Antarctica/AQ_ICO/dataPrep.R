@@ -1,43 +1,59 @@
-### Antarctica ICO calculation
+
+###########################
+## Iconics data
+## April 27 2016
+###########################
+
 library(dplyr)
+
+#iconics species list
+ico <- read.csv("Antarctica/AQ_ICO/raw/Antartica_iconic species_from_Katie_Apr_26_2016.csv") %>%
+  select(sciname) %>%
+  mutate(sciname = as.character(sciname)) %>%
+  mutate(sciname = ifelse(sciname == "Arctocephalus gazella", "Arctocephalus gazella, Arctocephalus tropicalis", sciname)) %>%
+  mutate(sciname = ifelse(sciname == "Balaenoptera bonaerensis", "Balaenoptera acutorostrata", sciname)) %>%
+  mutate(sciname = ifelse(sciname == "Lobodon carcinophaga", "Lobodon carcinophaga, Lobodon carcinophagus", sciname)) %>%
+  mutate(sciname = ifelse(sciname == "Stercorarius maccormicki", "Stercorarius maccormicki, Catharacta maccormicki", sciname)) %>%
+  mutate(sciname = ifelse(sciname == "Thalassarche melanophrys", "Thalassarche melanophris, Thalassarche melanophris melanophris, Thalassarche melanophrys", sciname)) %>%
+  mutate(sciname = ifelse(sciname == "Tursiops truncatus", "Tursiops truncatus, Tursiops gephyreus, Tursiops nuuanu", sciname)) %>%
+  mutate(sciname = ifelse(sciname == "Stercorarius lonnbergi", "Catharacta antarctica, Catharacta lonnbergi, Stercorarius lonnbergi", sciname)) 
+  
+
+# IUCN data for Antarctica
+iucn <- read.csv('globalprep/spp_ico/v2016/output/rgn_spp_aq.csv') %>%
+  select(sciname, pop_cat, pop_trend, rgn_id)
+
+## these are iconic species, but do not have IUCN antarctica data
+## Data Deficient species are not included:
+# "Berardius arnuxii", "Caperea marginata", "Globicephala melas",
+# "Lagenorhynchus obscurus", "Lissodelphis peronii", "Mesoplodon bowdoini",  
+# "Mesoplodon grayi", "Mesoplodon hectori", "Mesoplodon layardii", "Orcinus orca",
+# "Phocoena dioptrica", "Tasmacetus shepherdi" 
+
+# not in Antarctic according to IUCN: "Cetorhinus maximus", "Isurus oxyrinchus", "Prionace glauca"
+
+# unclear: 
+# "Lamna nasus"  
 
 
 ### STATUS
-## IUCN status data for each CCAMLR region
-status <- read.csv('globalprep/SPP_ICO/v2015/data/ico_status_aq.csv')
-setdiff(ico$sciname, status$sciname)  # some species on the ico list that aren't in Antarctic regions (this is correct because it includes all global data)
-setdiff(status$sciname, ico$sciname)  #lots of species that aren't iconic - to be expected
-write.csv(intersect(status$sciname, ico$sciname), "Antarctica/AQ_ICO/supplement/AQ_iconics.csv", row.names=FALSE) #iconic species that are in analysis
+sort(setdiff(ico$sciname, iucn$sciname))  # some species on the ico list that aren't in Antarctic regions
+sort(setdiff(iucn$sciname, ico$sciname))  
+intersect(iucn$sciname, ico$sciname)
+write.csv(intersect(iucn$sciname, ico$sciname), "Antarctica/AQ_ICO/supplement/iconics_in_AQ_assess.csv", row.names=FALSE) #iconic species that are in analysis
 
-# one think I want to check is that Katie's list is mostly showing up...
-# references Katie used for list are also in these data
-AQ_icons <- read.csv("Global/HS-AQ-Iconics_2014/raw/AQ_IconicSpecies.csv") %>%
-  select(Scientific.name)
-setdiff(AQ_icons$Scientific.name, status$sciname)  # these seem like they should be showing up in the data, check on this...
-
-grep('Euphausia', status$sciname, value=TRUE) #krill - not in IUCN apparently
-sort(unique(grep('Balaenoptera', status$sciname, value=TRUE))) #data deficient, not included
-grep('orca', status$sciname, value=TRUE) #data deficient, not included
-#updated list to include specific species (Catharacta antarctica and Catharacta maccormicki):
-grep('Catharacta', status$sciname, value=TRUE) # Catharacta antarctica and Catharacta lonnbergi = same species
-                                            # Catharacta skua = different species (more north distribution)
-                                            # Catharacta chilensis = different species (mostly around chile)
-                                            # Catharacta maccormicki = pretty wide distribution including Antarctica
 
 ### Subset data to include only iconics:
-ico_status <- status %>%
+ico_status <- iucn %>%
   filter(sciname %in% ico$sciname) %>%
-  select(sp_id = rgn_id, sciname, category) %>%
+  select(sp_id = rgn_id, sciname, category=pop_cat) %>%
   unique()
 
 write.csv(ico_status, 'Antarctica/AQ_ICO/data/ico_status.csv', row.names=FALSE)
 
 ### trend
-## IUCN status data for each CCAMLR region
-trend <- read.csv('globalprep/SPP_ICO/v2015/data/ico_trend_aq.csv')
-
-ico_trend <- trend %>%
+ico_trend <- iucn %>%
   filter(sciname %in% ico$sciname) %>%
-  select(sp_id = rgn_id, sciname, popn_trend) %>%
+  select(sp_id = rgn_id, sciname, popn_trend=pop_trend) %>%
   unique()
 write.csv(ico_trend, 'Antarctica/AQ_ICO/data/ico_trend.csv', row.names=FALSE)
