@@ -1,5 +1,5 @@
 ---
-title: 'OHI: SPP'
+title: 'OHI: Species subgoal'
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
@@ -19,24 +19,30 @@ knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
                       echo = FALSE, message = FALSE, warning = FALSE)
 
 library(foreign)
-library(data.table) # for fread()
+library(data.table)
 library(sp)
 library(rgdal)
 library(raster)
 library(maptools)
-library(readr)      # for read_csv()
+library(readr)
 
 source('~/github/ohiprep/src/R/common.R')
 
-goal     <- 'globalprep/SPP_ICO'
+goal     <- 'globalprep/spp_ico'
 scenario <- 'v2016'
-dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal) 
-dir_data_am    <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'aquamaps/v2015') 
-dir_data_iucn  <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'iucn_spp') 
-dir_data_bird  <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'birdlife_intl') 
+dir_anx  <- file.path(dir_M, 'git-annex', goal) 
+dir_data_am    <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'aquamaps', str_replace(scenario, 'v', 'd')) 
+dir_data_iucn  <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'iucn_spp') 
+dir_data_bird  <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'birdlife_intl') 
 dir_git  <- file.path('~/github/ohiprep', goal)
 
 source(file.path(dir_git, scenario, 'spp_fxn.R'))
+if(!file.exists(file.path(dir_git, 'README.md'))) {
+  warning(sprintf('No README detected in %s', dir_git))
+}
+if(!file.exists(file.path(dir_git, scenario, 'README.md'))) {
+  warning(sprintf('No README detected in %s', file.path(dir_git, scenario)))
+}
 # SPP-specific and ICO-specific functions
 ```
 
@@ -162,7 +168,7 @@ To identify appropriate IUCN species for the analysis, we identified all IUCN Re
 * All species with "marine" habitat are then scraped to find details on population trend and subpopulation ID numbers.
 * After some cleaning of scientific names (accents, spaces, html tags, etc) the file is saved to git-annex for later use.
 
-Processed files, saved to `git-annex/globalprep/SPP_ICO/v201x/int`: 
+Processed files, saved to `git-annex/globalprep/spp_ico/v201x/int`: 
 * `spp_iucn_all.csv` - full list of IUCN species pulled from web, some cleaning.
 * `spp_iucn_habitats.csv` - list of IUCN species (by iucn_sid) and corresponding habitat.
 * `spp_iucn_marine.csv` - prepped list: cleaned marine list with subpops and trends.
@@ -200,9 +206,9 @@ Now having identified spatial source availability and preference for all species
 
 * Clean out duplicated species
 * Assign numeric values to population Red List category and population trend.
-* Save result to `git-annex/globalprep/SPP_ICO/v2016/int/spp_all_raw.csv`
+* Save result to `git-annex/globalprep/spp_ico/v2016/int/spp_all_raw.csv`
 * Filter out subpop species rows (species with a non-NA `parent_sid`) that do not have a named subpopulation location (i.e. `iucn_subpop` field is NA, instead of the name of a subpopulation)
-* Save final list to `git-annex/globalprep/SPP_ICO/v2016/int/spp_all_cleaned.csv`
+* Save final list to `git-annex/globalprep/spp_ico/v2016/int/spp_all_cleaned.csv`
 
 ``` {r Generate spp lookup}
 
@@ -252,7 +258,7 @@ We extract IUCN polygon presence to the same half-degree cells as AquaMaps to si
 ### set up maps_list for all standard (non-bird) IUCN species...
 maps_list_iucn <- spp_all %>%
   filter(str_detect(spatial_source, 'iucn') & !str_detect(spatial_source, 'bli')) %>%
-  select(sciname, iucn_sid, spp_group) %>%
+  dplyr::select(sciname, iucn_sid, spp_group) %>%
   unique()
 
 extract_loiczid_per_spp(maps_list_iucn,
@@ -263,7 +269,7 @@ extract_loiczid_per_spp(maps_list_iucn,
 ### set up maps_list for all bird IUCN species...
 maps_list_bli <- spp_all %>%
   filter(str_detect(spatial_source, 'bli')) %>%
-  select(sciname, iucn_sid, spp_group) %>%
+  dplyr::select(sciname, iucn_sid, spp_group) %>%
   mutate(spp_group = 'BOTW') %>%
   unique()
 
@@ -292,7 +298,7 @@ am_cells_spp_sum <- process_am_summary_per_cell(spp_all, fn_tag = '', prob_filte
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### AM does not include subspecies or subpops: every am_sid corresponds to exactly one sciname.
 
-iucn_cells_spp_sum <- process_iucn_summary_per_cell(spp_all, fn_tag = '', reload = FALSE)
+iucn_cells_spp_sum <- process_iucn_summary_per_cell(spp_all, fn_tag = '', reload = TRUE)
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### IUCN includes subpops - one sciname corresponds to multiple iucn_sid values.
 
@@ -312,27 +318,27 @@ These are then saved to status and trend layer outputs for global (shown in tabl
 
 summary_by_loiczid <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum, fn_tag = '')
 ### This returns dataframe with variables:
-### loiczid | mean_cat_score | mean_pop_trend_score | n_cat_species | n_trend_species | source
+### loiczid | weighted_mean_cat | weighted_mean_trend
 
 rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
 ### | rgn_id | rgn_name | loiczid | proportionArea | csq | cell_area
 
-### saves lookup table to git-annex/globalprep/SPP_ICO/rgns/cellID_region_gcs_global.csv
+### saves lookup table to git-annex/globalprep/spp_ico/rgns/cellID_region_gcs_global.csv
 ### To use a different region shapefile, add an argument of: rgn_layer = '<rgn file here, without extension>'
 ### To use a shape file from a different directory (other than git-annex/globalprep/spatial/v2015/data), add an ogr_location argument.
 ### To run a different type of analysis, add an ohi_type argument with global (default), HS, or AQ
 
 summary_by_rgn <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup, rgn_note = 'gl')
 ### This returns dataframe with variables:
-### sp_id | rgn_mean_cat | rgn_mean_trend | status
+### rgn_id | rgn_mean_cat | rgn_mean_trend | status
 
 ### Create final outputs:
 if(!exists('summary_by_rgn')) 
   summary_by_rgn <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_gl.csv'))
 spp_status <- summary_by_rgn %>%
-  select(rgn_id, score = status)
+  dplyr::select(rgn_id, score = status)
 spp_trend <- summary_by_rgn %>%
-  select(rgn_id, score = rgn_mean_trend)
+  dplyr::select(rgn_id, score = rgn_mean_trend)
 write_csv(spp_status, file.path(dir_git, scenario, 'output/spp_status_global.csv'))
 write_csv(spp_trend,  file.path(dir_git, scenario, 'output/spp_trend_global.csv'))
 ```
@@ -346,19 +352,19 @@ write_csv(spp_trend,  file.path(dir_git, scenario, 'output/spp_trend_global.csv'
 ### create final outputs for 3nm zone:
 ### This version is for the 3 nm coastal zone cells...
 rgn_cell_lookup_3nm <- extract_cell_id_per_region(reload = FALSE, 
-                                                  ogr_location = file.path(dir_neptune_data, 'git-annex/Global/NCEAS-Regions_v2014/data'),
+                                                  ogr_location = file.path(dir_M, 'git-annex/Global/NCEAS-Regions_v2014/data'),
                                                   rgn_layer = 'rgn_offshore3nm_gcs')
 ### | sp_id | loiczid | proportionArea | csq | cell_area
-### saves lookup table to git-annex/globalprep/SPP_ICO/rgns/cellID_rgn_offshore3nm_gcs_global.csv
+### saves lookup table to git-annex/globalprep/spp_ico/rgns/cellID_rgn_offshore3nm_gcs_global.csv
 
 summary_by_rgn_3nm <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup_3nm, rgn_note = '3nm')
 
 if(!exists('summary_by_rgn_3nm')) 
   summary_by_rgn_3nm <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_3nm.csv'))
 spp_status_3nm <- summary_by_rgn_3nm %>%
-  select(rgn_id, score = status)
+  dplyr::select(rgn_id, score = status)
 spp_trend_3nm <- summary_by_rgn_3nm %>%
-  select(rgn_id, score = rgn_mean_trend)
+  dplyr::select(rgn_id, score = rgn_mean_trend)
 write_csv(spp_status_3nm, file.path(dir_git, scenario, 'output/spp_status_3nm.csv'))
 write_csv(spp_trend_3nm,  file.path(dir_git, scenario, 'output/spp_trend_3nm.csv'))
 
@@ -372,16 +378,16 @@ write_csv(spp_trend_3nm,  file.path(dir_git, scenario, 'output/spp_trend_3nm.csv
 ### This version is for the high seas cells...
 rgn_cell_lookup_hs <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 'regions_gcs', ohi_type = 'hs')
 ### | sp_id | loiczid | proportionArea | csq | cell_area
-### saves lookup table to git-annex/globalprep/SPP_ICO/rgns/cellID_region_gcs_HS.csv
+### saves lookup table to git-annex/globalprep/spp_ico/rgns/cellID_region_gcs_HS.csv
 
 summary_by_rgn_hs <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup_hs, rgn_note = 'hs')
 
 if(!exists('summary_by_rgn_hs')) 
   summary_by_rgn_hs <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_hs.csv'))
 spp_status_hs <- summary_by_rgn_hs %>%
-  select(rgn_id, score = status)
+  dplyr::select(rgn_id, score = status)
 spp_trend_hs <- summary_by_rgn_hs %>%
-  select(rgn_id, score = rgn_mean_trend)
+  dplyr::select(rgn_id, score = rgn_mean_trend)
 write_csv(spp_status_hs, file.path(dir_git, scenario, 'output/spp_status_hs.csv'))
 write_csv(spp_trend_hs,  file.path(dir_git, scenario, 'output/spp_trend_hs.csv'))
 
@@ -390,16 +396,16 @@ write_csv(spp_trend_hs,  file.path(dir_git, scenario, 'output/spp_trend_hs.csv')
 ### This version is for the Antarctic cells...
 rgn_cell_lookup_aq <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 'regions_gcs', ohi_type = 'aq')
 ### | sp_id | loiczid | proportionArea | csq | cell_area
-### saves lookup table to git-annex/globalprep/SPP_ICO/rgns/cellID_region_gcs_AQ.csv
+### saves lookup table to git-annex/globalprep/spp_ico/rgns/cellID_region_gcs_AQ.csv
 
 summary_by_rgn_aq <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup_aq, rgn_note = 'aq')
 
 if(!exists('summary_by_rgn_aq')) 
   summary_by_rgn_aq <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_aq.csv'))
 spp_status_aq <- summary_by_rgn_aq %>%
-  select(rgn_id, score = status)
+  dplyr::select(rgn_id, score = status)
 spp_trend_aq <- summary_by_rgn_aq %>%
-  select(rgn_id, score = rgn_mean_trend)
+  dplyr::select(rgn_id, score = rgn_mean_trend)
 write_csv(spp_status_aq, file.path(dir_git, scenario, 'output/spp_status_aq.csv'))
 write_csv(spp_trend_aq,  file.path(dir_git, scenario, 'output/spp_trend_aq.csv'))
 ```
@@ -420,28 +426,33 @@ for (pref_flag in pref_flag_vec) {   ### pref_flag  <- pref_flag_vec[1]
                                         reload = TRUE)
     # only affected by am/iucn preference
     spp_all <- spp_all %>%
-      select(-iucn_subpop) %>% ### need to figure out how to use this info
-      select(-sciname) %>%     ### get rid of this to eliminate duped names
+      dplyr::select(-iucn_subpop) %>% ### need to figure out how to use this info
+      dplyr::select(-sciname) %>%     ### get rid of this to eliminate duped names
       filter(!is.na(spatial_source)) %>% 
       unique()
         
-    am_cells_spp_sum <- process_am_summary_per_cell(fn_tag = sprintf('%s_prob%s', pref_flag, prob_filt), prob_filter = prob_filt, reload = TRUE)
+    am_cells_spp_sum <- process_am_summary_per_cell(fn_tag = sprintf('%s_prob%s', pref_flag, prob_filt), 
+                                                    prob_filter = prob_filt, reload = TRUE)
     # affected by prob filter and preference flag
     
     iucn_cells_spp_sum <- process_iucn_summary_per_cell(fn_tag = sprintf('_pref%s', pref_flag), reload = TRUE)
     # affected by preference flag
     
-    sum_by_loiczid <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum, fn_tag = sprintf('%s_%s', pref_flag, prob_filt))
+    sum_by_loiczid <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum, 
+                                             fn_tag = sprintf('%s_%s', pref_flag, prob_filt))
+    
     rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
-    sum_by_rgn     <- process_means_per_rgn(sum_by_loiczid, rgn_cell_lookup, rgn_note = sprintf('%s_%s', pref_flag, prob_filt))
+    
+    sum_by_rgn     <- process_means_per_rgn(sum_by_loiczid, rgn_cell_lookup, 
+                                            rgn_note = sprintf('%s_%s', pref_flag, prob_filt))
     ### This returns dataframe with variables:
     ### sp_id | rgn_mean_cat | rgn_mean_trend | status
     
     ### Create final outputs:
     spp_status <- sum_by_rgn %>%
-      select(rgn_id, score = status)
+      dplyr::select(rgn_id, score = status)
     spp_trend <- sum_by_rgn %>%
-      select(rgn_id, score = rgn_mean_trend)
+      dplyr::select(rgn_id, score = rgn_mean_trend)
     write_csv(spp_status, 
               file.path(dir_git, scenario, 
                         sprintf('output/spp_status_global%s_prob%s.csv', pref_flag, prob_filt)))
@@ -505,7 +516,7 @@ st_2016v2015 <- ggplot(status_df, aes(x = st_2015, y = st_2016)) +
   geom_abline(slope = 1, intercept = 0, color = 'red') +
   scale_x_continuous(limits = c(0, 1)) +
   scale_y_continuous(limits = c(0, 1)) +
-  labs(title = 'Status: 2016 vs 2015 1')
+  labs(title = 'Status: 2016 vs 2015')
 
 print(st_2016v2015)
 ggsave(file.path(dir_git, scenario, 'output/scatterplot_spp_status_global.png'))
@@ -518,4 +529,5 @@ tr_2016v2015 <- ggplot(status_df, aes(x = tr_2015, y = tr_2016)) +
   labs(title = 'Trend: 2016 vs 2015')
 
 print(tr_2016v2015)
+
 ```
