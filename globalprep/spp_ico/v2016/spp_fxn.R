@@ -25,19 +25,19 @@ get_loiczid_raster <- function(reload = FALSE) {
     
     stopifnot(sum(duplicated(am_cells$LOICZID)) == 0) #key numeric ID for raster generation.... check for dups
     
-    template_raster <- raster(raster_template_file)
+    template_raster <- raster::raster(raster_template_file)
     
     coordinates(am_cells) <- ~ CenterLong + CenterLat
     proj4string(am_cells) <- CRS(projection(template_raster))
     
     message(sprintf('Writing LOICZID 0.5° raster to: \n  %s', rgn_prop_file))
-    rasterize(am_cells, template_raster, field = 'LOICZID', progress = 'text', 
-              filename = loiczid_raster_file,
-              overwrite = TRUE)
+    raster::rasterize(am_cells, template_raster, field = 'LOICZID', progress = 'text', 
+                      filename = loiczid_raster_file,
+                      overwrite = TRUE)
   } else {
     message(sprintf('Reading LOICZID 0.5° raster from: \n  %s', loiczid_raster_file))
   }
-  loiczid_raster <- raster(loiczid_raster_file)
+  loiczid_raster <- raster::raster(loiczid_raster_file)
   return(invisible(loiczid_raster))
 }
 
@@ -157,7 +157,7 @@ iucn_shp_info <- function(reload = TRUE) {
       fsize <- round(file.size(file.path(dir_iucn_shp, sprintf('%s.shp', spp_gp)))/1e6, 2)
       message(sprintf('Species group shapefile %s, %.2f MB\n  %s/%s', spp_gp, fsize, dir_iucn_shp, spp_gp))
       # spp_group | .shp size | # species | binomial TF | id_no TF | col_names
-      spp_dbf <- read.dbf(file.path(dir_iucn_shp, sprintf('%s.dbf', spp_gp)))
+      spp_dbf <- foreign::read.dbf(file.path(dir_iucn_shp, sprintf('%s.dbf', spp_gp)))
       message('file read successfully... ')
       spp_dbf <- as.data.frame(spp_dbf)
       message('converted to data frame... ')
@@ -208,7 +208,7 @@ generate_iucn_map_list <- function(reload = FALSE) {
     
     for (spp_group in groups_list$shp_fn) { # spp_group <- groups_list$shp_fn[1]
       message(sprintf('Processing species group: %s...', tolower(spp_group)))
-      spp_dbf <- read.dbf(file.path(dir_iucn_shp, sprintf('%s.dbf', spp_group)))
+      spp_dbf <- foreign::read.dbf(file.path(dir_iucn_shp, sprintf('%s.dbf', spp_group)))
       
       # convert to data frame, lower-case the column names
       spp_dbf <- as.data.frame(spp_dbf)
@@ -354,10 +354,13 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
     
     spp_iucn <- read_spp_iucn(reload)
     
-    
+    message('Joining ', nrow(spp_am), ' AquaMaps species to ', nrow(spp_iucn), ' species...')
     ### To the AquaMaps list (speciesoccursum) bind the IUCN marine species list
     spp_all <- spp_am %>%
       full_join(spp_iucn, by = c('sciname', 'name_verified'))
+    
+    message(nrow(spp_all), ' species, with ', nrow(spp_all %>% filter(!is.na(iucn_sid) & !is.na(am_sid))),
+            ' species with info in both lists')
     
     spp_all <- spp_all %>%
       # create single 'pop_cat' field for risk category, and flag 'info_source' to indicate iucn or am.
@@ -376,29 +379,45 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
     ### where iucn_subpop is a text name for the subpop (why not ID? dammit) and
     ### spatial_source is 'iucn'
     
+    message('IUCN map list contains ', nrow(spp_iucn_maps %>% select(id_no) %>% unique()), 
+            ' separate IUCN species ids...')
     
     ### join spp_iucn_maps info to spp_all dataframe, using the 
     ### map ID number (rather than sciname as in the past)
     if(nrow(spp_iucn_maps %>% filter(is.na(id_no))) > 0)
-      message(sprintf('Species %s range map has no ID number', spp_iucn_maps$sciname))
+      message(sprintf('Species %s range map has no ID number', spp_iucn_maps$sciname %>% filter(is.na(id_no))))
     spp_all <- spp_all %>% 
       left_join(spp_iucn_maps %>%
-                  mutate(iucn_sid = id_no),     ### want both iucn_sid and id_no separate - helps to later determine IUCN aliases and subpops
+                  mutate(iucn_sid = id_no),
                 by = 'iucn_sid')
+    
+    message('Species list matched ', 
+            nrow(spp_all %>% filter(!is.na(spp_group)) %>% select(iucn_sid) %>% unique()),
+            ' instances of IUCN species maps by ID...')
+    
     
     ### query birdlife international .dbf, using the ID number, left join
     ### to spp_all which already filters to marine species.
     spp_birds <- foreign::read.dbf(file.path(dir_data_bird, 'BOTW.dbf')) %>%
       setNames(tolower(names(.))) %>%
-      dplyr::select(iucn_sid = sisid, sciname, presence) %>%
+      dplyr::select(id_no = sisid, sciname) %>%
       unique()
-    ### NOTE: this loses info on 'origin' and 'seasonal' fields
     
+    message('Birdlife International list contains ', nrow(spp_birds), ' species ID records...')
+
     ### toggle the spatial_source variable for bird species; set to 'iucn-bli' for
-    ### same handling as IUCN generally, but identifiable as a birdlife int'l
+    ### same handling as IUCN generally, but identifiable as a birdlife int'l.
+    ### Split off the bird matches, adjust variables, then rejoin to non-matches.
     spp_all <- spp_all %>%
-      mutate(spatial_source = ifelse(!is.na(iucn_sid) & iucn_sid %in% spp_birds$iucn_sid, 'iucn-bli', spatial_source),
-             spp_group      = ifelse(str_detect(spatial_source, 'bli'), 'BIRDS', spp_group))
+      filter(iucn_sid %in% spp_birds$id_no) %>%
+      mutate(spatial_source = 'iucn-bli',
+             spp_group      = 'BOTW',
+             id_no          = iucn_sid) %>%
+    bind_rows(spp_all %>%
+              filter(is.na(iucn_sid) | !iucn_sid %in% spp_birds$id_no))
+    
+    message(nrow(spp_all %>% filter(spp_group == 'BOTW') %>% select(iucn_sid) %>% unique()),
+            ' bird species matched to species list...')
     
     ### toggle the spatial_source variable for aquamaps, based on source_pref
     ### and whether there is already an IUCN range map (or birdlife range map) available.
@@ -416,13 +435,13 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
     ### * parent/subpop issues
     ### * sciname duped, due to same sciname/id_no polygons within multiple IUCN shapefiles 
     spp_all1 <- ditch_dupes(spp_all)
-
+    
     
     ### to overall lookup table, join scores for population category and trend.
     pop_cat    <- data.frame(pop_cat  = c("LC", "NT", "VU", "EN", "CR", "EX"), 
-                              cat_score = c(   0,  0.2,  0.4,  0.6,  0.8,   1))
+                             cat_score = c(   0,  0.2,  0.4,  0.6,  0.8,   1))
     pop_trend  <- data.frame(pop_trend  = c("Decreasing", "Stable", "Increasing"), 
-                              trend_score = c(-0.5, 0, 0.5))
+                             trend_score = c(-0.5, 0, 0.5))
     
     spp_all1 <- spp_all1 %>%
       left_join(pop_cat,   by = 'pop_cat') %>%
@@ -430,7 +449,7 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
     
     ### Ditch some presently unused columns...
     spp_all1 <- spp_all1 %>%
-      dplyr::select(-am_cat, -iucn_cat, -reviewed, -name_verified, -info_source, -parent_sid) %>%
+      dplyr::select(-iucn_cat, -reviewed, -name_verified, -info_source, -parent_sid) %>%
       unique()
     
     message(sprintf('Writing full species lookup table to: \n  %s', spp_all_file))
@@ -530,9 +549,9 @@ extract_loiczid_per_spp <- function(map_list,
       ### Because the IUCN metadata states that shapefiles are unprojected lat-long with WGS84,
       ### use readShapePoly (rather than readOGR) and manually tell it the projection...
       if (use_readOGR) spp_shp <- readOGR(dsn = path.expand(shp_dir), layer = spp_gp)
-      else  spp_shp <- readShapePoly(fn = file.path(shp_dir, spp_gp), 
-                                     proj4string = CRS('+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'),
-                                     delete_null_obj = TRUE)
+      else  spp_shp <- maptools::readShapePoly(fn = file.path(shp_dir, spp_gp), 
+                                               proj4string = CRS('+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'),
+                                               delete_null_obj = TRUE)
       message(sprintf('Elapsed read time: %.2f seconds', (proc.time() - ptm)[3]))
       
       names(spp_shp@data) <- tolower(names(spp_shp@data))
@@ -586,7 +605,10 @@ extract_loiczid_per_spp <- function(map_list,
 
 
 ##############################################################################=
-process_am_summary_per_cell <- function(spp_all, spp_cells = NULL, fn_tag = '', prob_filter = 0, reload = FALSE) {
+process_am_summary_per_cell <- function(spp_all, 
+                                        spp_cells = NULL, ### optional give it a df of cells-per-spp
+                                        fn_tag = '', prob_filter = 0, ### options for custom runs
+                                        reload = FALSE) {
   # Calculate category and trend scores per cell for Aquamaps species.
   # * load AM species <-> cell lookup
   # * filter to appropriate cells (in regions, meets probability threshold)
@@ -619,27 +641,28 @@ process_am_summary_per_cell <- function(spp_all, spp_cells = NULL, fn_tag = '', 
     message('Filtering to just species with non-NA IUCN category scores.')
     spp_am_info <- spp_all %>% 
       filter(str_detect(spatial_source, 'am')) %>%
-      ### NOTE: as of 2015, AM data does not include spatially distinct subpops, so OK to cut 'am_subpops'
       filter(!is.na(cat_score) & !(cat_score == 'DD')) %>%
       dplyr::select(am_sid, cat_score, trend_score) %>%
       unique()
     message(sprintf('Length of Aquamaps species list: %d', nrow(spp_am_info)))
-
+    
     message('Keyed data frame join cell/species IDs to master species list (filtered for just spatial_source == am or am_parent).')
     acs_keyed <- data.table(am_cells_spp, key = "am_sid") 
     sai_keyed <- data.table(spp_am_info,  key = "am_sid")
     am_cells_spp1 <- acs_keyed[sai_keyed] %>%
-      as.data.frame() %>%
-      unique()
+      setkey(NULL)
     # z <- x[y] is analogous to z <- left_join(y, x, by = 'key'), so the y variable determines which
     # rows to keep (non-matching rows in x will be discarded).  In this case, all species must be on the spp_am_info list
     # (to learn IUCN cat/trend info); and species not on the list will be discarded.  So: acs_keyed is x, and sai_keyed is y.
+    # The setkey(NULL) removes the key so the unique() can work properly (otherwise, just selects rows with unique values 
+    # of the key)
     # Somehow, after this step, there is one instance of Clupea harengus (Fis-29344) that has no LOICZID.  It appears on
     # the spp_all list, but has no associated cells.  Weird.    
     
     message('Grouping by cell and summarizing by mean category, mean trend, and n_spp for each, for AM spatial info.')
     am_cells_spp_sum <- am_cells_spp1 %>%
       as.data.frame() %>%
+      unique() %>%
       group_by(loiczid) %>%
       summarize(mean_cat_score        = mean(cat_score),     # no na.rm needed; already filtered
                 mean_pop_trend_score  = mean(trend_score, na.rm = TRUE), 
@@ -686,10 +709,12 @@ get_am_cells_spp <- function(n_max = -1, prob_filter = .40, reload = TRUE) {
 
 ##############################################################################=
 get_iucn_cells_spp <- function(reload = FALSE) {
-  iucn_cells_file <- file.path(dir_data_iucn, sprintf('iucn_cells_%s.csv', str_replace(scenario, 'v', 'd')))
+  iucn_cells_file <- file.path(dir_anx, scenario, 'int/iucn_cells_spp.csv')
   if(!file.exists(iucn_cells_file) | reload) {
     message(sprintf('Building IUCN species to cell table.  This might take a few minutes.'))
-    iucn_map_files      <- file.path(dir_anx, 'iucn_intersections', list.files(file.path(dir_anx, 'iucn_intersections')))
+    dir_intsx <- file.path(dir_anx, scenario, 'iucn_intersections')
+    iucn_map_files      <- file.path(dir_intsx, list.files(dir_intsx))
+    message('Binding rows from intersection files: \n  ', paste(basename(iucn_map_files), collapse = '\n  '))
     iucn_cells_spp_list <- lapply(iucn_map_files, read.csv) # read each into dataframe within a list
     iucn_cells_spp      <- bind_rows(iucn_cells_spp_list)   # combine list of dataframes to single dataframe
     names(iucn_cells_spp) <- tolower(names(iucn_cells_spp))
@@ -712,9 +737,9 @@ process_iucn_summary_per_cell <- function(spp_all, spp_cells = NULL, fn_tag = ''
   # * join species info: category score and trend score
   # * filter by cat score != NA
   # * summarize by loiczid:  mean cat_score, mean trend_score, count
-
+  
   iucn_cells_spp_sum_file <- file.path(dir_git, scenario, sprintf('summary/spp_sum_iucn_cells%s.csv', fn_tag))
-
+  
   if(!file.exists(iucn_cells_spp_sum_file) | reload | !is.null(spp_cells)) {
     message('Generating cell-by-cell summary for IUCN range-map species.')
     
@@ -731,7 +756,7 @@ process_iucn_summary_per_cell <- function(spp_all, spp_cells = NULL, fn_tag = ''
     }
     
     # bind to iucn_cells_spp to attach cat_score and trend_score.
-
+    
     spp_iucn_info <- spp_all %>% 
       filter(str_detect(spatial_source, 'iucn')) %>% 
       dplyr::select(iucn_sid, cat_score, trend_score) %>%
@@ -744,18 +769,33 @@ process_iucn_summary_per_cell <- function(spp_all, spp_cells = NULL, fn_tag = ''
                             key = "iucn_sid") 
     sii_keyed <- data.table(spp_iucn_info,  
                             key = "iucn_sid")
-    iucn_cells_spp1 <- ics_keyed[sii_keyed] 
+    iucn_cells_spp1 <- ics_keyed[sii_keyed] %>%
+      setkey(NULL)
     # z <- x[y] is analogous to z <- left_join(y, x, by = 'key'), so the y variable determines which
     # rows to keep (non-matching rows in x will be discarded).  In this case, all species must be on the spp_iucn_info list
-    # (to learn IUCN cat/trend info); and species not on the list will be discarded.  So: ics_keyed is x, and sii_keyed is y.
-    # The following species are dropped; they have shapefile info but no IUCN ID number according to this analysis:
-    #   Alopex lagopus, Conus eduardi, Conus evansi, Conus hypochlorus, Conus luteus, Conus moncuri, Conus moylani,
-    #   Conus sartii, Conus subulatus, Diplodus argenteus, Diplodus sargus, Eptatretus fernholmi, Halichoeres bleekeri,
-    #   Holothuria squamifera, Sarda chiliensis chiliensis, Scyphiphora hydrophyllacea, Tetrapturus albidus
+    # (to learn IUCN cat/trend info); and species not on the list will be discarded.  So: ics_is x, and sii_keyed is y.
     
-    x <- ics_keyed %>% dplyr::select(iucn_sid) %>% unique()
-    y <- spp_iucn_info %>% filter(!iucn_sid %in% x$iucn_sid)
-    z <- spp_all %>% filter(iucn_sid %in% y$iucn_sid) %>% filter(pop_cat != 'DD')
+    
+    ### DEBUG:  At this point, there are 4087 unique species IDs; there 
+    ### are 4155 in whole IUCN species cell list - but only 4087 in the species info list
+    ### so this is probably OK.  Which species are not on the species info list?
+    # x <- iucn_cells_spp %>%
+    #   filter(!iucn_sid %in% spp_iucn_info$iucn_sid) %>%
+    #   select(iucn_sid) %>% unique() %>%
+    #   left_join(spp_all, by = 'iucn_sid')
+    # write_csv(x, file.path(dir_git, scenario, 'debug/iucn_not_in_speciesinfo_list.csv'))
+    ### These are all DD, except one Testudo Coriacea which is a translation
+    
+    # x <- ics_keyed %>% dplyr::select(iucn_sid) %>% setkey(NULL) %>% unique()
+    # y <- spp_iucn_info %>% filter(!iucn_sid %in% x$iucn_sid)
+    # z <- spp_all %>% filter(iucn_sid %in% y$iucn_sid) %>% filter(pop_cat != 'DD')
+    # write_csv(z, file.path(dir_git, scenario, 'debug/iucn_on_list_no_cells.csv'))
+    ### These are species with a species SID on the species info list that do not have
+    ### a an IUCN sid in the cell file - all birds:  Hirundo neoxena, Hirundo nigrita, Hirundo tahitica,        
+    # Prinia inornata, Procellaria aequinoctialis, Pseudobulweria aterrima, Pterodroma aterrima, 
+    # Pseudobulweria becki, Pterodroma becki, Procellaria cinerea, Procellaria conspicillata, 
+    # Procellaria parkinsoni, Procellaria westlandica, Procelsterna albivitta, Prosobonia cancellata, 
+    # Prosobonia parvirostris
     
     ### assign proper values for extinct polygons based on presence = 5; category becomes EX
     ### and trend becomes NA
@@ -766,14 +806,16 @@ process_iucn_summary_per_cell <- function(spp_all, spp_cells = NULL, fn_tag = ''
              trend_score = ifelse(presence == 5, NA, trend_score))
     
     message('Eliminating IUCN species double-counting due to overlapping polygons in IUCN shapefiles.')
+    # this next part to collapse any duplicated cells - summarize to max proportional area
     iucn_cells_spp2 <- iucn_cells_spp1 %>%
-      as.data.frame() %>%
-      # this next part to collapse any duplicated cells (overlapping polygons with same iucn_sid)
       group_by(iucn_sid, loiczid) %>%
       summarize(cat_score   = mean(cat_score), 
                 trend_score = mean(trend_score, na.rm = TRUE), 
                 prop_area   = max(prop_area))
     message('Collapsed ', nrow(iucn_cells_spp1) - nrow(iucn_cells_spp2), ' double-counted cells...')
+    ### DEBUG:  Check species counts again!
+    # length(unique(iucn_cells_spp1$iucn_sid)); length(unique(iucn_cells_spp2$iucn_sid))
+    # 4087; 4087.  Still no species dropped!
     
     message('Grouping by cell and summarizing mean category/trend and n_spp for each, for IUCN spatial info.')
     iucn_cells_spp_sum <- iucn_cells_spp2 %>%
@@ -784,6 +826,11 @@ process_iucn_summary_per_cell <- function(spp_all, spp_cells = NULL, fn_tag = ''
                 n_trend_species = sum(!is.na(trend_score))) %>% # no na.rm needed; count all with cat_score
       mutate(source = 'iucn') %>%
       filter(!is.na(mean_cat_score))
+    ### DEBUG:  Any lost cells?  Compare total of n_spp per cells to the number of species-cell pairs
+    ### iucn_cells_spp2 is 17124438 species-cell pairs
+    # sum(iucn_cells_spp_sum$n_cat_species) 
+    ### --> this returns 17124385; a few dropped, why?
+    ### come back to this later...
     
     message(sprintf('Writing cell-by-cell summary for IUCN species to:\n  %s', iucn_cells_spp_sum_file))
     write_csv(iucn_cells_spp_sum, iucn_cells_spp_sum_file)
@@ -812,16 +859,10 @@ process_means_per_cell <- function(am_cell_summary, iucn_cell_summary, fn_tag = 
   }
   sum_by_loiczid <- bind_rows(am_cell_summary, iucn_cell_summary) %>%
     group_by(loiczid) %>%
-    mutate(weighted_cat_score   = n_cat_species * mean_cat_score,
-           weighted_trend_score = n_trend_species * mean_pop_trend_score,
-           n_cat_spp = sum(n_cat_species),
-           n_tr_spp  = sum(n_trend_species),
-           weighted_mean_cat1 = sum(weighted_cat_score)/n_cat_spp,
-           weighted_mean_tr1  = sum(weighted_trend_score)/n_tr_spp) %>%
     summarize(weighted_mean_cat    = sum(n_cat_species   * mean_cat_score)/sum(n_cat_species),
               weighted_mean_trend  = sum(n_trend_species * mean_pop_trend_score, na.rm = TRUE)/sum(n_trend_species),
-              weighted_mean_cat1   = first(weighted_mean_cat1),
-              weighted_mean_trend1 = first(weighted_mean_tr1)) %>%
+              n_cat_spp = sum(n_cat_species),
+              n_tr_spp  = sum(n_trend_species)) %>%
     arrange(loiczid)
   
   write_csv(sum_by_loiczid, file.path(dir_git, scenario, sprintf('summary/cell_spp_summary_by_loiczid%s.csv', fn_tag)))
@@ -842,17 +883,22 @@ process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup, rgn_note 
   }
   
   rgn_weighted_sums <- summary_by_loiczid %>%
-    inner_join(rgn_cell_lookup %>% dplyr::select(-csq),
+    inner_join(rgn_cell_lookup %>% 
+                 dplyr::select(-csq),
                by = 'loiczid') %>%
-    mutate(rgn_area = cell_area * proportionArea,
-           area_weighted_mean_cat   = weighted_mean_cat   * rgn_area,
-           area_weighted_mean_trend = weighted_mean_trend * rgn_area) %>%
+    # mutate(rgn_area = cell_area * proportionArea,
+    #        area_weighted_mean_cat   = weighted_mean_cat   * rgn_area,
+    #        area_weighted_mean_trend = weighted_mean_trend * rgn_area) %>%
+    mutate(cell_area_weight_cat     = cell_area * n_cat_spp * proportionArea,
+           cell_area_weight_trend   = cell_area * n_tr_spp * proportionArea,
+           area_weighted_mean_cat   = weighted_mean_cat   * cell_area_weight_cat,
+           area_weighted_mean_trend = weighted_mean_trend * cell_area_weight_trend) %>%
     arrange(loiczid)
   
   region_sums <- rgn_weighted_sums %>%
     group_by(rgn_id) %>%
-    summarize(rgn_mean_cat   = sum(area_weighted_mean_cat)/sum(rgn_area),
-              rgn_mean_trend = sum(area_weighted_mean_trend)/sum(rgn_area))
+    summarize(rgn_mean_cat   = sum(area_weighted_mean_cat)/sum(cell_area_weight_cat),
+              rgn_mean_trend = sum(area_weighted_mean_trend, na.rm = TRUE)/sum(cell_area_weight_trend))
   
   region_sums <- region_sums %>%
     mutate(status = ((1 - rgn_mean_cat) - 0.25) / 0.75)
@@ -944,43 +990,38 @@ verify_scinames <- function(names_df, fn_tag) {
 
 ##############################################################################=
 calc_rgn_spp <- function(ics_keyed, acs_keyed, rgn_keyed, spp_all) {
+  message('processing iucn cells')
   iucn_rgn_spp <- ics_keyed[rgn_keyed] %>%
-    dplyr::select(iucn_sid, presence, loiczid, rgn_id, rgn_name) %>%
-    unique() %>%
+    setkey(NULL) %>%
     group_by(rgn_id, rgn_name, iucn_sid, presence) %>%
     summarize(n_cells = n())
   
-  spp_iucn <- spp_all %>%
-    filter(str_detect(spatial_source, 'iucn')) %>%
-    filter(pop_cat != 'DD') %>%
-    dplyr::select(iucn_sid, am_sid, sciname, pop_cat, pop_trend) %>%
-    unique() %>%
-    group_by(iucn_sid, pop_cat, pop_trend) %>%
-    summarize(sciname = paste(sciname, collapse = ', '),
-              am_sid = paste(am_sid, collapse = ', '))
-  
-  iucn_rgn_spp1 <- spp_iucn %>%
-    left_join(iucn_rgn_spp, by = 'iucn_sid') %>%
-    mutate(spatial_source = 'iucn') %>%
-    filter(!is.na(rgn_id))
-  
+  message('processing am cells')
   am_rgn_spp <- acs_keyed[rgn_keyed] %>%
+    setkey(NULL) %>%
     dplyr::select(am_sid, loiczid, rgn_id, rgn_name) %>%
     unique() %>%
     group_by(rgn_id, rgn_name, am_sid) %>%
     summarize(n_cells = n())
   
-  spp_am <- spp_all %>%
-    filter(str_detect(spatial_source, 'am')) %>%
-    filter(pop_cat != 'DD') %>%
-    dplyr::select(am_sid, iucn_sid, sciname, pop_cat, pop_trend)
+  spp_all_trunc <- spp_all %>%
+    dplyr::select(iucn_sid, am_sid, sciname, pop_cat, pop_trend, spatial_source) %>%
+    unique()
   
-  am_rgn_spp1 <- spp_am %>%
-    left_join(am_rgn_spp, by = 'am_sid') %>%
-    mutate(presence = NA,
-           spatial_source = 'am') %>%
+  message('processing iucn info')
+  iucn_rgn_spp1 <- spp_all_trunc %>%
+    filter(str_detect(spatial_source, 'iucn')) %>%
+    left_join(iucn_rgn_spp, by = 'iucn_sid') %>%
     filter(!is.na(rgn_id))
   
+  message('processing am info')
+  am_rgn_spp1 <- spp_all_trunc %>%
+    filter(str_detect(spatial_source, 'am')) %>%
+    left_join(am_rgn_spp, by = 'am_sid') %>%
+    mutate(presence = NA) %>%
+    filter(!is.na(rgn_id))
+  
+  message('binding all together')
   rgn_spp_all <- bind_rows(am_rgn_spp1, iucn_rgn_spp1) %>%
     group_by(rgn_id) %>%
     mutate(n_spp_rgn = n()) %>%

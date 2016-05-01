@@ -1,0 +1,51 @@
+sciname,iucn_sid,loiczid,spp_group,cat_score,trend_score
+Aptenodytes patagonicus,22697748,212772,BOTW,0,0.5
+Puffinus griseus,22698209,212772,BOTW,0.2,-0.5
+"Catharacta antarctica, Catharacta lonnbergi, Stercorarius lonnbergi",62289571,212772,BOTW,0,0
+"Stercorarius maccormicki, Catharacta maccormicki",22694218,212772,BOTW,0,0
+Daption capense,22697879,212772,BOTW,0,0
+Diomedea epomophora,22698314,212772,BOTW,0.4,0
+Diomedea exulans,22698305,212772,BOTW,0.4,-0.5
+Diomedea sanfordi,22728323,212772,BOTW,0.6,-0.5
+Eudyptes chrysolophus,22697793,212772,BOTW,0.4,-0.5
+Fulmarus glacialoides,22697870,212772,BOTW,0,0
+Halobaena caerulea,22698102,212772,BOTW,0,0
+Macronectes giganteus,22697852,212772,BOTW,0,0.5
+Macronectes halli,22697859,212772,BOTW,0,0.5
+Oceanites oceanicus,22698436,212772,BOTW,0,0
+Pachyptila belcheri,22698119,212772,BOTW,0,0
+Pachyptila desolata,22698114,212772,BOTW,0,-0.5
+Pagodroma nivea,22697885,212772,BOTW,0,0
+Phoebetria palpebrata,22698448,212772,BOTW,0.2,-0.5
+"Pterodroma lessoni, Pterodroma lessonii",22698055,212772,BOTW,0,-0.5
+Pygoscelis adeliae,22697758,212772,BOTW,0.2,0.5
+Pygoscelis antarcticus,22697761,212772,BOTW,0,0.5
+Pygoscelis papua,22697755,212772,BOTW,0.2,-0.5
+Stercorarius longicaudus,22694251,212772,BOTW,0,0
+Sterna paradisaea,22694629,212772,BOTW,0,-0.5
+"Thalassarche chrysostoma, Diomedea chrysostoma",22698398,212772,BOTW,0.6,-0.5
+"Thalassarche melanophris, Thalassarche melanophris melanophris, Thalassarche melanophrys",22698375,212772,BOTW,0.2,-0.5
+Thalassoica antarctica,22697875,212772,BOTW,0,0
+"Stereomastis suhmi, Polycheles suhmi",185036,212772,LOBSTERS,0,NA
+Berardius arnuxii,2762,212772,MARINE_MAMMALS_update,NA,NA
+Balaenoptera acutorostrata,2474,212772,MARINE_MAMMALS_update,0,0
+Mirounga leonina,13583,212772,MARINE_MAMMALS_update,0,NA
+"Globicephala melas, Globicephala leucosagmaphora, Globicephala melaena, Globicephala melas, Globicephala leucosagmaphora, Globicephala melaena",9250,212772,MARINE_MAMMALS_update,NA,NA
+"Physeter macrocephalus, Physeter macrocephalus",41755,212772,MARINE_MAMMALS_update,0.4,NA
+"Arctocephalus gazella, Arctocephalus tropicalis",2058,212772,MARINE_MAMMALS_update,0,0.5
+Hyperoodon planifrons,10708,212772,MARINE_MAMMALS_update,0,NA
+Hydrurga leptonyx,10340,212772,MARINE_MAMMALS_update,0,NA
+"Lobodon carcinophaga, Lobodon carcinophagus",12246,212772,MARINE_MAMMALS_update,0,NA
+"Phocoena dioptrica, Australophocaena dioptrica",41715,212772,MARINE_MAMMALS_update,NA,NA
+Mesoplodon grayi,13247,212772,MARINE_MAMMALS_update,NA,NA
+Balaenoptera musculus,2477,212772,MARINE_MAMMALS_update,0.6,0.5
+Megaptera novaeangliae,13006,212772,MARINE_MAMMALS_update,0,0.5
+Balaenoptera physalus,2478,212772,MARINE_MAMMALS_update,0.6,NA
+Balaenoptera borealis,2475,212772,MARINE_MAMMALS_update,0.6,NA
+Balaenoptera bonaerensis,2480,212772,MARINE_MAMMALS_update,NA,NA
+Leptonychotes weddellii,11696,212772,MARINE_MAMMALS_update,0,NA
+Lagenorhynchus cruciger,11144,212772,MARINE_MAMMALS_update,0,NA
+Mesoplodon layardii,13249,212772,MARINE_MAMMALS_update,NA,NA
+Ommatophoca rossii,15269,212772,MARINE_MAMMALS_update,0,NA
+Eubalaena australis,8153,212772,MARINE_MAMMALS_update,0,0.5
+"Molpadiodemas violaceus, Pseudostichopus villosus",19720962,212772,SEACUCUMBERS,0,NA

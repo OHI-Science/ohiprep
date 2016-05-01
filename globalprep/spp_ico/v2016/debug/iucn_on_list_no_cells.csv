@@ -1,0 +1,17 @@
+am_sid,am_cat,sciname,iucn_sid,pop_trend,pop_cat,spp_group,id_no,iucn_subpop,spatial_source,cat_score,trend_score
+NA,NA,Hirundo neoxena,22712294,Increasing,LC,BIRDS,NA,NA,iucn-bli,0,0.5
+NA,NA,Hirundo nigrita,22712305,Increasing,LC,BIRDS,NA,NA,iucn-bli,0,0.5
+NA,NA,Hirundo tahitica,22712289,Increasing,LC,BIRDS,NA,NA,iucn-bli,0,0.5
+NA,NA,Prinia inornata,22713615,Stable,LC,BIRDS,NA,NA,iucn-bli,0,0
+NA,NA,Procellaria aequinoctialis,22698140,Decreasing,VU,BIRDS,NA,NA,iucn-bli,0.4,-0.5
+NA,NA,Pseudobulweria aterrima,22697896,Decreasing,CR,BIRDS,NA,NA,iucn-bli,0.8,-0.5
+NA,NA,Pterodroma aterrima,22697896,Decreasing,CR,BIRDS,NA,NA,iucn-bli,0.8,-0.5
+NA,NA,Pseudobulweria becki,22697913,Decreasing,CR,BIRDS,NA,NA,iucn-bli,0.8,-0.5
+NA,NA,Pterodroma becki,22697913,Decreasing,CR,BIRDS,NA,NA,iucn-bli,0.8,-0.5
+NA,NA,Procellaria cinerea,22698159,Decreasing,NT,BIRDS,NA,NA,iucn-bli,0.2,-0.5
+NA,NA,Procellaria conspicillata,22728437,Increasing,VU,BIRDS,NA,NA,iucn-bli,0.4,0.5
+NA,NA,Procellaria parkinsoni,22698150,Stable,VU,BIRDS,NA,NA,iucn-bli,0.4,0
+NA,NA,Procellaria westlandica,22698155,Stable,VU,BIRDS,NA,NA,iucn-bli,0.4,0
+NA,NA,Procelsterna albivitta,22733705,Stable,LC,BIRDS,NA,NA,iucn-bli,0,0
+NA,NA,Prosobonia cancellata,62289108,NA,EX,BIRDS,NA,NA,iucn-bli,1,NA
+NA,NA,Prosobonia parvirostris,62289271,Decreasing,EN,BIRDS,NA,NA,iucn-bli,0.6,-0.5
