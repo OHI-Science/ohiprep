@@ -1,17 +1,13 @@
-## Ocean Health Index: [NAME OF GOAL/DATA LAYER/SCENARIO YEAR]
+## Ocean Health Index: [NAME OF GOAL/SUBGOAL]
 
-[Example: https://github.com/OHI-Science/ohiprep/tree/master/globalprep/Pressures_OceanAcidification/v2015]
+This folder describes the methods used to prepare data for [name of goal/subgoal] for the global OHI assessment.
 
-See full data prep details [here](LINK TO HTML FILE).
+More information about this goal is available [here](http://ohi-science.org/goals/#artisanal-fishing-opportunities).
 
-If using these data, please see our [citation policy](will add a link in here).
+The folders in this file include the metadata, R scripts, and data for each assessement year (i.e., the year the assessment was conducted).  The most current year represents the best available data and methods, and previous years are maintained for archival purposes.
 
-[alternatively, if you want a specific citation for this resource, you can add that here....]
+Our [data managment SOP](https://rawgit.com/OHI-Science/ohiprep/master/src/dataOrganization_SOP.html) describes how we manage OHI global data, including a description of the file structure.
 
+Please see our [citation policy](http://ohi-science.org/citation-policy/) if you use OHI data or methods.
 
-### Additional information
-
-[If relevant: description of workflow, description of files, etc.]
-
-
-  
+Thank you!
