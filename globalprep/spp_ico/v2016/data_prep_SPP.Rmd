@@ -22,8 +22,8 @@ library(foreign)
 library(data.table)
 library(sp)
 library(rgdal)
-library(raster)
-library(maptools)
+# library(raster)
+# library(maptools)
 library(readr)
 
 source('~/github/ohiprep/src/R/common.R')
@@ -31,9 +31,9 @@ source('~/github/ohiprep/src/R/common.R')
 goal     <- 'globalprep/spp_ico'
 scenario <- 'v2016'
 dir_anx  <- file.path(dir_M, 'git-annex', goal) 
-dir_data_am    <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'aquamaps', str_replace(scenario, 'v', 'd')) 
-dir_data_iucn  <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'iucn_spp') 
-dir_data_bird  <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'birdlife_intl') 
+dir_data_am    <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'aquamaps', 'd2015') 
+dir_data_iucn  <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'iucn_spp', 'd2015') 
+dir_data_bird  <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'birdlife_intl', 'd2015') 
 dir_git  <- file.path('~/github/ohiprep', goal)
 
 source(file.path(dir_git, scenario, 'spp_fxn.R'))
@@ -212,7 +212,7 @@ Now having identified spatial source availability and preference for all species
 
 ``` {r Generate spp lookup}
 
-reload <- FALSE
+reload <- TRUE
 
 if(reload) {
   ### NOTE: Manually set up the subpopulations for 2016: see subpops_list.csv.
@@ -220,8 +220,8 @@ if(reload) {
   ### field related to the subpop iucn_sid instead of the parent iucn_sid.
 
   spp_all <- create_spp_master_lookup(source_pref = 'iucn', fn_tag = '', reload = TRUE)
-  ### | am_sid | sciname | am_category | iucn_sid | iucn_category | pop_trend | pop_category | 
-  ### | info_source | spp_group | id_no | objectid | spatial_source | category_score | trend_score |
+  ### | am_sid | sciname | am_cat | iucn_sid | iucn_cat | pop_trend | pop_cat | 
+  ### | info_source | spp_group | id_no | objectid | spatial_source | cat_score | trend_score |
   
   ### check subpops: all spp with an IUCN subpop code
   spp_all_subpops <- spp_all %>%
@@ -316,10 +316,10 @@ These are then saved to status and trend layer outputs for global (shown in tabl
 
 ``` {r  SPP Global Summarize mean category and trend per cell and per region}
 
-summary_by_loiczid <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum, fn_tag = '')
+sum_by_loiczid <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum, fn_tag = '')
 ### This returns dataframe with variables:
-### loiczid | weighted_mean_cat | weighted_mean_trend
-
+### loiczid | weighted_mean_cat | weighted_mean_trend | n_cat_spp | n_tr_spp
+  
 rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
 ### | rgn_id | rgn_name | loiczid | proportionArea | csq | cell_area
 
@@ -328,22 +328,22 @@ rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
 ### To use a shape file from a different directory (other than git-annex/globalprep/spatial/v2015/data), add an ogr_location argument.
 ### To run a different type of analysis, add an ohi_type argument with global (default), HS, or AQ
 
-summary_by_rgn <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup, rgn_note = 'gl')
+sum_by_rgn <- process_means_per_rgn(sum_by_loiczid, rgn_cell_lookup, rgn_note = 'gl')
 ### This returns dataframe with variables:
 ### rgn_id | rgn_mean_cat | rgn_mean_trend | status
 
 ### Create final outputs:
-if(!exists('summary_by_rgn')) 
-  summary_by_rgn <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_gl.csv'))
-spp_status <- summary_by_rgn %>%
+if(!exists('sum_by_rgn')) 
+  sum_by_rgn <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_gl.csv'))
+spp_status <- sum_by_rgn %>%
   dplyr::select(rgn_id, score = status)
-spp_trend <- summary_by_rgn %>%
+spp_trend <- sum_by_rgn %>%
   dplyr::select(rgn_id, score = rgn_mean_trend)
 write_csv(spp_status, file.path(dir_git, scenario, 'output/spp_status_global.csv'))
 write_csv(spp_trend,  file.path(dir_git, scenario, 'output/spp_trend_global.csv'))
 ```
 
-`r DT::datatable(summary_by_rgn, caption = 'Region summary: mean category, trend, and status')`
+`r DT::datatable(sum_by_rgn, caption = 'Region summary: mean category, trend, and status')`
 
 
 ``` {r SPP 3nm}
@@ -357,13 +357,13 @@ rgn_cell_lookup_3nm <- extract_cell_id_per_region(reload = FALSE,
 ### | sp_id | loiczid | proportionArea | csq | cell_area
 ### saves lookup table to git-annex/globalprep/spp_ico/rgns/cellID_rgn_offshore3nm_gcs_global.csv
 
-summary_by_rgn_3nm <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup_3nm, rgn_note = '3nm')
+sum_by_rgn_3nm <- process_means_per_rgn(sum_by_loiczid, rgn_cell_lookup_3nm, rgn_note = '3nm')
 
-if(!exists('summary_by_rgn_3nm')) 
-  summary_by_rgn_3nm <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_3nm.csv'))
-spp_status_3nm <- summary_by_rgn_3nm %>%
+if(!exists('sum_by_rgn_3nm')) 
+  sum_by_rgn_3nm <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_3nm.csv'))
+spp_status_3nm <- sum_by_rgn_3nm %>%
   dplyr::select(rgn_id, score = status)
-spp_trend_3nm <- summary_by_rgn_3nm %>%
+spp_trend_3nm <- sum_by_rgn_3nm %>%
   dplyr::select(rgn_id, score = rgn_mean_trend)
 write_csv(spp_status_3nm, file.path(dir_git, scenario, 'output/spp_status_3nm.csv'))
 write_csv(spp_trend_3nm,  file.path(dir_git, scenario, 'output/spp_trend_3nm.csv'))
@@ -380,13 +380,13 @@ rgn_cell_lookup_hs <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 're
 ### | sp_id | loiczid | proportionArea | csq | cell_area
 ### saves lookup table to git-annex/globalprep/spp_ico/rgns/cellID_region_gcs_HS.csv
 
-summary_by_rgn_hs <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup_hs, rgn_note = 'hs')
+sum_by_rgn_hs <- process_means_per_rgn(sum_by_loiczid, rgn_cell_lookup_hs, rgn_note = 'hs')
 
-if(!exists('summary_by_rgn_hs')) 
-  summary_by_rgn_hs <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_hs.csv'))
-spp_status_hs <- summary_by_rgn_hs %>%
+if(!exists('sum_by_rgn_hs')) 
+  sum_by_rgn_hs <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_hs.csv'))
+spp_status_hs <- sum_by_rgn_hs %>%
   dplyr::select(rgn_id, score = status)
-spp_trend_hs <- summary_by_rgn_hs %>%
+spp_trend_hs <- sum_by_rgn_hs %>%
   dplyr::select(rgn_id, score = rgn_mean_trend)
 write_csv(spp_status_hs, file.path(dir_git, scenario, 'output/spp_status_hs.csv'))
 write_csv(spp_trend_hs,  file.path(dir_git, scenario, 'output/spp_trend_hs.csv'))
@@ -398,13 +398,13 @@ rgn_cell_lookup_aq <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 're
 ### | sp_id | loiczid | proportionArea | csq | cell_area
 ### saves lookup table to git-annex/globalprep/spp_ico/rgns/cellID_region_gcs_AQ.csv
 
-summary_by_rgn_aq <- process_means_per_rgn(summary_by_loiczid, rgn_cell_lookup_aq, rgn_note = 'aq')
+sum_by_rgn_aq <- process_means_per_rgn(sum_by_loiczid, rgn_cell_lookup_aq, rgn_note = 'aq')
 
-if(!exists('summary_by_rgn_aq')) 
-  summary_by_rgn_aq <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_aq.csv'))
-spp_status_aq <- summary_by_rgn_aq %>%
+if(!exists('sum_by_rgn_aq')) 
+  sum_by_rgn_aq <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_aq.csv'))
+spp_status_aq <- sum_by_rgn_aq %>%
   dplyr::select(rgn_id, score = status)
-spp_trend_aq <- summary_by_rgn_aq %>%
+spp_trend_aq <- sum_by_rgn_aq %>%
   dplyr::select(rgn_id, score = rgn_mean_trend)
 write_csv(spp_status_aq, file.path(dir_git, scenario, 'output/spp_status_aq.csv'))
 write_csv(spp_trend_aq,  file.path(dir_git, scenario, 'output/spp_trend_aq.csv'))
@@ -470,7 +470,7 @@ The `calc_rgn_spp()` function takes in lookup tables of species by cell (for bot
 
 ``` {r species_by_region}
 
-iucn_cells_spp <- read_csv(file.path(dir_data_iucn, sprintf('iucn_cells_%s.csv', scenario)),
+iucn_cells_spp <- read_csv(file.path(dir_anx, scenario, 'int/iucn_cells_spp.csv'),
                            col_types = 'cddddc')
 am_cells_spp   <- read_csv(file.path(dir_anx, scenario, 'int/am_cells_spp_prob0.csv'))
 
@@ -500,24 +500,23 @@ write_csv(rgn_spp_hs,  file.path(dir_git, scenario, 'output/rgn_spp_hs.csv'))
 library(ggplot2)
 status_2016 <- read_csv(file.path(dir_git, scenario, 'output/spp_status_global.csv'))
 trend_2016  <- read_csv(file.path(dir_git, scenario, 'output/spp_trend_global.csv'))
-# status_2016 <- read_csv(file.path(dir_git, scenario, 'output/spp_status_global_40.csv'))
-# trend_2016  <- read_csv(file.path(dir_git, scenario, 'output/spp_trend_global_40.csv'))
-# status_2016 <- read_csv(file.path(dir_git, scenario, 'output/spp_status_global_40_nobirds.csv'))
-# trend_2016  <- read_csv(file.path(dir_git, scenario, 'output/spp_trend_global_40_nobirds.csv'))
 status_2015 <- read_csv(file.path(dir_git, 'v2015', 'data/spp_status_global.csv'))
 trend_2015  <- read_csv(file.path(dir_git, 'v2015', 'data/spp_trend_global.csv'))
 
 status_df <- status_2016 %>% rename(st_2016 = score) %>%
   full_join(status_2015 %>% rename(st_2015 = score), by = 'rgn_id') %>%
   full_join(trend_2016 %>% rename(tr_2016 = score), by = 'rgn_id') %>%
-  full_join(trend_2015 %>% rename(tr_2015 = score), by = 'rgn_id')
-st_2016v2015 <- ggplot(status_df, aes(x = st_2015, y = st_2016)) + 
+  full_join(trend_2015 %>% rename(tr_2015 = score), by = 'rgn_id') %>%
+  full_join(rgn_cell_lookup %>% select(rgn_id, rgn_name) %>% unique(), by = 'rgn_id')
+st_2016v2015 <- ggplot(status_df, aes(x = st_2015, y = st_2016, key = rgn_name)) + 
   geom_point() +
   geom_abline(slope = 1, intercept = 0, color = 'red') +
   scale_x_continuous(limits = c(0, 1)) +
   scale_y_continuous(limits = c(0, 1)) +
   labs(title = 'Status: 2016 vs 2015')
 
+library(plotly)
+ggplotly(st_2016v2015)
 print(st_2016v2015)
 ggsave(file.path(dir_git, scenario, 'output/scatterplot_spp_status_global.png'))
 

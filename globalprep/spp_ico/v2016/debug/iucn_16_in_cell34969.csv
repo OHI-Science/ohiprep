@@ -1,0 +1,71 @@
+sciname,iucn_sid,loiczid,spp_group,cat_score,trend_score
+"Actitis hypoleucos, Tringa hypoleucos",22693264,34969,BOTW,0,-0.5
+Alauda arvensis,22717415,34969,BOTW,0,-0.5
+Alca torda,22694852,34969,BOTW,0.2,0.5
+Anas acuta,22680301,34969,BOTW,0,-0.5
+Anthus pratensis,22718556,34969,BOTW,0.2,-0.5
+Arenaria interpres,22693336,34969,BOTW,0,-0.5
+Aythya ferina,22680358,34969,BOTW,0.4,-0.5
+Aythya fuligula,22680391,34969,BOTW,0,0
+Aythya marila,22680398,34969,BOTW,0,-0.5
+Bucephala clangula,22680455,34969,BOTW,0,0
+Calidris minutilla,22693396,34969,BOTW,0,-0.5
+"Calidris pugnax, Philomachus pugnax",22693468,34969,BOTW,0,-0.5
+Calidris temminckii,22693388,34969,BOTW,0,NA
+Cepphus grylle,22694861,34969,BOTW,0,0.5
+Charadrius dubius,22693770,34969,BOTW,0,0
+Charadrius hiaticula,22693759,34969,BOTW,0,-0.5
+Clangula hyemalis,22680427,34969,BOTW,0.4,-0.5
+Corvus corone,22706016,34969,BOTW,0,0.5
+Eremophila alpestris,22717434,34969,BOTW,0,-0.5
+Falco columbarius,22696453,34969,BOTW,0,0
+"Falco pelegrinoides, Falco peregrinus",45354964,34969,BOTW,0,0
+Falco rusticolus,22696500,34969,BOTW,0,0
+Fulmarus glacialis,22697866,34969,BOTW,0,0.5
+Gavia arctica,22697834,34969,BOTW,0,-0.5
+Gavia stellata,22697829,34969,BOTW,0,-0.5
+Grus grus,22692146,34969,BOTW,0,NA
+"Haematopus finschi, Haematopus ostralegus",22733462,34969,BOTW,0.2,-0.5
+"Hydrocoloeus minutus, Larus minutus",22694469,34969,BOTW,0,0.5
+"Hydroprogne caspia, Sterna caspia",22694524,34969,BOTW,0,0.5
+Jynx torquilla,22680683,34969,BOTW,0,-0.5
+"Larus argentatus, Larus argentatus",62030608,34969,BOTW,0,-0.5
+"Larus canus, Larus canus",22694308,34969,BOTW,0,NA
+"Larus fuscus, Larus fuscus",22694373,34969,BOTW,0,0.5
+Larus hyperboreus,22694343,34969,BOTW,0,0
+"Larus marinus, Larus marinus",22694324,34969,BOTW,0,0.5
+"Larus ridibundus, Chroicocephalus ridibundus ridibundus, Larus ridibundus, Chroicocephalus ridibundus ridibundus",22694420,34969,BOTW,0,-0.5
+Lymnocryptes minimus,22693133,34969,BOTW,0,0
+"Anas penelope, Mareca penelope",22680157,34969,BOTW,0,-0.5
+Melanitta fusca,22724836,34969,BOTW,0.4,-0.5
+Melanitta nigra,22724879,34969,BOTW,0,NA
+"Mergellus albellus, Mergus albellus",22680465,34969,BOTW,0,-0.5
+Mergus merganser,22680492,34969,BOTW,0,0.5
+Mergus serrator,22680485,34969,BOTW,0,0
+Morus bassanus,22696657,34969,BOTW,0,0.5
+Numenius arquata,22693190,34969,BOTW,0.2,-0.5
+Numenius phaeopus,22693178,34969,BOTW,0,-0.5
+Oenanthe oenanthe,22710272,34969,BOTW,0,-0.5
+Pandion haliaetus,22694938,34969,BOTW,0,0.5
+Phalaropus lobatus,22693490,34969,BOTW,0,-0.5
+Podiceps auritus,22696606,34969,BOTW,0.4,-0.5
+Podiceps cristatus,22696602,34969,BOTW,0,NA
+Podiceps grisegena,22696599,34969,BOTW,0,-0.5
+Anas clypeata,22680247,34969,BOTW,0,-0.5
+Anas querquedula,22680313,34969,BOTW,0,-0.5
+Sterna hirundo,22694623,34969,BOTW,0,-0.5
+Sterna paradisaea,22694629,34969,BOTW,0,-0.5
+Sturnus vulgaris,22710886,34969,BOTW,0,-0.5
+Tringa erythropus,22693207,34969,BOTW,0,0
+Tringa nebularia,22693220,34969,BOTW,0,0
+Tringa totanus,22693211,34969,BOTW,0,NA
+Vanellus vanellus,22693949,34969,BOTW,0.2,-0.5
+Xenus cinereus,22693251,34969,BOTW,0,0
+Phocoena phocoena,17031,34969,MARINE_MAMMALS_update,0.8,-0.5
+Halichoerus grypus,9660,34969,MARINE_MAMMALS_update,0,0.5
+Lagenorhynchus albirostris,11142,34969,MARINE_MAMMALS_update,0,NA
+"Pusa hispida, Phoca hispida",41672,34969,MARINE_MAMMALS_update,0,NA
+Mesothuria intestinalis,180540,34969,SEACUCUMBERS,0,NA
+"Zostera marina, Zostera stenophylla",153538,34969,SEAGRASSES,0,-0.5
+"Lutra lutra, Lutra nippon",12419,34969,TERRESTRIAL_MAMMALS,0.2,-0.5
+"Thunnus thynnus, Scomber thynnus, Thunnus vulgaris, Thynnus linnei, Thynnus mediterraneus, Thynnus secundodorsalis",21860,34969,TUNAS_BILLFISHES,0.6,-0.5
