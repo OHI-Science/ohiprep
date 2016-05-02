@@ -45,7 +45,7 @@ ics16_all <- read_csv(ics16_file, col_types = 'cddddc')
 
 ##### Examine the raw cell files #####
 # nrow(ics15_all %>% select(iucn_sid, sciname) %>% unique()) 
-# # 3371 spp
+# # 3463 spp
 # nrow(ics16_all %>% select(iucn_sid, sciname) %>% unique()) 
 # # 4154 spp
 # 
@@ -62,13 +62,69 @@ ics16_all <- read_csv(ics16_file, col_types = 'cddddc')
 #   unique()
 # # 3381 spp  
 # 
-# spp_valid_16 <- ics16_all %>% 
+# spp_valid_16 <- ics16_all %>%
 #   select(iucn_sid, sciname) %>%
 #   filter(iucn_sid %in% (spp_all_16 %>%
 #            filter(pop_cat != 'DD' & !is.na(pop_cat)) %>%
 #            .$iucn_sid)) %>% ### these are ones with ID and valid category
 #   unique()
 # # 4073 spp
+
+
+### species per cell are increasing
+cell_n_compare <-  ics15_all %>%
+  filter(iucn_sid %in% (spp_all_16 %>%
+                          filter(pop_cat != 'DD' & !is.na(pop_cat)) %>%
+                          .$iucn_sid)) %>%
+  group_by(loiczid) %>%
+  summarize(n_spp_15 = n()) %>%
+  left_join(ics16_all %>%
+    filter(iucn_sid %in% (spp_all_16 %>%
+                            filter(pop_cat != 'DD' & !is.na(pop_cat)) %>%
+                            .$iucn_sid)) %>%
+    group_by(loiczid) %>%
+    summarize(n_spp_16 = n()),
+  by = 'loiczid')
+
+cell_n_plot <- ggplot(cell_n_compare %>%
+                        sample_frac(.25), 
+                      aes(x = n_spp_15, y = n_spp_16, key = 'loiczid')) +
+  geom_point(alpha = 0.2) +
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  labs(x = 'Species per cell, IUCN 2014',
+       y = 'Species per cell, IUCN 2015')
+
+cell_n_plot
+ggsave(file.path(dir_git, 'v2016/debug', 'scatter_spp_per_cell.png'))
+
+### species shapefiles aren't changing.
+spp_cell_compare <- ics15_all %>%
+  filter(iucn_sid %in% (spp_all_16 %>%
+                          filter(pop_cat != 'DD' & !is.na(pop_cat)) %>%
+                          .$iucn_sid)) %>%
+  group_by(iucn_sid) %>%
+  summarize(n_cell_15 = n()) %>%
+  inner_join(ics16_all %>%
+              filter(iucn_sid %in% (spp_all_16 %>%
+                                      filter(pop_cat != 'DD' & !is.na(pop_cat)) %>%
+                                      .$iucn_sid)) %>%
+              group_by(iucn_sid) %>%
+              summarize(n_cell_16 = n()),
+            by = 'iucn_sid')
+
+spp_cell_plot <- ggplot(spp_cell_compare, 
+                      aes(x = n_cell_15, y = n_cell_16, key = 'iucn_sid')) +
+  geom_point(alpha = 0.5) +
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  labs(x = 'cells per species, IUCN 2014',
+       y = 'cells per species, IUCN 2015')
+
+spp_cell_plot
+ggsave(file.path(dir_git, 'v2016/debug', 'scatter_cell_per_spp.png'))
+
+### so changes in species per cell must be due to new polygons, or
+### changes in id numbers.
+
 
 ##### check that rgn cells are identical #####
 # source(file.path(dir_git, scenario, 'spp_fxn_v2015.R'))
@@ -94,21 +150,21 @@ ics16_15a <- process_iucn_summary_per_cell(spp_all_15,
                                            fn_tag = 'debug16_15')
 
 head(ics15_15a)
-      # loiczid mean_cat_score mean_popn_trend_score n_cat_species n_trend_species source
-      #   34969      0.1142857            -0.2500000             7               4   iucn
-      #   34970      0.1142857            -0.2500000             7               4   iucn
-      #   34971      0.1142857            -0.2500000             7               4   iucn
-      #   35688      0.1000000            -0.1666667             6               3   iucn
-      #   35689      0.1000000            -0.1666667             6               3   iucn
-      #   35690      0.1000000            -0.1666667             6               3   iucn
+# loiczid mean_cat_score mean_popn_trend_score n_cat_species n_trend_species source
+#   34969      0.1142857            -0.2500000             7               4   iucn
+#   34970      0.1142857            -0.2500000             7               4   iucn
+#   34971      0.1142857            -0.2500000             7               4   iucn
+#   35688      0.1000000            -0.1666667             6               3   iucn
+#   35689      0.1000000            -0.1666667             6               3   iucn
+#   35690      0.1000000            -0.1666667             6               3   iucn
 head(ics16_15a)
-      # loiczid mean_cat_score mean_popn_trend_score n_cat_species n_trend_species source
-      #   34969     0.10000000            -0.2500000             8               4   iucn
-      #   34970     0.10000000            -0.2500000             8               4   iucn
-      #   34971     0.10000000            -0.2500000             8               4   iucn
-      #   35688     0.08571429            -0.1666667             7               3   iucn
-      #   35689     0.08571429            -0.1666667             7               3   iucn
-      #   35690     0.08571429            -0.1666667             7               3   iucn
+# loiczid mean_cat_score mean_popn_trend_score n_cat_species n_trend_species source
+#   34969     0.10000000            -0.2500000             8               4   iucn
+#   34970     0.10000000            -0.2500000             8               4   iucn
+#   34971     0.10000000            -0.2500000             8               4   iucn
+#   35688     0.08571429            -0.1666667             7               3   iucn
+#   35689     0.08571429            -0.1666667             7               3   iucn
+#   35690     0.08571429            -0.1666667             7               3   iucn
 
 # ics16_15aa <- process_iucn_summary_per_cell(spp_all_16 %>%
 #                                               rename(category_score = cat_score), 
@@ -128,21 +184,21 @@ ics16_16a <- process_iucn_summary_per_cell(spp_all_16,
                                            spp_cells = ics16, 
                                            fn_tag = 'debug16_16')
 head(ics15_16a)
-      # loiczid mean_cat_score mean_pop_trend_score n_cat_species n_trend_species source
-      #   34969            0.3                 -0.5             2               1   iucn
-      #   34970            0.3                 -0.5             2               1   iucn
-      #   34971            0.3                 -0.5             2               1   iucn
-      #   35688            0.3                 -0.5             2               1   iucn
-      #   35689            0.3                 -0.5             2               1   iucn
-      #   35690            0.3                 -0.5             2               1   iucn
+# loiczid mean_cat_score mean_pop_trend_score n_cat_species n_trend_species source
+#   34969            0.3                 -0.5             2               1   iucn
+#   34970            0.3                 -0.5             2               1   iucn
+#   34971            0.3                 -0.5             2               1   iucn
+#   35688            0.3                 -0.5             2               1   iucn
+#   35689            0.3                 -0.5             2               1   iucn
+#   35690            0.3                 -0.5             2               1   iucn
 head(ics16_16a)
-      # loiczid mean_cat_score mean_pop_trend_score n_cat_species n_trend_species source
-      #   34969     0.06000000          -0.20491803            70              61   iucn
-      #   34970     0.06027397          -0.20312500            73              64   iucn
-      #   34971     0.05405405          -0.20769231            74              65   iucn
-      #   35688     0.08888889           0.07142857            18              14   iucn
-      #   35689     0.08888889           0.07142857            18              14   iucn
-      #   35690     0.04545455          -0.16666667            66              57   iucn
+# loiczid mean_cat_score mean_pop_trend_score n_cat_species n_trend_species source
+#   34969     0.06000000          -0.20491803            70              61   iucn
+#   34970     0.06027397          -0.20312500            73              64   iucn
+#   34971     0.05405405          -0.20769231            74              65   iucn
+#   35688     0.08888889           0.07142857            18              14   iucn
+#   35689     0.08888889           0.07142857            18              14   iucn
+#   35690     0.04545455          -0.16666667            66              57   iucn
 
 ### Why such a big difference in n_cat_species and n_trend_species?
 ### * why does the n_cat_species for 2015 dataset drop so much? 
@@ -212,7 +268,7 @@ spp_gp_ranges <- spp_ranges %>%
   arrange(desc(gp_area_cat))
 write_csv(spp_gp_ranges, file.path(dir_git, 'v2016/debug/spp_gp_ranges.csv'))
 
-
+DT::datatable(spp_gp_ranges)
 
 # for checkcell = 34969
 # cell_lost <- cell_15 %>% filter(!iucn_sid %in% cell_16$iucn_sid)
@@ -230,66 +286,97 @@ write_csv(spp_gp_ranges, file.path(dir_git, 'v2016/debug/spp_gp_ranges.csv'))
 # # Arenaria interpres 22693336   34969      BOTW       0.0        -0.5
 
 
+### OK, now to plot 2015 vs 2016 scores, and color code by % of bird species...?
 
 
-##### Pick out odd regions #####
+# ics16_rgn <- ics16_all %>%
+#   select(-presence, -sciname, -prop_area, -subpop) %>%
+#   left_join(rgn_cells_16, by = 'loiczid') %>%
+#   unique()
+# spp_ct_rgn <- ics16_rgn %>%
+#   group_by(rgn_id) %>%
+#   summarize(n_cells = n())
 
-### Finland: 85 spp; old: 87 -> 79.
-### Bouvet Island: 137 spp; 81 -> 100!
-x <- rgn_spp_gl %>%
-  filter(rgn_name %in% c('Bouvet Island', 'Finland')) %>%
-  dplyr::select(rgn_name, rgn_id, am_sid, iucn_sid, sciname, 
-                pop_cat, n_cells, spatial_source)
-
-y <- spp_all %>%
-  filter((!is.na(iucn_sid) & iucn_sid %in% x$iucn_sid) | 
-           (!is.na(am_sid)   & am_sid %in% x$am_sid))
-### Very few IUCN species mapped here.  That is unlikely?
-
-z <- read_csv(file.path(dir_anx, scenario, 'int/spp_iucn_maps_all.csv')) %>%
-  filter(id_no %in% x$iucn_sid)
-### None of these id_no match up with IUCN ids that are listed as found in these two regions.  Unlikely?
-
-
-am_match   <- read_csv(file.path(dir_anx, scenario, 'int/namecheck_am.csv')) %>%
-  filter((!is.na(am_sid)   & am_sid %in% x$am_sid))
-iucn_match <- read_csv(file.path(dir_anx, scenario, 'int/namecheck_iucn.csv')) %>%
-  filter((!is.na(iucn_sid) & iucn_sid %in% x$iucn_sid))
-
-##### spp cell to region, without filtering - which species exist in these two regions? #####
-
-rgn_cells_test <- rgn_cells %>%
-  filter(rgn_id %in% x$rgn_id)
-iucn_cells_test <- iucn_cs16 %>%
-  filter(loiczid %in% rgn_cells_test$loiczid)
-am_cells_test <- am_cs16 %>%
-  filter(loiczid %in% rgn_cells_test$loiczid)
-iucn_spp_test <- iucn_cells_test %>%
-  dplyr::select(sciname, iucn_sid) %>%
-  unique()
-am_spp_test <- am_cells_test %>%
-  dplyr::select(am_sid) %>%
-  unique()
-
-yy <- spp_all %>%
-  filter(iucn_sid %in% iucn_spp_test$iucn_sid | 
-           am_sid   %in% am_spp_test$am_sid)
-yyy <- yy %>%
-  dplyr::select(am_sid, am_cat, sciname, iucn_sid, pop_trend, pop_cat, 
-                spp_group, iucn_subpop, id_no, spatial_source) %>%
-  mutate(iucn_dropped = ifelse(str_detect(spatial_source, 'iucn') & !iucn_sid %in% x$iucn_sid, TRUE, FALSE),
-         am_dropped   = ifelse(str_detect(spatial_source, 'am')   & !am_sid   %in% x$am_sid,   TRUE, FALSE))
-
-am_dropped <- yyy %>%
-  filter(am_dropped == TRUE & str_detect(spatial_source, 'am')) %>%
+rgn_spp_gp <- rgn_spp_gl %>%
   filter(!is.na(pop_cat) & pop_cat != 'DD') %>%
-  dplyr::select(-spp_group, -id_no, -iucn_subpop)
-### NONE - AquaMaps is good?
+  select(iucn_sid, sciname, pop_cat, spatial_source, rgn_id, rgn_name, n_cells, n_spp_rgn) 
 
+rgn_spp_gp1 <- rgn_spp_gp %>%
+  left_join(x <- spp_all_16 %>%
+              filter(!is.na(pop_cat) & pop_cat != 'DD') %>%
+              select(iucn_sid, spp_group) %>%
+              unique(),
+            by = 'iucn_sid') %>%
+  mutate(spp_group = ifelse(spatial_source == 'am', 'aquamaps', spp_group)) %>%
+  filter(!is.na(spp_group))
 
-iucn_dropped <- yyy %>%
-  filter(iucn_dropped == TRUE & str_detect(spatial_source, 'iucn')) %>%
-  filter(!is.na(pop_cat) & pop_cat != 'DD')
+rgn_spp_gp2 <- rgn_spp_gp1 %>%
+  left_join(data.frame(pop_cat  = c("LC", "NT", "VU", "EN", "CR", "EX"), 
+                       cat_score = c(   0,  0.2,  0.4,  0.6,  0.8,   1))) %>%
+  mutate(cat_wt = cat_score * n_cells)
 
-write_csv(iucn_dropped, file.path(dir_anx, scenario, 'int/dropped_spp_iucn.csv'))
+rgn_spp_gp3 <- rgn_spp_gp2 %>%
+  group_by(rgn_name, rgn_id, spp_group) %>%
+  summarize(gp_cat   = sum(cat_wt)/sum(n_cells),
+            gp_cells = sum(n_cells),
+            n_spp_gp = n()) %>%
+  mutate(birds = ifelse(spp_group == 'BOTW', TRUE, FALSE))
 
+rgn_spp_gp4 <- rgn_spp_gp3 %>%
+  group_by(rgn_name, rgn_id, birds) %>%
+  summarize(rgn_cat = sum(gp_cat * gp_cells) / sum(gp_cells),
+            rgn_cells = sum(gp_cells),
+            rgn_spp   = sum(n_spp_gp)) %>%
+  group_by(rgn_name, rgn_id) %>%
+  mutate(n_birds = ifelse(birds, rgn_spp, 0),
+         tot_spp = sum(rgn_spp),
+         cat_bird = ifelse(birds, rgn_cat, 0),
+         cells_bird = ifelse(birds, rgn_cells, 0),
+         cat_tot = sum(rgn_cells * rgn_cat)/sum(rgn_cells),
+         cells_tot = sum(rgn_cells)) %>%
+  filter(birds) %>% 
+  select(-birds)
+  
+rgn_spp_gp5 <- rgn_spp_gp4 %>%
+  mutate(pct_n_bird = n_birds/tot_spp,
+         pct_area_bird = cells_bird/cells_tot) %>%
+  select(rgn_name, rgn_id, 
+         n_birds, n_spp = tot_spp,
+         pct_n_bird,
+         pct_area_bird,
+         cat_bird, cat_tot) %>%
+  mutate(birds_high = (cat_bird > cat_tot))
+  
+
+status_2016 <- read_csv(file.path(dir_git, 'v2016', 'output/spp_status_global.csv'))
+status_2015 <- read_csv(file.path(dir_git, 'v2015', 'data/spp_status_global.csv'))
+
+status_df <- status_2016 %>% rename(st_2016 = score) %>%
+  full_join(status_2015 %>% rename(st_2015 = score), by = 'rgn_id') %>%
+  mutate(diff = st_2016 - st_2015) %>%
+  arrange(desc(diff)) %>%
+  left_join(rgn_spp_gp5, by = 'rgn_id') %>%
+  mutate(st_recalc = (.75 - cat_tot)/.75)
+
+status_plot <- ggplot(status_df, aes(x = st_2015, y = st_2016)) +
+  geom_point(aes(color = n_birds)) +
+#  geom_point(aes(x = st_recalc, y = st_2016), color = 'yellow') +
+  geom_abline(slope = 1, intercept = 0, col = 'red') +
+  scale_x_continuous(limits = c(0.7, 1)) + 
+  scale_y_continuous(limits = c(0.7, 1)) +
+  scale_color_continuous(low = 'darkred', high = 'yellow') +
+  labs(x = 'Status by 2015 methods/data',
+       y = 'Status by 2016 methods/data')
+status_plot
+
+diff_plot <- ggplot(status_df, aes(x = pct_n_bird, y = diff)) +
+  geom_point(aes(color = n_birds))
+
+#  geom_point(aes(x = st_recalc, y = st_2016), color = 'yellow') +
+  # geom_abline(slope = 1, intercept = 0, col = 'red') +
+  # scale_x_continuous(limits = c(0.7, 1)) + 
+  # scale_y_continuous(limits = c(0.7, 1))
+
+diff_plot
+
+diff_lm <- lm(diff ~ pct_n_bird, data = status_df)
