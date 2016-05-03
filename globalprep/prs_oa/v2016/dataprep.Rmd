@@ -56,6 +56,11 @@ Added one more year of data (2015)
 knitr::opts_chunk$set(fig.path='Figs/', echo=FALSE, warning=FALSE, message=FALSE)
 source("~/github/ohiprep/src/R/common.R")
 
+# set temporary directory to folder on mazu disk big enough to handle it
+tmpdir='~/big/R_raster_tmp'
+dir.create(tmpdir, showWarnings=F)
+rasterOptions(tmpdir=tmpdir)
+
 #libraries
 
 library(raster)
@@ -84,7 +89,9 @@ Get annual averages for each year in the 2 decades
       
 #annual_arag is a function that calculates annual average surface aragonite saturation 
 
-  annual_arag<-function(file,k){
+  annual_arag<-function(file){
+    
+    year = substr(file,73,76)
     
     nc = nc_open(file)
             
@@ -137,7 +144,7 @@ for(i in seq(1,120,by=12)){
       out <- rotate(out) #shifts data from 0-360 to -180-180
   
   
- #     plot(out)
+      plot(out)
   #    map('world',col='gray95',fill=T,border='gray80',add=T)
   
       #notice the empty cells, due to irregular grid, so plot using a different projection
@@ -154,25 +161,20 @@ for(i in seq(1,120,by=12)){
   
   
       # plot results
- #     plot(out_moll)
+     plot(out_moll)
       
- #     print(cellStats(out_moll,stat='mean',na.rm=T))
-  
- # writeRaster(out_moll,paste0("working/annualmean_1880-1889/moll/global_arag_avg_moll",i,k,sep="_"), format='GTiff', overwrite=T)
-  
-  #currently, the naming convention is a little wonky. The files are saved as follows:
-  # For the year 1880: 'global_arag_avg_laea118th_.tif' (i = 1, k = 18th)
-  # For the year 1881: 'global_arag_avg_laea1318th_.tif' (i=13, k = 18th)
-  # I've been renaming these manually but suggest finding an alternate way to do this
+     print(cellStats(out_moll,stat='mean',na.rm=T))
+     
+     
+  writeRaster(out_moll,filename = paste0(file.path(dir_M,"git-annex/globalprep/prs_oa/v2016/int/global_arag_avg_moll_"),year), format='GTiff', overwrite=T)
     
   }    
 }
 
 #run the function
 
-
-
- lapply(files,annual_arag('18th'))
+ lapply(files,annual_arag)
+ 
 ```
 
 ## Step Three  
