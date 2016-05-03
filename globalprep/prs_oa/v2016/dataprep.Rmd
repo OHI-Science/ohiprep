@@ -112,15 +112,8 @@ Get annual averages for each year in the 2 decades
 # land cells are given large, strange value, so set these to NA
 
       arag[arag==9969209968386869046778552952102584320]<-NA 
-      
-for(i in seq(1,120,by=12)){
 
-  
-      print(i) # i is the first month of the year
-      j  = i+11 #j is the last month of the year
-  
-      yr = arag[,,i:j] #select the monthly layers for each year
-      yr_mean = apply(yr,1:2,mean) # get the annual mean
+      yr_mean = apply(arag,1:2,mean) # get the annual mean
   
       #create an array with long, lat, aragonite mean data
       A <- array(c(long,lat,yr_mean),dim=c(320,384,3))
@@ -168,7 +161,6 @@ for(i in seq(1,120,by=12)){
      
   writeRaster(out_moll,filename = paste0(file.path(dir_M,"git-annex/globalprep/prs_oa/v2016/int/global_arag_avg_moll_"),year), format='GTiff', overwrite=T)
     
-  }    
 }
 
 #run the function
