@@ -39,8 +39,20 @@ spp_all_16 <- read_csv(file.path(dir_anx, 'v2016', 'int/spp_all_cleaned.csv'))
 ics15_file <- file.path(dir_anx, 'v2015', 'int/iucn_cells_spp.csv')
 ics16_file <- file.path(dir_anx, 'v2016', 'int/iucn_cells_spp.csv')
 
-ics15_all <- read_csv(ics15_file, col_types = 'cdddd') %>%
-  rename(iucn_sid = id_no)
+ics15_raw <- read_csv(ics15_file, col_types = 'cdddd') %>%
+  rename(iucn_sid = id_no) 
+
+ics15_all <- ics15_raw %>%
+  filter(!is.na(iucn_sid)) %>%      ### This first subset contains id_no (now iucn_sid) from polygons
+  bind_rows(x <- ics15_all %>%         ### This next subset is missing id_no (iucn_sid); join to iucn_sid by sciname
+              filter(is.na(iucn_sid)) %>%
+              select(-iucn_sid) %>%
+              left_join(spp_all_15 %>%
+                          filter(!is.na(category_score) & !(category_score == 'DD')) %>%
+                          dplyr::select(iucn_sid, sciname, category_score, trend_score),
+                        by = 'sciname')) %>%
+  unique()
+
 ics16_all <- read_csv(ics16_file, col_types = 'cddddc') 
 
 ##### Examine the raw cell files #####
@@ -70,25 +82,55 @@ ics16_all <- read_csv(ics16_file, col_types = 'cddddc')
 #   unique()
 # # 4073 spp
 
-
 ### species per cell are increasing
-cell_n_compare <-  ics15_all %>%
-  filter(iucn_sid %in% (spp_all_16 %>%
-                          filter(pop_cat != 'DD' & !is.na(pop_cat)) %>%
-                          .$iucn_sid)) %>%
+
+spp_all_16_x <- spp_all_16 %>%
+  filter(pop_cat != 'DD' & !is.na(pop_cat)) %>%
+  filter(!is.na(spatial_source))
+# 15567-80 loiczid with more sciname_dupes than species?
+# ics15_x <- ics15_all %>%
+#   filter(loiczid %in% c(15567)) #:15580))
+
+ics15_duped_spp1 <-  ics15_all %>%
+  select(-presence, -prop_area) %>%
+  distinct() 
+ics15_duped_spp2 <- ics15_duped_spp1 %>%
+  group_by(loiczid, iucn_sid) %>%
+  mutate(n_dupe_ids_15 = n() - 1)
+ics15_duped_spp3 <- ics15_duped_spp2 %>%
+  select(iucn_sid, loiczid, n_dupe_ids_15) %>%
+  ungroup() %>%
+  distinct()
+ics15_duped_spp4 <- ics15_duped_spp3 %>%
   group_by(loiczid) %>%
-  summarize(n_spp_15 = n()) %>%
-  left_join(ics16_all %>%
-    filter(iucn_sid %in% (spp_all_16 %>%
-                            filter(pop_cat != 'DD' & !is.na(pop_cat)) %>%
-                            .$iucn_sid)) %>%
-    group_by(loiczid) %>%
-    summarize(n_spp_16 = n()),
-  by = 'loiczid')
+  summarize(n_spp_15 = n(),
+            n_dupe_ids_15 = sum(n_dupe_ids_15))
+ics16_duped_spp1 <- ics16_all %>%
+  select(-presence, -prop_area, -subpop) %>%
+  filter(iucn_sid %in% spp_all_16_x$iucn_sid) %>%
+  distinct() 
+ics16_duped_spp2 <- ics16_duped_spp1 %>%
+  group_by(loiczid, iucn_sid) %>%
+  mutate(n_dupe_ids_16 = n() - 1)
+ics16_duped_spp3 <- ics16_duped_spp2 %>%
+  select(iucn_sid, loiczid, n_dupe_ids_16) %>%
+  ungroup() %>%
+  distinct()
+ics16_duped_spp4 <- ics16_duped_spp3 %>%
+  group_by(loiczid) %>%
+  summarize(n_spp_16 = n(),
+            n_dupe_ids_16 = sum(n_dupe_ids_16)) 
+
+cell_n_compare <- ics15_duped_spp4 %>%
+  left_join(ics16_duped_spp4, by = 'loiczid') %>%
+  mutate(n_spp_15_adj = n_spp_15 - n_dupe_ids_15,
+         n_spp_16_adj = n_spp_16 - n_dupe_ids_16)
+
+write_csv(cell_n_compare, file.path(dir_git, 'v2016/debug/cell_compare.csv'))
 
 cell_n_plot <- ggplot(cell_n_compare %>%
                         sample_frac(.25), 
-                      aes(x = n_spp_15, y = n_spp_16, key = 'loiczid')) +
+                      aes(x = n_spp_15, y = n_spp_16, key = loiczid)) +
   geom_point(alpha = 0.2) +
   geom_abline(slope = 1, intercept = 0, color = 'red') +
   labs(x = 'Species per cell, IUCN 2014',
@@ -96,6 +138,8 @@ cell_n_plot <- ggplot(cell_n_compare %>%
 
 cell_n_plot
 ggsave(file.path(dir_git, 'v2016/debug', 'scatter_spp_per_cell.png'))
+
+plotly::ggplotly(cell_n_plot)
 
 ### species shapefiles aren't changing.
 spp_cell_compare <- ics15_all %>%
@@ -105,15 +149,15 @@ spp_cell_compare <- ics15_all %>%
   group_by(iucn_sid) %>%
   summarize(n_cell_15 = n()) %>%
   inner_join(ics16_all %>%
-              filter(iucn_sid %in% (spp_all_16 %>%
-                                      filter(pop_cat != 'DD' & !is.na(pop_cat)) %>%
-                                      .$iucn_sid)) %>%
-              group_by(iucn_sid) %>%
-              summarize(n_cell_16 = n()),
-            by = 'iucn_sid')
+               filter(iucn_sid %in% (spp_all_16 %>%
+                                       filter(pop_cat != 'DD' & !is.na(pop_cat)) %>%
+                                       .$iucn_sid)) %>%
+               group_by(iucn_sid) %>%
+               summarize(n_cell_16 = n()),
+             by = 'iucn_sid')
 
 spp_cell_plot <- ggplot(spp_cell_compare, 
-                      aes(x = n_cell_15, y = n_cell_16, key = 'iucn_sid')) +
+                        aes(x = n_cell_15, y = n_cell_16, key = 'iucn_sid')) +
   geom_point(alpha = 0.5) +
   geom_abline(slope = 1, intercept = 0, color = 'red') +
   labs(x = 'cells per species, IUCN 2014',
@@ -124,6 +168,10 @@ ggsave(file.path(dir_git, 'v2016/debug', 'scatter_cell_per_spp.png'))
 
 ### so changes in species per cell must be due to new polygons, or
 ### changes in id numbers.
+
+### New check: for each cell, how many of the species are cross-listed, e.g.
+### (number of scinames) - (number of unique scinames) or same with (iucn_sid)
+
 
 
 ##### check that rgn cells are identical #####
@@ -336,7 +384,7 @@ rgn_spp_gp4 <- rgn_spp_gp3 %>%
          cells_tot = sum(rgn_cells)) %>%
   filter(birds) %>% 
   select(-birds)
-  
+
 rgn_spp_gp5 <- rgn_spp_gp4 %>%
   mutate(pct_n_bird = n_birds/tot_spp,
          pct_area_bird = cells_bird/cells_tot) %>%
@@ -346,7 +394,7 @@ rgn_spp_gp5 <- rgn_spp_gp4 %>%
          pct_area_bird,
          cat_bird, cat_tot) %>%
   mutate(birds_high = (cat_bird > cat_tot))
-  
+
 
 status_2016 <- read_csv(file.path(dir_git, 'v2016', 'output/spp_status_global.csv'))
 status_2015 <- read_csv(file.path(dir_git, 'v2015', 'data/spp_status_global.csv'))
@@ -360,7 +408,7 @@ status_df <- status_2016 %>% rename(st_2016 = score) %>%
 
 status_plot <- ggplot(status_df, aes(x = st_2015, y = st_2016)) +
   geom_point(aes(color = n_birds)) +
-#  geom_point(aes(x = st_recalc, y = st_2016), color = 'yellow') +
+  #  geom_point(aes(x = st_recalc, y = st_2016), color = 'yellow') +
   geom_abline(slope = 1, intercept = 0, col = 'red') +
   scale_x_continuous(limits = c(0.7, 1)) + 
   scale_y_continuous(limits = c(0.7, 1)) +
@@ -372,10 +420,10 @@ status_plot
 diff_plot <- ggplot(status_df, aes(x = pct_n_bird, y = diff)) +
   geom_point(aes(color = n_birds))
 
-#  geom_point(aes(x = st_recalc, y = st_2016), color = 'yellow') +
-  # geom_abline(slope = 1, intercept = 0, col = 'red') +
-  # scale_x_continuous(limits = c(0.7, 1)) + 
-  # scale_y_continuous(limits = c(0.7, 1))
+# geom_point(aes(x = st_recalc, y = st_2016), color = 'yellow') +
+# geom_abline(slope = 1, intercept = 0, col = 'red') +
+# scale_x_continuous(limits = c(0.7, 1)) + 
+# scale_y_continuous(limits = c(0.7, 1))
 
 diff_plot
 
