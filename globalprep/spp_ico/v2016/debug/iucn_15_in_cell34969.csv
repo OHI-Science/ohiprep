@@ -1,0 +1,8 @@
+sciname,iucn_sid,loiczid,spp_group,cat_score,trend_score
+Halichoerus grypus,9660,34969,MAMMMARINE,0,0.5
+Pusa hispida,41672,34969,MAMMMARINE,0,NA
+Phocoena phocoena,17027,34969,MAMMMARINE,0,NA
+Lutra lutra,12419,34969,MAMMTERR,0.2,-0.5
+Mesothuria intestinalis,180540,34969,SEACUCUMBERS,0,NA
+Zostera marina,153538,34969,SEAGRASSES,0,-0.5
+Thunnus thynnus,21860,34969,TUNAS_BILLFISHES,0.6,-0.5
