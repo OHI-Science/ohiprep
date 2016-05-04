@@ -180,9 +180,10 @@ iucn_shp_info <- function(reload = TRUE) {
     message(sprintf('Writing list of IUCN range map info to: \n  %s', iucn_shp_info_file))
     write_csv(iucn_shp_info, iucn_shp_info_file)
   } else {
-    message(sprintf('List of IUCN range map exists: \n  %s', iucn_shp_info_file))
+    message(sprintf('Reading list of IUCN range map from: \n  %s', iucn_shp_info_file))
+    iucn_shp_info <- read.csv(iucn_shp_info_file, stringsAsFactors = FALSE)
   }
-  return(iucn_shp_info_file)
+  return(iucn_shp_info)
 }
 
 ##############################################################################=
@@ -240,13 +241,14 @@ generate_iucn_map_list <- function(reload = FALSE) {
     message(sprintf('Writing list of available IUCN range maps to: \n  %s', iucn_map_list_file))
     write_csv(spp_iucn_maps, iucn_map_list_file)
   } else {
-    message(sprintf('List of available IUCN range maps exists: \n  %s', iucn_map_list_file))
+    message(sprintf('Reading list of available IUCN range maps from: \n  %s', iucn_map_list_file))
+    spp_iucn_maps <- read.csv(iucn_map_list_file, stringsAsFactors = FALSE)
   }
-  return(iucn_map_list_file)
+  return(spp_iucn_maps)
 }
 
 ##############################################################################=
-create_spp_am_csv   <- function(reload = FALSE) {
+read_spp_am <- function(reload = FALSE) {
   spp_am_processed_file <- file.path(dir_anx, scenario, 'int/spp_am_cleaned.csv')
   if(!file.exists(spp_am_processed_file) | reload) {
     spp_am_raw_file <- file.path(dir_data_am, 'csv/speciesoccursum.csv')
@@ -286,13 +288,14 @@ create_spp_am_csv   <- function(reload = FALSE) {
     write_csv(spp_am, spp_am_processed_file)
     
   } else {
-    message(sprintf('Processed AquaMaps species list exists: \n  %s', spp_am_processed_file))
+    message(sprintf('Reading processed AquaMaps species list from: \n  %s', spp_am_processed_file))
+    spp_am <- read_csv(spp_am_processed_file)
   }
-  return(spp_am_processed_file)
+  return(spp_am)
 }
 
 ##############################################################################=
-create_spp_iucn_csv <- function(reload = FALSE) {
+read_spp_iucn <- function(reload = FALSE) {
   spp_iucn_processed_file <- file.path(dir_anx, scenario, 'int/spp_iucn_cleaned.csv')
   if(!file.exists(spp_iucn_processed_file) | reload) {
     ### pull the IUCN data from the git-annex file for this year - output from ingest_iucn.R
@@ -327,9 +330,10 @@ create_spp_iucn_csv <- function(reload = FALSE) {
     write_csv(spp_iucn, spp_iucn_processed_file)
     
   } else {
-    message(sprintf('Processed IUCN species list exists: \n  %s', spp_iucn_processed_file))
+    message(sprintf('Reading processed IUCN species list from: \n  %s', spp_iucn_processed_file))
+    spp_iucn <- read_csv(spp_iucn_processed_file)
   }
-  return(spp_iucn_processed_file)
+  return(spp_iucn)
 }
 
 ##############################################################################=
@@ -346,9 +350,9 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
   
   if(!file.exists(spp_all_file) | reload) {
     
-    spp_am   <- read_csv(create_spp_am_csv(reload))
+    spp_am <- read_spp_am(reload) 
     
-    spp_iucn <- read_csv(create_spp_iucn_csv(reload))
+    spp_iucn <- read_spp_iucn(reload)
     
     message('Joining ', nrow(spp_am), ' AquaMaps species to ', nrow(spp_iucn), ' species...')
     ### To the AquaMaps list (speciesoccursum) bind the IUCN marine species list
@@ -367,7 +371,7 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
         info_source   = ifelse(!is.na(iucn_cat), 'iucn',
                                ifelse(!is.na(am_cat), 'am',   NA)))
     
-    spp_iucn_maps <- read_csv(generate_iucn_map_list(reload = reload)) %>%
+    spp_iucn_maps <- generate_iucn_map_list(reload = reload) %>%
       dplyr::select(-presence) %>% ### let's leave this out of the species list... save it for the polygons
       filter(!str_detect(spp_group, 'MARINEFISH')) ### these items are duped in marine mammals
     ### This function returns a dataframe with the following columns: 
@@ -451,10 +455,11 @@ create_spp_master_lookup <- function(source_pref = 'iucn', fn_tag = '', reload =
     message(sprintf('Writing full species lookup table to: \n  %s', spp_all_file))
     write_csv(spp_all1, spp_all_file)
   } else {
-    message(sprintf('Full species lookup table already exists: \n  %s', spp_all_file))
+    message(sprintf('Full species lookup table already exists.  Reading from: \n  %s', spp_all_file))
+    spp_all1 <- read_csv(spp_all_file)
   }
   
-  return(spp_all_file)
+  return(invisible(spp_all1))
 }
 
 
@@ -604,7 +609,7 @@ process_am_summary_per_cell <- function(spp_all,
                                         spp_cells = NULL, ### optional give it a df of cells-per-spp
                                         fn_tag = '', prob_filter = 0, ### options for custom runs
                                         reload = FALSE) {
-  # Calculate category and trend scores per cell for Aquamaps species. Return file location.
+  # Calculate category and trend scores per cell for Aquamaps species.
   # * load AM species <-> cell lookup
   # * filter to appropriate cells (in regions, meets probability threshold)
   # * join spatial info: loiczid, region ID, cell area
@@ -628,8 +633,7 @@ process_am_summary_per_cell <- function(spp_all,
     }
     else {
       message('loading species cell dataframe')
-      am_cells_spp <- create_am_cells_spp_csv(prob_filter = prob_filter, reload = reload) %>%
-        read_csv()
+      am_cells_spp <- get_am_cells_spp(prob_filter = prob_filter, reload = reload)
     }
     
     # filter species info to just Aquamaps species with category info, and bind to 
@@ -669,14 +673,15 @@ process_am_summary_per_cell <- function(spp_all,
     message(sprintf('Writing cell-by-cell summary for Aquamaps species to:\n  %s', am_cells_spp_sum_file))
     write_csv(am_cells_spp_sum, am_cells_spp_sum_file)
   } else {
-    message(sprintf('Cell-by-cell summary for Aquamaps species already exists:\n  %s', am_cells_spp_sum_file))
+    message(sprintf('Cell-by-cell summary for Aquamaps species already exists.  Reading from:\n  %s', am_cells_spp_sum_file))
+    am_cells_spp_sum <- read_csv(am_cells_spp_sum_file)
   }
-  return(am_cells_spp_sum_file)
+  return(invisible(am_cells_spp_sum))
 }
 
 
 ##############################################################################=
-create_am_cells_spp_csv <- function(n_max = -1, prob_filter = .40, reload = TRUE) {
+get_am_cells_spp <- function(n_max = -1, prob_filter = .40, reload = TRUE) {
   am_cells_spp_file <- file.path(dir_anx, scenario, sprintf('int/am_cells_spp_prob%s.csv', prob_filter))
   if(!file.exists(am_cells_spp_file) | reload) {
     message('Creating Aquamaps species per cell file')
@@ -694,31 +699,33 @@ create_am_cells_spp_csv <- function(n_max = -1, prob_filter = .40, reload = TRUE
     message(sprintf('Writing Aquamaps species per cell file to: \n  %s', am_cells_spp_file))
     write_csv(am_cells_spp, am_cells_spp_file)
   } else {
-    message(sprintf('Aquamaps species per cell file already exists: \n  %s', am_cells_spp_file))
+    message(sprintf('Reading Aquamaps species per cell file from: \n  %s', am_cells_spp_file))
+    am_cells_spp <- read_csv(am_cells_spp_file)
   }
   
-  return(am_cells_spp_file)
+  return(am_cells_spp)
 }
 
 
 ##############################################################################=
-create_iucn_cells_spp_csv <- function(reload = FALSE) {
+get_iucn_cells_spp <- function(reload = FALSE) {
   iucn_cells_file <- file.path(dir_anx, scenario, 'int/iucn_cells_spp.csv')
   if(!file.exists(iucn_cells_file) | reload) {
     message(sprintf('Building IUCN species to cell table.  This might take a few minutes.'))
     dir_intsx <- file.path(dir_anx, scenario, 'iucn_intersections')
     iucn_map_files      <- file.path(dir_intsx, list.files(dir_intsx))
     message('Binding rows from intersection files: \n  ', paste(basename(iucn_map_files), collapse = '\n  '))
-    iucn_cells_spp_list <- lapply(iucn_map_files, utils::read.csv) # read each into dataframe within a list
+    iucn_cells_spp_list <- lapply(iucn_map_files, read.csv) # read each into dataframe within a list
     iucn_cells_spp      <- bind_rows(iucn_cells_spp_list)   # combine list of dataframes to single dataframe
     names(iucn_cells_spp) <- tolower(names(iucn_cells_spp))
     message('Writing IUCN species-cell file to ', iucn_cells_file)
     write_csv(iucn_cells_spp, iucn_cells_file)
   } else {
-    message('IUCN species-cell file already exists: \n  ', iucn_cells_file)
+    message('Reading IUCN species-cell file from ', iucn_cells_file)
+    iucn_cells_spp <- read_csv(iucn_cells_file, col_types = 'cddddc')
   }
   
-  return(iucn_cells_file)
+  return(iucn_cells_spp)
 }
 
 
@@ -743,8 +750,7 @@ process_iucn_summary_per_cell <- function(spp_all, spp_cells = NULL, fn_tag = ''
     }
     else {
       message('loading species cell dataframe')
-      iucn_cells_spp <- create_iucn_cells_spp_csv(reload = reload) %>%
-        read_csv() %>%
+      iucn_cells_spp <- get_iucn_cells_spp(reload = reload) %>%
         dplyr::select(-subpop) %>%
         unique()
     }
@@ -829,9 +835,10 @@ process_iucn_summary_per_cell <- function(spp_all, spp_cells = NULL, fn_tag = ''
     message(sprintf('Writing cell-by-cell summary for IUCN species to:\n  %s', iucn_cells_spp_sum_file))
     write_csv(iucn_cells_spp_sum, iucn_cells_spp_sum_file)
   } else {
-    message(sprintf('Cell-by-cell summary for IUCN species already exists:\n  %s', iucn_cells_spp_sum_file))
+    message(sprintf('Cell-by-cell summary for IUCN species already exists.  Reading from:\n  %s', iucn_cells_spp_sum_file))
+    iucn_cells_spp_sum <- read_csv(iucn_cells_spp_sum_file, col_types = 'dddddc')
   }
-  return(iucn_cells_spp_sum_file)
+  return(invisible(iucn_cells_spp_sum))
 }
 
 

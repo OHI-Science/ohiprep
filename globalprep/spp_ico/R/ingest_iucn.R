@@ -188,7 +188,7 @@ get_trend_and_subpops <- function(df = spp_iucn_marine, reload = FALSE) {
 ### iucn_sid (use as parent_id) | subpop_sid | popn_trend
 
   spp_trend_file <- file.path(dir_anx, scenario, 'int/trend_and_subpops.csv')
-  if(!file.exists(spp_trend_file)) {
+  if(!file.exists(spp_trend_file) | reload) {
     message('Creating trend and subpopulations list.\n')
     spp_subpop     <- data.frame() # initialize
     spp_popn_trend <- data.frame()
@@ -221,7 +221,7 @@ get_trend_and_subpops <- function(df = spp_iucn_marine, reload = FALSE) {
     write_csv(spp_trend_subpops, spp_trend_file)
   } else {
     message(sprintf('Reading trend and subpops file from: \n  %s\n', spp_trend_file))
-    spp_trend_subpops <- read.csv(spp_trend_file, stringsAsFactors = FALSE)
+    spp_trend_subpops <- read_csv(spp_trend_file)
   }
   return(spp_trend_subpops)
 }
@@ -229,11 +229,12 @@ get_trend_and_subpops <- function(df = spp_iucn_marine, reload = FALSE) {
 
 spp_iucn_marine <- get_mar_spp(reload = FALSE)
 
-spp_trend_subpops <- get_trend_and_subpops(spp_iucn_marine, reload = TRUE)
+spp_trend_subpops <- get_trend_and_subpops(spp_iucn_marine, reload = FALSE)
 
 spp_iucn_marine <- spp_iucn_marine %>%
   left_join(spp_trend_subpops, 
             by = 'iucn_sid')
+
 spp_iucn_marine <- spp_iucn_marine %>%
   left_join(spp_trend_subpops %>%
               filter(!is.na(subpop_sid)) %>%
