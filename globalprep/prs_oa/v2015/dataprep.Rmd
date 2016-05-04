@@ -20,7 +20,7 @@ This script takes the raw data, shared by Woods Hole Institute for Oceanography,
    a. Calculates the historical global mean for the decade 1880-1889 (1 raster layer as output)
    b. Calculates the annual mean for each of the 10 years in 2005-2014 (10 raster layers as output)
    
-   **This is a dataprep script. The data processed here is used to create the Ocean Acidification Pressures layer. Full methods of the next step can be found [here](http://htmlpreview.github.io/?https://github.com/OHI-Science/ohiprep/blob/master/globalprep/Pressures_OceanAcidification/v2015/oa_create_layer_2015.html)
+   **This is a dataprep script. The data processed here is used to create the Ocean Acidification Pressures layer. Full methods of the next step can be found [here](http://htmlpreview.github.io/?https://github.com/OHI-Science/ohiprep/blob/master/globalprep/prs_oa/v2015/oa_create_layer_2015.html)
 
 **Notes about the data:**  
 This data was shared with us by Ivan Lima from Woods Hole Institue for Oceanography in December 2014. The data came as NetCDFs in an irregular grid format with a resolution of about 1 degree. The data values are monthly average surface &#937; aragonite saturation state.
@@ -65,7 +65,7 @@ This data was shared with us by Ivan Lima from Woods Hole Institue for Oceanogra
   library(maps)
 
 
-wd = file.path(dir_N,'git-annex/globalprep/Pressures_OceanAcidification/v2015')
+wd = file.path(dir_N,'git-annex/globalprep/prs_oa/v2015')
 setwd(wd)
 ```
 
