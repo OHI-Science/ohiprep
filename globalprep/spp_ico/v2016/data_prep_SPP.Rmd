@@ -509,7 +509,7 @@ The following plots compare the status scores generated for the 2015 assessment 
         * AquaMaps for d2014 is processed with a 40% threshold (as in v2015) while d2015 is processed with a 0% threshold.
         * IUCN species-cell lookup for d2014 was generated using v2015 scripts, which relied on the `sciname` field for joining.  I've added a step to add `iucn_sid` values according to `sciname`, to allow the species-cell lookup to work with the v2016 scripts.
 
-``` {r plot_scores_vs_2015, eval = TRUE}
+``` {r plot_scores_vs_2015, eval = FALSE}
 
 spp_all_d14v16 <- read_csv(file.path(dir_anx, 'v2015', 'int/spp_all.csv')) %>%
   rename(cat_score = category_score)
@@ -582,6 +582,8 @@ trend_2015    <- read_csv(file.path(dir_git, 'v2015', 'data/spp_trend_global.csv
 status_d14v16 <- read_csv(file.path(dir_git, 'v2016', 'output/spp_status_global_d14v16.csv'))
 trend_d14v16  <- read_csv(file.path(dir_git, 'v2016', 'output/spp_trend_global_d14v16.csv'))
 
+rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
+
 status_df <- status_2016 %>% rename(st_2016 = score) %>%
   full_join(status_2015 %>% rename(st_2015 = score), by = 'rgn_id') %>%
   full_join(trend_2016 %>% rename(tr_2016 = score), by = 'rgn_id') %>%
@@ -590,33 +592,50 @@ status_df <- status_2016 %>% rename(st_2016 = score) %>%
   full_join(trend_d14v16 %>% rename(tr_d14v16 = score), by = 'rgn_id') %>%
   full_join(rgn_cell_lookup %>% select(rgn_id, rgn_name) %>% unique(), by = 'rgn_id')
 
-st_2016_2015 <- ggplot(status_df, aes(x = st_2015, y = st_2016, key = rgn_name)) + 
-  geom_point() +
+st_2016_2015 <- ggplot(status_df %>%
+                         select(rgn_id, rgn_name, st_2016, v2015 = st_2015, v2016 = st_d14v16) %>%
+                         gather(method, st_2015, c(v2016, v2015)), 
+                       aes(x = st_2015, y = st_2016, color = method, key = rgn_name)) + 
+  geom_point(alpha = .5) +
   geom_abline(slope = 1, intercept = 0, color = 'red') +
-  scale_x_continuous(limits = c(0, 1)) +
-  scale_y_continuous(limits = c(0, 1)) +
-  labs(x = 'Status: data d2014/scenario v2015',
-       y = 'Status: data d2015/scenario v2016',
-       title = 'Status: v2015(d2014) by v2016(d2015)')
+  scale_x_continuous(limits = c(.5, 1)) +
+  scale_y_continuous(limits = c(.5, 1)) +
+  labs(x = 'Status: old data (d2014)',
+       y = 'Status: new data (d2015)',
+       title = 'SPP Status: v2015 vs v2016',
+       color = 'Method for old data')
 library(plotly)
 ggplotly(st_2016_2015)
 # print(st_2016_2015)
 ggsave(file.path(dir_git, scenario, 'output/scatterplot_spp_status_global_d15v16_d14v15.png'),
        plot = st_2016_2015)
 
-st_2016_d14v16 <- ggplot(status_df, aes(x = st_d14v16, y = st_2016, key = rgn_name)) + 
-  geom_point() +
+z <- read_csv(file.path(dir_git, scenario, 'output/rgn_spp_gl.csv')) %>%
+  filter(pop_cat != 'DD' & !is.na(spatial_source)) %>%
+  select(-sciname, -pop_cat, -spatial_source) %>%
+  distinct() %>%
+  group_by(rgn_id) %>%
+  mutate(n_spp_rgn_valid = n())
+zz <- z %>% 
+  select(rgn_id, n_spp = n_spp_rgn_valid) %>%
+  distinct()
+
+st_d14v15_d14v16 <- ggplot(status_df %>%
+                             left_join(zz, by = 'rgn_id'), 
+                           aes(x = st_d14v16, y = st_2015, key = rgn_name, color = n_spp)) + 
+  geom_point(alpha = .5) +
   geom_abline(slope = 1, intercept = 0, color = 'red') +
-  scale_x_continuous(limits = c(0, 1)) +
-  scale_y_continuous(limits = c(0, 1)) +
-  labs(x = 'Status: data d2014/scenario v2016',
-       y = 'Status: data d2015/scenario v2016',
-       title = 'Status: 2016 methods (v2016); d2015 vs d2014 data')
+  scale_x_continuous(limits = c(.5, 1)) +
+  scale_y_continuous(limits = c(.5, 1)) +
+  scale_color_gradient2(low = 'red', mid = 'blue', high = 'blue', midpoint = 2500) +
+  labs(x = 'Status: old data, new method',
+       y = 'Status: old data, new method',
+       title = 'Status: old (d2014) data by new (v2016) and old (v2015) methods')
 # library(plotly)
-ggplotly(st_2016_d14v16)
+ggplotly(st_d14v15_d14v16)
 # print(st_2016_d14v16)
-ggsave(file.path(dir_git, scenario, 'output/scatterplot_spp_status_global_d15v16_d14v16.png'),
-       plot = st_2016_d14v16)
+ggsave(file.path(dir_git, scenario, 'output/scatterplot_spp_status_global_d14v15_d14v16.png'),
+       plot = st_d14v15_d14v16)
 
 # tr_2016v2015 <- ggplot(status_df, aes(x = tr_2015, y = tr_2016)) + 
 #   geom_point() +
@@ -626,5 +645,17 @@ ggsave(file.path(dir_git, scenario, 'output/scatterplot_spp_status_global_d15v16
 #   labs(title = 'Trend: 2016 vs 2015')
 
 # print(tr_2016v2015)
+
+x <- read_csv(file.path(dir_git, scenario, 'debug/spp_gp_ranges.csv')) %>%
+  mutate(label = ifelse(spp_group == 'BOTW', 'BIRDS!', 'not birds'))
+
+y <- ggplot(x, aes(x = total_cells, y = gp_area_cat, color = label)) + 
+  geom_point(size = 3, alpha = .8) + 
+  labs(x = 'total area (# of cells)', 
+       y = 'mean IUCN risk (0 = LC, 100 = EX)', 
+       color = 'SPP group')
+y
+
+ggsave(file.path(dir_git, scenario, 'debug/birds_health.png'))
 
 ```
