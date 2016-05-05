@@ -6,12 +6,12 @@ rgn_cell_lookup_hs <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 're
 ### | sp_id | loiczid | proportionArea | csq | cell_area
 ### saves lookup table to git-annex/globalprep/spp_ico/rgns/cellID_region_gcs_HS.csv
 
-sum_by_loiczid  <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum, fn_tag = '') %>%
-  read_csv()
+sum_by_loiczid  <- read_csv(sum_by_loiczid_file,
+                            col_types = 'ddddd')  ### filename from top-level script
 ### This returns dataframe with variables:
 ### loiczid | weighted_mean_cat | weighted_mean_trend | n_cat_spp | n_tr_spp
 
-sum_by_rgn_hs <- process_means_per_rgn(sum_by_loiczid, rgn_cell_lookup_hs, rgn_note = 'hs')
+sum_by_rgn_hs <- get_means_per_rgn(sum_by_loiczid, rgn_cell_lookup_hs, rgn_note = 'hs')
 
 if(!exists('sum_by_rgn_hs')) 
   sum_by_rgn_hs <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_hs.csv'))
@@ -29,7 +29,7 @@ rgn_cell_lookup_aq <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 're
 ### | sp_id | loiczid | proportionArea | csq | cell_area
 ### saves lookup table to git-annex/globalprep/spp_ico/rgns/cellID_region_gcs_AQ.csv
 
-sum_by_rgn_aq <- process_means_per_rgn(sum_by_loiczid, rgn_cell_lookup_aq, rgn_note = 'aq')
+sum_by_rgn_aq <- get_means_per_rgn(sum_by_loiczid, rgn_cell_lookup_aq, rgn_note = 'aq')
 
 if(!exists('sum_by_rgn_aq')) 
   sum_by_rgn_aq <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_aq.csv'))
