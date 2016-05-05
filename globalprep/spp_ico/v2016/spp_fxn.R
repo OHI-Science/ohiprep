@@ -44,7 +44,7 @@ get_loiczid_raster <- function(reload = FALSE) {
 
 ##############################################################################=
 extract_cell_id_per_region <- function(reload       = FALSE, 
-                                       ogr_location = file.path(dir_neptune_data, 'git-annex/globalprep/spatial/v2015/data'),
+                                       ogr_location = file.path(dir_M, 'git-annex/globalprep/spatial/v2015/data'),
                                        rgn_layer    = 'regions_gcs', 
                                        ohi_type     = 'global') {   # ohi_type = 'HS'    ohi_type = 'AQ'
   ### Determines proportional area of each cell covered by region polygons.  Returns data frame
@@ -127,7 +127,7 @@ extract_cell_id_per_region <- function(reload       = FALSE,
     write_csv(region_prop_df, rgn_prop_file)
   } else {
     message(sprintf('Reading loiczid cell proportions by region from: \n  %s', rgn_prop_file))
-    region_prop_df <- read.csv(rgn_prop_file, stringsAsFactors = FALSE)
+    region_prop_df <- read_csv(rgn_prop_file, col_types = 'dcdd_d')
   }
   
   return(invisible(region_prop_df))
@@ -629,7 +629,7 @@ process_am_summary_per_cell <- function(spp_all,
     else {
       message('loading species cell dataframe')
       am_cells_spp <- create_am_cells_spp_csv(prob_filter = prob_filter, reload = reload) %>%
-        read_csv()
+        read_csv(col_types = 'cd')
     }
     
     # filter species info to just Aquamaps species with category info, and bind to 
@@ -744,7 +744,7 @@ process_iucn_summary_per_cell <- function(spp_all, spp_cells = NULL, fn_tag = ''
     else {
       message('loading species cell dataframe')
       iucn_cells_spp <- create_iucn_cells_spp_csv(reload = reload) %>%
-        read_csv() %>%
+        read_csv(col_types = 'cddddc') %>%
         dplyr::select(-subpop) %>%
         unique()
     }
@@ -836,72 +836,87 @@ process_iucn_summary_per_cell <- function(spp_all, spp_cells = NULL, fn_tag = ''
 
 
 ##############################################################################=
-process_means_per_cell <- function(am_cell_summary, iucn_cell_summary, fn_tag = '') { 
+process_means_per_cell <- function(am_cell_summary, iucn_cell_summary, fn_tag = '', reload = FALSE) { 
   ### 2 input data frames:
   ### loiczid | mean_cat_score | mean_pop_trend_score | n_cat_species | n_trend_species | source
   ### calcs weighted score for each cell (by loiczid) from:
   ###   (mean IUCN category value * # of species) for both IUCN and AM data, divided by total species.
   ###   (same for trend)
-  if(sum(is.na(am_cell_summary$mean_cat_score)) > 0) {
-    message('NA values for mean category score in aquamaps cell summary df')
-    stop()
-  }
-  if(sum(is.na(iucn_cell_summary$mean_cat_score)) > 0) {
-    message('NA values for mean category score in iucn cell summary df')
-    stop()
-  }
-  sum_by_loiczid <- bind_rows(am_cell_summary, iucn_cell_summary) %>%
-    group_by(loiczid) %>%
-    summarize(weighted_mean_cat    = sum(n_cat_species   * mean_cat_score)/sum(n_cat_species),
-              weighted_mean_trend  = sum(n_trend_species * mean_pop_trend_score, na.rm = TRUE)/sum(n_trend_species),
-              n_cat_spp = sum(n_cat_species),
-              n_tr_spp  = sum(n_trend_species)) %>%
-    arrange(loiczid)
   
-  write_csv(sum_by_loiczid, file.path(dir_git, scenario, sprintf('summary/cell_spp_summary_by_loiczid%s.csv', fn_tag)))
-  return(sum_by_loiczid)
+  cell_sum_file <- file.path(dir_git, scenario, sprintf('summary/cell_spp_summary_by_loiczid%s.csv', fn_tag))
+  
+  if(!file.exists(cell_sum_file) | reload) {
+    
+    if(sum(is.na(am_cell_summary$mean_cat_score)) > 0) {
+      message('NA values for mean category score in aquamaps cell summary df')
+      stop()
+    }
+    if(sum(is.na(iucn_cell_summary$mean_cat_score)) > 0) {
+      message('NA values for mean category score in iucn cell summary df')
+      stop()
+    }
+    sum_by_loiczid <- bind_rows(am_cell_summary, iucn_cell_summary) %>%
+      group_by(loiczid) %>%
+      summarize(weighted_mean_cat    = sum(n_cat_species   * mean_cat_score)/sum(n_cat_species),
+                weighted_mean_trend  = sum(n_trend_species * mean_pop_trend_score, na.rm = TRUE)/sum(n_trend_species),
+                n_cat_spp = sum(n_cat_species),
+                n_tr_spp  = sum(n_trend_species)) %>%
+      arrange(loiczid)
+    
+    write_csv(sum_by_loiczid, cell_sum_file)
+  } else {
+    message('Summary by loiczid file exists at: ', cell_sum_file)
+  }
+  
+  return(cell_sum_file)
 }
+    
 
 
 ##############################################################################=
-process_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup, rgn_note = '') {  
+get_means_per_rgn <- function(summary_by_loiczid, rgn_cell_lookup, rgn_note = '', reload = FALSE) {  
   ### Joins region-cell info to mean cat & trend per cell.
   ### Groups by region IDs, and calcs area-weighted mean category and trend values
   ### for all cells across entire region.  Cells only partly within a region are
   ### accounted for by multiplying cell area * proportionArea from rgn_cell_lookup.
   
-  if(sum(is.na(summary_by_loiczid$weighted_mean_cat)) > 0) {
-    message('NA values for mean category score in cell summary df')
-    stop()
-  }
-  
-  rgn_weighted_sums <- summary_by_loiczid %>%
-    inner_join(rgn_cell_lookup %>% 
-                 dplyr::select(-csq),
-               by = 'loiczid') %>%
-    # mutate(rgn_area = cell_area * proportionArea,
-    #        area_weighted_mean_cat   = weighted_mean_cat   * rgn_area,
-    #        area_weighted_mean_trend = weighted_mean_trend * rgn_area) %>%
-    mutate(cell_area_weight_cat     = cell_area * n_cat_spp * proportionArea,
-           cell_area_weight_trend   = cell_area * n_tr_spp * proportionArea,
-           area_weighted_mean_cat   = weighted_mean_cat   * cell_area_weight_cat,
-           area_weighted_mean_trend = weighted_mean_trend * cell_area_weight_trend) %>%
-    arrange(loiczid)
-  
-  region_sums <- rgn_weighted_sums %>%
-    group_by(rgn_id) %>%
-    summarize(rgn_mean_cat   = sum(area_weighted_mean_cat)/sum(cell_area_weight_cat),
-              rgn_mean_trend = sum(area_weighted_mean_trend, na.rm = TRUE)/sum(cell_area_weight_trend))
-  
-  region_sums <- region_sums %>%
-    mutate(status = ((1 - rgn_mean_cat) - 0.25) / 0.75)
-  
   region_summary_file <- file.path(dir_git, scenario, 
                                    sprintf('summary/rgn_summary%s.csv', ifelse(rgn_note == '', '',
                                                                                sprintf('_%s', rgn_note))))
-  
-  message(sprintf('Writing summary file of area-weighted mean category & trend per region:\n  %s', region_summary_file))
-  write_csv(region_sums, region_summary_file)
+  if(!file.exists(region_summary_file) | reload) {
+    if(sum(is.na(summary_by_loiczid$weighted_mean_cat)) > 0) {
+      message('NA values for mean category score in cell summary df')
+      stop()
+    }
+    
+    rgn_weighted_sums <- summary_by_loiczid %>%
+      inner_join(rgn_cell_lookup,
+                 by = 'loiczid') %>%
+      # mutate(rgn_area = cell_area * proportionArea,
+      #        area_weighted_mean_cat   = weighted_mean_cat   * rgn_area,
+      #        area_weighted_mean_trend = weighted_mean_trend * rgn_area) %>%
+      mutate(cell_area_weight_cat     = cell_area * n_cat_spp * proportionArea,
+             cell_area_weight_trend   = cell_area * n_tr_spp * proportionArea,
+             area_weighted_mean_cat   = weighted_mean_cat   * cell_area_weight_cat,
+             area_weighted_mean_trend = weighted_mean_trend * cell_area_weight_trend) %>%
+      arrange(loiczid)
+    
+    region_sums <- rgn_weighted_sums %>%
+      group_by(rgn_id) %>%
+      summarize(rgn_mean_cat   = sum(area_weighted_mean_cat)/sum(cell_area_weight_cat),
+                rgn_mean_trend = sum(area_weighted_mean_trend, na.rm = TRUE)/sum(cell_area_weight_trend))
+    
+    region_sums <- region_sums %>%
+      mutate(status = ((1 - rgn_mean_cat) - 0.25) / 0.75)
+    
+    
+    message(sprintf('Writing summary file of area-weighted mean category & trend per region:\n  %s', region_summary_file))
+    write_csv(region_sums, region_summary_file)
+  } else {
+    message(sprintf('Reading summary file of area-weighted mean category & trend per region:\n  %s', region_summary_file))
+    region_sums <- read_csv(region_summary_file)
+    
+  }
   
   return(region_sums)
 }
@@ -983,13 +998,11 @@ verify_scinames <- function(names_df, fn_tag) {
 
 ##############################################################################=
 calc_rgn_spp <- function(ics_keyed, acs_keyed, rgn_keyed, spp_all) {
-  message('processing iucn cells')
   iucn_rgn_spp <- ics_keyed[rgn_keyed] %>%
     setkey(NULL) %>%
     group_by(rgn_id, rgn_name, iucn_sid, presence) %>%
     summarize(n_cells = n())
   
-  message('processing am cells')
   am_rgn_spp <- acs_keyed[rgn_keyed] %>%
     setkey(NULL) %>%
     dplyr::select(am_sid, loiczid, rgn_id, rgn_name) %>%
@@ -1001,20 +1014,18 @@ calc_rgn_spp <- function(ics_keyed, acs_keyed, rgn_keyed, spp_all) {
     dplyr::select(iucn_sid, am_sid, sciname, pop_cat, pop_trend, spatial_source) %>%
     unique()
   
-  message('processing iucn info')
   iucn_rgn_spp1 <- spp_all_trunc %>%
     filter(str_detect(spatial_source, 'iucn')) %>%
     left_join(iucn_rgn_spp, by = 'iucn_sid') %>%
     filter(!is.na(rgn_id))
   
-  message('processing am info')
   am_rgn_spp1 <- spp_all_trunc %>%
     filter(str_detect(spatial_source, 'am')) %>%
     left_join(am_rgn_spp, by = 'am_sid') %>%
     mutate(presence = NA) %>%
     filter(!is.na(rgn_id))
   
-  message('binding all together')
+  message('binding IUCN cells/info with AM cells/info')
   rgn_spp_all <- bind_rows(am_rgn_spp1, iucn_rgn_spp1) %>%
     group_by(rgn_id) %>%
     mutate(n_spp_rgn = n()) %>%

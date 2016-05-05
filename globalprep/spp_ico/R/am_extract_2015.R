@@ -1,8 +1,8 @@
 ### Source this file from data_prep_SPP.Rmd 
 ### - no need to load packages or common.R
 
-am_dir_2014 <- file.path(dir_M, 'git-annex/globalprep/_raw_data/aquamaps/v2014/raw')
-am_dir_2015 <- file.path(dir_M, 'git-annex/globalprep/_raw_data/aquamaps/v2015/aquamaps_2015_full_dataset_ohi')
+### this should be defined in the top-level script:
+### dir_am_data <- file.path(dir_M, 'git-annex/globalprep/_raw_data/aquamaps/d2015')
 
 ##############################################=
 ### Process hcaf .sql file -----
@@ -13,11 +13,17 @@ am_dir_2015 <- file.path(dir_M, 'git-annex/globalprep/_raw_data/aquamaps/v2015/a
 ### Currently our process does not require these columns, so dropping
 ###   them solves that problem.  And, saves memory and load time!
 
-am_hcaf_sql <- file.path(am_dir_2015, 'hcaf_ohi.sql')
+am_hcaf_sql <- file.path(dir_am_data, 'aquamaps_2015_full_dataset_ohi/hcaf_ohi.sql')
+am_zip <- file.path(dir_am_data, 'aquamaps_2015_full_dataset_ohi.zip')
+
 # am_file_hcaf_csq <- file.path(am_dir_2014, 'hcaf.sql')
-am_hcaf_csv <- file.path(am_dir_2015, '../csv/hcaf_truncated.csv')
+am_hcaf_csv <- file.path(dir_am_data, 'csv/hcaf_truncated.csv')
 
 if(!file.exists(am_hcaf_csv) | reload) {
+  
+  if(!file.exists(am_hcaf_sql) & file.exists(am_zip)) {
+    stop('File ', basename(am_zip), ' needs to be extracted to create ', basename(am_hcaf_sql))
+  }
   system.time({
     sql_df <- data.frame('raw' = scan(file = am_hcaf_sql,      
                                       what = 'character', 
@@ -60,8 +66,12 @@ if(!file.exists(am_hcaf_csv) | reload) {
   rm(hdr_lines, sql_df, tbl_lines, x)
   ### clean up memory before next one!
 } else {
-  ### no need to load, but get the git_prov info manually for the .sql input and .csv output
-  git_prov(am_hcaf_sql, filetype = 'input')
+  ### no need to load, but get the git_prov info manually for the .sql input (or .zip) and .csv output
+  if(file.exists(am_hcaf_sql))
+    git_prov(am_hcaf_sql, filetype = 'input')
+  else
+    git_prov(am_zip, filetype = 'input')
+  
   git_prov(am_hcaf_csv, filetype = 'output')
 }
 
@@ -75,10 +85,14 @@ if(!file.exists(am_hcaf_csv) | reload) {
 ### New columns added; 'occurcells' might be a useful filter?
 
 # am_sp_occur_sql <- file.path(am_dir_2014,  'ohi_speciesoccursum.sql')
-am_sp_occur_sql <- file.path(am_dir_2015,  'speciesoccursum_ohi.sql')
-am_sp_occur_csv <- file.path(am_dir_2015, '../csv/speciesoccursum.csv')
+am_sp_occur_sql <- file.path(dir_am_data,  'aquamaps_2015_full_dataset_ohi/speciesoccursum_ohi.sql')
+am_sp_occur_csv <- file.path(dir_am_data, 'csv/speciesoccursum.csv')
 
-if(!file.exists(am_hcaf_csv) | reload) {
+if(!file.exists(am_sp_occur_csv) | reload) {
+
+  if(!file.exists(am_sp_occur_sql) & file.exists(am_zip)) {
+    stop('File ', basename(am_zip), ' needs to be extracted to create ', basename(am_sp_occur_sql))
+  }
   system.time({
     sql_df <- data.frame('raw' = scan(file = am_sp_occur_sql,  
                                       what = 'character', 
@@ -115,9 +129,13 @@ if(!file.exists(am_hcaf_csv) | reload) {
   rm(hdr_lines, sql_df, sp_occur_df)
   ### clean up memory before next one!
 } else {
-  ### no need to load, but get the git_prov info manually for the .sql input and .csv output
-  git_prov(am_sp_occur_sql, filetype = 'input')
-  git_prov(am_sp_occur_csv, filetype = 'output')
+  ### no need to load, but get the git_prov info manually for the .sql input (or .zip) and .csv output
+  if(file.exists(am_sp_occur_sql))
+    git_prov(am_sp_occur_sql, filetype = 'input')
+  else
+    git_prov(am_zip, filetype = 'input')
+
+    git_prov(am_sp_occur_csv, filetype = 'output')
 }
 
   ### Check method against 2014 data -----
@@ -204,10 +222,14 @@ if(!file.exists(am_hcaf_csv) | reload) {
 ###   Is there a reason to work with CsquareCode at all?
 
 # am_sp_native_sql <- file.path(am_dir_2014, 'ohi_hcaf_species_native.sql')
-am_sp_native_sql <- file.path(am_dir_2015, 'hcaf_species_native_ohi.sql')
-am_sp_native_csv <- file.path(am_dir_2015, '../csv/hcaf_sp_native_trunc.csv')
+am_sp_native_sql <- file.path(dir_am_data, 'aquamaps_2015_full_dataset_ohi/hcaf_species_native_ohi.sql')
+am_sp_native_csv <- file.path(dir_am_data, 'csv/hcaf_sp_native_trunc.csv')
 
 if(!file.exists(am_sp_native_csv) | reload) {
+  
+  if(!file.exists(am_sp_native_sql) & file.exists(am_zip)) {
+    stop('File ', basename(am_zip), ' needs to be extracted to create ', basename(am_sp_native_sql))
+  }
   
   system.time({
     nlines_query <- system2(command = 'wc', args = sprintf('-l %s', am_sp_native_sql), stdout = TRUE)
@@ -293,8 +315,12 @@ if(!file.exists(am_sp_native_csv) | reload) {
   }) 
 
 } else {
-  ### no need to load, but get the git_prov info manually for the .sql input and .csv output
-  git_prov(am_sp_native_sql, filetype = 'input')
+  ### no need to load, but get the git_prov info manually for the .sql input (or .zip) and .csv output
+  if(file.exists(am_sp_native_sql))
+    git_prov(am_sp_native_sql, filetype = 'input')
+  else
+    git_prov(am_zip, filetype = 'input')
+  
   git_prov(am_sp_native_csv, filetype = 'output')
 }
 
