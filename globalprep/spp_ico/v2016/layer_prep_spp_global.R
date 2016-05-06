@@ -3,7 +3,7 @@
 ### create final outputs for global analysis
 
 sum_by_loiczid  <- read_csv(sum_by_loiczid_file,
-                            col_types = 'ddddd') ### file from previous step
+                            col_types = 'ddddd')  ### file from previous step
 ### This returns dataframe with variables:
 ### loiczid | weighted_mean_cat | weighted_mean_trend | n_cat_spp | n_tr_spp
 
