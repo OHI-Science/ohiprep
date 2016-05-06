@@ -4,7 +4,7 @@ dir_M             <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
                        'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
                        'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
 
-dir_neptune_data  <- c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
+dir_N <- dir_neptune_data <- c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
                        'Darwin'  = '/Volumes/data_edit',
                        'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
 
