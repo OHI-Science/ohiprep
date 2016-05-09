@@ -96,8 +96,9 @@ st_2016_2015 <- ggplot(status_df %>%
        y = 'Status: new data (d2015)',
        title = 'SPP Status: v2015 vs v2016',
        color = 'Method for old data')
+
 library(plotly)
-ggplotly(st_2016_2015)
+print(ggplotly(st_2016_2015))
 # print(st_2016_2015)
 ggsave(file.path(dir_git, scenario, 'output/scatterplot_spp_status_global_d15v16_d14v15.png'),
        plot = st_2016_2015)
@@ -124,7 +125,7 @@ st_d14v15_d14v16 <- ggplot(status_df %>%
        y = 'Status: old data, old method',
        title = 'Status: old (d2014) data by new (v2016) and old (v2015) methods')
 # library(plotly)
-ggplotly(st_d14v15_d14v16)
+print(ggplotly(st_d14v15_d14v16))
 # print(st_2016_d14v16)
 ggsave(file.path(dir_git, scenario, 'output/scatterplot_spp_status_global_d14v15_d14v16.png'),
        plot = st_d14v15_d14v16)
