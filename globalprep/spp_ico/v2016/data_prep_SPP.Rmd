@@ -88,8 +88,9 @@ where:
 
 Changes since 2015 SPP subgoal for global OHI:
 
-* The 2016 assessment now includes bird species, based upon BirdLife International data.  "Marine" bird species include any bird species with overlap of marine cells. (?) Prior assessments did not include this data.
-* Previous assessments counted overlapping species as any species with a binomial included in both data sets (AquaMaps and IUCN/BirdLife).  Synonyms were matched and typos were fixed manually where possible.  This assessment takes advantage of the `taxize` package to identify and match synonyms for better match rate.
+* The 2016 assessment now includes bird species, based upon BirdLife International data.  "Marine" bird species include any bird species whose habitat, as listed by IUCN, includes "marine".  Prior assessments did not include this data.
+* Previous assessments counted overlapping species as any species with a binomial included in both data sets (AquaMaps and IUCN).  Synonyms were matched and typos were fixed manually where possible.  This assessment takes advantage of the `taxize` package to identify and match synonyms for better confidence in matching species.
+* Prior assessments, using older IUCN spatial data, relied on name matching to match IUCN information (incl. extinction risk category and population trend) to spatial information in IUCN shapefiles, which could generate duplicates or misse.  Newer IUCN spatial files (as of Dec 2015) include a unique IUCN species ID number field to unambiguously match species information to species ranges.
 * Previous assessments used an AquaMaps threshold of 40% to determine whether a species counted as "present" within a cell.  Based on the IUCN/AquaMaps manuscript, we are now using a 0% threshold for AquaMaps as it more closely resembles the "limits of distribution" criterion used for IUCN inclusion.
 * Previous assessments ignored subpopulations for SPP; with IUCN's newest data, a subpopulation field identifies distinct subpopulations (and IUCN risk codes) for a number of species (mostly mammals, but a handful of others as well).  This allows us to incorporate subpopulation scores in the global assessment.
     * From http://www.iucnredlist.org/details/3897/0 (Loggerhead sea turtle):
@@ -144,7 +145,9 @@ AquaMaps data for the 2016 assessment was provided as .sql files, as in previous
 To extract data, we instead scan each line for `CREATE TABLE` and `INSERT INTO` commands to create and save dataframes.  Note that the `am_extract_2015.R` script discards much of the data from these .sqls that is not used within the OHI Species Goal processing (thus "truncated").  This speeds up read time and processing time and avoids parsing issues with some of the rows/columns.
 Note also that the hcaf_species_native_ohi.sql file does not originally contain LOICZID information; this is added in the extract script, since LOICZID as a cell identifier is faster and less memory intensive than CsquareCode (integer vs character string).
 
-``` {r Ingest Aquamaps data to csv from sql, eval = FALSE}
+The `spp_ico/R/am_extract_2015.R` script performs these operations.  This can be a time consuming process, so typically this code chunk is run once and then set to `eval = FALSE` once the outputs have been generated.
+
+``` {r Ingest Aquamaps data to csv from sql, eval = FALSE, echo = TRUE}
 
 reload <- FALSE
 
@@ -172,7 +175,9 @@ Processed files, saved to `git-annex/globalprep/spp_ico/v201x/int`:
 * `spp_iucn_habitats.csv` - list of IUCN species (by iucn_sid) and corresponding habitat.
 * `spp_iucn_marine.csv` - prepped list: cleaned marine list with subpops and trends.
 
-``` {r Ingest IUCN species list, eval = TRUE}
+The `spp_ico/R/ingest_iucn.R` script performs these functions.  This can be a time consuming process, so typically this code chunk is run once and then set to `eval = FALSE` once the outputs have been generated.
+
+``` {r Ingest IUCN species list, eval = FALSE, echo = TRUE}
 
 reload <- FALSE
 
@@ -207,7 +212,13 @@ Now having identified spatial source availability and preference for all species
 * Filter out subpop species rows (species with a non-NA `parent_sid`) that do not have a named subpopulation location (i.e. `iucn_subpop` field is NA, instead of the name of a subpopulation)
 * Save final list to `git-annex/globalprep/spp_ico/v2016/int/spp_all_cleaned.csv`
 
-``` {r Generate spp lookup}
+The `spp_ico/v2016/prep_spp_list.R` script performs these functions.  This does not take all that long, but the saved output can be used instead instead of reloading the entire process.  Note the optional arguments `source_pref` and `fn_tag` that can be used to customize the run (passed to `create_spp_master_lookup()` from `spp_fxn.R`); `'iucn'` and `''` are standard defaults.
+
+``` {r Generate spp lookup, echo = TRUE}
+
+reload      <- FALSE
+source_pref <- 'iucn'
+fn_tag      <- ''
 
 source(file.path(dir_git, scenario, 'prep_spp_list.R'))
 
@@ -227,9 +238,11 @@ We extract IUCN polygon presence to the same half-degree cells as AquaMaps to si
     * presence codes: 1 extant; 2 prob extant (discontinued); 3 Possibly Extant; 4 Possibly Extinct; 5 Extinct (post 1500); 6 Presence Uncertain
 * __NOTE:__ this takes a long time - multiple hours for some of the shape files.  
     * by passing a filtered data frame to the function, you can focus the process only on new or updated shapefiles
-    * reload = FALSE allows the function to skip extraction on groups with files already present.  Set to TRUE if you need to extract an updated shapefile (or change the shapefile name, or delete the previous extraction...)
+    * reload = FALSE allows the function to skip extraction on groups with files already present.  Set to TRUE if you need to extract an updated shapefile (or change the shapefile name, or delete the previous extraction...).
 
-``` {r Generate lookup IUCN species to LOICZID, eval = FALSE}
+The function `extract_loiczid_per_spp()` performs these functions, and is contained in the `spp_ico/v2016/spp_fxn.R` script.  This can be a time consuming process, so typically this code chunk is run once and then set to `eval = FALSE` once the outputs have been generated.
+
+``` {r Generate lookup IUCN species to LOICZID, eval = FALSE, echo = TRUE}
 
 spp_all <- read_csv(file.path(dir_anx, scenario, 'int/spp_all_cleaned.csv'))
 
@@ -268,8 +281,10 @@ For each half-degree cell, tally up the number of species present and determine 
     * For AquaMaps, we apply a threshold to set the minimum probability of occurrence that determines species "presence."
     * For IUCN, no threshold is needed; but the shapefiles include a "presence" attribute in which a value of 5 indicates a region in which a subpopulation has become extinct.  We use this to manually reset local extinction risk and trend to EX and NA respectively.
     * Note that for IUCN, we determine the proportional area when extracting polygons; currently we just consider any presence to fill the cell (similar to assuming even a low AquaMaps probability to indicate presence within the entire cell).
+    
+The following code chunk executes the functions that perform these tasks.  Note the optional arguments `fn_tag` and `prob_filter` that can be changed to facilitate custom runs (including different `spp_all` species info lists, different AquaMaps thresholds, and different filename tags to uniquely identify the custom run)
 
-``` {r SPP Generate species per cell tables for Aquamaps and IUCN }
+``` {r SPP Generate species per cell tables for Aquamaps and IUCN, echo = TRUE}
 
 spp_all <- read_csv(file.path(dir_anx, scenario, 'int/spp_all_cleaned.csv'))
 
@@ -300,8 +315,9 @@ Finally we take the two cell-by-cell summaries and combine, using a species-coun
 
 These are then saved to status and trend layer outputs for global (shown in table) as well as 3 nautical mile, Antarctic, and High Seas regions.
 
-``` {r  SPP Global Summarize mean category and trend per cell and per region}
+The script `spp_ico/v2016/layer_prep_spp_global.R` performs these tasks.
 
+``` {r  SPP Global Summarize mean category and trend per cell and per region, echo = TRUE}
 
 source(file.path(dir_git, scenario, 'layer_prep_spp_global.R'))
 
@@ -309,14 +325,15 @@ source(file.path(dir_git, scenario, 'layer_prep_spp_global.R'))
 
 `r DT::datatable(sum_by_rgn, caption = 'Region summary: mean category, trend, and status')`
 
+These analyses are repeated for additional scenarios: 3 nautical mile coastal buffer (for resilience calculations), High Seas, and Antarctic.
 
-``` {r SPP 3nm}
+``` {r SPP 3nm, echo = TRUE}
 
 source(file.path(dir_git, scenario, 'layer_prep_spp_3nm.R'))
 
 ```
 
-``` {R SPP HS and Antarctic}
+``` {R SPP HS and Antarctic, echo = TRUE}
 
 source(file.path(dir_git, scenario, 'layer_prep_spp_hs_aq.R'))
 
@@ -378,7 +395,7 @@ for (pref_flag in pref_flag_vec) {   ### pref_flag  <- pref_flag_vec[1]
 
 ## Determine species by region
 
-The `calc_rgn_spp()` function takes in lookup tables of species by cell (for both IUCN and AM), a cell-to-region lookup, and a species info lookup.  From this it generates a list of which species occur in which regions, including species information.
+The `calc_rgn_spp()` function takes in lookup tables of species by cell (for both IUCN and AM), a cell-to-region lookup, and a species info lookup.  From this it generates a list of which species occur in which regions, including basic species information.
 
 ``` {r species_by_region, echo = FALSE, eval = TRUE}
 
@@ -411,15 +428,12 @@ write_csv(rgn_spp_hs,  file.path(dir_git, scenario, 'output/rgn_spp_hs.csv'))
 
 The following plots compare the status scores generated for the 2015 assessment to those generated for 2016.  
 
-* The first compares the released scores for 2015 to the proposed scores for 2016.  This changes both the datasets and the methodology between the two axes.
-    * 2015 scores used data from 2014 (d2014) for both AquaMaps and IUCN, and scripts from the v2015 scenario.
+* The first compares the released region status for 2015 to the proposed status for 2016.  This changes both the datasets and the methodology between the two axes.
+    * 2015 scores used data from 2014 (d2014) for both AquaMaps and IUCN, and scripts from the v2015 scenario and from the v2016 scenario to see the impact of the updated methods.  See the second plot to better understand the differences between these two.
     * 2016 scores use data from 2015 (d2015) for both AquaMaps and IUCN, and scripts from the v2016 scenario.
-* The first compares regenerated scores for 2015 to the proposed scores for 2016. This keeps the methodology largely the same between the two axes (except as noted below), and compares the changes in data.
-    * 2015 scores used data from 2014 (d2014) for both AquaMaps and IUCN.
-    * 2016 scores use data from 2015 (d2015) for both AquaMaps and IUCN.
-    * Both scores use scripts from the v2016 scenario.  Methodology exceptions: 
-        * AquaMaps for d2014 is processed with a 40% threshold (as in v2015) while d2015 is processed with a 0% threshold.
-        * IUCN species-cell lookup for d2014 was generated using v2015 scripts, which relied on the `sciname` field for joining.  I've added a step to add `iucn_sid` values according to `sciname`, to allow the species-cell lookup to work with the v2016 scripts.
+* The second compares original status for 2015 (using d2014 data) to the updated status applied to d2014 data.  This keeps the data largely the same, and compares the changes due to the updated methodology.
+    * For this plot, both methods (v2015 and v2016) use a 40% threshold on AquaMaps data.
+    * IUCN species-cell lookup for d2014 was generated using v2015 scripts, which relied on the `sciname` field for joining.  I've added a step to add `iucn_sid` values according to `sciname`, to allow the species-cell lookup to work with the v2016 scripts.  Much of the variation in the plot may be due to differences in name-matching.
 
 ``` {r plot_scores_vs_2015}
 
