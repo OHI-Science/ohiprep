@@ -424,22 +424,34 @@ write_csv(rgn_spp_hs,  file.path(dir_git, scenario, 'output/rgn_spp_hs.csv'))
 
 `r knitr::kable(head(rgn_spp_gl), caption = 'Species by region - first few rows')`
 
-## Comparing scenarios and data
+# Comparing scenarios and changes in data
+
+``` {r plot_scores_vs_2015}
+### commented out - uncomment to regenerate plots...
+# source(file.path(dir_git, scenario, 'score_plot_spp.R'))
+
+```
 
 The following plots compare the status scores generated for the 2015 assessment to those generated for 2016.  
 
 * The first compares the released region status for 2015 to the proposed status for 2016.  This changes both the datasets and the methodology between the two axes.
     * 2015 scores used data from 2014 (d2014) for both AquaMaps and IUCN, and scripts from the v2015 scenario and from the v2016 scenario to see the impact of the updated methods.  See the second plot to better understand the differences between these two.
     * 2016 scores use data from 2015 (d2015) for both AquaMaps and IUCN, and scripts from the v2016 scenario.
+    
+![](Figs/scatterplot_spp_status_global_d15v16_d14v15.png)
+    
 * The second compares original status for 2015 (using d2014 data) to the updated status applied to d2014 data.  This keeps the data largely the same, and compares the changes due to the updated methodology.
     * For this plot, both methods (v2015 and v2016) use a 40% threshold on AquaMaps data.
     * IUCN species-cell lookup for d2014 was generated using v2015 scripts, which relied on the `sciname` field for joining.  I've added a step to add `iucn_sid` values according to `sciname`, to allow the species-cell lookup to work with the v2016 scripts.  Much of the variation in the plot may be due to differences in name-matching.
 
-``` {r plot_scores_vs_2015}
+![](Figs/scatterplot_spp_status_global_d14v15_d14v16.png)
 
-source(file.path(dir_git, scenario, 'score_plot_spp.R'))
+The third examines one possible reason for the large shift in scores between the 2015 scores (d2014 data) and 2016 scores (d2015 data): the addition of birds to the IUCN spatial information.  Bird species have a fairly low area-weighted mean risk category, but include a very large number of total cells of coverage.  This means these lower-risk species have a very large impact on the final score compared to other species groups.
 
-```
+![](debug/birds_health.png)
+
+
+
 
 ``` {r child = file.path('~/github/ohibc', 'src/templates/ohibc_prov_ftr.Rmd')}
 ```
