@@ -2,14 +2,14 @@
 ##############################################################################=
 ### create species list for global analysis
 
-reload <- FALSE
+### set reload, source_pref, fn_tag in parent script
 
 if(reload) {
   ### NOTE: Manually set up the subpopulations for 2016: see subpops_list.csv.
   ### For each of these species, the shapefile was modified so that the id_no
   ### field related to the subpop iucn_sid instead of the parent iucn_sid.
   
-  spp_all_file <- create_spp_master_lookup(source_pref = 'iucn', fn_tag = '', reload = TRUE)
+  spp_all_file <- create_spp_master_lookup(source_pref = source_pref, fn_tag = fn_tag, reload = TRUE)
   spp_all <- read_csv(spp_all_file)
   ### | am_sid | sciname | am_cat | iucn_sid | iucn_cat | pop_trend | pop_cat | 
   ### | info_source | spp_group | id_no | objectid | spatial_source | cat_score | trend_score |
