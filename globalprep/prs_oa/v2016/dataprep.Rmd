@@ -230,13 +230,16 @@ resample = function(file){
        writeRaster(r,filename=paste0(oagit_dir,'/v2016/int/annual_oa_rescaled_1km/annual_oa_rescaled_1km_',yr,sep=''),format='GTiff',overwrite=T)
 }
 
-  sapply(rescaled,resample)
+sapply(rescaled,resample)
+
+resampled = list.files(file.path(oagit_dir,'v2016/int/annual_oa_rescaled_1km'),full.names=T)
 
 ```
 
 ##Interpolate
 
 ```{r interpolate}
+
 
 
 ```
