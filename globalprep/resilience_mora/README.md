@@ -1,58 +1,40 @@
-## MRF NOTE: Feb 2 2016:
+# README
 
-## These data were moved to Github from this location: Neptune/model/GL-NCEAS-Resilience_Mora (now deleted)
-## These notes for missing regions do not seem correct based on:
-## The data from v2012 (_output_actuals and _output_scores), and the whence data in v2013 does seem accurate
-## although it does not take into account the downscaling that occurred from the 2012 to 2013 analysis
+**Mora et al. 2009. Management Effectiveness of the World's Marine Fisheries. PLOS Biology.** [http://dx.doi.org/10.1371/journal.pbio.1000131](http://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1000131)
 
-Source: GL-Scripps-Mora2009, GL-NCEAS-ArtisanalFishing
+Data from Mora et al. 2009 are used for global Ocean Health Index assessments as two resilience measures. 
 
-We use the Mora data (Oaf) from the Artisanal Fishing goal, and 
-we used georegional means for 18 regions.
+### 1. fisheries management effectiveness
 
-    "Regions with nodata, filled with georegion average"
-     id  |                 label                  
-    -----+----------------------------------------
-      32 | Djibouti
-      38 | Bahrain
-      43 | Gibraltar
-      67 | French Southern Ocean Territories
-      73 | Republic of the Congo
-      79 | Clipperton Island
-     108 | British Pacific Territories (Pitcairn)
-     110 | Jarvis Island
-     114 | USA Pacific Uninhabited Territories
-     136 | Monaco
-     137 | Serbia and Montenegro
-     139 | Slovenia
-     143 | Iraq
-     157 | Vietnam
-     158 | Singapore
-     164 | Jordan
-     171 | East Timor
-     172 | Bosnia and Herzegovina
-    (18 rows)
+Data from from Mora et al. 2009, 
 
+Description from Halpern et al. 2012, Supplemental Information, p. 41.
 
-We computed the resilience as $1 - mean(x_1, ..., x_6)$ where $x_i$ is the
-score for 6 Mora et al (2009) indicators ('fishing-effort', 'foreign-fishing',
-'implementation-capability', 'policy-transparency', 'scientific-robustness',
-and 'subsidies'). In 28 out of 193 countries, there were multiple sets of
-values for these indicators, so we took the mean for each category. We
-computed weighted averages, weighted by country area, to aggregate into our
-reporting regions. We had actuals data for 162 regions, and georegional means
-for 9 regions. Any region with no data is given resilience=0.
+"These data come from Mora et al. [2009], and assess the current effectiveness of fisheries management regimes along 6 axes: Scientific Robustness, Policy Transparency, Implementation Capacity, Subsidies, Fishing Effort, and Foreign Fishing. All countries with coastal areas were assessed through a combination of surveys, empirical data and enquiries to fisheries experts. For each OHI reporting region, scores for each category were rescaled between 0 and 1 using the maximum possible value for each category and then the average score of all 6 categories combined was recorded as the overall Fisheries management effectiveness score."
 
-    "Regions with nodata, filled with georegion average"
-     id  |                 label                  
-    -----+----------------------------------------
-      67 | French Southern Ocean Territories
-      79 | Clipperton Island
-     108 | British Pacific Territories (Pitcairn)
-     110 | Jarvis Island
-     114 | USA Pacific Uninhabited Territories
-     136 | Monaco
-     158 | Singapore
-     171 | East Timor
-     172 | Bosnia and Herzegovina
-    (9 rows)
+### 2. artisanal and recreational fisheries 
+
+Data from from Mora et al. 2009 supplementary figure S4.
+
+Description from Halpern et al. 2012, Supplemental Information, p. 19
+
+"To assess the opportunity or ability to meet this demand, we used data from Mora et al. [2009], which scores countries on the institutional measures that support or facilitate artisanal and small-scale fishing. The data come from Figure S4 in Mora et al. [2009; see screenshot below], which is based on two survey questions focused on recreational and artisanal fishing (see Table S5 below for questions) and are on a scale from 0 to 100 (which we then rescale 0-1), where higher scores indicate better management. We extracted the data from the color codes on the map in Figure S4. There may be some small errors far a few countries due to difficulty of distinguishing between the two red colors at the lowest end of the scale."
+
+![Mora et al 2009, figS4](Mora_et_al_2009_figS4.png)
+**Mora et al 2009, figS4.**
+
+**Table S5. Questions from Mora et al. [2009] that were used to evaluate access to artisanal scale fishing.**
+ 
+If recreational fishing exists to any extent, which of the following apply:
+
+- Are recreational fishermen required to have a fishing license? Y/N
+- Are there regulations to the size of fish caught? Y/N
+- Are there regulations to the number of fish caught? Y/N
+- Are there regulations to the number of fishermen allowed to fish? Y/N
+- Are there statistics being collected for this sort of fishing? Y/N
+
+If artisanal fishing exists to any extent, which of the following apply?
+- Are there regulations to the size of fish caught? Y/N
+- Are there regulations to the number of fish caught? Y/N
+- Are there regulations to the number of fishermen allowed to fish? Y/N
+- Are there statistics being collected for this sort of fishing? Y/N
