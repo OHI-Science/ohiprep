@@ -1,11 +1,11 @@
 WEF-Economics
 ===========================
-See github/ohiprep/globalprep/TourismRecreation/ for scripts on processing and cleaning this data
+See github/ohiprep/globalprep/TourismRecreation/ for scripts on processing and cleaning TTCI data
 
 WEF = World Economic Forum
 
 * GCI = Global Competitiveness Index 
-* TTCI = Travel and Tourist Competitiveness Index
+* TTCI = Travel and Tourist Competitiveness Index -  TR goal
 
 Description
 ===========
@@ -18,27 +18,25 @@ Global Competitiveness:
 * read report: http://reports.weforum.org/global-competitiveness-report-2014-2015/
   * table 3 in this .pdf: http://reports.weforum.org/global-competitiveness-report-2014-2015/wp-content/blogs.dir/54/mp/files/pages/files/tables3-7-wef-globalcompetitivenessreport-2014-15-2.pdf
   
-Travel and Tourism competitiveness:
+Travel and Tourism competitiveness (see TR goal):
 * download .xlsx: http://www3.weforum.org/docs/TT15/WEF_TTCR_Dataset_2015.xlsx
   * note: only 2015 is represented here.  
 * read report online: http://reports.weforum.org/travel-and-tourism-competitiveness-report-2015/
   * table 1: http://reports.weforum.org/travel-and-tourism-competitiveness-report-2015/index-results-the-travel-tourism-competitiveness-index-ranking-2015/
 
-R scripts involved
+R script for GCI processing
 ==================
 SCRIPT:
 
-* ~/github/ohiprep/globalprep/TourismRecreation/data_prep_WEF.R
+* ~/github/ohiprep/globalprep/WEF-Economics/data_prep_WEF.R
 
 DETAILS: cleaning
 
-Original data downloaded as .xls from links above.  These .xlsx files are stored on Neptune on data_edit: 
+Original data downloaded as .xls from link above.  This .xlsx file is stored on Neptune on data_edit: 
 * git-annex/globalprep/TourismRecreation/WEF-Economics/raw/GCI_Dataset_2006-07-2014-15.xlsx
-* git-annex/globalprep/TourismRecreation/WEF-Economics/raw/WEF_TTCR_Dataset_2015.xlsx
 
-Each file has been opened and the 'data' sheet saved as .csv in the same location:
+'data' sheet saved as .csv in the same location:
 * git-annex/globalprep/TourismRecreation/WEF-Economics/raw/GCI_Dataset_2006-07-2014-15.csv
-* git-annex/globalprep/TourismRecreation/WEF-Economics/raw/WEF_TTCR_Dataset_2015.csv
 
 
 WEF_GCI_2013-2014_Table3_reformatted.csv is processed further by data_prep.R in ohiprep/Global/WEF-Economics_v2014/
@@ -65,17 +63,6 @@ TTCI: Travel and Tourist Competitiveness Report
 * Added: Seychelles, Guinea, Sierra Leone, Yemen, Haiti and Suriname (reinstated
 after being absent in the last edition because of a lack of data)
 * Subtracted: Angola, Libya, Syria, Timor-Leste, and Tunisia— not covered this year because of insufficient or unreliable data. See Metadata below. 
-
-To work with data: 
-  + To copy data, use Adobe Acrobat Pro 9.0
-	+ Table was copied into WEF_GCI_2012-2013_Table3.txt and WEF_TTCI_2012-2013_Table1.txt
-	+ Table saved as WEF_GCI_2012-2013_Table3_reformatted.csv  and WEF_TTCI_2012-2013_Table1_reformatted.csv with TextWrangler:
-		- add quotes around countries with commas (~5). 
-		- add commas to make it csv: 1) search '(\\w) (\\d)' replace '\\1,\\2'; 2)search '(\\d) (\\d)' replace '\\1,\\2'; 3) search ' (n\\/a)' replace ',NA'
-		- simplify/rename headers 
-		
-		
-\*\* Note: Other tables have subindex and pillar score values for each country as well, so there are other data available that could potentially be useful 
 
 
 2014 Resolutions

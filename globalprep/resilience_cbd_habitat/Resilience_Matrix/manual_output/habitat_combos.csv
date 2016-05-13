@@ -1,0 +1,11 @@
+name,layer1,layer2,layer3,layer4,layer5,layer6,layer7,layer8
+bd-corals-only,water,fishing-v3-eez,habitat-combo-eez,tourism,mariculture,alien-species,species-diversity,wgi-all
+bd-seagrasses-only,water,habitat-combo-eez,tourism,mariculture,alien-species,species-diversity,wgi-all,
+bd-soft-bottom-with-corals,water,fishing-v2-eez,habitat-combo-eez,tourism,mariculture,alien-species,species-diversity,wgi-all
+bd-soft-bottom-without-corals,water,fishing-v1-eez,habitat-combo-eez,tourism,mariculture,alien-species,species-diversity,wgi-all
+sh-mangrove-only,habitat-combo,wgi-all
+sh-seaice-only,wgi-all
+sh-default,water,habitat-combo,wgi-all
+ca-mangrove-only,habitat-combo,wgi-all
+ca-default,water,habitat-combo,wgi-all
+

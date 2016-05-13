@@ -1,0 +1,255 @@
+---
+title: 'OHI 2016: Ocean Acidification Data Prep '
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    code_folding: show
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+#Summary
+
+This script takes the raw data, shared by Woods Hole Institute for Oceanography, and does the following:
+
+   a. Calculates the historical global mean for the decade 1880-1889 (1 raster layer as output)
+   b. Calculates the annual mean for each of the 10 years in 2005-2015 (10 raster layers as output)
+   
+   **This is a dataprep script. The data processed here is used to create the Ocean Acidification Pressures layer. Full methods of the next step can be found [here](http://htmlpreview.github.io/?https://github.com/OHI-Science/ohiprep/blob/master/globalprep/prs_oa/v2015/oa_create_layer_2015.html)
+
+**Notes about the data:**  
+This data was shared with us by Ivan Lima from Woods Hole Institue for Oceanography in December 2014. The data came as NetCDFs in an irregular grid format with a resolution of about 1 degree. The data values are monthly average surface &#937; aragonite saturation state.
+
+
+#Updates from previous assessment
+
+Added one more year of data (2015)
+
+***
+
+#Data Source
+**Reference**: [Feely et al.] 2009(https://darchive.mblwhoilibrary.org/bitstream/handle/1912/3180/22-4_feely.pdf?sequence=1&isAllowed=y)
+
+**Downloaded**: March 15, 2016
+
+**Description**:  Aragonite Saturation State
+
+**Native data resolution**: 1 degree
+
+**Time range**: 1880-1889 and 2005-2015, monthly data provided for each year
+
+**Format**:  NetCDF
+
+***
+
+# Methods
+
+
+##Setup  
+```{r setup,message=FALSE,warning=FALSE,verbose=FALSE}
+
+#set options for all chunks in code
+knitr::opts_chunk$set(fig.path='Figs/', echo=FALSE, warning=FALSE, message=FALSE)
+source("~/github/ohiprep/src/R/common.R")
+
+#libraries
+
+library(raster)
+library(ncdf4)
+library(maps)
+
+raw_dir    = file.path(dir_M,'git-annex/globalprep/_raw_data')
+oagit_dir  = file.path(dir_M,'git-annex/globalprep/prs_oa')
+
+# set temporary directory to folder on mazu disk big enough to handle it
+tmpdir='~/big/R_raster_tmp'
+dir.create(tmpdir, showWarnings=F)
+rasterOptions(tmpdir=tmpdir)
+```
+
+## Step One:  
+Read in raw data to get lat and long information and monthly aragonite saturation state values
+
+```{r,message=FALSE,warning=FALSE,eval=FALSE}
+
+#list all 2015-2020 files
+
+files <- list.files(file.path(raw_dir,'WHOI/annual'),pattern=".nc",recursive=T,full.names = T)[12:17] #grab only 2015-2020
+        
+```
+
+## Step Two  
+Get annual averages for each year
+
+```{r,message=FALSE,warning=FALSE,eval=FALSE}
+      
+#annual_arag is a function that calculates annual average surface aragonite saturation 
+
+  annual_arag<-function(file){
+    
+    year = substr(file,73,76)
+    
+    nc = nc_open(file)
+            
+# longitude values are stored in the variable 'TLONG'
+
+      long <- ncvar_get(nc,varid='TLONG') #same lat and long for both data sets so just reading in from data_nc_18 works
+
+# latitude values are stored in the variable 'TLAT'
+
+      lat <- ncvar_get(nc,varid='TLAT')
+    
+  
+  # select the surface aragonite variable (OARG)
+
+      arag<- ncvar_get(nc,varid="OARG")
+
+
+# land cells are given large, strange value, so set these to NA
+
+      arag[arag==9969209968386869046778552952102584320]<-NA 
+
+      yr_mean = apply(arag,1:2,mean) # get the annual mean
+  
+      #create an array with long, lat, aragonite mean data
+      A <- array(c(long,lat,yr_mean),dim=c(320,384,3))
+      B <- apply(A, 3, cbind)
+  
+      #lon=x, lat=y
+      x = B[,1]
+      y = B[,2]
+  
+  
+      C = as.data.frame(B)
+      names(C)<-c('x','y','value')
+  
+      #set extent to lon/lat
+      e <- extent(C[,1:2])
+      r <- raster(e,ncol=320,nrow=384) #create empty raster with e extent
+  
+      #rasterize the dataframe
+      out <- rasterize(C[,1:2],r,C[,3],fun=function(x,...)mean(x),progress='text') # i had to create a mean function here for "multiple points in a cell"
+      extent(out)<-c(0,360,-80,90) #data extent is 0,360,-80, 90 (the -80 is not a typo)
+      out <- rotate(out) #shifts data from 0-360 to -180-180
+  
+  
+      plot(out)
+  #    map('world',col='gray95',fill=T,border='gray80',add=T)
+  
+      #notice the empty cells, due to irregular grid, so plot using a different projection
+  
+      
+      # Define initial projection for out
+      projection(out) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+  
+      # define mollweide projection
+      mollCRS <- CRS('+proj=moll')
+
+      # then convert to mollweide and other projections
+      out_moll <- projectRaster(out, crs=mollCRS, over=T)
+  
+  
+      # plot results
+     plot(out_moll)
+      
+     print(cellStats(out_moll,stat='mean',na.rm=T))
+     
+     
+  writeRaster(out_moll,filename = paste0(file.path(dir_M,"git-annex/globalprep/prs_oa/v2016/int/global_arag_avg_moll_"),year), format='GTiff', overwrite=T)
+    
+}
+
+#run the function
+
+ lapply(files,annual_arag)
+ 
+```
+
+## Step Three  
+Read in historical mean from 1880-1889
+
+```{r histMean}
+
+hist <- raster(file.path(dir_M,'git-annex/globalprep/prs_oa/v2015/working/global_oa_1880_1889_arag_mean_moll.tif'))
+
+```
+
+
+## Rescale 
+
+Take past 5 years of OA data and rescale using a biological reference point and a historical mean.
+
+
+```{r}
+
+#Get 2011-2015 rasters
+
+files = c(list.files(file.path(oagit_dir,'v2015/working/annualmean_2005-2014/moll'),full.names = T)[7:10],file.path(oagit_dir,'v2016/int/global_arag_avg_moll_2015.tif'))
+
+
+#for each layer, all values <=1 are assigned a 1, otherwise old-new/old
+
+oaRescale <- function(file){
+  
+  yr   = substr(file,nchar(file)-7,nchar(file)-4)         #get year of file
+  mean = raster(file)               #get seasonal mean aragonite raster for given year
+  diff = (hist-mean)/(hist-1)
+  mean[mean<=1]<-1                                #all values at or less than 1 are given a value of 1
+  mean[mean>1] <- diff[mean>1]                      #all cells with values greater than 1 are swapped out with their amount of change scaled to how close to 1 
+  mean[mean<0]<-0                                 #all values less than 0 (indicating a decrease in acidity) are capped at 0
+
+    writeRaster(mean,filename=paste0(oagit_dir,'/v2016/int/annual_oa_rescaled/oa_rescaled_',yr,sep=""),format='GTiff',overwrite=T)
+
+}
+
+  sapply(files,oaRescale)
+
+  rescaled = list.files(file.path(oagit_dir,'v2016/int/annual_oa_rescaled'),full.names=T)
+
+```
+
+
+## Resample
+
+```{r resample}
+
+#ocean is a raster with all land clipped out - at 1km with value of 1. This is used as a mask
+ocean = raster(file.path(oagit_dir,'v2016/int/ocean.tif'))
+
+resample = function(file){
+  
+        yr  = substr(file,87,90)
+        r   = raster(file)%>%raster::resample(ocean,method='ngb',progress='text') # resample r to the resolution of 'ocean' (~1km)
+    
+       writeRaster(r,filename=paste0(oagit_dir,'/v2016/int/annual_oa_rescaled_1km/annual_oa_rescaled_1km_',yr,sep=''),format='GTiff',overwrite=T)
+}
+
+sapply(rescaled,resample)
+
+resampled = list.files(file.path(oagit_dir,'v2016/int/annual_oa_rescaled_1km'),full.names=T)
+
+```
+
+##Interpolate
+
+```{r interpolate}
+
+
+
+```
+
+##Remove Land
+
+```{r mask}
+
+
+```
+
+
+

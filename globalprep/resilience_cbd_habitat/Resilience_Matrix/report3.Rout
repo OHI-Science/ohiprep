@@ -1,0 +1,647 @@
+
+R version 2.15.3 (2013-03-01) -- "Security Blanket"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> require(ohi)
+Loading required package: ohi
+Loading required package: reshape2
+Loading OHI options (version 0.9.10)
+> options(digits=4)
+> options(width=70)
+> ## Example for computing AO resilience
+> 
+> # load data
+> ohi.load('global_v_resilience_layers')
+> ohi.load('global_resilience_layers')
+> ohi.load('global_resilience_matrix')
+> names(global_resilience_layers) <- tolower(names(global_resilience_layers))
+> 
+> # extract relavant resilience layers for AO goal
+> layers <- subset(global_resilience_matrix, GOAL == 'artisanal-fishing' & COMPONENT == 'all')$LAYER
+> layers
+[1] "fishing-v1"            "habitat-combo"        
+[3] "species-diversity-3nm" "wgi-all"              
+> 
+> # extract resilience layers typing information
+> # XXX: we need to fix the global_resilience_layers to use the correct values
+> d <- subset(global_resilience_layers, layer %in% layers)[,c('layer', 'type', 'category', 'value')]
+> d$type <- ifelse(d$type == 'ecological', 'environmental', d$type)
+> d$type <- ifelse(paste(d$type, d$category) == 'environmental regulations', 'regulatory', d$type)
+> t <- d$type
+> names(t) <- d$layer
+> t
+           fishing-v1         habitat-combo species-diversity-3nm 
+         "regulatory"          "regulatory"       "environmental" 
+              wgi-all 
+             "social" 
+> 
+> # extract resilience layers weighting information
+> w <- d$value
+> names(w) <- d$layer
+> w
+           fishing-v1         habitat-combo species-diversity-3nm 
+                    2                     2                     1 
+              wgi-all 
+                    1 
+> 
+> # extract resilience layers data for regions
+> r <- acast(id ~ layer, data=subset(global_v_resilience_layers, id %in% 1:172 & layer %in% layers))
+> names(dimnames(r)) <- c('region_id', 'layer')
+> r
+         layer
+region_id fishing-v1 habitat-combo species-diversity-3nm wgi-all
+      1    0.8949637     0.9999978                0.8747 0.81661
+      2    0.5639806     0.5072877                0.9061 0.81661
+      3    0.3545090     0.2703217                0.9132 0.36428
+      4    0.3510162     0.3418384                0.9177 0.55573
+      5    0.4263549     0.4772727                0.9035 0.40791
+      6    0.4002036     0.4545455                0.9160 0.55649
+      7    0.3099856     0.2500000                0.8978 0.52875
+      8    0.3185236     0.2500000                0.9053 0.53344
+      9    0.3125672     0.2500000                0.9119 0.48115
+      10   0.5012546     0.4959445                0.9054 0.66993
+      11   0.5409827     0.5696470                0.8939 0.40331
+      12   0.7998535     0.8566262                0.8982 0.81556
+      13   0.3533165     0.2850402                0.9049 0.35905
+      14   0.2829509     0.2501220                0.9111 0.35528
+      15   0.2460192     0.2500000                0.9133 0.55510
+      16   0.6356005     0.6255625                0.8320 0.64624
+      17   0.4074088     0.3863636                0.8464 0.18656
+      18   0.5400822     0.5275808                0.9112 0.33841
+      19   0.6459375     0.6604107                0.9138 0.45484
+      20   0.4379784     0.4545455                0.9023 0.28260
+      21   0.4178883     0.4114924                0.9072 0.68493
+      22   0.5156186     0.5925580                0.9079 0.52216
+      23   0.4480037     0.4894534                0.9067 0.65518
+      24   0.7926209     0.9388635                0.9011 0.36922
+      25   0.3107379     0.2500000                0.9097 0.43858
+      26   0.4921395     0.5270962                0.9070 0.40951
+      27   0.5405016     0.6238776                0.9080 0.45855
+      28   0.4316581     0.4630244                0.9036 0.38746
+      29   0.6818325     0.7559682                0.9067 0.34573
+      30   0.2843143     0.2500000                0.9101 0.04923
+      31   0.4298106     0.3636364                0.9175 0.22621
+      32   0.3530083     0.3983849                0.9162 0.39831
+      33   0.3240187     0.2500000                0.9130 0.25078
+      34   0.3499657     0.3437711                0.9116 0.57350
+      35   0.3269240     0.2500000                0.9266 0.19201
+      36   0.4649874     0.5033531                0.9295 0.44189
+      37   0.3607260     0.2500000                0.9335 0.54308
+      38   0.3797747     0.2500000                0.9353 0.54309
+      39   0.4372058     0.4082792                0.8955 0.26826
+      40   0.4093552     0.3636364                0.9308 0.60274
+      41   0.4407328     0.4318182                0.8371 0.59578
+      42   0.4714275     0.4772727                0.8735 0.75771
+      43   0.4593380     0.3772950                0.8310 0.63530
+      44   0.4542005     0.3869744                0.8589 0.49021
+      45   0.5209195     0.5180336                0.8094 0.44245
+      46   0.3689248     0.3543405                0.8026 0.30626
+      47   0.8363790     1.0000000                0.8566 0.32524
+      48   0.5010937     0.4772727                0.8113 0.40893
+      49   0.7264235     0.8401096                0.8291 0.43462
+      50   0.2571636     0.2500000                0.9037 0.32549
+      51   0.4419622     0.4152493                0.8794 0.73800
+      52   0.6516830     0.7121706                0.9217 0.63295
+      53   0.7706052     0.8863636                0.9426 0.71491
+      54   0.3556114     0.2809654                0.9063 0.55385
+      55   0.7732412     0.8863636                0.9017 0.54418
+      56   0.6053956     0.6264271                0.9314 0.35630
+      57   0.3950356     0.2500000                0.9059 0.47518
+      58   0.5511311     0.5381450                0.8976 0.39064
+      59   0.5112973     0.4772727                0.9035 0.49591
+      60   0.4924312     0.4318182                0.9456 0.31934
+      61   0.5081933     0.5000000                0.9312 0.36613
+      62   0.4748048     0.3982940                0.9186 0.59790
+      63   0.5092333     0.5006592                0.8911 0.59938
+      64   0.5079731     0.4816716                0.9412 0.70675
+      65   0.4554837     0.3833819                0.8787 0.47507
+      66   0.4405956     0.3640837                0.8478 0.33356
+      67   0.5122914     0.4530838                0.8192 0.78473
+      68   0.5419214     0.4545888                0.8308 0.78473
+      69   0.4895853     0.4318182                0.8264 0.34813
+      70   0.3686622     0.3537562                0.8219 0.32177
+      71   0.3393613     0.3181818                0.8188 0.31942
+      72   0.3989016     0.3636364                0.8245 0.45247
+      73   0.7371593     0.8863636                0.8257 0.28781
+      74   0.5023194     0.3984191                0.8206 0.56266
+      75   0.7386464     0.7960148                0.8556 0.55555
+      76   0.2946913     0.2500000                0.8479 0.42737
+      77   0.4761163     0.4448202                0.8240 0.24457
+      78   0.4133856     0.4344595                0.8221 0.52665
+      79   0.4605384     0.3190436                0.8757 0.57029
+      80   0.4644061     0.3918215                0.8809 0.69510
+      81   0.6518460     0.6264517                0.8786 0.36233
+      82   0.3371151     0.2772076                0.8851 0.29365
+      83   0.3895805     0.3409091                0.8864 0.44173
+      84   0.2916627     0.1757487                0.8865 0.63585
+      85   0.5014175     0.4704135                0.8866 0.71983
+      86   0.3710435     0.2500000                0.8878 0.68254
+      87   0.5392591     0.5546915                0.8868 0.65736
+      88   0.5120549     0.4565829                0.8819 0.68631
+      89   0.4601576     0.3863636                0.8857 0.64697
+      90   0.4620057     0.5000000                0.8818 0.71741
+      91   0.4237494     0.4545455                0.8759 0.57893
+      92   0.4283345     0.4013967                0.8885 0.54074
+      93   0.4311677     0.4772727                0.8759 0.67924
+      94   0.4998566     0.4156236                0.8804 0.65601
+      95   0.5921758     0.6808992                0.8872 0.53492
+      96   0.5312396     0.6231747                0.8906 0.62815
+      97   0.6148859     0.7350697                0.8837 0.36575
+      98   0.5259054     0.5719769                0.8840 0.42223
+      99   0.5165365     0.5665673                0.8828 0.38505
+      100  0.5312726     0.5133152                0.8950 0.48319
+      101  0.7686138     0.9732882                0.8815 0.47092
+      102  0.6670135     0.8317559                0.8790 0.38201
+      103  0.7922564     0.9545455                0.8852 0.31923
+      104  0.4869664     0.4495072                0.8679 0.43847
+      105  0.5161992     0.5904796                0.8748 0.24601
+      106  0.4810556     0.4051340                0.8852 0.64647
+      107  0.3618289     0.2583243                0.8260 0.80070
+      108  0.5322460     0.4702709                0.9318 0.55793
+      109  0.5053243     0.4702709                0.9313 0.55793
+      110  0.6491377     0.5690436                0.9239 0.57029
+      111  0.3628921     0.1562462                0.9230 0.63746
+      112  0.5669587     0.5000000                0.9273 0.57180
+      113  0.3807295     0.2530111                0.9339 0.44836
+      114  0.6508272     0.5690436                0.9275 0.57029
+      115  0.5964509     0.5800982                0.8763 0.84678
+      116  0.6433061     0.6586480                0.8678 0.73269
+      117  0.7830259     0.8620538                0.8770 0.48394
+      118  0.5021607     0.5519126                0.8890 0.49017
+      119  0.4068959     0.3863636                0.8472 0.42107
+      120  0.6632018     0.7500000                0.8411 0.48243
+      121  0.5908337     0.6597268                0.8542 0.69701
+      122  0.7584644     0.9109098                0.8668 0.52675
+      123  0.5023657     0.4652320                0.8306 0.42549
+      124  0.4638320     0.4158340                0.8001 0.66615
+      125  0.5591939     0.5774380                0.9637 0.86351
+      126  0.7825558     0.8636364                0.9096 0.76604
+      127  0.8350151     0.9772727                0.8634 0.78445
+      128  0.7728152     0.9090909                0.8697 0.82508
+      129  0.4701039     0.4269886                0.8898 0.65587
+      130  0.5768736     0.5812473                0.8522 0.74260
+      131  0.7481743     0.8350104                0.8462 0.76238
+      132  0.4920114     0.4824040                0.8435 0.79038
+      133  0.4115066     0.3716907                0.8417 0.67520
+      134  0.4812175     0.5004168                0.8297 0.71212
+      135  0.6301997     0.7175146                0.8698 0.61433
+      136  0.3519272     0.2500000                0.8641 0.76140
+      137  0.3189355     0.1272950                0.8692 0.63530
+      138  0.4152527     0.4422229                0.8815 0.58678
+      139  0.5100168     0.5028546                0.8783 0.70263
+      140  0.4916552     0.4902866                0.9393 0.64003
+      141  0.4548857     0.4346287                0.9361 0.65267
+      142  0.5222146     0.4940754                0.9180 0.25948
+      143  0.3376797     0.2500000                0.9346 0.19975
+      144  0.8246979     0.9772727                0.8140 0.29996
+      145  0.5903420     0.6766789                0.8119 0.21253
+      146  0.4685291     0.5040231                0.8240 0.25436
+      147  0.3144215     0.2621581                0.8298 0.26561
+      148  0.4179096     0.4528119                0.8445 0.33597
+      149  0.5230354     0.4996140                0.8153 0.37827
+      150  0.5225684     0.5473098                0.8799 0.16559
+      151  0.3891359     0.3484415                0.8081 0.30542
+      152  0.8105090     0.9090909                0.9071 0.44283
+      153  0.5220967     0.5642112                0.8976 0.45713
+      154  0.4871415     0.4440424                0.9086 0.32088
+      155  0.3875480     0.4214543                0.9134 0.12264
+      156  0.5052376     0.4968795                0.8921 0.54756
+      157  0.5773712     0.5910164                0.8921 0.39681
+      158  0.3644781     0.3409091                0.8914 0.78821
+      159  0.5668553     0.5015728                0.8680 0.39830
+      160  0.6171191     0.7369606                0.8799 0.73249
+      161  0.5135027     0.4550421                0.9112 0.50912
+      162  0.0001125     0.0001687                0.8709      NA
+      163  0.7520124     0.8416646                0.9265 0.41250
+      164  0.4449661     0.4545455                0.9287 0.50690
+      165  0.5044089     0.5979983                0.8929 0.41816
+      166  0.5186429     0.4863554                0.9466 0.82319
+      167  0.4773371     0.4318182                0.7998 0.77889
+      168  0.5608260     0.6654066                0.9122 0.84864
+      169  0.8234243     0.9397955                0.8607 0.82296
+      170  0.6791757     0.6704728                0.8419 0.73080
+      171  0.3038720     0.2500000                0.8935 0.33597
+      172  0.3318615     0.2500000                0.8719 0.43275
+> 
+> # extract data mask
+> b <- ifelse(!is.na(r),T,F)
+> b
+         layer
+region_id fishing-v1 habitat-combo species-diversity-3nm wgi-all
+      1         TRUE          TRUE                  TRUE    TRUE
+      2         TRUE          TRUE                  TRUE    TRUE
+      3         TRUE          TRUE                  TRUE    TRUE
+      4         TRUE          TRUE                  TRUE    TRUE
+      5         TRUE          TRUE                  TRUE    TRUE
+      6         TRUE          TRUE                  TRUE    TRUE
+      7         TRUE          TRUE                  TRUE    TRUE
+      8         TRUE          TRUE                  TRUE    TRUE
+      9         TRUE          TRUE                  TRUE    TRUE
+      10        TRUE          TRUE                  TRUE    TRUE
+      11        TRUE          TRUE                  TRUE    TRUE
+      12        TRUE          TRUE                  TRUE    TRUE
+      13        TRUE          TRUE                  TRUE    TRUE
+      14        TRUE          TRUE                  TRUE    TRUE
+      15        TRUE          TRUE                  TRUE    TRUE
+      16        TRUE          TRUE                  TRUE    TRUE
+      17        TRUE          TRUE                  TRUE    TRUE
+      18        TRUE          TRUE                  TRUE    TRUE
+      19        TRUE          TRUE                  TRUE    TRUE
+      20        TRUE          TRUE                  TRUE    TRUE
+      21        TRUE          TRUE                  TRUE    TRUE
+      22        TRUE          TRUE                  TRUE    TRUE
+      23        TRUE          TRUE                  TRUE    TRUE
+      24        TRUE          TRUE                  TRUE    TRUE
+      25        TRUE          TRUE                  TRUE    TRUE
+      26        TRUE          TRUE                  TRUE    TRUE
+      27        TRUE          TRUE                  TRUE    TRUE
+      28        TRUE          TRUE                  TRUE    TRUE
+      29        TRUE          TRUE                  TRUE    TRUE
+      30        TRUE          TRUE                  TRUE    TRUE
+      31        TRUE          TRUE                  TRUE    TRUE
+      32        TRUE          TRUE                  TRUE    TRUE
+      33        TRUE          TRUE                  TRUE    TRUE
+      34        TRUE          TRUE                  TRUE    TRUE
+      35        TRUE          TRUE                  TRUE    TRUE
+      36        TRUE          TRUE                  TRUE    TRUE
+      37        TRUE          TRUE                  TRUE    TRUE
+      38        TRUE          TRUE                  TRUE    TRUE
+      39        TRUE          TRUE                  TRUE    TRUE
+      40        TRUE          TRUE                  TRUE    TRUE
+      41        TRUE          TRUE                  TRUE    TRUE
+      42        TRUE          TRUE                  TRUE    TRUE
+      43        TRUE          TRUE                  TRUE    TRUE
+      44        TRUE          TRUE                  TRUE    TRUE
+      45        TRUE          TRUE                  TRUE    TRUE
+      46        TRUE          TRUE                  TRUE    TRUE
+      47        TRUE          TRUE                  TRUE    TRUE
+      48        TRUE          TRUE                  TRUE    TRUE
+      49        TRUE          TRUE                  TRUE    TRUE
+      50        TRUE          TRUE                  TRUE    TRUE
+      51        TRUE          TRUE                  TRUE    TRUE
+      52        TRUE          TRUE                  TRUE    TRUE
+      53        TRUE          TRUE                  TRUE    TRUE
+      54        TRUE          TRUE                  TRUE    TRUE
+      55        TRUE          TRUE                  TRUE    TRUE
+      56        TRUE          TRUE                  TRUE    TRUE
+      57        TRUE          TRUE                  TRUE    TRUE
+      58        TRUE          TRUE                  TRUE    TRUE
+      59        TRUE          TRUE                  TRUE    TRUE
+      60        TRUE          TRUE                  TRUE    TRUE
+      61        TRUE          TRUE                  TRUE    TRUE
+      62        TRUE          TRUE                  TRUE    TRUE
+      63        TRUE          TRUE                  TRUE    TRUE
+      64        TRUE          TRUE                  TRUE    TRUE
+      65        TRUE          TRUE                  TRUE    TRUE
+      66        TRUE          TRUE                  TRUE    TRUE
+      67        TRUE          TRUE                  TRUE    TRUE
+      68        TRUE          TRUE                  TRUE    TRUE
+      69        TRUE          TRUE                  TRUE    TRUE
+      70        TRUE          TRUE                  TRUE    TRUE
+      71        TRUE          TRUE                  TRUE    TRUE
+      72        TRUE          TRUE                  TRUE    TRUE
+      73        TRUE          TRUE                  TRUE    TRUE
+      74        TRUE          TRUE                  TRUE    TRUE
+      75        TRUE          TRUE                  TRUE    TRUE
+      76        TRUE          TRUE                  TRUE    TRUE
+      77        TRUE          TRUE                  TRUE    TRUE
+      78        TRUE          TRUE                  TRUE    TRUE
+      79        TRUE          TRUE                  TRUE    TRUE
+      80        TRUE          TRUE                  TRUE    TRUE
+      81        TRUE          TRUE                  TRUE    TRUE
+      82        TRUE          TRUE                  TRUE    TRUE
+      83        TRUE          TRUE                  TRUE    TRUE
+      84        TRUE          TRUE                  TRUE    TRUE
+      85        TRUE          TRUE                  TRUE    TRUE
+      86        TRUE          TRUE                  TRUE    TRUE
+      87        TRUE          TRUE                  TRUE    TRUE
+      88        TRUE          TRUE                  TRUE    TRUE
+      89        TRUE          TRUE                  TRUE    TRUE
+      90        TRUE          TRUE                  TRUE    TRUE
+      91        TRUE          TRUE                  TRUE    TRUE
+      92        TRUE          TRUE                  TRUE    TRUE
+      93        TRUE          TRUE                  TRUE    TRUE
+      94        TRUE          TRUE                  TRUE    TRUE
+      95        TRUE          TRUE                  TRUE    TRUE
+      96        TRUE          TRUE                  TRUE    TRUE
+      97        TRUE          TRUE                  TRUE    TRUE
+      98        TRUE          TRUE                  TRUE    TRUE
+      99        TRUE          TRUE                  TRUE    TRUE
+      100       TRUE          TRUE                  TRUE    TRUE
+      101       TRUE          TRUE                  TRUE    TRUE
+      102       TRUE          TRUE                  TRUE    TRUE
+      103       TRUE          TRUE                  TRUE    TRUE
+      104       TRUE          TRUE                  TRUE    TRUE
+      105       TRUE          TRUE                  TRUE    TRUE
+      106       TRUE          TRUE                  TRUE    TRUE
+      107       TRUE          TRUE                  TRUE    TRUE
+      108       TRUE          TRUE                  TRUE    TRUE
+      109       TRUE          TRUE                  TRUE    TRUE
+      110       TRUE          TRUE                  TRUE    TRUE
+      111       TRUE          TRUE                  TRUE    TRUE
+      112       TRUE          TRUE                  TRUE    TRUE
+      113       TRUE          TRUE                  TRUE    TRUE
+      114       TRUE          TRUE                  TRUE    TRUE
+      115       TRUE          TRUE                  TRUE    TRUE
+      116       TRUE          TRUE                  TRUE    TRUE
+      117       TRUE          TRUE                  TRUE    TRUE
+      118       TRUE          TRUE                  TRUE    TRUE
+      119       TRUE          TRUE                  TRUE    TRUE
+      120       TRUE          TRUE                  TRUE    TRUE
+      121       TRUE          TRUE                  TRUE    TRUE
+      122       TRUE          TRUE                  TRUE    TRUE
+      123       TRUE          TRUE                  TRUE    TRUE
+      124       TRUE          TRUE                  TRUE    TRUE
+      125       TRUE          TRUE                  TRUE    TRUE
+      126       TRUE          TRUE                  TRUE    TRUE
+      127       TRUE          TRUE                  TRUE    TRUE
+      128       TRUE          TRUE                  TRUE    TRUE
+      129       TRUE          TRUE                  TRUE    TRUE
+      130       TRUE          TRUE                  TRUE    TRUE
+      131       TRUE          TRUE                  TRUE    TRUE
+      132       TRUE          TRUE                  TRUE    TRUE
+      133       TRUE          TRUE                  TRUE    TRUE
+      134       TRUE          TRUE                  TRUE    TRUE
+      135       TRUE          TRUE                  TRUE    TRUE
+      136       TRUE          TRUE                  TRUE    TRUE
+      137       TRUE          TRUE                  TRUE    TRUE
+      138       TRUE          TRUE                  TRUE    TRUE
+      139       TRUE          TRUE                  TRUE    TRUE
+      140       TRUE          TRUE                  TRUE    TRUE
+      141       TRUE          TRUE                  TRUE    TRUE
+      142       TRUE          TRUE                  TRUE    TRUE
+      143       TRUE          TRUE                  TRUE    TRUE
+      144       TRUE          TRUE                  TRUE    TRUE
+      145       TRUE          TRUE                  TRUE    TRUE
+      146       TRUE          TRUE                  TRUE    TRUE
+      147       TRUE          TRUE                  TRUE    TRUE
+      148       TRUE          TRUE                  TRUE    TRUE
+      149       TRUE          TRUE                  TRUE    TRUE
+      150       TRUE          TRUE                  TRUE    TRUE
+      151       TRUE          TRUE                  TRUE    TRUE
+      152       TRUE          TRUE                  TRUE    TRUE
+      153       TRUE          TRUE                  TRUE    TRUE
+      154       TRUE          TRUE                  TRUE    TRUE
+      155       TRUE          TRUE                  TRUE    TRUE
+      156       TRUE          TRUE                  TRUE    TRUE
+      157       TRUE          TRUE                  TRUE    TRUE
+      158       TRUE          TRUE                  TRUE    TRUE
+      159       TRUE          TRUE                  TRUE    TRUE
+      160       TRUE          TRUE                  TRUE    TRUE
+      161       TRUE          TRUE                  TRUE    TRUE
+      162       TRUE          TRUE                  TRUE   FALSE
+      163       TRUE          TRUE                  TRUE    TRUE
+      164       TRUE          TRUE                  TRUE    TRUE
+      165       TRUE          TRUE                  TRUE    TRUE
+      166       TRUE          TRUE                  TRUE    TRUE
+      167       TRUE          TRUE                  TRUE    TRUE
+      168       TRUE          TRUE                  TRUE    TRUE
+      169       TRUE          TRUE                  TRUE    TRUE
+      170       TRUE          TRUE                  TRUE    TRUE
+      171       TRUE          TRUE                  TRUE    TRUE
+      172       TRUE          TRUE                  TRUE    TRUE
+> 
+> # run resilience matrix model
+> w <- ohi.model.resilience.matrix(b, w)
+> w
+         layer
+region_id fishing-v1 habitat-combo species-diversity-3nm wgi-all
+      1            2             2                     1       1
+      2            2             2                     1       1
+      3            2             2                     1       1
+      4            2             2                     1       1
+      5            2             2                     1       1
+      6            2             2                     1       1
+      7            2             2                     1       1
+      8            2             2                     1       1
+      9            2             2                     1       1
+      10           2             2                     1       1
+      11           2             2                     1       1
+      12           2             2                     1       1
+      13           2             2                     1       1
+      14           2             2                     1       1
+      15           2             2                     1       1
+      16           2             2                     1       1
+      17           2             2                     1       1
+      18           2             2                     1       1
+      19           2             2                     1       1
+      20           2             2                     1       1
+      21           2             2                     1       1
+      22           2             2                     1       1
+      23           2             2                     1       1
+      24           2             2                     1       1
+      25           2             2                     1       1
+      26           2             2                     1       1
+      27           2             2                     1       1
+      28           2             2                     1       1
+      29           2             2                     1       1
+      30           2             2                     1       1
+      31           2             2                     1       1
+      32           2             2                     1       1
+      33           2             2                     1       1
+      34           2             2                     1       1
+      35           2             2                     1       1
+      36           2             2                     1       1
+      37           2             2                     1       1
+      38           2             2                     1       1
+      39           2             2                     1       1
+      40           2             2                     1       1
+      41           2             2                     1       1
+      42           2             2                     1       1
+      43           2             2                     1       1
+      44           2             2                     1       1
+      45           2             2                     1       1
+      46           2             2                     1       1
+      47           2             2                     1       1
+      48           2             2                     1       1
+      49           2             2                     1       1
+      50           2             2                     1       1
+      51           2             2                     1       1
+      52           2             2                     1       1
+      53           2             2                     1       1
+      54           2             2                     1       1
+      55           2             2                     1       1
+      56           2             2                     1       1
+      57           2             2                     1       1
+      58           2             2                     1       1
+      59           2             2                     1       1
+      60           2             2                     1       1
+      61           2             2                     1       1
+      62           2             2                     1       1
+      63           2             2                     1       1
+      64           2             2                     1       1
+      65           2             2                     1       1
+      66           2             2                     1       1
+      67           2             2                     1       1
+      68           2             2                     1       1
+      69           2             2                     1       1
+      70           2             2                     1       1
+      71           2             2                     1       1
+      72           2             2                     1       1
+      73           2             2                     1       1
+      74           2             2                     1       1
+      75           2             2                     1       1
+      76           2             2                     1       1
+      77           2             2                     1       1
+      78           2             2                     1       1
+      79           2             2                     1       1
+      80           2             2                     1       1
+      81           2             2                     1       1
+      82           2             2                     1       1
+      83           2             2                     1       1
+      84           2             2                     1       1
+      85           2             2                     1       1
+      86           2             2                     1       1
+      87           2             2                     1       1
+      88           2             2                     1       1
+      89           2             2                     1       1
+      90           2             2                     1       1
+      91           2             2                     1       1
+      92           2             2                     1       1
+      93           2             2                     1       1
+      94           2             2                     1       1
+      95           2             2                     1       1
+      96           2             2                     1       1
+      97           2             2                     1       1
+      98           2             2                     1       1
+      99           2             2                     1       1
+      100          2             2                     1       1
+      101          2             2                     1       1
+      102          2             2                     1       1
+      103          2             2                     1       1
+      104          2             2                     1       1
+      105          2             2                     1       1
+      106          2             2                     1       1
+      107          2             2                     1       1
+      108          2             2                     1       1
+      109          2             2                     1       1
+      110          2             2                     1       1
+      111          2             2                     1       1
+      112          2             2                     1       1
+      113          2             2                     1       1
+      114          2             2                     1       1
+      115          2             2                     1       1
+      116          2             2                     1       1
+      117          2             2                     1       1
+      118          2             2                     1       1
+      119          2             2                     1       1
+      120          2             2                     1       1
+      121          2             2                     1       1
+      122          2             2                     1       1
+      123          2             2                     1       1
+      124          2             2                     1       1
+      125          2             2                     1       1
+      126          2             2                     1       1
+      127          2             2                     1       1
+      128          2             2                     1       1
+      129          2             2                     1       1
+      130          2             2                     1       1
+      131          2             2                     1       1
+      132          2             2                     1       1
+      133          2             2                     1       1
+      134          2             2                     1       1
+      135          2             2                     1       1
+      136          2             2                     1       1
+      137          2             2                     1       1
+      138          2             2                     1       1
+      139          2             2                     1       1
+      140          2             2                     1       1
+      141          2             2                     1       1
+      142          2             2                     1       1
+      143          2             2                     1       1
+      144          2             2                     1       1
+      145          2             2                     1       1
+      146          2             2                     1       1
+      147          2             2                     1       1
+      148          2             2                     1       1
+      149          2             2                     1       1
+      150          2             2                     1       1
+      151          2             2                     1       1
+      152          2             2                     1       1
+      153          2             2                     1       1
+      154          2             2                     1       1
+      155          2             2                     1       1
+      156          2             2                     1       1
+      157          2             2                     1       1
+      158          2             2                     1       1
+      159          2             2                     1       1
+      160          2             2                     1       1
+      161          2             2                     1       1
+      162          2             2                     1      NA
+      163          2             2                     1       1
+      164          2             2                     1       1
+      165          2             2                     1       1
+      166          2             2                     1       1
+      167          2             2                     1       1
+      168          2             2                     1       1
+      169          2             2                     1       1
+      170          2             2                     1       1
+      171          2             2                     1       1
+      172          2             2                     1       1
+> x <- ohi.model.resilience(r, t, w)
+> x
+     1      2      3      4      5      6      7      8      9     10 
+0.8639 0.7687 0.4885 0.5939 0.5428 0.6141 0.5588 0.5641 0.5389 0.6860 
+    11     12     13     14     15     16     17     18     19     20 
+0.5640 0.8394 0.4856 0.4720 0.5679 0.6888 0.4041 0.5305 0.6192 0.4784 
+    21     22     23     24     25     26     27     28     29     30 
+0.6729 0.6266 0.6714 0.6263 0.5168 0.5589 0.6018 0.5315 0.5793 0.3189 
+    31     32     33     34     35     36     37     38     39     40 
+0.4417 0.5221 0.4254 0.6014 0.3998 0.5744 0.5813 0.5841 0.4637 0.6307 
+    41     42     43     44     45     46     47     48     49     50 
+0.6162 0.7158 0.6300 0.5650 0.5534 0.4442 0.6063 0.5296 0.6204 0.4521 
+    51     52     53     54     55     56     57     58     59     60 
+0.6960 0.7174 0.8002 0.5831 0.7050 0.5650 0.5447 0.5559 0.5974 0.5116 
+    61     62     63     64     65     66     67     68     69     70 
+0.5419 0.6377 0.6487 0.7124 0.5621 0.4793 0.7178 0.7246 0.4958 0.4567 
+    71     72     73     74     75     76     77     78     79     80 
+0.4466 0.5277 0.5533 0.5991 0.6835 0.4937 0.4434 0.5748 0.6015 0.6748 
+    81     82     83     84     85     86     87     88     89     90 
+0.5606 0.4449 0.5338 0.5980 0.7030 0.6409 0.6871 0.6847 0.6507 0.6994 
+    91     92     93     94     95     96     97     98     99    100 
+0.6182 0.5962 0.6722 0.6625 0.6484 0.6810 0.5725 0.5694 0.5486 0.5959 
+   101    102    103    104    105    106    107    108    109    110 
+0.6736 0.5981 0.5993 0.5533 0.4800 0.6553 0.6844 0.6372 0.6337 0.6684 
+   111    112    113    114    115    116    117    118    119    120 
+0.6144 0.6511 0.5369 0.6695 0.7895 0.7460 0.6669 0.5991 0.5215 0.6281 
+   121    122    123    124    125    126    127    128    129    130 
+0.7184 0.6887 0.5414 0.6431 0.8148 0.8162 0.8346 0.8402 0.6625 0.7291 
+   131    132    133    134    135    136    137    138    139    140 
+0.7906 0.7279 0.6459 0.6862 0.6931 0.6720 0.5907 0.6210 0.6975 0.6776 
+   141    142    143    144    145    146    147    148    149    150 
+0.6715 0.4863 0.4070 0.5787 0.4676 0.4547 0.4123 0.4879 0.5208 0.4365 
+   151    152    153    154    155    156    157    158    159    160 
+0.4469 0.6631 0.5888 0.5040 0.3908 0.6221 0.5675 0.7051 0.5497 0.7555 
+   161    162    163    164    165    166    167    168    169    170 
+0.6034 0.2178 0.6371 0.5981 0.5701 0.7739 0.7031 0.8056 0.8471 0.7446 
+   171    172 
+0.4606 0.5071 
+> 
+> # test against 2012 resilience scores
+> ohi.load('results_global_data', dir='/usr/local/ohi/src/model/global2012/doc/')
+> x.actual <- subset(results_global_data, goal.subgoal=='AO')[,'resilience']
+> names(x.actual) <- subset(results_global_data, goal.subgoal=='AO')[,'id']
+> x.actual <- x.actual[names(x)]
+> stopifnot(names(x) == names(x.actual))
+> stopifnot(all(round(x.actual/100 - x, 3) == 0.000, na.rm=T))
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  0.472   0.044   0.509 

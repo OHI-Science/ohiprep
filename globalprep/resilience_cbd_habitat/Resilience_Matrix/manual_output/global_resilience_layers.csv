@@ -1,0 +1,21 @@
+LAYER,NAME,TYPE,CATEGORY,VALUE
+alien-species,"Convention on Biological Diversity (CBD) :: Alien species",ecological,regulations,1
+cites,"Convention on International Trade in Endangered Species of Wild Fauna and Flora (CITES) :: Signatories",ecological,regulations,1
+fishing-v1,"Fishing Resilience :: Version 1 (Coastal)",ecological,regulations,2
+fishing-v2,"Fishing Resilience :: Version 2 (Coastal)",ecological,regulations,2
+fishing-v3,"Fishing Resilience :: Version 3 (Coastal)",ecological,regulations,2
+fishing-v1-eez,"Fishing Resilience :: Version 1 (EEZ)",ecological,regulations,2
+fishing-v2-eez,"Fishing Resilience :: Version 2 (EEZ)",ecological,regulations,2
+fishing-v3-eez,"Fishing Resilience :: Version 3 (EEZ)",ecological,regulations,2
+habitat,"Habitat Resilience :: Alternative version",ecological,regulations,1
+habitat-combo,"Habitat Resilience :: Coastal",ecological,regulations,2
+habitat-combo-eez,"Habitat Resilience :: EEZ",ecological,regulations,2
+li-gci,"Global Competitiveness Index (GCI)",social,none,1
+li-sector-evenness,"Sector Evenness",social,none,1
+mariculture,"Convention on Biological Diversity (CBD) :: Mariculture",ecological,regulations,1
+msi-gov,"Mariculture :: Sustainability Index",ecological,regulations,2
+species-diversity,"Biodiversity Index :: EEZ",ecological,integrity,1
+species-diversity-3nm,"Biodiversity Index :: Coastal",ecological,integrity,1
+tourism,"Convention on Biological Diversity (CBD) :: Tourism",ecological,regulations,1
+water,"Convention on Biological Diversity (CBD) :: Water",ecological,regulations,1
+wgi-all,"Worldwide Governance Indicators (WGI)",social,none,1
