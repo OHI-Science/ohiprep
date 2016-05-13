@@ -1,0 +1,215 @@
+---
+title: 'OHI: data_prep_ico_aq.Rmd'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+``` {r setup, echo = FALSE, message = FALSE, warning = FALSE}
+library(sp)        # the classes and methods that make up spatial ops in R
+library(rgdal)
+library(raster)
+library(data.table)
+library(readr)
+
+dir_git <- '~/github/ohiprep'
+
+source(file.path(dir_git, 'src/R/common.R'))  
+
+dir_anx <- file.path(dir_neptune_data, 'git-annex/globalprep/SPP_ICO')
+dir_spp <- file.path(dir_git, 'globalprep/SPP_ICO')
+
+dir_data_am    <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'aquamaps/v2014') 
+dir_data_iucn  <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data', 'iucn_spp') 
+
+scenario <- 'v2015'
+
+source(file.path(dir_spp, 'R/spp_fxn.R'))
+source(file.path(dir_spp, 'R/ico_fxn.R'))
+### SPP-specific and ICO-specific functions
+
+```
+
+
+# OHI Iconic Species Subgoal (Sense of Place)
+
+This script prepares scores (status and trend) for Iconic Species in 
+Antarctica's coastal regions.  Spatial data from IUCN and Aquamaps is
+combined with extinction risk information from IUCN.
+
+Currently, the Iconic Species sub-goal model is identical to the OHI Global 
+model: a region's status is based upon an unweighted average of species
+health for all 'iconic' species found within each CCAMLR reporting region.
+
+From Halpern et al (2012):
+
+> Iconic species are those that are relevant to local cultural identity through a species’ relationship to one or more of the following: 1) traditional activities such as fishing, hunting or commerce; 2) local ethnic or religious practices; 3) existence value; and 4) locally-recognized aesthetic value (e.g., touristic attractions/common subjects for art such as whales). Habitat-forming species are not included in this definition of iconic species, nor are species that are harvested solely for economic or utilitarian purposes (even though they may be iconic to a sector or individual). ...
+
+> Ultimately, almost any species can be iconic to someone, and so the intent with this goal was to focus on those species widely seen as iconic within a country, and iconic from a cultural or existence value (rather than for a livelihoods or extractive reason). ...
+
+> The reference point is to have the risk status of all assessed species as Least Concern (i.e., a goal score = 1.0)
+
+The Status of this sub-goal (X~ICO~) is then the % of iconic species in each threat category (as defined by the IUCN Red List), such that:
+
+$$X_{ICO} = \frac{\displaystyle\sum_{category}S_{cat}*w_{cat}}{\displaystyle\sum_{category}S_{cat}}$$
+
+where for each IUCN threat category (or analogous NatureServe conservation rank):
+
+* *S~cat~* is the number of assessed species in the category
+* *w~cat~* is the status weight assigned for that category (note, these are the inverse of the risk value used in the SPP calculations):
+    * 'LC' = 1.0, 'NT' = 0.8, 'VU' = 0.6, 'EN' = 0.4, 'CR' = 0.2, 'EX' = 0.0
+
+
+ICO trend is calculated in a similar manner, but weightings are assigned according to IUCN population trend: 'Decreasing' = -0.5, 'Stable' = 0.0, 'Increasing' = +0.5.  
+
+# Data Preparation
+
+## Data Sources
+
+Iconic Species List:
+
+* The OHI global iconic species list - how is this determined?
+* <citation>
+
+-----
+
+## Prepare master list of Iconic Species
+
+Get list of all species listed as "iconic" for Antarctica.  For now, the analysis is based on a unique list of Iconic Species, filtered to just the species that occur in CCAMLR regions.  The filtering by species is done at the `functions.R level`, not in this code, so this code outputs ALL species that occur in CCAMLR regions.
+
+To this global ICO species list, we attach `spp_all` df to acquire IUCN category & trend.
+
+``` {r read iconic species list, echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE}
+
+spp_all <- read.csv(file.path(dir_anx, scenario, 'int/spp_all.csv'), 
+                    stringsAsFactors = FALSE)
+
+ico_list <- spp_all %>%
+              select(sciname, am_sid, iucn_sid, 
+                     popn_trend, popn_category, category_score, trend_score)
+
+### skip iconic species list - for AQ just give all species
+# ico_list <- get_ico_list()
+# 
+# ico_list <- ico_list %>%
+#   select(sciname, iucn_sid) %>%
+#   unique()
+
+
+# join ico_list to spp_all to incorporate category info and parent/subpop info.
+# ico_list <- ico_list %>%
+#   left_join(spp_all %>%
+#               select(sciname, am_sid, iucn_sid, 
+#                      popn_trend, popn_category, category_score, trend_score),
+#             by = c('sciname', 'iucn_sid'))
+
+```
+
+-----
+
+## Find AQ-specific cell locations for all species on ICO list
+
+Using same raster method as for SPP, identify .5 deg cells within AQ regions.
+Then filter IUCN and AM lists to just species on ico_list, and just cells within AQ regions.
+
+``` {r set up BC rasters, echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE}
+
+### Read in global regions polygons, in WGS84 CRS
+# dir_rgn <- file.path(dir_neptune_data, 'git-annex/globalprep/spatial/v2015/data')
+# rgn_lyr <- 'regions_gcs'
+# 
+# message(sprintf('Reading global regions shapefile...\n  %s/%s.shp', dir_rgn, rgn_lyr))
+# rgn_poly <- readShapePoly(fn = file.path(dir_rgn, rgn_lyr))
+# rgn_poly@proj4string <- CRS('+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0')
+
+rgn2cell_df <- extract_cell_id_per_region(reload = FALSE, 
+                                          ogr_location = file.path(dir_neptune_data, 'git-annex/globalprep/spatial/v2015/data'),
+                                          rgn_layer    = 'regions_gcs', 
+                                          ohi_type     = 'AQ')
+
+```
+
+## Determine species located in AQ cells
+``` {r Get spatial distributions, echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE}
+
+### Get spatial distributions of species from both Aquamaps and IUCN shps
+
+am_cells_spp_0  <- get_am_cells_spp(n_max = -1, prob_filter = 0,   reload = FALSE)
+am_cells_spp_40 <- get_am_cells_spp(n_max = -1, prob_filter = .40, reload = FALSE)
+iucn_cells_spp  <- get_iucn_cells_spp()
+
+ico_aq_iucn <- rgn2cell_df %>%
+  left_join(iucn_cells_spp, by = 'loiczid') %>%
+  inner_join(ico_list, by = c('sciname')) %>%
+  mutate(popn_category  = ifelse(presence == 5, 'EX', popn_category),
+         category_score = ifelse(presence == 5, 1, category_score)) %>%
+  select(rgn_id, rgn_name, sciname, iucn_sid, am_sid,
+  popn_trend, popn_category, category_score, trend_score) %>%
+  unique()
+  
+ico_aq_am_0 <- rgn2cell_df %>%
+  left_join(am_cells_spp_0, by = 'loiczid') %>%
+  inner_join(ico_list, by = c('am_sid')) %>%
+  select(rgn_id, rgn_name, sciname, iucn_sid, am_sid,
+  popn_trend, popn_category, category_score, trend_score) %>%
+  unique()
+
+ico_aq_am_40 <- rgn2cell_df %>%
+  left_join(am_cells_spp_40, by = 'loiczid') %>%
+  inner_join(ico_list, by = c('am_sid')) %>%
+  select(rgn_id, rgn_name, sciname, iucn_sid, am_sid,
+  popn_trend, popn_category, category_score, trend_score) %>%
+  unique()
+
+
+```
+
+At this point we have `r nrow(ico_aq_iucn)` species/cell instances based on IUCN spatial data, and `r nrow(ico_aq_am_40)` species/cell instances based on AM spatial data with a 40% presence threshold.
+
+**NOTE:** Unlike the SPP goal, in which IUCN data was preferentially used to identify cell locations for a species, for ICO I am allowing both IUCN and Aquamaps datasets to indicate presence of an iconic species in a given cell.  Aquamaps indicates presence of FAR more species than IUCN at these latitudes.
+
+For example, if in cell #216221, for Tursiops truncatus, IUCN indicates presence and Aquamaps does not, it will be registered as present.  But if in cell #216222, Aquamaps indicates presence and IUCN does not, it will also by registered as present (whereas in SPP it would register as NOT present).
+
+Because the spatially explicit range is not critical, but rather just whether the species is present or absent within a give assessment region, it seems reasonable to consider both spatial sources.
+
+## Aggregate species lists from cell scale to region scale
+
+Collapse all observations of species, whether in Aquamaps or IUCN spatial data, to the region level.  Some species, such as *Balaenoptera physalus*, can appear multiple times in a region due to differences in population/subpopulation category and/or trend.  Without spatially explicit information on parent/subpop, perhaps we should exclude all subpopulation category/trend information?  Or perhaps an average of parent/subpop?
+
+This process currently does not exclude subpops.
+``` {r combine ico records, echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE}
+
+ico_aq_all <- bind_rows(ico_aq_iucn, ico_aq_am_40) %>%
+  select(sciname, rgn_id, category = popn_category, popn_trend) %>%
+  unique()
+
+ico_aq_all_0 <- bind_rows(ico_aq_iucn, ico_aq_am_0) %>%
+  select(sciname, rgn_id, category = popn_category, popn_trend) %>%
+  unique()
+
+### Identify and present parent/subpop species listings
+parent_subpops <- ico_aq_all_0 %>%
+  group_by(rgn_id, sciname) %>%
+  filter(n() > 1)
+
+DT::datatable(parent_subpops, caption = 'Occurrences of parent/subpop species')
+```
+
+# Write outputs to file
+
+``` {r write outputs}
+write.csv(ico_aq_all_0 %>% select(rgn_id, sciname, category), 
+          file.path(dir_git, 'globalprep/SPP_ICO/v2015/data/ico_status_0_aq.csv'),
+          row.names = FALSE)
+write.csv(ico_aq_all_0 %>% select(rgn_id, sciname, popn_trend), 
+          file.path(dir_git, 'globalprep/SPP_ICO/v2015/data/ico_trend_0_aq.csv'),
+          row.names = FALSE)
+```

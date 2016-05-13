@@ -1,0 +1,41 @@
+
+R version 2.15.3 (2013-03-01) -- "Security Blanket"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> sink('_per_habitat_matrix.txt') # used to copy-n-paste into the static matrix
+> d <- read.csv('manual_output/habitat_combos.csv')
+> for (n in d$name) {
++   if (substr(n, 1, 2) == 'sh') {
++     goal <- 'safe-coastlines'
++   } else if (substr(n, 1, 2) == 'ca') {
++     goal <- 'carbon-storage'
++   } else if (substr(n, 1, 2) == 'bd') {
++     goal <- 'biodiversity'
++   } else {
++     stopifnot(TRUE)
++   }
++   
++   for (i in 2:ncol(d)) {
++     l <- as.character(d[d$name==n,i])
++     if (!is.na(l) && l != '') {
++       cat(sprintf('%s,habitats-%s,%s\n', goal, n, l))
++     }
++   }
++ }
+> 

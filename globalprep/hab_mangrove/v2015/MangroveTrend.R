@@ -137,7 +137,7 @@ final_data <- data_region_trend %>%
   select(rgn_id, habitat, trend)
 
 write.csv(final_data, 
-          sprintf('globalprep/hab_mangrove/v2015/data/habitat_trend_mangrove_v%s.csv', scenarioYear),
+          sprintf('globalprep/hab_mangrove/v2015/tmp/habitat_trend_mangrove_v%s.csv', scenarioYear),
                   row.names=FALSE)
 }
 

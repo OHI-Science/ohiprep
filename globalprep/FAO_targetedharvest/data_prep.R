@@ -20,9 +20,9 @@ library(ohicore) # devtools::install_github('ohi-science/ohicore@dev') # may req
 source('src/R/fao_fxn.R') # by @oharac
 
 # directory where data are stored
-dir_in = '~/github/ohiprep/globalprep/FAO_captureproduction' 
-dir_out = '~/github/ohiprep/globalprep/FAO_targetedharvest'
-dir_old = '~/github/ohiprep/Global/FAO-TargetedHarvest_v2012' 
+dir_in = 'globalprep/FAO_captureproduction' 
+dir_out = 'globalprep/FAO_targetedharvest'
+dir_old = 'Global/FAO-TargetedHarvest_v2012' 
 
 # # running on neptune:
 # dir_in = 'globalprep/FAO_captureproduction' 
@@ -68,6 +68,14 @@ suppressWarnings({ # warning: attributes are not identical across measure variab
 m <- m %>%
   filter(!country %in% c('Totals', 'Yugoslavia SFR')) %>%
   fao_clean_data() # NOTE: optional parameter 'sub_0_0' can be passed to control how a '0 0' code is interpreted.
+
+### get list of countries with FAO data
+country <- unique(m$country)
+country <- data.frame(country=country, value=0)
+rgns = name_to_rgn(country, fld_name='country', flds_unique=c('country'), fld_value='value', add_rgn_name=T,
+                  dir_lookup = "src/LookupTables")
+write.csv(rgns, "globalprep/FAO_targetedharvest/FAO_regions.csv", row.names=FALSE)
+
 
 # check for commodities in data not found in lookup, per product by keyword
 spgroups = sort(as.character(unique(m$species)))
@@ -143,7 +151,8 @@ m_sum = m_l %>%
 
 
 ## add rgn_ids: name_to_rgn ----
-m_r = name_to_rgn(m_sum, fld_name='country', flds_unique=c('country','year'), fld_value='value', add_rgn_name=T) %>%
+m_r = name_to_rgn(m_sum, fld_name='country', flds_unique=c('country','year'), fld_value='value', add_rgn_name=T,
+                  dir_lookup = "src/LookupTables") %>%
   select(rgn_name, rgn_id, year, value) %>%
   arrange(rgn_name, year)  ### JSL come back and look into Netherlands Antilles, etc. ### 
 m_r$year = as.numeric(as.character(factor(m_r$year))); head(m_r)

@@ -1,0 +1,16 @@
+sciname,iucn_sid,loiczid,spp_group,cat_score,trend_score
+Stereomastis suhmi,185036,212772,LOBSTERS,0,NA
+Arctocephalus gazella,2058,212772,MAMMMARINE,0,0.5
+Hydrurga leptonyx,10340,212772,MAMMMARINE,0,NA
+Leptonychotes weddellii,11696,212772,MAMMMARINE,0,NA
+Mirounga leonina,13583,212772,MAMMMARINE,0,NA
+Eubalaena australis,8153,212772,MAMMMARINE,0,0.5
+Balaenoptera acutorostrata,2474,212772,MAMMMARINE,0,0
+Balaenoptera borealis,2475,212772,MAMMMARINE,0.6,NA
+Balaenoptera musculus,2477,212772,MAMMMARINE,0.6,0.5
+Balaenoptera physalus,2478,212772,MAMMMARINE,0.6,NA
+Megaptera novaeangliae,13006,212772,MAMMMARINE,0,0.5
+Lagenorhynchus cruciger,11144,212772,MAMMMARINE,0,NA
+Physeter macrocephalus,41755,212772,MAMMMARINE,0.4,NA
+Hyperoodon planifrons,10708,212772,MAMMMARINE,0,NA
+Molpadiodemas violaceus,19720962,212772,SEACUCUMBERS,0,NA
