@@ -1,12 +1,13 @@
 # README
 
-**Mora et al. 2009. Management Effectiveness of the World's Marine Fisheries. PLOS Biology.** [http://dx.doi.org/10.1371/journal.pbio.1000131](http://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1000131)
+**Data from Mora et al. 2009 are used for global Ocean Health Index assessments as two resilience measures.** These data are located in [resilience_mora/v2013/data](https://github.com/OHI-Science/ohiprep/tree/master/globalprep/resilience_mora/v2013/data) and can be downloaded individually by clicking on the filename (see below) and clicking 'raw' in the upper right corner of the file.
 
-Data from Mora et al. 2009 are used for global Ocean Health Index assessments as two resilience measures. 
+[Mora et al. 2009. Management Effectiveness of the World's Marine Fisheries. PLOS Biology.](http://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1000131)
+
 
 ### 1. fisheries management effectiveness
 
-Data from from Mora et al. 2009, 
+Data from from Mora et al. 2009, filename = `r_mora_2013a.csv`. 
 
 Description from Halpern et al. 2012, Supplemental Information, p. 41.
 
@@ -14,7 +15,7 @@ Description from Halpern et al. 2012, Supplemental Information, p. 41.
 
 ### 2. artisanal and recreational fisheries 
 
-Data from from Mora et al. 2009 supplementary figure S4.
+Data from from Mora et al. 2009 supplementary figure S4. filename = `r_mora_s4_2013a.csv`. 
 
 Description from Halpern et al. 2012, Supplemental Information, p. 19
 
