@@ -1,6 +1,8 @@
 # README
 
-**Data from Mora et al. 2009 are used for global Ocean Health Index assessments as two resilience measures.** These data are located in [resilience_mora/v2013/data](https://github.com/OHI-Science/ohiprep/tree/master/globalprep/resilience_mora/v2013/data) and can be downloaded individually by clicking on the filename (see below) and clicking 'raw' in the upper right corner of the file.
+**Data from Mora et al. 2009 are used for global Ocean Health Index assessments as two resilience measures.**   
+
+These data are located in [resilience_mora/v2013/data](https://github.com/OHI-Science/ohiprep/tree/master/globalprep/resilience_mora/v2013/data) and can be downloaded individually by clicking on the filename (see below) and clicking 'raw' in the upper right corner of the file.
 
 [Mora et al. 2009. Management Effectiveness of the World's Marine Fisheries. PLOS Biology.](http://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1000131)
 
