@@ -89,16 +89,44 @@ for (i in yrs){
     
     month_sd <- stack(m)%>%
             calc(fun=function(x){sd(x,na.rm=T)},filename=paste0(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/monthly_sd/monthly_sd_'),i,'_',j,'.tif'), overwrite=T)
+    
   }
   
 }
 
 
+```
+
+## Create annual mean and sd rasters
+
+```{r}
+
+#Using data from all days in the years 2011-2015, get the mean and SD per cell
+
+
+all_mean <- stack(list)%>%calc(fun=function(x){mean(x,na.rm=T)},filename=file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/uv_mean.tif'),overwrite=T)
+
+all_sd <- stack(list)%>%calc(fun=function(x){sd(x,na.rm=T)},filename=file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/uv_sd.tif'),overwrite=T)
+
 
 ```
 
-##
+## Compare each monthly raster to the total mean/sd raster and count the number of months from 2011-2015 that are beyond the SD
 
+```{r}
+
+for (i in yrs){
+  
+  for (j in mths){
+    
+    
+    
+    
+  }
+}
+
+
+```
 
 ***
 
