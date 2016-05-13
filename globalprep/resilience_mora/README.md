@@ -27,7 +27,7 @@ Description from Halpern et al. 2012, Supplemental Information, p. 19
 "To assess the opportunity or ability to meet this demand, we used data from Mora et al. [2009], which scores countries on the institutional measures that support or facilitate artisanal and small-scale fishing. The data come from Figure S4 in Mora et al. [2009; see screenshot below], which is based on two survey questions focused on recreational and artisanal fishing (see Table S5 below for questions) and are on a scale from 0 to 100 (which we then rescale 0-1), where higher scores indicate better management. We extracted the data from the color codes on the map in Figure S4. There may be some small errors far a few countries due to difficulty of distinguishing between the two red colors at the lowest end of the scale."
 
 ![Mora et al 2009, figS4](Mora_et_al_2009_figS4.png)
-**Mora et al 2009, figS4.**
+**Mora et al 2009, figS4: 'Global extent of recreational and small-scale fisheries and the frequency of countries imposing different types of regulations'**
 
 **Table S5. Questions from Mora et al. [2009] that were used to evaluate access to artisanal scale fishing.**
  
