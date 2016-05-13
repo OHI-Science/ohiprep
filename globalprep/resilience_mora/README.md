@@ -7,11 +7,14 @@
 
 ### 1. fisheries management effectiveness
 
-Data from from Mora et al. 2009, filename = `r_mora_2013a.csv`. 
+Data from from Mora et al. 2009, figure 3G, available from [fmap.ca > Data/Country > Google Maps](http://www.fmap.ca/ramweb/media/management_effectiveness/home.php?sub=34). filename = `r_mora_2013a.csv`. 
 
 Description from Halpern et al. 2012, Supplemental Information, p. 41.
 
 "These data come from Mora et al. [2009], and assess the current effectiveness of fisheries management regimes along 6 axes: Scientific Robustness, Policy Transparency, Implementation Capacity, Subsidies, Fishing Effort, and Foreign Fishing. All countries with coastal areas were assessed through a combination of surveys, empirical data and enquiries to fisheries experts. For each OHI reporting region, scores for each category were rescaled between 0 and 1 using the maximum possible value for each category and then the average score of all 6 categories combined was recorded as the overall Fisheries management effectiveness score."
+
+![Mora et al 2009, fig3G from fmap.ca](Mora_et_al_2009_fig3Gfmap.png)
+**Mora et al 2009, fig3G from fmap.ca.**
 
 ### 2. artisanal and recreational fisheries 
 
