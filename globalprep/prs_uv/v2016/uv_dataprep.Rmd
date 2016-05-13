@@ -1,0 +1,106 @@
+---
+title: 'OHI 2016: Ultraviolet Radiation Pressure Data Prep'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+[REFERENCE RMD FILE: https://rawgit.com/OHI-Science/ohiprep/master/globalprep/Pressures_OceanAcidification/v2015/oa_create_layer_2015.html]
+
+#Summary
+[general description: What data are being generated? Why (what project, etc.)? Upstream/downstream processing information that might be helpful?  Other information?]
+
+#Updates from previous assessment
+[Any significant changes in methods from previous analyses?]
+
+***
+
+#Data Source [NOTE: can be copied from README.md in rawdata file]
+**Reference**: [citation for source data; website, literature, contact information. Version of data (if relevant). Screenshots if a series of menus had to be navigated to obtain the data.]
+
+**Downloaded**: [date downloaded or received]
+
+**Description**:  [e.g., surface aragonite state]
+
+**Native data resolution**: [e.g., 1 degree, 30 m, etc.]   
+
+**Time range**: [e.g., 1880-1899, monthly data provided for each year] 
+
+**Format**:  [e.g. NetCDF]
+
+***
+  
+#Methods
+
+## Setup
+
+```{r setup}
+
+source('~/github/ohiprep/src/R/common.R')
+library(raster)
+library(ncdf4)
+library(dplyr)
+library(ggplot2)
+
+raw_data_dir = file.path(dir_M,'git-annex/globalprep/_raw_data/NASA_OMI_AURA_UV/d2016')
+
+#years of data we are using for this data layer
+yrs <- c(2011, 2012, 2013, 2014, 2015)
+mths <- c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12")
+
+```
+
+## Create monthly rasters from .nc files and get the mean and standard deviation per month
+
+```{r}
+
+#list all .nc files from raw data folder
+
+list = list.files(file.path(raw_data_dir),pattern='*.nc',full.names=T)
+
+#subset list to get those files in our years
+l <- list[substr(list[],91,94) %in% yrs]
+
+#Function to create monthly mean and standard deviation raster for each month
+
+for (i in yrs){
+  
+  print(i)
+  
+  y <- l[substr(l[],91,94)==i]
+  
+  #for each month
+  for (j in mths){
+    
+    print(j)
+    
+    m <- y[substr(y[],96,97)==j]
+    
+    month_mean<- stack(m)%>%
+                calc(fun=function(x){mean(x,na.rm=T)},filename=paste0(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/monthly_means/monthly_mean_'),i,'_',j,'.tif'),overwrite=T)
+    
+    month_sd <- stack(m)%>%
+            calc(fun=function(x){sd(x,na.rm=T)},filename=paste0(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/monthly_sd/monthly_sd_'),i,'_',j,'.tif'), overwrite=T)
+  }
+  
+}
+
+
+
+```
+
+##
+
+
+***
+
+#Citation information  
+[citation information: include if these data will have their own specific citation.]
