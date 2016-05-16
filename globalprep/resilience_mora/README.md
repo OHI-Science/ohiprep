@@ -9,11 +9,14 @@ These data are located in [resilience_mora/v2013/data](https://github.com/OHI-Sc
 
 ### 1. fisheries management effectiveness
 
-Data from from Mora et al. 2009, filename = `r_mora_2013a.csv`. 
+Data from from Mora et al. 2009, figure 3G, available from [fmap.ca > Data/Country > Google Maps](http://www.fmap.ca/ramweb/media/management_effectiveness/home.php?sub=34). filename = `r_mora_2013a.csv`. 
 
 Description from Halpern et al. 2012, Supplemental Information, p. 41.
 
 "These data come from Mora et al. [2009], and assess the current effectiveness of fisheries management regimes along 6 axes: Scientific Robustness, Policy Transparency, Implementation Capacity, Subsidies, Fishing Effort, and Foreign Fishing. All countries with coastal areas were assessed through a combination of surveys, empirical data and enquiries to fisheries experts. For each OHI reporting region, scores for each category were rescaled between 0 and 1 using the maximum possible value for each category and then the average score of all 6 categories combined was recorded as the overall Fisheries management effectiveness score."
+
+![Mora et al 2009, fig3G from fmap.ca](Mora_et_al_2009_fig3Gfmap.png)
+**Mora et al 2009, fig3G from fmap.ca.**
 
 ### 2. artisanal and recreational fisheries 
 
@@ -24,7 +27,7 @@ Description from Halpern et al. 2012, Supplemental Information, p. 19
 "To assess the opportunity or ability to meet this demand, we used data from Mora et al. [2009], which scores countries on the institutional measures that support or facilitate artisanal and small-scale fishing. The data come from Figure S4 in Mora et al. [2009; see screenshot below], which is based on two survey questions focused on recreational and artisanal fishing (see Table S5 below for questions) and are on a scale from 0 to 100 (which we then rescale 0-1), where higher scores indicate better management. We extracted the data from the color codes on the map in Figure S4. There may be some small errors far a few countries due to difficulty of distinguishing between the two red colors at the lowest end of the scale."
 
 ![Mora et al 2009, figS4](Mora_et_al_2009_figS4.png)
-**Mora et al 2009, figS4.**
+**Mora et al 2009, figS4: 'Global extent of recreational and small-scale fisheries and the frequency of countries imposing different types of regulations'**
 
 **Table S5. Questions from Mora et al. [2009] that were used to evaluate access to artisanal scale fishing.**
  
