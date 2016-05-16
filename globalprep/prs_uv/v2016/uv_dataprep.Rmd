@@ -70,43 +70,77 @@ list = list.files(file.path(raw_data_dir),pattern='*.nc',full.names=T)
 l <- list[substr(list[],91,94) %in% yrs]
 
 #Function to create monthly mean and standard deviation raster for each month
-
-for (i in yrs){
-  
+for (i in mths){
+    
   print(i)
   
-  y <- l[substr(l[],91,94)==i]
+  s <- stack()
   
-  #for each month
-  for (j in mths){
+    k <- list[substr(list[],96,97)==i]
     
-    print(j)
+    for (j in 1:length(k)){
+      
+print(j)
+      
+      #skip the .nc files that are corrupt from the data source
+      r <- try(raster(k[j]))
+      
+      s <- stack(s,r)
+      
+    }
     
-    m <- y[substr(y[],96,97)==j]
+    print(s)
     
-    month_mean<- stack(m)%>%
-                calc(fun=function(x){mean(x,na.rm=T)},filename=paste0(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/monthly_means/monthly_mean_'),i,'_',j,'.tif'),overwrite=T)
+    month_mean <- calc(s, fun=function(x){mean(x,na.rm=T)},filename=paste0(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/monthly_means/monthly_mean_'),i,'.tif'),overwrite=T)
     
-    month_sd <- stack(m)%>%
-            calc(fun=function(x){sd(x,na.rm=T)},filename=paste0(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/monthly_sd/monthly_sd_'),i,'_',j,'.tif'), overwrite=T)
+    month_sd <- calc(s, fun=function(x){sd(x,na.rm=T)}, filename=paste0(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/monthly_sd/monthly_sd_'),i,'.tif'), overwrite=T)
     
-  }
-  
+    #make a raster equal to the mean plus 1 sd
+    month_mean_sd <- sum(month_mean,month_sd,na.rm=T)
+    
+    writeRaster(month_mean_sd,filename=paste0(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/monthly_sd_mean/monthly_sd_mean_'),i,'.tif'),overwrite=T)
+    
+    print(month_mean_sd)
+    
 }
-
+  
 
 ```
 
-## Create annual mean and sd rasters
+## Compare individual months in the last 5 years to mean/sd of the climatological mean for that month
 
 ```{r}
 
-#Using data from all days in the years 2011-2015, get the mean and SD per cell
+month_means <- list.files(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/monthly_means'),full.names = T)
+month_sds   <- list.files(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/monthly_sd_mean'),full.names=T)
 
+for (i in yrs){
+  
+  #get all months within the year 
+  yr_months <- month_means[substr(month_means[],83,86)==i]
+  
+  s <- stack()
 
-all_mean <- stack(list)%>%calc(fun=function(x){mean(x,na.rm=T)},filename=file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/uv_mean.tif'),overwrite=T)
+    #for each month grab the raster that represents the climatological mean + 1 sd
+    for (j in mths){
+      
+      #climatological mean for the month
+      monthly_sd_climat <- month_sds[substr(month_sds[],88,89)==j]%>%raster()
 
-all_sd <- stack(list)%>%calc(fun=function(x){sd(x,na.rm=T)},filename=file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/uv_sd.tif'),overwrite=T)
+      #grab month of the year
+      annual_month_mean <- yr_months[substr(yr_months[],88,89)==j]%>%raster()
+      
+      diff <- overlay(annual_month_mean,monthly_sd_climat,fun=function(x,y){ifelse(x>y,1,0)})
+  
+      s <- stack(s,diff)%>%overlay(fun='sum')
+      
+    }
+  
+  plot(s)
+  #writeRaster(s,filename=paste0(dir_M,'/git-annex/globalprep/prs_uv/v2016/int/annual_anomalies/annual_anomalies_',i,'.tif'))
+  
+  
+}
 
 
 ```
@@ -131,4 +165,4 @@ for (i in yrs){
 ***
 
 #Citation information  
-[citation information: include if these data will have their own specific citation.]
+Jari Hovila, Antii Arola, and Johanna Tamminen (Oct ), OMI/Aura Surface UVB Irradiance and Erythemal Dose Daily L3 Global 1.0x1.0 deg Grid, version 003, NASA Goddard Space Flight Center, , Accessed [Enter User Data Access Date at] 10.5067/Aura/OMI/DATA3009
