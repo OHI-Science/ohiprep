@@ -27,7 +27,7 @@ nitro = raster('nitro.grd')
 
 china = readOGR(dsn=file.path(dir_N,'git-annex/clip-n-ship/chn/spatial'),layer= 'rgn_offshore_gcs')
 
-showRaster <- function(r, defaultTiles = TRUE, colorFunc = colorBin("RdBu", c(minValue(r), maxValue(r)), 16)) {
+showRaster <- function(r, defaultTiles = TRUE, colorFunc = colorBin("RdBu", c(maxValue(r), minValue(r)), 16)) {
   if (!inherits(r, "RasterLayer")) {
     stop("showRaster only works with raster layers")
   }
@@ -73,4 +73,4 @@ showRaster <- function(r, defaultTiles = TRUE, colorFunc = colorBin("RdBu", c(mi
 #r <- raster("globalprep/pressures_decision_tree/shinyapps/decision_tree/data/sst.grd")
 
 # Show the map
-showRaster(nitro, TRUE)
+showRaster(uv, TRUE)

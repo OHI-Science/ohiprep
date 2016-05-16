@@ -50,16 +50,13 @@ Added one more year of data (2015)
 
 # Methods
 
+
+##Setup  
 ```{r setup,message=FALSE,warning=FALSE,verbose=FALSE}
 
 #set options for all chunks in code
 knitr::opts_chunk$set(fig.path='Figs/', echo=FALSE, warning=FALSE, message=FALSE)
 source("~/github/ohiprep/src/R/common.R")
-
-# set temporary directory to folder on mazu disk big enough to handle it
-tmpdir='~/big/R_raster_tmp'
-dir.create(tmpdir, showWarnings=F)
-rasterOptions(tmpdir=tmpdir)
 
 #libraries
 
@@ -67,8 +64,13 @@ library(raster)
 library(ncdf4)
 library(maps)
 
-raw_dir = file.path(dir_M,'git-annex/globalprep/_raw_data')
+raw_dir    = file.path(dir_M,'git-annex/globalprep/_raw_data')
+oagit_dir  = file.path(dir_M,'git-annex/globalprep/prs_oa')
 
+# set temporary directory to folder on mazu disk big enough to handle it
+tmpdir='~/big/R_raster_tmp'
+dir.create(tmpdir, showWarnings=F)
+rasterOptions(tmpdir=tmpdir)
 ```
 
 ## Step One:  
@@ -83,7 +85,7 @@ files <- list.files(file.path(raw_dir,'WHOI/annual'),pattern=".nc",recursive=T,f
 ```
 
 ## Step Two  
-Get annual averages for each year in the 2 decades
+Get annual averages for each year
 
 ```{r,message=FALSE,warning=FALSE,eval=FALSE}
       
@@ -170,81 +172,84 @@ Get annual averages for each year in the 2 decades
 ```
 
 ## Step Three  
-Get the decadal mean (across all months/years)
-```{r,message=FALSE,warning=FALSE,eval=FALSE}
-  
-decadal_arag<-function(data){
-  
-  dec_mean = apply(data, 1:2, mean) #gets the mean across all 120 data layers 
-    
-    #create an array with long, lat, aragonite mean data
-    A <- array(c(long,lat,dec_mean),dim=c(320,384,3))
-    B <- apply(A, 3, cbind)
-    
-    #lon=x, lat=y
-    x = B[,1]
-    y = B[,2]
-    
-    
-    C = as.data.frame(B)
-    names(C)<-c('x','y','value')
-    
-    #set extent to lon/lat
-    e <- extent(C[,1:2])
-    r <- raster(e,ncol=320,nrow=384) #create empty raster with e extent
-    
-    #rasterize the dataframe
-    out <- rasterize(C[,1:2],r,C[,3],fun=function(x,...)mean(x),progress='text') # i had to create a mean function here for "multiple points in a cell"
-    extent(out)<-c(0,360,-80,90) #data extent is 0,360,-8090 (the -80 is not a typo)
-    out <- rotate(out) #shifts data from 0-360 to -180-180
-    
-    
-    
-  #  plot(out)
-  #  map('world',col='gray95',fill=T,border='gray80',add=T)
-    
-    #notice the empty cells, due to irregular grid, so plot using a different projection
-    
-    
-    # Define initial projection for out
-    projection(out) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
-    
-    
-    # define mollewide projection
-    mollCRS <- CRS('+proj=moll')
-    
-    # then convert to mollweide
-    out_moll <- projectRaster(out, crs=mollCRS, over=T)
-    
-    # plot results
-#    plot(out_moll)
- 
-  return(out_moll)
-  
-}
+Read in historical mean from 1880-1889
 
-#get the decadal average for 1880 - 1889
+```{r histMean}
 
-  decadal_arag_18 = decadal_arag(arag_18)
+hist <- raster(file.path(dir_M,'git-annex/globalprep/prs_oa/v2015/working/global_oa_1880_1889_arag_mean_moll.tif'))
 
-  writeRaster(decadal_arag_18,filename='working/global_oa_1880_1889_arag_mean_moll',format='GTiff', overwrite=T)
-
-#get the decadal average for 2005-2014
-
-  decadal_arag_20 = decadal_arag(arag_20)
-
-#  writeRaster(decadal_arag_20,filename='working/global_oa_2005_2014_arag_mean_moll',format='GTiff', overwrite=T)
 ```
 
 
-## Step Four  
-Calculate difference between 2 decadal averages
+## Rescale 
 
-```{r,message=FALSE,warning=FALSE,eval=FALSE}
+Take past 5 years of OA data and rescale using a biological reference point and a historical mean.
+
+
+```{r}
+
+#Get 2011-2015 rasters
+
+files = c(list.files(file.path(oagit_dir,'v2015/working/annualmean_2005-2014/moll'),full.names = T)[7:10],file.path(oagit_dir,'v2016/int/global_arag_avg_moll_2015.tif'))
+
+
+#for each layer, all values <=1 are assigned a 1, otherwise old-new/old
+
+oaRescale <- function(file){
   
-diff = decadal_arag_18-decadal_arag_20 #although this doesn't make sense logically, this produces values that are easier to interpret for the sake of pressures. Higher values indicate increased acidification.
+  yr   = substr(file,nchar(file)-7,nchar(file)-4)         #get year of file
+  mean = raster(file)               #get seasonal mean aragonite raster for given year
+  diff = (hist-mean)/(hist-1)
+  mean[mean<=1]<-1                                #all values at or less than 1 are given a value of 1
+  mean[mean>1] <- diff[mean>1]                      #all cells with values greater than 1 are swapped out with their amount of change scaled to how close to 1 
+  mean[mean<0]<-0                                 #all values less than 0 (indicating a decrease in acidity) are capped at 0
+
+    writeRaster(mean,filename=paste0(oagit_dir,'/v2016/int/annual_oa_rescaled/oa_rescaled_',yr,sep=""),format='GTiff',overwrite=T)
+
+}
+
+  sapply(files,oaRescale)
+
+  rescaled = list.files(file.path(oagit_dir,'v2016/int/annual_oa_rescaled'),full.names=T)
+
+```
 
 
-# writeRaster(diff,filename='oa_arag_DecadalDifference_hist_minus_current_moll.tif',overwrite=T)
+## Resample
+
+```{r resample}
+
+#ocean is a raster with all land clipped out - at 1km with value of 1. This is used as a mask
+ocean = raster(file.path(oagit_dir,'v2016/int/ocean.tif'))
+
+resample = function(file){
+  
+        yr  = substr(file,87,90)
+        r   = raster(file)%>%raster::resample(ocean,method='ngb',progress='text') # resample r to the resolution of 'ocean' (~1km)
+    
+       writeRaster(r,filename=paste0(oagit_dir,'/v2016/int/annual_oa_rescaled_1km/annual_oa_rescaled_1km_',yr,sep=''),format='GTiff',overwrite=T)
+}
+
+sapply(rescaled,resample)
+
+resampled = list.files(file.path(oagit_dir,'v2016/int/annual_oa_rescaled_1km'),full.names=T)
+
+```
+
+##Interpolate
+
+```{r interpolate}
+
+
+
+```
+
+##Remove Land
+
+```{r mask}
+
+
+```
+
 
 
