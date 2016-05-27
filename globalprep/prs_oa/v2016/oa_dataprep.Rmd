@@ -5,7 +5,9 @@ output:
   html_document:
     code_folding: show
     toc: true
-    number_sections: true
+    toc_depth: 3
+    toc_float: yes
+    number_sections: false
     theme: cerulean
     highlight: haddock
     includes: 
@@ -16,25 +18,22 @@ output:
 
 #Summary
 
-This script takes the raw data, shared by Woods Hole Institute for Oceanography, and does the following:
+This script takes the raw netCDF data and does the following:
 
-   a. Calculates the historical global mean for the decade 1880-1889 (1 raster layer as output)
-   b. Calculates the annual mean for each of the 10 years in 2005-2015 (10 raster layers as output)
+   a. Calculates the annual mean for each of the 5 years in 2011-2015 (5 raster layers as output)  
+   b. Rescales each annual raster layer from 0 to 1 based on a biological threshold (&#937 <= 1) and the proportional change compared to a historical mean
+   c. Interpolates the data to gap-fill for cells where there is no data
+   d. Resamples the rescaled raster layer to 1km cell resolution
+   e. Mask the resampled data to select only those cells within the ocean
   
-**Notes about the data:**  
-This data was shared with us by Ivan Lima from Woods Hole Institue for Oceanography in December 2014 and again February 2016. The data came as NetCDFs in an irregular grid format with a resolution of about 1 degree. The data values are monthly average surface &#937; aragonite saturation state.
-
 
 #Updates from previous assessment
 
-Added one more year of data (2015) and rescaled values greater than 1 using
-
-
-Deviation from aragonite saturation state is determined for each year in the study period:
+Added one more year of data (2015) and rescaled values greater than 1 based on how close the value is to the threshold of 1. This was done by using the following equation:
 
 $$\Delta \Omega_{year} = \frac{(\Omega_{base} - \Omega_{year})}{(\Omega_{base} - 1)}$$
 
-Note that current is subtracted from the baseline; this way, a reduction in $\Omega$ becomes a positive pressure value.  It is then normalized by the current mean state; so a decrease in $\Omega$ while the current state is high indicates less pressure than the same decrease when the current state is near 1. 
+Note that current is subtracted from the baseline; this way, a reduction in $\Omega$ becomes a positive pressure value. It is then normalized by the current mean state; so a decrease in $\Omega$ while the current state is high indicates less pressure than the same decrease when the current state is near 1. 
 
 $\Delta \Omega_{year}$ is then modified to account for increases in aragonite saturation state (pressure = 0) and arag sat state less than 1 (pressure = 1).
 
@@ -47,11 +46,17 @@ $\Delta \Omega_{year}$ is then modified to account for increases in aragonite sa
 
 **Description**:  Aragonite Saturation State  $\Omega_{arg}$
 
-**Native data resolution**: 1 degree
+**Native data resolution**: 1 degree cells
 
 **Time range**: 1880-1889 and 2005-2015, monthly data provided for each year
 
 **Format**:  NetCDF
+
+  
+**Notes about the data**:  
+
+This data was shared with us by Ivan Lima from Woods Hole Institue for Oceanography in December 2014 and again February 2016. The data came as NetCDFs in an irregular grid format with a resolution of about 1 degree. The data values are monthly average surface &#937; aragonite saturation state.
+
 
 ***
 
@@ -64,7 +69,7 @@ The main R libraries needed for this analysis are the `raster`, and `ncdf4` pack
 ```{r setup,message=FALSE,warning=FALSE,verbose=FALSE}
 
 #set options for all chunks in code
-knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+knitr::opts_chunk$set(warning=FALSE, message=FALSE,fig.width=6, fig.height=6)
 source("~/github/ohiprep/src/R/common.R")
 
 #libraries
@@ -72,32 +77,31 @@ source("~/github/ohiprep/src/R/common.R")
 library(raster)
 library(ncdf4)
 library(maps)
+library(RColorBrewer)
 
 #define paths for the raw data and OA folder held on git-annex on our NCEAS server, Mazu
 
 raw_dir    = file.path(dir_M,'git-annex/globalprep/_raw_data')
 oagit_dir  = file.path(dir_M,'git-annex/globalprep/prs_oa')
 
-# set temporary directory to folder on mazu disk big enough to handle it
-tmpdir='~/big/R_raster_tmp'
-dir.create(tmpdir, showWarnings=F)
-rasterOptions(tmpdir=tmpdir)
+cols      = rev(colorRampPalette(brewer.pal(9, 'Spectral'))(255)) # rainbow color scheme
+
 ```
   
-## Load raw  
-
-Read in raw data to get lat and long information and monthly aragonite saturation state values
+## Load raw data  
 
 ```{r,message=FALSE,warning=FALSE,eval=FALSE}
 
-#list all 2015-2020 files
+#list all 2015-2020 files. Creating additional raster layers 
 
 files <- list.files(file.path(raw_dir,'WHOI/annual'),pattern=".nc",recursive=T,full.names = T)[12:17] #grab only 2015-2020
         
 ```
 
 ## Step Two  
-Get annual averages for each year
+Get annual averages for each year. The function `annual_arag` takes the .nc file for each year, gets the lat, long and arag values for each month and stores them in a data frame. Then using this dataframe, rasterizes the data into a global 1x1 degree grid, reprojects to molleweide and saves the raster to file.
+
+This has already been done for years 2005 - 2014 for the OHI 2015 assessment. Here we create the same rasters for 2015-2020 for this years and future OHI global assessments.
 
 ```{r,message=FALSE,warning=FALSE,eval=FALSE}
       
@@ -107,11 +111,13 @@ Get annual averages for each year
     
     year = substr(file,73,76)
     
+    #nc_open comes from the ncdf4 package
+    # there are 12 files in each .nc file (one for each month of the year)
     nc = nc_open(file)
             
 # longitude values are stored in the variable 'TLONG'
 
-      long <- ncvar_get(nc,varid='TLONG') #same lat and long for both data sets so just reading in from data_nc_18 works
+      long <- ncvar_get(nc,varid='TLONG')
 
 # latitude values are stored in the variable 'TLAT'
 
@@ -173,56 +179,72 @@ Get annual averages for each year
      print(cellStats(out_moll,stat='mean',na.rm=T))
      
      
-  writeRaster(out_moll,filename = paste0(file.path(dir_M,"git-annex/globalprep/prs_oa/v2016/int/global_arag_avg_moll_"),year), format='GTiff', overwrite=T)
+  writeRaster(out_moll,filename = paste0(file.path(oagit_dir,"v2016/int/global_arag_avg_moll_"),year), format='GTiff', overwrite=T)
     
 }
 
-#run the function
+#run the function for each file in the file list using lapply
 
 # lapply(files,annual_arag)
+```
+
+```{r plot mean 2015 raster}
+
+#Here is the output for 2015
+
+r_2015 <- raster(file.path(oagit_dir,'v2016/int/global_arag_avg_moll_2015.tif'))
+
+plot(r_2015,box=F,axes=F,main="Mean Ωaragonite saturation state 2015", col=cols)
  
 ```
 
-## Step Three  
-Read in historical mean from 1880-1889
+
+## Rescale from 0 to 1
+
+This pressure layer is rescaled so that all values lie between 0 and 1. This is done by first setting all values at or below 1 to 1. Since all values under 1 represent undersaturated waters, this threshold is set equal to our highest pressure value (1). For cell values that are not yet at the threshold of 1, the values are rescaled by comparing their current value with their historcal values.
+
+The baseline aragonite saturation state $\Omega_{base}$ is represented by the decadal average from 1880-1889.
+
+### Historical Mean
+
+The historical mean &#937 aragonite saturation state from 1880 - 1889 was calculated for OHI 2015. The same raster is used here for comparison.
 
 ```{r histMean}
 
 hist <- raster(file.path(dir_M,'git-annex/globalprep/prs_oa/v2015/working/global_oa_1880_1889_arag_mean_moll.tif'))
 
+plot(hist,main='Mean Ωaragonite 1880-1889', col=cols, box=F,axes=F)
+
 ```
 
 
-## Rescale 
-
-Baseline aragonite saturation state $\Omega_{base}$ is represented by the decadal average from 1880-1889.
-
-Deviation from aragonite saturation state is determined for each year in the study period:
+Deviation from aragonite saturation state is determined for each year in the study period using this equation:
 
 $$\Delta \Omega_{year} = \frac{(\Omega_{base} - \Omega_{year})}{(\Omega_{base} - 1)}$$
 
-Note that current is subtracted from the baseline; this way, a reduction in $\Omega$ becomes a positive pressure value.  It is then normalized by the current mean state; so a decrease in $\Omega$ while the current state is high indicates less pressure than the same decrease when the current state is near 1. 
+Note that the current value is subtracted from the baseline; this way, a reduction in $\Omega$ becomes a positive pressure value.  It is then normalized by the current mean state; so a decrease in $\Omega$ while the current state is high indicates less pressure than the same decrease when the current state is near 1. 
 
 $\Delta \Omega_{year}$ is then modified to account for increases in aragonite saturation state (pressure = 0) and arag sat state less than 1 (pressure = 1).
 
+The `oaRescale` function rescales each of the annual rasters. If the current value is less than or equal to 1, it is set to 1, otherwise the value is calculated from the above equation.
 
-```{r}
+```{r rescale}
 
 #Get 2011-2015 rasters
 
 files = c(list.files(file.path(oagit_dir,'v2015/working/annualmean_2005-2014/moll'),full.names = T)[7:10],file.path(oagit_dir,'v2016/int/global_arag_avg_moll_2015.tif'))
 
 
-#for each layer, all values <=1 are assigned a 1, otherwise old-new/old
+#for each layer, all values <=1 are assigned a 1, otherwise old-new/(old-1)
 
 oaRescale <- function(file){
   
-  yr   = substr(file,nchar(file)-7,nchar(file)-4)         #get year of file
-  mean = raster(file)               #get seasonal mean aragonite raster for given year
+  yr   = substr(file,nchar(file)-7,nchar(file)-4)  #get year of file
+  mean = raster(file)                              #get seasonal mean aragonite raster for given year
   diff = (hist-mean)/(hist-1)
-  mean[mean<=1]<-1                                #all values at or less than 1 are given a value of 1
-  mean[mean>1] <- diff[mean>1]                      #all cells with values greater than 1 are swapped out with their amount of change scaled to how close to 1 
-  mean[mean<0]<-0                                 #all values less than 0 (indicating a decrease in acidity) are capped at 0
+  mean[mean<=1]<-1                                 #all values at or less than 1 are given a value of 1
+  mean[mean>1] <- diff[mean>1]                     #all cells with values greater than 1 are swapped out with their amount of change scaled to how close to 1 
+  mean[mean<0]<-0                                  #all values less than 0 (indicating a decrease in acidity) are capped at 0
 
     writeRaster(mean,filename=paste0(oagit_dir,'/v2016/int/annual_oa_rescaled/oa_rescaled_',yr,sep=""),format='GTiff',overwrite=T)
 
@@ -231,22 +253,31 @@ oaRescale <- function(file){
 #  sapply(files,oaRescale)
 
   rescaled = list.files(file.path(oagit_dir,'v2016/int/annual_oa_rescaled'),full.names=T)
+```
 
+```{r plot rescale}
+r <- raster(rescaled[5])
+plot(r,col=cols,box=F,axes=F, main = 'Rescaled Ωaragonite layer for 2015')
 ```
 
 
-##Interpolate
+## Interpolate
 
-Interpolation was done using python and ArcPY. 
+Since there are oceanic cells with no information in the raw data, we need to fill in these gaps. We do this by interpolating across the globe using the data we have. Unfortunately there is not an easy and quick way to do this in R so this was done using arcpy from ArcGIS via a python script you can find [here](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/prs_oa/v2016/OA_interpolation.py).
+
 
 ```{r interpolate}
 
 int_files <- list.files(file.path(oagit_dir,'v2016/int/annual_oa_rescaled_int'),full.names=T)
 
+plot(raster(int_files[5]),col=cols,box=F,axes=F,main='Rescaled and Interpolated Ωaragonite layer for 2015')
+
 ```
 
 
 ## Resample
+
+All pressure layers need to be resampled to 1km cell resolution. We have a template ocean raster with cells at this resolution that we use to resample all pressure layers. You won't see any difference between the plot above and this one since we are using the nearest neighbor method when resampling which maintains the original cell value for each of resampled cell.
 
 ```{r resample}
 
@@ -265,10 +296,16 @@ resample = function(file){
 
 resampled = list.files(file.path(oagit_dir,'v2016/int/annual_oa_rescaled_int_1km'),full.names=T)
 
+plot(raster(resampled[5]),col=cols,box=F,axes=F,main='Resampled, rescaled and interpolated \nΩaragonite layer for 2015')
+
 ```
 
 
-##Remove Land
+# Final Pressure Layers 
+
+## Landmask
+
+Now that we have 1km, rescaled and inteprolated raster layers we want to remove the land and extra cell values. We can use the `mask` function from the `raster` package to do this using our ocean raster.
 
 ```{r mask}
 
@@ -280,8 +317,41 @@ rm_land <- function(file){
 
 #sapply(resampled,rm_land)
 
+r <- raster(file.path(oagit_dir,'v2016/output/oa_prs_layer_2015.tif'))
+plot(r,box=F,axes=F,col=cols,main='Final Ocean Acidification \nPressure Layer 2015')
 
 ```
 
 
+# Gap-fill raster layer
+
+We want to create a raster layer that shows all cells that were gap-filled. Since they were the same cells interpolated across all years, we only need to create one raster.
+
+```{r,eval=F}
+
+    #Rescaled data before interpolation 
+
+      r = raster(file.path(oagit_dir,'v2016/int/annual_oa_rescaled/oa_rescaled_2011.tif'))%>%
+          resample(ocean)
+
+    #after interpolation,
+
+      r_int = raster(file.path(oagit_dir,'v2016/output/oa_prs_layer_2015.tif'))
+
+
+    interp_cells = mask(r_int,r,inverse=TRUE,filename = file.path(oagit_dir,'v2016/output/oa_interpolated_cells.tif'))
+```
+
+```{r}
+    plot(raster(file.path(oagit_dir,'v2016/output/oa_interpolated_cells.tif')),
+         col=cols,box=F,axes=F,main='Interpolated cells')
+
+```
+
+
+**References**  
+
+Woods Hole Oceanographic Institution. 2014 update to data originally published in: Feely, R.A., S.C. Doney, and
+S.R. Cooley. 2009. Ocean acidification: Present conditions and future changes in a high-CO2 world.
+Oceanography 22(4):36–47
 
