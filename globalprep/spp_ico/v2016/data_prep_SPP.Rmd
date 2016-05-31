@@ -37,7 +37,7 @@ dir_data_bird  <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'birdlife_i
 dir_git  <- file.path('~/github/ohiprep', goal)
 
 ### set up provenance tracking for this script:
-source(file.path('~/github/ohibc', 'src/R/prov.R'))          
+# source(file.path('~/github/ohibc', 'src/R/prov.R'))          
 
 
 source(file.path(dir_git, scenario, 'spp_fxn.R'))
@@ -339,6 +339,63 @@ source(file.path(dir_git, scenario, 'layer_prep_spp_hs_aq.R'))
 
 ```
 
+## Summarize status and trend by region, excluding BirdLife International data
+
+``` {r SPP Generate species per cell tables for Aquamaps and IUCN without birds, echo = TRUE}
+
+spp_all_nobirds <- read_csv(file.path(dir_anx, scenario, 'int/spp_all_cleaned.csv')) %>%
+  filter(!(spp_group == 'BOTW' & is.na(am_sid))) %>% ### remove any BOTW with no AquaMaps map
+  mutate(spatial_source = ifelse(spp_group == 'BOTW', 'am', spatial_source))
+
+am_cells_spp_sum_nobirds <- process_am_summary_per_cell(spp_all_nobirds, fn_tag = 'nobirds', prob_filter = 0, reload = FALSE) %>%
+  read_csv(col_types = 'dddddc')
+### NOTE: keyed data.table works way faster than the old inner_join or merge.
+### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
+### AM does not include subspecies or subpops: every am_sid corresponds to exactly one sciname.
+
+iucn_cells_spp_sum_nobirds <- process_iucn_summary_per_cell(spp_all_nobirds, fn_tag = 'nobirds', reload = FALSE) %>%
+  read_csv(col_types = 'dddddc')
+### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
+### IUCN includes subpops - one sciname corresponds to multiple iucn_sid values.
+
+sum_by_loiczid_file_nobirds  <- process_means_per_cell(am_cells_spp_sum_nobirds, iucn_cells_spp_sum_nobirds, fn_tag = 'nobirds')
+### This returns location of dataframe with variables:
+### loiczid | weighted_mean_cat | weighted_mean_trend | n_cat_spp | n_tr_spp
+
+```
+
+``` {r  SPP Global Summarize mean category and trend per cell and per region without birds, echo = TRUE}
+
+source(file.path(dir_git, scenario, 'layer_prep_spp_global_nobirds.R'))
+
+library(ggplot2)
+nobirds_df <- read_csv(file.path(dir_git, scenario, 'output/spp_status_global.csv')) %>% 
+  rename(status = score) %>%
+  left_join(read_csv(file.path(dir_git, scenario, 'output/spp_status_global_nobirds.csv'))  %>%
+              rename(status_nobirds = score),
+            by = 'rgn_id') %>%
+  left_join(read_csv(file.path(dir_git, 'v2015', 'data/spp_status_global.csv'))  %>%
+              rename(status_2015 = score),
+            by = 'rgn_id')
+  
+scatter_nobirds <- ggplot(nobirds_df, aes(x = status_nobirds, y = status)) +
+  geom_point(alpha = .5) +
+  geom_point(aes(x = status_nobirds, y = status_2015), color = 'blue', alpha = .5) +
+  geom_abline(color = 'red') +
+  scale_x_continuous(limits = c(.5, 1)) +
+  scale_y_continuous(limits = c(.5, 1)) +
+  labs(x = 'Status: v2016 excluding Bird Life data',
+       y = 'Status: v2015(blue), v2016 all (black)',
+       title = 'SPP Status: excluding birds')
+ggsave(file.path(dir_git, scenario, 'Figs/scatterplot_spp_status_global_excl_bli.png'),
+       plot = scatter_nobirds)
+  
+```
+
+`r DT::datatable(sum_by_rgn_nobirds, caption = 'Region summary sans BLI: mean category, trend, and status')`
+
+-----
+
 ``` {r SPP swapping priority on AM and IUCN spatial source, eval = FALSE}
 
 ### for AquaMaps/IUCN paper, using OHI case study
@@ -450,8 +507,11 @@ The third examines one possible reason for the large shift in scores between the
 
 ![](debug/birds_health.png)
 
+Finally, this plot compares the 2016 scores as calculated with and without BirdLife International data.  AquaMaps bird species were left in.  Blue points compare 2015 scores (which did not include BirdLife International data) to the 2016 scores excluding BirdLife International data.
+
+![](Figs/scatterplot_spp_status_global_excl_bli.png)
 
 
 
-``` {r child = file.path('~/github/ohibc', 'src/templates/ohibc_prov_ftr.Rmd')}
+``` {r child = file.path('~/github/ohibc', 'src/templates/ohibc_prov_ftr.Rmd'), eval = FALSE}
 ```
