@@ -1,0 +1,168 @@
+---
+title: 'OHI 2016: Ultraviolet Radiation Pressure Data Prep'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+[REFERENCE RMD FILE: https://rawgit.com/OHI-Science/ohiprep/master/globalprep/Pressures_OceanAcidification/v2015/oa_create_layer_2015.html]
+
+#Summary
+[general description: What data are being generated? Why (what project, etc.)? Upstream/downstream processing information that might be helpful?  Other information?]
+
+#Updates from previous assessment
+[Any significant changes in methods from previous analyses?]
+
+***
+
+#Data Source [NOTE: can be copied from README.md in rawdata file]
+**Reference**: [citation for source data; website, literature, contact information. Version of data (if relevant). Screenshots if a series of menus had to be navigated to obtain the data.]
+
+**Downloaded**: [date downloaded or received]
+
+**Description**:  [e.g., surface aragonite state]
+
+**Native data resolution**: [e.g., 1 degree, 30 m, etc.]   
+
+**Time range**: [e.g., 1880-1899, monthly data provided for each year] 
+
+**Format**:  [e.g. NetCDF]
+
+***
+  
+#Methods
+
+## Setup
+
+```{r setup}
+
+source('~/github/ohiprep/src/R/common.R')
+library(raster)
+library(ncdf4)
+library(dplyr)
+library(ggplot2)
+
+raw_data_dir = file.path(dir_M,'git-annex/globalprep/_raw_data/NASA_OMI_AURA_UV/d2016')
+
+#years of data we are using for this data layer
+yrs <- c(2011, 2012, 2013, 2014, 2015)
+mths <- c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12")
+
+```
+
+## Create monthly rasters from .nc files and get the mean and standard deviation per month
+
+```{r}
+
+#list all .nc files from raw data folder
+
+list = list.files(file.path(raw_data_dir),pattern='*.nc',full.names=T)
+
+#subset list to get those files in our years
+l <- list[substr(list[],91,94) %in% yrs]
+
+#Function to create monthly mean and standard deviation raster for each month
+for (i in mths){
+    
+  print(i)
+  
+  s <- stack()
+  
+    k <- list[substr(list[],96,97)==i]
+    
+    for (j in 1:length(k)){
+      
+print(j)
+      
+      #skip the .nc files that are corrupt from the data source
+      r <- try(raster(k[j]))
+      
+      s <- stack(s,r)
+      
+    }
+    
+    print(s)
+    
+    month_mean <- calc(s, fun=function(x){mean(x,na.rm=T)},filename=paste0(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/monthly_means/monthly_mean_'),i,'.tif'),overwrite=T)
+    
+    month_sd <- calc(s, fun=function(x){sd(x,na.rm=T)}, filename=paste0(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/monthly_sd/monthly_sd_'),i,'.tif'), overwrite=T)
+    
+    #make a raster equal to the mean plus 1 sd
+    month_mean_sd <- sum(month_mean,month_sd,na.rm=T)
+    
+    writeRaster(month_mean_sd,filename=paste0(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/monthly_sd_mean/monthly_sd_mean_'),i,'.tif'),overwrite=T)
+    
+    print(month_mean_sd)
+    
+}
+  
+
+```
+
+## Compare individual months in the last 5 years to mean/sd of the climatological mean for that month
+
+```{r}
+
+month_means <- list.files(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/monthly_means'),full.names = T)
+month_sds   <- list.files(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/int/monthly_sd_mean'),full.names=T)
+
+for (i in yrs){
+  
+  #get all months within the year 
+  yr_months <- month_means[substr(month_means[],83,86)==i]
+  
+  s <- stack()
+
+    #for each month grab the raster that represents the climatological mean + 1 sd
+    for (j in mths){
+      
+      #climatological mean for the month
+      monthly_sd_climat <- month_sds[substr(month_sds[],88,89)==j]%>%raster()
+
+      #grab month of the year
+      annual_month_mean <- yr_months[substr(yr_months[],88,89)==j]%>%raster()
+      
+      diff <- overlay(annual_month_mean,monthly_sd_climat,fun=function(x,y){ifelse(x>y,1,0)})
+  
+      s <- stack(s,diff)%>%overlay(fun='sum')
+      
+    }
+  
+  plot(s)
+  #writeRaster(s,filename=paste0(dir_M,'/git-annex/globalprep/prs_uv/v2016/int/annual_anomalies/annual_anomalies_',i,'.tif'))
+  
+  
+}
+
+
+```
+
+## Compare each monthly raster to the total mean/sd raster and count the number of months from 2011-2015 that are beyond the SD
+
+```{r}
+
+for (i in yrs){
+  
+  for (j in mths){
+    
+    
+    
+    
+  }
+}
+
+
+```
+
+***
+
+#Citation information  
+Jari Hovila, Antii Arola, and Johanna Tamminen (Oct ), OMI/Aura Surface UVB Irradiance and Erythemal Dose Daily L3 Global 1.0x1.0 deg Grid, version 003, NASA Goddard Space Flight Center, , Accessed [Enter User Data Access Date at] 10.5067/Aura/OMI/DATA3009

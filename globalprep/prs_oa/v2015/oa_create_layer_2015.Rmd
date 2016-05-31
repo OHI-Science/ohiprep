@@ -15,8 +15,8 @@ output:
 #Summary
 
 There are two parts to creating this layer:  
-  (1) Data prep to get raw data into the correct format: see [dataprep.html](http://htmlpreview.github.io/?https://github.com/OHI-Science/ohiprep/blob/master/globalprep/Pressures_OceanAcidification/v2015/dataprep.html)  
-  (2) Creating the pressure layer for OHI which includes averaging across the most recent 5 years and rescaling values from 0 to 1 [oa_create_layer_2015.html](http://htmlpreview.github.io/?https://github.com/OHI-Science/ohiprep/blob/master/globalprep/Pressures_OceanAcidification/v2015/oa_create_layer_2015.html)
+  (1) Data prep to get raw data into the correct format: see [dataprep.html](http://htmlpreview.github.io/?https://github.com/OHI-Science/ohiprep/blob/master/globalprep/prs_oa/v2015/dataprep.html)  
+  (2) Creating the pressure layer for OHI which includes averaging across the most recent 5 years and rescaling values from 0 to 1 [oa_create_layer_2015.html](http://htmlpreview.github.io/?https://github.com/OHI-Science/ohiprep/blob/master/globalprep/prs_oa/v2015/oa_create_layer_2015.html)
 
 For each year in the dataset provided, an average annual aragonite saturation state layer was created. Using these annual averages, a decadal average for both 1880-1889 and 2005-2014 was calculated.
 
@@ -91,12 +91,12 @@ This script takes prepped Ocean Acidification input raster layers (created by oa
 #set root directory
 require("knitr")
     
-   opts_knit$set(root.dir = file.path(dir_N,'git-annex/globalprep/Pressures_OceanAcidification/v2015'))
+   opts_knit$set(root.dir = file.path(dir_N,'git-annex/globalprep/prs_oa/v2015'))
 
 
 # read in data
 
-   hist_mean = raster(file.path(dir_N,'git-annex/globalprep/Pressures_OceanAcidification/v2015/working/global_oa_1880_1889_arag_mean_moll.tif')) # historical decadal mean of aragonite saturation state from 1880-1889
+   hist_mean = raster(file.path(dir_N,'git-annex/globalprep/prs_oa/v2015/working/global_oa_1880_1889_arag_mean_moll.tif')) # historical decadal mean of aragonite saturation state from 1880-1889
 
     files = list.files('working/annualmean_2005-2014/moll',full.names=TRUE,recursive=TRUE) # list the annual mean raster files for each year in 2005-2014
 

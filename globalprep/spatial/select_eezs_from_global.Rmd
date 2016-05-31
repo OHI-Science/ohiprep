@@ -1,0 +1,92 @@
+---
+title: "Select EEZs from Global Shapefile"
+output: html_document
+---
+
+#Setup
+
+```{r setup, include=FALSE}
+
+source('~/github/ohiprep/src/R/common.R')
+
+library(raster)
+library(rgdal)
+
+
+```
+
+#Read in global shapefile
+
+You will have to point the path to where the global OHI EEZ file is located on your local computer.
+
+```{r}
+
+#use readOGR to read in the global shapefile.
+## dsn: path name, layer: name of the shapefile
+
+eezs = readOGR(dsn = file.path(dir_M,'git-annex/globalprep/spatial/v2015/data'), layer = 'regions_gcs')
+
+
+```
+
+#Look at global data
+
+```{r}
+head(eezs@data)
+```
+
+#Specify countries
+
+```{r}
+
+countries = c("Sweden", "Finland", "Denmark", "Germany", "Estonia", "Poland", "Latvia", "Lithuania", "Russia")
+
+```
+
+#Select EEZs and remove all others
+
+```{r}
+
+myShape <- eezs%>%subset(rgn_nam%in%countries)%>%subset(rgn_typ=='eez')
+
+plot(myShape)
+
+```
+
+#Draw extent to crop
+
+You can use raster::drawExtent() to draw the bounding box for cropping your shapefile if you don't have a predefined extent. Otherwise use extent() to set it.
+
+```{r}
+
+ext <- drawExtent(show=TRUE,col='red')
+
+#ext <- extent()
+
+ext
+
+myShape <- crop(myShape,ext)
+
+
+```
+
+#Save shapefile
+
+Use rgdal::writeOGR() to save the shapefile. Set the driver equal to ESRI Shapefile.
+
+```{r save}
+
+writeOGR(myShape,dsn='globalprep/spatial',layer='bhi_global_eezs', driver = "ESRI Shapefile")
+
+```
+
+
+
+
+
+
+
+
+
+
+

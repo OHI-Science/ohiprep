@@ -16,16 +16,16 @@ rasterOptions(tmpdir=tmpdir)
 
 # paths
 
-dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
-          'Darwin'  = '/Volumes/data_edit',
-          'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
+dir_M             <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
+                       'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
+                       'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
 
-setwd(file.path(dir_N,'git-annex/globalprep/Pressures_UV'))
+setwd(file.path(dir_M,'git-annex/globalprep/prs_uv'))
 
 
 
 #bring in ocean raster to clip out land
-ocean = raster(file.path(dir_N,'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
+ocean = raster(file.path(dir_M,'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
 
 
 uv_current = raster('data/uv_omi_aura_2013_2014/uv_baseline_anomaly/omi_aura_uv_anomaly_2010m01-2014m12_raw.tif')
