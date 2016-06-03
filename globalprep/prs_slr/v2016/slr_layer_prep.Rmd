@@ -1,0 +1,379 @@
+---
+  title: 'OHIBC: Sea Level Rise Pressure layers prep'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+  toc: true
+number_sections: true
+theme: cerulean
+highlight: haddock
+includes: 
+  in_header: '~/github/ohibc/src/templates/ohibc_hdr1.html'
+pdf_document:
+  toc: true
+---
+  
+  ``` {r setup, echo = FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
+                      echo = FALSE, message = FALSE, warning = FALSE)
+
+library(sp)        # the classes and methods that make up spatial ops in R
+library(rgdal)
+library(raster)
+
+dir_git <- '~/github/ohibc'
+source(file.path(dir_git, 'src/R/common.R'))
+### an OHIBC specific version of common.R
+dir_anx <- file.path(dir_neptune_data, 'git-annex/bcprep')
+dir_rgn <- file.path(dir_git, 'prep/regions')  ### github: general buffer region shapefiles
+
+### goal specific folders and info
+goal      <- 'pressures'
+scenario  <- 'v2016'
+dir_goal  <- file.path(dir_git, 'prep', goal, scenario)
+dir_goal_anx <- file.path(dir_anx, goal, scenario)
+
+### provenance tracking
+source('~/github/ohibc/src/R/prov.R')      
+### Provenance tracking functions: must source at start to initialize prov_track
+dir_prov <- file.path(dir_goal, 'prov') 
+### set a provenance folder for this script
+this_script_file <- file.path(dir_goal, 'pressures_slr_prep.Rmd') 
+### can't recognize the current script name on its own :(
+prov_run_tag <- 'standard run'
+
+### goal-specific source scripts
+source(file.path(dir_goal, 'pressures_lyr_fxns.R'))
+
+### other support functions
+source(file.path(dir_git, 'src/R/rast_tools.R'))
+
+### set up proj4string options: BC Albers and WGS84
+p4s_wgs84 <- '+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'
+p4s_bcalb <- '+proj=aea +lat_1=50 +lat_2=58.5 +lat_0=45 +lon_0=-126 +x_0=1000000 +y_0=0 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0'
+
+```
+
+# Summary
+
+There are two parts to creating this layer:
+  
+  1. Data prep to get raw data into the correct format:
+  * If necessary, read .nc.gz files from aviso: ftp://ftp.aviso.altimetry.fr/global/delayed-time/grids/climatology/monthly_mean/
+  * unzip .gz files and then delete .gz 
+* Read monthly mean sea level data as rasters; aggregate to annual means
+* Clip rasters to extents of OHIBC region, and reproject into BC Albers projection.
+2. Creating the pressure layers for OHIBC:
+  * Determine baseline using five-year average from 1993-1997.
+* For each study year (2000 - 2015) calculate difference between study year and baseline
+* Set to zero all negative values, indicating decreases in mean sea level
+* Resample data from the native cell resolution (0.25 degrees) to ~ 1km
+* Set reference point as the 99.99th quantile of the data distribution to rescale all values from 0 to 1
+* Use thin plate spline interpolation to fill in NA values
+* Clip results to 1 km offshore region, and determine average SLR pressure per region.
+
+This process is completed entirely within this script.
+
+# Data
+
+Reference: The altimeter products were produced and distributed by Aviso (http://www.aviso.altimetry.fr/), as part of the Ssalto ground processing segment. [AVISO MSLA heights, monthly means](http://www.aviso.altimetry.fr/en/data/products/sea-surface-height-products/global/msla-mean-climatology.html)
+
+* Downloaded: March 18, 2016
+* Description: Monthly mean sea level anomaly
+* Native data resolution: 0.25 degree grid cells
+* Time range: January 1993 - August 2015
+* Format: NetCDF
+
+# Methods
+
+## Data Prep
+
+### Read raw data as monthly means and convert to annual means
+
+Raw data in monthly mean sea level anomalies, at .25 degree grid globally, is processed into annual mean sea level anomalies.  These files are saved in git-annex as GeoTIFFs for later use.
+
+``` {r download_files_and_unzip}
+
+reload <- FALSE
+
+dir_anx_aviso <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data/AVISO_slr')
+
+if(reload) {
+  ### Get filenames from AVISO FTP URL:
+  library(RCurl)
+  url <- "ftp://ftp.aviso.altimetry.fr/global/delayed-time/grids/climatology/monthly_mean/"
+  userpwd <- "nceas_ohara:diors54jh"
+  filenames <- getURL(url,
+                      userpwd = userpwd,
+                      ftp.use.epsv = FALSE,
+                      dirlistonly = TRUE) %>%
+    str_split('\n') %>%
+    unlist()
+  
+  filenames <- filenames[!str_detect(filenames, '.png')] %>%
+    sort()
+  
+  
+  ### Set up loop to download each file and save to git-annex:
+  
+  ftp_dir <- 'ftp://nceas_ohara:diors54jh@ftp.aviso.altimetry.fr/global/delayed-time/grids/climatology/monthly_mean'
+  for (nc_file in filenames) { # nc_file <- filenames[2]
+    download.file(url      = file.path(ftp_dir, nc_file),
+                  destfile = file.path(dir_anx_aviso, 'msla_monthly_mean', nc_file),
+                  mode     = 'wb')
+  }
+  
+  zipfiles <- list.files(file.path(dir_anx_aviso, 'msla_monthly_mean'),
+                         full.names = TRUE)
+  zipfiles <- zipfiles[str_detect(zipfiles, '.gz')]
+  for (zipfile in zipfiles) { # zipfile <- zipfiles[1]
+    message('Unzipping file: ', zipfile)
+    R.utils::gunzip(zipfile, remove = TRUE, skip = TRUE)
+  }
+}
+```
+
+``` {r msla_monthly_to_annual}
+
+library(ncdf4)
+nc_files <- list.files(file.path(dir_anx_aviso, 'msla_monthly_mean'),
+                       full.names = TRUE)
+nc_files <- nc_files[str_detect(nc_files, '.nc') & !str_detect(nc_files, '.gz')]
+
+years <- unique(basename(nc_files) %>% 
+                  str_replace('dt_global_allsat_msla_h_y', '') %>%
+                  substr(1, 4)) %>%
+  sort()
+
+for (j in 1:length(years)) { ### j <- 1
+  ### get the list of netCDF files associated with the appropriate year
+  msla_yr <- nc_files[str_detect(nc_files, years[j])]
+  ### set up an empty list to store rasters for this year
+  rast_list_yr <- vector('list', length(msla_yr))
+  
+  message('Generating annual MSLA raster for ', years[j])
+  
+  ### Loop over all files for this year, read raster and assign to list for this year
+  for (i in 1:length(msla_yr)) { ### i = 1
+    rast_list_yr[i] <- raster(msla_yr[i], nogit = TRUE) %>%
+      raster::rotate()
+  }
+  
+  ### brick all rasters for this year, and calc annual mean, then write as raster
+  rbrick_yr <- brick(rast_list_yr)
+  rast_annual_mean <- calc(rbrick_yr, mean)
+  
+  rast_file <- file.path(dir_anx_aviso, 'msla_annual_mean', 
+                         sprintf('rast_msla_annual_%s.tif', years[j]))
+  message('Writing raster to ', rast_file)
+  writeRaster(rast_annual_mean, 
+              rast_file,
+              overwrite = TRUE,
+              nogit = TRUE)
+}
+
+```
+
+For analysis, convert the annual means into a raster brick with each layer representing a year.
+
+``` {r }
+rast_files <- file.path(dir_anx_aviso, 'msla_annual_mean', 
+                        sprintf('rast_msla_annual_%s.tif', years))
+
+rast_list <- vector('list', length(rast_files))
+for (i in 1:length(rast_files)) {
+  message('Reading raster from ', rast_files[i])
+  rast_list[[i]] <- raster(rast_files[i])
+}
+
+rbrick_sla <- brick(rast_list)
+names(rbrick_sla) <- years
+
+range_sla <- range(values(rbrick_sla), na.rm = TRUE)
+```
+
+Range of annual mean sea level anomalies for global dataset: `r paste(range_sla, collapse = ' - ')` meters.
+
+
+### Convert global data to OHIBC region data
+
+The global data, in WGS84 coordinate ref system, is clipped down to a bounding box around the OHIBC region, and reprojected into BC Albers projection.  This data is then resampled to 1 km resolution using nearest neighbor method.
+
+The resulting raster layers include annual mean sea level anomaly for each coarse cell (approx .25 degree, from original resolution) for each year (1993-2015).
+
+``` {r load_rgn, echo = FALSE}
+
+rgn_lyr <- 'ohibc_rgn'
+
+message(sprintf('Reading OHIBC regions shapefile...\n  %s/%s.shp', dir_rgn, rgn_lyr))
+rgn_poly <- readOGR(dsn = path.expand(dir_rgn), layer = rgn_lyr,
+                    verbose = FALSE, stringsAsFactors = FALSE)
+
+rgn_poly_wgs84 <- readOGR(dsn = path.expand(dir_rgn), 
+                          layer = paste(rgn_lyr, '_wgs84', sep = ''),
+                          verbose = FALSE, stringsAsFactors = FALSE)
+
+### In case we need to resample to 1 km... use base raster from 
+### regions folder (note: 500m base raster available too).  Used later in
+### finding zonal statistics anyway.
+rast_rgn <- raster(file.path(dir_rgn, 'ohibc_rgn_raster_1000m.tif'))
+
+```
+
+``` {r crop_sla_brick, echo = FALSE}
+### clip rasters to extents of region (in WGS 84 CRS)
+### then: reproject to BC Albers projection
+bc_sla_file <- file.path(dir_goal, 'int/slr/rast_sla_raw.tif')
+
+if(!file.exists(bc_sla_file)) {
+  bc_sla <- raster::crop(rbrick_sla, rgn_poly_wgs84, snap = 'out') %>%
+    raster::projectRaster(crs = p4s_bcalb)
+  
+  plot_rast(bc_sla[[1]], 
+            title = sprintf('Mean SL anomaly %s', names(bc_sla)[1]), 
+            scale_label = 'meters',
+            rev_scale = TRUE)
+  plot_rast(bc_sla[[nlayers(bc_sla)]], 
+            title = sprintf('Mean SL anomaly %s', names(bc_sla)[nlayers(bc_sla)]), 
+            scale_label = 'meters',
+            rev_scale = TRUE)
+  
+  message('Resampling rasters to new resolution')
+  bc_sla_resamp <- resample_brick(bc_sla, rast_rgn,
+                                  filename = bc_sla_file,
+                                  overwrite = TRUE)
+} else {
+  bc_sla_resamp <- brick(bc_sla_file)
+  names(bc_sla_resamp) <- paste('y', years, sep = '')
+}
+
+plot_rast(bc_sla_resamp[[1]], 
+          title = sprintf('Mean SL anomaly %s', names(bc_sla_resamp)[1]), 
+          scale_label = 'meters',
+          rev_scale = TRUE)
+plot_rast(bc_sla_resamp[[nlayers(bc_sla_resamp)]], 
+          title = sprintf('Mean SL anomaly %s', names(bc_sla_resamp)[nlayers(bc_sla_resamp)]), 
+          scale_label = 'meters',
+          rev_scale = TRUE)
+
+```
+
+
+## Rescale values as pressures
+
+Baseline sea level anomaly is based upon the count within 1993 to 1997.
+
+Change in mean sea level is determined by simple subtraction of the 1998-2014 rasters from the 1993-1997 mean raster.
+
+``` {r calc_delta_sl_anomalies}
+
+base_yrs <- 5
+names(bc_sla_resamp)[1:base_yrs]
+bc_sla_baseline <- bc_sla_resamp[[1:base_yrs]] %>%
+  calc(mean)
+
+bc_sla_study <- bc_sla_resamp[[(base_yrs + 1):nlayers(bc_sla_resamp)]]
+
+bc_sla_delta <- bc_sla_study - bc_sla_baseline
+names(bc_sla_delta) <- names(bc_sla_study)
+
+bc_sla_delta_file <- file.path(dir_goal, 'int/slr/rast_sla_delta_raw.tif')
+message('Writing BC SLA delta to: ', bc_sla_delta_file)
+writeRaster(bc_sla_delta, bc_sla_delta_file, bandorder='BIL', overwrite = TRUE)
+
+plot_rast(bc_sla_delta[[1]], 
+          title = sprintf('delta SL anomaly %s', names(bc_sla_delta)[1]), 
+          scale_label = 'meters',
+          rev_scale = TRUE)
+plot_rast(bc_sla_delta[[nlayers(bc_sla_delta)]], 
+          title = sprintf('delta SL anomaly %s', names(bc_sla_delta)[nlayers(bc_sla_delta)]), 
+          scale_label = 'meters',
+          rev_scale = TRUE)
+
+```
+
+Interpolate change in sea level values, to fill gaps.  Use thin-plate spline method to interpolate.
+
+``` {r interpolate_bc_sla}
+### sea level rise = delta (sea level anomaly) so slr <- d(sla)
+bc_slr_int_file <- file.path(dir_goal, 'int/slr/rast_slr_int.tif')
+
+if(!file.exists(bc_slr_int_file)) {
+  message('Interpolating BC SL rise data')
+  bc_slr_int <- interpolate_brick(bc_sla_delta, subset_n = 2000)
+  
+  ### mask to regions
+  values(bc_slr_int)[is.na(values(rast_rgn))] <- NA
+  
+  message('Writing interpolated BC SLA delta to: ', bc_slr_int_file)
+  writeRaster(bc_slr_int, bc_slr_int_file, bandorder='BIL', overwrite = TRUE)
+  
+} else {
+  message('Reading interpolated BC SLA delta from: ', bc_slr_int_file)
+  
+  bc_slr_int <- brick(bc_slr_int_file)
+  names(bc_slr_int) <- names(bc_sla_delta)
+}
+
+plot_rast(bc_slr_int[[1]], 
+          title = sprintf('delta SL anomaly %s', names(bc_slr_int)[1]), 
+          scale_label = 'meters',
+          rev_scale = TRUE)
+plot_rast(bc_slr_int[[nlayers(bc_slr_int)]], 
+          title = sprintf('delta SL anomaly %s', names(bc_slr_int)[nlayers(bc_slr_int)]), 
+          scale_label = 'meters',
+          rev_scale = TRUE)
+
+```
+
+Values below zero (drop in sea level) are set to zero.
+
+This difference value is rescaled from zero (no sea level rise) to 1 (at 99.99%ile of local slr).
+
+
+``` {r rescale_uv_pressures}
+
+### If SLR velocity is negative, set to zero
+bc_slr_pos <- bc_slr_int
+values(bc_slr_pos)[values(bc_slr_pos) < 0] <- 0
+
+plot_rast(bc_slr_pos, 
+          title = 'SLR pos velocity', 
+          scale_label = 'mm/yr',
+          rev_scale = TRUE)
+
+ref_pt = quantile(bc_slr_pos, prob=0.9999)
+
+bc_slr_resc <- calc(bc_slr_pos, fun = function(x) ifelse(x > ref_pt, 1, x/ref_pt))
+plot_rast(bc_slr_resc, 
+          title = 'rescaled SLR velocity', 
+          scale_label = 'scaled pressure',
+          rev_scale = TRUE)
+
+writeRaster(bc_slr_resc, file.path(dir_goal, 'output/slr/slr_rescaled.tif'), 
+            overwrite = TRUE)
+
+```
+
+
+## Calculate mean pressure by region by year
+
+Using 1000 m region ID raster to run zonal statistics on the pressures layers, calculate the regional average pressures for the study period, and save as a .csv.
+
+``` {r calc_mean_pressures_by_year}
+
+slr_rgn_mean <- zonal(bc_slr_resc, rast_rgn, fun = 'mean') %>%
+  as.data.frame() %>%
+  rename(pressure = mean, rgn_id = zone) %>%
+  left_join(rgn_poly@data %>% select(rgn_id, rgn_name), by = 'rgn_id')
+
+knitr::kable(slr_rgn_mean)
+
+write_csv(slr_rgn_mean, file.path(dir_goal, 'output/slr/slr_rgn_pressures.csv'))
+
+```
+
+-----
+  
+  ``` {r child = file.path(dir_git, 'src/templates/ohibc_prov_ftr.Rmd')}
+```
