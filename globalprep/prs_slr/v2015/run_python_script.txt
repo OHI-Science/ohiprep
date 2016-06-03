@@ -1,0 +1,20 @@
+Running 'SLR_interpolation.py'
+
+On cmd line:
+
+- need to get to directory where the python script is located
+
+N:
+
+cd git-annex\globalprep\Pressures_SeaLevelRise
+
+- now open ipython from cmd line
+
+ipython
+
+- now run the python script
+
+run SLR_interpolation.py
+
+THATS IT!
+
