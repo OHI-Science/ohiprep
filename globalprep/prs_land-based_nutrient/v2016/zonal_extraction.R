@@ -120,7 +120,7 @@ scenario_year <- 2016
   library(googleVis)
   plotData <- data %>%
     dplyr::select(rgn_name, year, pressure_score)
-p <- gvisMotionChart(data, idvar = 'rgn_name', timevar="year")
+p <- gvisMotionChart(plotData, idvar = 'rgn_name', timevar="year")
     plot(p)
     
     print(p, file=file.path(save_loc_data, 'fertilizer.html'))
