@@ -168,4 +168,4 @@ plotData <- new_data %>%
 p <- gvisMotionChart(plotData, idvar = 'rgn_name', timevar="year")
 plot(p)
 
-print(p, file=file.path(save_loc_data, 'fertilizer.html'))
+print(p, file=file.path(save_loc_data, 'chemical.html'))
