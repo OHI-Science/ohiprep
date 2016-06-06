@@ -1,0 +1,26 @@
+---
+title: "SAUP Species Resilience Lookup Table"
+author: "Jamie Afflerbach"
+date: "June 6, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(rfishbase)
+source('~/github/ohiprep/src/R/common.R')
+
+```
+
+
+# Read in SAUP catch data
+
+```{r catch_dat}
+
+
+catch <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/raw/SAUP_catch_taxon_tons_eezs.csv'))%>%
+          rbind(read.csv(file.path(dir_M,'git-annex/globalprep/fis/raw/SAUP_catch_taxon_tons_highseas.csv')))
+
+spp <- unique(catch$species)
+
+```
