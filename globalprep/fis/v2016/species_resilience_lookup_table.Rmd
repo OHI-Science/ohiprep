@@ -13,14 +13,32 @@ source('~/github/ohiprep/src/R/common.R')
 ```
 
 
-# Read in SAUP catch data
+# Read in SAUP catch data and match common names to scientific names
 
 ```{r catch_dat}
 
+taxon <- read.csv(file.path(dir_M,'git-annex/globalprep/_raw_data/SAUP/d2016/TaxonTable.csv'))%>%
+          select(sciname = Scientific.Name,
+                 species = Common.Name,
+                 TaxonKey)%>%
+            filter(TaxonKey>599999)%>%
+            mutate(FBvalidName = validate_names(as.character(sciname)))
+
+#validate scientific names with fishbase
+
+scinames <- as.character(unique(taxon$sciname))%>%
+              validate_names()
 
 catch <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/raw/SAUP_catch_taxon_tons_eezs.csv'))%>%
-          rbind(read.csv(file.path(dir_M,'git-annex/globalprep/fis/raw/SAUP_catch_taxon_tons_highseas.csv')))
+          rbind(read.csv(file.path(dir_M,'git-annex/globalprep/fis/raw/SAUP_catch_taxon_tons_highseas.csv')))%>%
+            filter(species != "Others")%>%
+              left_join(taxon)
+          
 
 spp <- unique(catch$species)
 
 ```
+
+# UseSAUP lookup table to match common names to scientific names
+
+``{r}
