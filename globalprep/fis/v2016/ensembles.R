@@ -13,6 +13,8 @@ catch <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/raw/SAUP_catch_taxon
             filter(species %in% stks)%>%
             mutate(species = gsub(" ", "_", .$species,fixed = TRUE),
                    stock_id = paste(species,rgn_num,sep="_"))
+
+stocks <- list(unique(catch$stock_id))
             
 library(datalimited)
 library(fishensembles) #i cloned this package then used devtools::install() to install it locally so we can call it whenever. I didthis since it;s a private repo
@@ -23,6 +25,14 @@ library(fishensembles) #i cloned this package then used devtools::install() to i
 
 c <- cmsy()
 
+for(i in 1:3){
+  
+  x <- catch%>%
+        filter(stock_id == stocks[[1]][i])
+  
+  out <- cmsy(x$year,x$tons)
+  
+}
 
 x <- make()
 
