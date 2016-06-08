@@ -69,3 +69,4 @@ f <- do.call(rbind.data.frame,hs_catch)
 write.csv(f,file=file.path(dir_M,'git-annex/globalprep/fis/raw/SAUP_catch_taxon_tons_highseas.csv'))
 
 
+
