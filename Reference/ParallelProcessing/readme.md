@@ -30,9 +30,28 @@ To navigate to git-annex run the following:
 
 cd stands for Change Directory
 
+## Multiple tabs in your command line
+
+You can utilize [byobu](http://byobu.co/) to create multiple tabs in your command line. To enable this all you do is type:
+
+`byobu-enable`
+
+To create a new tab use F2
+To switch between tabs use F3 and F4
+
+To leave a tab type `exit`
+
+To kill a process hit control+c
+
 ## Running R scripts on the server
 
-You can run an R script via the command line by 
+You can run an R script via the command line by the command `Rscript`. Below is an example of how to run the example_mclapply.R script:
+
+`ssh afflerbach@mazu.nceas.ucsb.edu`
+
+`cd github/ohiprep/Reference/ParallelProcessing`
+
+`Rscript example_mclapply.R`
 
 ## Monitoring cores on the server
 
