@@ -55,5 +55,4 @@ You can run an R script via the command line by the command `Rscript`. Below is 
 
 ## Monitoring cores on the server
 
-htop
-top works as well
+`htop` will open up a viewer to monitor the processes occuring on all cores on Mazu.
