@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 library(dplyr)
 library(rfishbase)
+library(parallel)
 source('~/github/ohiprep/src/R/common.R')
 
 ```
@@ -17,28 +18,66 @@ source('~/github/ohiprep/src/R/common.R')
 
 ```{r catch_dat}
 
-taxon <- read.csv(file.path(dir_M,'git-annex/globalprep/_raw_data/SAUP/d2016/TaxonTable.csv'))%>%
-          select(sciname = Scientific.Name,
+taxon <- read.csv(file.path(dir_M,'git-annex/globalprep/_raw_data/SAUP/d2016/TaxonTable.csv'),stringsAsFactors = F)%>%
+          dplyr::select(sciname = Scientific.Name,
                  species = Common.Name,
                  TaxonKey)%>%
-            filter(TaxonKey>599999)%>%
-            mutate(FBvalidName = validate_names(as.character(sciname)))
+            filter(TaxonKey>599999)
 
 #validate scientific names with fishbase
 
-scinames <- as.character(unique(taxon$sciname))%>%
-              validate_names()
+sp <- taxon$sci
 
-catch <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/raw/SAUP_catch_taxon_tons_eezs.csv'))%>%
-          rbind(read.csv(file.path(dir_M,'git-annex/globalprep/fis/raw/SAUP_catch_taxon_tons_highseas.csv')))%>%
+fb <- mclapply(sp,validate_names,mc.cores = 8)
+
+resil <- mclapply(fb,stocks,fields = "Resilience",mc.cores=10)
+
+res <- do.call(rbind.data.frame,resil)%>%
+        distinct()
+
+taxon <- taxon%>%
+            left_join(res,by='sciname')%>%
+            select(sciname,
+                   common = species.x,
+                   TaxonKey = TaxonKey.x,
+                   Resilience,
+                   SpecCode)
+
+# there are some duplicated species since fishbase provides resilience per stock...we'll want to remove the duplicates 
+
+dup <- taxon$sciname[duplicated(taxon$sciname)]
+
+d <- taxon%>%
+      filter(sciname %in% dup)%>%
+      filter(!is.na(Resilience))
+
+dup_sp <- d$sciname[duplicated(d$sciname)]
+# now we have 4 species that have stocks with 2 different resiliences:
+#[1] "Salmo trutta"          "Salmo trutta"          "Platichthys flesus"    "Pleuronectes platessa" "Clupea harengus"    
+
+# for these we are going to remove the resilience and leave an NA. This will cause the models to default to Medium resilience
+
+taxon_res <- taxon%>%
+              filter(!is.na(Resilience))%>%
+              mutate(Resilience = ifelse(sciname %in% dup_sp,NA,Resilience))%>%
+            distinct()
+
+write.csv(taxon_res,file = 'int/taxon_resilience_lookup.csv')
+```       
+
+
+attach to taxon table
+
+```{r}
+
+catch <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/raw/SAUP_catch_taxon_tons_eezs.csv'),stringsAsFactors=F)%>%
+          rbind(read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/raw/SAUP_catch_taxon_tons_highseas.csv'),stringsAsFactors=F))%>%
             filter(species != "Others")%>%
-              left_join(taxon)
-          
+            rename(common = species)%>%
+              left_join(taxon_res)
 
-spp <- unique(catch$species)
+write.csv(catch,file= file.path(dir_M,'git-annex/globalprep/fis/v2016/int/catch_saup.csv'))
 
 ```
 
-# UseSAUP lookup table to match common names to scientific names
-
-``{r}
+# Use SAUP lookup table to match common names to scientific names
