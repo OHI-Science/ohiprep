@@ -27,10 +27,10 @@ library(readr)
 
 source('~/github/ohiprep/src/R/common.R')
 
-goal     <- 'globalprep/lsp'
+goal     <- 'lsp'
 scenario <- 'v2016'
-dir_anx       <- file.path(dir_M, 'git-annex') 
-dir_goal      <- file.path('~/github/ohiprep', goal, scenario)
+dir_anx       <- file.path(dir_M, 'git-annex/globalprep') 
+dir_goal      <- file.path('~/github/ohiprep/globalprep', goal, scenario)
 dir_goal_anx  <- file.path(dir_anx,            goal, scenario)
 dir_data_wdpa <- file.path(dir_anx, '_raw_data/wdpa_mpa', 'd2016') 
 
@@ -38,13 +38,11 @@ dir_data_wdpa <- file.path(dir_anx, '_raw_data/wdpa_mpa', 'd2016')
 # source(file.path('~/github/ohibc', 'src/R/prov.R'))          
 
 
-source(file.path(dir_git, scenario, 'lsp_fxn.R'))
-if(!file.exists(file.path(dir_git, 'README.md'))) {
-  warning(sprintf('No README detected in %s', dir_git))
+source(file.path(dir_goal, 'lsp_fxn.R'))
+if(!file.exists(file.path(dir_goal, 'README.md'))) {
+  warning(sprintf('No README detected in %s', dir_goal))
 }
-if(!file.exists(file.path(dir_git, scenario, 'README.md'))) {
-  warning(sprintf('No README detected in %s', file.path(dir_git, scenario)))
-}
+
 
 ```
 
@@ -53,9 +51,9 @@ if(!file.exists(file.path(dir_git, scenario, 'README.md'))) {
 shp_raw     <- file.path(dir_data_wdpa, 
                          'WDPA_May2016-shapefile',
                          'WDPA_May2016-shapefile-polygons')
-shp_reorder <- file.path(dir_data_wdpa, 
+shp_reorder <- file.path(dir_data_wdpa, 'shps',
                          'WDPA_May2016_shp_ordered')
-shp_xformed <- file.path(dir_data_wdpa, 
+shp_xformed <- file.path(dir_data_wdpa, 'shps',
                          'WDPA_May2016_shp_xformed')
 
 ### Filter criteria:
@@ -161,13 +159,92 @@ doubled_check <- wdpa_df %>%
   filter(str_detect(tolower(NAME), "yosemite|yellowst|chitwan|tikal|nahanni"))
 ### looks like most of those parks are covered under other rubrics as well
 
+### check distribution of STATUS_YR to see if there are breaks 
+status_yr <- wdpa_df$STATUS_YR
+sum(status_yr == 0) ### 22072 (about 10%)
+hist(status_yr[status_yr > 0])
+
+quantile(status_yr, probs = seq(0, 1, 0.1))
 ```
 
+``` {r chunk out layers for rasterization}
+wdpa_poly <- readOGR(dsn   = dirname(shp_xformed),
+                     layer = basename(shp_xformed))
+quantile(wdpa_poly@data$STATUS_YR, probs = seq(0, 1, 0.1))
+
+break_list <- c(0, 1968, 1983, 1990, 1995, 1999, 2000:2015)
+break_poly <- function(poly, yr0 = 0, yr1 = 2015) {
+  if(length(yr0) == 0) yr0 <- 0 ### to allow for indexing to [0] in a vector
+  else yr0 <- yr0 + 1
+  message('yr0 = ', yr0, '; yr1 = ', yr1)
+  poly1 <- poly[(poly@data$STATUS_YR >= yr0 & poly@data$STATUS_YR <= yr1), ]
+}
+
+library(doParallel); library(foreach)
+
+registerDoParallel()
+
+foreach(i = c(1:length(break_list))) %dopar% { # i = 1
+  wdpa_poly_sub <- break_poly(wdpa_poly, break_list[i - 1], break_list[i])
+  layername <- paste0(basename(shp_xformed), '_yr', break_list[i])
+  writeOGR(wdpa_poly_sub, 
+           dsn    = dirname(shp_xformed),
+           layer  = layername,
+           driver = 'ESRI Shapefile')
+}
+```
+
+``` {r rasterize_wdpa_subsets}
+shpnames <- paste0(shp_xformed, '_yr', break_list, '.shp')
+tifnames <- file.path(dir_goal_anx, 'rasts', paste0(basename(shp_xformed), '_yr', break_list, '.tif'))
+file.exists(shpnames)
+
+### Check base raster:
+dir_rast <- file.path(dir_anx, 'spatial/v2015/data/rgn_raster_500m')
+fn_rast_base <- file.path(dir_rast, 'rgn_offshore3nm_mol_500mcell.tif')
+rast_base    <- raster::raster(fn_rast_base)
+# plot(rast_base)
+
+### setup gdal_rasterize based on base raster and shp_xformed
+in_shp  <- shpnames[1]
+out_tif <- tifnames[1]
+
+te <- rast_base@extent
+base_te <- c(te@xmin, te@ymin, te@xmax, te@ymax)
+base_tr <- raster::res(rast_base)
+
+
+out_tif_tmp <- out_tif %>%
+  str_replace('.tif', '_tmp.tif')
+if(!file.exists(out_tif_tmp))
+  file.copy(fn_rast_base, out_tif_tmp)
+### need a file there for gdalUtils::gdal_rasterize to do its work
+
+message('Rasterizing:\n  ', in_shp, '\nto temp tif: \n  ', out_tif_tmp)
+ptm <- proc.time()
+rast_tmp <- gdalUtils::gdal_rasterize(
+  src_datasource = path.expand(in_shp),
+  dst_filename   = path.expand(out_tif_tmp),
+  a = 'STATUS_YR', # attribute to burn
+  a_nodata = NA,
+  # at = TRUE,
+  te = base_te,
+  tr = base_tr,
+  output_Raster = TRUE)
+
+message('elapsed gdal_rasterize: ', (proc.time() - ptm)[3])
+### rewrite for compression and unlink the temp raster
+message('Compressing: \n  ', out_tif_tmp, '\nto: \n  ', out_tif)
+raster::writeRaster(rast_tmp, out_tif, overwrite = TRUE)
+message('elapsed gdal_rasterize + writeRaster: ', (proc.time() - ptm)[3])
+# unlink(out_tif_tmp)
+
+```
 
 ``` {r rasterize_wdpa_mollweide}
 
 ### Check base raster:
-dir_rast <- file.path(dir_anx, 'globalprep/spatial/v2015/data/rgn_raster_500m')
+dir_rast <- file.path(dir_anx, 'spatial/v2015/data/rgn_raster_500m')
 fn_rast_base <- file.path(dir_rast, 'rgn_offshore3nm_mol_500mcell.tif')
 rast_base    <- raster::raster(fn_rast_base)
 # plot(rast_base)
@@ -179,29 +256,33 @@ te <- rast_base@extent
 base_te <- c(te@xmin, te@ymin, te@xmax, te@ymax)
 base_tr <- raster::res(rast_base)
 
-in_shp <- paste0(shp_xformed, '.shp')
+in_shp <- file.path(dir_data_wdpa, 
+                         'WDPA_May2016_shp_xformed.shp')
 
 out_tif_tmp <- out_tif %>%
   str_replace('.tif', '_tmp.tif')
 if(!file.exists(out_tif_tmp))
-  raster::writeRaster(rast_base, out_tif_tmp)
+  file.copy(fn_rast_base, out_tif_tmp)
 ### need a file there for gdalUtils::gdal_rasterize to do its work
 
 message('Rasterizing:\n  ', in_shp, '\nto temp tif: \n  ', out_tif_tmp)
+ptm <- proc.time()
 rast_tmp <- gdalUtils::gdal_rasterize(
   src_datasource = path.expand(in_shp),
   dst_filename   = path.expand(out_tif_tmp),
-  a = 'STATUS', # attribute to burn
+  a = 'STATUS_YR', # attribute to burn
   a_nodata = NA,
   # at = TRUE,
   te = base_te,
   tr = base_tr,
   output_Raster = TRUE)
 
+message('elapsed gdal_rasterize: ', (proc.time() - ptm)[3])
 ### rewrite for compression and unlink the temp raster
 message('Compressing: \n  ', out_tif_tmp, '\nto: \n  ', out_tif)
 raster::writeRaster(rast_tmp, out_tif, overwrite = TRUE)
-unlink(out_tif_tmp)
+message('elapsed gdal_rasterize + writeRaster: ', (proc.time() - ptm)[3])
+# unlink(out_tif_tmp)
 
 ```
 
