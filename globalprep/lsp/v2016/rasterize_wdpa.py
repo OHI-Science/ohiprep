@@ -16,32 +16,32 @@ import arcpy, os, subprocess, csv, sys, socket
 from arcpy.sa import *
 
 # configuration based on machine name
-dirs =  {'git'    :'C:/Users/ohara/Documents/github/ohiprep', 
-         'neptune':'N:',
-         'tmp'    :'C:/Users/ohara/tmp',
+dirs =  {'git' :'C:/Users/ohara/Documents/github/ohiprep', 
+         'mazu':'M:',
+         'tmp' :'C:/Users/ohara/tmp'
          }
-print 'Setting pathnames...'
-print dirs
+print ('Setting pathnames...')
+print (dirs)
 
 # paths
 prod     = 'globalprep/lsp/v2016'                 # name of product
 # dir_git  = '%s/%s' % (dirs['git'], prod)               # local github directory inside ohiprep
 # dir_tmp  = '%s/%s' % (dirs['tmp'], prod)               # local temp directory
-dir_anx      = '%s/git-annex/globalprep' % dirs['neptune']
-print 'dir_git = ' + dir_git
-print 'dir_tmp = ' + dir_tmp
-print 'dir_anx = ' + dir_anx
+dir_anx      = '%s/git-annex/globalprep' % dirs['mazu']
+print ('dir_git = ' + dir_git)
+print ('dir_tmp = ' + dir_tmp)
+print ('dir_anx = ' + dir_anx)
 
 # inputs
 poly_wdpa = '%s/_raw_data/wdpa_mpa/d2016/shps/WDPA_May2016_shp_xformed.shp' % dir_anx
 rast_base = '%s/spatial/v2015/data/rgn_raster_500m/rgn_offshore3nm_mol_500mcell.tif' % dir_anx
 
-print 'input poly_wdpa = ' + poly_wdpa
-print 'base raster = ' + rast_base
+print ('input poly_wdpa = ' + poly_wdpa)
+print ('base raster = ' + rast_base)
 
 # outputs
-rast_out  = '%s/wdpa_designated_mol.tif' % dir_tmp
-print 'output raster = ' + rast_out
+rast_out  = '%s/lsp/v2016/int/wdpa_designated_mol.tif' % dir_anx
+print ('output raster = ' + rast_out)
 
 # initial env
 arcpy.CheckOutExtension('Spatial')
@@ -50,19 +50,19 @@ arcpy.env.overwriteOutput = 1
 # workspace & scratch space
 # arcpy.env.scratchWorkspace = dir_tmp
 
-print 'Setting environment based on rast_base.'
+print ('Setting environment based on rast_base.')
 arcpy.env.snapRaster             = rast_base
 arcpy.env.cellSize               = rast_base
 arcpy.env.outputCoordinateSystem = rast_base
 arcpy.env.extent                 = rast_base
 
 # create priority field, prioritizing by earliest STATUS_YR (take inverse of STATUS_YR)
-print 'Creating and calculating priority field'
+print ('Creating and calculating priority field')
 arcpy.AddField_management(poly_wdpa, 'poly_priority', 'FLOAT')
 arcpy.CalculateField_management(poly_wdpa, 'poly_priority', '1/(!STATUS_YR! + 1)', 'PYTHON_9.3')
 
 # polygon to raster
-print 'From pre-prepared polygons, create raster .tif'
+print ('From pre-prepared polygons, create raster .tif')
 arcpy.PolygonToRaster_conversion(poly_wdpa, 'STATUS_YR', rast_out, 'MAXIMUM_COMBINED_AREA', 'poly_priority', rast_base)
 
 
