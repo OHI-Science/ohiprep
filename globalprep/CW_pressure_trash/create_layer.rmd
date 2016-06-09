@@ -43,10 +43,8 @@ tmpdir='~/big/R_raster_tmp'
 dir.create(tmpdir, showWarnings=F)
 
 # paths
-
-dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
-          'Darwin'  = '/Volumes/data_edit',
-          'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
+    dir_M = c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
+              'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
 
 #libraries
 
@@ -63,14 +61,14 @@ cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color sc
 mytheme <- rasterTheme(region = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)))
 
 #set working directory on neptune
-data_wd = file.path(dir_N,'git-annex/globalprep/CW_pressure_trash')
+data_wd = file.path(dir_M,'git-annex/globalprep/CW_pressure_trash')
 ```
 
 ## Read in data
 
 ```{r read data, warning=F,message=F}
 #bring in ocean raster to clip out land
-ocean = raster(file.path(dir_N,'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
+ocean = raster(file.path(dir_M,'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
 
 
 # plastics data
@@ -97,7 +95,7 @@ Data came to use logged (using base 10 log) so need to 'unlog' the data first
   name = unlist(strsplit(file,'/','.'))[3] #split filename, grab second string to use in naming tif
   r = raster(file)
   out = 10^r
-  writeRaster(out,filename=paste0(data_wd,'v2015/tmp/unlog/unlog_',name,sep=''),overwrite=T,format='GTiff')
+  #writeRaster(out,filename=paste0(data_wd,'v2015/tmp/unlog/unlog_',name,sep=''),overwrite=T,format='GTiff')
   
 }
 
@@ -134,9 +132,9 @@ Data came to use logged (using base 10 log) so need to 'unlog' the data first
 
 ## Resample to 1km 
 ```{r resample, message=F,warning=F,eval=F}
-    resamp_w   <- resample(w_moll,ocean,progress='text',filename=file.path(data_wd,'v2015/tmp/weight_sum_moll_1km.tif'),overwrite=T,method='ngb')
+   # resamp_w   <- resample(w_moll,ocean,progress='text',filename=file.path(data_wd,'v2015/tmp/weight_sum_moll_1km.tif'),overwrite=T,method='ngb')
 
-    resamp_c   <- resample(c_moll,ocean,progress='text',filename=file.path(data_wd,'v2015/tmp/count_sum_moll_1km.tif'),overwrite=T,method='ngb')
+  #  resamp_c   <- resample(c_moll,ocean,progress='text',filename=file.path(data_wd,'v2015/tmp/count_sum_moll_1km.tif'),overwrite=T,method='ngb')
 
 ```
 
@@ -151,7 +149,7 @@ weight_moll_1km = raster(file.path(data_wd,'v2015/tmp/weight_sum_moll_1km.tif'))
 
 ## Mask out ocean
 ```{r mask ocean,warning=F,message=F}
-     count_mask = mask(count_moll_1km,ocean,progress='text',filename = file.path(data_wd,'v2015/tmp/count_sum_moll_1km_clip.tif'),overwrite=T)
+#     count_mask = mask(count_moll_1km,ocean,progress='text',filename = file.path(data_wd,'v2015/tmp/count_sum_moll_1km_clip.tif'),overwrite=T)
 #     weight_mask = mask(weight_moll_1km,ocean,progress='text',filename=file.path(data_wd,'v2015/tmp/weight_sum_moll_1km_clip.tif'),overwrite=T)
 
     count_mask = raster(file.path(data_wd,'v2015/tmp/count_sum_moll_1km_clip.tif'))
