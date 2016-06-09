@@ -1,0 +1,1594 @@
+"","sciname","common","TaxonKey","Resilience","SpecCode"
+"1","Lutjanus peru","Pacific red snapper",600170,"Medium",170
+"2","Anchoa mitchilli","Bay anchovy",600545,"High",545
+"3","Trachinus draco","Greater weever",601363,"Medium",1363
+"4","Epigonus telescopus","Black cardinal fish",602508,"Very low",2508
+"5","Rexea solandri","Silver gemfish",608490,"Low",8490
+"6","Dasyatis longa","Longtail stingray",613178,"Very low",13178
+"7","Porichthys margaritatus","Daisy midshipman",608220,"High",8220
+"8","Pentheroscion mbizi","Mbizi croaker",605000,"Medium",5000
+"9","Priacanthus arenatus","Atlantic bigeye",601149,"High",1149
+"10","Polydactylus approximans","Blue bobo",603680,"High",3680
+"11","Engyophrys sanctilaurentii","Speckled-tail flounder",613558,"High",13558
+"12","Alepisaurus ferox","Long snouted lancetfish",600099,"Very low",99
+"13","Gasterochisma melampus","Butterfly kingfish",600100,"Low",100
+"14","Anguilla japonica","Japanese eel",600295,"Low",295
+"15","Anguilla rostrata","American eel",600296,"Medium",296
+"16","Alectis indica","Indian threadfish",600010,"Medium",10
+"17","Lutjanus quinquelineatus","Fivelined snapper",600172,"Very low",172
+"18","Lutjanus vivanus","Silk snapper",600185,"Low",185
+"19","Macolor macularis","Midnight snapper",600186,"Medium",186
+"20","Ocyurus chrysurus","Yellowtail snapper",600188,"Low",188
+"21","Paracaesio kusakarii","Saddle-back snapper",600191,"Medium",191
+"22","Paracaesio sordida","Dirty ordure snapper",600192,"Medium",192
+"23","Paracaesio stonei","Cocoa snapper",600193,"Medium",193
+"24","Paracaesio xanthura","Yellowtail blue snapper",600194,"Medium",194
+"25","Pristipomoides argyrogrammicus","Ornate jobfish",600199,"Medium",199
+"26","Pristipomoides auricilla","Goldflag jobfish",600200,"Medium",200
+"27","Pristipomoides flavipinnis","Golden eye jobfish",600202,"Medium",202
+"28","Petrus rupestris","Red steenbras",600447,"Low",447
+"29","Stenotomus chrysops","Scup",600452,"Medium",452
+"30","Doederleinia berycoides","Rosy seabass",604599,"Medium",4599
+"31","Acipenser ruthenus","Sterlet sturgeon",604604,"Low",4604
+"32","Merluccius merluccius","European hake",600030,"Low",30
+"33","Lophius gastrophysus","Blackfin goosefish",601078,"Medium",1078
+"34","Mugil incilis","Parassi mullet",601089,"High",1089
+"35","Mugil liza","Lebranche mullet",601090,"Medium",1090
+"36","Heteropriacanthus cruentatus","Glasseye",601150,"High",1150
+"37","Sparus aurata","Gilthead seabream",601164,"Medium",1164
+"38","Acanthurus xanthopterus","Yellowfin surgeonfish",601261,"Low",1261
+"39","Ctenochaetus striatus","Striated surgeonfish",601262,"Low",1262
+"40","Naso hexacanthus","Sleek unicornfish",601263,"Low",1263
+"41","Naso lituratus","Orangespine unicornfish",601264,"Medium",1264
+"42","Naso unicornis","Bluespine unicornfish",601265,"Low",1265
+"43","Zebrasoma velifer","Sailfin tang",601266,"Medium",1266
+"44","Platybelone argalus platyura","Keeled needlefish",601314,"Medium",1314
+"45","Tylosurus acus melanotus","Keeljawed needle fish",601317,"Medium",1317
+"46","Siganus guttatus","Goldlined spinefoot",604588,"High",4588
+"47","Bothus pantherinus","Leopard flounder",601321,"Medium",1321
+"48","Mullus surmuletus","Surmullet",601327,"Medium",1327
+"49","Paralichthys dentatus","Summer flounder",601338,"Medium",1338
+"50","Serranus cabrilla","Comber",601353,"Medium",1353
+"51","Siganus argenteus","Streamlined spinefoot",604614,"High",4614
+"52","Dentex congoensis","Congo dentex",604641,"Medium",4641
+"53","Acipenser baerii","Siberian sturgeon",604683,"Very low",4683
+"54","Molva dypterygia","Blue ling",601383,"Low",1383
+"55","Lutjanus analis","Mutton snapper",601403,"Low",1403
+"56","Lutjanus erythropterus","Crimson snapper",601406,"Medium",1406
+"57","Lutjanus argentimaculatus","Mangrove red snapper",601407,"Low",1407
+"58","Lutjanus argentiventris","Yellow snapper",601408,"Low",1408
+"59","Cyprinus carpio","Common carp",601450,"Medium",1450
+"60","Chirocentrus nudus","Whitefin wolf-herring",601452,"Medium",1452
+"61","Gobius niger","Black goby",600072,"Medium",72
+"62","Helicolenus dactylopterus","Blackbelly rosefish",600076,"Very low",76
+"63","Istiophorus platypterus","Indo-Pacific sailfish",600077,"Low",77
+"64","Thalassoma purpureum","Surge wrasse",605647,"Medium",5647
+"65","Thalassoma quinquevittatum","Fivestripe wrasse",605648,"High",5648
+"66","Neomyxus leuciscus","Acutejawed mullet",605652,"Medium",5652
+"67","Crenimugil crenilabis","Fringelip mullet",605653,"High",5653
+"68","Chromis margaritifer","Bicolor chromis",605675,"High",5675
+"69","Chromis ternatensis","Ternate chromis",605677,"High",5677
+"70","Chromis viridis","Bluegreen damselfish",605679,"High",5679
+"71","Abudefduf septemfasciatus","Banded sergeant",605687,"Medium",5687
+"72","Abudefduf sexfasciatus","Scissortail sergeant",605688,"Medium",5688
+"73","Abudefduf sordidus","Blackspot sergeant",605689,"Medium",5689
+"74","Istiophorus albicans","Atlantic sailfish",600078,"Medium",78
+"75","Chrysiptera biocellata","Twinspot damselfish",605693,"High",5693
+"76","Chrysiptera glauca","Grey demoiselle",605696,"High",5696
+"77","Plectroglyphidodon lacrymatus","Whitespotted devil",605712,"High",5712
+"78","Plectroglyphidodon leucozonus","Singlebar devil",605713,"High",5713
+"79","Pomacentrus amboinensis","Ambon damsel",605715,"High",5715
+"80","Pomacentrus pavo","Sapphire damsel",605726,"High",5726
+"81","Pomacentrus vaiuli","Ocellate damselfish",605730,"High",5730
+"82","Sphyraena acutipinnis","Sharpfin barracuda",605733,"Medium",5733
+"83","Sphyraena forsteri","Bigeye barracuda",605734,"Medium",5734
+"84","Platax orbicularis","Orbicular batfish",605737,"Medium",5737
+"85","Platax pinnatus","Dusky batfish",605738,"Medium",5738
+"86","Platax teira","Longfin batfish",605739,"Medium",5739
+"87","Apogonichthys ocellatus","Ocellated cardinalfish",605740,"High",5740
+"88","Apogon coccineus","Ruby cardinalfish",605752,"High",5752
+"89","Lamna nasus","Porbeagle",600088,"Very low",88
+"90","Nectamia bandanensis","Bigeye cardinalfish",605763,"High",5763
+"91","Nectamia savayensis","Samoan cardinalfish",605764,"High",5764
+"92","Zoramia gilberti","Gilberts cardinalfish",605772,"High",5772
+"93","Zoramia perlita","Pearly cardinalfish",605774,"High",5774
+"94","Cheilodipterus artus","Wolf cardinalfish",605780,"High",5780
+"95","Cheilodipterus macrodon","Largetoothed cardinalfish",605781,"High",5781
+"96","Cheilodipterus singapurensis","Truncate cardinalfish",605782,"High",5782
+"97","Synodus marchenae","Lizardfish",650023,"High",50023
+"98","Thunnus albacares","Yellowfin tuna",600143,"Medium",143
+"99","Thunnus atlanticus","Blackfin tuna",600144,"Medium",144
+"100","Urotrygon serrula","Stingray",650099,"Low",50099
+"101","Peprilus paru","American harvestfish",628143,"High",28143
+"102","Liza haematocheila","So-iny mullet",657506,"Medium",13000
+"103","Thunnus maccoyii","Southern bluefin tuna",600145,"Low",145
+"104","Thunnus obesus","Bigeye tuna",600146,"Low",146
+"105","Thaleichthys pacificus","Eulachon",600256,"Medium",256
+"106","Glossanodon semifasciatus","Deepsea smelt",600257,"High",257
+"107","Lampanyctodes hectoris","Hectors lanternfish",600259,"High",259
+"108","Harpadon nehereus","Bombay duck",600260,"High",260
+"109","Lutjanus fulviflamma","Dory snapper",600261,"Medium",261
+"110","Lutjanus fulvus","Blacktail snapper",600262,"Medium",262
+"111","Lutjanus johnii","Johns snapper",600264,"Medium",264
+"112","Lutjanus gibbus","Humpback red snapper",600265,"Medium",265
+"113","Galeichthys feliceps","White barbel",600288,"Medium",288
+"114","Muraenesox cinereus","Daggertooth pike conger",600298,"Low",298
+"115","Conger conger","European conger",600301,"Very low",301
+"116","Conger myriaster","Whitespotted conger",600302,"Low",302
+"117","Cololabis saira","Pacific saury",600303,"High",303
+"118","Hyporhamphus sajori","Japanese halfbeak",600305,"Medium",305
+"119","Salilota australis","Tadpole codling",600306,"Medium",306
+"120","Gadus macrocephalus","Pacific cod",600308,"Low",308
+"121","Gadus ogac","Greenland cod",600309,"Medium",309
+"122","Urophycis chuss","Red hake",600312,"Medium",312
+"123","Urophycis tenuis","White hake",600313,"Low",313
+"124","Eleginus nawaga","Navaga",600314,"Medium",314
+"125","Eleginus gracilis","Saffron cod",600315,"Medium",315
+"126","Microgadus tomcod","Atlantic tomcod",600316,"Medium",316
+"127","Theragra chalcogramma","Alaska pollock",600318,"Low",318
+"128","Boreogadus saida","Polar cod",600319,"Medium",319
+"129","Micromesistius australis","Southern blue whiting",600320,"Medium",320
+"130","Merluccius senegalensis","Senegalese hake",600321,"Low",321
+"131","Merluccius australis","Southern hake",600322,"Low",322
+"132","Merluccius bilinearis","Silver hake",600323,"Medium",323
+"133","Merluccius gayi gayi","South Pacific hake",600324,"Medium",324
+"134","Merluccius hubbsi","Argentine hake",600325,"Low",325
+"135","Merluccius productus","North Pacific hake",600326,"Low",326
+"136","Merluccius polli","Benguela hake",600327,"Medium",327
+"137","Macruronus magellanicus","Patagonian grenadier",600329,"Low",329
+"138","Trachurus japonicus","Japanese jack mackerel",600366,"Medium",366
+"139","Macrourus berglax","Roughhead grenadier",600331,"Very low",331
+"140","Coryphaenoides rupestris","Roundnose grenadier",600332,"Low",332
+"141","Macroramphosus scolopax","Longspine snipefish",600333,"Medium",333
+"142","Hoplostethus atlanticus","Orange roughy",600334,"Very low",334
+"143","Zenopsis conchifer","Silvery John dory",600336,"Low",336
+"144","Joturus pichardi","Bobo mullet",600338,"Medium",338
+"145","Menidia menidia","Atlantic silverside",600339,"High",339
+"146","Galeoides decadactylus","Lesser African threadfin",600341,"Medium",341
+"147","Lates calcarifer","Barramundi",600346,"Medium",346
+"148","Epinephelus analogus","Spotted grouper",600348,"Medium",348
+"149","Polyprion americanus","Wreckfish",600349,"Low",349
+"150","Hoplopagrus guentherii","Mexican barred snapper",601393,"Low",1393
+"151","Lutjanus apodus","Schoolmaster snapper",601404,"Medium",1404
+"152","Lutjanus bohar","Two-spot red snapper",601417,"Medium",1417
+"153","Dussumieria acuta","Rainbow sardine",601453,"High",1453
+"154","Dussumieria elopsoides","Slender rainbow sardine",601454,"High",1454
+"155","Etrumeus sadina","Red-eye round herring",601455,"Medium",1455
+"156","Etrumeus whiteheadi","Whiteheads round herring",601456,"High",1456
+"157","Spratelloides gracilis","Silverstriped round herring",601458,"High",1458
+"158","Sprattus fuegensis","Falkland sprat",601466,"High",1466
+"159","Clupeonella cultriventris","Caspian Sea sprat",601470,"Medium",1470
+"160","Opisthonema libertate","Pacific thread herring",601484,"High",1484
+"161","Opisthonema oglinum","Atlantic thread herring",601486,"Medium",1486
+"162","Herklotsichthys quadrimaculatus","Bluestripe herring",601494,"High",1494
+"163","Sardinella brasiliensis","Brazilian sardinella",601505,"High",1505
+"164","Sardinella gibbosa","Goldstripe sardinella",601508,"High",1508
+"165","Sardinella lemuru","Bali sardinella",601510,"High",1510
+"166","Sardinella longiceps","Indian oil sardine",601511,"High",1511
+"167","Sardinella zunasi","Japanese sardinella",601519,"High",1519
+"168","Clupea pallasii pallasii","Pacific herring",601520,"Medium",1520
+"169","Lile stolifera","Pacific piquitinga",601529,"High",1529
+"170","Clupea bentincki","Araucanian herring",601530,"High",1530
+"171","Alosa aestivalis","Blueback shad",601574,"Medium",1574
+"172","Alosa mediocris","Hickory shad",601582,"Medium",1582
+"173","Alosa pseudoharengus","Alewife",601583,"Medium",1583
+"174","Alosa sapidissima","American shad",601584,"Low",1584
+"175","Brevoortia aurea","Brazilian menhaden",601587,"High",1587
+"176","Brevoortia patronus","Gulf menhaden",601589,"Medium",1589
+"177","Brevoortia pectinata","Argentine menhaden",601590,"High",1590
+"178","Gymnura micrura","Smooth butterfly ray",602579,"Very low",2579
+"179","Brevoortia tyrannus","Atlantic menhaden",601592,"Medium",1592
+"180","Ethmidium maculatum","Pacific menhaden",601593,"High",1593
+"181","Ethmalosa fimbriata","Bonga shad",601594,"High",1594
+"182","Hilsa kelee","Kelee shad",601595,"High",1595
+"183","Tenualosa ilisha","Hilsa shad",601596,"High",1596
+"184","Tenualosa toli","Toli shad",601600,"High",1600
+"185","Dorosoma cepedianum","American gizzard shad",601604,"Medium",1604
+"186","Clupanodon thrissa","Chinese gizzard shad",601608,"High",1608
+"187","Konosirus punctatus","Dotted gizzard shad",601609,"High",1609
+"188","Anodontostoma chacunda","Chacunda gizzard shad",601619,"High",1619
+"189","Ilisha africana","West African ilisha",601625,"High",1625
+"190","Ilisha elongata","Elongate ilisha",601627,"High",1627
+"191","Pellona ditchela","Indian pellona",601641,"High",1641
+"192","Engraulis anchoita","Argentine anchovy",601659,"Medium",1659
+"193","Engraulis capensis","Southern African anchovy",601661,"High",64907
+"194","Engraulis japonicus","Japanese anchovy",601663,"High",1663
+"195","Engraulis mordax","Californian anchovy",601664,"Medium",1664
+"196","Anthias anthias","Swallowtail seaperch",601692,"Medium",1692
+"197","Atherina boyeri","Bigscale sand smelt",601696,"Medium",1696
+"198","Mora moro","Common mora",601734,"Low",1734
+"199","Liza aurata","Golden grey mullet",601735,"Medium",1735
+"200","Liza saliens","Leaping mullet",601736,"Medium",1736
+"201","Phycis phycis","Forkbeard",601747,"Medium",1747
+"202","Diplodus puntazzo","Sharpsnout seabream",601749,"Medium",1749
+"203","Diplodus annularis","Annular seabream",601752,"Medium",1752
+"204","Diplodus sargus sargus","White seabream",601753,"Medium",1753
+"205","Diplodus vulgaris","Common twobanded seabream",601754,"Medium",1754
+"206","Pagrus pagrus","Red porgy",601756,"Medium",1756
+"207","Scorpaena scrofa","Red scorpionfish",601759,"Low",1759
+"208","Trachinotus ovatus","Pompano",601773,"Medium",1773
+"209","Trachipterus trachypterus","Mediterranean dealfish",601777,"Low",1777
+"210","Tetrapturus belone","Mediterranean spearfish",601823,"Low",1823
+"211","Macruronus novaezelandiae","Blue grenadier",601825,"Low",1825
+"212","Merluccius angustimanus","Panama hake",601827,"Medium",1827
+"213","Merluccius capensis","Shallow-water Cape hake",601828,"Low",1828
+"214","Gnathodentex aureolineatus","Striped large-eye bream",601832,"Medium",1832
+"215","Lethrinus rubrioperculatus","Spotcheek emperor",601848,"Medium",1848
+"216","Lethrinus amboinensis","Ambon emperor",601853,"Medium",1853
+"217","Lethrinus miniatus","Trumpet emperor",601858,"Medium",1858
+"218","Lethrinus lentjan","Pink ear emperor",601863,"Medium",1863
+"219","Lethrinus olivaceus","Longface emperor",601864,"Low",1864
+"220","Enchelyopus cimbrius","Fourbeard rockling",601874,"Medium",1874
+"221","Microgadus proximus","Pacific tomcod",601879,"Medium",1879
+"222","Alectis alexandrina","Alexandria pompano",601888,"Medium",1888
+"223","Caranx rhonchus","False scad",601899,"Medium",1899
+"224","Caranx melampygus","Bluefin trevally",601906,"Medium",1906
+"225","Scarus oviceps","Darkcapped parrotfish",605551,"High",5551
+"226","Caranx ruber","Bar jack",601918,"Medium",1918
+"227","Ulua aurochs","Silvermouth trevally",601931,"Medium",1931
+"228","Caranx crysos","Blue runner",601933,"Medium",1933
+"229","Decapterus maruadsi","Japanese scad",601939,"High",1939
+"230","Parastromateus niger","Black pomfret",601947,"High",1947
+"231","Scomberoides commersonnianus","Talang queenfish",601950,"Medium",1950
+"232","Trachinotus blochii","Snubnose pompano",601963,"Medium",1963
+"233","Trachinotus mookalee","Indian pompano",601964,"Medium",1964
+"234","Trachurus longimanus","Crozet scad",601980,"High",1980
+"235","Antimora rostrata","Blue antimora",602005,"Medium",2005
+"236","Drepane punctata","Spotted sicklefish",600454,"Medium",454
+"237","Lycengraulis grossidens","Atlantic sabretooth anchovy",600552,"Medium",552
+"238","Squatina californica","Pacific angelshark",600729,"Very low",729
+"239","Anchoa marinii","Marini's anchovy",600925,"High",925
+"240","Amphichthys cryptocentrus","Bocon toadfish",600967,"Medium",967
+"241","Merluccius albidus","Offshore silver hake",601080,"Medium",1080
+"242","Haemulon album","White margate",601126,"Medium",1126
+"243","Anchoa spinifer","Spicule anchovy",600538,"High",538
+"244","Notarius grandicassis","Thomas sea catfish",600949,"Low",949
+"245","Sciades parkeri","Gillbacker sea catfish",600952,"High",952
+"246","Pomadasys corvinaeformis","Roughneck grunt",601146,"Medium",1146
+"247","Sebastolobus macrochir","Broadbanded thornyhead",611704,"Very low",11704
+"248","Cleisthenes pinetorum","Sôhachi",652511,"Low",52511
+"249","Hippoglossoides dubius","Flathead flounder",608845,"Low",8845
+"250","Chiloscyllium griseum","Grey bambooshark",604304,"Low",4304
+"251","Amphiarius phrygiatus","Kukwari sea catfish",600954,"Medium",954
+"252","Hypoatherina temminckii","Samoan silverside",601307,"High",1307
+"253","Caranx latus","Horseeye jack",601935,"Medium",1935
+"254","Haemulon plumierii","White grunt",601140,"Medium",1140
+"255","Pseudupeneus maculatus","Spotted goatfish",601094,"High",1094
+"256","Anchoa nasus","Longnose anchovy",601163,"High",1163
+"257","Dasyatis americana","Southern stingray",601247,"Very low",1247
+"258","Lutjanus cyanopterus","Cubera snapper",601427,"Low",1427
+"259","Harengula thrissina","Pacific flatiron herring",601481,"High",1481
+"260","Stegastes punctatus","Blunt snout gregory",658951,"High",4351
+"261","Lagocephalus sceleratus","Silvercheeked toadfish",604761,"Low",4761
+"262","Serranus scriba","Painted comber",601761,"Medium",1761
+"263","Selene brevoortii","Hairfin lookdown",601956,"High",1956
+"264","Brotula clarkae","Pacific bearded brotula",608275,"Low",8275
+"265","Parapsettus panamensis","Panama spadefish",608326,"High",8326
+"266","Epinephelus guttatus","Red hind",600015,"Medium",15
+"267","Epinephelus morio","Red grouper",600017,"Low",17
+"268","Epinephelus striatus","Nassau grouper",600018,"Low",18
+"269","Anguilla anguilla","European eel",600035,"Very low",35
+"270","Aphia minuta","Transparent goby",600039,"High",39
+"271","Arnoglossus laterna","Mediterranean scaldfish",600041,"Medium",41
+"272","Caesio lunaris","Lunar fusilier",600920,"High",920
+"273","Caesio teres","Yellow and blueback fusilier",600923,"High",923
+"274","Chelidonichthys cuculus","Red gurnard",600044,"Medium",44
+"275","Pterocaesio pisang","Banana fusilier",600936,"High",936
+"276","Atrobucca nibe","Blackmouth croaker",600941,"Medium",941
+"277","Melichthys niger","Black triggerfish",600966,"Medium",966
+"278","Ablennes hians","Flat needlefish",600972,"Medium",972
+"279","Tylosurus crocodilus","Hound needlefish",600977,"Low",977
+"280","Caulolatilus chrysops","Atlantic goldeye tilefish",600983,"Medium",983
+"281","Alectis ciliaris","African pompano",600988,"Low",988
+"282","Sphoeroides maculatus","Northern puffer",601181,"High",1181
+"283","Sciaenops ocellatus","Red drum",601191,"Medium",1191
+"284","Chanos chanos","Milkfish",600080,"Low",80
+"285","Aphareus furca","Small toothed jobfish",600081,"Medium",81
+"286","Aprion virescens","Green jobfish",600084,"Medium",84
+"287","Apsilus fuscus","African forktail snapper",600086,"Medium",86
+"288","Etelis carbunculus","Deepwater red snapper",600087,"Very low",87
+"289","Allothunnus fallai","Slender tuna",600091,"Medium",91
+"290","Grammatorcynus bilineatus","Doublelined mackerel",600104,"Medium",104
+"291","Hyporthodus flavolimbatus","Yellowedge grouper",601205,"Low",1205
+"292","Hyporthodus nigritus","Warsaw grouper",601207,"Low",1207
+"293","Hyporthodus niveatus","Snowy grouper",601208,"Low",1208
+"294","Mycteroperca bonaci","Black grouper",601209,"Low",1209
+"295","Mycteroperca interstitialis","Yellowmouth grouper",601211,"Low",1211
+"296","Mycteroperca microlepis","Gag",601212,"Low",1212
+"297","Mycteroperca rubra","Mottled grouper",601214,"Medium",1214
+"298","Paranthias furcifer","Creolefish",601217,"Medium",1217
+"299","Archosargus rhomboidalis","Western Atlantic seabream",601219,"High",1219
+"300","Calamus bajonado","Jolthead porgy",601221,"Medium",1221
+"301","Sphyraena barracuda","Great barracuda",601235,"Low",1235
+"302","Spratelloides delicatulus","Delicate round herring",601457,"High",1457
+"303","Clupeonella engrauliformis","Anchovy sprat",601471,"High",1471
+"304","Harengula clupeola","False herring",601478,"High",1478
+"305","Harengula humeralis","Redear herring",601479,"High",1479
+"306","Sargocentron diadema","Crown squirrelfish",604699,"High",4699
+"307","Amblygaster sirm","Spotted sardinella",601501,"High",1501
+"308","Sardinella fimbriata","Fringescale sardinella",601507,"High",1507
+"309","Plotosus lineatus","Striped eel catfish",604706,"Medium",4706
+"310","Pomadasys jubelini","Sompat grunt",604708,"Medium",4708
+"311","Callorhinchus milii","Ghost shark",604722,"Low",4722
+"312","Acanthurus nubilus","Bluelined surgeon",604733,"High",4733
+"313","Acanthurus guttatus","Whitespotted surgeonfish",604736,"High",4736
+"314","Acanthurus nigrofuscus","Brown surgeonfish",604739,"Medium",4739
+"315","Acanthurus pyroferus","Chocolate surgeonfish",604742,"Medium",4742
+"316","Acanthurus blochii","Ringtail surgeonfish",604750,"Low",4750
+"317","Leuciscus aspius","Asp",604783,"Medium",4783
+"318","Plectropomus leopardus","Leopard coralgrouper",604826,"Medium",4826
+"319","Pollachius pollachius","Pollack",600034,"Medium",34
+"320","Atherina presbyter","Sand smelt",600045,"High",45
+"321","Nematalosa nasus","Blochs gizzard shad",601616,"High",1616
+"322","Anchoa choerostoma","Bermuda anchovy",601684,"High",1684
+"323","Sphyraena jello","Pickhandle barracuda",604827,"Low",4827
+"324","Spicara maena","Blotched picarel",604887,"Medium",4887
+"325","Anampses caeruleopunctatus","Bluespotted wrasse",604888,"Medium",4888
+"326","Sargocentron punctatissimum","Speckled squirrelfish",604906,"High",4906
+"327","Sargocentron caudimaculatum","Silverspot squirrelfish",604907,"High",4907
+"328","Sargocentron violaceum","Violet squirrelfish",604909,"High",4909
+"329","Pterois radiata","Radial firefish",604913,"Medium",4913
+"330","Belone belone","Garfish",600047,"Medium",47
+"331","Brosme brosme","Tusk",600051,"Low",51
+"332","Chromis chromis","Damselfish",601706,"Medium",1706
+"333","Sciaena umbra","Brown meagre",601707,"Medium",1707
+"334","Lepidotrigla cavillone","Largescaled gurnard",601722,"Medium",1722
+"335","Muraena helena","Mediterranean moray",601729,"Very low",1729
+"336","Mola mola","Ocean sunfish",601732,"Medium",1732
+"337","Gymnothorax javanicus","Giant moray",606380,"High",6380
+"338","Spicara smaris","Picarel",601766,"Medium",1766
+"339","Uranoscopus scaber","Stargazer",601779,"Medium",1779
+"340","Acanthurus monroviae","Monrovia doctorfish",601800,"Medium",1800
+"341","Priacanthus hamrur","Moontail bullseye",605791,"High",5791
+"342","Malacanthus brevirostris","Quakerfish",605795,"Medium",5795
+"343","Malacanthus latovittatus","Blue blanquillo",605796,"Medium",5796
+"344","Gazza achlamys","Smalltoothed ponyfish",605797,"High",5797
+"345","Equulites stercorarius","Oblong slipmouth",605798,"High",5798
+"346","Gerres oblongus","Slender silverbiddy",605801,"High",5801
+"347","Pempheris oualensis","Silver sweeper",605802,"High",5802
+"348","Parapriacanthus ransonneti","Pigmy sweeper",605803,"High",5803
+"349","Kyphosus bigibbus","Brown chub",605804,"Low",5804
+"350","Kyphosus cinerascens","Blue seachub",605805,"Medium",5805
+"351","Kyphosus vaigiensis","Brassy chub",605806,"Low",5806
+"352","Sebastapistes strongia","Barchin scorpionfish",605814,"High",5814
+"353","Scorpaenodes guamensis","Guam scorpionfish",605819,"Medium",5819
+"354","Scorpaenopsis macrochir","Flasher scorpionfish",605820,"Medium",5820
+"355","Scorpaenopsis oxycephala","Tassled scorpionfish",605822,"Low",5822
+"356","Neocirrhites armatus","Flame hawkfish",605832,"High",5832
+"357","Cantherhines dumerilii","Whitespotted filefish",605836,"Medium",5836
+"358","Kuhlia mugil","Barred flagtail",605790,"Low",5790
+"359","Melichthys vidua","Pinktail triggerfish",605838,"Medium",5838
+"360","Sargocentron microstoma","Smallmouth squirrelfish",605841,"High",5841
+"361","Nemipterus randalli","Randalls threadfin bream",605852,"High",5852
+"362","Pentapodus trivittatus","Three-striped whiptail",605873,"High",5873
+"363","Scolopsis lineata","Striped monocle bream",605877,"High",5877
+"364","Scolopsis bilineata","Two-lined monocle bream",605885,"High",5885
+"365","Scolopsis taeniata","Blackstreaked monocle bream",605889,"High",5889
+"366","Nebrius ferrugineus","Tawny nurse shark",605895,"Very low",5895
+"367","Acanthocybium solandri","Wahoo",600089,"Medium",89
+"368","Cetorhinus maximus","Basking shark",600090,"Very low",90
+"369","Auxis rochei","Bullet tuna",600093,"Medium",93
+"370","Auxis thazard","Frigate tuna",600094,"Medium",94
+"371","Mustelus lenticulatus","Spotted estuary smooth-hound",605933,"Very low",5933
+"372","Corythoichthys intestinalis","Scribbled pipefish",605961,"High",5961
+"373","Mulloidichthys vanicolensis","Yellowfin goatfish",605984,"Medium",5984
+"374","Mulloidichthys pfluegeri","Orange goatfish",605985,"Medium",5985
+"375","Parupeneus barberinoides","Bicolor goatfish",605986,"High",5986
+"376","Parupeneus barberinus","Dash-and-dot goatfish",605987,"Medium",5987
+"377","Parupeneus trifasciatus","Doublebar goatfish",605988,"Medium",5988
+"378","Parupeneus ciliatus","Whitesaddle goatfish",605989,"Medium",5989
+"379","Aphareus rutilans","Rusty jobfish",600083,"Medium",83
+"380","Rhinobatos percellens","Chola guitarfish",600140,"Low",140
+"381","Callorhinchus capensis","Cape elephantfish",600167,"Low",167
+"382","Pristipomoides multidens","Goldbanded jobfish",600208,"Medium",208
+"383","Hypophthalmichthys molitrix","Silver carp",600274,"Medium",274
+"384","Pentanemus quinquarius","Royal threadfin",600342,"High",342
+"385","Priacanthus macracanthus","Red bigeye",600356,"Medium",356
+"386","Selene dorsalis","African moonfish",600379,"High",379
+"387","Conodon nobilis","Barred grunt",600401,"Medium",401
+"388","Dentex angolensis","Angola dentex",600440,"Medium",440
+"389","Archosargus probatocephalus","Sheepshead",600441,"Medium",441
+"390","Tautoga onitis","Tautog",600458,"Low",458
+"391","Scymnodon ringens","Knifetooth dogfish",600700,"Low",700
+"392","Squalus blainville","Longnose spurdog",600708,"Very low",708
+"393","Scyliorhinus canicula","Smallspotted catshark",600845,"Low",845
+"394","Pterocaesio marri","Marr's fusilier",600935,"High",935
+"395","Pterocaesio tile","Darkbanded fusilier",600939,"High",939
+"396","Dasyatis akajei","Whip stingray",600940,"Low",940
+"397","Sciades couma","Couma sea catfish",600948,"Medium",948
+"398","Platycephalus indicus","Bartail flathead",600950,"Medium",950
+"399","Acanthistius brasilianus","Argentine seabass",600351,"Medium",351
+"400","Morone saxatilis","Striped bass",600353,"Low",353
+"401","Morone americana","White perch",600355,"Low",355
+"402","Synagrops japonicus","Blackmouth splitfin",600357,"Medium",357
+"403","Sander lucioperca","Pike-perch",600360,"Low",360
+"404","Lactarius lactarius","False trevally",600363,"High",363
+"405","Pomatomus saltatrix","Bluefish",600364,"Medium",364
+"406","Trachurus murphyi","Chilean jack mackerel",600367,"Low",367
+"407","Trachurus symmetricus","Pacific jack mackerel",600368,"Low",368
+"408","Trachurus lathami","Rough scad",600369,"Medium",369
+"409","Trachurus trecae","Cunene horse mackerel",600371,"Medium",371
+"410","Trachurus declivis","Greenback horse mackerel",600372,"Medium",372
+"411","Decapterus russelli","Indian scad",600374,"Medium",374
+"412","Selene setapinnis","Atlantic moonfish",600378,"Medium",378
+"413","Thyrsites atun","Snoek",600489,"Medium",489
+"414","Trachinotus carolinus","Florida pompano",600380,"Medium",380
+"415","Seriola quinqueradiata","Japanese amberjack",600381,"Medium",381
+"416","Seriola lalandi","Yellowtail amberjack",600382,"Low",382
+"417","Megalaspis cordyla","Torpedo scad",600384,"Medium",384
+"418","Chloroscombrus chrysurus","Atlantic bumper",600385,"Medium",385
+"419","Selar crumenophthalmus","Bigeye scad",600387,"High",387
+"420","Selaroides leptolepis","Yellowstripe scad",600388,"High",388
+"421","Brama brama","Atlantic pomfret",600391,"Low",391
+"422","Arripis georgianus","Ruff",600392,"Medium",392
+"423","Dicentrarchus punctatus","Spotted seabass",600394,"Medium",394
+"424","Isacia conceptionis","Cabinza grunt",600397,"Medium",397
+"425","Plectorhinchus mediterraneus","Rubberlip grunt",600398,"Medium",398
+"426","Brachydeuterus auritus","Bigeye grunt",600400,"Medium",400
+"427","Cynoscion striatus","Striped weakfish",600407,"High",407
+"428","Micropogonias undulatus","Atlantic croaker",600408,"Medium",408
+"429","Menticirrhus americanus","Southern kingcroaker",600409,"Medium",409
+"430","Menticirrhus saxatilis","Northern kingcroaker",600410,"High",410
+"431","Elagatis bipinnulata","Rainbow runner",600412,"Medium",412
+"432","Larimichthys polyactis","Yellow croaker",600416,"Medium",416
+"433","Macrodon ancylodon","King weakfish",600417,"Medium",417
+"434","Argyrosomus regius","Meagre",600418,"Low",418
+"435","Argyrosomus hololepidotus","Southern meagre",600419,"Very low",419
+"436","Atractoscion aequidens","Geelbeck croaker",600420,"Low",420
+"437","Genyonemus lineatus","White croaker",600422,"Medium",422
+"438","Pteroscion peli","Boe drum",600423,"Medium",423
+"439","Nibea mitsukurii","Honnibe croaker",600427,"Medium",427
+"440","Larimichthys crocea","Large yellow croaker",600428,"Medium",428
+"441","Pseudotolithus elongatus","Bobo croaker",600433,"Medium",433
+"442","Pennahia argentata","Silver croaker",600434,"High",434
+"443","Achirus klunzingeri","Brown sole",613429,"Medium",13429
+"444","Pomadasys panamensis","Panama grunt",613740,"Medium",13740
+"445","Larimus acclivis","Steeplined drum",614015,"High",14015
+"446","Paralonchurus dumerilii","Suco croaker",614069,"Medium",14069
+"447","Stellifer illecebrosus","Silver stardrum",614084,"High",14084
+"448","Stellifer zestocarus","Softhead stardrum",614090,"High",14090
+"449","Peprilus snyderi","Salema butterfish",614146,"High",14146
+"450","Synodus scituliceps","Shorthead lizardfish",614155,"High",14155
+"451","Diplectrum pacificum","Inshore sand perch",614248,"Medium",14248
+"452","Pronotogrammus eos","Bigeye bass",614296,"Medium",14296
+"453","Encrasicholina devisi","Devis anchovy",600555,"High",555
+"454","Stolephorus waitei","Spotty face anchovy",600578,"Medium",578
+"455","Phycis chesteri","Longfin hake",601880,"Low",1880
+"456","Campogramma glaycos","Vadigo",601894,"Medium",1894
+"457","Manta birostris","Giant manta",602061,"Very low",2061
+"458","Pseudotriakis microdon","False catshark",602536,"Very low",2536
+"459","Mustelus canis","Dusky smoothhound",602539,"Low",2539
+"460","Gymnura marmorata","California butterfly ray",602578,"Very low",2578
+"461","Trachipterus arcticus","Dealfish",603265,"Very low",3265
+"462","Malacanthus plumieri","Sand tilefish",603541,"Low",3541
+"463","Sebastes crameri","Darkblotched rockfish",603962,"Very low",3962
+"464","Erilepis zonifer","Skilfish",604031,"Very low",4031
+"465","Hexagrammos decagrammus","Kelp greenling",604032,"Medium",4032
+"466","Raja maderensis","Madeiran ray",605013,"Low",5013
+"467","Cymatoceps nasutus","Black musselcracker",605531,"Very low",5531
+"468","Alopias pelagicus","Pelagic thresher",605891,"Very low",5891
+"469","Pseudocarcharias kamoharai","Crocodile shark",605923,"Very low",5923
+"470","Triakis megalopterus","Sharptooth houndshark",605948,"Very low",5948
+"471","Sphyraena ensis","Mexican barracuda",606405,"Low",6405
+"472","Gymnoscopelus nicholsi","Nichol's lanternfish",606990,"Medium",6990
+"473","Parachaenichthys georgianus","Parachaenichthys georgianus",607103,"Medium",7103
+"474","Chionodraco hamatus","Hooked icefish",607109,"Medium",7109
+"475","Scomberomorus semifasciatus","Broadbarred king mackerel",600135,"Medium",135
+"476","Lutjanus guttatus","Spotted rose snapper",600152,"Medium",152
+"477","Lutjanus jordani","Jordans snapper",600155,"Medium",155
+"478","Lutjanus kasmira","Common bluestripe snapper",600156,"Medium",156
+"479","Aetobatus narinari","Spotted eagle ray",601250,"Very low",1250
+"480","Acanthurus mata","Elongate surgeonfish",601255,"Low",1255
+"481","Acanthurus dussumieri","Eyestripe surgeonfish",601256,"Low",1256
+"482","Mycteroperca phenax","Scamp",601213,"Low",1213
+"483","Lutjanus monostigma","Onespot snapper",600166,"Medium",166
+"484","Lutjanus russellii","Russell's snapper",600176,"Medium",176
+"485","Pristipomoides macrophthalmus","Cardinal snapper",600206,"Medium",206
+"486","Bothus podas","Wide-eyed flounder",600207,"Medium",207
+"487","Pristipomoides sieboldii","Lavender jobfish",600209,"Medium",209
+"488","Pristipomoides zonatus","Oblique-banded snapper",600211,"Medium",211
+"489","Symphorichthys spilurus","Sailfin snapper",600214,"Medium",214
+"490","Albula vulpes","Bonefish",600228,"Low",228
+"491","Ciliata mustela","Fivebeard rockling",601290,"High",1290
+"492","Pterothrissus belloci","Longfin bonefish",600229,"Medium",229
+"493","Salvelinus fontinalis","Brook trout",600246,"Medium",246
+"494","Atherinomorus lacunosus","Hardyhead silverside",601303,"Medium",1303
+"495","Umbrina cirrosa","Shi drum",601306,"Medium",1306
+"496","Odonus niger","Redtoothed triggerfish",601311,"Medium",1311
+"497","Sufflamen fraenatum","Masked triggerfish",601312,"Medium",1312
+"498","Sphyraena sphyraena","European barracuda",601765,"Medium",1765
+"499","Gymnocranius grandoculis","Bluelined largeeye bream",601834,"Medium",1834
+"500","Gymnocranius euanus","Japanese largeeye bream",601837,"Medium",1837
+"501","Plecoglossus altivelis altivelis","Ayu sweetfish",600251,"High",251
+"502","Merluccius paradoxus","Deepwater Cape hake",601826,"Low",1826
+"503","Gymnocranius griseus","Grey largeeye bream",601833,"Medium",1833
+"504","Lethrinus variegatus","Slender emperor",601850,"Medium",1850
+"505","Lethrinus harak","Thumbprint emperor",601851,"Medium",1851
+"506","Lethrinus xanthochilus","Yellowlip emperor",601852,"Low",1852
+"507","Lethrinus atkinsoni","Pacific yellowtail emperor",601854,"Medium",1854
+"508","Carangoides armatus","Longfin trevally",601916,"Medium",1916
+"509","Alepes djedaba","Shrimp scad",601889,"High",1889
+"510","Caranx ignobilis","Giant trevally",601895,"Medium",1895
+"511","Carangoides orthogrammus","Island trevally",601909,"Medium",1909
+"512","Carangoides plagiotaenia","Barcheek trevally",601910,"Medium",1910
+"513","Scomberoides tol","Needlescaled queenfish",601953,"Medium",1953
+"514","Seriolina nigrofasciata","Blackbanded trevally",601962,"Medium",1962
+"515","Trachinotus baillonii","Smallspotted dart",601978,"Medium",1978
+"516","Uraspis helvola","Whitetongue jack",601983,"Medium",1983
+"517","Uraspis uraspis","Whitemouth jack",601984,"High",1984
+"518","Halargyreus johnsonii","Slender codling",602012,"Low",2012
+"519","Laemonema longipes","Longfin codling",602014,"Low",2014
+"520","Acipenser stellatus","Starry sturgeon",602065,"Low",2065
+"521","Huso huso","Beluga",602067,"Very low",2067
+"522","Balistoides conspicillum","Clown triggerfish",602300,"Medium",2300
+"523","Echeneis naucrates","Live sharksucker",602467,"Medium",2467
+"524","Kyphosus sectatrix","Bermuda sea chub",602498,"Low",2498
+"525","Thalassoma pavo","Ornate wrasse",602500,"Medium",2500
+"526","Chimaera monstrosa","Rabbit fish",602503,"Low",2503
+"527","Ginglymostoma cirratum","Nurse shark",602532,"Low",2532
+"528","Coris julis","Mediterranean rainbow wrasse",600058,"Medium",58
+"529","Leucoraja erinacea","Little skate",602557,"Low",2557
+"530","Dasyatis centroura","Roughtail stingray",602572,"Very low",2572
+"531","Gymnura altavela","Spiny butterfly ray",602577,"Very low",2577
+"532","Acipenser medirostris","Green sturgeon",602592,"Low",2592
+"533","Acipenser transmontanus","White sturgeon",602594,"Very low",2594
+"534","Oreochromis mossambicus","Mozambique tilapia",600003,"Medium",3
+"535","Scardinius erythrophthalmus","Rudd",602951,"Low",2951
+"536","Stereolepis gigas","Giant seabass",603310,"Very low",3310
+"537","Mycteroperca xenarcha","Broomtail grouper",603334,"Low",3334
+"538","Taractichthys steindachneri","Sickle pomfret",603561,"Medium",3561
+"539","Girella nigricans","Opaleye",603594,"Medium",3594
+"540","Tautogolabrus adspersus","Cunner",603672,"Medium",3672
+"541","Engraulis ringens","Anchoveta",600004,"High",4
+"542","Coryphaena hippurus","Common dolphinfish",600006,"High",6
+"543","Sebastes goodei","Chilipepper rockfish",603971,"Medium",3971
+"544","Parupeneus cyclostomus","Goldsaddle goatfish",605990,"Medium",5990
+"545","Parupeneus heptacanthus","Cinnabar goatfish",605991,"High",5991
+"546","Parupeneus multifasciatus","Manybar goatfish",605993,"High",5993
+"547","Parupeneus pleurostigma","Sidespot goatfish",605994,"High",5994
+"548","Euthynnus affinis","Kawakawa",600096,"Medium",96
+"549","Pomadasys kaakan","Javelin grunter",606006,"Medium",6006
+"550","Acanthurus nigricans","Whitecheek surgeonfish",606011,"Very low",6011
+"551","Ctenochaetus binotatus","Twospot surgeonfish",606012,"High",6012
+"552","Paracanthurus hepatus","Palette surgeonfish",606017,"High",6017
+"553","Zebrasoma flavescens","Yellow tang",606018,"High",6018
+"554","Naso tuberosus","Humpnose unicornfish",606023,"Medium",6023
+"555","Naso vlamingii","Bignose unicornfish",606024,"Low",6024
+"556","Balistapus undulatus","Orangelined triggerfish",606025,"Medium",6025
+"557","Balistoides viridescens","Titan triggerfish",606026,"Low",6026
+"558","Pseudobalistes flavimarginatus","Yellowmargin triggerfish",606027,"High",6027
+"559","Rhinecanthus verrucosus","Blackbelly triggerfish",606028,"High",6028
+"560","Euthynnus alletteratus","Little tunny",600097,"Medium",97
+"561","Euthynnus lineatus","Black skipjack",600098,"Medium",98
+"562","Alosa alosa","Allis shad",600101,"Medium",101
+"563","Sufflamen bursa","Boomerang triggerfish",606029,"High",6029
+"564","Xanthichthys auromarginatus","Gilded triggerfish",606030,"Medium",6030
+"565","Istiblennius edentulus","Rippled rockskipper",606049,"High",6049
+"566","Salarias fasciatus","Jewelled blenny",606058,"High",6058
+"567","Plectropomus areolatus","Squaretail coralgrouper",606082,"Low",6082
+"568","Acanthopagrus latus","Yellowfin seabream",606356,"Medium",6356
+"569","Xanthichthys caeruleolineatus","Outrigger triggerfish",606359,"Medium",6359
+"570","Caranx papuensis","Brassy trevally",606360,"Medium",6360
+"571","Plectorhinchus gibbosus","Harry hotlips",606366,"Medium",6366
+"572","Plectorhinchus picus","Painted sweetlip",606370,"Medium",6370
+"573","Arothron nigropunctatus","Blackspotted puffer",606400,"High",6400
+"574","Polydactylus sexfilis","Sixfinger threadfin",606416,"Medium",6416
+"575","Pagrus auratus","Silver seabream",606426,"Low",6426
+"576","Scarus tricolor","Tricolour parrotfish",606438,"High",6438
+"577","Epinephelus coeruleopunctatus","Whitespotted grouper",606440,"Low",6440
+"578","Aethaloperca rogaa","Redmouth grouper",606441,"Medium",6441
+"579","Cephalopholis boenak","Chocolate hind",606444,"Medium",6444
+"580","Cephalopholis hemistiktos","Yellowfin hind",606447,"Low",6447
+"581","Cephalopholis leopardus","Leopard hind",606448,"High",6448
+"582","Alosa immaculata","Pontic shad",600105,"Medium",105
+"583","Gymnosarda unicolor","Dogtooth tuna",600106,"Low",106
+"584","Totoaba macdonaldi","Totoaba",606317,"Low",6317
+"585","Cephalopholis miniata","Coral hind",606450,"Low",6450
+"586","Cephalopholis polleni","Harlequin hind",606452,"Medium",6452
+"587","Cephalopholis sexmaculata","Sixblotch hind",606453,"Medium",6453
+"588","Cephalopholis spiloparaea","Strawberry hind",606455,"Medium",6455
+"589","Cromileptes altivelis","Humpback grouper",606457,"Medium",6457
+"590","Sciades passany","Passany sea catfish",600953,"Very low",953
+"591","Sciades proops","Crucifix sea catfish",600955,"High",955
+"592","Caulolatilus microps","Grey tilefish",600987,"Low",987
+"593","Dactylopterus volitans","Flying gurnard",601021,"High",1021
+"594","Diodon hystrix","Spot-fin porcupinefish",601022,"Low",1022
+"595","Polydactylus octonemus","Atlantic threadfin",601110,"High",1110
+"596","Haemulon boschmae","Bronzestripe grunt",601130,"High",1130
+"597","Haemulon steindachneri","Cherechere grunt",601142,"Medium",1142
+"598","Bairdiella chrysoura","Silver croaker",601165,"High",1165
+"599","Bairdiella ronchus","Ground croaker",601166,"High",1166
+"600","Paralonchurus brasiliensis","Banded croaker",601187,"High",1187
+"601","Diplectrum formosum","Sand perch",601203,"High",1203
+"602","Mycteroperca tigris","Tiger grouper",601215,"Low",1215
+"603","Mycteroperca venenosa","Yellowfin grouper",601216,"Low",1216
+"604","Acanthurus lineatus","Lined surgeonfish",601258,"Medium",1258
+"605","Etelis oculatus","Queen snapper",601391,"Medium",1391
+"606","Lutjanus campechanus","Northern red snapper",601423,"Low",1423
+"607","Alosa caspia caspia","Caspian shad",601577,"Medium",1577
+"608","Molva macrophthalma","Spanish ling",601733,"Low",1733
+"609","Scorpaena porcus","Black scorpionfish",601758,"Medium",1758
+"610","Lethrinus semicinctus","Blackblotch emperor",601849,"High",1849
+"611","Atule mate","Yellowtail scad",601893,"High",1893
+"612","Carangoides hedlandensis","Bumpnose trevally",601907,"High",1907
+"613","Carangoides talamparoides","Imposter trevally",601912,"Medium",1912
+"614","Chloroscombrus orqueta","Pacific bumper",601937,"High",1937
+"615","Oligoplites refulgens","Shortjaw leatherjacket",601946,"High",1946
+"616","Scomberoides lysan","Doublespotted queenfish",601951,"Medium",1951
+"617","Mustelus henlei","Brown smoothhound",602540,"Low",2540
+"618","Rhinoptera bonasus","Cownose ray",602584,"Low",2584
+"619","Hydrolagus colliei","Spotted ratfish",602589,"Low",2589
+"620","Diapterus auratus","Irish mojarra",603563,"High",3563
+"621","Haemulon vittatum","Boga",603572,"High",3572
+"622","Semicossyphus pulcher","California sheephead",603671,"Low",3671
+"623","Hyperoglyphe perciformis","Barrelfish",603921,"Low",3921
+"624","Prionotus rubio","Blackwing searobin",604025,"Medium",4025
+"625","Scorpaenichthys marmoratus","Cabezon",604140,"Medium",4140
+"626","Platichthys stellatus","Starry flounder",604249,"Medium",4249
+"627","Siganus rivulatus","Marbled spinefoot",604545,"Medium",4545
+"628","Nemipterus japonicus","Japanese threadfin bream",604559,"Medium",4559
+"629","Xyrichtys novacula","Pearly razorfish",604581,"Medium",4581
+"630","Lateolabrax japonicus","Japanese seaperch",604589,"Medium",4589
+"631","Sebastiscus marmoratus","False kelpfish",604597,"Medium",4597
+"632","Siganus corallinus","Bluespotted spinefoot",604611,"High",4611
+"633","Siganus luridus","Dusky spinefoot",604613,"Medium",4613
+"634","Siganus randalli","Variegated spinefoot",604626,"High",4626
+"635","Acanthurus sohal","Sohal surgeonfish",604740,"Medium",4740
+"636","Dentex macrophthalmus","Largeeye dentex",600438,"Medium",438
+"637","Dentex dentex","Common dentex",600439,"Low",439
+"638","Argyrozona argyrozona","Carpenter seabream",600443,"Low",443
+"639","Pagrus major","Red seabream",600445,"Low",445
+"640","Pterogymnus laniarius","Panga seabream",600448,"Low",448
+"641","Rhabdosargus globiceps","White stumpnose",600449,"Medium",449
+"642","Lithognathus lithognathus","White steenbras",600450,"Low",450
+"643","Hypoptychus dybowskii","Korean sandeel",600488,"High",488
+"644","Nemadactylus bergi","Castaneta",600460,"Medium",460
+"645","Cheilodactylus variegatus","Peruvian morwong",600461,"Medium",461
+"646","Arctoscopus japonicus","Japanese sandfish",600463,"Medium",463
+"647","Eleginops maclovinus","Patagonian blennie",600466,"Medium",466
+"648","Dissostichus eleginoides","Patagonian toothfish",600467,"Low",467
+"649","Notothenia rossii","Marbled rockcod",600468,"Low",468
+"650","Pleuragramma antarctica","Antarctic silverfish",600472,"Low",472
+"651","Champsocephalus gunnari","Mackerel icefish",600474,"Medium",474
+"652","Chionodraco rastrospinosus","Ocellated icefish",600476,"Medium",476
+"653","Chaenodraco wilsoni","Spiny icefish",600478,"Medium",478
+"654","Zoarces viviparus","Eelpout",600479,"Low",479
+"655","Trisopterus minutus","Poor cod",600481,"Medium",481
+"656","Genypterus blacodes","Pink cusk-eel",600482,"Low",482
+"657","Genypterus chilensis","Red cusk-eel",600483,"Low",483
+"658","Genypterus maculatus","Black cuskeel",600484,"Medium",484
+"659","Genypterus capensis","Kingklip",600485,"Low",485
+"660","Brotula barbata","Bearded brotula",600486,"Medium",486
+"661","Ammodytes personatus","Pacific sandlance",600487,"High",487
+"662","Thyrsitops lepidopoides","White snake mackerel",600490,"Medium",490
+"663","Pampus argenteus","Silver pomfret",600491,"Medium",491
+"664","Peprilus triacanthus","Atlantic butterfish",600492,"High",492
+"665","Peprilus simillimus","Pacific pompano",600493,"High",493
+"666","Hyperoglyphe antarctica","Bluenose warehou",600496,"Low",496
+"667","Psenopsis anomala","Pacific rudderfish",600497,"High",497
+"668","Sebastes norvegicus","Golden redfish",600501,"Low",501
+"669","Sebastes entomelas","Widow rockfish",600502,"Very low",502
+"670","Sebastes flavidus","Yellowtail rockfish",600503,"Low",503
+"671","Sebastes alutus","Pacific ocean perch",600504,"Very low",504
+"672","Sebastes mentella","Beaked redfish",600505,"Very low",505
+"673","Sebastes capensis","Cape redfish",600506,"Low",506
+"674","Pleurogrammus azonus","Okhostk atka mackerel",600510,"Medium",510
+"675","Anoplopoma fimbria","Sablefish",600512,"Very low",512
+"676","Hippoglossus stenolepis","Pacific halibut",600514,"Low",514
+"677","Reinhardtius hippoglossoides","Greenland halibut",600516,"Low",516
+"678","Limanda ferruginea","Yellowtail flounder",600521,"Low",521
+"679","Pseudopleuronectes americanus","Winter flounder",600524,"Medium",524
+"680","Pseudophycis bachus","Red codling",602020,"Medium",2020
+"681","Dipturus batis","Blue skate",602058,"Very low",2058
+"682","Raja clavata","Thornback ray",602059,"Low",2059
+"683","Dasyatis pastinaca","Common stingray",602060,"Very low",2060
+"684","Acipenser sturio","Sturgeon",602066,"Very low",2066
+"685","Rhincodon typus","Whale shark",602081,"Very low",2081
+"686","Gasterosteus aculeatus","Three-spined stickleback",602420,"High",2420
+"687","Chelon labrosus","Thicklip grey mullet",602499,"Medium",2499
+"688","Anarhichas lupus","Atlantic wolffish",602501,"Low",2501
+"689","Myxine glutinosa","Hagfish",602513,"Low",2513
+"690","Petromyzon marinus","Sea lamprey",602530,"Low",2530
+"691","Notorynchus cepedianus","Broadnose sevengill shark",602531,"Very low",2531
+"692","Alopias superciliosus","Bigeye thresher",602534,"Low",2534
+"693","Alopias vulpinus","Thresher",602535,"Very low",2535
+"694","Somniosus pacificus","Pacific sleeper shark",602544,"Low",2544
+"695","Dipturus laevis","Barndoor skate",602561,"Low",2561
+"696","Raja stellulata","Starry skate",602570,"Low",2570
+"697","Coregonus pidschian","Humpback whitefish",602676,"Low",2676
+"698","Argentina silus","Greater argentine",602700,"Low",2700
+"699","Corniger spinosus","Spinycheek soldierfish",603246,"High",3246
+"700","Neoniphon marianus","Longjaw squirrelfish",603249,"High",3249
+"701","Zenopsis nebulosa","Mirror dory",603255,"Medium",3255
+"702","Regalecus glesne","King of herrings",603267,"Very low",3267
+"703","Cookeolus japonicus","Longfinned bullseye",603517,"Medium",3517
+"704","Caulolatilus princeps","Ocean whitefish",603539,"Low",3539
+"705","Rachycentron canadum","Cobia",603542,"Medium",3542
+"706","Eucinostomus gracilis","Graceful mojarra",603565,"High",3565
+"707","Diplodus argenteus argenteus","South American silver porgy",603574,"Medium",3574
+"708","Atractoscion nobilis","White weakfish",603578,"Low",3578
+"709","Chaetodipterus zonatus","Pacific spadefish",603599,"Medium",3599
+"710","Chaetodon capistratus","Foureye butterflyfish",603602,"High",3602
+"711","Chaetodon sedentarius","Reef butterflyfish",603605,"Medium",3605
+"712","Clepticus parrae","Creole wrasse",603656,"Medium",3656
+"713","Anarhichas denticulatus","Northern wolffish",603810,"Low",3810
+"714","Tetrapturus angustirostris","Shortbill spearfish",603915,"Medium",3915
+"715","Hyperoglyphe bythites","Black driftfish",603920,"Medium",3920
+"716","Sebastes paucispinis","Bocaccio rockfish",603987,"Low",3987
+"717","Sebastes pinniger","Canary rockfish",603989,"Low",3989
+"718","Sebastolobus alascanus","Shortspine thornyhead",604009,"Very low",4009
+"719","Prionotus stephanophrys","Lumptail searobin",604029,"Medium",4029
+"720","Pleurogrammus monopterygius","Atka mackerel",604037,"Low",4037
+"721","Eopsetta jordani","Petrale sole",604237,"Medium",4237
+"722","Glyptocephalus zachirus","Rex sole",604238,"Low",4238
+"723","Diapterus peruvianus","Peruvian mojarra",610430,"High",10430
+"724","Cynoscion stolzmanni","Stolzmanns weakfish",611002,"Medium",11002
+"725","Centropyge shepardi","Mango angelfish",611111,"High",11111
+"726","Albula glossodonta","Roundjaw bonefish",611512,"Medium",11512
+"727","Congresox talabonoides","Indian pike conger",611713,"High",11713
+"728","Ambassis buruensis","Buru glass perchlet",611783,"High",11783
+"729","Paratrachichthys trailli","Sandpaper fish",612005,"Very low",12005
+"730","Plagioscion surinamensis","Pacora",612081,"Medium",12081
+"731","Sebastes oculatus","Patagonian redfish",612084,"Low",12084
+"732","Niphon spinosus","Ara",612128,"Low",12128
+"733","Salangichthys microdon","Japanese icefish",612238,"Medium",12238
+"734","Plagiogeneion rubiginosum","Rubyfish",612288,"Medium",12288
+"735","Himantura granulata","Mangrove whipray",612586,"Low",12586
+"736","Himantura fai","Pink whipray",612587,"Low",12587
+"737","Myripristis chryseres","Yellowfin soldierfish",612596,"High",12596
+"738","Synodus dermatogenys","Sand lizardfish",612620,"High",12620
+"739","Halichoeres hortulanus","Checkerboard wrasse",612663,"High",12663
+"740","Bodianus loxozonus","Blackfin hogfish",612744,"Medium",12744
+"741","Liopropoma maculatum","Liopropoma maculatum",612848,"Medium",12848
+"742","Hyporhamphus dussumieri","Dussumier's halfbeak",612895,"High",12895
+"743","Neoniphon aurolineatus","Yellowstriped squirrelfish",612896,"High",12896
+"744","Seriolella brama","Common warehou",612918,"Medium",12918
+"745","Seriolella caerulea","White warehou",612919,"Medium",12919
+"746","Seriolella punctata","Silver warehou",612922,"Medium",12922
+"747","Pinguipes brasilianus","Brazilian sandperch",612928,"Low",12928
+"748","Stromateus brasiliensis","Southwest Atlantic butterfish",612930,"High",12930
+"749","Pinguipes chilensis","Chilean sandperch",612942,"Low",12942
+"750","Polymixia japonica","Silver eye",612996,"Medium",12996
+"751","Sparisoma cretense","Old parrotfish",613025,"Medium",13025
+"752","Halichoeres zeylonicus","Goldstripe wrasse",613050,"Medium",13050
+"753","Liparis tanakae","Tanaka's snailfish",624115,"Medium",24115
+"754","Hyporhamphus ihi","Halfbeak",613135,"High",13135
+"755","Zearaja nasuta","New Zealand rough skate",613144,"Low",13144
+"756","Dipturus innominatus","New Zealand smooth skate",613145,"Low",13145
+"757","Symphurus atramentatus","Inkspot tonguefish",613632,"High",13632
+"758","Haemulopsis leuciscus","Raucous grunt",613720,"Medium",13720
+"759","Haemulopsis axillaris","Yellowstripe grunt",613734,"Medium",13734
+"760","Pomadasys macracanthus","Longspine grunt",613738,"Medium",13738
+"761","Cyclopsetta querna","Toothed flounder",613954,"Medium",13954
+"762","Hippoglossina tetrophthalma","Fourspot flounder",613967,"High",13967
+"763","Syacium ovale","Oval flounder",613978,"High",13978
+"764","Micropogonias altipinnis","Tallfin croaker",613998,"Medium",13998
+"765","Larimus pacificus","Pacific drum",614009,"High",14009
+"766","Isopisthus remifer","Silver weakfish",614018,"High",14018
+"767","Cynoscion reticulatus","Mexican striped weakfish",614030,"Medium",14030
+"768","Centroberyx affinis","Redfish",614129,"Medium",14129
+"769","Clidoderma asperrimum","Roughscale sole",608838,"Medium",8838
+"770","Krobia guianensis","Krobia",647068,"High",47068
+"771","Argentina sphyraena","European argentine",600020,"Medium",20
+"772","Orcynopsis unicolor","Plain bonito",600108,"Medium",108
+"773","Rastrelliger brachysoma","Short mackerel",600109,"High",109
+"774","Thunnus thynnus","Atlantic bluefin tuna",600147,"Low",147
+"775","Thunnus tonggol","Longtail tuna",600148,"Medium",148
+"776","Rhinobatos planiceps","Pacific guitarfish",600149,"Low",149
+"777","Lutjanus jocu","Dog snapper",600154,"Low",154
+"778","Lutjanus malabaricus","Malabar blood snapper",600162,"Low",162
+"779","Lutjanus purpureus","Southern red snapper",600171,"Low",171
+"780","Elops saurus","Ladyfish",600175,"Medium",175
+"781","Lutjanus synagris","Lane snapper",600181,"Medium",181
+"782","Macolor niger","Black and white snapper",600187,"Medium",187
+"783","Pristipomoides filamentosus","Crimson jobfish",600201,"Medium",201
+"784","Boops boops","Bogue",600203,"Medium",203
+"785","Sarpa salpa","Salema",600204,"Medium",204
+"786","Rhomboplites aurorubens","Vermilion snapper",600213,"Medium",213
+"787","Makaira nigricans","Blue marlin",600216,"Medium",216
+"788","Istiompax indica","Black marlin",600217,"Medium",217
+"789","Makaira mazara","Indo-Pacific blue marlin",600218,"Low",218
+"790","Kajikia albida","Atlantic white marlin",600219,"Medium",219
+"791","Tetrapturus pfluegeri","Longbill spearfish",600220,"Medium",220
+"792","Kajikia audax","Striped marlin",600223,"Low",223
+"793","Alepocephalus bairdii","Baird's slickhead",600230,"Low",230
+"794","Coregonus albula","Vendace",600231,"Medium",231
+"795","Coregonus lavaretus","European whitefish",600232,"Medium",232
+"796","Coregonus oxyrinchus","Houting",600233,"Medium",233
+"797","Salmo salar","Atlantic salmon",600236,"Medium",236
+"798","Salmo trutta","Sea trout",600238,NA,238
+"799","Oncorhynchus mykiss","Rainbow trout",600239,"Medium",239
+"800","Oncorhynchus gorbuscha","Pink salmon",600240,"Medium",240
+"801","Oncorhynchus keta","Chum salmon",600241,"Medium",241
+"802","Oncorhynchus masou masou","Masu salmon",600242,"Medium",242
+"803","Oncorhynchus nerka","Sockeye salmon",600243,"Medium",243
+"804","Oncorhynchus tshawytscha","Chinook salmon",600244,"Medium",244
+"805","Oncorhynchus kisutch","Coho salmon",600245,"Medium",245
+"806","Salvelinus alpinus alpinus","Arctic char",600247,"Low",247
+"807","Centrolophus niger","Rudderfish",600249,"Very low",249
+"808","Schedophilus ovalis","Imperial blackfish",600250,"Low",250
+"809","Mallotus villosus","Capelin",600252,"Medium",252
+"810","Hypomesus pretiosus","Surf smelt",600255,"Medium",255
+"811","Acanthurus olivaceus","Orangespot surgeonfish",604744,"High",4744
+"812","Acanthurus maculiceps","White freckled surgeonfish",604746,"Medium",4746
+"813","Acanthurus nigricauda","Epaulette surgeonfish",604747,"High",4747
+"814","Sargocentron tiere","Bluelined squirrelfish",604908,"High",4908
+"815","Myripristis berndti","Blotcheye soldierfish",604910,"High",4910
+"816","Neoniphon sammara","Sammara squirrelfish",604911,"High",4911
+"817","Scorpaenopsis diabolus","False stonefish",604921,"Low",4921
+"818","Epinephelus merra","Honeycomb grouper",604923,"High",4923
+"819","Scarus globiceps","Globehead parrotfish",604970,"Medium",4970
+"820","Epinephelus morrhua","Comet grouper",605353,"Medium",5353
+"821","Acanthopagrus berda","Goldsilk seabream",605526,"Medium",5526
+"822","Scarus ghobban","Bluebarred parrotfish",605548,"Medium",5548
+"823","Chaetodon ephippium","Saddle butterflyfish",605562,"High",5562
+"824","Chaetodon lineolatus","Lined butterflyfish",605564,"High",5564
+"825","Hemigymnus melapterus","Blackeye thicklip",605636,"Medium",5636
+"826","Thalassoma lunare","Moon wrasse",605645,"Medium",5645
+"827","Thalassoma lutescens","Yellow-brown wrasse",605646,"Medium",5646
+"828","Thalassoma trilobatum","Christmas wrasse",605649,"Medium",5649
+"829","Sphyraena novaehollandiae","Australian barracuda",605736,"Low",5736
+"830","Rhinecanthus aculeatus","White-banded triggerfish",605839,"High",5839
+"831","Rhinecanthus rectangulus","Wedge-tail triggerfish",605840,"Medium",5840
+"832","Sufflamen chrysopterum","Halfmoon triggerfish",605842,"Medium",5842
+"833","Pentapodus caninus","Small-toothed whiptail",605867,"High",5867
+"834","Upeneus taeniopterus","Finstripe goatfish",605995,"High",5995
+"835","Gerres oyena","Common silverbiddy",605996,"High",5996
+"836","Naso annulatus","Whitemargin unicornfish",606019,"Low",6019
+"837","Naso brachycentron","Humpback unicornfish",606020,"Low",6020
+"838","Plectorhinchus albovittatus","Two-stripe sweetlips",606362,"Very low",6362
+"839","Plectorhinchus obscurus","Giant sweetlips",606368,"Low",6368
+"840","Myripristis adusta","Shadowfin soldierfish",606506,"High",6506
+"841","Amblyraja taaf","Whiteleg skate",606954,"Low",6954
+"842","Trematomus eulepidotus","Blunt scalyhead",607054,"Medium",7054
+"843","Epinephelus multinotatus","White-blotched grouper",607354,"Medium",7354
+"844","Raja undulata","Undulate ray",607617,"Low",7617
+"845","Hyporhamphus affinis","Tropical halfbeak",607710,"High",7710
+"846","Crenidens crenidens","Karenteen seabream",607931,"Medium",7931
+"847","Pelates quadrilineatus","Fourlined terapon",607945,"High",7945
+"848","Paristiopterus labiosus","Giant boarfish",612354,"Low",12354
+"849","Pentaceros decacanthus","Bigspined boarfish",612357,"Medium",12357
+"850","Coregonus muksun","Muksun",612547,"Low",12547
+"851","Kathetostoma giganteum","Giant stargazer",612920,"Medium",12920
+"852","Meuschenia scaber","Velvet leatherjacket",613139,"Medium",13139
+"853","Pennahia anea","Bigeye croaker",613664,"High",13664
+"854","Haemulopsis nitidus","Shining grunt",613721,"Medium",13721
+"855","Scorpaena russula","Reddish scorpionfish",614220,"Medium",14220
+"856","Centriscops humerosus","Banded yellowfish",614242,"Medium",14242
+"857","Carcharhinus melanopterus","Blacktip reef shark",600877,"Very low",877
+"858","Carcharhinus obscurus","Dusky shark",600878,"Very low",878
+"859","Galeocerdo cuvier","Tiger shark",600886,"Low",886
+"860","Pagellus acarne","Axillary seabream",600889,"Medium",889
+"861","Pagellus bogaraveo","Blackspot seabream",600890,"Low",890
+"862","Pagellus erythrinus","Common pandora",600893,"Medium",893
+"863","Negaprion brevirostris","Lemon shark",600897,"Very low",897
+"864","Prionace glauca","Blue shark",600898,"Very low",898
+"865","Rhizoprionodon porosus","Caribbean sharpnose shark",600903,"Very low",903
+"866","Rhizoprionodon terraenovae","Atlantic sharpnose shark",600905,"Very low",905
+"867","Sphyrna lewini","Scalloped hammerhead",600912,"Low",912
+"868","Sphyrna tiburo","Bonnethead",600915,"Very low",915
+"869","Acanthurus bahianus","Ocean surgeon",600942,"High",942
+"870","Bagre bagre","Coco sea catfish",600958,"Low",958
+"871","Decapterus macarellus","Mackerel scad",600993,"High",993
+"872","Decapterus punctatus","Round scad",600994,"High",994
+"873","Naucrates ductor","Pilotfish",600998,"High",998
+"874","Selene vomer","Lookdown",601004,"Medium",1004
+"875","Seriola dumerili","Greater amberjack",601005,"Medium",1005
+"876","Trachinotus goodei","Great pompano",601011,"Medium",1011
+"877","Uraspis secunda","Cottonmouth jack",601012,"Medium",1012
+"878","Trisopterus esmarkii","Norway pout",601023,"Medium",1023
+"879","Mugil curema","White mullet",601086,"Medium",1086
+"880","Chaetodipterus faber","Atlantic spadefish",601024,"Medium",1024
+"881","Lepidocybium flavobrunneum","Escolar",601042,"Low",1042
+"882","Sardinella aurita","Round sardinella",601043,"High",1043
+"883","Ruvettus pretiosus","Oilfish",601044,"Low",1044
+"884","Sardinella maderensis","Madeiran sardinella",601047,"Medium",1047
+"885","Diapterus rhombeus","Caitipa mojarra",601048,"High",1048
+"886","Eucinostomus argenteus","Silver mojarra",601049,"High",1049
+"887","Gerres cinereus","Yellow fin mojarra",601054,"Medium",1054
+"888","Sparisoma rubripinne","Redfin parrotfish",601160,"High",1160
+"889","Saurida undosquamis","Brushtooth lizardfish",601055,"Medium",1055
+"890","Hemiramphus brasiliensis","Ballyhoo halfbeak",601059,"Medium",1059
+"891","Holocentrus adscensionis","Squirrelfish",601061,"Medium",1061
+"892","Holocentrus rufus","Longspine squirrelfish",601062,"High",1062
+"893","Myripristis jacobus","Blackbar soldierfish",601063,"High",1063
+"894","Lachnolaimus maximus","Hogfish",601071,"Medium",1071
+"895","Lampris guttatus","Opah",601072,"Low",1072
+"896","Lobotes surinamensis","Tripletail",601077,"High",1077
+"897","Megalops atlanticus","Tarpon",601079,"Low",1079
+"898","Mulloidichthys martinicus","Yellow goatfish",601092,"Medium",1092
+"899","Haemulon aurolineatum","Tomtate grunt",601128,"Medium",1128
+"900","Haemulon bonariense","Black grunt",601129,"Medium",1129
+"901","Anchoa hepsetus","Broadstriped anchovy",601133,"High",1133
+"902","Haemulon flavolineatum","French grunt",601135,"Medium",1135
+"903","Haemulon sciurus","Bluestriped grunt",601141,"Medium",1141
+"904","Sparisoma aurofrenatum","Redband parrotfish",601158,"Medium",1158
+"905","Sparisoma chrysopterum","Redtail parrotfish",601159,"High",1159
+"906","Sparisoma viride","Stoplight parrotfish",601161,"Medium",1161
+"907","Ctenosciaena gracilicirrhus","Barbel drum",601168,"High",1168
+"908","Cynoscion acoupa","Acoupa weakfish",601169,"Medium",1169
+"909","Cynoscion arenarius","Sand weakfish",601170,"Medium",1170
+"910","Cynoscion jamaicensis","Jamaica weakfish",601171,"High",1171
+"911","Cynoscion leiarchus","Smooth weakfish",601173,"Medium",1173
+"912","Cynoscion steindachneri","Smalltooth weakfish",601177,"Low",1177
+"913","Cynoscion virescens","Green weakfish",601178,"Low",1178
+"914","Isopisthus parvipinnis","Bigtooth corvina",601179,"High",1179
+"915","Larimus breviceps","Shorthead drum",601180,"High",1180
+"916","Nebris microps","Smalleye croaker",601184,"High",1184
+"917","Stromateus fiatola","Blue butterfish",601198,"Medium",1198
+"918","Hyporthodus mystacinus","Misty grouper",601206,"Very low",1206
+"919","Calamus calamus","Saucereye porgy",601222,"Low",1222
+"920","Sphyraena picudilla","Southern sennet",601237,"Medium",1237
+"921","Lagocephalus laevigatus","Smooth puffer",601239,"Medium",1239
+"922","Dasyatis guttata","Longnose stingray",601248,"Low",1248
+"923","Acanthurus triostegus","Convict surgeonfish",601260,"Medium",1260
+"924","Trachurus mediterraneus","Mediterranean horse mackerel",601278,"Medium",1278
+"925","Trachurus picturatus","Blue jack mackerel",601279,"Medium",1279
+"926","Trichiurus lepturus","Largehead hairtail",601288,"Medium",1288
+"927","Ariomma indicum","Indian driftfish",601300,"High",1300
+"928","Beryx decadactylus","Alfonsino",601319,"Low",1319
+"929","Beryx splendens","Splendid alfonsino",601320,"Low",1320
+"930","Osmerus eperlanus","European smelt",601334,"Medium",1334
+"931","Pegusa lascaris","Sand sole",601336,"Medium",1336
+"932","Phycis blennoides","Greater forkbeard",601340,"Medium",1340
+"933","Platichthys flesus","European flounder",601341,NA,1341
+"934","Pleuronectes platessa","European plaice",601342,NA,1342
+"935","Pollachius virens","Saithe",601343,"Medium",1343
+"936","Scophthalmus maximus","Turbot",601348,"Medium",1348
+"937","Sardina pilchardus","European pilchard",601350,"Medium",1350
+"938","Paralichthys olivaceus","Bastard halibut",601351,"Medium",1351
+"939","Sebastes viviparus","Norway redfish",601352,"Very low",1352
+"940","Spondyliosoma cantharus","Black seabream",601356,"Medium",1356
+"941","Sprattus sprattus","European sprat",601357,"Medium",1357
+"942","Sardinops sagax","Pacific sardine",601477,"Medium",1477
+"943","Trachurus trachurus","Atlantic horse mackerel",601365,"Medium",1365
+"944","Chelidonichthys lucerna","Tub gurnard",601366,"Low",1366
+"945","Trisopterus luscus","Pouting",601367,"Medium",1367
+"946","Zeus faber","John dory",601370,"Low",1370
+"947","Hippoglossus hippoglossus","Atlantic halibut",601371,"Very low",1371
+"948","Melanogrammus aeglefinus","Haddock",601381,"Medium",1381
+"949","Microstomus kitt","Lemon sole",601382,"Medium",1382
+"950","Etelis coruscans","Deepwater longtail red snapper",601385,"Low",1385
+"951","Solea solea","Common sole",600525,"Medium",525
+"952","Scophthalmus rhombus","Brill",600529,"Medium",529
+"953","Scophthalmus aquosus","Windowpane flounder",600530,"Medium",530
+"954","Stephanolepis cirrhifer","Thread-sail filefish",600531,"Medium",531
+"955","Lophius americanus","American angler",600532,"Low",532
+"956","Cetengraulis edentulus","Atlantic anchoveta",600547,"Medium",547
+"957","Cetengraulis mysticetus","Pacific anchoveta",600548,"High",548
+"958","Stolephorus indicus","Indian anchovy",600569,"High",569
+"959","Labrus bergylta","Ballan wrasse",600572,"Low",572
+"960","Hexanchus griseus","Bluntnose sixgill shark",600637,"Low",637
+"961","Echinorhinus brucus","Bramble shark",600641,"Very low",641
+"962","Lepidopus caudatus","Silver scabbardfish",600645,"Medium",645
+"963","Aphanopus carbo","Black scabbardfish",600646,"Low",646
+"964","Centrophorus granulosus","Gulper shark",600648,"Low",648
+"965","Centrophorus squamosus","Leafscale gulper shark",600653,"Very low",653
+"966","Centroscymnus coelolepis","Portuguese dogfish",600662,"Low",662
+"967","Centroscymnus crepidater","Longnose velvet dogfish",600663,"Very low",663
+"968","Sphyrna mokarran","Great hammerhead",600914,"Low",914
+"969","Centroscymnus owstonii","Roughskin dogfish",600664,"Low",666
+"970","Dalatias licha","Kitefin shark",600669,"Low",669
+"971","Deania calcea","Birdbeak dogfish",600670,"Very low",670
+"972","Etmopterus spinax","Velvet belly",600687,"Very low",687
+"973","Lichia amia","Leerfish",600692,"Medium",692
+"974","Limanda limanda","Common dab",600695,"Medium",695
+"975","Lithognathus mormyrus","Sand steenbras",600706,"Medium",706
+"976","Lophius piscatorius","Angler",600716,"Low",716
+"977","Squatina squatina","Angelshark",600736,"Very low",736
+"978","Carcharodon carcharias","Great white shark",600751,"Very low",751
+"979","Isurus oxyrinchus","Shortfin mako",600752,"Very low",752
+"980","Isurus paucus","Longfin mako",600753,"Very low",753
+"981","Maurolicus muelleri","Silvery lightfish",600754,"Medium",754
+"982","Apristurus profundorum","Deepwater catshark",600779,"Very low",779
+"983","Mugil cephalus","Flathead grey mullet",600785,"Medium",785
+"984","Mullus barbatus barbatus","Red mullet",600790,"Medium",790
+"985","Cephaloscyllium isabellum","Draughtsboard shark",600797,"Low",797
+"986","Galeus melastomus","Blackmouth catshark",600807,"Low",807
+"987","Bythaelurus canescens","Dusky catshark",600817,"Low",817
+"988","Oblada melanura","Saddled seabream",600850,"Medium",850
+"989","Carcharhinus albimarginatus","Silvertip shark",600858,"Very low",858
+"990","Carcharhinus amblyrhynchos","Blacktail reef shark",600861,"Very low",861
+"991","Carcharhinus falciformis","Silky shark",600868,"Very low",868
+"992","Carcharhinus galapagensis","Galapagos shark",600870,"Very low",870
+"993","Carcharhinus leucas","Bull shark",600873,"Very low",873
+"994","Carcharhinus limbatus","Blacktip shark",600874,"Low",874
+"995","Carcharhinus longimanus","Oceanic whitetip shark",600875,"Very low",875
+"996","Hippoglossoides platessoides","American plaice",604239,"Low",4239
+"997","Parophrys vetulus","English sole",604248,"Medium",4248
+"998","Pleuronectes quadrituberculatus","Alaska plaice",604250,"Very low",4250
+"999","Psettichthys melanostictus","Pacific sand sole",604255,"Medium",4255
+"1000","Canthidermis sufflamen","Ocean triggerfish",604279,"Medium",4279
+"1001","Normanichthys crockeri","Mote sculpin",604313,"High",4313
+"1002","Leptoscarus vaigiensis","Marbled parrotfish",604360,"High",4360
+"1003","Upeneus sulphureus","Sulphur goatfish",604445,"High",4445
+"1004","Leiognathus equulus","Common ponyfish",604451,"High",4451
+"1005","Terapon jarbua","Jarbua terapon",604458,"Medium",4458
+"1006","Sparidentex hasta","Sobaity seabream",604499,"Low",4499
+"1007","Dentex maroccanus","Morocco dentex",604538,"Medium",4538
+"1008","Pagrus caeruleostictus","Bluespotted seabream",604540,"Medium",4540
+"1009","Raja brachyura","Blonde ray",604552,"Low",4552
+"1010","Siganus lineatus","Goldenlined spinefoot",604625,"High",4625
+"1011","Galeorhinus galeus","Tope shark",604642,"Very low",4642
+"1012","Scatophagus argus","Spotted scat",604698,"High",4698
+"1013","Notothenia coriiceps","Black rockcod",604702,"Low",4702
+"1014","Acipenser gueldenstaedtii","Danube sturgeon",604712,"Very low",4712
+"1015","Upeneus vittatus","Yellowstriped goatfish",604821,"High",4821
+"1016","Otolithes ruber","Tigertoothed croaker",604824,"Medium",4824
+"1017","Elops lacerta","West African ladyfish",604959,"Medium",4959
+"1018","Scarus dimidiatus","Yellowbarred parrotfish",604973,"High",4973
+"1019","Mustelus mustelus","Smooth-hound",604996,"Very low",4996
+"1020","Nezumia aequalis","Common Atlantic grenadier",604997,"Medium",4997
+"1021","Promethichthys prometheus","Roudi escolar",605008,"Medium",5008
+"1022","Trigla lyra","Piper gurnard",605038,"Medium",5038
+"1023","Arripis trutta","Australian salmon",605048,"Medium",5048
+"1024","Pagrus auriga","Redbanded seabream",605066,"Very low",5066
+"1025","Trigloporus lastoviza","Streaked gurnard",605081,"Medium",5081
+"1026","Lophius budegassa","Blackbellied angler",605094,"Low",5094
+"1027","Epinephelus fasciatus","Blacktip grouper",605348,"Low",5348
+"1028","Epinephelus maculatus","Highfin grouper",605350,"Medium",5350
+"1029","Alosa fallax","Twaite shad",605355,"Medium",5355
+"1030","Trachurus capensis","Cape horse mackerel",605382,"Medium",5382
+"1031","Hemiramphus far","Blackbarred halfbeak",605404,"High",5404
+"1032","Raja microocellata","Small-eyed ray",605492,"Low",5492
+"1033","Cetoscarus bicolor","Bicolour parrotfish",605538,"Medium",5538
+"1034","Hipposcarus longiceps","Pacific longnose parrotfish",605539,"High",5539
+"1035","Cheilinus trilobatus","Tripletail wrasse",605603,"Medium",5603
+"1036","Ellochelon vaigiensis","Squaretail mullet",605656,"Low",5656
+"1037","Moolgarda seheli","Bluespot mullet",605659,"Medium",5659
+"1038","Mustelus schmitti","Narrownose smoothhound",605937,"Very low",5937
+"1039","Mustelus asterias","Starry smooth-hound",605938,"Very low",5938
+"1040","Mulloidichthys flavolineatus","Yellowstripe goatfish",605983,"Medium",5983
+"1041","Parupeneus indicus","Indian goatfish",605992,"Medium",5992
+"1042","Naso brevirostris","Spotted unicornfish",606021,"Medium",6021
+"1043","Chirocentrus dorab","Dorab wolfherring",606358,"Medium",6358
+"1044","Plectorhinchus vittatus","Indian Ocean oriental sweetlips",606369,"Low",25706
+"1045","Cephalopholis argus","Peacock hind",606396,"Medium",6396
+"1046","Rajella lintea","Sailray",606422,"Low",6422
+"1047","Epinephelus malabaricus","Malabar grouper",606439,"Low",6439
+"1048","Cephalopholis sonnerati","Tomato hind",606454,"Medium",6454
+"1049","Cephalopholis urodeta","Darkfin hind",606456,"High",6456
+"1050","Epinephelus marginatus","Dusky grouper",606470,"Low",6470
+"1051","Epinephelus melanostigma","One-blotch grouper",606471,"Medium",6471
+"1052","Epinephelus polyphekadion","Camouflage grouper",606473,"Very low",6473
+"1053","Saurida tumbil","Greater lizardfish",606479,"Medium",6479
+"1054","Sargocentron spiniferum","Sabre squirrelfish",606507,"Medium",6507
+"1055","Hyporthodus septemfasciatus","Convict grouper",606574,"Very low",6574
+"1056","Epinephelus hexagonatus","Starspotted grouper",606660,"High",6660
+"1057","Bathyraja eatonii","Eatons skate",606948,"Low",6948
+"1058","Electrona carlsbergi","Electron subantarctic",606985,"Medium",6985
+"1059","Dissostichus mawsoni","Antarctic toothfish",607039,"Low",7039
+"1060","Gobionotothen gibberifrons","Humped rockcod",607041,"Low",7041
+"1061","Lepidonotothen squamifrons","Grey rockcod",607045,"Low",7045
+"1062","Patagonotothen brevicauda brevicauda","Patagonian rockcod",607052,"Medium",7052
+"1063","Trematomus hansoni","Striped rockcod",607055,"Medium",7055
+"1064","Neopagetopsis ionah","Jonah's icefish",607113,"Medium",7113
+"1065","Muraenolepis microps","Smalleye moray cod",607126,"Medium",7126
+"1066","Macrourus carinatus","Ridge scaled rattail",607137,"Low",7137
+"1067","Macrourus holotrachys","Bigeye grenadier",607138,"Very low",7138
+"1068","Macrourus whitsoni","Whitson's grenadier",607139,"Very low",7139
+"1069","Balistes capriscus","Grey triggerfish",607327,"Medium",7327
+"1070","Epinephelus polylepis","Smallscaled grouper",607358,"Medium",7358
+"1071","Epinephelus timorensis","Yellowspotted grouper",607367,"Medium",7367
+"1072","Plectropomus laevis","Blacksaddled coralgrouper",607372,"Very low",7372
+"1073","Saloptia powelli","Golden grouper",607374,"Medium",7374
+"1074","Plesiobatis daviesi","Deepwater stingray",607376,"Low",7376
+"1075","Trichopsetta caribbaea","Caribbean flounder",607530,"High",7530
+"1076","Genyatremus luteus","Torroto grunt",607535,"Medium",7535
+"1077","Gymnothorax moringa","Spotted moray",607547,"Low",7547
+"1078","Polymixia nobilis","Stout beardfish",607557,"Medium",7557
+"1079","Atlantoraja cyclophora","Eyespot skate",607609,"Very low",7609
+"1080","Rostroraja alba","White skate",607613,"Low",7613
+"1081","Dipturus oxyrinchus","Longnosed skate",607616,"Low",7616
+"1082","Leucoraja fullonica","Shagreen ray",607619,"Low",7619
+"1083","Micropogonias furnieri","Whitemouth croaker",607620,"Medium",7620
+"1084","Plectorhinchus sordidus","Sordid rubberlip",607626,"Medium",7626
+"1085","Bothus mancus","Flowery flounder",607641,"Medium",7641
+"1086","Gerres longirostris","Strongspine silver-biddy",607699,"Medium",7699
+"1087","Gerres methueni","Striped silver biddy",607700,"High",7700
+"1088","Raja asterias","Mediterranean starry ray",608924,"Low",8924
+"1089","Hydrolagus mirabilis","Largeeyed rabbitfish",609000,"Low",9000
+"1090","Rhinochimaera atlantica","Straightnose rabbitfish",609005,"Low",9005
+"1091","Neocyttus rhomboidalis","Spiky oreo",609146,"Very low",9146
+"1092","Nemadactylus macropterus","Tarakihi",610106,"Low",10106
+"1093","Netuma thalassina","Giant catfish",610220,"Low",10220
+"1094","Takifugu vermicularis","Purple puffer",610301,"Medium",10301
+"1095","Abudefduf luridus","Canary damsel",611820,"High",11820
+"1096","Scomberomorus commerson","Narrowbarred Spanish mackerel",600121,"Medium",121
+"1097","Scomberomorus guttatus","Indo-Pacific king mackerel",600123,"Medium",123
+"1098","Scomberomorus lineolatus","Streaked seerfish",600125,"Medium",125
+"1099","Prolatilus jugularis","Pacific sandperch",612917,"Medium",12917
+"1100","Allocyttus niger","Black oreo",612962,"Very low",12962
+"1101","Hydrolagus novaezealandiae","Dark ghost shark",613146,"Low",13146
+"1102","Scomberomorus maculatus","Atlantic Spanish mackerel",600126,"Medium",126
+"1103","Scomberomorus niphonius","Japanese Spanish mackerel",600131,"Medium",131
+"1104","Scomberomorus regalis","Cero",600134,"Medium",134
+"1105","Scomberomorus sierra","Pacific sierra",600136,"Medium",136
+"1106","Somniosus microcephalus","Greenland shark",600138,"Very low",138
+"1107","Squalus acanthias","Piked dogfish",600139,"Very low",139
+"1108","Mullus argentinae","Argentine goatfish",614063,"Medium",14063
+"1109","Lepidoperca pulchella","Orange perch",614354,"Medium",14354
+"1110","Rhynchobatus australiae","Whitespotted wedgefish",615380,"Low",15380
+"1111","Scomberomorus tritor","West African Spanish mackerel",600141,"Medium",141
+"1112","Himantura gerrardi","Sharpnose stingray",615483,"Very low",15483
+"1113","Naso caesius","Gray unicornfish",615628,"Medium",15628
+"1114","Myripristis woodsi","Whitespot soldierfish",617190,"High",17190
+"1115","Sicamugil cascasia","Yellowtail mullet",625225,"High",25225
+"1116","Cilus gilberti","Corvina drum",626675,"Medium",26675
+"1117","Sargocentron lepros","Spiny squirrelfish",627348,"High",27348
+"1118","Grammoplites suppositus","Spotfin flathead",628128,"High",28128
+"1119","Thunnus alalunga","Albacore",600142,"Medium",142
+"1120","Lepidotrigla brachyoptera","Scaly gurnard",628232,"High",28232
+"1121","Coregonus laurettae","Bering cisco",646941,"Medium",46941
+"1122","Awaous tajasica","Sand fish",646950,"Medium",46950
+"1123","Chlorurus sordidus","Daisy parrotfish",605556,"Medium",5556
+"1124","Chaetodon auriga","Threadfin butterflyfish",605557,"High",5557
+"1125","Chaetodon bennetti","Bluelashed butterflyfish",605559,"High",5559
+"1126","Chaetodon citrinellus","Speckled butterflyfish",605561,"High",5561
+"1127","Eutrigla gurnardus","Grey gurnard",600068,"Medium",68
+"1128","Chaetodon lunula","Raccoon butterflyfish",605565,"High",5565
+"1129","Chaetodon melannotus","Blackback butterflyfish",605566,"Low",5566
+"1130","Chaetodon mertensii","Atoll butterflyfish",605567,"High",5567
+"1131","Chaetodon quadrimaculatus","Fourspot butterflyfish",605572,"High",5572
+"1132","Chaetodon reticulatus","Mailed butterflyfish",605574,"High",5574
+"1133","Chaetodon trifascialis","Chevron butterflyfish",605578,"High",5578
+"1134","Chaetodon ulietensis","Pacific doublesaddle butterflyfish",605580,"High",5580
+"1135","Chaetodon unimaculatus","Teardrop butterflyfish",605581,"High",5581
+"1136","Gadus morhua","Atlantic cod",600069,"Medium",69
+"1137","Caranx hippos","Crevalle jack",600071,"Medium",71
+"1138","Forcipiger flavissimus","Longnose butterfly fish",605584,"High",5584
+"1139","Hemitaurichthys polylepis","Pyramid butterflyfish",605586,"High",5586
+"1140","Heniochus acuminatus","Pennant coralfish",605588,"High",5588
+"1141","Heniochus chrysostomus","Threeband pennantfish",605589,"High",5589
+"1142","Heniochus monoceros","Masked bannerfish",605590,"High",5590
+"1143","Heniochus singularius","Singular bannerfish",605591,"High",5591
+"1144","Oxycheilinus arenatus","Speckled maori wrasse",605595,"Medium",5595
+"1145","Oxycheilinus celebicus","Celebes wrasse",605597,"Medium",5597
+"1146","Cheilinus chlorourus","Floral wrasse",605598,"Medium",5598
+"1147","Oxycheilinus digramma","Cheeklined wrasse",605599,"Medium",5599
+"1148","Cheilinus fasciatus","Redbreasted wrasse",605600,"Medium",5600
+"1149","Oxycheilinus orientalis","Oriental maori wrasse",605601,"Medium",5601
+"1150","Cheilinus undulatus","Humphead wrasse",605604,"Low",5604
+"1151","Oxycheilinus unifasciatus","Ringtail maori wrasse",605605,"Medium",5605
+"1152","Epibulus insidiator","Slingjaw wrasse",605606,"Low",5606
+"1153","Cymolutes praetextatus","Knife razorfish",605607,"Medium",5607
+"1154","Novaculichthys taeniourus","Rockmover wrasse",605610,"Medium",5610
+"1155","Iniistius aneitensis","Yellowblotch razorfish",605611,"Medium",5611
+"1156","Iniistius pavo","Peacock wrasse",605613,"Medium",5613
+"1157","Pteragogus guttatus","Sneaky wrasse",605621,"High",5621
+"1158","Cheilio inermis","Cigar wrasse",605623,"Low",5623
+"1159","Coris aygula","Clown coris",605624,"Very low",5624
+"1160","Gomphosus varius","Bird wrasse",605626,"Medium",5626
+"1161","Halichoeres biocellatus","Redlined wrasse",605627,"High",5627
+"1162","Halichoeres margaritaceus","Pink-belly wrasse",605630,"High",5630
+"1163","Halichoeres marginatus","Dusky wrasse",605631,"High",5631
+"1164","Halichoeres richmondi","Richmonds wrasse",605632,"Medium",5632
+"1165","Halichoeres trimaculatus","Threespot wrasse",605634,"Medium",5634
+"1166","Hemigymnus fasciatus","Barred thicklip",605635,"Medium",5635
+"1167","Hologymnosus doliatus","Pastel ringwrasse",605638,"Low",5638
+"1168","Stethojulis bandanensis","Red shoulder wrasse",605640,"High",5640
+"1169","Thalassoma hardwicke","Sixbar wrasse",605643,"High",5643
+"1170","Sargocentron praslin","Darkstriped squirrelfish",607714,"High",7714
+"1171","Kuhlia rupestris","Rock flagtail",607715,"Medium",7715
+"1172","Sorsogona prionota","Halfspined flathead",607897,"High",7897
+"1173","Sphyraena flavicauda","Yellowtail barracuda",607937,"Medium",7937
+"1174","Sphyraena putnamae","Sawtooth barracuda",607938,"Medium",7938
+"1175","Sphyraena qenie","Blackfin barracuda",607939,"Very low",7939
+"1176","Synodus jaculum","Lighthouse lizardfish",607943,"High",7943
+"1177","Oxyurichthys papuensis","Frogface goby",608030,"Medium",8030
+"1178","Myrichthys colubrinus","Harlequin snake eel",608053,"Medium",8053
+"1179","Strongylura incisa","Reef needlefish",608121,"Low",8121
+"1180","Odontesthes regia","Chilean silverside",608172,"High",8172
+"1181","Girella tricuspidata","Parore",608173,"Low",8173
+"1182","Takifugu rubripes","Japanese pufferfish",608198,"Medium",8198
+"1183","Bollmannia chlamydes","Gobido cabezon",608273,"Medium",8273
+"1184","Pontinus macrocephalus","Largeheaded scorpionfish",608280,"Very low",8280
+"1185","Plectorhinchus pictus","Trout sweetlips",608315,"Low",8315
+"1186","Seriolella porosa","Choicy ruff",608390,"Medium",8390
+"1187","Bregmaceros mcclellandi","Unicorn cod",608421,"High",8421
+"1188","Gaidropsarus ensis","Threadfin rockling",608425,"Medium",8425
+"1189","Coelorinchus chilensis","Chilean grenadier",608445,"Low",8445
+"1190","Lepidorhynchus denticulatus","Thorntooth grenadier",608483,"Low",8483
+"1191","Pseudopleuronectes herzensteini","Yellow striped flounder",608556,"Medium",8556
+"1192","Pelotretis flavilatus","Southern lemon sole",608848,"Medium",8848
+"1193","Dipturus nidarosiensis","Norwegian skate",608900,"Low",8900
+"1194","Rajella bigelowi","Bigelows ray",608936,"Low",8936
+"1195","Spectrunculus grandis","Pudgy cuskeel",608991,"Very low",8991
+"1196","Alepocephalus agassizii","Agassiz slickhead",609171,"Very low",9171
+"1197","Epinephelus caninus","Dogtooth grouper",609217,"Very low",9217
+"1198","Amblyraja hyperborea","Arctic skate",609256,"Low",9256
+"1199","Pristigenys meyeri","Baga",609891,"High",9891
+"1200","Priacanthus alalaua","Alalaua",609902,"High",9902
+"1201","Gerres nigri","Guinean striped mojarra",609907,"High",9907
+"1202","Plectorhinchus macrolepis","Biglip grunt",609908,"Medium",9908
+"1203","Sicyopterus lagocephalus","Red-tailed goby",609994,"High",9994
+"1204","Rhinobatos holcorhynchus","Slender guitarfish",610126,"Low",10126
+"1205","Schedophilus pemarco","Pemarco blackfish",610190,"Medium",10190
+"1206","Benthosema pterotum","Skinnycheek lanternfish",610238,"High",10238
+"1207","Lophius vomerinus","Devil anglerfish",610256,"Low",10256
+"1208","Ostichthys kaianus","Kai soldierfish",610285,"Low",10285
+"1209","Cheilopogon agoo","Japanese flyingfish",610307,"High",10307
+"1210","Patagonotothen ramsayi","Longtail southern cod",610308,"Medium",10308
+"1211","Istigobius decoratus","Decorated goby",604328,"High",4328
+"1212","Sphaeramia orbicularis","Orbiculate cardinalfish",604926,"High",4926
+"1213","Scarus rivulatus","Rivulated parrotfish",604969,"Medium",4969
+"1214","Chlorurus bowersi","Bower's parrotfish",605542,"High",5542
+"1215","Stethojulis strigiventer","Three-ribbon wrasse",605641,"High",5641
+"1216","Canthigaster bennetti","Bennett's sharpnose puffer",606541,"High",6541
+"1217","Amblygobius phalaena","Whitebarred goby",607198,"High",7198
+"1218","Dactyloptena peterseni","Starry flying gurnard",607691,"High",7691
+"1219","Scolecenchelys australis","Shortfinned worm eel",624290,"High",24290
+"1220","Bellator militaris","Horned searobin",604014,"High",4014
+"1221","Porichthys porosissimus","Toadfish",612925,"Medium",12925
+"1222","Aspistor quadriscutis","Bressou sea catfish",600956,"Medium",956
+"1223","Odontognathus mucronatus","Guiana longfin herring",601655,"Medium",1655
+"1224","Symphurus plagusia","Duskycheek tonguefish",607532,"Medium",7532
+"1225","Abalistes stellaris","Starry triggerfish",600009,"Medium",9
+"1226","Exyrias belissimus","Mud reef goby",600370,"Medium",370
+"1227","Esox lucius","Northern pike",600258,"Low",258
+"1228","Lutjanus griseus","Grey snapper",600266,"Medium",266
+"1229","Tinca tinca","Tench",600269,"Medium",269
+"1230","Carassius carassius","Crucian carp",600270,"Medium",270
+"1231","Rutilus rutilus","Roach",600272,"Medium",272
+"1232","Hypophthalmichthys nobilis","Bighead carp",600275,"Medium",275
+"1233","Pelecus cultratus","Sichel",600283,"Medium",283
+"1234","Barbonymus gonionotus","Silver barb",600286,"Medium",286
+"1235","Silurus glanis","Wels catfish",600289,"Low",289
+"1236","Conger orbignianus","Argentine conger",600299,"Medium",299
+"1237","Conger oceanicus","American conger",600300,"Low",300
+"1238","Lota lota","Burbot",600310,"Low",310
+"1239","Urophycis brasiliensis","Brazilian codling",600311,"Medium",311
+"1240","Gymnocranius microdon","Bluespotted largeeye bream",601839,"Medium",1839
+"1241","Lethrinus erythropterus","Longfin emperor",601842,"Medium",1842
+"1242","Lethrinus mahsena","Sky emperor",601843,"Medium",1843
+"1243","Lethrinus borbonicus","Snubnose emperor",601844,"Medium",1844
+"1244","Lethrinus microdon","Smalltooth emperor",601845,"Medium",1845
+"1245","Lethrinus nebulosus","Spangled emperor",601846,"Low",1846
+"1246","Lethrinus obsoletus","Orangestriped emperor",601847,"Low",1847
+"1247","Lethrinus erythracanthus","Orangespotted emperor",601862,"Medium",1862
+"1248","Eleutheronema tetradactylum","Fourfinger threadfin",600340,"Medium",340
+"1249","Channa micropeltes","Indonesian snakehead",600344,"Low",344
+"1250","Centropomus undecimalis","Common snook",600345,"Medium",345
+"1251","Polyprion oxygeneios","Hapuka",600350,"Very low",350
+"1252","Paralabrax humeralis","Peruvian rock seabass",600352,"Medium",352
+"1253","Lethrinus ornatus","Ornate emperor",601866,"High",1866
+"1254","Lethrinus atlanticus","Atlantic emperor",601867,"Medium",1867
+"1255","Monotaxis grandoculis","Humpnose bigeye bream",601869,"Medium",1869
+"1256","Xiphias gladius","Swordfish",600226,"Low",226
+"1257","Perca fluviatilis","European perch",600358,"Low",358
+"1258","Centropristis striata","Black seabass",600361,"Low",361
+"1259","Lopholatilus chamaeleonticeps","Great northern tilefish",600362,"Low",362
+"1260","Wattsia mossambica","Mozambique largeeye bream",601870,"High",1870
+"1261","Atlantoraja castelnaui","Spotback skate",614143,"Low",14143
+"1262","Notopogon lilliei","Crested bellowfish",614266,"Medium",14266
+"1263","Nemadactylus monodactylus","St. Pauls fingerfin",614282,"Low",14282
+"1264","Thunnus orientalis","Pacific bluefin tuna",614290,"Low",14290
+"1265","Chaetodon lunulatus","Oval butterflyfish",614300,"Medium",14300
+"1266","Hemiramphus archipelagicus","Jumping halfbeak",614303,"High",14303
+"1267","Pterygotrigla picta","Spotted gurnard",614327,"Medium",14327
+"1268","Scarus persicus","Gulf parrotfish",614383,"Medium",14383
+"1269","Merluccius gayi peruanus","Peruvian hake",614693,"Medium",14693
+"1270","Plesiops corallicola","Bluegill longfin",614983,"Medium",14983
+"1271","Caprodon longimanus","Pink maomao",615086,"Medium",15086
+"1272","Mesogobius batrachocephalus","Knout goby",616305,"Medium",16305
+"1273","Symbolophorus barnardi","Barnards lanternfish",616720,"Medium",16720
+"1274","Trachyscorpia cristulata echinata","Spiny scorpionfish",617286,"Very low",17286
+"1275","Candidia barbata","Candidia barbata",617304,"Medium",17304
+"1276","Acanthurus gahhm","Black surgeonfish",617471,"Medium",17471
+"1277","Aseraggodes melanostictus","Mottled sole",622522,"High",22522
+"1278","Spaniblennius riodourensis","Rio de Oreo blenny",622620,"High",22620
+"1279","Cheilopogon unicolor","Limpidwing flyingfish",623049,"High",23049
+"1280","Odontanthias borbonius","Checked swallowtail",623333,"High",23333
+"1281","Eptatretus cirrhatus","Broadgilled hagfish",623878,"Low",23878
+"1282","Lepidopsetta bilineata","Rock sole",624237,"Low",24237
+"1283","Cirrhilabrus balteatus","Girdled wrasse",625760,"High",25760
+"1284","Cryptocentrus caeruleomaculatus","Bluespeckled prawngoby",625798,"High",25798
+"1285","Liza klunzingeri","Klunzingers mullet",646376,"High",46376
+"1286","Rioraja agassizii","Rio skate",650857,"Low",50857
+"1287","Bathyraja brachyurops","Broadnose skate",651184,"Low",51184
+"1288","Zearaja chilensis","Yellownose skate",651636,"Low",51636
+"1289","Bathyraja macloviana","Patagonian skate",652474,"Low",52474
+"1290","Cynoscion guatucupa","Stripped weakfish",652918,"Medium",52918
+"1291","Sympterygia bonapartii","Smallnose fanskate",654031,"Low",54031
+"1292","Sympterygia acuta","Bignose fanskate",654032,"Low",54032
+"1293","Scomber colias","Atlantic chub mackerel",654736,"High",54736
+"1294","Brama australis","Southern rays bream",654793,"Low",54793
+"1295","Paralichthys microps","Paralichthys microps",654963,"Medium",54963
+"1296","Chrysiptera brownriggii","Surge damselfish",656326,"High",5697
+"1297","Bathyraja irrasa","Kerguelen sandpaper skate",657505,"Low",6949
+"1298","Cephalopholis aurantia","Golden hind",658000,"Medium",6443
+"1299","Coris gaimard","African coris",658001,"Medium",5625
+"1300","Plectranthias kamii","Basslet",658002,"Medium",59805
+"1301","Sebastes melanops","Black rockfish",603979,"Low",3979
+"1302","Trachyscorpia cristulata cristulata","Atlantic thornyhead",604011,"Very low",4011
+"1303","Myoxocephalus quadricornis","Fourhorn sculpin",604122,"Low",4122
+"1304","Citharichthys sordidus","Pacific sanddab",604215,"Medium",4215
+"1305","Paralichthys californicus","California flounder",604228,"Low",4228
+"1306","Microstomus pacificus","Dover sole",604247,"Low",4247
+"1307","Cephalopholis cruentata","Graysby",600012,"Medium",12
+"1308","Epinephelus adscensionis","Rock hind",600014,"Low",14
+"1309","Pleuronichthys decurrens","Curlfin sole",604252,"Medium",4252
+"1310","Aluterus scriptus","Scribbled leatherjacket filefish",604275,"Medium",4275
+"1311","Canthidermis maculata","Rough triggerfish",604278,"Medium",4278
+"1312","Epinephelus fuscoguttatus","Brownmarbled grouper",604460,"Medium",4460
+"1313","Gazza minuta","Toothpony",604462,"High",4462
+"1314","Gnathanodon speciosus","Golden trevally",604464,"Medium",4464
+"1315","Acanthopagrus bifasciatus","Twobar seabream",604543,"Medium",4543
+"1316","Labrus merula","Brown wrasse",604582,"Medium",4582
+"1317","Siganus sutor","Shoemaker spinefoot",604615,"High",4615
+"1318","Siganus punctatissimus","Peppered spinefoot",604620,"High",4620
+"1319","Siganus punctatus","Goldspotted spinefoot",604621,"High",4621
+"1320","Micromesistius poutassou","Blue whiting",600031,"Medium",31
+"1321","Microchirus variegatus","Thickback sole",600032,"Medium",32
+"1322","Molva molva","Ling",600033,"Low",33
+"1323","Capros aper","Boarfish",600054,"Low",54
+"1324","Cepola macrophthalma","Red bandfish",600056,"Medium",56
+"1325","Grammistes sexlineatus","Goldenstriped soapfish",604925,"Medium",4925
+"1326","Citharus linguatula","Spotted flounder",604943,"Medium",4943
+"1327","Epinephelus goreensis","Dungat grouper",604961,"Medium",4961
+"1328","Symphodus melops","Corkwing wrasse",600059,"Medium",59
+"1329","Ctenolabrus rupestris","Goldsinny wrasse",600061,"Medium",61
+"1330","Scarus schlegeli","Yellowband parrotfish",604975,"Medium",4975
+"1331","Macropharyngodon meleagris","Blackspotted wrasse",604984,"High",4984
+"1332","Lophius vaillanti","Shortspine African angler",604988,"Medium",4988
+"1333","Polydactylus quadrifilis","Giant African threadfin",605002,"Medium",5002
+"1334","Pomadasys incisus","Bastard grunt",605003,"Medium",5003
+"1335","Pontinus kuhlii","Offshore rockfish",605007,"Low",5007
+"1336","Pseudotolithus senegallus","Law croaker",605009,"Low",5009
+"1337","Raja miraletus","Brown ray",605014,"Low",5014
+"1338","Psettodes bennettii","Spiny turbot",605068,"Medium",5068
+"1339","Alepocephalus rostratus","Rissos smooth-head",605071,"Very low",5071
+"1340","Borostomias antarcticus","Snaggletooth",605098,"Medium",5098
+"1341","Labrichthys unilineatus","Tubelip wrasse",605109,"High",5109
+"1342","Pseudopercis semifasciata","Argentinian sandperch",650136,"Low",50136
+"1343","Conger cinereus","Longfin African conger",658004,"Very low",6654
+"1344","Notothenia neglecta","Yellowbelly rockcod",658010,"Low",58010
+"1345","Iniistius geisha","Japanese razorfish",658754,"Medium",58754
+"1346","Nototheniops nybelini","Rockcod",659654,"Medium",59654
+"1347","Lobotes pacificus","Pacific tripletail",660984,"High",60984
+"1348","Odontanthias katayamai","Fairy basslet",661829,"High",64625
+"1349","Epinephelus coioides","Orangespotted grouper",606465,"Low",6465
+"1350","Epinephelus corallicola","Coral grouper",606466,"Medium",6466
+"1351","Epinephelus lanceolatus","Giant grouper",606468,"Very low",6468
+"1352","Gracila albomarginata","Masked grouper",606477,"Medium",6477
+"1353","Variola albimarginata","White-edged lyretail",606478,"Low",6478
+"1354","Aeoliscus strigatus","Razorfish",606503,"High",6503
+"1355","Pomacanthus imperator","Emperor angelfish",606504,"Medium",6504
+"1356","Myripristis vittata","Whitetip soldierfish",606505,"High",6505
+"1357","Arothron stellatus","Stellate puffer",606526,"Low",6526
+"1358","Acanthopagrus schlegelii","Blackhead seabream",606531,"Medium",6531
+"1359","Sebastes schlegelii","Korean rockfish",606534,"Very low",6534
+"1360","Girella punctata","Girella punctata",606537,"Low",6537
+"1361","Chaetodon ornatissimus","Ornate butterflyfish",606550,"High",6550
+"1362","Oxymonacanthus longirostris","Harlequin filefish",606559,"Medium",6559
+"1363","Parapercis clathrata","Latticed sandperch",606561,"Medium",6561
+"1364","Pygoplites diacanthus","Regal angelfish",606572,"Medium",6572
+"1365","Valenciennea strigata","Blueband goby",606575,"High",6575
+"1366","Canthigaster solandri","Spotted sharpnose",606578,"High",6578
+"1367","Neoniphon opercularis","Black squirrelfish",606582,"High",6582
+"1368","Abudefduf vaigiensis","Indo-Pacific sergeant",606630,"High",6630
+"1369","Cantherhines pardalis","Honeycomb filefish",606635,"Medium",6635
+"1370","Epinephelus macrospilos","Snubnose grouper",606661,"Medium",6661
+"1371","Parapercis millepunctata","Blackdotted sand perch",606670,"Medium",6670
+"1372","Amanses scopas","Broom filefish",606672,"Medium",6672
+"1373","Katsuwonus pelamis","Skipjack tuna",600107,"Medium",107
+"1374","Naso thynnoides","Oneknife unicornfish",606932,"Medium",6932
+"1375","Plectorhinchus lineatus","Yellowbanded sweetlips",606940,"Medium",6940
+"1376","Bathyraja maccaini","McCains skate",606950,"Low",6950
+"1377","Bathyraja meridionalis","Darkbelly skate",606951,"Low",6951
+"1378","Bathyraja murrayi","Murrays skate",606952,"Low",6952
+"1379","Amblyraja georgiana","Antarctic starry skate",606953,"Low",6953
+"1380","Diastobranchus capensis","Basketwork eel",606957,"Low",6957
+"1381","Gobionotothen acuta","Triangular rockcod",607040,"Medium",7040
+"1382","Nototheniops larseni","Painted notie",607048,"Medium",7048
+"1383","Chionobathyscus dewitti","Chionobathyscus dewitti",607108,"Medium",7108
+"1384","Chionodraco myersi","Myers' icefish",607110,"Medium",7110
+"1385","Cryodraco antarcticus","Longfingered icefish",607111,"Medium",7111
+"1386","Paradiplospinus gracilis","Slender escolar",607117,"Medium",7117
+"1387","Mancopsetta maculata","Antarctic armless flounder",607120,"Medium",7121
+"1388","Stellifer rastrifer","Rake stardrum",601196,"High",1196
+"1389","Sphyraena guachancho","Guachanche barracuda",601236,"Very low",1236
+"1390","Harengula jaguana","Scaled herring",601480,"Medium",1480
+"1391","Pellona harroweri","American coastal pellona",601643,"High",1643
+"1392","Trachinotus cayennensis","Cayenne pompano",601009,"Medium",1009
+"1393","Trinectes paulistanus","Slipper sole",607580,"High",7580
+"1394","Bodianus pulchellus","Spotfin hogfish",601066,"Medium",1066
+"1395","Lutjanus lutjanus","Bigeye snapper",600159,"Medium",159
+"1396","Selar boops","Oxeye scad",601954,"High",1954
+"1397","Pterocaesio trilineata","Three-stripe fusilier",601886,"High",1886
+"1398","Caranx sexfasciatus","Bigeye trevally",601917,"Medium",1917
+"1399","Carangoides ferdau","Blue trevally",601921,"Medium",1921
+"1400","Carangoides bajad","Orangespotted trevally",601923,"High",1923
+"1401","Carangoides coeruleopinnatus","Coastal trevally",601924,"High",1924
+"1402","Carangoides fulvoguttatus","Yellowspotted trevally",601926,"Low",1926
+"1403","Caranx lugubris","Black jack",601936,"Low",1936
+"1404","Decapterus macrosoma","Shortfin scad",601938,"High",1938
+"1405","Megalops cyprinoides","Indo-Pacific tarpon",600227,"Medium",227
+"1406","Parona signata","Parona leatherjacket",600386,"Medium",386
+"1407","Mene maculata","Moonfish",600390,"High",390
+"1408","Emmelichthys nitidus nitidus","Cape bonnetmouth",600395,"Medium",395
+"1409","Nemipterus virgatus","Golden threadfin bream",600396,"Medium",396
+"1410","Pomadasys argenteus","Silver grunt",600399,"Medium",399
+"1411","Cynoscion analis","Peruvian weakfish",600403,"Medium",403
+"1412","Cynoscion nebulosus","Spotted weakfish",600405,"Medium",405
+"1413","Cynoscion regalis","Squeteague",600406,"Medium",406
+"1414","Menticirrhus littoralis","Gulf kingcroaker",600411,"Medium",411
+"1415","Umbrina canosai","Argentine croaker",600413,"Medium",413
+"1416","Paralonchurus peruanus","Peruvian banded croaker",600424,"Medium",424
+"1417","Pogonias cromis","Black drum",600425,"Medium",425
+"1418","Epinephelus aeneus","White grouper",600426,"Medium",426
+"1419","Tripterophycis gilchristi","Grenadier cod",602023,"Low",2023
+"1420","Notacanthus chemnitzii","Spiny eel",602661,"Low",2661
+"1421","Coregonus autumnalis","Arctic cisco",602669,"Low",2669
+"1422","Coregonus nasus","Broad whitefish",602674,"Low",2674
+"1423","Somniosus antarcticus","Southern sleeper shark",665976,"Very low",65976
+"1424","Leiostomus xanthurus","Spot croaker",600429,"High",429
+"1425","Pseudotolithus senegalensis","Cassava croaker",600432,"Medium",432
+"1426","Pagellus bellottii","Red pandora",600436,"Medium",436
+"1427","Argyrops spinifer","King soldierbream",600442,"Low",442
+"1428","Cheimerius nufar","Santer seabream",600444,"Low",444
+"1429","Pseudupeneus prayensis","West African goatfish",600453,"High",453
+"1430","Parapercis colias","New Zealand blue cod",600464,"Medium",464
+"1431","Percophis brasiliensis","Brazilian flathead",600465,"Medium",465
+"1432","Dascyllus aruanus","Whitetail dascyllus",605110,"Medium",5110
+"1433","Dascyllus trimaculatus","Threespot dascyllus",605112,"High",5112
+"1434","Cypselurus poecilopterus","Yellowing flyingfish",605122,"High",5122
+"1435","Champsocephalus esox","Pike icefish",605133,"Medium",5133
+"1436","Epinephelus akaara","Hong Kong grouper",605158,"Medium",5158
+"1437","Pterois volitans","Red lionfish",605195,"Low",5195
+"1438","Sargocentron melanospilos","Blackblotch squirrelfish",605345,"High",5345
+"1439","Variola louti","Yellow-edged lyretail",605354,"Medium",5354
+"1440","Cephalopholis igarashiensis","Garish hind",605366,"Medium",5366
+"1441","Epinephelus areolatus","Areolate grouper",605367,"Low",5367
+"1442","Lactoria cornuta","Longhorn cowfish",606399,"High",6399
+"1443","Cyclopterus lumpus","Lumpfish",600062,"Low",62
+"1444","Rhabdosargus sarba","Goldlined seabream",605368,"Medium",5368
+"1445","Oxyeleotris marmorata","Marble goby",605376,"High",5376
+"1446","Synodus variegatus","Variegated lizardfish",605398,"High",5398
+"1447","Antennatus coccineus","Scarlet frogfish",605402,"High",5402
+"1448","Sargocentron cornutum","Threespot squirrelfish",605406,"High",5406
+"1449","Myripristis murdjan","Pinecone soldierfish",605408,"Medium",5408
+"1450","Arothron hispidus","White-spotted puffer",605425,"Medium",5425
+"1451","Halobatrachus didactylus","Lusitanian toadfish",605429,"Medium",5429
+"1452","Centropyge flavissima","Lemonpeel angelfish",605457,"High",5457
+"1453","Labroides dimidiatus","Bluestreak cleaner wrasse",605459,"Medium",5459
+"1454","Amblyglyphidodon curacao","Staghorn damselfish",605477,"High",5477
+"1455","Cheilodipterus quinquelineatus","Fivelined cardinalfish",605482,"High",5482
+"1456","Bodianus axillaris","Axilspot hogfish",605498,"Medium",5498
+"1457","Rhynchobatus djiddensis","Giant guitarfish",605503,"Low",5503
+"1458","Chelidonichthys capensis","Cape gurnard",605504,"Low",5504
+"1459","Epinephelus chlorostigma","Brownspotted grouper",605524,"Low",5524
+"1460","Bolbometopon muricatum","Green humphead parrotfish",605537,"Low",5537
+"1461","Scarus altipinnis","Filamentfinned parrotfish",605540,"Medium",5540
+"1462","Scarus festivus","Festive parrotfish",605544,"Medium",5544
+"1463","Scarus forsteni","Forstens parrotfish",605545,"Medium",5545
+"1464","Scarus frenatus","Bridled parrotfish",605546,"Medium",5546
+"1465","Dicentrarchus labrax","European seabass",600063,"Low",63
+"1466","Engraulis encrasicolus","European anchovy",600066,"Medium",66
+"1467","Chlorurus frontalis","Pacific slopehead parrotfish",605547,"Medium",5547
+"1468","Scarus niger","Dusky parrotfish",605550,"High",5550
+"1469","Scarus psittacus","Common parrotfish",605553,"High",5553
+"1470","Scarus rubroviolaceus","Ember parrotfish",605555,"Medium",5555
+"1471","Coelorinchus marinii","Marinis grenadier",607132,"Medium",7132
+"1472","Cynomacrurus piriei","Dogtooth grenadier",607136,"Low",7136
+"1473","Pseudocyttus maculatus","Smooth oreo dory",607151,"Very low",7151
+"1474","Arothron manilensis","Narrowlined puffer",607187,"High",7187
+"1475","Ctenogobiops tangaroai","Tangaroa shrimpgoby",607211,"High",7211
+"1476","Synodus binotatus","Two-spot lizard fish",607292,"High",7292
+"1477","Myripristis kuntee","Shoulderbar soldierfish",607306,"High",7306
+"1478","Myripristis pralinia","Scarlet soldierfish",607308,"High",7308
+"1479","Myripristis violacea","Lattice soldierfish",607309,"High",7309
+"1480","Neoniphon argenteus","Clearfin squirrelfish",607310,"High",7310
+"1481","Sargocentron tiereoides","Pink squirrelfish",607311,"High",7311
+"1482","Epinephelus awoara","Yellow grouper",607329,"High",7329
+"1483","Epinephelus howlandi","Blacksaddle grouper",607348,"Medium",7348
+"1484","Hyporthodus octofasciatus","Eightbar grouper",607355,"Very low",7355
+"1485","Epinephelus socialis","Surge grouper",607362,"Medium",7362
+"1486","Epinephelus summana","Summan grouper",607366,"Medium",7366
+"1487","Plectropomus pessuliferus","Roving coralgrouper",607430,"Very low",7430
+"1488","Lepophidium brevibarbe","Shortbeard cusk-eel",607553,"Medium",7553
+"1489","Leucoraja circularis","Sandy ray",607614,"Low",7614
+"1490","Mobula mobular","Devil fish",607618,"Low",7618
+"1491","Rastrelliger kanagurta","Indian mackerel",600111,"High",111
+"1492","Sarda chiliensis","Eastern Pacific bonito",600113,"Medium",113
+"1493","Sarda orientalis","Striped bonito",600114,"Medium",114
+"1494","Plectorhinchus gaterinus","Blackspotted rubberlips",607703,"Medium",7703
+"1495","Sarda sarda","Atlantic bonito",600115,"Medium",115
+"1496","Plectorhinchus schotaf","Minstrel sweetlip",607706,"Low",7706
+"1497","Pomadasys stridens","Striped piggy",607708,"High",7708
+"1498","Myripristis amaena","Brick soldierfish",607773,"Medium",7773
+"1499","Scomber australasicus","Blue mackerel",600116,"Medium",116
+"1500","Scomber japonicus","Chub mackerel",600117,"Medium",117
+"1501","Scomber scombrus","Atlantic mackerel",600118,"Medium",118
+"1502","Scomberomorus brasiliensis","Serra Spanish mackerel",600119,"Medium",119
+"1503","Pomacanthus maculosus","Yellowbar angelfish",607903,"Low",7903
+"1504","Scomberomorus cavalla","King mackerel",600120,"Low",120
+"1505","Parapristipoma octolineatum","African striped grunt",608092,"Medium",8092
+"1506","Chlorurus microrhinos","Steephead parrotfish",608097,"Low",60479
+"1507","Rhabdosargus haffara","Haffara seabream",608166,"Medium",8166
+"1508","Pampus chinensis","Chinese silver pomfret",608187,"High",8187
+"1509","Aphanopus intermedius","Intermediate scabbardfish",608540,"Low",8540
+"1510","Cephalopholis fulva","Coney",608816,"Low",8816
+"1511","Solea senegalensis","Senegalese sole",608852,"Medium",8852
+"1512","Chaenocephalus aceratus","Blackfin icefish",600473,"Medium",473
+"1513","Pseudochaenichthys georgianus","South Georgia icefish",600475,"Medium",475
+"1514","Channichthys rhinoceratus","Unicorn icefish",600477,"Medium",477
+"1515","Coregonus sardinella","Sardine cisco",602678,"Medium",2678
+"1516","Stenodus leucichthys","Sheefish",602692,"Low",2692
+"1517","Leuciscus idus","Ide",602801,"Low",2801
+"1518","Zoarces americanus","Ocean pout",600480,"Low",480
+"1519","Anarhichas minor","Spotted wolffish",603811,"Low",3811
+"1520","Acanthurus achilles","Achilles tang",604306,"High",4306
+"1521","Leucoraja naevus","Cuckoo ray",604326,"Low",4326
+"1522","Raja montagui","Spotted ray",604329,"Low",4329
+"1523","Myliobatis aquila","Common eagleray",604330,"Very low",4330
+"1524","Lycodes esmarkii","Greater eelpout",604333,"Very low",4333
+"1525","Stegastes albifasciatus","Whitebar gregory",604340,"High",4340
+"1526","Stegastes lividus","Stegastes lividus",604351,"High",58951
+"1527","Calotomus carolinus","Carolines parrotfish",604355,"Medium",4355
+"1528","Calotomus spinidens","Spinytooth parrotfish",604357,"High",4357
+"1529","Epinephelus itajara","Goliath grouper",600016,"Low",16
+"1530","Chelidonichthys kumu","Bluefin gurnard",600507,"Medium",507
+"1531","Deania hystricosa","Rough longnose dogfish",600671,"Low",671
+"1532","Pterygotrigla polyommata","Latchet",600508,"Medium",508
+"1533","Ophiodon elongatus","Lingcod",600509,"Low",509
+"1534","Psettodes erumei","Indian halibut",600513,"Medium",513
+"1535","Atheresthes stomias","Arrowtooth flounder",600517,"Low",517
+"1536","Atheresthes evermanni","Kamchatka flounder",600518,"Low",518
+"1537","Hippoglossoides elassodon","Flathead sole",600519,"Low",519
+"1538","Limanda aspera","Yellowfin sole",600520,"Low",520
+"1539","Carangoides malabaricus","Malabar trevally",604443,"High",4443
+"1540","Dicologlossa cuneata","Wedge sole",600526,"High",526
+"1541","Austroglossus microlepis","West coast sole",600527,"Low",527
+"1542","Austroglossus pectoralis","Mud sole",600528,"Medium",528
+"1543","Encrasicholina heteroloba","Shorthead anchovy",600556,"High",556
+"1544","Encrasicholina punctifer","Buccaneer anchovy",600558,"High",558
+"1545","Stolephorus insularis","Hardenbergs anchovy",600571,"High",571
+"1546","Stolephorus pacificus","Pacific anchovy",600575,"High",575
+"1547","Heptranchias perlo","Sharpnose sevengill shark",600636,"Very low",636
+"1548","Siganus canaliculatus","White-spotted spinefoot",604456,"Medium",4456
+"1549","Siganus spinus","Little spinefoot",604457,"High",4457
+"1550","Centrophorus lusitanicus","Lowfin gulper shark",600650,"Very low",650
+"1551","Centroscyllium fabricii","Black dogfish",600656,"Low",656
+"1552","Orthopristis chrysoptera","Pigfish",600005,"Medium",5
+"1553","Etmopterus granulosus","Southern lanternshark",600679,"Low",679
+"1554","Somniosus rostratus","Little sleeper shark",600704,"Low",704
+"1555","Diagramma pictum","Painted sweetlips",604465,"Medium",4465
+"1556","Pseudobalistes fuscus","Yellow-spotted triggerfish",604466,"Medium",4466
+"1557","Gymnocephalus cernua","Ruffe",604474,"Medium",4474
+"1558","Dactyloptena orientalis","Oriental flying gurnard",604485,"High",4485
+"1559","Sphyraena obtusata","Obtuse barracuda",604493,"High",4493
+"1560","Psettodes belcheri","Spottail spiny turbot",604504,"Medium",4504
+"1561","Clupea harengus","Atlantic herring",600024,NA,24
+"1562","Oxynotus centrina","Angular roughshark",600718,"Very low",718
+"1563","Oxynotus paradoxus","Sailfin roughshark",600719,"Low",719
+"1564","Squatina argentina","Argentine angelshark",600727,"Very low",727
+"1565","Carcharias taurus","Sand tiger shark",600747,"Very low",747
+"1566","Galeus murinus","Mouse catshark",600808,"Low",808
+"1567","Neotrygon kuhlii","Bluespotted stingray",604508,"Very low",4508
+"1568","Saurida gracilis","Gracile lizardfish",604534,"High",4534
+"1569","Dentex gibbosus","Pink dentex",604536,"Medium",4536
+"1570","Dentex canariensis","Canary dentex",604539,"Medium",4539
+"1571","Epinephelus tauvina","Greasy grouper",604461,"Low",4461
+"1572","Sillago sihama","Silver sillago",604544,"High",4544
+"1573","Umbrina canariensis","Canary drum",604548,"Medium",4548
+"1574","Scyliorhinus stellaris","Nursehound",600854,"Low",854
+"1575","Carcharhinus brachyurus","Copper shark",600864,"Very low",864
+"1576","Carcharhinus plumbeus","Sandbar shark",600880,"Very low",880
+"1577","Carcharhinus porosus","Smalltail shark",600881,"Very low",881
+"1578","Carcharhinus sorrah","Spottail shark",600884,"Very low",884
+"1579","Trachyrincus scabrus","Roughsnout grenadier",604556,"Medium",4556
+"1580","Siganus vermiculatus","Vermiculated spinefoot",604561,"Medium",4561
+"1581","Miichthys miiuy","Mi-iuy croaker",604569,"Medium",4569
+"1582","Liza ramada","Thinlip grey mullet",604583,"Low",4583
+"1583","Chelidonichthys spinosus","Spiny red gurnard",604598,"Medium",4598
+"1584","Glyptocephalus cynoglossus","Witch flounder",600026,"Low",26
+"1585","Lepidorhombus boscii","Fourspot megrim",600027,"Medium",27
+"1586","Lepidorhombus whiffiagonis","Megrim",600028,"Low",28
+"1587","Merlangius merlangus","Whiting",600029,"Medium",29
+"1588","Triaenodon obesus","Whitetip reef shark",600907,"Very low",907
+"1589","Sphyrna zygaena","Smooth hammerhead",600917,"Low",917
+"1590","Caesio caerulaurea","Blue and gold fusilier",600918,"High",918
+"1591","Pseudocaranx dentex","White trevally",601002,"Medium",1002
+"1592","Seriola rivoliana","Longfin yellowtail",601007,"Low",1007
+"1593","Hemiramphus bermudensis","Bermuda halfbeak",601058,"High",1058
