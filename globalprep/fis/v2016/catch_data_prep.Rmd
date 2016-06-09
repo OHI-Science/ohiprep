@@ -1,0 +1,24 @@
+---
+title: "Catch data prep"
+author: "Jamie Afflerbach"
+date: "6/8/2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+library(dplyr)
+
+source('~/github/ohiprep/src/R/common.R')
+
+```
+
+Read in raw catch data from Mazu and then filter the data based on the following conditions:
+
+(1) Keep all stocks that have at least 1000 tons mean annual harvest
+(2) Keep all stocks with time series of 20 years or more
+```{r catch_data}
+
+dat <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/catch_saup.csv'))
+
+```
