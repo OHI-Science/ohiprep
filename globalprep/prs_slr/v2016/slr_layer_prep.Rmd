@@ -13,44 +13,27 @@ pdf_document:
   toc: true
 ---
   
-  ``` {r setup, echo = FALSE, message = FALSE, warning = FALSE}
+``` {r setup, echo = FALSE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
                       echo = FALSE, message = FALSE, warning = FALSE)
 
 library(sp)        # the classes and methods that make up spatial ops in R
 library(rgdal)
 library(raster)
+library(rasterVis)
+library(ncdf4)
+library(RColorBrewer)
 
-dir_git <- '~/github/ohibc'
-source(file.path(dir_git, 'src/R/common.R'))
+dir_git <- '~/github/ohiprep'
+source('~/github/ohiprep/src/R/common.R')
 ### an OHIBC specific version of common.R
-dir_anx <- file.path(dir_neptune_data, 'git-annex/bcprep')
-dir_rgn <- file.path(dir_git, 'prep/regions')  ### github: general buffer region shapefiles
+dir_anx <- file.path(dir_M, 'git-annex/globalprep')
 
-### goal specific folders and info
-goal      <- 'pressures'
-scenario  <- 'v2016'
-dir_goal  <- file.path(dir_git, 'prep', goal, scenario)
-dir_goal_anx <- file.path(dir_anx, goal, scenario)
-
-### provenance tracking
-source('~/github/ohibc/src/R/prov.R')      
-### Provenance tracking functions: must source at start to initialize prov_track
-dir_prov <- file.path(dir_goal, 'prov') 
-### set a provenance folder for this script
-this_script_file <- file.path(dir_goal, 'pressures_slr_prep.Rmd') 
-### can't recognize the current script name on its own :(
-prov_run_tag <- 'standard run'
-
-### goal-specific source scripts
-source(file.path(dir_goal, 'pressures_lyr_fxns.R'))
-
-### other support functions
-source(file.path(dir_git, 'src/R/rast_tools.R'))
-
-### set up proj4string options: BC Albers and WGS84
+### set up proj4string options: WGS84
 p4s_wgs84 <- '+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'
-p4s_bcalb <- '+proj=aea +lat_1=50 +lat_2=58.5 +lat_0=45 +lon_0=-126 +x_0=1000000 +y_0=0 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0'
+
+### Define spectral color scheme for plotting maps
+cols      = rev(colorRampPalette(brewer.pal(9, 'Spectral'))(255)) # rainbow color scheme
 
 ```
 
@@ -62,8 +45,7 @@ There are two parts to creating this layer:
   * If necessary, read .nc.gz files from aviso: ftp://ftp.aviso.altimetry.fr/global/delayed-time/grids/climatology/monthly_mean/
   * unzip .gz files and then delete .gz 
 * Read monthly mean sea level data as rasters; aggregate to annual means
-* Clip rasters to extents of OHIBC region, and reproject into BC Albers projection.
-2. Creating the pressure layers for OHIBC:
+2. Creating the pressure layers for OHI Global:
   * Determine baseline using five-year average from 1993-1997.
 * For each study year (2000 - 2015) calculate difference between study year and baseline
 * Set to zero all negative values, indicating decreases in mean sea level
@@ -96,7 +78,7 @@ Raw data in monthly mean sea level anomalies, at .25 degree grid globally, is pr
 
 reload <- FALSE
 
-dir_anx_aviso <- file.path(dir_neptune_data, 'git-annex/globalprep/_raw_data/AVISO_slr')
+dir_anx_aviso <- file.path(dir_M, 'git-annex/globalprep/_raw_data/AVISO_slr')
 
 if(reload) {
   ### Get filenames from AVISO FTP URL:
@@ -135,7 +117,6 @@ if(reload) {
 
 ``` {r msla_monthly_to_annual}
 
-library(ncdf4)
 nc_files <- list.files(file.path(dir_anx_aviso, 'msla_monthly_mean'),
                        full.names = TRUE)
 nc_files <- nc_files[str_detect(nc_files, '.nc') & !str_detect(nc_files, '.gz')]
@@ -161,7 +142,7 @@ for (j in 1:length(years)) { ### j <- 1
   
   ### brick all rasters for this year, and calc annual mean, then write as raster
   rbrick_yr <- brick(rast_list_yr)
-  rast_annual_mean <- calc(rbrick_yr, mean)
+  rast_annual_mean <- calc(rbrick_yr, mean,na.rm=T)
   
   rast_file <- file.path(dir_anx_aviso, 'msla_annual_mean', 
                          sprintf('rast_msla_annual_%s.tif', years[j]))
@@ -195,70 +176,6 @@ range_sla <- range(values(rbrick_sla), na.rm = TRUE)
 Range of annual mean sea level anomalies for global dataset: `r paste(range_sla, collapse = ' - ')` meters.
 
 
-### Convert global data to OHIBC region data
-
-The global data, in WGS84 coordinate ref system, is clipped down to a bounding box around the OHIBC region, and reprojected into BC Albers projection.  This data is then resampled to 1 km resolution using nearest neighbor method.
-
-The resulting raster layers include annual mean sea level anomaly for each coarse cell (approx .25 degree, from original resolution) for each year (1993-2015).
-
-``` {r load_rgn, echo = FALSE}
-
-rgn_lyr <- 'ohibc_rgn'
-
-message(sprintf('Reading OHIBC regions shapefile...\n  %s/%s.shp', dir_rgn, rgn_lyr))
-rgn_poly <- readOGR(dsn = path.expand(dir_rgn), layer = rgn_lyr,
-                    verbose = FALSE, stringsAsFactors = FALSE)
-
-rgn_poly_wgs84 <- readOGR(dsn = path.expand(dir_rgn), 
-                          layer = paste(rgn_lyr, '_wgs84', sep = ''),
-                          verbose = FALSE, stringsAsFactors = FALSE)
-
-### In case we need to resample to 1 km... use base raster from 
-### regions folder (note: 500m base raster available too).  Used later in
-### finding zonal statistics anyway.
-rast_rgn <- raster(file.path(dir_rgn, 'ohibc_rgn_raster_1000m.tif'))
-
-```
-
-``` {r crop_sla_brick, echo = FALSE}
-### clip rasters to extents of region (in WGS 84 CRS)
-### then: reproject to BC Albers projection
-bc_sla_file <- file.path(dir_goal, 'int/slr/rast_sla_raw.tif')
-
-if(!file.exists(bc_sla_file)) {
-  bc_sla <- raster::crop(rbrick_sla, rgn_poly_wgs84, snap = 'out') %>%
-    raster::projectRaster(crs = p4s_bcalb)
-  
-  plot_rast(bc_sla[[1]], 
-            title = sprintf('Mean SL anomaly %s', names(bc_sla)[1]), 
-            scale_label = 'meters',
-            rev_scale = TRUE)
-  plot_rast(bc_sla[[nlayers(bc_sla)]], 
-            title = sprintf('Mean SL anomaly %s', names(bc_sla)[nlayers(bc_sla)]), 
-            scale_label = 'meters',
-            rev_scale = TRUE)
-  
-  message('Resampling rasters to new resolution')
-  bc_sla_resamp <- resample_brick(bc_sla, rast_rgn,
-                                  filename = bc_sla_file,
-                                  overwrite = TRUE)
-} else {
-  bc_sla_resamp <- brick(bc_sla_file)
-  names(bc_sla_resamp) <- paste('y', years, sep = '')
-}
-
-plot_rast(bc_sla_resamp[[1]], 
-          title = sprintf('Mean SL anomaly %s', names(bc_sla_resamp)[1]), 
-          scale_label = 'meters',
-          rev_scale = TRUE)
-plot_rast(bc_sla_resamp[[nlayers(bc_sla_resamp)]], 
-          title = sprintf('Mean SL anomaly %s', names(bc_sla_resamp)[nlayers(bc_sla_resamp)]), 
-          scale_label = 'meters',
-          rev_scale = TRUE)
-
-```
-
-
 ## Rescale values as pressures
 
 Baseline sea level anomaly is based upon the count within 1993 to 1997.
@@ -268,27 +185,64 @@ Change in mean sea level is determined by simple subtraction of the 1998-2014 ra
 ``` {r calc_delta_sl_anomalies}
 
 base_yrs <- 5
-names(bc_sla_resamp)[1:base_yrs]
-bc_sla_baseline <- bc_sla_resamp[[1:base_yrs]] %>%
-  calc(mean)
+names(rbrick_sla)[1:base_yrs]
+sla_baseline <-rbrick_sla[[1:base_yrs]] %>%
+  calc(mean,na.rm=T,filename = file.path(dir_M,'git-annex/globalprep/prs_slr/v2016/int/sla_baseline.tif'))
 
-bc_sla_study <- bc_sla_resamp[[(base_yrs + 1):nlayers(bc_sla_resamp)]]
 
-bc_sla_delta <- bc_sla_study - bc_sla_baseline
-names(bc_sla_delta) <- names(bc_sla_study)
+sla_study <- rbrick_sla[[(base_yrs + 1):nlayers(rbrick_sla)]]
 
-bc_sla_delta_file <- file.path(dir_goal, 'int/slr/rast_sla_delta_raw.tif')
-message('Writing BC SLA delta to: ', bc_sla_delta_file)
-writeRaster(bc_sla_delta, bc_sla_delta_file, bandorder='BIL', overwrite = TRUE)
+sla_delta <- sla_study - sla_baseline
+names(sla_delta) <- names(sla_study)
 
-plot_rast(bc_sla_delta[[1]], 
-          title = sprintf('delta SL anomaly %s', names(bc_sla_delta)[1]), 
-          scale_label = 'meters',
-          rev_scale = TRUE)
-plot_rast(bc_sla_delta[[nlayers(bc_sla_delta)]], 
-          title = sprintf('delta SL anomaly %s', names(bc_sla_delta)[nlayers(bc_sla_delta)]), 
-          scale_label = 'meters',
-          rev_scale = TRUE)
+sla_delta_file <- file.path(dir_M, 'git-annex/globalprep/prs_slr/v2016/int/rast_sla_delta_raw.tif')
+writeRaster(sla_delta, sla_delta_file, bandorder='BIL', overwrite = TRUE) ### Saving a brick to file which includes years 1998 - 2015
+
+plot(sla_delta[[1]], 
+          main = sprintf('Change in SL anomaly %s', names(sla_delta)[1]), 
+          col=cols,box=F,axes=F)
+plot(sla_delta[[nlayers(sla_delta)]], 
+          main = sprintf('Change in SL anomaly %s', names(sla_delta)[nlayers(sla_delta)]), 
+          col=cols,axes=F,box=F)
+
+```
+
+
+## Reproject
+
+```{r reproject_annual_changes, dependson=calc_delta_sl_anomalies, eval=F}
+
+# Read in ocean raster with cells at 1km. Use this as a template for resampling
+
+ocean = raster(file.path(dir_M,'git-annex/globalprep/spatial/ocean.tif'))
+
+library(doParallel)
+library(foreach)
+
+## Multiprocessing cores
+# best to leave empty arguments; by default, the number of cores used for parallel 
+# execution is 1/2 the number of detected cores (if number is unspecified)
+# You can also detect the number of Cores: ?detectCores
+registerDoParallel(16) 
+
+#do some parallelization to reproject all rasters
+foreach(i = 1:nlayers(sla_delta))%dopar%{
+  
+  r <- sla_delta[[i]]%>%
+        projectRaster(ocean,filename = paste0(file.path(dir_M,'git-annex/globalprep/prs_slr/v2016/int/sla_delta_moll/sla_delta_moll_'),
+                                              names(sla_delta[[i]]),'.tif'),overwrite=T)
+  
+}
+
+```
+
+
+## Resample
+
+```{r resample_annual_changes, dependson = reproject_annual_changes}
+
+sla_delta_resamp = raster(file.path(dir_M,'git-annex/globalprep/prs_slr/v2016/int/sla_delta_moll_brick.tif'))[[]]
+
 
 ```
 
