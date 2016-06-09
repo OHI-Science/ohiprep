@@ -1,1 +1,0 @@
-Downloaded on 1/12/2015 by JAfflerbach from: http://www.aviso.altimetry.fr/en/data/products/ocean-indicators-products/mean-sea-level/products-images.html
