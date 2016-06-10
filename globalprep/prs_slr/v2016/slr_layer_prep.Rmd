@@ -35,6 +35,9 @@ p4s_wgs84 <- '+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'
 ### Define spectral color scheme for plotting maps
 cols      = rev(colorRampPalette(brewer.pal(9, 'Spectral'))(255)) # rainbow color scheme
 
+# define mollweide projection
+mollCRS=crs('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs')
+
 ```
 
 # Summary
@@ -187,7 +190,7 @@ Change in mean sea level is determined by simple subtraction of the 1998-2014 ra
 base_yrs <- 5
 names(rbrick_sla)[1:base_yrs]
 sla_baseline <-rbrick_sla[[1:base_yrs]] %>%
-  calc(mean,na.rm=T,filename = file.path(dir_M,'git-annex/globalprep/prs_slr/v2016/int/sla_baseline.tif'))
+  calc(mean,na.rm=T,filename = file.path(dir_M,'git-annex/globalprep/prs_slr/v2016/int/sla_baseline.tif'),overwrite=T)
 
 
 sla_study <- rbrick_sla[[(base_yrs + 1):nlayers(rbrick_sla)]]
@@ -195,8 +198,8 @@ sla_study <- rbrick_sla[[(base_yrs + 1):nlayers(rbrick_sla)]]
 sla_delta <- sla_study - sla_baseline
 names(sla_delta) <- names(sla_study)
 
-sla_delta_file <- file.path(dir_M, 'git-annex/globalprep/prs_slr/v2016/int/rast_sla_delta_raw.tif')
-writeRaster(sla_delta, sla_delta_file, bandorder='BIL', overwrite = TRUE) ### Saving a brick to file which includes years 1998 - 2015
+#sla_delta_file <- file.path(dir_M, 'git-annex/globalprep/prs_slr/v2016/int/rast_sla_delta_raw.tif')
+#writeRaster(sla_delta, sla_delta_file, bandorder='BIL', overwrite = TRUE) ### Saving a brick to file which includes years 1998 - 2015
 
 plot(sla_delta[[1]], 
           main = sprintf('Change in SL anomaly %s', names(sla_delta)[1]), 
@@ -208,7 +211,7 @@ plot(sla_delta[[nlayers(sla_delta)]],
 ```
 
 
-## Reproject
+## Reproject to molleweide & Resample to 1km2 cells
 
 ```{r reproject_annual_changes, dependson=calc_delta_sl_anomalies, eval=F}
 
@@ -229,9 +232,9 @@ registerDoParallel(16)
 foreach(i = 1:nlayers(sla_delta))%dopar%{
   
   r <- sla_delta[[i]]%>%
-        projectRaster(ocean,filename = paste0(file.path(dir_M,'git-annex/globalprep/prs_slr/v2016/int/sla_delta_moll/sla_delta_moll_'),
+        projectRaster(crs = mollCRS)%>%
+          resample(ocean,filename = paste0(file.path(dir_anx, 'prs_slr/v2016/int/sla_delta_moll/sla_delta_moll_'),
                                               names(sla_delta[[i]]),'.tif'),overwrite=T)
-  
 }
 
 ```
@@ -240,6 +243,15 @@ foreach(i = 1:nlayers(sla_delta))%dopar%{
 ## Resample
 
 ```{r resample_annual_changes, dependson = reproject_annual_changes}
+
+slr_proj_files = list.files(file.path(dir_anx,'prs_slr/v2016/int/sla_delta_moll'),full.names = T)
+
+slr_resamp <- function(file){
+  
+  r <- raster(file)
+  
+  
+}
 
 sla_delta_resamp = raster(file.path(dir_M,'git-annex/globalprep/prs_slr/v2016/int/sla_delta_moll_brick.tif'))[[]]
 
