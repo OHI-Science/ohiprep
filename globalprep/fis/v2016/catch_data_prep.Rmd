@@ -1,9 +1,11 @@
 ---
-title: "Catch data prep"
+title: "Preparing catch data for BBmsy calculations"
 author: "Jamie Afflerbach"
 date: "6/8/2016"
 output: html_document
 ---
+
+This script takes the SAUP catch data and aggregates catch to **stock levels**. For the Ocean Health Index, we assume a stock is represented by the FAO region in which the species is caught.
 
 ```{r setup, include=FALSE}
 
@@ -13,12 +15,97 @@ source('~/github/ohiprep/src/R/common.R')
 
 ```
 
-Read in raw catch data from Mazu and then filter the data based on the following conditions:
+In order to aggregate to FAO regions, we associate catch per SAUP region to the FAO region it is found.
+
+For example, New Zealand is located entirely in FAO region 81. All catch reported by New Zealand will be aggregated by species to the FAO region. If a species was reported as caught in both New Zealand waters and in the High Seas of area 81, these two records will be combined into one by summing the catch.
+
+***
+
+The catch data was joined to a lookup table that links SAUP region names and ids to the FAO region they are located in. The proportional area of each EEZ within the FAO region was also calculated for overlapping EEZs.
+
+```{r rgns_table}
+# Read in the SAUP regions lookup table created in saup_rasters_to_ohi_rgns.R
+
+rgns <- read.csv('int/saup_rgn_to_fao.csv')
+
+DT::datatable(rgns)
+
+```
+
+The catch data is linked to these regions and a unique **stock_id** is created by pasting the scientific name of the species and the FAO region together.
+
+```{r catch_data}
+
+#read in the catch data created in getSAUPdata.R and the taxon_resilence table to link the data together
+
+taxon_res = read.csv('int/taxon_resilience_lookup.csv')
+
+dat <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/raw/SAUP_catch_taxon_tons_eezs.csv'),stringsAsFactors=F)%>%
+          rbind(read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/raw/SAUP_catch_taxon_tons_highseas.csv'),stringsAsFactors=F))%>%
+           filter(species != "Others")%>%
+            rename(common = species)%>%
+              left_join(taxon_res,by='common')%>%
+            filter(!is.na(TaxonKey))%>%
+         rename(saup_name = rgn_name,
+                 saup_id = rgn_num)%>%
+          left_join(rgns)%>%
+          mutate(fao_rgn = ifelse(saup_id > 1000, saup_id - 1000,fao_rgn),
+                stock_id = gsub(" ","_",paste(sciname,fao_rgn,sep='-'),fixed=T))%>%
+          select(-X.x,-X.y, -saup_name,-sciname,-prop_area)
+
+
+#write.csv(dat,file='int/catch_saup.csv',row.names=F)
+
+#Showing only 
+DT::datatable(head(dat,n=100),caption = 'Only showing the first 100 rows due to large size of this data')
+
+```
+
+This catch data table is then used, along with the proportional area per region, to aggregate catch by stock
+
+```{r catch_aggregate}
+catch <- dat%>%
+          left_join(rgns)%>%
+          mutate(prop_area = ifelse(saup_id > 1000, 1, prop_area),
+                  tons_area = tons*prop_area)
+
+```
+
+Filter out all stocks that don't meet our conditions
 
 (1) Keep all stocks that have at least 1000 tons mean annual harvest
 (2) Keep all stocks with time series of 20 years or more
-```{r catch_data}
 
-dat <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/catch_saup.csv'))
+```{r}
+
+#set variables to filter by
+min_yrs = 20
+min_tons = 1000
+
+stks <- catch%>%
+  group_by_(.dots=c("year","common","fao_rgn","stock_id","TaxonKey","Resilience"))%>%
+          summarize(tons = sum(tons_area))%>%
+      ungroup()%>%
+        mutate(nonzero = ifelse(tons>0, 1, 0))%>%
+      group_by(stock_id)%>%
+      mutate(nyrs = sum(nonzero),
+             avg_ann_catch = mean(tons))%>%
+        filter(avg_ann_catch >=min_tons,
+               nyrs >= min_yrs)
+
+
+#write.csv(stks, file = 'int/catch_pre_bbmsy.csv')
+
+DT::datatable(head(stks,n=100))
+
 
 ```
+
+
+
+
+
+
+
+
+
