@@ -65,19 +65,3 @@ taxon_res <- taxon%>%
 write.csv(taxon_res,file = 'int/taxon_resilience_lookup.csv')
 ```       
 
-
-attach to taxon table
-
-```{r}
-
-catch <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/raw/SAUP_catch_taxon_tons_eezs.csv'),stringsAsFactors=F)%>%
-          rbind(read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/raw/SAUP_catch_taxon_tons_highseas.csv'),stringsAsFactors=F))%>%
-            filter(species != "Others")%>%
-            rename(common = species)%>%
-              left_join(taxon_res)
-
-write.csv(catch,file= file.path(dir_M,'git-annex/globalprep/fis/v2016/int/catch_saup.csv'))
-
-```
-
-# Use SAUP lookup table to match common names to scientific names
