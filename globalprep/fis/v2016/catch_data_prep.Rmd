@@ -26,7 +26,7 @@ The catch data was joined to a lookup table that links SAUP region names and ids
 ```{r rgns_table}
 # Read in the SAUP regions lookup table created in saup_rasters_to_ohi_rgns.R
 
-rgns <- read.csv('int/saup_rgn_to_fao.csv')
+rgns <- read.csv('globalprep/fis/v2016/int/saup_rgn_to_fao.csv')
 
 DT::datatable(rgns)
 
@@ -36,38 +36,62 @@ The catch data is linked to these regions and a unique **stock_id** is created b
 
 ```{r catch_data}
 
-#read in the catch data created in getSAUPdata.R and the taxon_resilence table to link the data together
+## Master SAUP species list, however....
+## There are some repeats in the common names which are used to link to the saup catch data
+## In these cases, I will select the listing with the lowest taxonomic resolution.  
+## There is one species included in the group, and these have distinct regions, so I will add this info. to the common names
+taxon_lookup <- read.csv(file.path(dir_M, "git-annex/globalprep/_raw_data/SAUP/d2016/TaxonTable.csv"), stringsAsFactors=FALSE) %>%
+  dplyr::select(TaxonKey, common=Common.Name, Scientific.Name) %>%
+  mutate(common = ifelse(common %in% "Silver croaker", paste(common, Scientific.Name, sep=" "), common)) %>%
+  group_by(common) %>%
+  top_n(1, -TaxonKey) %>%
+  ungroup()
 
-taxon_res = read.csv('int/taxon_resilience_lookup.csv')
+  filter(taxon_lookup, common %in% c("Silver croaker", "Slipper lobster", "Smelt-whitings", "Snappers", "Soles", "Spiny lobsters")) %>%
+    arrange(common) 
+  
+  # Silver croaker Bairdiella chrysoura = USA (East Coast), USA (Gulf of Mexico)
+  # Silver croaker Pennahia argentata = China, Taiwan, Japan (Daito Islands), Japan (main islands), Korea (South), Hawaii Northwest Islands (USA)
 
-dat <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/raw/SAUP_catch_taxon_tons_eezs.csv'),stringsAsFactors=F)%>%
-          rbind(read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/raw/SAUP_catch_taxon_tons_highseas.csv'),stringsAsFactors=F))%>%
-           filter(species != "Others")%>%
-            rename(common = species)%>%
-              left_join(taxon_res,by='common')%>%
-            filter(!is.na(TaxonKey))%>%
-         rename(saup_name = rgn_name,
-                 saup_id = rgn_num)%>%
-          left_join(rgns)%>%
-          mutate(fao_rgn = ifelse(saup_id > 1000, saup_id - 1000,fao_rgn),
-                stock_id = gsub(" ","_",paste(sciname,fao_rgn,sep='-'),fixed=T))%>%
-          select(-X.x,-X.y, -saup_name,-sciname,-prop_area)
+    
+#read in the catch data created in getSAUPdata.R  
+dat <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/raw/SAUP_catch_taxon_tons_eezs.csv'), stringsAsFactors = FALSE) %>%
+          rbind(read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/raw/SAUP_catch_taxon_tons_highseas.csv'), stringsAsFactors = FALSE)) %>%
+           filter(species != "Others") %>%
+            rename(common = species,
+                   saup_id = rgn_num,
+                   saup_name = rgn_name) %>%   
+           mutate(common = ifelse(common == "Silver croaker" & saup_name %in% c('USA (East Coast)', 'USA (Gulf of Mexico)'), 
+                                  "Silver croaker Bairdiella chrysoura", common)) %>%
+             mutate(common = ifelse(common == "Silver croaker" & 
+                                      saup_name %in% c('China', 'Taiwan', 'Japan (Daito Islands)', 'Japan (main islands)', 
+                                                      'Korea (South)', 'Hawaii Northwest Islands (USA)'), 
+                                  "Silver croaker Pennahia argentata", common)) %>%
+           left_join(taxon_lookup, by = 'common')
 
 
-#write.csv(dat,file='int/catch_saup.csv',row.names=F)
+# next add in the region data and correct catch for saups that fall into multiple fao regions
+  # and use the fao region to create the stock id
+dat <-    dat %>%
+        left_join(rgns) %>%
+          mutate(prop_area = ifelse(saup_id > 1000, 1, prop_area)) %>%   ## fill in the high seas which are otherwise blank
+          mutate(tons = tons * prop_area) %>%   ### correction in catch because some saup regions include multiple fao regions
+          mutate(fao_rgn = ifelse(saup_id > 1000, saup_id - 1000, fao_rgn),
+                stock_id = gsub(" ", "_", paste(Scientific.Name, fao_rgn, sep='-'), fixed=TRUE))
+
+# add the taxon_resilence data to catch for b/bmsy calculations
+taxon_res = read.csv('globalprep/fis/v2016/int/taxon_resilience_lookup.csv', stringsAsFactors = FALSE) %>%
+  mutate(common = ifelse(common %in% "Silver croaker", paste(common, sciname, sep=" "), common)) %>%
+  dplyr::select(common, Resilience)
+  
+catch <- dat %>%
+  left_join(taxon_res, by="common") %>%
+  dplyr::select(-X, -saup_name, -prop_area)
+
+#write.csv(catch, file.path(dir_M, 'git-annex/globalprep/fis/v2016/int/catch_saup.csv'), row.names=FALSE)
 
 #Showing only 
 DT::datatable(head(dat,n=100),caption = 'Only showing the first 100 rows due to large size of this data')
-
-```
-
-This catch data table is then used, along with the proportional area per region, to aggregate catch by stock
-
-```{r catch_aggregate}
-catch <- dat%>%
-          left_join(rgns)%>%
-          mutate(prop_area = ifelse(saup_id > 1000, 1, prop_area),
-                  tons_area = tons*prop_area)
 
 ```
 
@@ -82,19 +106,29 @@ Filter out all stocks that don't meet our conditions
 min_yrs = 20
 min_tons = 1000
 
-stks <- catch%>%
-  group_by_(.dots=c("year","common","fao_rgn","stock_id","TaxonKey","Resilience"))%>%
-          summarize(tons = sum(tons_area))%>%
+stks <- catch %>%
+  filter(TaxonKey >= 600000) %>%   #select only taxa identified to species
+  group_by_(.dots = c("year", "common", "fao_rgn", "stock_id", "TaxonKey", "Resilience"))%>%
+          summarize(tons = sum(tons))%>%
       ungroup()%>%
         mutate(nonzero = ifelse(tons>0, 1, 0))%>%
       group_by(stock_id)%>%
       mutate(nyrs = sum(nonzero),
              avg_ann_catch = mean(tons))%>%
-        filter(avg_ann_catch >=min_tons,
+        filter(avg_ann_catch >= min_tons,
                nyrs >= min_yrs)
 
 
-#write.csv(stks, file = 'int/catch_pre_bbmsy.csv')
+write.csv(stks, file = 'globalprep/fis/v2016/int/catch_pre_bbmsy.csv')
+
+stks[stks$stock_id == 'Acetes_japonicus-61', ]
+old[old$stock_id == 'Acetes_japonicus-61', ]
+
+old <- read.csv("https://raw.githubusercontent.com/OHI-Science/ohiprep/master/globalprep/fis/v2016/int/catch_pre_bbmsy.csv") %>%
+  rename(old_tons = tons) 
+setdiff(old$stock_id, stks$stock_id)
+setdiff(stks$stock_id, old$stock_id)
+stks[stks$stock_id == 'Acetes_japonicus-61', ]
 
 DT::datatable(head(stks,n=100))
 

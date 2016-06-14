@@ -2,6 +2,8 @@
 ## preparing mean catch data for the toolbox
 ## MRF June 9 2016
 ###############################################
+library(dplyr)
+library(tidyr)
 
 source('../ohiprep/src/R/common.R') # set dir_neptune_data
 
@@ -9,21 +11,29 @@ source('../ohiprep/src/R/common.R') # set dir_neptune_data
 # getting data
 # --------------------------
 
-## get catch data and convert region 910 (South Onarky Islands) to 0 (no corresponding ohi region)
 data <- read.csv('globalprep/fis/v2016/int/catch_saup.csv') 
 data <- data %>%
-  dplyr::select(year, rgn_num, sciname, SpecCode, TaxonKey, tons, saup_id = rgn_num) %>%
-  group_by(saup_id, FAOAreaID, TaxonKey, Year) %>%
-  summarize(catch = sum(catch)) %>%
+  dplyr::select(year, saup_rgn = saup_id, fao_rgn, stock_id, TaxonKey, tons) %>%
+  group_by(saup_rgn, fao_rgn, TaxonKey, stock_id, year) %>%
+  summarize(catch = sum(tons)) %>%
   ungroup()
 
 ## SAUP to OHI region data
-region <- read.csv("src/LookupTables/new_saup_to_ohi_rgn.csv")
-dups <- region[duplicated(region$saup_id), ]
-region[region$saup_id %in% dups$saup_id, ] #duplicates, 
-###### dups occur because some SAUP regions have lower resolution than OHI regions.
+region <- read.csv("globalprep/fis/v2016/int/saup_to_ohi_key.csv")
+dups <- region[duplicated(region$saup_rgn), ]
+region[region$saup_rgn %in% dups$saup_rgn, ] #duplicates, 
+###### dups occur because a few SAUP regions have lower resolution than OHI regions.
 ###### This causes the sample size of the following merge to increase, but this is ok.  
-###### They end up getting the same score.  
+
+data_ohi_rgns <- data %>%
+  left_join(region, by="saup_rgn") %>%
+  filter(!is.na(ohi_rgn))
+
+# some saup regions do not correspond to any ohi regions
+# region 156 is China, but this polygon overlaps other polygons that better reflect our regions
+# region 910 is South Orkney Island, which we include in our Antarctica analysis
+# regions >1000 represent the high seas.  These should all be safe to cut for the eez analysis.
+
 
 species <- read.csv(file.path(dir_neptune_data, 
                               'git-annex/globalprep/SAUP_FIS_data/v2015/raw/ohi_taxon.csv'))

@@ -9,6 +9,8 @@ If using these data, please see our [citation policy](http://ohi-science.org/cit
 ### Additional information
 A description of some of the files so far:
 
+NOTE: now catch data is int/catch_saup.csv...make sure dataprep script is in here...
+
 * saup_raster_data_download.R: Goal was to use the seaaroundus R package to download the SAUP raster cell data.  However, this will take too long. Abandoned, but keeping script as archive.
 
 * getSAUPdata.R: Uses the seaaroundus R package to download the catch data for each SAUP region. Outputs:
