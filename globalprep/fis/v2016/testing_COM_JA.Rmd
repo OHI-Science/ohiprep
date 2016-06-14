@@ -1,0 +1,141 @@
+---
+title: "Playing with datalimited models on SAUP data"
+author: "Jamie Afflerbach"
+date: "6/9/2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+library(datalimited) #has the 4 catch only models
+library(dplyr)
+library(doParallel)
+registerDoParallel(cores = 10)
+
+source('~/github/ohiprep/src/R/common.R')
+
+```
+
+
+```{r catch_data}
+
+catch <- read.csv('int/catch_pre_bbmsy.csv')
+
+```
+
+# Catch-MSY
+
+```{r cmsy}
+
+if (!file.exists(file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits.rds"))) {
+cmsy_fits <- plyr::dlply(catch, c("stock_id", "common"), function(x) {
+    out <- cmsy(x$tons, yr = x$year,  start_r = resilience(x$Resilience[1]), 
+      reps = 2e4)
+    out$year <- x$year
+    out
+  }, .parallel = TRUE)
+saveRDS(cmsy_fits, file = file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits.rds"))
+} else {
+  cmsy_fits <- readRDS(file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits.rds"))
+}
+
+fake_data <- data.frame(bbmsy_q2.5 = NA, bbmsy_q25 = NA, bbmsy_q50 = NA, 
+  bbmsy_q75 = NA, bbmsy_q97.5 = NA)
+
+cmsy_bbmsy <- plyr::ldply(cmsy_fits, function(x) {
+  bbmsy_cmsy <- x$biomass[, -1] / x$bmsy
+  bbmsy_out <- tryCatch({
+    bbmsy_out <- summarize_bbmsy(bbmsy_cmsy)
+    bbmsy_out$year <- x$year
+    bbmsy_out}, error = function(e) fake_data)
+})
+cmsy_bbmsy$model <- "CMSY"
+
+```
+
+```{r cmsy_uni_prior}
+
+if (!file.exists(file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits-uni-prior.rds"))) {
+cmsy_fits_uni <- plyr::dlply(catch, c("stock_id", "common"), function(x) {
+    out <- cmsy(x$tons, yr = x$year,  start_r = resilience(x$Resilience[1]), 
+      reps = 2e4, finalbio = c(0.01, 0.7))
+    out$year <- x$year
+    out
+  }, .parallel = TRUE)
+saveRDS(cmsy_fits_uni, file = file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits-uni-prior.rds"))
+} else {
+  cmsy_fits_uni <- readRDS(file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits-uni-prior.rds"))
+}
+
+fake_data <- data.frame(bbmsy_q2.5 = NA, bbmsy_q25 = NA, bbmsy_q50 = NA, 
+  bbmsy_q75 = NA, bbmsy_q97.5 = NA)
+
+cmsy_bbmsy_uni <- plyr::ldply(cmsy_fits_uni, function(x) {
+  bbmsy_cmsy <- x$biomass[, -1] / x$bmsy
+  bbmsy_out <- tryCatch({
+    bbmsy_out <- summarize_bbmsy(bbmsy_cmsy)
+    bbmsy_out$year <- x$year
+    bbmsy_out}, error = function(e) fake_data)
+})
+cmsy_bbmsy_uni$model <- "CMSY_uniform"
+
+```
+
+
+# COMSIR
+
+```{r fit-comsir}
+
+sps<-unique(catch$stock_id)[1:50]
+
+f_catch <- catch%>%
+            filter(stock_id %in% sps)
+
+#test how long it takes comsir to run on one stock
+ #   user  system elapsed 
+ # 65.284   4.932  70.186 
+
+system.time(comsir_fits <- comsir(ct=f_catch$tons, yr = f_catch$year, start_r = resilience(f_catch$Resilience[1]),nsim = 2e6, n_posterior = 5e3))
+
+
+all.stocks<-unique(catch$stock_id)
+##
+batch1.stocks<-all.stocks[1:225]
+batch2.stocks<-all.stocks[226:450]
+batch3.stocks<-all.stocks[451:705]
+batch4.stocks<-all.stocks[706:1021]
+##
+
+
+
+#for loop
+for (i in 1:4){
+  
+  print(i)
+  
+input<-subset(catch, stock_id%in%get(paste("batch",i,".stocks",sep="")))
+
+
+comsir_fits <- plyr::dlply(input, c("stock_id", "common"), function(x) {
+    out <- comsir(ct = x$tons, yr = x$year,  start_r = resilience(x$Resilience[1]), 
+      nsim = 2e6, n_posterior = 5e3)
+  }, .parallel = TRUE)
+saveRDS(comsir_fits, file = paste0(file.path(dir_M),"/git-annex/globalprep/fis/v2016/int/comsir-fits_",i,".rds"))
+
+
+comsir_bbmsy <- plyr::ldply(comsir_fits, function(x) {
+  tryCatch({
+    out <- reshape2::dcast(comsir_fits$quantities, sample_id ~ yr, value.var = "bbmsy")[,-1]
+    out <- summarize_bbmsy(out)
+    out$year <- unique(comsir_fits$quantities$yr)
+    out}, 
+    error = function(e) fake_data)
+})
+comsir_bbmsy$model <- "COM-SIR"
+
+saveRDS(comsir_bbmsy,file=paste0(file.path(dir_M),"/git-annex/globalprep/fis/v2016/int/comsir-bbmsy_",i,".rds"))
+
+}
+
+```
+
