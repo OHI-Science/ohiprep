@@ -35,7 +35,7 @@ DT::datatable(rgns)
 The catch data is linked to these regions and a unique **stock_id** is created by pasting the scientific name of the species and the FAO region together.
 
 ```{r catch_data}
-
+catch[catch$saup_id == 1071 & catch$TaxonKey==400323, ]
 ## Master SAUP species list, however....
 ## There are some repeats in the common names which are used to link to the saup catch data
 ## In these cases, I will select the listing with the lowest taxonomic resolution.  
@@ -67,6 +67,9 @@ dat <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/raw/SAUP_catch_t
                                       saup_name %in% c('China', 'Taiwan', 'Japan (Daito Islands)', 'Japan (main islands)', 
                                                       'Korea (South)', 'Hawaii Northwest Islands (USA)'), 
                                   "Silver croaker Pennahia argentata", common)) %>%
+          group_by(year, common, saup_id, saup_name) %>%
+          summarize(tons = sum(tons)) %>%
+          ungroup() %>%
            left_join(taxon_lookup, by = 'common')
 
 
@@ -86,7 +89,7 @@ taxon_res = read.csv('globalprep/fis/v2016/int/taxon_resilience_lookup.csv', str
   
 catch <- dat %>%
   left_join(taxon_res, by="common") %>%
-  dplyr::select(-X, -saup_name, -prop_area)
+  dplyr::select(-saup_name, -prop_area)
 
 #write.csv(catch, file.path(dir_M, 'git-annex/globalprep/fis/v2016/int/catch_saup.csv'), row.names=FALSE)
 
@@ -129,6 +132,8 @@ old <- read.csv("https://raw.githubusercontent.com/OHI-Science/ohiprep/master/gl
 setdiff(old$stock_id, stks$stock_id)
 setdiff(stks$stock_id, old$stock_id)
 stks[stks$stock_id == 'Acetes_japonicus-61', ]
+tail(stks[stks$stock_id == "Theragra_chalcogramma-61", ])
+tail(old[old$stock_id == "Theragra_chalcogramma-61", ])
 
 DT::datatable(head(stks,n=100))
 

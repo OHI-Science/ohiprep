@@ -1,5 +1,6 @@
 ##############################################
-## preparing mean catch data for the toolbox
+## Preparing mean catch data for the toolbox
+## OHI 2016 global
 ## MRF June 9 2016
 ###############################################
 library(dplyr)
@@ -8,10 +9,13 @@ library(tidyr)
 source('../ohiprep/src/R/common.R') # set dir_neptune_data
 
 #--------------------------
-# getting data
+# get data and check for duplicates 
+# (sample size should stay the same after below)
 # --------------------------
 
-data <- read.csv('globalprep/fis/v2016/int/catch_saup.csv') 
+## SAUP catch data:
+data <- read.csv(file.path(dir_M, 'git-annex/globalprep/fis/v2016/int/catch_saup.csv'))
+
 data <- data %>%
   dplyr::select(year, saup_rgn = saup_id, fao_rgn, stock_id, TaxonKey, tons) %>%
   group_by(saup_rgn, fao_rgn, TaxonKey, stock_id, year) %>%
@@ -25,6 +29,10 @@ region[region$saup_rgn %in% dups$saup_rgn, ] #duplicates,
 ###### dups occur because a few SAUP regions have lower resolution than OHI regions.
 ###### This causes the sample size of the following merge to increase, but this is ok.  
 
+#---------------------------------------------
+#  Convert from SAUP regions to OHI regions
+# --------------------------------------------
+
 data_ohi_rgns <- data %>%
   left_join(region, by="saup_rgn") %>%
   filter(!is.na(ohi_rgn))
@@ -34,146 +42,58 @@ data_ohi_rgns <- data %>%
 # region 910 is South Orkney Island, which we include in our Antarctica analysis
 # regions >1000 represent the high seas.  These should all be safe to cut for the eez analysis.
 
+### correcting for saup regions represented by more than one ohi-region
+### and then summing catch by ohi region (many ohi regions are composed of >1 saup region)
 
-species <- read.csv(file.path(dir_neptune_data, 
-                              'git-annex/globalprep/SAUP_FIS_data/v2015/raw/ohi_taxon.csv'))
-
-#######################################################################
-### filter data to relevant years for calculating mean catch
-#######################################################################
-catch <- data %>%
-  filter(Year >= 1980) %>%
-  mutate(saup_fao_taxon = paste(EEZID, FAOAreaID, TaxonKey, sep="_")) %>%
+data_ohi_rgns <- data_ohi_rgns %>%
+  mutate(catch_corr = catch * percent_saup) %>%
+  group_by(fao_rgn, TaxonKey, stock_id, year, ohi_rgn) %>%
+  summarize(catch = sum(catch_corr)) %>%
   ungroup()
 
-##########################################################################  
-### Filling in missing years with zero values after first catch
-## Determine first year of catch data (no true zeros in data)
-first_report <- catch %>%
-  group_by(saup_fao_taxon) %>%
-  summarize(first_catch_yr = min(Year)) %>%
+#---------------------------------------------
+### Calculate mean catch for ohi regions (using data from 1980 onward)
+### These data are used to weight the RAM b/bmys values 
+# --------------------------------------------
+
+mean_catch <- data_ohi_rgns %>%
+  filter(year >= 1980) %>%
+  group_by(ohi_rgn, fao_rgn, TaxonKey, stock_id) %>%
+  mutate(mean_catch=mean(catch, na.rm=TRUE))%>%
+  filter(mean_catch != 0)  %>%      ## some stocks have no reported catch for time period
   ungroup()
 
-## Expand data and fill in all missing years with zero values
-catch_wide <- spread(catch, Year, catch)
-catch_wide[is.na(catch_wide)] <- 0
-
-## Gather data and get rid of years prior to the first reported year of catch:
-catch_zero_gapfill <- gather(catch_wide, "Year", "Catch", 5:dim(catch_wide)[2])
-catch_zero_gapfill <- catch_zero_gapfill %>%
-  left_join(first_report) %>%
-  mutate(Year = as.numeric(as.character(Year))) %>%
-  mutate(include = ifelse(Year >= first_catch_yr, "include", "cut")) %>%
-  filter(include=="include")
-
-## calculate mean catch at saup level for calculating RAMdataprep
-## These data used to weight the RAM b/bmsy values when multiple saup regions within an OHI region
-
-catch_saup_fao_mean <- catch_zero_gapfill %>%
-  dplyr::select(EEZID, FAOAreaID, TaxonKey, Year, Catch) %>%
-  group_by(EEZID, FAOAreaID, TaxonKey) %>%
-  mutate(mean_catch=mean(Catch, na.rm=TRUE)) %>%
-  select(EEZID, FAOAreaID, TaxonKey, Year, mean_catch) %>%
-  ungroup(); head(catch_saup_fao_mean)
-
-# some checks to make sure things look right:
-data.frame(filter(catch_saup_fao_mean, EEZID==8 & FAOAreaID==37 & TaxonKey==100039)) #should all be the same
-data.frame(filter(catch_zero_gapfill, EEZID==8 & FAOAreaID==37 & TaxonKey==100039))
-
-data.frame(filter(catch_saup_fao_mean, EEZID==50 & FAOAreaID==57 & TaxonKey==600142)) #should all be the same
-data.frame(filter(catch_zero_gapfill, EEZID==50 & FAOAreaID==57 & TaxonKey==600142))
-
-data.frame(filter(catch_saup_fao_mean, EEZID==36 & FAOAreaID==57 & TaxonKey==600142)) #should all be the same
-data.frame(filter(catch_zero_gapfill, EEZID==36 & FAOAreaID==57 & TaxonKey==600142))
-
-write.csv(catch_saup_fao_mean, 'globalprep/SAUP_FIS/v2015/tmp/mean_catch_saup_fao.csv', row.names=FALSE)
-
-##############################################################
-## converting SAUP regions to OHI regions:
-catch_ohi_fao <- catch_zero_gapfill %>%
-  left_join(region, by=c("EEZID"="saup_id")) %>%   #N increases here due to SAUP regions that correspond to multiple OHI regions
-  mutate(ohi_id_2013 = ifelse(is.na(ohi_id_2013), 0, ohi_id_2013)) %>%  # All NA values are EEZID=0
-  dplyr::select(region_id=ohi_id_2013, FAO_id=FAOAreaID, TaxonKey, Year, Catch) %>%
-  group_by(region_id, FAO_id, TaxonKey, Year) %>%
-  summarize(catch=sum(Catch)) %>%  # N decreases due to OHI regions that are comprised of multiple SAUP regions
-  arrange(region_id, FAO_id, TaxonKey, Year) %>%
-  ungroup()
-
-## check: these three regions should have the same data:
-data.frame(filter(catch_ohi_fao, region_id %in% c(33, 34, 35) & TaxonKey ==100038))
-
-##########################################################################  
-### Merge with Species name and formatting for toolbox
-
-setdiff(catch_zero_gapfill$TaxonKey, species$taxonkey)  # some unaccounted for Taxon -but not big players...will ignore
-# [1] 600478 612081 600472 607082 607108
-# data[data$TaxonKey == 612081, ]
-# catch[catch$TaxonKey %in% c(600478, 612081, 600472, 607082, 607108), ]
-setdiff(species$taxonkey, catch_zero_gapfill$TaxonKey)  # a couple taxa not in the catch data
-sum(duplicated(species$taxonkey))
-sum(duplicated(species$scientific.name))
-species[duplicated(species$scientific.name), ]  ## use names only for descriptive purposes...or edit species data to make names unique
-
-catch_ohi_fao_taxa <- catch_ohi_fao %>%
-  left_join(species, by=c('TaxonKey'='taxonkey')) 
-
-#################################
-###### EEZ data ###############
-################################
-
-eez <-  catch_ohi_fao_taxa %>%
-  filter(region_id != 0) %>%
-  mutate(fao_ohi_id = paste(FAO_id, region_id, sep="_")) %>%
-  mutate(taxon_name_key = paste(scientific.name, TaxonKey, sep="_")) %>%
-  select(fao_ohi_id, taxon_name_key, year=Year, catch)
-### save these data for calculating FP weightings
-write.csv(eez, "globalprep/SAUP_FIS/v2015/data/FP_fis_data.csv", row.names=FALSE)
-
-
-### Average catch across years
-eez_meanCatch <- eez %>%
-  group_by(fao_ohi_id, taxon_name_key) %>%
-  mutate(mean_catch = mean(catch, na.rm=TRUE)) %>%
-  filter(mean_catch > 0) %>%
-  select(fao_ohi_id, taxon_name_key, year, mean_catch) %>%
-  ungroup()
+#---------------------------------------------
+# Toolbox formatting and save
+# --------------------------------------------
+mean_catch_toolbox <- mean_catch %>%
+  mutate(fao_ohi_id = paste(fao_rgn, ohi_rgn, sep = "_")) %>%
+  separate(stock_id, c("common", "fao_rgn_2"), sep = "-") %>%
+  mutate(taxon_name_key = paste(common, TaxonKey, sep = "_")) %>%
+  dplyr::select(fao_ohi_id, taxon_name_key, year, mean_catch) %>%
+  filter(year>=2005) %>%  # filter to include only analysis years
+  data.frame()
 
 # check 
-data.frame(filter(eez_meanCatch, fao_ohi_id=="57_1" & taxon_name_key=='Holothuroidea_290012'))
-data.frame(filter(catch_ohi_fao_taxa, FAO_id=="57" & TaxonKey=="290012" & region_id==1))
+data.frame(filter(mean_catch_toolbox, fao_ohi_id=="57_1" & taxon_name_key=='Holothuroidea_290012')) #region 1 corresponds to saup 166 
+data.frame(filter(data, fao_rgn=="57" & TaxonKey=="290012"))
 
 
-# filter to analysis years and save final data
-eez_meanCatch <- eez_meanCatch %>%
-  filter(year>=2005)
-
-write.csv(eez_meanCatch, 
-          'globalprep/SAUP_FIS/v2015/data/mean_catch.csv',
-          row.names=FALSE)
+write.csv(mean_catch_toolbox, "globalprep/fis/v2016/data/mean_catch.csv", row.names=FALSE)
 
 
-#################################
-###### HS data ###############
-################################
+#---------------------------------------------
+# Get regions weights for FP weighting
+# --------------------------------------------
 
-hs <-  catch_ohi_fao_taxa %>%
-  filter(region_id == 0) %>%
-  mutate(fao_ohi_id = paste(FAO_id, region_id, sep="_")) %>%
-  mutate(taxon_name_key = paste(scientific.name, TaxonKey, sep="_")) %>%
-  select(fao_ohi_id, taxon_name_key, year=Year, catch)
+total_catch_FP <- mean_catch %>%
+  group_by(ohi_rgn, year) %>%
+  summarize(fis_catch = sum(catch)) %>%
+  dplyr::select(rgn_id = ohi_rgn, year, fis_catch) %>%
+  filter(year >= 2005) # filter to include only the relevant analysis years
 
-### Average catch across years
-hs_meanCatch <- hs %>%
-  group_by(fao_ohi_id, taxon_name_key) %>%
-  mutate(mean_catch = mean(catch, na.rm=TRUE)) %>%
-  filter(mean_catch > 0) %>%
-  select(fao_ohi_id, taxon_name_key, year, mean_catch) %>%
-  ungroup()
+write.csv(total_catch_FP, "globalprep/fis/v2016/data/FP_fis_catch.csv", row.names=FALSE)
 
-# filter to analysis years and save final data
-hs_meanCatch <- hs_meanCatch %>%
-  filter(year>=2005)
 
-write.csv(hs_meanCatch, 
-          'globalprep/SAUP_FIS/v2015/data/mean_high_seas_catch.csv',
-          row.names=FALSE)
+
+
