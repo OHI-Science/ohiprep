@@ -67,16 +67,10 @@ mean_catch <- data_ohi_rgns %>%
 # Toolbox formatting and save
 # --------------------------------------------
 mean_catch_toolbox <- mean_catch %>%
-  mutate(fao_ohi_id = paste(fao_rgn, ohi_rgn, sep = "_")) %>%
-  separate(stock_id, c("common", "fao_rgn_2"), sep = "-") %>%
-  mutate(taxon_name_key = paste(common, TaxonKey, sep = "_")) %>%
-  dplyr::select(fao_ohi_id, taxon_name_key, year, mean_catch) %>%
+  mutate(taxon_key_stock = paste(TaxonKey, stock_id, sep = "-")) %>%
+  dplyr::select(rgn_id=ohi_rgn, taxon_key_stock, year, mean_catch) %>%
   filter(year>=2005) %>%  # filter to include only analysis years
   data.frame()
-
-# check 
-data.frame(filter(mean_catch_toolbox, fao_ohi_id=="57_1" & taxon_name_key=='Holothuroidea_290012')) #region 1 corresponds to saup 166 
-data.frame(filter(data, fao_rgn=="57" & TaxonKey=="290012"))
 
 
 write.csv(mean_catch_toolbox, "globalprep/fis/v2016/data/mean_catch.csv", row.names=FALSE)
