@@ -1,8 +1,16 @@
 ---
 title: "Playing with datalimited models on SAUP data"
-author: "Jamie Afflerbach"
-date: "6/9/2016"
-output: html_document
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+  toc: true
+number_sections: true
+theme: cerulean
+highlight: haddock
+includes: 
+  in_header: '~/github/ohibc/src/templates/ohibc_hdr1.html'
+pdf_document:
+  toc: true
 ---
 
 ```{r setup, include=FALSE}
@@ -10,7 +18,7 @@ output: html_document
 library(datalimited) #has the 4 catch only models
 library(dplyr)
 library(doParallel)
-registerDoParallel(cores = 10)
+registerDoParallel(cores = 12)
 
 source('~/github/ohiprep/src/R/common.R')
 
@@ -19,7 +27,7 @@ source('~/github/ohiprep/src/R/common.R')
 
 ```{r catch_data}
 
-catch <- read.csv('int/catch_pre_bbmsy.csv')
+catch <- read.csv('../int/catch_pre_bbmsy.csv')
 
 ```
 
@@ -54,6 +62,24 @@ cmsy_bbmsy$model <- "CMSY"
 write.csv(cmsy_bbmsy,file='int/cmsy_bbmsy.csv')
 
 ```
+
+Explore why there are some NAs (I think non convergance)
+
+```{r nas}
+
+nas <- cmsy_bbmsy%>%
+  group_by(stock_id)%>%
+  summarize(m = mean(bbmsy_mean))%>%
+  filter(is.na(m))
+
+nrow(nas)
+
+#there are 210 stocks that do not have any data.
+
+```
+
+
+### Running cmsy with a uniform prior
 
 ```{r cmsy_uni_prior}
 
