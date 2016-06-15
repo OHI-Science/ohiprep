@@ -51,6 +51,8 @@ cmsy_bbmsy <- plyr::ldply(cmsy_fits, function(x) {
 })
 cmsy_bbmsy$model <- "CMSY"
 
+write.csv(cmsy_bbmsy,file='int/cmsy_bbmsy.csv')
+
 ```
 
 ```{r cmsy_uni_prior}
@@ -79,6 +81,8 @@ cmsy_bbmsy_uni <- plyr::ldply(cmsy_fits_uni, function(x) {
 })
 cmsy_bbmsy_uni$model <- "CMSY_uniform"
 
+write.csv(cmsy_bbmsy_uni,file="int/cmsy_bbmsy_uni_prior.csv")
+
 ```
 
 
@@ -91,11 +95,12 @@ sps<-unique(catch$stock_id)[1:50]
 f_catch <- catch%>%
             filter(stock_id %in% sps)
 
+system.time(comsir_fits <- comsir(ct=f_catch$tons, yr = f_catch$year, start_r = resilience(f_catch$Resilience[1]),nsim = 2e6, n_posterior = 5e3))
+
 #test how long it takes comsir to run on one stock
  #   user  system elapsed 
  # 65.284   4.932  70.186 
 
-system.time(comsir_fits <- comsir(ct=f_catch$tons, yr = f_catch$year, start_r = resilience(f_catch$Resilience[1]),nsim = 2e6, n_posterior = 5e3))
 
 
 all.stocks<-unique(catch$stock_id)
@@ -106,10 +111,8 @@ batch3.stocks<-all.stocks[451:705]
 batch4.stocks<-all.stocks[706:1021]
 ##
 
-
-
 #for loop
-for (i in 1:4){
+for (i in 2:4){
   
   print(i)
   
@@ -120,6 +123,7 @@ comsir_fits <- plyr::dlply(input, c("stock_id", "common"), function(x) {
     out <- comsir(ct = x$tons, yr = x$year,  start_r = resilience(x$Resilience[1]), 
       nsim = 2e6, n_posterior = 5e3)
   }, .parallel = TRUE)
+
 saveRDS(comsir_fits, file = paste0(file.path(dir_M),"/git-annex/globalprep/fis/v2016/int/comsir-fits_",i,".rds"))
 
 
@@ -133,9 +137,13 @@ comsir_bbmsy <- plyr::ldply(comsir_fits, function(x) {
 })
 comsir_bbmsy$model <- "COM-SIR"
 
-saveRDS(comsir_bbmsy,file=paste0(file.path(dir_M),"/git-annex/globalprep/fis/v2016/int/comsir-bbmsy_",i,".rds"))
+write.csv(comsir_bbmsy,file=paste0("int/comsir-bbmsy_",i,".csv"))
 
 }
+
+#got this error on the 4th batch so maybe its the 42nd stock in this batch?
+Error in do.ply(i) : 
+  task 42 failed - "missing value where TRUE/FALSE needed" 
 
 ```
 
