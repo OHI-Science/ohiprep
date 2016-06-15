@@ -100,7 +100,7 @@ Filter out all stocks that don't meet our conditions
 (1) Keep all stocks that have at least 1000 tons mean annual harvest
 (2) Keep all stocks with time series of 20 years or more
 
-```{r}
+```{r prep_data_bbmsy}
 
 #set variables to filter by
 min_yrs = 20
@@ -119,16 +119,16 @@ stks <- catch %>%
                nyrs >= min_yrs)
 
 
-write.csv(stks, file = 'globalprep/fis/v2016/int/catch_pre_bbmsy.csv')
+write.csv(stks, file = 'int/catch_pre_bbmsy.csv')
 
-stks[stks$stock_id == 'Acetes_japonicus-61', ]
-old[old$stock_id == 'Acetes_japonicus-61', ]
-
-old <- read.csv("https://raw.githubusercontent.com/OHI-Science/ohiprep/master/globalprep/fis/v2016/int/catch_pre_bbmsy.csv") %>%
-  rename(old_tons = tons) 
-setdiff(old$stock_id, stks$stock_id)
-setdiff(stks$stock_id, old$stock_id)
-stks[stks$stock_id == 'Acetes_japonicus-61', ]
+# stks[stks$stock_id == 'Acetes_japonicus-61', ]
+# old[old$stock_id == 'Acetes_japonicus-61', ]
+# 
+# old <- read.csv("https://raw.githubusercontent.com/OHI-Science/ohiprep/master/globalprep/fis/v2016/int/catch_pre_bbmsy.csv") %>%
+#   rename(old_tons = tons) 
+# setdiff(old$stock_id, stks$stock_id)
+# setdiff(stks$stock_id, old$stock_id)
+# stks[stks$stock_id == 'Acetes_japonicus-61', ]
 
 DT::datatable(head(stks,n=100))
 
