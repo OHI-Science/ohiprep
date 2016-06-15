@@ -34,8 +34,8 @@ region[region$saup_rgn %in% dups$saup_rgn, ] #duplicates,
 # --------------------------------------------
 
 data_ohi_rgns <- data %>%
-  left_join(region, by="saup_rgn") %>%
-  filter(!is.na(ohi_rgn))
+  left_join(region, by="saup_rgn") 
+
 
 # some saup regions do not correspond to any ohi regions
 # region 156 is China, but this polygon overlaps other polygons that better reflect our regions
@@ -46,6 +46,7 @@ data_ohi_rgns <- data %>%
 ### and then summing catch by ohi region (many ohi regions are composed of >1 saup region)
 
 data_ohi_rgns <- data_ohi_rgns %>%
+  filter(!is.na(ohi_rgn)) %>%
   mutate(catch_corr = catch * percent_saup) %>%
   group_by(fao_rgn, TaxonKey, stock_id, year, ohi_rgn) %>%
   summarize(catch = sum(catch_corr)) %>%
@@ -88,6 +89,21 @@ total_catch_FP <- mean_catch %>%
 
 write.csv(total_catch_FP, "globalprep/fis/v2016/data/FP_fis_catch.csv", row.names=FALSE)
 
+#############################################################
+#############################################################
+# Do calculations for high seas
+#############################################################
 
+data_hs_rgns <- data_ohi_rgns %>%
+  filter(saup_rgn > 1000) %>%
+  filter(year >= 1980) %>%
+  mutate(ohi_rgn = 0) %>%
+  group_by(ohi_rgn, fao_rgn, TaxonKey, stock_id) %>%
+  mutate(mean_catch=mean(catch, na.rm=TRUE))%>%
+  filter(mean_catch != 0)  %>%      ## some stocks have no reported catch for time period
+  ungroup() %>%
+  dplyr::select(fao_rgn, ohi_rgn, TaxonKey, stock_id, year, mean_catch) %>%
+  data.frame()
 
+write.csv(data_hs_rgns, "globalprep/fis/v2016/data/mean_catch_hs.csv", row.names=FALSE)
 
