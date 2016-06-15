@@ -1,8 +1,16 @@
 ---
 title: "Preparing catch data for BBmsy calculations"
-author: "Jamie Afflerbach"
-date: "6/8/2016"
-output: html_document
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+  toc: true
+number_sections: true
+theme: cerulean
+highlight: haddock
+includes: 
+  in_header: '~/github/ohibc/src/templates/ohibc_hdr1.html'
+pdf_document:
+  toc: true
 ---
 
 This script takes the SAUP catch data and aggregates catch to **stock levels**. For the Ocean Health Index, we assume a stock is represented by the FAO region in which the species is caught.
@@ -105,21 +113,25 @@ Filter out all stocks that don't meet our conditions
 
 ```{r prep_data_bbmsy}
 
+catch <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/catch_saup.csv'))
+
 #set variables to filter by
 min_yrs = 20
 min_tons = 1000
 
 stks <- catch %>%
-  filter(TaxonKey >= 600000) %>%   #select only taxa identified to species
-  group_by_(.dots = c("year", "common", "fao_rgn", "stock_id", "TaxonKey", "Resilience"))%>%
-          summarize(tons = sum(tons))%>%
-      ungroup()%>%
-        mutate(nonzero = ifelse(tons>0, 1, 0))%>%
-      group_by(stock_id)%>%
-      mutate(nyrs = sum(nonzero),
-             avg_ann_catch = mean(tons))%>%
-        filter(avg_ann_catch >= min_tons,
-               nyrs >= min_yrs)
+        filter(TaxonKey >= 600000,     #select only taxa identified to species
+               tons > 0) %>%           #remove all records of 0 catch
+        group_by_(.dots = c("year", "common", "fao_rgn", "stock_id", "TaxonKey", "Resilience"))%>%
+                summarize(tons = sum(tons))%>%
+            ungroup()%>%
+            group_by(stock_id)%>%
+            mutate(nyrs = n(),
+                   avg_ann_catch = mean(tons))%>%
+            ungroup()%>%
+              filter(avg_ann_catch >= min_tons,
+                     nyrs >= min_yrs)%>%
+            select(year,common,fao_rgn,stock_id,TaxonKey,Resilience,tons)
 
 
 write.csv(stks, file = 'int/catch_pre_bbmsy.csv')
