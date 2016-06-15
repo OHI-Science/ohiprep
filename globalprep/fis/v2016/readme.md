@@ -35,6 +35,11 @@ NOTE: now catch data is int/catch_saup.csv...make sure dataprep script is in her
    - globalprep/fis/v2016/int/saup_to_ohi_rough_draft.csv
    - globalprep/fis/v2016/int/saup_to_ohi_key.csv (this is mostly a hand correction of the above data)
    
+* meanCatch.R: calculates the mean catch data that is used to weight the B/Bmsy values.  It also generates a datafile describing total catch for each region and year to use as the weight in the FP goal calculation.
+
+  - data/FP_fis_catch.csv: weighting for MAR vs. FIS to calculate FP goal
+  - mean_catch.csv: used in the toolbox to weight the b/bmsy values for each region 
+   
    
 
 
