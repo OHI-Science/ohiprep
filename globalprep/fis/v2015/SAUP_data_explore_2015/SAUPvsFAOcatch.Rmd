@@ -1,0 +1,35 @@
+---
+title: "SAUPvsFAO_yellowfinTuna"
+output: html_document
+---
+
+Comparing yellowfin tuna catch by country for FAO and SAUP data
+```{r, echo=FALSE, message=FALSE}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+catch <- read.csv("C:/Users/Melanie/Desktop/SAUP_data_2015/FAOvsSAUP_yellowfin.csv")
+catch <- catch %>%
+  select(country, year, SAUPcatch=CatchAmount_saup, FAOcatch=CatchAmount) %>%
+  gather("DataSource", "Catch", 3:4)
+
+```
+
+
+```{r, echo=FALSE, fig.width=6, fig.height=2.5, message=FALSE}
+ uniqueRegion <- unique(catch$country)
+ for(region in uniqueRegion){
+   #region="Philippines"
+   plotData <- catch[catch$country %in% region, ]
+   plotData <- plotData[!is.na(plotData$Catch), ]
+  p <- ggplot(plotData, aes(x=year, y=Catch, group=DataSource, color=DataSource)) +
+     geom_point(shape=19, size=1.5, na.rm=TRUE) +
+     geom_line(size=0.5, na.rm=TRUE) +
+  labs(title=paste0('Region:', region)) +
+    theme(legend.position=c(0.1, .9))
+
+  print(p)
+   }
+#}
+
+```
