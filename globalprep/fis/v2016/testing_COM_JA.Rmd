@@ -1,8 +1,16 @@
 ---
 title: "Playing with datalimited models on SAUP data"
-author: "Jamie Afflerbach"
-date: "6/9/2016"
-output: html_document
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+  toc: true
+number_sections: true
+theme: cerulean
+highlight: haddock
+includes: 
+  in_header: '~/github/ohibc/src/templates/ohibc_hdr1.html'
+pdf_document:
+  toc: true
 ---
 
 ```{r setup, include=FALSE}
@@ -10,7 +18,7 @@ output: html_document
 library(datalimited) #has the 4 catch only models
 library(dplyr)
 library(doParallel)
-registerDoParallel(cores = 10)
+registerDoParallel(cores = 12)
 
 source('~/github/ohiprep/src/R/common.R')
 
@@ -19,7 +27,7 @@ source('~/github/ohiprep/src/R/common.R')
 
 ```{r catch_data}
 
-catch <- read.csv('int/catch_pre_bbmsy.csv')
+catch <- read.csv('../int/catch_pre_bbmsy.csv')
 
 ```
 
@@ -28,8 +36,12 @@ catch <- read.csv('int/catch_pre_bbmsy.csv')
 ```{r cmsy}
 
 if (!file.exists(file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits.rds"))) {
+  
 cmsy_fits <- plyr::dlply(catch, c("stock_id", "common"), function(x) {
-    out <- cmsy(x$tons, yr = x$year,  start_r = resilience(x$Resilience[1]), 
+  
+    #make sure the data is ordered from 1950 to 2010
+    x <- arrange(x,year)
+    out <- cmsy(ct = x$tons, yr = x$year,  start_r = resilience(x$Resilience[1]), 
       reps = 2e4)
     out$year <- x$year
     out
@@ -55,10 +67,30 @@ write.csv(cmsy_bbmsy,file='int/cmsy_bbmsy.csv')
 
 ```
 
+Explore why there are some NAs (I think non convergance)
+
+```{r nas}
+
+nas <- cmsy_bbmsy%>%
+  group_by(stock_id)%>%
+  summarize(m = mean(bbmsy_mean))%>%
+  filter(is.na(m))
+
+nrow(nas)
+
+```
+
+
+### Running cmsy with a uniform prior
+
 ```{r cmsy_uni_prior}
 
 if (!file.exists(file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits-uni-prior.rds"))) {
 cmsy_fits_uni <- plyr::dlply(catch, c("stock_id", "common"), function(x) {
+  
+  #make sure the data is ordered from 1950 to 2010
+     x <- arrange(x,year)
+     
     out <- cmsy(x$tons, yr = x$year,  start_r = resilience(x$Resilience[1]), 
       reps = 2e4, finalbio = c(0.01, 0.7))
     out$year <- x$year
