@@ -297,7 +297,37 @@ rgn_names <- foreign::read.dbf(file.path(dir_anx, 'spatial/v2015/data/regions_gc
   filter(rgn_typ == 'eez') %>%
   select(rgn_id, rgn_name = rgn_nam)
 
-rgn_poly <- rgdal::readOGR(dsn = file.path(dir_anx, 'spatial/v2015/data', layer = 'regions_gcs'), stringsAsFactors = FALSE)
+
+
+
+rgn_poly_gcs <- rgdal::readOGR(dsn = file.path(dir_anx, '../Global/NCEAS-Regions_v2014/data'), 
+                               layer = 'rgn_inland1km_gcs', 
+                               stringsAsFactors = FALSE)
+rgn_poly_mol <- rgdal::readOGR(dsn = file.path(dir_anx, '../Global/NCEAS-Regions_v2014/data'), 
+                               layer = 'rgn_inland1km_mol', 
+                               stringsAsFactors = FALSE)
+rgns_to_check <- c(65, 196, 150, 197, 72, 199, 194, 66)
+
+rgn_1km_gcs <- rgn_poly_gcs[rgn_poly_gcs@data$rgn_id %in% rgns_to_check, ]
+rgn_1km_mol <- rgn_poly_mol[rgn_poly_mol@data$rgn_id %in% rgns_to_check, ]
+
+rgn_1km_gcs_areas <- rgeos::gArea(rgn_1km_gcs, byid = TRUE)
+rgn_1km_mol_areas <- rgeos::gArea(rgn_1km_mol, byid = TRUE)
+
+area_mol_df <- rgn_poly_mol@data %>%
+  mutate(area_recalc = rgeos::gArea(rgn_poly_mol, byid = TRUE))
+
+area_mol_df <- area_mol_df %>%
+  mutate(area_recalc = area_recalc/1e6) %>%
+  rename(area_km2_from_shp = area_km2,
+         area_km2_from_gArea = area_recalc) %>%
+  left_join(rgn_area_1km %>% rename(area_km2_from_layer = area_km2), by = 'rgn_id')
+
+area_mol_df <- area_mol_df %>%
+  select(rgn_id, rgn_name, area_km2_from_shp, Shape_Area, area_km2_from_gArea, area_km2_from_layer)
+write_csv(area_mol_df, file.path(dir_goal, 'int/area_check.csv'))
+
+
 area_df <- prot_df %>%
   dplyr::select(rgn_id, a_tot_rgn_1km, a_tot_rgn_3nm, a_tot_cells_1km, a_tot_cells_3nm) %>%
   distinct() %>%
@@ -322,16 +352,19 @@ lsp_v2015 <- read_csv('~/github/ohi-global/eez2013/scores.csv') %>%
 
 library(ggplot2)
 lsp_plot_v2015 <- ggplot(lsp_v2015, 
-                        aes(x = lsp_v2015, y = lsp_status_rgn)) +
-  geom_point(aes(color = rgn_name)) +
+                        aes(x = lsp_v2015, y = lsp_status_cells)) +
+  geom_point(alpha = .6) +
   theme(legend.position = 'none') +
   geom_abline(slope = 1, intercept = 0, color = 'red') +
   labs(x = 'LSP status v2015 (eez2013: data through 2012)',
        y = 'LSP status v2016 (data through 2012))',
        title = 'LSP status compare')
 
+
 library(plotly)
 ggplotly(lsp_plot_v2015)
+
+ggsave(file.path(dir_goal, 'int/plot_v2015_v2016_cellarea.png'), plot = lsp_plot_v2015)
 
 lsp_v2015 <- lsp_v2015 %>%
   dplyr::select(rgn_id, year, lsp_v2015, lsp_status_rgn, lsp_status_cells, rgn_name) %>%
