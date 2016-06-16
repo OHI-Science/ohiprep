@@ -167,7 +167,10 @@ rast_wdpa <- raster::raster(rast_wdpa_file)
 
 ext <- raster::extent(c('xmin' = -12e6, 'xmax' = -8e6, 'ymin' = 2e6, 'ymax' = 5e6))
 rast_wdpa_crop <- raster::crop(rast_wdpa, ext)
+
+
 ```
+
 
 #### Global WDPA raster
 
@@ -232,6 +235,9 @@ if(!file.exists(zonal_3nm_file) | !file.exists(zonal_1km_file)) {
 stats_3nm <- read_csv(file.path(dir_goal, 'int', 'zonal_stats_3nm.csv'))
 stats_1km <- read_csv(file.path(dir_goal, 'int', 'zonal_stats_1km.csv'))
 
+rgn_area_1km <- read_csv(file.path('~/github/ohi-global/eez2013/layers', 'rgn_area_inland1km.csv'))
+rgn_area_3nm <- read_csv(file.path('~/github/ohi-global/eez2013/layers', 'rgn_area_offshore3nm.csv'))
+
 lsp_thresh <- 0.30
 ### Determine total cells per region (n_cells_tot) and then a cumulative
 ### total of cells per region
@@ -239,35 +245,67 @@ prot_1km <- stats_1km %>%
   group_by(rgn_id) %>%
   mutate(n_cells_tot = sum(n_cells),
          n_cells_cum = cumsum(n_cells),
-         a_tot_km2   = n_cells_tot / 4,
-         a_prot_km2  = n_cells_cum / 4) %>%
+         a_tot_cells = n_cells_tot / 4,
+         a_prot_cells = n_cells_cum / 4) %>%
+  ungroup() %>%
+  left_join(rgn_area_1km %>% rename(a_tot_rgn = area_km2), by = 'rgn_id') %>%
   filter(!is.na(year))  %>% ### this ditches non-protected cell counts but already counted in n_cells_tot
-  mutate(pct_prot   = n_cells_cum / n_cells_tot,
-         lsp_status = ifelse(pct_prot > lsp_thresh, 100, (pct_prot / lsp_thresh) * 100))
+  mutate(pct_prot_cells   = n_cells_cum / n_cells_tot,
+         lsp_status_cells = ifelse(pct_prot_cells > lsp_thresh, 100, (pct_prot_cells / lsp_thresh) * 100)) %>%
+  mutate(pct_prot_rgn     = a_prot_cells / a_tot_rgn,
+         lsp_status_rgn   = ifelse(pct_prot_rgn > lsp_thresh, 100, (pct_prot_rgn / lsp_thresh) * 100))
 
 prot_3nm <- stats_3nm %>%
   group_by(rgn_id) %>%
   mutate(n_cells_tot = sum(n_cells),
          n_cells_cum = cumsum(n_cells),
-         a_tot_km2   = n_cells_tot / 4,
-         a_prot_km2  = n_cells_cum / 4) %>%
+         a_tot_cells = n_cells_tot / 4,
+         a_prot_cells = n_cells_cum / 4) %>%
+  ungroup() %>%
+  left_join(rgn_area_3nm %>% rename(a_tot_rgn = area_km2), by = 'rgn_id') %>%
   filter(!is.na(year))  %>% ### this ditches non-protected cell counts but already counted in n_cells_tot
-  mutate(pct_prot   = n_cells_cum / n_cells_tot,
-         lsp_status = ifelse(pct_prot > lsp_thresh, 100, (pct_prot / lsp_thresh) * 100))
+  mutate(pct_prot_cells   = n_cells_cum / n_cells_tot,
+         lsp_status_cells = ifelse(pct_prot_cells > lsp_thresh, 100, (pct_prot_cells / lsp_thresh) * 100)) %>%
+  mutate(pct_prot_rgn     = a_prot_cells / a_tot_rgn,
+         lsp_status_rgn   = ifelse(pct_prot_rgn > lsp_thresh,   100, (pct_prot_rgn / lsp_thresh) * 100))
 
 write_csv(prot_3nm, file.path(dir_goal, 'int', 'area_protected_3nm.csv'))
 write_csv(prot_1km, file.path(dir_goal, 'int', 'area_protected_1km.csv'))
 
 ```
 
+
 ``` {r combine_inland_and_offshore}
 
 prot_df <- prot_1km %>%
-  dplyr::select(rgn_id, year, lsp_st_1km = lsp_status) %>%
-  left_join(prot_1km %>% 
-              dplyr::select(rgn_id, year, lsp_st_3nm = lsp_status),
+  dplyr::select(rgn_id, year, 
+                lsp_st_1km_rgn   = lsp_status_rgn, 
+                lsp_st_1km_cells = lsp_status_cells,
+                a_tot_rgn_1km    = a_tot_rgn,
+                a_tot_cells_1km  = a_tot_cells) %>%
+  left_join(prot_3nm %>% 
+              dplyr::select(rgn_id, year, 
+                            lsp_st_3nm_rgn   = lsp_status_rgn, 
+                            lsp_st_3nm_cells = lsp_status_cells,
+                            a_tot_rgn_3nm    = a_tot_rgn,
+                            a_tot_cells_3nm  = a_tot_cells),
             by = c('rgn_id', 'year')) %>%
-  mutate(lsp_status = (lsp_st_1km + lsp_st_3nm) / 2)
+  mutate(lsp_status_rgn = (lsp_st_1km_rgn + lsp_st_3nm_rgn) / 2,
+         lsp_status_cells = (lsp_st_1km_cells + lsp_st_3nm_cells) / 2)
+
+rgn_names <- foreign::read.dbf(file.path(dir_anx, 'spatial/v2015/data/regions_gcs.dbf')) %>%
+  filter(rgn_typ == 'eez') %>%
+  select(rgn_id, rgn_name = rgn_nam)
+
+rgn_poly <- rgdal::readOGR(dsn = file.path(dir_anx, 'spatial/v2015/data', layer = 'regions_gcs'), stringsAsFactors = FALSE)
+area_df <- prot_df %>%
+  dplyr::select(rgn_id, a_tot_rgn_1km, a_tot_rgn_3nm, a_tot_cells_1km, a_tot_cells_3nm) %>%
+  distinct() %>%
+  mutate(a_1km_pct_diff = (a_tot_rgn_1km - a_tot_cells_1km) / a_tot_rgn_1km,
+         a_3nm_pct_diff = (a_tot_rgn_3nm - a_tot_cells_3nm) / a_tot_rgn_3nm) %>%
+  left_join(rgn_names, by = 'rgn_id')
+
+write_csv(area_df, file.path(dir_goal_anx, 'int/area_check.csv'))
 
 rgn_names <- foreign::read.dbf(file.path(dir_anx, 'spatial/v2015/data/regions_gcs.dbf')) %>%
   filter(rgn_typ == 'eez') %>%
@@ -278,15 +316,13 @@ lsp_v2015 <- read_csv('~/github/ohi-global/eez2013/scores.csv') %>%
   rename(rgn_id = region_id, lsp_v2015 = score) %>%
   filter(dimension == 'status' & goal == 'LSP') %>%
   left_join(prot_df %>% 
-              rename(lsp_v2016 = lsp_status) %>%
               filter(year == 2012), 
             by = 'rgn_id') %>%
-  dplyr::select(rgn_id, lsp_v2015, lsp_v2016) %>%
   left_join(rgn_names, by = 'rgn_id')
 
 library(ggplot2)
 lsp_plot_v2015 <- ggplot(lsp_v2015, 
-                        aes(x = lsp_v2015, y = lsp_v2016)) +
+                        aes(x = lsp_v2015, y = lsp_status_rgn)) +
   geom_point(aes(color = rgn_name)) +
   theme(legend.position = 'none') +
   geom_abline(slope = 1, intercept = 0, color = 'red') +
@@ -298,10 +334,11 @@ library(plotly)
 ggplotly(lsp_plot_v2015)
 
 lsp_v2015 <- lsp_v2015 %>%
-  mutate(diff = lsp_v2016 - lsp_v2015) %>%
+  dplyr::select(rgn_id, year, lsp_v2015, lsp_status_rgn, lsp_status_cells, rgn_name) %>%
+  mutate(diff = lsp_status_rgn - lsp_v2015 ) %>%
   arrange(diff)
 
-write_csv(lsp_v2015, file.path(dir_goal, 'int/check_vs_2015.csv'))
+write_csv(lsp_v2015, file.path(dir_goal_anx, 'int/check_vs_2015.csv'))
 ```
 
 ``` {r plot_protected_areas}
