@@ -18,9 +18,9 @@ output:
 knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
                       echo = FALSE, message = FALSE, warning = FALSE)
 
-library(foreign)
-library(sp)
-library(rgdal)
+# library(foreign)
+# library(sp)
+# library(rgdal)
 # library(raster)
 # library(maptools)
 library(readr)
@@ -37,8 +37,6 @@ dir_data_wdpa <- file.path(dir_anx, '_raw_data/wdpa_mpa', 'd2016')
 ### set up provenance tracking for this script:
 # source(file.path('~/github/ohibc', 'src/R/prov.R'))          
 
-
-source(file.path(dir_goal, 'lsp_fxn.R'))
 if(!file.exists(file.path(dir_goal, 'README.md'))) {
   warning(sprintf('No README detected in %s', dir_goal))
 }
@@ -46,24 +44,24 @@ if(!file.exists(file.path(dir_goal, 'README.md'))) {
 
 ```
 
+### Filter and re-project WDPA polygons
+
+The WDPA-MPA dataset comes as a shapefile or geodatabase in WGS84 coordinate reference system.  
+
+* For OHI we have chosen to count only protected areas with defined legal protection, so we apply a filter on the STATUS attribute that selects only STATUS == "Designated". 
+  * According to the WDPA Manual:  STATUS as "Designated" means:  "Is recognized or dedicated through legal means. Implies specific binding commitment to conservation in the long term. Applicable to government and non-government sources."
+  * Other values for STATUS include "Proposed", "Adopted", "Inscribed", or "Not Reported".
+    * "Adopted" and "Inscribed" are World Heritage or Barcelona Convention sites; while these may seem important, they are generally protected by other means (as overlapping "Designated" polygons) in addition to these values.
+* In 2015, the USA started including polygons that represent marine management plans, in addition to more strictly defined protected areas.  This info is contained in the "MANG_PLAN" field.
+  * These programmatic management plans variously protect species, habitats, and (??) and can be MPA or non-MPA.
+  * For OHI we have chosen to count only MPA programmatic management plans, omitting Non-MPA programmatic management plans.
+* For ease of tallying areas, we convert the polygons to a Mollweide equal-area projection before rasterizing.
+
 ``` {r wdpa_shapefile1}
 
-shp_raw     <- file.path(dir_data_wdpa, 
-                         'WDPA_May2016-shapefile',
-                         'WDPA_May2016-shapefile-polygons')
-shp_reorder <- file.path(dir_data_wdpa, 'shps',
-                         'WDPA_May2016_shp_ordered')
-shp_xformed <- file.path(dir_data_wdpa, 'shps',
-                         'WDPA_May2016_shp_xformed')
-
-### Filter criteria:
-### * MANG_PLAN does not include "Non-MPA Programmatic"
-### * STATUS is "Designated" only (NOT "Proposed", "Adopted", "Inscribed", or "Not Reported")
-###   * see WDPA Manual: field name STATUS:
-###     "Is recognized or dedicated through legal means. Implies specific binding commitment
-###      to conservation in the long term. Applicable to government and non-government sources."
-###   * "Adopted" and "Inscribed" are World Heritage or Barcelona Convention sites;
-###     protected by other means in addition to these.
+shp_raw     <- file.path(dir_data_wdpa, 'WDPA_May2016-shapefile', 'WDPA_May2016-shapefile-polygons')
+shp_reorder <- file.path(dir_data_wdpa, 'shps', 'WDPA_May2016_shp_ordered')
+shp_xformed <- file.path(dir_data_wdpa, 'shps', 'WDPA_May2016_shp_xformed')
 
 if(!file.exists(paste0(shp_xformed, '.shp'))) {
   message('No shp found for filtered/reordered/transformed WDPA database')
@@ -72,8 +70,7 @@ if(!file.exists(paste0(shp_xformed, '.shp'))) {
     ### Read in the raw shapefile (3.2 GB)
     message('Reading in raw shapefile: \n  ', shp_raw)
     ptm <- proc.time()
-    wdpa_poly <- readOGR(dsn   = dirname(shp_raw),
-                         layer = basename(shp_raw))
+    wdpa_poly <- readOGR(dsn = dirname(shp_raw), layer = basename(shp_raw))
     message('elapsed: ', (proc.time() - ptm)[3])
     
     ### filter polygons
@@ -85,49 +82,34 @@ if(!file.exists(paste0(shp_xformed, '.shp'))) {
     wdpa_poly1 <- wdpa_poly[reorder_vec, ]
     
     message('Writing filtered/reordered WDPA polygons to: \n  ', shp_reorder)
-    ptm <- proc.time()
-    writeOGR(wdpa_poly1, 
-             dsn    = dirname(shp_reorder),
-             layer  = basename(shp_reorder),
+    writeOGR(wdpa_poly1, dsn = dirname(shp_reorder), layer = basename(shp_reorder),
              driver = 'ESRI Shapefile')
-    message('elapsed: ', (proc.time() - ptm)[3])
     ### lots of warnings similar to:
-    ###   "Warning 1: Value 555593627 of field WDPAID of feature 507 not /
-    ###    successfully written. Possibly due to too larger number with /
-    ###    respect to field width"
+    ###   "Warning 1: Value 555593627 of field WDPAID of feature 507 not successfully written."
     ### warning ignored: WDPAID field not used in analysis
     
-    ### clean up the memory by removing this huge-ass object
-    rm('wdpa_poly')
+    rm('wdpa_poly') ### clean up memory
  
   } else {
     ### reordered shapefile exists; read it in
     message('Reading in filtered/re-ordered shapefile: \n  ', shp_reorder)
-    ptm <- proc.time()
-    wdpa_poly1 <- readOGR(dsn   = dirname(shp_reorder),
-                          layer = basename(shp_reorder))
-    message('elapsed: ', (proc.time() - ptm)[3])
+    wdpa_poly1 <- readOGR(dsn = dirname(shp_reorder), layer = basename(shp_reorder))
   }
   
   message('Spatial transforming WDPA polygons to Mollweide')
-  ### spatial transform the polygon into Mollweide CRS
   crs_mol <- CRS('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
   ptm <- proc.time()
   wdpa_poly2 <- spTransform(wdpa_poly1, crs_mol)
-  message('elapsed: ', (proc.time() - ptm)[3])
-  ### elapsed: 485.793s on Mazu
+  message('elapsed: ', (proc.time() - ptm)[3])  ### elapsed: 485.793s on Mazu
 
   message('Writing filtered/reorderedtransformed WDPA polygons to: \n  ', shp_xformed)
   ptm <- proc.time()
-  writeOGR(wdpa_poly2, 
-           dsn    = dirname(shp_xformed),
-           layer  = basename(shp_xformed),
+  writeOGR(wdpa_poly2, dsn = dirname(shp_xformed), layer = basename(shp_xformed),
            driver = 'ESRI Shapefile')
   message('elapsed: ', (proc.time() - ptm)[3])
-  ### elapsed: 1445.093 on Mazu
+  ### elapsed: 1445.093 s on Mazu
 
-  ### clean up the memory by removing these huge-ass objects
-  rm(c('wdpa_poly1', 'wdpa_poly2'))
+  rm(c('wdpa_poly1', 'wdpa_poly2')) ### clean up the memory
 
 } else {
   ### transformed shapefile exists
@@ -167,125 +149,204 @@ hist(status_yr[status_yr > 0])
 quantile(status_yr, probs = seq(0, 1, 0.1))
 ```
 
-``` {r chunk out layers for rasterization}
-wdpa_poly <- readOGR(dsn   = dirname(shp_xformed),
-                     layer = basename(shp_xformed))
-quantile(wdpa_poly@data$STATUS_YR, probs = seq(0, 1, 0.1))
+### Rasterize WDPA polygons
 
-break_list <- c(0, 1968, 1983, 1990, 1995, 1999, 2000:2015)
-break_poly <- function(poly, yr0 = 0, yr1 = 2015) {
-  if(length(yr0) == 0) yr0 <- 0 ### to allow for indexing to [0] in a vector
-  else yr0 <- yr0 + 1
-  message('yr0 = ', yr0, '; yr1 = ', yr1)
-  poly1 <- poly[(poly@data$STATUS_YR >= yr0 & poly@data$STATUS_YR <= yr1), ]
+Once reprojected to Mollweide, the WDPA polygons are rasterized to a 500 m grid.  This resolution is necessary to reasonably capture the "signal" of a 1000 m feature, i.e. the 1 km inland coastal zone.  Due to the fine scale, we continue to rely on ArcGIS functionality to perform this rasterization.  For future years we hope to perform this in an open-source system such as GDAL.
+
+* The `rasterize_wdpa.py` script is an ArcPy script, and therefore, unfortunately, needs to be run on a Windows system with access to ArcGIS. 
+* In addition to the filtered and reprojected WDPA polygons, the `rasterize_wdpa.py` script relies on an existing 500 m Mollweide raster to set extents and resolution.  Either of these rasters (for the 3 nautical mile offshore and 1 km inland regions) can be used:
+    * `git-annex/globalprep/spatial/v2015/data/rgn_raster_500m/rgn_inland1km_mol_500mcell.tif`
+    * `git-annex/globalprep/spatial/v2015/data/rgn_raster_500m/rgn_offshore3nm_mol_500mcell.tif`
+* The output from `rasterize_wdpa.py` is saved as a 500 m global Mollweide raster, in which each cell value indicates the *earliest* year of protection.
+    * `git-annex/globalprep/lsp/v2016/int/wdpa_designated_mol.tif`
+    
+``` {r show_global_wdpa_raster}
+
+rast_wdpa_file <- file.path(dir_goal_anx, 'int/wdpa_designated_mol.tif')
+rast_wdpa <- raster::raster(rast_wdpa_file)
+
+ext <- raster::extent(c('xmin' = -12e6, 'xmax' = -8e6, 'ymin' = 2e6, 'ymax' = 5e6))
+rast_wdpa_crop <- raster::crop(rast_wdpa, ext)
+```
+
+#### Global WDPA raster
+
+`r plot(rast_wdpa)`
+
+#### WDPA raster, Mexico and southern US
+
+`r plot(rast_wdpa_crop)`
+
+
+### Zonal statistics
+
+Comparing the global WDPA raster to the 3 nm offshore and 1 km inland rasters, we can tally the protected area within each region and compare to the total area within each region.  Note each cell is 500 m^2^, so area is .25 km^2^, but since we are simply calculating a ratio, this cancels out.
+
+``` {r lsp_zonal_stats}
+
+zonal_3nm_file <- file.path(dir_goal, 'int', 'zonal_stats_3nm.csv')
+zonal_1km_file <- file.path(dir_goal, 'int', 'zonal_stats_1km.csv')
+
+if(!file.exists(zonal_3nm_file) | !file.exists(zonal_1km_file)) {
+  
+  ### point to 500 m rasters for 3 nautical mile coastal regions, and 1 km inland coastal regions.
+  rast_3nm_file <- file.path(dir_anx, 'spatial/v2015/data/rgn_raster_500m/rgn_offshore3nm_mol_500mcell.tif')
+  rast_1km_file <- file.path(dir_anx, 'spatial/v2015/data/rgn_raster_500m/rgn_inland1km_mol_500mcell.tif')
+  
+  rast_3nm <- raster::raster(rast_3nm_file)
+  rast_1km <- raster::raster(rast_1km_file)
+  
+  ### NOTE: The crosstab function returns this warning - does it affect the
+  ### outcomes, or does the function coerce the correct outcome?
+      # Warning message:
+      # In FUN(X[[i]], ...) : integer overflow - use sum(as.numeric(.))
+  
+  ptm <- proc.time()
+  stats_3nm <- raster::crosstab(rast_wdpa, rast_3nm, useNA = TRUE, progress = 'text') %>%
+    as.data.frame()
+    setNames(c('year', 'rgn_id', 'n_cells')) %>%
+    mutate(year   = as.integer(as.character(year)),
+           rgn_id = as.integer(as.character(rgn_id))) %>%
+    arrange(rgn_id, year)
+  
+  stats_1km <- raster::crosstab(rast_wdpa, rast_1km, useNA = TRUE, progress = 'text') %>%
+    as.data.frame() %>%
+    setNames(c('year', 'rgn_id', 'n_cells')) %>%
+    mutate(year   = as.integer(as.character(year)),
+           rgn_id = as.integer(as.character(rgn_id))) %>%
+    arrange(rgn_id, year)
+  
+  message('Elapsed: ', (proc.time() - ptm)[3], ' sec')
+  
+  
+  write_csv(stats_3nm, zonal_3nm_file)
+  write_csv(stats_1km, zonal_1km_file)
+} else {
+  message('Zonal stats layers already exist: \n  ', zonal_3nm_file, '\n  ', zonal_1km_file)
 }
 
-library(doParallel); library(foreach)
-
-registerDoParallel()
-
-foreach(i = c(1:length(break_list))) %dopar% { # i = 1
-  wdpa_poly_sub <- break_poly(wdpa_poly, break_list[i - 1], break_list[i])
-  layername <- paste0(basename(shp_xformed), '_yr', break_list[i])
-  writeOGR(wdpa_poly_sub, 
-           dsn    = dirname(shp_xformed),
-           layer  = layername,
-           driver = 'ESRI Shapefile')
-}
 ```
 
-``` {r rasterize_wdpa_subsets}
-shpnames <- paste0(shp_xformed, '_yr', break_list, '.shp')
-tifnames <- file.path(dir_goal_anx, 'rasts', paste0(basename(shp_xformed), '_yr', break_list, '.tif'))
-file.exists(shpnames)
+``` {r summarize_zonal_stats}
 
-### Check base raster:
-dir_rast <- file.path(dir_anx, 'spatial/v2015/data/rgn_raster_500m')
-fn_rast_base <- file.path(dir_rast, 'rgn_offshore3nm_mol_500mcell.tif')
-rast_base    <- raster::raster(fn_rast_base)
-# plot(rast_base)
+stats_3nm <- read_csv(file.path(dir_goal, 'int', 'zonal_stats_3nm.csv'))
+stats_1km <- read_csv(file.path(dir_goal, 'int', 'zonal_stats_1km.csv'))
 
-### setup gdal_rasterize based on base raster and shp_xformed
-in_shp  <- shpnames[1]
-out_tif <- tifnames[1]
+lsp_thresh <- 0.30
+### Determine total cells per region (n_cells_tot) and then a cumulative
+### total of cells per region
+prot_1km <- stats_1km %>%
+  group_by(rgn_id) %>%
+  mutate(n_cells_tot = sum(n_cells),
+         n_cells_cum = cumsum(n_cells),
+         a_tot_km2   = n_cells_tot / 4,
+         a_prot_km2  = n_cells_cum / 4) %>%
+  filter(!is.na(year))  %>% ### this ditches non-protected cell counts but already counted in n_cells_tot
+  mutate(pct_prot   = n_cells_cum / n_cells_tot,
+         lsp_status = ifelse(pct_prot > lsp_thresh, 100, (pct_prot / lsp_thresh) * 100))
 
-te <- rast_base@extent
-base_te <- c(te@xmin, te@ymin, te@xmax, te@ymax)
-base_tr <- raster::res(rast_base)
+prot_3nm <- stats_3nm %>%
+  group_by(rgn_id) %>%
+  mutate(n_cells_tot = sum(n_cells),
+         n_cells_cum = cumsum(n_cells),
+         a_tot_km2   = n_cells_tot / 4,
+         a_prot_km2  = n_cells_cum / 4) %>%
+  filter(!is.na(year))  %>% ### this ditches non-protected cell counts but already counted in n_cells_tot
+  mutate(pct_prot   = n_cells_cum / n_cells_tot,
+         lsp_status = ifelse(pct_prot > lsp_thresh, 100, (pct_prot / lsp_thresh) * 100))
 
-
-out_tif_tmp <- out_tif %>%
-  str_replace('.tif', '_tmp.tif')
-if(!file.exists(out_tif_tmp))
-  file.copy(fn_rast_base, out_tif_tmp)
-### need a file there for gdalUtils::gdal_rasterize to do its work
-
-message('Rasterizing:\n  ', in_shp, '\nto temp tif: \n  ', out_tif_tmp)
-ptm <- proc.time()
-rast_tmp <- gdalUtils::gdal_rasterize(
-  src_datasource = path.expand(in_shp),
-  dst_filename   = path.expand(out_tif_tmp),
-  a = 'STATUS_YR', # attribute to burn
-  a_nodata = NA,
-  # at = TRUE,
-  te = base_te,
-  tr = base_tr,
-  output_Raster = TRUE)
-
-message('elapsed gdal_rasterize: ', (proc.time() - ptm)[3])
-### rewrite for compression and unlink the temp raster
-message('Compressing: \n  ', out_tif_tmp, '\nto: \n  ', out_tif)
-raster::writeRaster(rast_tmp, out_tif, overwrite = TRUE)
-message('elapsed gdal_rasterize + writeRaster: ', (proc.time() - ptm)[3])
-# unlink(out_tif_tmp)
+write_csv(prot_3nm, file.path(dir_goal, 'int', 'area_protected_3nm.csv'))
+write_csv(prot_1km, file.path(dir_goal, 'int', 'area_protected_1km.csv'))
 
 ```
 
-``` {r rasterize_wdpa_mollweide}
+``` {r combine_inland_and_offshore}
 
-### Check base raster:
-dir_rast <- file.path(dir_anx, 'spatial/v2015/data/rgn_raster_500m')
-fn_rast_base <- file.path(dir_rast, 'rgn_offshore3nm_mol_500mcell.tif')
-rast_base    <- raster::raster(fn_rast_base)
-# plot(rast_base)
+prot_df <- prot_1km %>%
+  dplyr::select(rgn_id, year, lsp_st_1km = lsp_status) %>%
+  left_join(prot_1km %>% 
+              dplyr::select(rgn_id, year, lsp_st_3nm = lsp_status),
+            by = c('rgn_id', 'year')) %>%
+  mutate(lsp_status = (lsp_st_1km + lsp_st_3nm) / 2)
 
-### setup gdal_rasterize based on base raster and shp_xformed
-out_tif <- file.path(dir_goal_anx, 'int/wdpa_may2016.tif')
+rgn_names <- foreign::read.dbf(file.path(dir_anx, 'spatial/v2015/data/regions_gcs.dbf')) %>%
+  filter(rgn_typ == 'eez') %>%
+  select(rgn_id, rgn_name = rgn_nam)
 
-te <- rast_base@extent
-base_te <- c(te@xmin, te@ymin, te@xmax, te@ymax)
-base_tr <- raster::res(rast_base)
+### check vs 2015 assessment (using eez2013 scores)
+lsp_v2015 <- read_csv('~/github/ohi-global/eez2013/scores.csv') %>%
+  rename(rgn_id = region_id, lsp_v2015 = score) %>%
+  filter(dimension == 'status' & goal == 'LSP') %>%
+  left_join(prot_df %>% 
+              rename(lsp_v2016 = lsp_status) %>%
+              filter(year == 2012), 
+            by = 'rgn_id') %>%
+  dplyr::select(rgn_id, lsp_v2015, lsp_v2016) %>%
+  left_join(rgn_names, by = 'rgn_id')
 
-in_shp <- file.path(dir_data_wdpa, 
-                         'WDPA_May2016_shp_xformed.shp')
+library(ggplot2)
+lsp_plot_v2015 <- ggplot(lsp_v2015, 
+                        aes(x = lsp_v2015, y = lsp_v2016)) +
+  geom_point(aes(color = rgn_name)) +
+  theme(legend.position = 'none') +
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  labs(x = 'LSP status v2015 (eez2013: data through 2012)',
+       y = 'LSP status v2016 (data through 2012))',
+       title = 'LSP status compare')
 
-out_tif_tmp <- out_tif %>%
-  str_replace('.tif', '_tmp.tif')
-if(!file.exists(out_tif_tmp))
-  file.copy(fn_rast_base, out_tif_tmp)
-### need a file there for gdalUtils::gdal_rasterize to do its work
+library(plotly)
+ggplotly(lsp_plot_v2015)
 
-message('Rasterizing:\n  ', in_shp, '\nto temp tif: \n  ', out_tif_tmp)
-ptm <- proc.time()
-rast_tmp <- gdalUtils::gdal_rasterize(
-  src_datasource = path.expand(in_shp),
-  dst_filename   = path.expand(out_tif_tmp),
-  a = 'STATUS_YR', # attribute to burn
-  a_nodata = NA,
-  # at = TRUE,
-  te = base_te,
-  tr = base_tr,
-  output_Raster = TRUE)
+lsp_v2015 <- lsp_v2015 %>%
+  mutate(diff = lsp_v2016 - lsp_v2015) %>%
+  arrange(diff)
 
-message('elapsed gdal_rasterize: ', (proc.time() - ptm)[3])
-### rewrite for compression and unlink the temp raster
-message('Compressing: \n  ', out_tif_tmp, '\nto: \n  ', out_tif)
-raster::writeRaster(rast_tmp, out_tif, overwrite = TRUE)
-message('elapsed gdal_rasterize + writeRaster: ', (proc.time() - ptm)[3])
-# unlink(out_tif_tmp)
-
+write_csv(lsp_v2015, file.path(dir_goal, 'int/check_vs_2015.csv'))
 ```
 
+``` {r plot_protected_areas}
+library(ggplot2)
+
+x_1km <- prot_1km %>% 
+  group_by(year) %>%
+  summarize(rgn_id   = 0,
+            pct_prot = sum(n_cells_cum) / sum(n_cells_tot)) %>%
+  bind_rows(prot_1km) %>%
+  filter(year > 1950)
+
+x_3nm <- prot_3nm %>% 
+  group_by(year) %>%
+  summarize(rgn_id   = 0,
+            pct_prot = sum(n_cells_cum) / sum(n_cells_tot)) %>%
+  bind_rows(prot_1km) %>%
+  filter(year > 1950)
+
+plot_prot_1km <- ggplot(x_1km %>% filter(rgn_id > 0), aes(x = year, y = pct_prot)) +
+  geom_line(aes(group = rgn_id, color = rgn_id)) + 
+  geom_line(data = x_1km %>% filter(rgn_id == 0),
+            aes(group = rgn_id), 
+            color = 'red', size = 2, alpha = .7) +
+  labs(x = 'year',
+       y = 'proportion of region protected',
+       title = 'Protected area, 1 km inland',
+       color = 'Rgn ID')
+
+print(plot_prot_1km)
+
+plot_prot_3nm <- ggplot(x_3nm %>% filter(rgn_id > 0), aes(x = year, y = pct_prot)) +
+  geom_line(aes(group = rgn_id, color = rgn_id)) +
+  geom_line(data = x_3nm %>% filter(rgn_id == 0),
+            aes(group = rgn_id), 
+            color = 'red', size = 2, alpha = .7) +
+  labs(x = 'year',
+       y = 'proportion of region protected',
+       title = 'Protected area, 3 nm offshore',
+       color = 'Rgn ID')
+
+print(plot_prot_3nm)
+
+
+```
 [REFERENCE RMD FILE: https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/prs_oa/v2016/oa_dataprep.html]
 
 #Summary
