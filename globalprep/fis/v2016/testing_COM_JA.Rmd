@@ -36,8 +36,12 @@ catch <- read.csv('../int/catch_pre_bbmsy.csv')
 ```{r cmsy}
 
 if (!file.exists(file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits.rds"))) {
+  
 cmsy_fits <- plyr::dlply(catch, c("stock_id", "common"), function(x) {
-    out <- cmsy(x$tons, yr = x$year,  start_r = resilience(x$Resilience[1]), 
+  
+    #make sure the data is ordered from 1950 to 2010
+    x <- arrange(x,year)
+    out <- cmsy(ct = x$tons, yr = x$year,  start_r = resilience(x$Resilience[1]), 
       reps = 2e4)
     out$year <- x$year
     out
@@ -74,8 +78,6 @@ nas <- cmsy_bbmsy%>%
 
 nrow(nas)
 
-#there are 210 stocks that do not have any data.
-
 ```
 
 
@@ -85,6 +87,10 @@ nrow(nas)
 
 if (!file.exists(file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits-uni-prior.rds"))) {
 cmsy_fits_uni <- plyr::dlply(catch, c("stock_id", "common"), function(x) {
+  
+  #make sure the data is ordered from 1950 to 2010
+     x <- arrange(x,year)
+     
     out <- cmsy(x$tons, yr = x$year,  start_r = resilience(x$Resilience[1]), 
       reps = 2e4, finalbio = c(0.01, 0.7))
     out$year <- x$year
