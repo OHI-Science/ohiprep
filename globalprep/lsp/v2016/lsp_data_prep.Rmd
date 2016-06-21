@@ -64,13 +64,17 @@ where:
 * ${Area_{P_{ref}}}$ = Reference value for inland protected area
 * $Area_{MPA}$ = Marine protected area for offshore 3 nm buffer
 * ${Area_{MPA_{ref}}}$ = Reference value for marine protected area within offshore 3 nm buffer
-* $Ref$ = 30% of total area within buffer zone
+* $Ref$ = 30% of total area within buffer zone is protected
 
 ***
 
 # Updates from previous assessment
 
 New World Database on Protected Areas spatial data from UNEP-WCMC became available in May 2016.  In addition, an error in the previous assessments (specifically the .csv used to determine total areas for the 3 nm offshore and 1 km inland regions) caused total region areas to be underestimated, artificially inflating scores in past assessments, in some cases quite significantly.  This error has been fixed in the v2016 assessment, but in so doing, many of the reported scores are noticeably lower than before.
+
+## Goals for future improvements
+
+* Move away from using ArcPy for rasterization of WDPA-MPA database.  ArcPy works great for our purposes, but is neither open-source nor cross-platform.
 
 ***
 
@@ -84,6 +88,8 @@ New World Database on Protected Areas spatial data from UNEP-WCMC became availab
 **Time range**: 1819 - 2015; some protected areas do not have an associated "status year" and are reported as year 0.
 
 **Format**:  Shapefile
+
+**File location**: `Mazu:git-annex/globalprep/_raw_data/wdpa_mpa/d2016/WDPA_May2016-shapefile/`
 
 ***
   
@@ -382,7 +388,7 @@ lsp_plot_v2015 <- ggplot(lsp_v2015,
   theme(legend.position = 'none') +
   geom_abline(slope = 1, intercept = 0, color = 'red') +
   labs(x = 'LSP status v2015 (eez2013: data through 2012)',
-       y = 'LSP status v2016 (data through 2012))',
+       y = 'LSP status v2016 (data through 2012)',
        title = 'Comparing LSP status: 2015 vs 2016 methods')
 
 ggplotly(lsp_plot_v2015)
