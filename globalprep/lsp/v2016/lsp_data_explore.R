@@ -20,6 +20,33 @@ rast_wdpa <- raster::raster(rast_wdpa_file)
 
 plot(rast_wdpa)
 
+### to check existing SPDF for unfiltered polygons:
+wdpa_df <- foreign::read.dbf(paste0(shp_xformed, '.dbf'))
+
+names(wdpa_df)
+#  WDPAID | WDPA_PID | PA_DEF | NAME | ORIG_NAME | DESIG | DESIG_ENG | DESIG_TYPE | IUCN_CAT
+#  INT_CRIT | MARINE | REP_M_AREA | GIS_M_AREA | REP_AREA | GIS_AREA | NO_TAKE | NO_TK_AREA | STATUS
+#  STATUS_YR | GOV_TYPE | OWN_TYPE | MANG_AUTH | MANG_PLAN | VERIF | METADATAID | SUB_LOC | PARENT_ISO
+#  ISO3
+nonmpa_check <- wdpa_df %>%
+  filter(ISO3 == 'USA') %>% ### USA non-programmatic management plans were a problem in 2015
+  select(MANG_PLAN) %>%
+  distinct()
+### if there are any non-MPA programmatic species management plans in here, filter 'em
+
+newstatus_check <- wdpa_df %>%
+  filter(STATUS %in% c("Adopted", "Inscribed"))
+doubled_check <- wdpa_df %>%
+  filter(str_detect(tolower(NAME), "yosemite|yellowst|chitwan|tikal|nahanni"))
+### looks like most of those parks are covered under other rubrics as well
+
+### check distribution of STATUS_YR to see if there are breaks 
+status_yr <- wdpa_df$STATUS_YR
+sum(status_yr == 0) ### 22072 (about 10%)
+hist(status_yr[status_yr > 0])
+
+quantile(status_yr, probs = seq(0, 1, 0.1))
+
 
 
 stats_3nm <- read_csv(file.path(dir_goal, 'int', 'zonal_stats_3nm.csv'))
@@ -88,7 +115,9 @@ prot_df <- prot_1km %>%
 
 
 
-### Check areas based directly on 1 km Mollweide shapefile
+#########################################################################=
+### Check areas based directly on 1 km, 3 nm, and global(?) Mollweide shapefile
+#########################################################################=
 
 rgn_poly_mol <- rgdal::readOGR(dsn = file.path(dir_anx, '../Global/NCEAS-Regions_v2014/data'), 
                                layer = 'rgn_inland1km_mol', 
@@ -109,10 +138,35 @@ area_mol_df <- area_mol_df %>%
               filter(year == 2015) %>%
               select(rgn_id, a_km2_from_cells = a_tot_cells),
             by = 'rgn_id')
-# write_csv(area_mol_df, file.path(dir_goal, 'int/area_check.csv'))
+write_csv(area_mol_df, file.path(dir_goal, 'int/area_check_inland1km.csv'))
 
+### now for 3 nm
 
+rgn_poly_mol <- rgdal::readOGR(dsn = file.path(dir_anx, '../Global/NCEAS-Regions_v2014/data'), 
+                               layer = 'rgn_offshore3nm_mol', 
+                               stringsAsFactors = FALSE)
+
+area_mol_df <- rgn_poly_mol@data %>%
+  mutate(area_recalc = rgeos::gArea(rgn_poly_mol, byid = TRUE))
+
+area_mol_df <- area_mol_df %>%
+  mutate(area_recalc = area_recalc/1e6) %>%
+  rename(area_km2_from_shp = area_km2,
+         area_km2_from_gArea = area_recalc) %>%
+  left_join(rgn_area_1km %>% rename(area_km2_from_layer = area_km2), by = 'rgn_id')
+
+area_mol_df <- area_mol_df %>%
+  dplyr::select(rgn_id, rgn_name, area_km2_from_shp, Shape_Area, area_km2_from_gArea, area_km2_from_layer) %>%
+  left_join(prot_3nm %>%
+              filter(year == 2015) %>%
+              dplyr::select(rgn_id, a_km2_from_cells = a_tot_cells),
+            by = 'rgn_id')
+write_csv(area_mol_df, file.path(dir_goal, 'int/area_check_offshore3nm.csv'))
+
+#########################################################################=
 ### check vs 2015 assessment (using eez2013 scores)
+#########################################################################=
+
 lsp_v2015 <- read_csv('~/github/ohi-global/eez2013/scores.csv') %>%
   rename(rgn_id = region_id, lsp_v2015 = score) %>%
   filter(dimension == 'status' & goal == 'LSP') %>%

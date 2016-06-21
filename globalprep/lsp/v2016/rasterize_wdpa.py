@@ -20,11 +20,14 @@ dirs =  {'git' :'C:/Users/ohara/Documents/github/ohiprep',
          'mazu':'M:',
          'tmp' :'C:/Users/ohara/tmp'
          }
+         
+scenario = 'v2016'
+
 print ('Setting pathnames...')
 print (dirs)
 
 # paths
-prod     = 'globalprep/lsp/v2016'                 # name of product
+prod     = 'globalprep/lsp/%s'    % scenario             # name of product
 # dir_git  = '%s/%s' % (dirs['git'], prod)               # local github directory inside ohiprep
 # dir_tmp  = '%s/%s' % (dirs['tmp'], prod)               # local temp directory
 dir_anx      = '%s/git-annex/globalprep' % dirs['mazu']
@@ -40,7 +43,7 @@ print ('input poly_wdpa = ' + poly_wdpa)
 print ('base raster = ' + rast_base)
 
 # outputs
-rast_out  = '%s/lsp/v2016/int/wdpa_designated_mol.tif' % dir_anx
+rast_out  = '%s/lsp/%s/int/wdpa_designated_mol.tif' % (dir_anx, scenario)
 print ('output raster = ' + rast_out)
 
 # initial env
