@@ -4,7 +4,7 @@
 
 See full data prep details [here](LINK TO HTML FILE).
 
-If using these data, please see our [citation policy](will add a link in here).
+If using these data, please see our [citation policy](http://ohi-science.org/citation-policy/).
 
 [alternatively, if you want a specific citation for this resource, you can add that here....]
 
