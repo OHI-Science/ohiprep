@@ -25,8 +25,11 @@ library(dplyr)
 
 ## Identify and select the stocks that b/bmsy was calculated for (cmsy method):
 stocks <- read.csv("globalprep/fis/v2016/int/cmsy_bbmsy.csv") %>%
+#  filter(!is.na(bbmsy_mean)) %>%  # thare are some that don't converge during cmsy analysis...but it seems better to keep them in because it seems they do for the uniform
   dplyr::select(stock_id) %>%
   unique()
+# Umbrina_cirrosa-37
+filter(stocks, stock_id=="Conger_myriaster-71")
 
 ## Mean eez catch data
 meanCatch_ohi <- read.csv('globalprep/fis/v2016/data/mean_catch.csv') %>%
@@ -35,13 +38,13 @@ meanCatch_ohi <- read.csv('globalprep/fis/v2016/data/mean_catch.csv') %>%
   filter(stock_id %in% stocks$stock_id) %>%
   select(stock_id, rgn_id, fao_id, TaxonKey, mean_catch) %>%
   unique()
-
+filter(meanCatch_ohi, stock_id == "Conger_myriaster-71")
 ## Mean hs catch data
 meanCatch_hs <- read.csv('globalprep/fis/v2016/data/mean_catch_hs.csv') %>%
   filter(stock_id %in% stocks$stock_id) %>%
   select(stock_id, rgn_id=ohi_rgn, fao_id=fao_rgn, TaxonKey, mean_catch) %>%
   unique()
-
+filter(meanCatch_hs, stock_id == "Conger_myriaster-71")
 ## bind eez and hs regions
 meanCatch <- rbind(meanCatch_ohi, meanCatch_hs)
 
