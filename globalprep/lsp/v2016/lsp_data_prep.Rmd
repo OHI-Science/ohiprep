@@ -254,7 +254,8 @@ prot_1km <- stats_1km %>%
   filter(!is.na(year))  %>% ### this ditches non-protected cell counts but already counted in n_cells_tot
   mutate(pct_prot   = round(n_cells_cum / n_cells_tot, 4),
          lsp_status = round(ifelse(pct_prot > lsp_thresh, 100, (pct_prot / lsp_thresh) * 100), 2)) %>%
-  left_join(rgn_names, by = 'rgn_id')
+  left_join(rgn_names, by = 'rgn_id') %>%
+  distinct()
 
 prot_3nm <- stats_3nm %>%
   group_by(rgn_id) %>%
@@ -266,7 +267,8 @@ prot_3nm <- stats_3nm %>%
   filter(!is.na(year))  %>% ### this ditches non-protected cell counts but already counted in n_cells_tot
   mutate(pct_prot   = round(n_cells_cum / n_cells_tot, 4),
          lsp_status = round(ifelse(pct_prot > lsp_thresh, 100, (pct_prot / lsp_thresh) * 100), 2)) %>%
-  left_join(rgn_names, by = 'rgn_id')
+  left_join(rgn_names, by = 'rgn_id') %>%
+  distinct()
 
 write_csv(prot_3nm, file.path(dir_goal, 'int', 'area_protected_3nm.csv'))
 write_csv(prot_1km, file.path(dir_goal, 'int', 'area_protected_1km.csv'))
@@ -295,13 +297,16 @@ prot_df <- prot_1km %>%
                 lsp_st_1km = lsp_status,
                 a_prot_1km = a_prot_km2,
                 a_tot_1km  = a_tot_km2) %>%
-  left_join(prot_3nm %>% 
+  full_join(prot_3nm %>% 
               dplyr::select(rgn_id, year, rgn_name,
                             lsp_st_3nm = lsp_status,
                             a_prot_3nm = a_prot_km2,
                             a_tot_3nm  = a_tot_km2),
             by = c('rgn_id', 'rgn_name', 'year')) %>%
-  mutate(lsp_status = (lsp_st_1km + lsp_st_3nm) / 2)
+  mutate(lsp_st_1km = ifelse(is.na(lsp_st_1km), 0, lsp_st_1km),
+         lsp_st_3nm = ifelse(is.na(lsp_st_3nm), 0, lsp_st_3nm),
+         lsp_status = (lsp_st_1km + lsp_st_3nm) / 2) %>%
+  distinct()
 
 write_csv(prot_df, file.path(dir_goal, 'int', 'area_protected_total.csv'))
 
@@ -311,7 +316,7 @@ a_tot_inland_file    <- file.path(dir_goal, 'output', 'lsp_a_total_inland1km.csv
 a_tot_offshore_file  <- file.path(dir_goal, 'output', 'lsp_a_total_offshore3nm.csv')
 
 prot_df_recent <- prot_df %>%
-  filter(year >= 2000)
+  filter(year >= 2000) 
 
 write_csv(prot_df_recent %>% select(rgn_id, year, a_prot_1km), a_prot_inland_file)
 write_csv(prot_df_recent %>% select(rgn_id, year, a_prot_3nm), a_prot_offshore_file)
@@ -349,7 +354,9 @@ for (i in 2010:max(status_df$year, na.rm = TRUE)) { # i <- 2013
     group_by(rgn_id) %>%
     do(trend_lm = lm(lsp_status ~ year, data = .)$coefficients[2]) %>%
     mutate(year     = i,
-           trend_lm = round(trend_lm, 5)/100) ### divide by 100 b/c trend should be in fractional amounts
+           trend_lm = round(trend_lm, 5)/100 * 5,  ### divide by 100 b/c trend should be in fractional amounts
+           trend = ifelse(trend_lm >  1,  1, trend_lm), ### clip to +/- 1
+           trend = ifelse(trend_lm < -1, -1, trend)) 
   trend_df <- trend_df %>%
     bind_rows(tmp_trend)
 }
@@ -361,6 +368,17 @@ Year-by-year status and trend estimates will be saved:
 
 * ``r status_file``: estimate of status by region since 2000
 * ``r trend_file``: estimate of trend by region since 2010
+
+### Status and trend estimates:
+
+``` {r calc_lsp_status_trend_summary}
+lsp_status_trend_summary <- rgn_names %>% 
+  left_join(status_df %>% filter(), by = 'rgn_id') %>% 
+  left_join(trend_df, by = c('rgn_id', 'year')) %>%
+  arrange(desc(year), rgn_id)
+```
+
+`r DT::datatable(lsp_status_trend_summary, caption = 'LSP status and trend estimates')`
 
 ***
 
