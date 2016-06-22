@@ -2,6 +2,7 @@
 ## Making a few modifications of the spatial files that Ben B
 ## created so they will be more useful for our analyses
 ## June 7 2015, MRF
+## NOTE: 6/21/2016: file locations have changed to match our current data organization method
 ########################################################
 
 library(maptools)
@@ -65,17 +66,22 @@ data_tmp$area3 <- gArea(merge_shape, byid=TRUE)
 
 #### checking on data, and changing variable names to more sensible names:
 
-check <- readOGR(dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/data", layer="regions_mol")
+check <- readOGR(dsn="/home/shares/ohi/git-annex/globalprep/spatial/d2014/data", layer="regions_mol")
 
 check@data <- select(check@data, c(rgn_typ, ant_typ=sp_type, rgn_id, ant_id=rgn_d_c, rgn_nam, rgn_key, are_km2))
 head(check@data)
 table(check@data$ant_typ)
 table(check@data$rgn_typ)
+check@data[check@data$rgn_id != check@data$ant_id, ]
+check@data[check@data$rgn_id == 16, ]
+
 #writeOGR(check, dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/data", "regions_mol", driver="ESRI Shapefile", overwrite_layer=TRUE)
 
-check <- readOGR(dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/data", layer="regions_gcs")
+check <- readOGR(dsn="/home/shares/ohi/git-annex/globalprep/spatial/d2014/data", layer="regions_gcs")
 check@data <- select(check@data, c(rgn_typ, ant_typ=sp_type, rgn_id, ant_id=rgn_d_c, rgn_nam, rgn_key, are_km2))
 head(check@data)
 table(check@data$ant_typ)
 table(check@data$rgn_typ)
+check@data[check@data$rgn_id != check@data$ant_id, ]
+check@data[check@data$rgn_id == 16, ]
 #writeOGR(check, dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/data", "regions_gcs", driver="ESRI Shapefile", overwrite_layer=TRUE)
