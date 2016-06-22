@@ -38,7 +38,19 @@ NOTE: now catch data is int/catch_saup.csv...make sure dataprep script is in her
 * meanCatch.R: calculates the mean catch data that is used to weight the B/Bmsy values.  It also generates a datafile describing total catch for each region and year to use as the weight in the FP goal calculation.
 
   - data/FP_fis_catch.csv: weighting for MAR vs. FIS to calculate FP goal
-  - mean_catch.csv: used in the toolbox to weight the b/bmsy values for each region 
+  - data/mean_catch.csv: used in the toolbox to weight the b/bmsy values for each region
+  - data/mean_catch_hs.csv: catch dat for the high seas regions
+  
+* Stock_resilience.R: Used to calculate resilience of stocks based on mora scores of regions where they are fished.  This is used to determine whether we should use a constrained or uniform prior in the cmsy model used to calculate B/Bmsy values.  Based on analyses, it never makes sense to use anything except the constrained prior.  So this is probably irrelevant moving forward.
+ 
+   - stock_resil_06cutoff_2016.csv
+   
+* format_bbmsy_data.R: Used to explore and combine various B/Bmsy scores into a single score.  This also merges in the RAM B/Bmsy scores when they are available. Also gets the B/Bmsy values to the correct spatial scale.
+ 
+    - fis_bbmsy.csv: Final B/Bmsy scores used for ohi-global calculations
+    - fis_bbmsy_gf_ram.csv: Gapfilling done on RAM data when scores didn't go to 2010
+    
+   
    
    
 

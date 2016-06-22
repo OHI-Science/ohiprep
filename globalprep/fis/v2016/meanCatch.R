@@ -1,5 +1,5 @@
 ##############################################
-## Preparing mean catch data for the toolbox
+## Preparing mean catch data for ohi-global
 ## OHI 2016 global
 ## MRF June 9 2016
 ###############################################
@@ -15,6 +15,9 @@ source('../ohiprep/src/R/common.R') # set dir_neptune_data
 
 ## SAUP catch data:
 data <- read.csv(file.path(dir_M, 'git-annex/globalprep/fis/v2016/int/catch_saup.csv'))
+filter(data, stock_id == "Conger_myriaster-71")
+filter(data, stock_id == "Gadus_macrocephalus-71")
+filter(data, stock_id == "Pseudopleuronectes_herzensteini-71")
 
 data <- data %>%
   dplyr::select(year, saup_rgn = saup_id, fao_rgn, stock_id, TaxonKey, tons) %>%
@@ -53,11 +56,24 @@ data_ohi_rgns <- data_ohi_rgns %>%
   ungroup()
 
 #---------------------------------------------
+### Sort data by year and include zeros only after
+### first catch 
+# --------------------------------------------
+data_ohi_rgns_fc <- data_ohi_rgns %>%
+  group_by(fao_rgn, TaxonKey, stock_id, ohi_rgn) %>%
+  arrange(year) %>%
+  mutate(cum_catch = cumsum(catch)) %>%
+  filter(cum_catch > 0) %>%
+  select(-cum_catch) %>%
+  ungroup()
+
+
+#---------------------------------------------
 ### Calculate mean catch for ohi regions (using data from 1980 onward)
 ### These data are used to weight the RAM b/bmys values 
 # --------------------------------------------
 
-mean_catch <- data_ohi_rgns %>%
+mean_catch <- data_ohi_rgns_fc %>%
   filter(year >= 1980) %>%
   group_by(ohi_rgn, fao_rgn, TaxonKey, stock_id) %>%
   mutate(mean_catch=mean(catch, na.rm=TRUE))%>%
@@ -94,8 +110,17 @@ write.csv(total_catch_FP, "globalprep/fis/v2016/data/FP_fis_catch.csv", row.name
 # Do calculations for high seas
 #############################################################
 
-data_hs_rgns <- data_ohi_rgns %>%
+data_hs_rgns <- data %>%
   filter(saup_rgn > 1000) %>%
+  group_by(fao_rgn, TaxonKey, stock_id) %>%
+  arrange(year) %>%
+  mutate(cum_catch = cumsum(catch)) %>%
+  filter(cum_catch > 0) %>%
+  select(-cum_catch) %>%
+  ungroup()
+
+
+data_hs_rgns <- data_hs_rgns %>%
   filter(year >= 1980) %>%
   mutate(ohi_rgn = 0) %>%
   group_by(ohi_rgn, fao_rgn, TaxonKey, stock_id) %>%
