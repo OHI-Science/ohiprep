@@ -389,8 +389,9 @@ ico_status_raw <- ico_spp_rgn_cat %>%
 
 ico_status_calc <- ico_status_raw %>%
   group_by(rgn_id, rgn_name, year) %>%
-  summarize(mean_cat = round(mean(cat_score, na.rm = TRUE), 5),
-            ico_status = 1 - mean_cat) ### since DDs are still in, use na.rm = TRUE
+  summarize(mean_cat = round(mean(cat_score, na.rm = TRUE), 5), ### since DDs are still in, use na.rm = TRUE
+            ico_status = 1 - mean_cat,
+            n_spp = n()) 
 
 
 ico_trend <- data.frame()
@@ -463,6 +464,50 @@ trend_ts_plot <- ggplot(ico_sum %>%
        color = 'Region')
 
 ggplotly(trend_ts_plot)
+```
+
+***
+
+### Compare scores OHI 2016 vs OHI 2015 
+
+``` {r spp_plot_scores_vs_2015, fig.height = 4, fig.width = 6, fig.align = 'center'}
+
+ico_2015 <- read_csv('~/github/ohi-global/eez2013/scores.csv') %>%
+  filter(goal == 'ICO' & dimension %in% c('status', 'trend')) %>%
+  spread(key = dimension, value = score) %>%
+  select(-goal)
+
+ico_15_16 <- ico_sum %>%
+  filter(year == max(year)) %>% 
+  select(rgn_id, rgn_name, st_16 = ico_status, tr_16 = ico_trend, n_spp) %>%
+  distinct() %>%
+  full_join(ico_2015 %>%
+              rename(rgn_id = region_id, st_15 = status, tr_15 = trend),
+            by = 'rgn_id') %>%
+  mutate(st_16 = st_16 * 100)
+  
+st_15_16_plot <- ggplot(ico_15_16 %>%
+                           filter(!is.na(rgn_id)),
+                         aes(x = st_15, y = st_16, color = n_spp, key = rgn_name)) +
+  geom_point(alpha = .6) +
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  labs(x = 'ICO status v2015',
+       y = 'ICO status v2016',
+       title = 'ICO status comparison')
+
+ggplotly(st_15_16_plot)
+
+tr_15_16_plot <- ggplot(ico_15_16 %>%
+                           filter(!is.na(rgn_id)),
+                         aes(x = tr_15, y = tr_16, color = n_spp, key = rgn_name)) +
+  geom_point(alpha = .6) +
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  labs(x = 'ICO trend v2015',
+       y = 'ICO trend v2016',
+       title = 'ICO trend comparison')
+
+ggplotly(tr_15_16_plot)
+
 ```
 
 ***
