@@ -18,12 +18,6 @@ output:
 knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
                       echo = FALSE, message = FALSE, warning = FALSE)
 
-library(foreign)
-library(data.table)
-library(sp)
-library(rgdal)
-# library(raster)
-# library(maptools)
 library(readr)
 
 source('~/github/ohiprep/src/R/common.R')
