@@ -15,7 +15,7 @@ get_ico_list <- function() {
 ### consider for ICO (as well as global and regional ICO status); then attaches 
 ### this ICO species list to the IUCN master species list.  
 
-  ico_list_file <- file.path(dir_anx, 'ico/ico_global_list.csv')
+  ico_list_file <- file.path(dir_anx, scenario, 'int/ico_global_list.csv')
   message(sprintf('Reading raw iconic species list from: \n  %s\n', ico_list_file))
   ico_list_raw <- read.csv(ico_list_file, stringsAsFactors = FALSE) %>%
     select(rgn_name   = Country, 
@@ -38,30 +38,8 @@ get_ico_list <- function() {
   ico_list <- ico_list_raw %>%
     mutate(ico_gl = (!is.na(ico_global) | !is.na(ico_local) | !is.na(ico_flag))) %>%
     select(-ico_global, -ico_local, -ico_flag) 
-
-  # load IUCN list - does this contain year? does it matter? if fast, just reload all data
-  spp_all <- read.csv(file.path(dir_anx, scenario, 'int/spp_all.csv'), 
-                     stringsAsFactors = FALSE)
-
-  # join ico_list to spp_all to incorporate category info and parent/subpop info.
-  ico_list <- ico_list %>%
-    left_join(spp_all %>%
-                select(sciname, category = iucn_category, iucn_sid, trend = popn_trend, parent_sid, subpop_sid) %>%
-                filter(sciname %in% ico_list$sciname),
-              by = 'sciname')
-  cat_list <- c('LC', 'NT', 'VU', 'EN', 'CR', 'EX')
-  ico_list <- ico_list %>%
-    mutate(trend    = tolower(trend),
-           category = ifelse(category == 'DD', NA, category),
-           category = ifelse(category == 'LR/lc', 'LC', category),
-           category = ifelse(category == 'LR/nt', 'NT', category)) %>%
-    filter(category %in% cat_list)
   
-  # convert regional iconic status into a rgn_id, and join to ico_list.
-  # - consider only observations with ico_rgn indicator
-  # - for these, attach an 'ico_rgn_id' variable to track which countries to 
-  #   count for these species
-  rgn_name_file <- '~/github/ohi-global/eez2013/layers/rgn_global.csv' # ??? update this - Mel has a new one
+  rgn_name_file <- '~/github/ohi-global/eez2013/layers/rgn_global.csv' 
   rgn_names <- read_csv(rgn_name_file)
   ico_list <- ico_list %>%
     left_join(ico_list %>%
@@ -70,11 +48,13 @@ get_ico_list <- function() {
                 left_join(rgn_names, by = c('rgn_name' = 'label')),
               by = c('rgn_name', 'sciname')) %>% 
     rename(ico_rgn_id = rgn_id) %>% 
-      # note: check that all countries properly translate on this. 
-      # Should be easy since I can control the rgn-specific country names in the spreadsheet.
+    # note: check that all countries properly translate on this. 
+    # Should be easy since I can control the rgn-specific country names in the spreadsheet.
     select(-rgn_name, -ico_rgn) %>%
-
+    mutate(ico_rgn_id = ifelse(ico_gl, NA, ico_rgn_id)) %>% ### 
+      ### if globally iconic, rgn_id is unimportant - results in duplicates
     unique()
+  
   return(ico_list)
 }
 
