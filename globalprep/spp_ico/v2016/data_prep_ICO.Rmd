@@ -494,6 +494,7 @@ st_15_16_plot <- ggplot(ico_15_16 %>%
        title = 'ICO status comparison')
 
 ggplotly(st_15_16_plot)
+ggsave(file.path(dir_goal, scenario, 'int/scatterplot_status_15v16.png'))
 
 tr_15_16_plot <- ggplot(ico_15_16 %>%
                            filter(!is.na(rgn_id)),
@@ -505,6 +506,7 @@ tr_15_16_plot <- ggplot(ico_15_16 %>%
        title = 'ICO trend comparison')
 
 ggplotly(tr_15_16_plot)
+ggsave(file.path(dir_goal, scenario, 'int/scatterplot_trend_15v16.png'))
 
 ```
 
