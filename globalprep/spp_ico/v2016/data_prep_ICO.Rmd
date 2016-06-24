@@ -109,7 +109,7 @@ Changes since 2015 ICO subgoal for global OHI:
 ## get master list of Iconic Species
 
 ``` {r get_ico_spp_list}
-ico_list_raw <- get_ico_list()
+ico_list_raw <- get_ico_list(reload = TRUE)
 
 #                   comname                  sciname ico_gl ico_rgn_id
 # 1      Peruvian anchoveta        Engraulis ringens  FALSE        138
@@ -184,6 +184,9 @@ ico_list <- ico_list_raw %>%
   left_join(spp_ico %>% 
               select(iucn_sid, sciname, subpop = population, cat = category),
             by = 'sciname')
+
+write_csv(ico_list, file.path(dir_goal, scenario, 'int/ico_list_prepped.csv'))
+
             
 ```
 
@@ -217,7 +220,9 @@ ico_spp_rgn <- ico_spp_rgn %>%
   left_join(rgn_iucn2ohi,
             by = 'iucn_rgn_name') %>%
   rename(rgn_name = ohi_rgn_name) %>%
-  select(-iucn_rgn_name, -count, -code)
+  select(-iucn_rgn_name, -count, -code) %>%
+  filter(!is.na(rgn_id)) %>%
+  distinct()
 
 write_csv(ico_spp_rgn, file.path(dir_goal, scenario, 'int/ico_spp_rgn.csv'))
 
@@ -283,6 +288,7 @@ pop_cat <- data.frame(cat       = c("LC", "NT", "VU", "EN", "CR", "EX", "T", "CD
 ico_assess <- ico_assess %>% 
   left_join(pop_cat, by = 'cat') %>%
   filter(!is.na(cat_score) & !is.na(year)) %>%
+  distinct() %>%
   arrange(iucn_sid, year)
 
 write_csv(ico_assess, file.path(dir_goal, scenario, 'int/ico_assess_clean.csv'))
@@ -328,7 +334,8 @@ ico_spp_cat <- ico_spp_cat %>%
   arrange(iucn_sid, year) %>%
   group_by(iucn_sid) %>%
   fill(cat, cat_score, cat_txt, .direction = 'up') %>%
-  ungroup()
+  ungroup() %>%
+  distinct()
   
 write_csv(ico_spp_cat, file.path(dir_goal, scenario, 'int/ico_spp_cat.csv'))
 
@@ -338,13 +345,13 @@ write_csv(ico_spp_cat, file.path(dir_goal, scenario, 'int/ico_spp_cat.csv'))
 
 ``` {r combine_ico_spp_cat_with_countries}
 
-ico_list_ts_abbr <- read_csv(file.path(dir_goal, scenario, 'int/ico_spp_cat.csv')) %>%
+ico_cat_ts_abbr <- read_csv(file.path(dir_goal, scenario, 'int/ico_spp_cat.csv')) %>%
   select(iucn_sid, sciname, year, cat, cat_score, ico_gl, ico_rgn_id) %>%
   filter(year >= 2000)
 
 ico_spp_rgn <- read_csv(file.path(dir_goal, scenario, 'int/ico_spp_rgn.csv'))
 
-ico_spp_rgn_cat <- ico_list_ts_abbr %>% 
+ico_spp_rgn_cat <- ico_cat_ts_abbr %>% 
   full_join(ico_spp_rgn, by = c('iucn_sid', 'sciname'))
 
 # ico_2015 <- ico_spp_rgn_cat %>%
@@ -365,7 +372,8 @@ ico_spp_rgn_cat <- ico_list_ts_abbr %>%
 ico_spp_rgn_cat <- ico_spp_rgn_cat %>%
   mutate(cat = ifelse(str_detect(presence, '^Extinct'), 'EX', cat), ### ^ indicates start of string
          cat_score = ifelse(cat == 'EX', 1, cat_score)) %>%
-  filter(ico_gl | ico_rgn_id == rgn_id) ### Keep (all globally iconic) and (regionally iconic in region only)
+  filter(ico_gl | ico_rgn_id == rgn_id) %>% ### Keep (all globally iconic) and (regionally iconic in region only)
+  distinct()
 
 write_csv(ico_spp_rgn_cat, file.path(dir_goal, scenario, 'int/ico_spp_rgn_cat.csv'))
 
@@ -494,7 +502,7 @@ st_15_16_plot <- ggplot(ico_15_16 %>%
        title = 'ICO status comparison')
 
 ggplotly(st_15_16_plot)
-ggsave(file.path(dir_goal, scenario, 'int/scatterplot_status_15v16.png'))
+ggsave(file.path(dir_goal, scenario, 'Figs/scatterplot_status_15v16.png'))
 
 tr_15_16_plot <- ggplot(ico_15_16 %>%
                            filter(!is.na(rgn_id)),
@@ -506,7 +514,26 @@ tr_15_16_plot <- ggplot(ico_15_16 %>%
        title = 'ICO trend comparison')
 
 ggplotly(tr_15_16_plot)
-ggsave(file.path(dir_goal, scenario, 'int/scatterplot_trend_15v16.png'))
+ggsave(file.path(dir_goal, scenario, 'Figs/scatterplot_trend_15v16.png'))
+
+```
+
+``` {r more_random_checks, eval = FALSE}
+# ico_tr_15_16_lm <- lm(tr_16 ~ tr_15, data = ico_15_16)
+# summary(ico_tr_15_16_lm)
+
+# lm(formula = tr_16 ~ tr_15, data = ico_15_16)
+# 
+# Coefficients:
+#             Estimate Std. Error t value Pr(>|t|)    
+# (Intercept) 0.037894   0.001546   24.51   <2e-16 ***
+# tr_15       0.052046   0.004969   10.47   <2e-16 ***
+#
+# Multiple R-squared:  0.3624,	Adjusted R-squared:  0.3591 
+# F-statistic: 109.7 on 1 and 193 DF,  p-value: < 2.2e-16
+
+# z <- ico_15_16 %>% filter(rgn_id, n_spp) %>% unique()
+# median(z$n_spp)
 
 ```
 

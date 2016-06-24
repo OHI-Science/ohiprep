@@ -1,0 +1,83 @@
+comname,sciname,ico_gl,ico_rgn_id
+Blue whale,Balaenoptera musculus,TRUE,NA
+"Humphead wrasse, Napoleon Wrasse",Cheilinus undulatus,TRUE,NA
+Green Turtle,Chelonia mydas,TRUE,NA
+Humpback Whale,Megaptera novaeangliae,TRUE,NA
+Whitetip reef shark,Triaenodon obesus,TRUE,NA
+Tiger Shark,Galeocerdo cuvier,TRUE,NA
+Thresher Shark,Alopias vulpinus,TRUE,NA
+Minke whale,Balaenoptera acutorostrata,TRUE,NA
+Fin whale,Balaenoptera physalus,TRUE,NA
+Blacktip reef shark,Carcharhinus melanopterus,TRUE,NA
+Great White Shark,Carcharodon carcharias,TRUE,NA
+Loggerhead Turtle,Caretta caretta,TRUE,NA
+Shortfin Mako,Isurus oxyrinchus,TRUE,NA
+Blue Shark,Prionace glauca,TRUE,NA
+Whale Shark,Rhincodon typus,TRUE,NA
+Hawksbill Turtle,Eretmochelys imbricata,TRUE,NA
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA
+Longfin Mako,Isurus paucus,TRUE,NA
+Olive Ridley Turtle,Lepidochelys olivacea,TRUE,NA
+North Pacific Right Whale,Eubalaena japonica,TRUE,NA
+Megamouth Shark,Megachasma pelagios,TRUE,NA
+Irrawaddy Dolphin,Orcaella brevirostris,TRUE,NA
+Antarctic minke whale,Balaenoptera bonaerensis,FALSE,16
+Sei whale,Balaenoptera borealis,TRUE,NA
+Bryde's whale,Balaenoptera edeni,FALSE,16
+Arnoux's Beaked Whale,Berardius arnuxii,FALSE,16
+Pygmy right whale,Caperea marginata,FALSE,16
+Gray reef shark,Carcharhinus amblyrhynchos,TRUE,NA
+Basking Shark,Cetorhinus maximus,TRUE,NA
+Common Dophin,Delphinus delphis,FALSE,16
+Southern right whale,Eubalaena australis,FALSE,16
+Pygmy Killer Whale,Feresa attenuata,FALSE,16
+Short-finned Pilot Whale,Globicephala macrorhynchus,FALSE,16
+Long-finned Pilot Whale,Globicephala melas,FALSE,16
+Risso's Dolphin,Grampus griseus,FALSE,16
+Southern Bottlenose Whale,Hyperoodon planifrons,FALSE,16
+Longman's Beaked Whale,Indopacetus pacificus,FALSE,16
+Pygmy sperm whale,Kogia breviceps,FALSE,16
+Dwarf sperm whale,Kogia sima,FALSE,16
+Fraser's Dolphin,Lagenodelphis hosei,FALSE,16
+Hourglass Dolphin,Lagenorhynchus cruciger,FALSE,16
+Dusky Dolphin,Lagenorhynchus obscurus,FALSE,16
+Porbeagle,Lamna nasus,TRUE,NA
+Southern Right Whale Dolphin,Lissodelphis peronii,FALSE,16
+Andrew's beaked whale,Mesoplodon bowdoini,FALSE,16
+Blainville's Beaked Whale,Mesoplodon densirostris,FALSE,16
+Gingko-toothed Beaked Whale,Mesoplodon ginkgodens,FALSE,16
+Gray's beaked whale,Mesoplodon grayi,FALSE,16
+Hector's Beaked Whale,Mesoplodon hectori,FALSE,16
+Strap-toothed Beaked Whale,Mesoplodon layardii,FALSE,16
+True's beaked whale,Mesoplodon mirus,FALSE,16
+Flatback Turtle,Natator depressus,TRUE,NA
+Snubfin Dolphin,Orcaella heinsohni,TRUE,NA
+Killer Whale,Orcinus orca,FALSE,16
+Melon-headed Whale,Peponocephala electra,FALSE,16
+Spectacled Porpoise,Phocoena dioptrica,FALSE,16
+Sperm whale,Physeter macrocephalus,FALSE,16
+False Killer Whale,Pseudorca crassidens,FALSE,16
+Indo-Pacific humpback dolphin,Sousa chinensis,FALSE,16
+Pantropical Spotted Dolphin,Stenella attenuata,FALSE,16
+Striped Dolphin,Stenella coeruleoalba,FALSE,16
+Spinner Dolphin,Stenella longirostris,FALSE,16
+Rough Toothed Dolphin,Steno bredanensis,TRUE,NA
+Shepherd's Beaked Whale,Tasmacetus shepherdi,FALSE,16
+Indo-Pacific Bottlenose Dolphin,Tursiops aduncus,FALSE,16
+Bottlenose Dolphin,Tursiops truncatus,FALSE,16
+Cuvier's Beaked Whale,Ziphius cavirostris,FALSE,16
+Gray Whale,Eschrichtius robustus,TRUE,NA
+Bottlenose Dolphin,Tursiops truncatus,FALSE,53
+North Atlantic Right Whale,Eubalaena glacialis,TRUE,NA
+Bowhead whale,Balaena mysticetus,TRUE,NA
+Polar bear,Ursus maritimus,TRUE,NA
+Caribbean reef shark,Carcharhinus perezi,TRUE,NA
+Kemp's Ridley Turtle,Lepidochelys kempii,TRUE,NA
+Vaquita,Phocoena sinus,TRUE,NA
+Peruvian anchoveta,Engraulis ringens,FALSE,138
+Hector's Dolphin,Cephalorhynchus hectori,TRUE,NA
+Maui's Dolphin,Cephalorhynchus hectori ssp. maui,TRUE,NA
+Franciscana,Pontoporia blainvillei,TRUE,NA
+Mediterranean monk seal,Monachus monachus,FALSE,183
+Ganges Shark,Glyphis gangeticus,FALSE,203
+Smooth-coated Otter,Lutrogale perspicillata,FALSE,203

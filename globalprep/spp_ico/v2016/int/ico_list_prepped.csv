@@ -1,0 +1,135 @@
+comname,sciname,ico_gl,ico_rgn_id,iucn_sid,subpop,cat
+Blue whale,Balaenoptera musculus,TRUE,NA,2477,NA,EN
+"Humphead wrasse, Napoleon Wrasse",Cheilinus undulatus,TRUE,NA,4592,NA,EN
+Green Turtle,Chelonia mydas,TRUE,NA,16285718,Hawaiian subpopulation,LC
+Green Turtle,Chelonia mydas,TRUE,NA,4615,NA,EN
+Humpback Whale,Megaptera novaeangliae,TRUE,NA,132835,Arabian Sea subpopulation,EN
+Humpback Whale,Megaptera novaeangliae,TRUE,NA,13006,NA,LC
+Humpback Whale,Megaptera novaeangliae,TRUE,NA,132832,Oceania subpopulation,EN
+Whitetip reef shark,Triaenodon obesus,TRUE,NA,39384,NA,NT
+Tiger Shark,Galeocerdo cuvier,TRUE,NA,39378,NA,NT
+Thresher Shark,Alopias vulpinus,TRUE,NA,39339,NA,VU
+Minke whale,Balaenoptera acutorostrata,TRUE,NA,2474,NA,LC
+Fin whale,Balaenoptera physalus,TRUE,NA,16208224,Mediterranean subpopulation,VU
+Fin whale,Balaenoptera physalus,TRUE,NA,2478,NA,EN
+Blacktip reef shark,Carcharhinus melanopterus,TRUE,NA,39375,NA,NT
+Great White Shark,Carcharodon carcharias,TRUE,NA,3855,NA,VU
+Loggerhead Turtle,Caretta caretta,TRUE,NA,3897,NA,VU
+Loggerhead Turtle,Caretta caretta,TRUE,NA,84127873,North West Indian Ocean subpopulation,CR
+Loggerhead Turtle,Caretta caretta,TRUE,NA,83652278,North Pacific subpopulation,LC
+Loggerhead Turtle,Caretta caretta,TRUE,NA,83776383,North East Atlantic subpopulation,EN
+Loggerhead Turtle,Caretta caretta,TRUE,NA,84126444,North East Indian Ocean subpopulation,CR
+Loggerhead Turtle,Caretta caretta,TRUE,NA,84131194,North West Atlantic subpopulation,LC
+Loggerhead Turtle,Caretta caretta,TRUE,NA,84191235,South West Atlantic subpopulation,LC
+Loggerhead Turtle,Caretta caretta,TRUE,NA,84199475,South West Indian Ocean subpopulation,NT
+Loggerhead Turtle,Caretta caretta,TRUE,NA,84156809,South Pacific subpopulation,CR
+Loggerhead Turtle,Caretta caretta,TRUE,NA,83644804,Mediterranean subpopulation,LC
+Loggerhead Turtle,Caretta caretta,TRUE,NA,84189617,South East Indian Ocean subpopulation,NT
+Shortfin Mako,Isurus oxyrinchus,TRUE,NA,161750,Indo-west Pacific subpopulation,VU
+Shortfin Mako,Isurus oxyrinchus,TRUE,NA,39341,NA,VU
+Shortfin Mako,Isurus oxyrinchus,TRUE,NA,161751,Eastern North Pacific subpopulation,NT
+Shortfin Mako,Isurus oxyrinchus,TRUE,NA,161749,Atlantic subpopulation,VU
+Blue Shark,Prionace glauca,TRUE,NA,39381,NA,NT
+Whale Shark,Rhincodon typus,TRUE,NA,19488,NA,VU
+Hawksbill Turtle,Eretmochelys imbricata,TRUE,NA,8005,NA,CR
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA,46967807,East Pacific Ocean subpopulation,CR
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA,6494,NA,VU
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA,46967817,West Pacific Ocean subpopulation,CR
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA,46967827,Northwest Atlantic Ocean subpopulation,LC
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA,46967848,Southeast Atlantic Ocean subpopulation,DD
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA,46967838,Southwest Atlantic Ocean subpopulation,CR
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA,46967873,Northeast Indian Ocean subpopulation,DD
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA,46967863,Southwest Indian Ocean subpopulation,CR
+Longfin Mako,Isurus paucus,TRUE,NA,60225,NA,VU
+Olive Ridley Turtle,Lepidochelys olivacea,TRUE,NA,11534,NA,VU
+North Pacific Right Whale,Eubalaena japonica,TRUE,NA,133706,Northeast Pacific subpopulation,CR
+North Pacific Right Whale,Eubalaena japonica,TRUE,NA,41711,NA,EN
+Megamouth Shark,Megachasma pelagios,TRUE,NA,39338,NA,LC
+Irrawaddy Dolphin,Orcaella brevirostris,TRUE,NA,44555,Mekong River subpopulation,CR
+Irrawaddy Dolphin,Orcaella brevirostris,TRUE,NA,15419,NA,VU
+Irrawaddy Dolphin,Orcaella brevirostris,TRUE,NA,39428,Mahakam River subpopulation,CR
+Irrawaddy Dolphin,Orcaella brevirostris,TRUE,NA,44556,Ayeyarwady River subpopulation,CR
+Irrawaddy Dolphin,Orcaella brevirostris,TRUE,NA,44187,Malampaya Sound subpopulation,CR
+Irrawaddy Dolphin,Orcaella brevirostris,TRUE,NA,44557,Songkhla Lake subpopulation,CR
+Antarctic minke whale,Balaenoptera bonaerensis,FALSE,16,2480,NA,DD
+Sei whale,Balaenoptera borealis,TRUE,NA,2475,NA,EN
+Bryde's whale,Balaenoptera edeni,FALSE,16,2476,NA,DD
+Arnoux's Beaked Whale,Berardius arnuxii,FALSE,16,2762,NA,DD
+Pygmy right whale,Caperea marginata,FALSE,16,3778,NA,DD
+Gray reef shark,Carcharhinus amblyrhynchos,TRUE,NA,39365,NA,NT
+Basking Shark,Cetorhinus maximus,TRUE,NA,4292,NA,VU
+Basking Shark,Cetorhinus maximus,TRUE,NA,39340,Northeast Atlantic subpopulation,EN
+Basking Shark,Cetorhinus maximus,TRUE,NA,39545,North Pacific subpopulation,EN
+Common Dophin,Delphinus delphis,FALSE,16,6336,NA,LC
+Common Dophin,Delphinus delphis,FALSE,16,41762,Mediterranean subpopulation,EN
+Southern right whale,Eubalaena australis,FALSE,16,133704,Chile-Peru subpopulation,CR
+Southern right whale,Eubalaena australis,FALSE,16,8153,NA,LC
+Pygmy Killer Whale,Feresa attenuata,FALSE,16,8551,NA,DD
+Short-finned Pilot Whale,Globicephala macrorhynchus,FALSE,16,9249,NA,DD
+Long-finned Pilot Whale,Globicephala melas,FALSE,16,9250,NA,DD
+Long-finned Pilot Whale,Globicephala melas,FALSE,16,16376479,Mediterranean subpopulation,DD
+Risso's Dolphin,Grampus griseus,FALSE,16,9461,NA,LC
+Risso's Dolphin,Grampus griseus,FALSE,16,16378423,Mediterranean subpopulation,DD
+Southern Bottlenose Whale,Hyperoodon planifrons,FALSE,16,10708,NA,LC
+Longman's Beaked Whale,Indopacetus pacificus,FALSE,16,40635,NA,DD
+Pygmy sperm whale,Kogia breviceps,FALSE,16,11047,NA,DD
+Dwarf sperm whale,Kogia sima,FALSE,16,11048,NA,DD
+Fraser's Dolphin,Lagenodelphis hosei,FALSE,16,11140,NA,LC
+Hourglass Dolphin,Lagenorhynchus cruciger,FALSE,16,11144,NA,LC
+Dusky Dolphin,Lagenorhynchus obscurus,FALSE,16,11146,NA,DD
+Porbeagle,Lamna nasus,TRUE,NA,11200,NA,VU
+Porbeagle,Lamna nasus,TRUE,NA,39343,Northeast Atlantic subpopulation,CR
+Porbeagle,Lamna nasus,TRUE,NA,39344,Northwest Atlantic subpopulation,EN
+Porbeagle,Lamna nasus,TRUE,NA,61420,Mediterranean subpopulation,CR
+Southern Right Whale Dolphin,Lissodelphis peronii,FALSE,16,12126,NA,DD
+Andrew's beaked whale,Mesoplodon bowdoini,FALSE,16,13242,NA,DD
+Blainville's Beaked Whale,Mesoplodon densirostris,FALSE,16,13244,NA,DD
+Gingko-toothed Beaked Whale,Mesoplodon ginkgodens,FALSE,16,13246,NA,DD
+Gray's beaked whale,Mesoplodon grayi,FALSE,16,13247,NA,DD
+Hector's Beaked Whale,Mesoplodon hectori,FALSE,16,13248,NA,DD
+Strap-toothed Beaked Whale,Mesoplodon layardii,FALSE,16,13249,NA,DD
+True's beaked whale,Mesoplodon mirus,FALSE,16,13250,NA,DD
+Flatback Turtle,Natator depressus,TRUE,NA,14363,NA,DD
+Snubfin Dolphin,Orcaella heinsohni,TRUE,NA,136315,NA,NT
+Killer Whale,Orcinus orca,FALSE,16,15421,NA,DD
+Melon-headed Whale,Peponocephala electra,FALSE,16,16564,NA,LC
+Spectacled Porpoise,Phocoena dioptrica,FALSE,16,41715,NA,DD
+Sperm whale,Physeter macrocephalus,FALSE,16,41755,NA,VU
+Sperm whale,Physeter macrocephalus,FALSE,16,16370739,Mediterranean subpopulation,EN
+False Killer Whale,Pseudorca crassidens,FALSE,16,18596,NA,DD
+Indo-Pacific humpback dolphin,Sousa chinensis,FALSE,16,20424,NA,NT
+Indo-Pacific humpback dolphin,Sousa chinensis,FALSE,16,133710,Eastern Taiwan Strait subpopulation,CR
+Pantropical Spotted Dolphin,Stenella attenuata,FALSE,16,20729,NA,LC
+Striped Dolphin,Stenella coeruleoalba,FALSE,16,20731,NA,LC
+Striped Dolphin,Stenella coeruleoalba,FALSE,16,16674437,Mediterranean subpopulation,VU
+Spinner Dolphin,Stenella longirostris,FALSE,16,20733,NA,DD
+Rough Toothed Dolphin,Steno bredanensis,TRUE,NA,20738,NA,LC
+Shepherd's Beaked Whale,Tasmacetus shepherdi,FALSE,16,21500,NA,DD
+Indo-Pacific Bottlenose Dolphin,Tursiops aduncus,FALSE,16,41714,NA,DD
+Bottlenose Dolphin,Tursiops truncatus,FALSE,16,22563,NA,LC
+Bottlenose Dolphin,Tursiops truncatus,FALSE,16,194300,Fiordland subpopulation,CR
+Bottlenose Dolphin,Tursiops truncatus,FALSE,16,16369383,Mediterranean subpopulation,VU
+Cuvier's Beaked Whale,Ziphius cavirostris,FALSE,16,23211,NA,LC
+Cuvier's Beaked Whale,Ziphius cavirostris,FALSE,16,16381144,Mediterranean subpopulation,DD
+Gray Whale,Eschrichtius robustus,TRUE,NA,8097,NA,LC
+Gray Whale,Eschrichtius robustus,TRUE,NA,8099,western subpopulation,CR
+Bottlenose Dolphin,Tursiops truncatus,FALSE,53,22563,NA,LC
+Bottlenose Dolphin,Tursiops truncatus,FALSE,53,194300,Fiordland subpopulation,CR
+Bottlenose Dolphin,Tursiops truncatus,FALSE,53,16369383,Mediterranean subpopulation,VU
+North Atlantic Right Whale,Eubalaena glacialis,TRUE,NA,41712,NA,EN
+Bowhead whale,Balaena mysticetus,TRUE,NA,2469,Okhotsk Sea subpopulation,EN
+Bowhead whale,Balaena mysticetus,TRUE,NA,2468,Bering-Chukchi-Beaufort Sea subpopulation,LR/cd
+Bowhead whale,Balaena mysticetus,TRUE,NA,2472,Svalbard-Barents Sea (Spitsbergen) subpopulation,CR
+Bowhead whale,Balaena mysticetus,TRUE,NA,2467,NA,LC
+Polar bear,Ursus maritimus,TRUE,NA,22823,NA,VU
+Caribbean reef shark,Carcharhinus perezi,TRUE,NA,60217,NA,NT
+Kemp's Ridley Turtle,Lepidochelys kempii,TRUE,NA,11533,NA,CR
+Vaquita,Phocoena sinus,TRUE,NA,17028,NA,CR
+Peruvian anchoveta,Engraulis ringens,FALSE,138,183775,NA,LC
+Hector's Dolphin,Cephalorhynchus hectori,TRUE,NA,4162,NA,EN
+Maui's Dolphin,Cephalorhynchus hectori ssp. maui,TRUE,NA,39427,NA,CR
+Franciscana,Pontoporia blainvillei,TRUE,NA,17978,NA,VU
+Franciscana,Pontoporia blainvillei,TRUE,NA,41761,Rio Grande do Sul/Uruguay subpopulation,VU
+Mediterranean monk seal,Monachus monachus,FALSE,183,13653,NA,EN
+Ganges Shark,Glyphis gangeticus,FALSE,203,9281,NA,CR
+Smooth-coated Otter,Lutrogale perspicillata,FALSE,203,12427,NA,VU

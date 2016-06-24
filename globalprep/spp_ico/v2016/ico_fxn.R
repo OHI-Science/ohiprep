@@ -10,50 +10,61 @@ message(sprintf('scenario: currently set to \'%s\'\n\n', scenario))
 
 
 #############################################################################=
-get_ico_list <- function() {
+get_ico_list <- function(reload = FALSE) {
 ### This function loads the ico_global_list.csv to determine which species to
 ### consider for ICO (as well as global and regional ICO status); then attaches 
 ### this ICO species list to the IUCN master species list.  
 
-  ico_list_file <- file.path(dir_anx, scenario, 'int/ico_global_list.csv')
-  message(sprintf('Reading raw iconic species list from: \n  %s\n', ico_list_file))
-  ico_list_raw <- read.csv(ico_list_file, stringsAsFactors = FALSE) %>%
-    select(rgn_name   = Country, 
-           comname    = Specie.Common.Name,  
-           sciname    = Specie.Scientific.Name, 
-           ico_flag   = Flagship.Species,
-           ico_local  = Priority.Species_Regional.and.Local,
-           ico_global = Priority.Species_Global,
-           ico_rgn    = Nation.Specific.List
-    )
-  # clean up names
-  ico_list_raw <- ico_list_raw %>%
-    mutate(rgn_name = str_trim(rgn_name),
-           sciname  = str_trim(sciname),
-           comname  = str_trim(comname)) %>%
-    filter(sciname != '')  
+  ico_list_file <- file.path(dir_goal, scenario, 'int/ico_global_list.csv')
+  ico_raw_file <- file.path(dir_anx, 'ico/ico_global_list2011.csv')
   
-  # convert global, flagship, and local iconic flags into single global iconic flag
-  # ??? NOTE: 'local' is just humpbacks and minkes, across 50-60 countries each. Just call it global?
-  ico_list <- ico_list_raw %>%
-    mutate(ico_gl = (!is.na(ico_global) | !is.na(ico_local) | !is.na(ico_flag))) %>%
-    select(-ico_global, -ico_local, -ico_flag) 
-  
-  rgn_name_file <- '~/github/ohi-global/eez2013/layers/rgn_global.csv' 
-  rgn_names <- read_csv(rgn_name_file)
-  ico_list <- ico_list %>%
-    left_join(ico_list %>%
-                filter(ico_rgn != '') %>%
-                select(rgn_name, sciname) %>%
-                left_join(rgn_names, by = c('rgn_name' = 'label')),
-              by = c('rgn_name', 'sciname')) %>% 
-    rename(ico_rgn_id = rgn_id) %>% 
-    # note: check that all countries properly translate on this. 
-    # Should be easy since I can control the rgn-specific country names in the spreadsheet.
-    select(-rgn_name, -ico_rgn) %>%
-    mutate(ico_rgn_id = ifelse(ico_gl, NA, ico_rgn_id)) %>% ### 
-      ### if globally iconic, rgn_id is unimportant - results in duplicates
-    unique()
+  if(file.exists(ico_list_file) & !reload) {
+    message(sprintf('Reading prepped iconic species list from: \n  %s\n', ico_list_file))
+    ico_list <- read_csv(ico_list_file)
+  } else {
+    message(sprintf('Prepping new ICO list from raw iconic species list: \n  %s\n', ico_raw_file))
+    ico_list_raw <- read.csv(ico_raw_file, stringsAsFactors = FALSE) %>%
+      select(rgn_name   = Country, 
+             comname    = Specie.Common.Name,  
+             sciname    = Specie.Scientific.Name, 
+             ico_flag   = Flagship.Species,
+             ico_local  = Priority.Species_Regional.and.Local,
+             ico_global = Priority.Species_Global,
+             ico_rgn    = Nation.Specific.List
+      )
+    # clean up names
+    ico_list_raw <- ico_list_raw %>%
+      mutate(rgn_name = str_trim(rgn_name),
+             sciname  = str_trim(sciname),
+             comname  = str_trim(comname)) %>%
+      filter(sciname != '')  
+    
+    # convert global, flagship, and local iconic flags into single global iconic flag
+    # ??? NOTE: 'local' is just humpbacks and minkes, across 50-60 countries each. Just call it global?
+    ico_list <- ico_list_raw %>%
+      mutate(ico_gl = (!is.na(ico_global) | !is.na(ico_local) | !is.na(ico_flag))) %>%
+      select(-ico_global, -ico_local, -ico_flag) 
+    
+    rgn_name_file <- '~/github/ohi-global/eez2013/layers/rgn_global.csv' 
+    rgn_names <- read_csv(rgn_name_file)
+    ico_list <- ico_list %>%
+      left_join(ico_list %>%
+                  filter(ico_rgn != '') %>%
+                  select(rgn_name, sciname) %>%
+                  left_join(rgn_names, by = c('rgn_name' = 'label')),
+                by = c('rgn_name', 'sciname')) %>% 
+      rename(ico_rgn_id = rgn_id) %>% 
+      # note: check that all countries properly translate on this. 
+      # Should be easy since I can control the rgn-specific country names in the spreadsheet.
+      select(-rgn_name, -ico_rgn) %>%
+      mutate(ico_rgn_id = ifelse(ico_gl, NA, ico_rgn_id)) %>% ### 
+        ### if globally iconic, rgn_id is unimportant - results in duplicates
+      unique()
+    
+    message(sprintf('Writing prepped iconic species list to: \n  %s\n', ico_list_file))
+    
+    write_csv(ico_list, ico_list_file)
+  }
   
   return(ico_list)
 }
