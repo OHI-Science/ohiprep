@@ -175,22 +175,22 @@ rgn_id,rgn_name,year,mean_cat,ico_status,n_spp
 12,Wake Island,2013,0.46667,0.53333,3
 12,Wake Island,2014,0.46667,0.53333,3
 12,Wake Island,2015,0.46667,0.53333,3
-13,Northern Mariana Islands and Guam,2000,0.44167,0.55833,24
-13,Northern Mariana Islands and Guam,2001,0.44167,0.55833,24
-13,Northern Mariana Islands and Guam,2002,0.44167,0.55833,24
-13,Northern Mariana Islands and Guam,2003,0.44167,0.55833,24
-13,Northern Mariana Islands and Guam,2004,0.45833,0.54167,24
-13,Northern Mariana Islands and Guam,2005,0.45833,0.54167,24
-13,Northern Mariana Islands and Guam,2006,0.45833,0.54167,24
-13,Northern Mariana Islands and Guam,2007,0.45833,0.54167,24
-13,Northern Mariana Islands and Guam,2008,0.425,0.575,24
-13,Northern Mariana Islands and Guam,2009,0.43333,0.56667,24
-13,Northern Mariana Islands and Guam,2010,0.43333,0.56667,24
-13,Northern Mariana Islands and Guam,2011,0.43333,0.56667,24
-13,Northern Mariana Islands and Guam,2012,0.43333,0.56667,24
-13,Northern Mariana Islands and Guam,2013,0.4,0.6,24
-13,Northern Mariana Islands and Guam,2014,0.4,0.6,24
-13,Northern Mariana Islands and Guam,2015,0.4,0.6,24
+13,Northern Mariana Islands and Guam,2000,0.45714,0.54286,14
+13,Northern Mariana Islands and Guam,2001,0.45714,0.54286,14
+13,Northern Mariana Islands and Guam,2002,0.45714,0.54286,14
+13,Northern Mariana Islands and Guam,2003,0.45714,0.54286,14
+13,Northern Mariana Islands and Guam,2004,0.47143,0.52857,14
+13,Northern Mariana Islands and Guam,2005,0.47143,0.52857,14
+13,Northern Mariana Islands and Guam,2006,0.47143,0.52857,14
+13,Northern Mariana Islands and Guam,2007,0.47143,0.52857,14
+13,Northern Mariana Islands and Guam,2008,0.44286,0.55714,14
+13,Northern Mariana Islands and Guam,2009,0.45714,0.54286,14
+13,Northern Mariana Islands and Guam,2010,0.45714,0.54286,14
+13,Northern Mariana Islands and Guam,2011,0.45714,0.54286,14
+13,Northern Mariana Islands and Guam,2012,0.45714,0.54286,14
+13,Northern Mariana Islands and Guam,2013,0.42857,0.57143,14
+13,Northern Mariana Islands and Guam,2014,0.42857,0.57143,14
+13,Northern Mariana Islands and Guam,2015,0.42857,0.57143,14
 14,Taiwan,2000,0.42353,0.57647,17
 14,Taiwan,2001,0.42353,0.57647,17
 14,Taiwan,2002,0.42353,0.57647,17
@@ -231,11 +231,11 @@ rgn_id,rgn_name,year,mean_cat,ico_status,n_spp
 16,Australia,2005,0.3,0.7,70
 16,Australia,2006,0.30364,0.69636,70
 16,Australia,2007,0.30364,0.69636,70
-16,Australia,2008,0.25789,0.74211,72
+16,Australia,2008,0.26727,0.73273,70
 16,Australia,2009,0.27091,0.72909,70
 16,Australia,2010,0.27091,0.72909,70
 16,Australia,2011,0.27091,0.72909,70
-16,Australia,2012,0.2614,0.7386,72
+16,Australia,2012,0.27091,0.72909,70
 16,Australia,2013,0.26364,0.73636,70
 16,Australia,2014,0.26364,0.73636,70
 16,Australia,2015,0.26,0.74,70
@@ -671,22 +671,22 @@ rgn_id,rgn_name,year,mean_cat,ico_status,n_spp
 52,Bahrain,2013,0.54286,0.45714,7
 52,Bahrain,2014,0.54286,0.45714,7
 52,Bahrain,2015,0.51429,0.48571,7
-53,Pakistan,2000,0.38824,0.61176,17
-53,Pakistan,2001,0.38824,0.61176,17
-53,Pakistan,2002,0.38824,0.61176,17
-53,Pakistan,2003,0.38824,0.61176,17
-53,Pakistan,2004,0.38824,0.61176,17
-53,Pakistan,2005,0.38824,0.61176,17
-53,Pakistan,2006,0.38824,0.61176,17
-53,Pakistan,2007,0.38824,0.61176,17
-53,Pakistan,2008,0.31579,0.68421,19
-53,Pakistan,2009,0.36471,0.63529,17
-53,Pakistan,2010,0.36471,0.63529,17
-53,Pakistan,2011,0.36471,0.63529,17
-53,Pakistan,2012,0.32632,0.67368,19
-53,Pakistan,2013,0.36471,0.63529,17
-53,Pakistan,2014,0.36471,0.63529,17
-53,Pakistan,2015,0.35294,0.64706,17
+53,Pakistan,2000,0.4125,0.5875,16
+53,Pakistan,2001,0.4125,0.5875,16
+53,Pakistan,2002,0.4125,0.5875,16
+53,Pakistan,2003,0.4125,0.5875,16
+53,Pakistan,2004,0.4125,0.5875,16
+53,Pakistan,2005,0.4125,0.5875,16
+53,Pakistan,2006,0.4125,0.5875,16
+53,Pakistan,2007,0.4125,0.5875,16
+53,Pakistan,2008,0.375,0.625,16
+53,Pakistan,2009,0.3875,0.6125,16
+53,Pakistan,2010,0.3875,0.6125,16
+53,Pakistan,2011,0.3875,0.6125,16
+53,Pakistan,2012,0.3875,0.6125,16
+53,Pakistan,2013,0.3875,0.6125,16
+53,Pakistan,2014,0.3875,0.6125,16
+53,Pakistan,2015,0.375,0.625,16
 54,United Arab Emirates,2000,0.5,0.5,10
 54,United Arab Emirates,2001,0.5,0.5,10
 54,United Arab Emirates,2002,0.5,0.5,10
@@ -1519,22 +1519,22 @@ rgn_id,rgn_name,year,mean_cat,ico_status,n_spp
 115,Dominican Republic,2013,0.30588,0.69412,17
 115,Dominican Republic,2014,0.30588,0.69412,17
 115,Dominican Republic,2015,0.29412,0.70588,17
-116,Puerto Rico and Virgin Islands of the United States,2000,0.34,0.66,30
-116,Puerto Rico and Virgin Islands of the United States,2001,0.34,0.66,30
-116,Puerto Rico and Virgin Islands of the United States,2002,0.34,0.66,30
-116,Puerto Rico and Virgin Islands of the United States,2003,0.34,0.66,30
-116,Puerto Rico and Virgin Islands of the United States,2004,0.34,0.66,30
-116,Puerto Rico and Virgin Islands of the United States,2005,0.34,0.66,30
-116,Puerto Rico and Virgin Islands of the United States,2006,0.34,0.66,30
-116,Puerto Rico and Virgin Islands of the United States,2007,0.34,0.66,30
-116,Puerto Rico and Virgin Islands of the United States,2008,0.29333,0.70667,30
-116,Puerto Rico and Virgin Islands of the United States,2009,0.30667,0.69333,30
-116,Puerto Rico and Virgin Islands of the United States,2010,0.30667,0.69333,30
-116,Puerto Rico and Virgin Islands of the United States,2011,0.30667,0.69333,30
-116,Puerto Rico and Virgin Islands of the United States,2012,0.30667,0.69333,30
-116,Puerto Rico and Virgin Islands of the United States,2013,0.28,0.72,30
-116,Puerto Rico and Virgin Islands of the United States,2014,0.28,0.72,30
-116,Puerto Rico and Virgin Islands of the United States,2015,0.26667,0.73333,30
+116,Puerto Rico and Virgin Islands of the United States,2000,0.3625,0.6375,16
+116,Puerto Rico and Virgin Islands of the United States,2001,0.3625,0.6375,16
+116,Puerto Rico and Virgin Islands of the United States,2002,0.3625,0.6375,16
+116,Puerto Rico and Virgin Islands of the United States,2003,0.3625,0.6375,16
+116,Puerto Rico and Virgin Islands of the United States,2004,0.3625,0.6375,16
+116,Puerto Rico and Virgin Islands of the United States,2005,0.3625,0.6375,16
+116,Puerto Rico and Virgin Islands of the United States,2006,0.3625,0.6375,16
+116,Puerto Rico and Virgin Islands of the United States,2007,0.3625,0.6375,16
+116,Puerto Rico and Virgin Islands of the United States,2008,0.3125,0.6875,16
+116,Puerto Rico and Virgin Islands of the United States,2009,0.325,0.675,16
+116,Puerto Rico and Virgin Islands of the United States,2010,0.325,0.675,16
+116,Puerto Rico and Virgin Islands of the United States,2011,0.325,0.675,16
+116,Puerto Rico and Virgin Islands of the United States,2012,0.325,0.675,16
+116,Puerto Rico and Virgin Islands of the United States,2013,0.3,0.7,16
+116,Puerto Rico and Virgin Islands of the United States,2014,0.3,0.7,16
+116,Puerto Rico and Virgin Islands of the United States,2015,0.2875,0.7125,16
 117,British Virgin Islands,2000,0.34667,0.65333,15
 117,British Virgin Islands,2001,0.34667,0.65333,15
 117,British Virgin Islands,2002,0.34667,0.65333,15
@@ -1887,22 +1887,22 @@ rgn_id,rgn_name,year,mean_cat,ico_status,n_spp
 139,Venezuela,2013,0.32941,0.67059,17
 139,Venezuela,2014,0.32941,0.67059,17
 139,Venezuela,2015,0.31765,0.68235,17
-140,Guadeloupe and Martinique,2000,0.35862,0.64138,29
-140,Guadeloupe and Martinique,2001,0.35862,0.64138,29
-140,Guadeloupe and Martinique,2002,0.35862,0.64138,29
-140,Guadeloupe and Martinique,2003,0.35862,0.64138,29
-140,Guadeloupe and Martinique,2004,0.35862,0.64138,29
-140,Guadeloupe and Martinique,2005,0.35862,0.64138,29
-140,Guadeloupe and Martinique,2006,0.35862,0.64138,29
-140,Guadeloupe and Martinique,2007,0.35862,0.64138,29
-140,Guadeloupe and Martinique,2008,0.31034,0.68966,29
-140,Guadeloupe and Martinique,2009,0.32414,0.67586,29
-140,Guadeloupe and Martinique,2010,0.32414,0.67586,29
-140,Guadeloupe and Martinique,2011,0.32414,0.67586,29
-140,Guadeloupe and Martinique,2012,0.32414,0.67586,29
-140,Guadeloupe and Martinique,2013,0.29655,0.70345,29
-140,Guadeloupe and Martinique,2014,0.29655,0.70345,29
-140,Guadeloupe and Martinique,2015,0.28276,0.71724,29
+140,Guadeloupe and Martinique,2000,0.36,0.64,15
+140,Guadeloupe and Martinique,2001,0.36,0.64,15
+140,Guadeloupe and Martinique,2002,0.36,0.64,15
+140,Guadeloupe and Martinique,2003,0.36,0.64,15
+140,Guadeloupe and Martinique,2004,0.36,0.64,15
+140,Guadeloupe and Martinique,2005,0.36,0.64,15
+140,Guadeloupe and Martinique,2006,0.36,0.64,15
+140,Guadeloupe and Martinique,2007,0.36,0.64,15
+140,Guadeloupe and Martinique,2008,0.30667,0.69333,15
+140,Guadeloupe and Martinique,2009,0.32,0.68,15
+140,Guadeloupe and Martinique,2010,0.32,0.68,15
+140,Guadeloupe and Martinique,2011,0.32,0.68,15
+140,Guadeloupe and Martinique,2012,0.32,0.68,15
+140,Guadeloupe and Martinique,2013,0.29333,0.70667,15
+140,Guadeloupe and Martinique,2014,0.29333,0.70667,15
+140,Guadeloupe and Martinique,2015,0.28,0.72,15
 141,Faeroe Islands,2000,0.48,0.52,5
 141,Faeroe Islands,2001,0.48,0.52,5
 141,Faeroe Islands,2002,0.48,0.52,5
@@ -2175,22 +2175,22 @@ rgn_id,rgn_name,year,mean_cat,ico_status,n_spp
 161,Wallis and Futuna,2013,0.275,0.725,8
 161,Wallis and Futuna,2014,0.275,0.725,8
 161,Wallis and Futuna,2015,0.275,0.725,8
-162,New Zealand,2000,0.47619,0.52381,21
-162,New Zealand,2001,0.47619,0.52381,21
-162,New Zealand,2002,0.47619,0.52381,21
-162,New Zealand,2003,0.47619,0.52381,21
-162,New Zealand,2004,0.47619,0.52381,21
-162,New Zealand,2005,0.47619,0.52381,21
-162,New Zealand,2006,0.47619,0.52381,21
-162,New Zealand,2007,0.47619,0.52381,21
-162,New Zealand,2008,0.44762,0.55238,21
-162,New Zealand,2009,0.45714,0.54286,21
-162,New Zealand,2010,0.45714,0.54286,21
-162,New Zealand,2011,0.45714,0.54286,21
-162,New Zealand,2012,0.45714,0.54286,21
-162,New Zealand,2013,0.4381,0.5619,21
-162,New Zealand,2014,0.4381,0.5619,21
-162,New Zealand,2015,0.42857,0.57143,21
+162,New Zealand,2000,0.49091,0.50909,22
+162,New Zealand,2001,0.49091,0.50909,22
+162,New Zealand,2002,0.49091,0.50909,22
+162,New Zealand,2003,0.49091,0.50909,22
+162,New Zealand,2004,0.49091,0.50909,22
+162,New Zealand,2005,0.49091,0.50909,22
+162,New Zealand,2006,0.49091,0.50909,22
+162,New Zealand,2007,0.49091,0.50909,22
+162,New Zealand,2008,0.46364,0.53636,22
+162,New Zealand,2009,0.47273,0.52727,22
+162,New Zealand,2010,0.47273,0.52727,22
+162,New Zealand,2011,0.47273,0.52727,22
+162,New Zealand,2012,0.47273,0.52727,22
+162,New Zealand,2013,0.45455,0.54545,22
+162,New Zealand,2014,0.45455,0.54545,22
+162,New Zealand,2015,0.44545,0.55455,22
 163,United States,2000,0.3881,0.6119,42
 163,United States,2001,0.3881,0.6119,42
 163,United States,2002,0.3881,0.6119,42
@@ -2399,22 +2399,22 @@ rgn_id,rgn_name,year,mean_cat,ico_status,n_spp
 179,France,2013,0.4,0.6,20
 179,France,2014,0.4,0.6,20
 179,France,2015,0.39,0.61,20
-180,United Kingdom,2000,0.41111,0.58889,18
-180,United Kingdom,2001,0.41111,0.58889,18
-180,United Kingdom,2002,0.41111,0.58889,18
-180,United Kingdom,2003,0.41111,0.58889,18
-180,United Kingdom,2004,0.41111,0.58889,18
-180,United Kingdom,2005,0.41111,0.58889,18
-180,United Kingdom,2006,0.44444,0.55556,18
-180,United Kingdom,2007,0.44444,0.55556,18
-180,United Kingdom,2008,0.41111,0.58889,18
-180,United Kingdom,2009,0.42222,0.57778,18
-180,United Kingdom,2010,0.42222,0.57778,18
-180,United Kingdom,2011,0.42222,0.57778,18
-180,United Kingdom,2012,0.42222,0.57778,18
-180,United Kingdom,2013,0.4,0.6,18
-180,United Kingdom,2014,0.4,0.6,18
-180,United Kingdom,2015,0.4,0.6,18
+180,United Kingdom,2000,0.4,0.6,17
+180,United Kingdom,2001,0.4,0.6,17
+180,United Kingdom,2002,0.4,0.6,17
+180,United Kingdom,2003,0.4,0.6,17
+180,United Kingdom,2004,0.4,0.6,17
+180,United Kingdom,2005,0.4,0.6,17
+180,United Kingdom,2006,0.43529,0.56471,17
+180,United Kingdom,2007,0.43529,0.56471,17
+180,United Kingdom,2008,0.4,0.6,17
+180,United Kingdom,2009,0.41176,0.58824,17
+180,United Kingdom,2010,0.41176,0.58824,17
+180,United Kingdom,2011,0.41176,0.58824,17
+180,United Kingdom,2012,0.41176,0.58824,17
+180,United Kingdom,2013,0.38824,0.61176,17
+180,United Kingdom,2014,0.38824,0.61176,17
+180,United Kingdom,2015,0.38824,0.61176,17
 181,Ireland,2000,0.42857,0.57143,14
 181,Ireland,2001,0.42857,0.57143,14
 181,Ireland,2002,0.42857,0.57143,14
@@ -2831,22 +2831,22 @@ rgn_id,rgn_name,year,mean_cat,ico_status,n_spp
 208,Singapore,2013,0.32,0.68,5
 208,Singapore,2014,0.32,0.68,5
 208,Singapore,2015,0.32,0.68,5
-209,China,2000,0.40385,0.59615,26
-209,China,2001,0.40385,0.59615,26
-209,China,2002,0.40385,0.59615,26
-209,China,2003,0.40385,0.59615,26
-209,China,2004,0.41923,0.58077,26
-209,China,2005,0.41923,0.58077,26
-209,China,2006,0.41923,0.58077,26
-209,China,2007,0.41923,0.58077,26
-209,China,2008,0.4,0.6,26
-209,China,2009,0.41538,0.58462,26
-209,China,2010,0.41538,0.58462,26
-209,China,2011,0.41538,0.58462,26
-209,China,2012,0.41538,0.58462,26
-209,China,2013,0.4,0.6,26
-209,China,2014,0.4,0.6,26
-209,China,2015,0.39231,0.60769,26
+209,China,2000,0.43043,0.56957,23
+209,China,2001,0.43043,0.56957,23
+209,China,2002,0.43043,0.56957,23
+209,China,2003,0.43043,0.56957,23
+209,China,2004,0.43913,0.56087,23
+209,China,2005,0.43913,0.56087,23
+209,China,2006,0.43913,0.56087,23
+209,China,2007,0.43913,0.56087,23
+209,China,2008,0.41739,0.58261,23
+209,China,2009,0.42609,0.57391,23
+209,China,2010,0.42609,0.57391,23
+209,China,2011,0.42609,0.57391,23
+209,China,2012,0.42609,0.57391,23
+209,China,2013,0.4087,0.5913,23
+209,China,2014,0.4087,0.5913,23
+209,China,2015,0.4,0.6,23
 210,Japan,2000,0.43929,0.56071,28
 210,Japan,2001,0.43929,0.56071,28
 210,Japan,2002,0.43929,0.56071,28
@@ -3183,51 +3183,3 @@ rgn_id,rgn_name,year,mean_cat,ico_status,n_spp
 250,Aruba,2013,0.22,0.78,10
 250,Aruba,2014,0.22,0.78,10
 250,Aruba,2015,0.2,0.8,10
-NA,Disputed Territory,2000,0.4,0.6,1
-NA,Disputed Territory,2001,0.4,0.6,1
-NA,Disputed Territory,2002,0.4,0.6,1
-NA,Disputed Territory,2003,0.4,0.6,1
-NA,Disputed Territory,2004,0.6,0.4,1
-NA,Disputed Territory,2005,0.6,0.4,1
-NA,Disputed Territory,2006,0.6,0.4,1
-NA,Disputed Territory,2007,0.6,0.4,1
-NA,Disputed Territory,2008,0.6,0.4,1
-NA,Disputed Territory,2009,0.6,0.4,1
-NA,Disputed Territory,2010,0.6,0.4,1
-NA,Disputed Territory,2011,0.6,0.4,1
-NA,Disputed Territory,2012,0.6,0.4,1
-NA,Disputed Territory,2013,0.6,0.4,1
-NA,Disputed Territory,2014,0.6,0.4,1
-NA,Disputed Territory,2015,0.6,0.4,1
-NA,landlocked,2000,0.45,0.55,4
-NA,landlocked,2001,0.45,0.55,4
-NA,landlocked,2002,0.45,0.55,4
-NA,landlocked,2003,0.45,0.55,4
-NA,landlocked,2004,0.45,0.55,4
-NA,landlocked,2005,0.45,0.55,4
-NA,landlocked,2006,0.45,0.55,4
-NA,landlocked,2007,0.45,0.55,4
-NA,landlocked,2008,0.45,0.55,4
-NA,landlocked,2009,0.45,0.55,4
-NA,landlocked,2010,0.45,0.55,4
-NA,landlocked,2011,0.45,0.55,4
-NA,landlocked,2012,0.45,0.55,4
-NA,landlocked,2013,0.45,0.55,4
-NA,landlocked,2014,0.45,0.55,4
-NA,landlocked,2015,0.45,0.55,4
-NA,NA,2000,NaN,NaN,2
-NA,NA,2001,NaN,NaN,2
-NA,NA,2002,NaN,NaN,2
-NA,NA,2003,NaN,NaN,2
-NA,NA,2004,NaN,NaN,2
-NA,NA,2005,NaN,NaN,2
-NA,NA,2006,NaN,NaN,2
-NA,NA,2007,NaN,NaN,2
-NA,NA,2008,NaN,NaN,2
-NA,NA,2009,NaN,NaN,2
-NA,NA,2010,NaN,NaN,2
-NA,NA,2011,NaN,NaN,2
-NA,NA,2012,NaN,NaN,2
-NA,NA,2013,NaN,NaN,2
-NA,NA,2014,NaN,NaN,2
-NA,NA,2015,NaN,NaN,2
