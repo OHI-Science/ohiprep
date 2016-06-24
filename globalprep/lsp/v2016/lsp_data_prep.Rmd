@@ -415,4 +415,19 @@ ggsave(file.path(dir_goal, 'int/plot_v2015_v2016.png'), plot = lsp_plot_v2015)
 
 ```
 
+``` {r eval = FALSE}
+
+### LSP outlier check
+# Palau            100 -> 37 seems little change in MPAs - check area .csv
+# Tristan da Cunha 100 -> 0 STATUS changed from Designated to Inscribed (World Heritage Site in both years)
+# Prince Edward     50 -> 0 !!! There is a poly there for both years; Designated for both; why not counted properly?
+# Pitcairn          50 -> 0
+# Yemen             40 -> 0
+# 
+# Bahamas            3 -> 51
+# Albania           17 -> 62
+# Japan             84 -> 100
+# ill europa         0 -> 100 (plus another underneath)
+# sao tome and principe 0 -> 30
+
 ***

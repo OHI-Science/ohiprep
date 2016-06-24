@@ -40,9 +40,7 @@ if(!file.exists(file.path(dir_goal, scenario, 'README.md'))) {
 # SPP-specific and ICO-specific functions
 ```
 
-# Summary
-
-# Summary: OHIBC Iconic Species Subgoal (Sense of Place)
+# Summary:  Iconic Species Subgoal (Sense of Place)
 
 This script prepares scores (status and trend) for Iconic Species in 
 British Columbia's coastal regions.  Spatial data from IUCN and Aquamaps is
@@ -488,7 +486,7 @@ ico_15_16 <- ico_sum %>%
   
 st_15_16_plot <- ggplot(ico_15_16 %>%
                            filter(!is.na(rgn_id)),
-                         aes(x = st_15, y = st_16, color = n_spp, key = rgn_name)) +
+                         aes(x = st_15, y = st_16, color = n_spp, key = rgn_name, key2 = rgn_id)) +
   geom_point(alpha = .6) +
   geom_abline(slope = 1, intercept = 0, color = 'red') +
   labs(x = 'ICO status v2015',
@@ -499,7 +497,7 @@ ggplotly(st_15_16_plot)
 
 tr_15_16_plot <- ggplot(ico_15_16 %>%
                            filter(!is.na(rgn_id)),
-                         aes(x = tr_15, y = tr_16, color = n_spp, key = rgn_name)) +
+                         aes(x = tr_15, y = tr_16, color = n_spp, key = rgn_name, key2 = rgn_id)) +
   geom_point(alpha = .6) +
   geom_abline(slope = 1, intercept = 0, color = 'red') +
   labs(x = 'ICO trend v2015',
@@ -507,6 +505,32 @@ tr_15_16_plot <- ggplot(ico_15_16 %>%
        title = 'ICO trend comparison')
 
 ggplotly(tr_15_16_plot)
+
+```
+
+``` {r eval = FALSE}
+
+# ICO outlier check:
+# 
+#   1 Cocos Island 60 -> 75
+#  59 Belgium      63 -> 60
+# 164 Belize       60 -> 73
+# 208 Singapore    60 -> 77
+# 210 Japan        53 -> 63
+
+rgns <- c(1, 59, 164, 208, 210)
+x15st_tr <- read_csv('~/github/ohi-global/eez2013/layers/ico_spp_extinction_status.csv') %>%
+  filter(rgn_id %in% rgns) %>%
+  full_join(read_csv('~/github/ohi-global/eez2013/layers/ico_spp_popn_trend.csv') %>%
+              filter(rgn_id %in% rgns),
+            by = c('rgn_id', 'sciname'))
+x16st_tr <- ico_sum %>%
+  filter(year == 2015) %>%
+  filter(rgn_id %in% rgns) %>%
+  select(-year, -trend_lm)
+
+write_csv(x15st_tr, file.path(dir_goal, 'tmp_15.csv'))
+write_csv(x16st_tr, file.path(dir_goal, 'tmp_16.csv'))
 
 ```
 
