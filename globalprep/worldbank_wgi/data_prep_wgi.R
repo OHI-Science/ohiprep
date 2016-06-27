@@ -120,6 +120,14 @@ d_calcs  <-  d_gap_fill %>%
 d_calcs <- d_calcs %>%
   mutate(score =  (score_wgi_scale - wgi_range[1]) / (wgi_range[2] - wgi_range[1])) %>%
   ungroup(); head(d_calcs); summary(d_calcs)
+
+## save intermediate file of wgi scores pre-gapfilling (for OHI+ use)
+write.csv(d_calcs %>%
+            select(country, year, score_wgi_scale, score_ohi_scale = score), 
+          file.path(dir_wgi, 'intermediate/wgi_combined_scores_by_country.csv'),
+          row.names = FALSE)
+          
+
 ## d_calcs file follows two branches:  the first one determines the within region gap-filling and the second one calculates scores
 ## In both branches, the Antilles are divided into separate regions and names are converted to regions.
 
