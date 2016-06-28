@@ -105,6 +105,7 @@ d_gap_fill <- d_gap_fill %>%
   filter(!(country %in% countries_no_data))
 
 ## wgi calculations and within country gapfill ----
+## To rescale from 0-1: from Nature 2012 SOM: ..."6 dimensions of governance that range in value from approximately -2.5 to 2.5"
 wgi_range = c(-2.5, 2.5)
 
 
