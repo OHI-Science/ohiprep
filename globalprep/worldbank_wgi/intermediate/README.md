@@ -12,7 +12,7 @@ It has the following columns:
   - Government Effectiveness
   - Regulatory Quality
   - Rule of Law
-  Control of Corruption
+  - Control of Corruption
 - "score_ohi_scale": score_wgi_scale rescaled between -2.5 and 2.5
 
 
