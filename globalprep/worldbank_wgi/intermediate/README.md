@@ -13,7 +13,7 @@ It has the following columns:
   - Regulatory Quality
   - Rule of Law
   - Control of Corruption
-- "score_ohi_scale": score_wgi_scale rescaled between -2.5 and 2.5
+- "score_ohi_scale": score_wgi_scale rescaled between 0 and 1 (score_wgi_scale range was -2.5 and 2.5)
 
 
 `wgi_combined_scores_by_country.csv` is created by `data_prep_wgi.r` in `ohiprep/globalprep/worldbank_wgi`. See `data_prep_wgi.r` for further details.
