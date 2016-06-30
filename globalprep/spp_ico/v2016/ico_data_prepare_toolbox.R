@@ -10,4 +10,4 @@ data <- read.csv("globalprep/spp_ico/v2016/output/ico_status_raw.csv") %>%
 data[duplicated(data), ]
 table(data$category)
 
-write.csv(data, "ico_spp_iucn_status.csv", row.names=FALSE)
+write.csv(output, "ico_spp_iucn_status.csv", row.names=FALSE)
