@@ -1513,12 +1513,10 @@ iucn_sid,presence,origin,distribution_code,sciname,rgn_id,rgn_name
 19488,Extant,Native,Native,Rhincodon typus,52,Bahrain
 19488,Extant,Native,Native,Rhincodon typus,99,Benin
 19488,Extant,Native,Native,Rhincodon typus,247,Brunei
-19488,Extant,Native,Native,Rhincodon typus,245,Bonaire
-19488,Extant,Native,Native,Rhincodon typus,248,Saba
-19488,Extant,Native,Native,Rhincodon typus,249,Sint Eustatius
 19488,Extant,Native,Native,Rhincodon typus,171,Brazil
 19488,Extant,Native,Native,Rhincodon typus,110,Bahamas
 19488,Extant,Native,Native,Rhincodon typus,164,Belize
+19488,Extant,Vagrant,Vagrant,Rhincodon typus,218,Canada
 19488,Extant,Native,Native,Rhincodon typus,199,Democratic Republic of the Congo
 19488,Extant,Native,Native,Rhincodon typus,100,Republique du Congo
 19488,Extant,Native,Native,Rhincodon typus,195,Ivory Coast
@@ -1574,6 +1572,7 @@ iucn_sid,presence,origin,distribution_code,sciname,rgn_id,rgn_name
 19488,Extant,Native,Native,Rhincodon typus,205,Myanmar
 19488,Extant,Native,Native,Rhincodon typus,64,Mauritania
 19488,Extant,Native,Native,Rhincodon typus,121,Montserrat
+19488,Extant,Native,Native,Rhincodon typus,39,Maldives
 19488,Extant,Native,Native,Rhincodon typus,135,Mexico
 19488,Extant,Native,Native,Rhincodon typus,206,Malaysia
 19488,Extant,Native,Native,Rhincodon typus,41,Mozambique
@@ -1583,7 +1582,7 @@ iucn_sid,presence,origin,distribution_code,sciname,rgn_id,rgn_name
 19488,Extant,Native,Native,Rhincodon typus,131,Nicaragua
 19488,Extant,Native,Native,Rhincodon typus,10,Nauru
 19488,Extant,Native,Native,Rhincodon typus,154,Niue
-19488,Extant,Native,Native,Rhincodon typus,162,New Zealand
+19488,Extant,Vagrant,Vagrant,Rhincodon typus,162,New Zealand
 19488,Extant,Native,Native,Rhincodon typus,48,Oman
 19488,Extant,Native,Native,Rhincodon typus,129,Panama
 19488,Extant,Native,Native,Rhincodon typus,138,Peru
@@ -1598,6 +1597,9 @@ iucn_sid,presence,origin,distribution_code,sciname,rgn_id,rgn_name
 19488,Extant,Native,Native,Rhincodon typus,50,Saudi Arabia
 19488,Extant,Native,Native,Rhincodon typus,7,Solomon Islands
 19488,Extant,Native,Native,Rhincodon typus,49,Sudan
+19488,Extant,Native,Native,Rhincodon typus,85,Ascension
+19488,Extant,Native,Native,Rhincodon typus,86,Saint Helena
+19488,Extant,Native,Native,Rhincodon typus,88,Tristan da Cunha
 19488,Extant,Native,Native,Rhincodon typus,96,Sierra Leone
 19488,Extant,Native,Native,Rhincodon typus,66,Senegal
 19488,Extant,Native,Native,Rhincodon typus,44,Somalia
