@@ -75,6 +75,7 @@ iucn_sid,year,code,category,sciname
 161749,2009,VU,Vulnerable,Isurus oxyrinchus
 39381,2009,NT,Near Threatened,Prionace glauca
 39381,2000,LR/nt,Lower Risk/near threatened,Prionace glauca
+19488,2016,EN,Endangered,Rhincodon typus
 19488,2005,VU,Vulnerable,Rhincodon typus
 19488,2000,VU,Vulnerable,Rhincodon typus
 19488,1996,DD,Data Deficient,Rhincodon typus
@@ -288,7 +289,7 @@ iucn_sid,year,code,category,sciname
 22563,2008,LC,Least Concern,Tursiops truncatus
 22563,1996,DD,Data Deficient,Tursiops truncatus
 22563,1994,K,Insufficiently Known,Tursiops truncatus
-194300,2013,CR,Critically Endangered,Tursiops truncatus
+194300,2011,CR,Critically Endangered,Tursiops truncatus
 16369383,2012,VU,Vulnerable,Tursiops truncatus
 23211,2008,LC,Least Concern,Ziphius cavirostris
 23211,1996,DD,Data Deficient,Ziphius cavirostris
@@ -303,7 +304,7 @@ iucn_sid,year,code,category,sciname
 22563,2008,LC,Least Concern,Tursiops truncatus
 22563,1996,DD,Data Deficient,Tursiops truncatus
 22563,1994,K,Insufficiently Known,Tursiops truncatus
-194300,2013,CR,Critically Endangered,Tursiops truncatus
+194300,2011,CR,Critically Endangered,Tursiops truncatus
 16369383,2012,VU,Vulnerable,Tursiops truncatus
 41712,2012,EN,Endangered,Eubalaena glacialis
 41712,2008,EN,Endangered,Eubalaena glacialis

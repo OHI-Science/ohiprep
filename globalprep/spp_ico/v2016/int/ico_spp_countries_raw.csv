@@ -1486,131 +1486,133 @@ iucn_sid,count,code,country,presence,origin,distribution_code,sciname
 39381,148,YE,Yemen,Extant,Native,Native,Prionace glauca
 39381,148,YT,Mayotte,Extant,Native,Native,Prionace glauca
 39381,148,ZA,South Africa,Extant,Native,Native,Prionace glauca
-19488,125,AE,United Arab Emirates,Extant,Native,Native,Rhincodon typus
-19488,125,AG,Antigua and Barbuda,Extant,Native,Native,Rhincodon typus
-19488,125,AI,Anguilla,Extant,Native,Native,Rhincodon typus
-19488,125,AO,Angola,Extant,Native,Native,Rhincodon typus
-19488,125,AR,Argentina,Extant,Native,Native,Rhincodon typus
-19488,125,AS,American Samoa,Extant,Native,Native,Rhincodon typus
-19488,125,AU,Australia,Extant,Native,Native,Rhincodon typus
-19488,125,AW,Aruba,Extant,Native,Native,Rhincodon typus
-19488,125,BB,Barbados,Extant,Native,Native,Rhincodon typus
-19488,125,BD,Bangladesh,Extant,Native,Native,Rhincodon typus
-19488,125,BH,Bahrain,Extant,Native,Native,Rhincodon typus
-19488,125,BJ,Benin,Extant,Native,Native,Rhincodon typus
-19488,125,BN,Brunei Darussalam,Extant,Native,Native,Rhincodon typus
-19488,125,BQ,"Bonaire, Sint Eustatius and Saba",Extant,Native,Native,Rhincodon typus
-19488,125,BR,Brazil,Extant,Native,Native,Rhincodon typus
-19488,125,BS,Bahamas,Extant,Native,Native,Rhincodon typus
-19488,125,BZ,Belize,Extant,Native,Native,Rhincodon typus
-19488,125,CD,"Congo, The Democratic Republic of the",Extant,Native,Native,Rhincodon typus
-19488,125,CG,Congo,Extant,Native,Native,Rhincodon typus
-19488,125,CI,Côte d'Ivoire,Extant,Native,Native,Rhincodon typus
-19488,125,CK,Cook Islands,Extant,Native,Native,Rhincodon typus
-19488,125,CL,Chile,Extant,Native,Native,Rhincodon typus
-19488,125,CM,Cameroon,Extant,Native,Native,Rhincodon typus
-19488,125,CN,China,Extant,Native,Native,Rhincodon typus
-19488,125,CO,Colombia,Extant,Native,Native,Rhincodon typus
-19488,125,CR,Costa Rica,Extant,Native,Native,Rhincodon typus
-19488,125,CU,Cuba,Extant,Native,Native,Rhincodon typus
-19488,125,CV,Cape Verde,Extant,Native,Native,Rhincodon typus
-19488,125,CW,Curaçao,Extant,Native,Native,Rhincodon typus
-19488,125,DJ,Djibouti,Extant,Native,Native,Rhincodon typus
-19488,125,DM,Dominica,Extant,Native,Native,Rhincodon typus
-19488,125,EC,Ecuador,Extant,Native,Native,Rhincodon typus
-19488,125,EG,Egypt,Extant,Native,Native,Rhincodon typus
-19488,125,EH,Western Sahara,Extant,Native,Native,Rhincodon typus
-19488,125,ER,Eritrea,Extant,Native,Native,Rhincodon typus
-19488,125,ET,Ethiopia,Extant,Native,Native,Rhincodon typus
-19488,125,FJ,Fiji,Extant,Native,Native,Rhincodon typus
-19488,125,FM,"Micronesia, Federated States of",Extant,Native,Native,Rhincodon typus
-19488,125,GA,Gabon,Extant,Native,Native,Rhincodon typus
-19488,125,GD,Grenada,Extant,Native,Native,Rhincodon typus
-19488,125,GF,French Guiana,Extant,Native,Native,Rhincodon typus
-19488,125,GH,Ghana,Extant,Native,Native,Rhincodon typus
-19488,125,GM,Gambia,Extant,Native,Native,Rhincodon typus
-19488,125,GN,Guinea,Extant,Native,Native,Rhincodon typus
-19488,125,GP,Guadeloupe,Extant,Native,Native,Rhincodon typus
-19488,125,GQ,Equatorial Guinea,Extant,Native,Native,Rhincodon typus
-19488,125,GT,Guatemala,Extant,Native,Native,Rhincodon typus
-19488,125,GW,Guinea-Bissau,Extant,Native,Native,Rhincodon typus
-19488,125,GY,Guyana,Extant,Native,Native,Rhincodon typus
-19488,125,HN,Honduras,Extant,Native,Native,Rhincodon typus
-19488,125,HT,Haiti,Extant,Native,Native,Rhincodon typus
-19488,125,ID,Indonesia,Extant,Native,Native,Rhincodon typus
-19488,125,IL,Israel,Extant,Native,Native,Rhincodon typus
-19488,125,IN,India,Extant,Native,Native,Rhincodon typus
-19488,125,IQ,Iraq,Extant,Native,Native,Rhincodon typus
-19488,125,IR,"Iran, Islamic Republic of",Extant,Native,Native,Rhincodon typus
-19488,125,JM,Jamaica,Extant,Native,Native,Rhincodon typus
-19488,125,JO,Jordan,Extant,Native,Native,Rhincodon typus
-19488,125,JP,Japan,Extant,Native,Native,Rhincodon typus
-19488,125,KE,Kenya,Extant,Native,Native,Rhincodon typus
-19488,125,KH,Cambodia,Extant,Native,Native,Rhincodon typus
-19488,125,KI,Kiribati,Extant,Native,Native,Rhincodon typus
-19488,125,KN,Saint Kitts and Nevis,Extant,Native,Native,Rhincodon typus
-19488,125,KY,Cayman Islands,Extant,Native,Native,Rhincodon typus
-19488,125,LC,Saint Lucia,Extant,Native,Native,Rhincodon typus
-19488,125,LR,Liberia,Extant,Native,Native,Rhincodon typus
-19488,125,MA,Morocco,Extant,Native,Native,Rhincodon typus
-19488,125,MF,Saint Martin (French part),Extant,Native,Native,Rhincodon typus
-19488,125,MG,Madagascar,Extant,Native,Native,Rhincodon typus
-19488,125,MH,Marshall Islands,Extant,Native,Native,Rhincodon typus
-19488,125,MM,Myanmar,Extant,Native,Native,Rhincodon typus
-19488,125,MQ,Martinique,Extant,Native,Native,Rhincodon typus
-19488,125,MR,Mauritania,Extant,Native,Native,Rhincodon typus
-19488,125,MS,Montserrat,Extant,Native,Native,Rhincodon typus
-19488,125,MX,Mexico,Extant,Native,Native,Rhincodon typus
-19488,125,MY,Malaysia,Extant,Native,Native,Rhincodon typus
-19488,125,MZ,Mozambique,Extant,Native,Native,Rhincodon typus
-19488,125,"NA",Namibia,Extant,Native,Native,Rhincodon typus
-19488,125,NC,New Caledonia,Extant,Native,Native,Rhincodon typus
-19488,125,NG,Nigeria,Extant,Native,Native,Rhincodon typus
-19488,125,NI,Nicaragua,Extant,Native,Native,Rhincodon typus
-19488,125,NR,Nauru,Extant,Native,Native,Rhincodon typus
-19488,125,NU,Niue,Extant,Native,Native,Rhincodon typus
-19488,125,NZ,New Zealand,Extant,Native,Native,Rhincodon typus
-19488,125,OM,Oman,Extant,Native,Native,Rhincodon typus
-19488,125,PA,Panama,Extant,Native,Native,Rhincodon typus
-19488,125,PE,Peru,Extant,Native,Native,Rhincodon typus
-19488,125,PF,French Polynesia,Extant,Native,Native,Rhincodon typus
-19488,125,PG,Papua New Guinea,Extant,Native,Native,Rhincodon typus
-19488,125,PH,Philippines,Extant,Native,Native,Rhincodon typus
-19488,125,PK,Pakistan,Extant,Native,Native,Rhincodon typus
-19488,125,PN,Pitcairn,Extant,Native,Native,Rhincodon typus
-19488,125,PR,Puerto Rico,Extant,Native,Native,Rhincodon typus
-19488,125,PT,Portugal,Extant,Native,Native,Rhincodon typus
-19488,125,QA,Qatar,Extant,Native,Native,Rhincodon typus
-19488,125,SA,Saudi Arabia,Extant,Native,Native,Rhincodon typus
-19488,125,SB,Solomon Islands,Extant,Native,Native,Rhincodon typus
-19488,125,SD,Sudan,Extant,Native,Native,Rhincodon typus
-19488,125,SL,Sierra Leone,Extant,Native,Native,Rhincodon typus
-19488,125,SN,Senegal,Extant,Native,Native,Rhincodon typus
-19488,125,SO,Somalia,Extant,Native,Native,Rhincodon typus
-19488,125,SR,Suriname,Extant,Native,Native,Rhincodon typus
-19488,125,ST,Sao Tomé and Principe,Extant,Native,Native,Rhincodon typus
-19488,125,SV,El Salvador,Extant,Native,Native,Rhincodon typus
-19488,125,SX,Sint Maarten (Dutch part),Extant,Native,Native,Rhincodon typus
-19488,125,TC,Turks and Caicos Islands,Extant,Native,Native,Rhincodon typus
-19488,125,TG,Togo,Extant,Native,Native,Rhincodon typus
-19488,125,TH,Thailand,Extant,Native,Native,Rhincodon typus
-19488,125,TK,Tokelau,Extant,Native,Native,Rhincodon typus
-19488,125,TO,Tonga,Extant,Native,Native,Rhincodon typus
-19488,125,TV,Tuvalu,Extant,Native,Native,Rhincodon typus
-19488,125,TW,"Taiwan, Province of China",Extant,Native,Native,Rhincodon typus
-19488,125,TZ,"Tanzania, United Republic of",Extant,Native,Native,Rhincodon typus
-19488,125,US,United States,Extant,Native,Native,Rhincodon typus
-19488,125,UY,Uruguay,Extant,Native,Native,Rhincodon typus
-19488,125,VC,Saint Vincent and the Grenadines,Extant,Native,Native,Rhincodon typus
-19488,125,VE,"Venezuela, Bolivarian Republic of",Extant,Native,Native,Rhincodon typus
-19488,125,VG,"Virgin Islands, British",Extant,Native,Native,Rhincodon typus
-19488,125,VI,"Virgin Islands, U.S.",Extant,Native,Native,Rhincodon typus
-19488,125,VN,Viet Nam,Extant,Native,Native,Rhincodon typus
-19488,125,VU,Vanuatu,Extant,Native,Native,Rhincodon typus
-19488,125,WF,Wallis and Futuna,Extant,Native,Native,Rhincodon typus
-19488,125,WS,Samoa,Extant,Native,Native,Rhincodon typus
-19488,125,YE,Yemen,Extant,Native,Native,Rhincodon typus
-19488,125,ZA,South Africa,Extant,Native,Native,Rhincodon typus
+19488,127,AE,United Arab Emirates,Extant,Native,Native,Rhincodon typus
+19488,127,AG,Antigua and Barbuda,Extant,Native,Native,Rhincodon typus
+19488,127,AI,Anguilla,Extant,Native,Native,Rhincodon typus
+19488,127,AO,Angola,Extant,Native,Native,Rhincodon typus
+19488,127,AR,Argentina,Extant,Native,Native,Rhincodon typus
+19488,127,AS,American Samoa,Extant,Native,Native,Rhincodon typus
+19488,127,AU,Australia,Extant,Native,Native,Rhincodon typus
+19488,127,AW,Aruba,Extant,Native,Native,Rhincodon typus
+19488,127,BB,Barbados,Extant,Native,Native,Rhincodon typus
+19488,127,BD,Bangladesh,Extant,Native,Native,Rhincodon typus
+19488,127,BH,Bahrain,Extant,Native,Native,Rhincodon typus
+19488,127,BJ,Benin,Extant,Native,Native,Rhincodon typus
+19488,127,BN,Brunei Darussalam,Extant,Native,Native,Rhincodon typus
+19488,127,BR,Brazil,Extant,Native,Native,Rhincodon typus
+19488,127,BS,Bahamas,Extant,Native,Native,Rhincodon typus
+19488,127,BZ,Belize,Extant,Native,Native,Rhincodon typus
+19488,127,CA,Canada,Extant,Vagrant,Vagrant,Rhincodon typus
+19488,127,CD,"Congo, The Democratic Republic of the",Extant,Native,Native,Rhincodon typus
+19488,127,CG,Congo,Extant,Native,Native,Rhincodon typus
+19488,127,CI,Côte d'Ivoire,Extant,Native,Native,Rhincodon typus
+19488,127,CK,Cook Islands,Extant,Native,Native,Rhincodon typus
+19488,127,CL,Chile,Extant,Native,Native,Rhincodon typus
+19488,127,CM,Cameroon,Extant,Native,Native,Rhincodon typus
+19488,127,CN,China,Extant,Native,Native,Rhincodon typus
+19488,127,CO,Colombia,Extant,Native,Native,Rhincodon typus
+19488,127,CR,Costa Rica,Extant,Native,Native,Rhincodon typus
+19488,127,CU,Cuba,Extant,Native,Native,Rhincodon typus
+19488,127,CV,Cape Verde,Extant,Native,Native,Rhincodon typus
+19488,127,CW,Curaçao,Extant,Native,Native,Rhincodon typus
+19488,127,DJ,Djibouti,Extant,Native,Native,Rhincodon typus
+19488,127,DM,Dominica,Extant,Native,Native,Rhincodon typus
+19488,127,EC,Ecuador,Extant,Native,Native,Rhincodon typus
+19488,127,EG,Egypt,Extant,Native,Native,Rhincodon typus
+19488,127,EH,Western Sahara,Extant,Native,Native,Rhincodon typus
+19488,127,ER,Eritrea,Extant,Native,Native,Rhincodon typus
+19488,127,ET,Ethiopia,Extant,Native,Native,Rhincodon typus
+19488,127,FJ,Fiji,Extant,Native,Native,Rhincodon typus
+19488,127,FM,"Micronesia, Federated States of",Extant,Native,Native,Rhincodon typus
+19488,127,GA,Gabon,Extant,Native,Native,Rhincodon typus
+19488,127,GD,Grenada,Extant,Native,Native,Rhincodon typus
+19488,127,GF,French Guiana,Extant,Native,Native,Rhincodon typus
+19488,127,GH,Ghana,Extant,Native,Native,Rhincodon typus
+19488,127,GM,Gambia,Extant,Native,Native,Rhincodon typus
+19488,127,GN,Guinea,Extant,Native,Native,Rhincodon typus
+19488,127,GP,Guadeloupe,Extant,Native,Native,Rhincodon typus
+19488,127,GQ,Equatorial Guinea,Extant,Native,Native,Rhincodon typus
+19488,127,GT,Guatemala,Extant,Native,Native,Rhincodon typus
+19488,127,GW,Guinea-Bissau,Extant,Native,Native,Rhincodon typus
+19488,127,GY,Guyana,Extant,Native,Native,Rhincodon typus
+19488,127,HN,Honduras,Extant,Native,Native,Rhincodon typus
+19488,127,HT,Haiti,Extant,Native,Native,Rhincodon typus
+19488,127,ID,Indonesia,Extant,Native,Native,Rhincodon typus
+19488,127,IL,Israel,Extant,Native,Native,Rhincodon typus
+19488,127,IN,India,Extant,Native,Native,Rhincodon typus
+19488,127,IQ,Iraq,Extant,Native,Native,Rhincodon typus
+19488,127,IR,"Iran, Islamic Republic of",Extant,Native,Native,Rhincodon typus
+19488,127,JM,Jamaica,Extant,Native,Native,Rhincodon typus
+19488,127,JO,Jordan,Extant,Native,Native,Rhincodon typus
+19488,127,JP,Japan,Extant,Native,Native,Rhincodon typus
+19488,127,KE,Kenya,Extant,Native,Native,Rhincodon typus
+19488,127,KH,Cambodia,Extant,Native,Native,Rhincodon typus
+19488,127,KI,Kiribati,Extant,Native,Native,Rhincodon typus
+19488,127,KN,Saint Kitts and Nevis,Extant,Native,Native,Rhincodon typus
+19488,127,KY,Cayman Islands,Extant,Native,Native,Rhincodon typus
+19488,127,LC,Saint Lucia,Extant,Native,Native,Rhincodon typus
+19488,127,LR,Liberia,Extant,Native,Native,Rhincodon typus
+19488,127,MA,Morocco,Extant,Native,Native,Rhincodon typus
+19488,127,MF,Saint Martin (French part),Extant,Native,Native,Rhincodon typus
+19488,127,MG,Madagascar,Extant,Native,Native,Rhincodon typus
+19488,127,MH,Marshall Islands,Extant,Native,Native,Rhincodon typus
+19488,127,MM,Myanmar,Extant,Native,Native,Rhincodon typus
+19488,127,MQ,Martinique,Extant,Native,Native,Rhincodon typus
+19488,127,MR,Mauritania,Extant,Native,Native,Rhincodon typus
+19488,127,MS,Montserrat,Extant,Native,Native,Rhincodon typus
+19488,127,MV,Maldives,Extant,Native,Native,Rhincodon typus
+19488,127,MX,Mexico,Extant,Native,Native,Rhincodon typus
+19488,127,MY,Malaysia,Extant,Native,Native,Rhincodon typus
+19488,127,MZ,Mozambique,Extant,Native,Native,Rhincodon typus
+19488,127,"NA",Namibia,Extant,Native,Native,Rhincodon typus
+19488,127,NC,New Caledonia,Extant,Native,Native,Rhincodon typus
+19488,127,NG,Nigeria,Extant,Native,Native,Rhincodon typus
+19488,127,NI,Nicaragua,Extant,Native,Native,Rhincodon typus
+19488,127,NR,Nauru,Extant,Native,Native,Rhincodon typus
+19488,127,NU,Niue,Extant,Native,Native,Rhincodon typus
+19488,127,NZ,New Zealand,Extant,Vagrant,Vagrant,Rhincodon typus
+19488,127,OM,Oman,Extant,Native,Native,Rhincodon typus
+19488,127,PA,Panama,Extant,Native,Native,Rhincodon typus
+19488,127,PE,Peru,Extant,Native,Native,Rhincodon typus
+19488,127,PF,French Polynesia,Extant,Native,Native,Rhincodon typus
+19488,127,PG,Papua New Guinea,Extant,Native,Native,Rhincodon typus
+19488,127,PH,Philippines,Extant,Native,Native,Rhincodon typus
+19488,127,PK,Pakistan,Extant,Native,Native,Rhincodon typus
+19488,127,PN,Pitcairn,Extant,Native,Native,Rhincodon typus
+19488,127,PR,Puerto Rico,Extant,Native,Native,Rhincodon typus
+19488,127,PT,Portugal,Extant,Native,Native,Rhincodon typus
+19488,127,QA,Qatar,Extant,Native,Native,Rhincodon typus
+19488,127,SA,Saudi Arabia,Extant,Native,Native,Rhincodon typus
+19488,127,SB,Solomon Islands,Extant,Native,Native,Rhincodon typus
+19488,127,SD,Sudan,Extant,Native,Native,Rhincodon typus
+19488,127,SH,"Saint Helena, Ascension and Tristan da Cunha",Extant,Native,Native,Rhincodon typus
+19488,127,SL,Sierra Leone,Extant,Native,Native,Rhincodon typus
+19488,127,SN,Senegal,Extant,Native,Native,Rhincodon typus
+19488,127,SO,Somalia,Extant,Native,Native,Rhincodon typus
+19488,127,SR,Suriname,Extant,Native,Native,Rhincodon typus
+19488,127,ST,Sao Tomé and Principe,Extant,Native,Native,Rhincodon typus
+19488,127,SV,El Salvador,Extant,Native,Native,Rhincodon typus
+19488,127,SX,Sint Maarten (Dutch part),Extant,Native,Native,Rhincodon typus
+19488,127,TC,Turks and Caicos Islands,Extant,Native,Native,Rhincodon typus
+19488,127,TG,Togo,Extant,Native,Native,Rhincodon typus
+19488,127,TH,Thailand,Extant,Native,Native,Rhincodon typus
+19488,127,TK,Tokelau,Extant,Native,Native,Rhincodon typus
+19488,127,TO,Tonga,Extant,Native,Native,Rhincodon typus
+19488,127,TV,Tuvalu,Extant,Native,Native,Rhincodon typus
+19488,127,TW,"Taiwan, Province of China",Extant,Native,Native,Rhincodon typus
+19488,127,TZ,"Tanzania, United Republic of",Extant,Native,Native,Rhincodon typus
+19488,127,US,United States,Extant,Native,Native,Rhincodon typus
+19488,127,UY,Uruguay,Extant,Native,Native,Rhincodon typus
+19488,127,VC,Saint Vincent and the Grenadines,Extant,Native,Native,Rhincodon typus
+19488,127,VE,"Venezuela, Bolivarian Republic of",Extant,Native,Native,Rhincodon typus
+19488,127,VG,"Virgin Islands, British",Extant,Native,Native,Rhincodon typus
+19488,127,VI,"Virgin Islands, U.S.",Extant,Native,Native,Rhincodon typus
+19488,127,VN,Viet Nam,Extant,Native,Native,Rhincodon typus
+19488,127,VU,Vanuatu,Extant,Native,Native,Rhincodon typus
+19488,127,WF,Wallis and Futuna,Extant,Native,Native,Rhincodon typus
+19488,127,WS,Samoa,Extant,Native,Native,Rhincodon typus
+19488,127,YE,Yemen,Extant,Native,Native,Rhincodon typus
+19488,127,ZA,South Africa,Extant,Native,Native,Rhincodon typus
 8005,76,AE,United Arab Emirates,Extant,Native,Native,Eretmochelys imbricata
 8005,76,AG,Antigua and Barbuda,Extant,Native,Native,Eretmochelys imbricata
 8005,76,AS,American Samoa,Extant,Native,Native,Eretmochelys imbricata

@@ -162,6 +162,7 @@ iucn_sid,year,cat,cat_txt,sciname,cat_score
 18596,1996,LC,Lower Risk/least concern,Pseudorca crassidens,0
 19488,2000,VU,Vulnerable,Rhincodon typus,0.4
 19488,2005,VU,Vulnerable,Rhincodon typus,0.4
+19488,2016,EN,Endangered,Rhincodon typus,0.6
 20424,2008,NT,Near Threatened,Sousa chinensis,0.2
 20729,1996,CD,Lower Risk/conservation dependent,Stenella attenuata,0.3
 20729,2008,LC,Least Concern,Stenella attenuata,0
@@ -237,7 +238,7 @@ iucn_sid,year,cat,cat_txt,sciname,cat_score
 161750,2009,VU,Vulnerable,Isurus oxyrinchus,0.4
 161751,2009,NT,Near Threatened,Isurus oxyrinchus,0.2
 183775,2010,LC,Least Concern,Engraulis ringens,0
-194300,2013,CR,Critically Endangered,Tursiops truncatus,0.8
+194300,2011,CR,Critically Endangered,Tursiops truncatus,0.8
 16208224,2012,VU,Vulnerable,Balaenoptera physalus,0.4
 16285718,2012,LC,Least Concern,Chelonia mydas,0
 16369383,2012,VU,Vulnerable,Tursiops truncatus,0.4
