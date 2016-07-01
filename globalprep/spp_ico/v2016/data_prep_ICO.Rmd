@@ -230,7 +230,7 @@ write_csv(ico_spp_countries, file.path(dir_goal, scenario, 'int/ico_spp_countrie
 
 ico_spp_rgn_raw <- read_csv(file.path(dir_goal, scenario, 'int/ico_spp_countries_raw.csv'))
 
-rgn_iucn2ohi <- read_csv(file.path(dir_goal, scenario, 'data/rgns_iucn2ohi.csv'))
+rgn_iucn2ohi <- read_csv(file.path(dir_goal, scenario, 'raw/rgns_iucn2ohi.csv'))
 
 ico_spp_rgn_raw <- ico_spp_rgn_raw %>%
   rename(iucn_rgn_name = country) %>%
@@ -419,16 +419,18 @@ ico_spp_rgn_cat <- read_csv(file.path(dir_goal, scenario, 'int/ico_spp_rgn_cat.c
 
 ico_status_raw <- ico_spp_rgn_cat %>%
   select(rgn_id, rgn_name, sciname, iucn_sid, cat, cat_score, year) %>%
-  arrange(rgn_id, desc(year), sciname)
-
-ico_status_calc <- ico_status_raw %>%
   filter(!is.na(cat_score)) %>% ### remove any DDs
   group_by(rgn_id, rgn_name, sciname, year) %>%
   summarize(cat_score = mean(cat_score)) %>% 
+  arrange(rgn_id, desc(year), sciname) %>%
+  ungroup()
+
+ico_status_calc <- ico_status_raw %>%
   group_by(rgn_id, rgn_name, year) %>%
   summarize(mean_cat = round(mean(cat_score), 5), 
             ico_status = (1 - mean_cat) * 100,
-            n_spp = n()) 
+            n_spp = n()) %>%
+  ungroup()
 
 
 ico_trend <- data.frame()
@@ -440,7 +442,8 @@ for (i in 2010:max(ico_status_calc$year, na.rm = TRUE)) { # i <- 2013
     do(trend_lm = lm(ico_status ~ year, data = .)$coefficients[2]) %>%
     mutate(year  = i,
            trend_lm  = as.numeric(trend_lm)/100, ### status is 0 - 100; trend should be +1 to -1
-           ico_trend = round(trend_lm * 5, 5))   ### trend prediction five years out
+           ico_trend = round(trend_lm * 5, 5)) %>%   ### trend prediction five years out
+    ungroup()
   ico_trend <- ico_trend %>%
     bind_rows(tmp_trend)
 }
