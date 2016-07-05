@@ -14,11 +14,15 @@ iucn_sid,year,cat,cat_txt,sciname,cat_score
 2472,2000,CR,Critically Endangered,Balaena mysticetus,0.8
 2472,2008,CR,Critically Endangered,Balaena mysticetus,0.8
 2472,2012,CR,Critically Endangered,Balaena mysticetus,0.8
+2474,1994,DD,Insufficiently Known,Balaenoptera acutorostrata,NA
 2474,1996,NT,Lower Risk/near threatened,Balaenoptera acutorostrata,0.2
 2474,2008,LC,Least Concern,Balaenoptera acutorostrata,0
 2475,1994,VU,Vulnerable,Balaenoptera borealis,0.4
 2475,1996,EN,Endangered,Balaenoptera borealis,0.6
 2475,2008,EN,Endangered,Balaenoptera borealis,0.6
+2476,1994,DD,Insufficiently Known,Balaenoptera edeni,NA
+2476,1996,DD,Data Deficient,Balaenoptera edeni,NA
+2476,2008,DD,Data Deficient,Balaenoptera edeni,NA
 2477,1965,CR,"""Very rare and believed to be decreasing in numbers""",Balaenoptera musculus,0.8
 2477,1986,EN,Endangered,Balaenoptera musculus,0.6
 2477,1988,EN,Endangered,Balaenoptera musculus,0.6
@@ -35,8 +39,15 @@ iucn_sid,year,cat,cat_txt,sciname,cat_score
 2478,2008,EN,Endangered,Balaenoptera physalus,0.6
 2478,2013,EN,Endangered,Balaenoptera physalus,0.6
 2480,1996,CD,Lower Risk/conservation dependent,Balaenoptera bonaerensis,0.3
+2480,2008,DD,Data Deficient,Balaenoptera bonaerensis,NA
+2762,1994,DD,Insufficiently Known,Berardius arnuxii,NA
 2762,1996,CD,Lower Risk/conservation dependent,Berardius arnuxii,0.3
+2762,2008,DD,Data Deficient,Berardius arnuxii,NA
+3778,1994,DD,Insufficiently Known,Caperea marginata,NA
 3778,1996,LC,Lower Risk/least concern,Caperea marginata,0
+3778,2008,DD,Data Deficient,Caperea marginata,NA
+3855,1990,DD,Insufficiently Known,Carcharodon carcharias,NA
+3855,1994,DD,Insufficiently Known,Carcharodon carcharias,NA
 3855,1996,VU,Vulnerable,Carcharodon carcharias,0.4
 3855,2000,VU,Vulnerable,Carcharodon carcharias,0.4
 3855,2009,VU,Vulnerable,Carcharodon carcharias,0.4
@@ -47,11 +58,15 @@ iucn_sid,year,cat,cat_txt,sciname,cat_score
 3897,1994,VU,Vulnerable,Caretta caretta,0.4
 3897,1996,EN,Endangered,Caretta caretta,0.6
 3897,2015,VU,Vulnerable,Caretta caretta,0.4
+4162,1988,DD,Insufficiently Known,Cephalorhynchus hectori,NA
 4162,1990,VU,Vulnerable,Cephalorhynchus hectori,0.4
+4162,1994,DD,Indeterminate,Cephalorhynchus hectori,NA
 4162,1996,VU,Vulnerable,Cephalorhynchus hectori,0.4
 4162,2000,EN,Endangered,Cephalorhynchus hectori,0.6
 4162,2008,EN,Endangered,Cephalorhynchus hectori,0.6
 4162,2013,EN,Endangered,Cephalorhynchus hectori,0.6
+4292,1990,DD,Insufficiently Known,Cetorhinus maximus,NA
+4292,1994,DD,Insufficiently Known,Cetorhinus maximus,NA
 4292,1996,VU,Vulnerable,Cetorhinus maximus,0.4
 4292,2000,VU,Vulnerable,Cetorhinus maximus,0.4
 4292,2005,VU,Vulnerable,Cetorhinus maximus,0.4
@@ -64,6 +79,7 @@ iucn_sid,year,cat,cat_txt,sciname,cat_score
 4615,1994,EN,Endangered,Chelonia mydas,0.6
 4615,1996,EN,Endangered,Chelonia mydas,0.6
 4615,2004,EN,Endangered,Chelonia mydas,0.6
+6336,1994,DD,Insufficiently Known,Delphinus delphis,NA
 6336,1996,LC,Lower Risk/least concern,Delphinus delphis,0
 6336,2008,LC,Least Concern,Delphinus delphis,0
 6494,1982,EN,Endangered,Dermochelys coriacea,0.6
@@ -93,20 +109,43 @@ iucn_sid,year,cat,cat_txt,sciname,cat_score
 8153,1996,CD,Lower Risk/conservation dependent,Eubalaena australis,0.3
 8153,2008,LC,Least Concern,Eubalaena australis,0
 8153,2013,LC,Least Concern,Eubalaena australis,0
+8551,1994,DD,Insufficiently Known,Feresa attenuata,NA
+8551,1996,DD,Data Deficient,Feresa attenuata,NA
+8551,2008,DD,Data Deficient,Feresa attenuata,NA
+9249,1994,DD,Insufficiently Known,Globicephala macrorhynchus,NA
 9249,1996,CD,Lower Risk/conservation dependent,Globicephala macrorhynchus,0.3
+9249,2008,DD,Data Deficient,Globicephala macrorhynchus,NA
+9249,2011,DD,Data Deficient,Globicephala macrorhynchus,NA
+9250,1994,DD,Insufficiently Known,Globicephala melas,NA
 9250,1996,LC,Lower Risk/least concern,Globicephala melas,0
+9250,2008,DD,Data Deficient,Globicephala melas,NA
 9281,1996,CR,Critically Endangered,Glyphis gangeticus,0.8
 9281,2007,CR,Critically Endangered,Glyphis gangeticus,0.8
+9461,1994,DD,Insufficiently Known,Grampus griseus,NA
+9461,1996,DD,Data Deficient,Grampus griseus,NA
 9461,2008,LC,Least Concern,Grampus griseus,0
 9461,2012,LC,Least Concern,Grampus griseus,0
+10708,1994,DD,Insufficiently Known,Hyperoodon planifrons,NA
 10708,1996,CD,Lower Risk/conservation dependent,Hyperoodon planifrons,0.3
 10708,2008,LC,Least Concern,Hyperoodon planifrons,0
+11047,1994,DD,Insufficiently Known,Kogia breviceps,NA
 11047,1996,LC,Lower Risk/least concern,Kogia breviceps,0
+11047,2008,DD,Data Deficient,Kogia breviceps,NA
+11047,2012,DD,Data Deficient,Kogia breviceps,NA
+11048,1994,DD,Insufficiently Known,Kogia sima,NA
 11048,1996,LC,Lower Risk/least concern,Kogia sima,0
+11048,2008,DD,Data Deficient,Kogia sima,NA
+11048,2012,DD,Data Deficient,Kogia sima,NA
+11140,1994,DD,Insufficiently Known,Lagenodelphis hosei,NA
+11140,1996,DD,Data Deficient,Lagenodelphis hosei,NA
 11140,2008,LC,Least Concern,Lagenodelphis hosei,0
 11140,2012,LC,Least Concern,Lagenodelphis hosei,0
+11144,1994,DD,Insufficiently Known,Lagenorhynchus cruciger,NA
 11144,1996,LC,Lower Risk/least concern,Lagenorhynchus cruciger,0
 11144,2008,LC,Least Concern,Lagenorhynchus cruciger,0
+11146,1994,DD,Insufficiently Known,Lagenorhynchus obscurus,NA
+11146,1996,DD,Data Deficient,Lagenorhynchus obscurus,NA
+11146,2008,DD,Data Deficient,Lagenorhynchus obscurus,NA
 11200,1996,VU,Vulnerable,Lamna nasus,0.4
 11200,2000,NT,Lower Risk/near threatened,Lamna nasus,0.2
 11200,2006,VU,Vulnerable,Lamna nasus,0.4
@@ -123,6 +162,13 @@ iucn_sid,year,cat,cat_txt,sciname,cat_score
 11534,1994,EN,Endangered,Lepidochelys olivacea,0.6
 11534,1996,EN,Endangered,Lepidochelys olivacea,0.6
 11534,2008,VU,Vulnerable,Lepidochelys olivacea,0.4
+12126,1994,DD,Insufficiently Known,Lissodelphis peronii,NA
+12126,1996,DD,Data Deficient,Lissodelphis peronii,NA
+12126,2008,DD,Data Deficient,Lissodelphis peronii,NA
+12126,2012,DD,Data Deficient,Lissodelphis peronii,NA
+12427,1988,DD,Insufficiently Known,Lutrogale perspicillata,NA
+12427,1990,DD,Insufficiently Known,Lutrogale perspicillata,NA
+12427,1994,DD,Insufficiently Known,Lutrogale perspicillata,NA
 12427,1996,VU,Vulnerable,Lutrogale perspicillata,0.4
 12427,2000,VU,Vulnerable,Lutrogale perspicillata,0.4
 12427,2004,VU,Vulnerable,Lutrogale perspicillata,0.4
@@ -135,6 +181,27 @@ iucn_sid,year,cat,cat_txt,sciname,cat_score
 13006,1994,VU,Vulnerable,Megaptera novaeangliae,0.4
 13006,1996,VU,Vulnerable,Megaptera novaeangliae,0.4
 13006,2008,LC,Least Concern,Megaptera novaeangliae,0
+13242,1994,DD,Insufficiently Known,Mesoplodon bowdoini,NA
+13242,1996,DD,Data Deficient,Mesoplodon bowdoini,NA
+13242,2008,DD,Data Deficient,Mesoplodon bowdoini,NA
+13244,1994,DD,Insufficiently Known,Mesoplodon densirostris,NA
+13244,1996,DD,Data Deficient,Mesoplodon densirostris,NA
+13244,2008,DD,Data Deficient,Mesoplodon densirostris,NA
+13246,1994,DD,Insufficiently Known,Mesoplodon ginkgodens,NA
+13246,1996,DD,Data Deficient,Mesoplodon ginkgodens,NA
+13246,2008,DD,Data Deficient,Mesoplodon ginkgodens,NA
+13247,1994,DD,Insufficiently Known,Mesoplodon grayi,NA
+13247,1996,DD,Data Deficient,Mesoplodon grayi,NA
+13247,2008,DD,Data Deficient,Mesoplodon grayi,NA
+13248,1994,DD,Insufficiently Known,Mesoplodon hectori,NA
+13248,1996,DD,Data Deficient,Mesoplodon hectori,NA
+13248,2008,DD,Data Deficient,Mesoplodon hectori,NA
+13249,1994,DD,Insufficiently Known,Mesoplodon layardii,NA
+13249,1996,DD,Data Deficient,Mesoplodon layardii,NA
+13249,2008,DD,Data Deficient,Mesoplodon layardii,NA
+13250,1994,DD,Insufficiently Known,Mesoplodon mirus,NA
+13250,1996,DD,Data Deficient,Mesoplodon mirus,NA
+13250,2008,DD,Data Deficient,Mesoplodon mirus,NA
 13653,1965,CR,"""Very rare and believed to be decreasing in numbers""",Monachus monachus,0.8
 13653,1986,EN,Endangered,Monachus monachus,0.6
 13653,1988,EN,Endangered,Monachus monachus,0.6
@@ -145,9 +212,18 @@ iucn_sid,year,cat,cat_txt,sciname,cat_score
 13653,2013,CR,Critically Endangered,Monachus monachus,0.8
 13653,2015,EN,Endangered,Monachus monachus,0.6
 14363,1994,VU,Vulnerable,Natator depressus,0.4
+14363,1996,DD,Data Deficient,Natator depressus,NA
 14363,1996,VU,Vulnerable,Natator depressus,0.4
+15419,1988,DD,Insufficiently Known,Orcaella brevirostris,NA
+15419,1990,DD,Insufficiently Known,Orcaella brevirostris,NA
+15419,1994,DD,Insufficiently Known,Orcaella brevirostris,NA
+15419,1996,DD,Data Deficient,Orcaella brevirostris,NA
 15419,2008,VU,Vulnerable,Orcaella brevirostris,0.4
+15421,1994,DD,Insufficiently Known,Orcinus orca,NA
 15421,1996,CD,Lower Risk/conservation dependent,Orcinus orca,0.3
+15421,2008,DD,Data Deficient,Orcinus orca,NA
+15421,2013,DD,Data Deficient,Orcinus orca,NA
+16564,1994,DD,Insufficiently Known,Peponocephala electra,NA
 16564,1996,LC,Lower Risk/least concern,Peponocephala electra,0
 16564,2008,LC,Least Concern,Peponocephala electra,0
 17028,1986,VU,Vulnerable,Phocoena sinus,0.4
@@ -157,21 +233,43 @@ iucn_sid,year,cat,cat_txt,sciname,cat_score
 17028,1996,CR,Critically Endangered,Phocoena sinus,0.8
 17028,2007,CR,Critically Endangered,Phocoena sinus,0.8
 17028,2008,CR,Critically Endangered,Phocoena sinus,0.8
+17978,1988,DD,Insufficiently Known,Pontoporia blainvillei,NA
+17978,1990,DD,Insufficiently Known,Pontoporia blainvillei,NA
+17978,1994,DD,Insufficiently Known,Pontoporia blainvillei,NA
+17978,1996,DD,Data Deficient,Pontoporia blainvillei,NA
 17978,2008,VU,Vulnerable,Pontoporia blainvillei,0.4
 17978,2012,VU,Vulnerable,Pontoporia blainvillei,0.4
+18596,1994,DD,Insufficiently Known,Pseudorca crassidens,NA
 18596,1996,LC,Lower Risk/least concern,Pseudorca crassidens,0
+18596,2008,DD,Data Deficient,Pseudorca crassidens,NA
+19488,1990,DD,Indeterminate,Rhincodon typus,NA
+19488,1994,DD,Indeterminate,Rhincodon typus,NA
+19488,1996,DD,Data Deficient,Rhincodon typus,NA
 19488,2000,VU,Vulnerable,Rhincodon typus,0.4
 19488,2005,VU,Vulnerable,Rhincodon typus,0.4
 19488,2016,EN,Endangered,Rhincodon typus,0.6
+20424,1994,DD,Insufficiently Known,Sousa chinensis,NA
+20424,1996,DD,Data Deficient,Sousa chinensis,NA
 20424,2008,NT,Near Threatened,Sousa chinensis,0.2
+20729,1994,DD,Insufficiently Known,Stenella attenuata,NA
 20729,1996,CD,Lower Risk/conservation dependent,Stenella attenuata,0.3
 20729,2008,LC,Least Concern,Stenella attenuata,0
 20729,2012,LC,Least Concern,Stenella attenuata,0
+20731,1994,DD,Insufficiently Known,Stenella coeruleoalba,NA
 20731,1996,CD,Lower Risk/conservation dependent,Stenella coeruleoalba,0.3
 20731,2008,LC,Least Concern,Stenella coeruleoalba,0
 20733,1996,CD,Lower Risk/conservation dependent,Stenella longirostris,0.3
+20733,2008,DD,Data Deficient,Stenella longirostris,NA
+20733,2012,DD,Data Deficient,Stenella longirostris,NA
+20738,1994,DD,Insufficiently Known,Steno bredanensis,NA
+20738,1996,DD,Data Deficient,Steno bredanensis,NA
 20738,2008,LC,Least Concern,Steno bredanensis,0
 20738,2012,LC,Least Concern,Steno bredanensis,0
+21500,1994,DD,Insufficiently Known,Tasmacetus shepherdi,NA
+21500,1996,DD,Data Deficient,Tasmacetus shepherdi,NA
+21500,2008,DD,Data Deficient,Tasmacetus shepherdi,NA
+22563,1994,DD,Insufficiently Known,Tursiops truncatus,NA
+22563,1996,DD,Data Deficient,Tursiops truncatus,NA
 22563,2008,LC,Least Concern,Tursiops truncatus,0
 22563,2012,LC,Least Concern,Tursiops truncatus,0
 22823,1965,T,"""Less rare but believed to be threatened-requires watching""",Ursus maritimus,0.6
@@ -184,8 +282,14 @@ iucn_sid,year,cat,cat_txt,sciname,cat_score
 22823,2006,VU,Vulnerable,Ursus maritimus,0.4
 22823,2008,VU,Vulnerable,Ursus maritimus,0.4
 22823,2015,VU,Vulnerable,Ursus maritimus,0.4
+23211,1994,DD,Insufficiently Known,Ziphius cavirostris,NA
+23211,1996,DD,Data Deficient,Ziphius cavirostris,NA
 23211,2008,LC,Least Concern,Ziphius cavirostris,0
+39338,2000,DD,Data Deficient,Megachasma pelagios,NA
+39338,2005,DD,Data Deficient,Megachasma pelagios,NA
 39338,2015,LC,Least Concern,Megachasma pelagios,0
+39339,2000,DD,Data Deficient,Alopias vulpinus,NA
+39339,2002,DD,Data Deficient,Alopias vulpinus,NA
 39339,2009,VU,Vulnerable,Alopias vulpinus,0.4
 39340,2000,EN,Endangered,Cetorhinus maximus,0.6
 39340,2009,EN,Endangered,Cetorhinus maximus,0.6
@@ -211,10 +315,20 @@ iucn_sid,year,cat,cat_txt,sciname,cat_score
 39428,2008,CR,Critically Endangered,Orcaella brevirostris,0.8
 39545,2000,EN,Endangered,Cetorhinus maximus,0.6
 39545,2009,EN,Endangered,Cetorhinus maximus,0.6
+40635,1994,DD,Insufficiently Known,Indopacetus pacificus,NA
+40635,1996,DD,Data Deficient,Indopacetus pacificus,NA
+40635,2008,DD,Data Deficient,Indopacetus pacificus,NA
 41711,1996,EN,Endangered,Eubalaena japonica,0.6
 41711,2008,EN,Endangered,Eubalaena japonica,0.6
 41712,2008,EN,Endangered,Eubalaena glacialis,0.6
 41712,2012,EN,Endangered,Eubalaena glacialis,0.6
+41714,1996,DD,Data Deficient,Tursiops aduncus,NA
+41714,2008,DD,Data Deficient,Tursiops aduncus,NA
+41714,2012,DD,Data Deficient,Tursiops aduncus,NA
+41715,1994,DD,Insufficiently Known,Phocoena dioptrica,NA
+41715,1996,DD,Data Deficient,Phocoena dioptrica,NA
+41715,2008,DD,Data Deficient,Phocoena dioptrica,NA
+41755,1994,DD,Insufficiently Known,Physeter macrocephalus,NA
 41755,1996,VU,Vulnerable,Physeter macrocephalus,0.4
 41755,2008,VU,Vulnerable,Physeter macrocephalus,0.4
 41761,2003,VU,Vulnerable,Pontoporia blainvillei,0.4
@@ -243,12 +357,17 @@ iucn_sid,year,cat,cat_txt,sciname,cat_score
 16285718,2012,LC,Least Concern,Chelonia mydas,0
 16369383,2012,VU,Vulnerable,Tursiops truncatus,0.4
 16370739,2012,EN,Endangered,Physeter macrocephalus,0.6
+16376479,2012,DD,Data Deficient,Globicephala melas,NA
+16378423,2012,DD,Data Deficient,Grampus griseus,NA
+16381144,2012,DD,Data Deficient,Ziphius cavirostris,NA
 16674437,2012,VU,Vulnerable,Stenella coeruleoalba,0.4
 46967807,2013,CR,Critically Endangered,Dermochelys coriacea,0.8
 46967817,2013,CR,Critically Endangered,Dermochelys coriacea,0.8
 46967827,2013,LC,Least Concern,Dermochelys coriacea,0
 46967838,2013,CR,Critically Endangered,Dermochelys coriacea,0.8
+46967848,2013,DD,Data Deficient,Dermochelys coriacea,NA
 46967863,2013,CR,Critically Endangered,Dermochelys coriacea,0.8
+46967873,2013,DD,Data Deficient,Dermochelys coriacea,NA
 83644804,2015,LC,Least Concern,Caretta caretta,0
 83652278,2015,LC,Least Concern,Caretta caretta,0
 83776383,2015,EN,Endangered,Caretta caretta,0.6
