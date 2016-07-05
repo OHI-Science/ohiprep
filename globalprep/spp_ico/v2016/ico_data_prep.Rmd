@@ -107,25 +107,7 @@ Changes since 2015 ICO subgoal for global OHI:
   
 # Methods
 
-## get master list of Iconic Species
 
-``` {r get_ico_spp_list}
-ico_list_raw <- get_ico_list(reload = TRUE)
-
-#                   comname                  sciname ico_gl ico_rgn_id
-# 1      Peruvian anchoveta        Engraulis ringens  FALSE        138
-# 2 Mediterranean monk seal        Monachus monachus  FALSE        183
-# 3     Smooth-coated Otter  Lutrogale perspicillata  FALSE        203
-# 4            Ganges Shark       Glyphis gangeticus  FALSE        203
-# 5       Pygmy right whale        Caperea marginata  FALSE         16
-# 6   Antarctic minke whale Balaenoptera bonaerensis  FALSE         16
-### * ico_rgn_id: rgn_id in which species is iconic by regional/national
-###   lists; if globally iconic, ico_rgn_id <- NA
-```
-
-`r DT::datatable(ico_list_raw, caption = 'Iconic species list')`
-
-***
 
 ``` {r setup functions}
 
@@ -182,6 +164,26 @@ if(!file.exists(spp_list_from_api_file)) {
 }
 
 ```
+
+## get master list of Iconic Species
+
+``` {r get_ico_spp_list}
+ico_list_raw <- get_ico_list(reload = TRUE)
+
+#                   comname                  sciname ico_gl ico_rgn_id
+# 1      Peruvian anchoveta        Engraulis ringens  FALSE        138
+# 2 Mediterranean monk seal        Monachus monachus  FALSE        183
+# 3     Smooth-coated Otter  Lutrogale perspicillata  FALSE        203
+# 4            Ganges Shark       Glyphis gangeticus  FALSE        203
+# 5       Pygmy right whale        Caperea marginata  FALSE         16
+# 6   Antarctic minke whale Balaenoptera bonaerensis  FALSE         16
+### * ico_rgn_id: rgn_id in which species is iconic by regional/national
+###   lists; if globally iconic, ico_rgn_id <- NA
+```
+
+`r DT::datatable(ico_list_raw, caption = 'Iconic species list')`
+
+***
 
 ``` {r combine_iucn_spp_info_with_ico_list}
 
@@ -312,6 +314,7 @@ pop_cat <- data.frame(cat       = c("LC", "NT", "VU", "EN", "CR", "EX", "T", "CD
   
 ico_assess <- ico_assess %>% 
   left_join(pop_cat, by = 'cat') %>%
+  filter(!is.na(cat_score)) %>%
   distinct() %>%
   arrange(iucn_sid, year)
 
