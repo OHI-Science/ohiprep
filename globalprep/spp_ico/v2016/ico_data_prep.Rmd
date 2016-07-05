@@ -454,7 +454,7 @@ write_csv(ico_sum, file.path(dir_goal, scenario, 'summary/ico_summary.csv'))
 ico_status_raw1 <- ico_status_raw %>%
   dplyr::select(rgn_id, sciname, iucn_sid, year, category = cat)
 
-write_csv(ico_status_raw1, file.path(dir_goal, scenario, 'output/ico_status_raw.csv'))
+write_csv(ico_status_raw1, file.path(dir_goal, scenario, 'output/ico_spp_iucn_status.csv'))
 write_csv(ico_status_calc, file.path(dir_goal, scenario, 'output/ico_status_calc.csv'))
 write_csv(ico_trend,       file.path(dir_goal, scenario, 'output/ico_trend.csv'))
 
