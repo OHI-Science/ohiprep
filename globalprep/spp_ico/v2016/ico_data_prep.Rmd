@@ -86,28 +86,15 @@ Changes since 2015 ICO subgoal for global OHI:
 **Species native country information:**
 
 * __Reference__: 
-    * IUCN 2015. The IUCN Red List of Threatened Species. Version 2015-4. <http://www.iucnredlist.org>.
-        * Shapefiles available from: http://www.iucnredlist.org/technical-documents/spatial-data
-        * __Downloaded__: 21 December 2015.
-* __Native data resolution__: NA
-* __Time range__: NA
-* __Format__:  Shapefile
-
-**Species extinction risk information:**
-
-* __Reference__: 
-    * IUCN 2015. The IUCN Red List of Threatened Species. Version 2015-4. <http://www.iucnredlist.org>.
-        * Shapefiles available from: http://www.iucnredlist.org/technical-documents/spatial-data
-        * __Downloaded__: 21 December 2015.
-* __Native data resolution__: NA
-* __Time range__: NA
-* __Format__:  Shapefile
+    * IUCN 2016. IUCN Red List of Threatened Species. Version 2016-1 <www.iucnredlist.org>
+        * __Accessed__: `r date()` by `r Sys.info()['user']` 
+* __Native data resolution__: Country level (by country name)
+* __Time range__: 1965-2015 (discrete past assessments by species)
+* __Format__:  JSON
 
 ***
   
 # Methods
-
-
 
 ``` {r setup functions}
 
@@ -127,6 +114,11 @@ mc_get_from_api <- function(url, param_vec) {
                str_replace('result.', ''))
 }
 ```
+
+Using the IUCN API, we accessed the full IUCN species list at http://apiv3.iucnredlist.org/api/v3/speciescount?token=<token>.  With some minor formatting, this list contains the following variables:
+
+iucn_sid | kingdom | phylum | class | order | family | genus | sciname | population | category
+
 
 ``` {r get_spp_info}
 ### Get all pages and bind into total species list
@@ -165,7 +157,10 @@ if(!file.exists(spp_list_from_api_file)) {
 
 ```
 
+
 ## get master list of Iconic Species
+
+The list of Iconic Species is based upon the original ICO list generated in 2011, using species identified as globally iconic (WWF Flagship species and Priority species) or regionally iconic (based upon WWF regional/local priority species and nation-specific lists).
 
 ``` {r get_ico_spp_list}
 ico_list_raw <- get_ico_list(reload = TRUE)
@@ -184,6 +179,10 @@ ico_list_raw <- get_ico_list(reload = TRUE)
 `r DT::datatable(ico_list_raw, caption = 'Iconic species list')`
 
 ***
+
+## Identify countries with extant ICO species populations
+
+Filtering the complete IUCN species list to include only the identified Iconic Species, we then use the IUCN API to access the list of countries in which each species occurs, from http://apiv3.iucnredlist.org/api/v3/species/countries/id/<species ID>?token=<token>.  The country list identifies whether the species' presence in that country is "Extant", "Extinct Post-1500", or "Possibly Extinct"; the "Extinct Post-1500" presence will be used later to identify locally extinct populations.
 
 ``` {r combine_iucn_spp_info_with_ico_list}
 
@@ -254,7 +253,17 @@ write_csv(ico_spp_rgn, file.path(dir_goal, scenario, 'int/ico_spp_rgn.csv'))
 
 ```
 
+Sample of `ico_spp_rgn` saved at `~/github/ohiprep/globalprep/spp_ico/v2016/int/ico_spp_rgn.csv`:
+
+`r knitr::kable(head(ico_spp_rgn))`
+
 ***
+
+## Identify extinction risk from current and past assessments
+
+We accessed the IUCN API to determine past IUCN assessments for each of the identified iconic species: http://apiv3.iucnredlist.org/api/v3/species/history/id/<species id>?token=<token>.
+
+Each assessment includes a year and an extinction risk, along with additional information on the assessment.
 
 ``` {r get_category_list}
 ### for each species ID, get past assessments
@@ -275,7 +284,24 @@ write_csv(ico_assess_raw, file.path(dir_goal, scenario, 'int/ico_assessments_raw
 
 ```
 
-***
+`r DT::datatable(ico_assess_raw, caption = 'ICO species and past IUCN assessments')`
+
+These raw assessments are cleaned up to standardize codes and categories, and category scores are assigned based on a scale from Least Concern = 1 to Extinct = 0, as per the Species OHI subgoal.  Note that past assessments used different coding, especially prior to 1994; we reclassified older codes according to this chart:
+
+```
+New category <- original category/description                         
+#     NT     <- "LOWER RISK/NEAR THREATENED (LR/NT)"                       
+#      T     <- "THREATENED (T)" treat as "EN"
+#     VU     <- "VULNERABLE (V)"                                           
+#     EN     <- "ENDANGERED (E)"                                           
+#  LR/CD     <- "LOWER RISK/CONSERVATION DEPENDENT (LR/CD)" treat as between VU and NT
+#     CR     <- "VERY RARE AND BELIEVED TO BE DECREASING IN NUMBERS"       
+#      T     <- "LESS RARE BUT BELIEVED TO BE THREATENED-REQUIRES WATCHING"
+#     DD     <- "INSUFFICIENTLY KNOWN (K)"                                 
+#     DD     <- "INDETERMINATE (I)"                                        
+#     DD     <- "STATUS INADEQUATELY KNOWN-SURVEY REQUIRED OR DATA SOUGHT" 
+#     NE     <- "NOT RECOGNIZED (NR)"  
+```
 
 ``` {r clean_up_category_list}
 ### Clean up the time series
@@ -295,19 +321,7 @@ ico_assess <- ico_assess_raw %>%
          cat = ifelse(cat == 'V', 'VU', cat), 
          cat = ifelse(cat == 'E', 'EN', cat))
 
-### reclassifications:
-#  LC <- "LOWER RISK/LEAST CONCERN (LR/LC)"                         
-#  NT <- "LOWER RISK/NEAR THREATENED (LR/NT)"                       
-#  T  <- "THREATENED (T)" treat as "EN"
-#  VU <- "VULNERABLE (V)"                                           
-#  EN <- "ENDANGERED (E)"                                           
-#  LR/CD <- "LOWER RISK/CONSERVATION DEPENDENT (LR/CD)" treat as between VU and NT
-#  CR <- "VERY RARE AND BELIEVED TO BE DECREASING IN NUMBERS"       
-#  T  <- "LESS RARE BUT BELIEVED TO BE THREATENED-REQUIRES WATCHING"
-#  DD <- "INSUFFICIENTLY KNOWN (K)"                                 
-#  DD <- "INDETERMINATE (I)"                                        
-#  DD <- "STATUS INADEQUATELY KNOWN-SURVEY REQUIRED OR DATA SOUGHT" 
-#  NE <- "NOT RECOGNIZED (NR)"         
+       
 pop_cat <- data.frame(cat       = c("LC", "NT", "VU", "EN", "CR", "EX", "T", "CD", "NE", "DD"), 
                       cat_score = c(   0,  0.2,  0.4,  0.6,  0.8,  1.0, 0.6,  0.3,   NA,  NA),
                       stringsAsFactors = FALSE)
@@ -323,6 +337,8 @@ write_csv(ico_assess, file.path(dir_goal, scenario, 'int/ico_assess_clean.csv'))
 ```
 
 ***
+
+Using `tidyr::complete()` and `tidyr::fill()`, we create a full time series for all species from the earliest assessment to the most recent year.
 
 ``` {r fill_out_category_time_series}
 
@@ -368,7 +384,9 @@ write_csv(ico_spp_cat, file.path(dir_goal, scenario, 'int/ico_spp_cat.csv'))
 
 ```
 
-***
+## Combine IUCN risk category time series with country <-> species lookup table
+
+Using `dplyr::full_join()` we combine the `ico_spp_rgn` dataframe (iconic species by OHI region) with the `ico_spp_cat` dataframe (iconic species by category and year, with species info, year, and category info).  
 
 ``` {r combine_ico_spp_cat_with_countries}
 
@@ -406,7 +424,18 @@ write_csv(ico_spp_rgn_cat, file.path(dir_goal, scenario, 'int/ico_spp_rgn_cat.cs
 
 ```
 
+Sample of `ico_spp_rgn_cat` saved at `~/github/ohiprep/globalprep/spp_ico/v2016/int/ico_spp_rgn_cat.csv`:
+
+`r knitr::kable(head(ico_spp_rgn_cat, 10))`
+
 ***
+
+## Prep dataframe for toolbox; estimate status and trend
+
+The toolbox wants `rgn_id`, species `sciname`, and extinction risk `category` for the basic calculations.  Since some regions contain multiple subpops (or parent/subpop) we also include `iucn_sid` to differentiate.  This information is included for each `year`, filtered back to the year 2000.
+
+While the official calculations are performed in the toolbox, we perform the same basic calcs here to get a sense of the ICO status and trend ahead of time.
+
 ``` {r report_status_and_trend}
 ### Report and summarize estimate of regional iconic species status
 
@@ -481,7 +510,9 @@ table(ico_status_raw1$category)
 
 ***
 
-### Plot scores time series
+## Plot scores time series
+
+To examine results of the new methods (including API-based data scraping and trend based on time series), we plot the estimated status and trend over time.
 
 ``` {r spp_plot_scores_over_time, fig.height = 4, fig.width = 6, fig.align = 'center'}
 library(ggplot2)
@@ -516,7 +547,18 @@ ggplotly(trend_ts_plot)
 
 ***
 
-### Compare scores OHI 2016 vs OHI 2015 
+## Compare scores OHI 2016 vs OHI 2015 
+
+To verify that this year's methods are not too crazy relative to prior years' methods, we plot the estimated status (for eez2013 scenario) based on v2016 methods and v2015 methods.  
+
+* For the most part, the status scores are similar. Some differences can be attributed to: 
+    * updated region data from the new IUCN API
+    * updated category data
+    * improved methodology of including subpopulations
+* Trend scores are very different.  This is clearly attributed to the time-series approach.
+    * A linear model comparing v2015 trend to v2016 trend shows an adjusted R^2 = 0.3591, suggesting that the difference is more a matter of scaling factor and intercept.
+    * While the differences are clear, the time-series approach is better as it more directly measures the change in category over time, as opposed to the simple "population trend" method which assigned +0.5, +0.0, -0.5 scores to increasing, stable, and decreasing populations per the most recent assessment.
+
 
 ``` {r spp_plot_scores_vs_2015, fig.height = 4, fig.width = 6, fig.align = 'center'}
 
