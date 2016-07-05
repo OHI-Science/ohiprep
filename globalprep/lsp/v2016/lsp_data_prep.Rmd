@@ -373,7 +373,7 @@ Year-by-year status and trend estimates will be saved:
 
 ``` {r calc_lsp_status_trend_summary}
 lsp_status_trend_summary <- rgn_names %>% 
-  left_join(status_df %>% filter(), by = 'rgn_id') %>% 
+  left_join(status_df, by = 'rgn_id') %>% 
   left_join(trend_df, by = c('rgn_id', 'year')) %>%
   arrange(desc(year), rgn_id)
 ```
@@ -415,19 +415,68 @@ ggsave(file.path(dir_goal, 'int/plot_v2015_v2016.png'), plot = lsp_plot_v2015)
 
 ```
 
-``` {r eval = FALSE}
+``` {r outlier_checks eval = FALSE}
 
-### LSP outlier check
-# Palau            100 -> 37 seems little change in MPAs - check area .csv
-# Tristan da Cunha 100 -> 0 STATUS changed from Designated to Inscribed (World Heritage Site in both years)
-# Prince Edward     50 -> 0 !!! There is a poly there for both years; Designated for both; why not counted properly?
-# Pitcairn          50 -> 0
-# Yemen             40 -> 0
+### LSP outlier check based on estimates
+#  88 Tristan da Cunha 100 -> 0   OK: STATUS changed from Designated to Inscribed (World Heritage Site in both years)
+# 146 Pitcairn          50 -> 0   OK?: looks like land-based protected area; not in 2016 raster
+#  47 Yemen             40 -> 0   OK?: land-based protected area on island; not in 2016 raster
 # 
-# Bahamas            3 -> 51
-# Albania           17 -> 62
-# Japan             84 -> 100
-# ill europa         0 -> 100 (plus another underneath)
-# sao tome and principe 0 -> 30
+# 110 Bahamas            3 -> 51  OK: new PAs showing up in 2016 raster (2015: SE island; 2016: add more on main island)
+#  82 Albania           17 -> 62  OK: much more protection showing up in 2016 raster
+# 210 Japan             84 -> 100 OK: many MPAs showing up on N island and all over
+#  35 Ile Europa         0 -> 100 OK: no PA in 2015 raster; now lots in 2016.
+# 103 Sao Tome/Principe  0 -> 30  OK: no PA in 2015 raster; some in 2016.
+#  90 Prince Edward     50 -> 100 OK: old data had 50 -> 100 from 2012->2013; new data has 0 -> 100; 
+#         new WDPA (2016) has big MPA in 2013 and nothing before, but WDPA 2015 had a
+#         small protected area from 2007.  Change is valid based on the new data.
+
+### THESE STILL NEED INVESTIGATION
+#   8 Palau            100 -> 37  
+#     !!! old raster shows big area in 2012 and scattered area from year 0;
+#         but new raster shows only the year 0 area.  Check the polygons!
+#     - according to csvs, looks like terr pa 186.75 -> 40.5, mpa 831.75 -> 103.25, which would drive scores
+
+# Mel's outlier checks:
+# rgn 88 (-100 drop in score!): The old data had 505 nm2 offshore and 49 km2 inland polygons in 1995, but these were gone in this year's analysis.
+# rgn 8 (-59 drop in score): The old data had 645 nm2 offshore and 63 km2 inland polygons in 2012, but these were gone in this year's analysis.
+# rgns 91, 92, 93 (+ increase in score): The new data included large polygons added in 2008 for all three regions that were no in the previous year's data.
+
+mpa2016 <- read_csv(file.path(dir_goal, 'output/lsp_protected_offshore3nm.csv'))
+tpa2016 <- read_csv(file.path(dir_goal, 'output/lsp_protected_inland1km.csv'))
+
+marea2016 <- read_csv(file.path(dir_goal, 'output/rgn_area_offshore3nm.csv'))
+tarea2016 <- read_csv(file.path(dir_goal, 'output/rgn_area_inland1km.csv'))
+
+mpa2015 <- read_csv(file.path(dir_goal, '../v2015/data/lsp_protarea_offshore3nm.csv')) %>%
+  group_by(rgn_id) %>%
+  mutate(a_prot_3nm = cumsum(area_km2)) %>%
+  select(-area_km2)
+tpa2015 <- read_csv(file.path(dir_goal, '../v2015/data/lsp_protarea_inland1km.csv')) %>%
+  group_by(rgn_id) %>%
+  mutate(a_prot_1km = cumsum(area_km2)) %>%
+  select(-area_km2)
+
+lsp_v2015 <- read_csv('~/github/ohi-global/eez2013/scores.csv') %>%
+
+marea2015 <- read_csv('~/github/ohi-global/eez2013/layers/rgn_area_offshore3nm.csv')
+tarea2015 <- read_csv('~/github/ohi-global/eez2013/layers/rgn_area_inland1km.csv')
+
+checks <- mpa2016 %>% filter(rgn_id %in% c(8, 90)) %>% filter(year > 2000) %>% rename(prot_3nm_2016 = a_prot_3nm) %>%
+  left_join(tpa2016 %>% filter(rgn_id %in% c(8, 90)) %>% filter(year > 2000) %>% rename(prot_1km_2016 = a_prot_1km),
+            by = c('rgn_id', 'year')) %>%
+  left_join(mpa2015 %>% filter(rgn_id %in% c(8, 90)) %>% filter(year > 2000) %>% rename(prot_3nm_2015 = a_prot_3nm),
+            by = c('rgn_id', 'year')) %>%
+  left_join(tpa2015 %>% filter(rgn_id %in% c(8, 90)) %>% filter(year > 2000) %>% rename(prot_1km_2015 = a_prot_1km),
+            by = c('rgn_id', 'year')) %>%
+  left_join(marea2016 %>% filter(rgn_id %in% c(8, 90)) %>% rename(marea16 = area),
+            by = c('rgn_id')) %>%
+  left_join(tarea2016 %>% filter(rgn_id %in% c(8, 90)) %>% rename(tarea16 = area),
+            by = c('rgn_id')) %>%
+  left_join(marea2015 %>% filter(rgn_id %in% c(8, 90)) %>% rename(marea15 = area_km2),
+            by = c('rgn_id')) %>%
+  left_join(tarea2015 %>% filter(rgn_id %in% c(8, 90)) %>% rename(tarea15 = area_km2),
+            by = c('rgn_id'))
+```
 
 ***
