@@ -1,0 +1,539 @@
+---
+title: 'OHI: Species subgoal'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
+                      echo = FALSE, message = FALSE, warning = FALSE)
+
+source('~/github/ohiprep/src/R/common.R')
+library(readr)
+
+goal      <- 'globalprep/spp_ico'
+scenario  <- 'v2016'
+dir_anx   <- file.path(dir_M, 'git-annex', goal) 
+dir_goal  <- file.path('~/github/ohiprep', goal)
+
+### set up provenance tracking for this script:
+# source(file.path('~/github/ohibc', 'src/R/prov.R'))          
+
+source(file.path(dir_goal, scenario, 'ico_fxn.R'))
+
+if(!file.exists(file.path(dir_goal, 'README.md'))) {
+  warning(sprintf('No README detected in %s', dir_git))
+}
+if(!file.exists(file.path(dir_goal, scenario, 'README.md'))) {
+  warning(sprintf('No README detected in %s', file.path(dir_git, scenario)))
+}
+# SPP-specific and ICO-specific functions
+```
+
+# Summary:  Iconic Species Subgoal (Sense of Place)
+
+This script prepares scores (status and trend) for Iconic Species in 
+British Columbia's coastal regions.  Spatial data from IUCN and Aquamaps is
+combined with extinction risk information from IUCN and conservation rank
+info based on NatureServe categories.
+
+The Iconic Species sub-goal model calculates a region's status based upon an unweighted average of species health for all 'iconic' species found within each BC reporting region.
+
+From Halpern et al (2012):
+
+> Iconic species are those that are relevant to local cultural identity through a species’ relationship to one or more of the following: 1) traditional activities such as fishing, hunting or commerce; 2) local ethnic or religious practices; 3) existence value; and 4) locally-recognized aesthetic value (e.g., touristic attractions/common subjects for art such as whales). Habitat-forming species are not included in this definition of iconic species, nor are species that are harvested solely for economic or utilitarian purposes (even though they may be iconic to a sector or individual). ...
+
+> Ultimately, almost any species can be iconic to someone, and so the intent with this goal was to focus on those species widely seen as iconic within a country, and iconic from a cultural or existence value (rather than for a livelihoods or extractive reason). ...
+
+> The reference point is to have the risk status of all assessed species as Least Concern (i.e., a goal score = 1.0)
+
+The Status of this sub-goal (X~ICO~) is then the % of iconic species in each threat category (as defined by the IUCN Red List), such that:
+
+$$X_{ICO} = \frac{\displaystyle\sum_{category}S_{cat}*w_{cat}}{\displaystyle\sum_{category}S_{cat}}$$
+
+where for each IUCN threat category:
+
+* *S~cat~* is the number of assessed species in the category
+* *w~cat~* is the status weight assigned for that category (note, these are the inverse of the risk value used in the SPP calculations):
+    * 'LC' = 1.0, 'NT' = 0.8, 'VU' = 0.6, 'EN' = 0.4, 'CR' = 0.2, 'EX' = 0.0
+
+ICO trend is calculated in a similar manner, but weightings are assigned according to IUCN population trend: 'Decreasing' = -0.5, 'Stable' = 0.0, 'Increasing' = +0.5.  
+
+# Updates from previous assessment
+
+Changes since 2015 ICO subgoal for global OHI:
+
+* The 2016 assessment now pulls data from the new IUCN API (http://apiv3.iucnredlist.org/api/v3/docs) instead of the old API.
+* The trend calculations for 2016 are based on a ten-year linear trend of species risk status based on past assessment information, rather than population trend ('decreasing', 'stable', 'increasing').
+
+***
+
+# Data Sources
+
+**List of iconic species:**
+
+**Species native country information:**
+
+* __Reference__: 
+    * IUCN 2015. The IUCN Red List of Threatened Species. Version 2015-4. <http://www.iucnredlist.org>.
+        * Shapefiles available from: http://www.iucnredlist.org/technical-documents/spatial-data
+        * __Downloaded__: 21 December 2015.
+* __Native data resolution__: NA
+* __Time range__: NA
+* __Format__:  Shapefile
+
+**Species extinction risk information:**
+
+* __Reference__: 
+    * IUCN 2015. The IUCN Red List of Threatened Species. Version 2015-4. <http://www.iucnredlist.org>.
+        * Shapefiles available from: http://www.iucnredlist.org/technical-documents/spatial-data
+        * __Downloaded__: 21 December 2015.
+* __Native data resolution__: NA
+* __Time range__: NA
+* __Format__:  Shapefile
+
+***
+  
+# Methods
+
+## get master list of Iconic Species
+
+``` {r get_ico_spp_list}
+ico_list_raw <- get_ico_list()
+
+#                   comname                  sciname ico_gl ico_rgn_id
+# 1      Peruvian anchoveta        Engraulis ringens  FALSE        138
+# 2 Mediterranean monk seal        Monachus monachus  FALSE        183
+# 3     Smooth-coated Otter  Lutrogale perspicillata  FALSE        203
+# 4            Ganges Shark       Glyphis gangeticus  FALSE        203
+# 5       Pygmy right whale        Caperea marginata  FALSE         16
+# 6   Antarctic minke whale Balaenoptera bonaerensis  FALSE         16
+### * ico_rgn_id: rgn_id in which species is iconic by regional/national
+###   lists; if globally iconic, ico_rgn_id <- NA
+```
+
+`r DT::datatable(ico_list_raw, caption = 'Iconic species list')`
+
+***
+
+``` {r setup functions}
+
+get_from_api <- function(url, param) {
+    api_info <- fromJSON(sprintf(url, param, api_key)) %>%
+      data.frame()
+}
+
+mc_get_from_api <- function(url, param_vec) {
+  numcores = ifelse(Sys.info()[['nodename']] == 'mazu', 12, 1)
+  out_df <- parallel::mclapply(param_vec, 
+                          function(x) get_from_api(url, x),
+                          mc.cores = numcores) %>% 
+    rbind_all() 
+  out_df <- out_df %>%
+    setNames(names(.) %>%
+               str_replace('result.', ''))
+}
+```
+
+``` {r get_spp_info}
+### Get all pages and bind into total species list
+
+library(jsonlite)
+api_key <- 'fb71ae836f415f04f41176f6d30c4a9e4cea620d46b9e5021bf2fb142ea51bf5'
+
+spp_npage_url <- sprintf('http://apiv3.iucnredlist.org/api/v3/speciescount?token=%s', api_key)
+n_spp <- fromJSON(spp_npage_url) %>%
+  .$count %>% as.integer()
+n_pages <- ceiling(n_spp/10000)
+
+spp_page_url <- 'http://apiv3.iucnredlist.org/api/v3/species/page/%s?token=%s'
+spp_df_all <- mc_get_from_api(spp_page_url, c(0:(n_pages - 1)))
+
+spp_df_all <- spp_df_all %>%
+  dplyr::select(-infra_rank, -infra_name, -count, -page) %>%
+  rename(iucn_sid = taxonid, sciname = scientific_name) %>%
+  setNames(names(.) %>%
+             str_replace('_name', ''))
+
+write_csv(spp_df_all, file.path(dir_goal, scenario, 'int/spp_list_from_api.csv'))
+
+```
+
+``` {r combine_iucn_spp_info_with_ico_list}
+
+spp_df_all <- read_csv(file.path(dir_goal, scenario, 'int/spp_list_from_api.csv'))
+
+spp_ico <- spp_df_all %>% 
+  filter(sciname %in% ico_list_raw$sciname) 
+
+spp_missing <- ico_list_raw %>% 
+  filter(!sciname %in% spp_ico$sciname)
+# none! :)
+
+ico_list <- ico_list_raw %>%
+  left_join(spp_ico %>% 
+              select(iucn_sid, sciname, subpop = population, cat = category),
+            by = 'sciname')
+            
+```
+
+``` {r get_country_list}
+### for each species ID, get country list
+ico_country_url <- 'http://apiv3.iucnredlist.org/api/v3/species/countries/id/%s?token=%s'
+
+ico_spp_countries <- mc_get_from_api(ico_country_url, ico_list$iucn_sid) 
+
+ico_spp_countries <- ico_spp_countries %>% 
+  rename(iucn_sid = name1) %>%
+  mutate(iucn_sid = as.integer(iucn_sid),
+         country  = str_trim(country)) %>% 
+  left_join(ico_list %>% 
+              select(iucn_sid, sciname) %>%
+              distinct(),
+            by = 'iucn_sid')
+
+write_csv(ico_spp_countries, file.path(dir_goal, scenario, 'int/ico_spp_countries_raw.csv'))
+
+```
+
+``` {r clean_up_country_list}
+
+ico_spp_rgn <- read_csv(file.path(dir_goal, scenario, 'int/ico_spp_countries_raw.csv'))
+
+rgn_iucn2ohi <- read_csv(file.path(dir_goal, scenario, 'data/rgns_iucn2ohi.csv'))
+
+ico_spp_rgn <- ico_spp_rgn %>%
+  rename(iucn_rgn_name = country) %>%
+  left_join(rgn_iucn2ohi,
+            by = 'iucn_rgn_name') %>%
+  rename(rgn_name = ohi_rgn_name) %>%
+  select(-iucn_rgn_name, -count, -code)
+
+write_csv(ico_spp_rgn, file.path(dir_goal, scenario, 'int/ico_spp_rgn.csv'))
+
+```
+
+***
+
+``` {r get_category_list}
+### for each species ID, get past assessments
+ico_past_assess_url <- 'http://apiv3.iucnredlist.org/api/v3/species/history/id/%s?token=%s'
+
+ico_assess_raw <- mc_get_from_api(ico_past_assess_url, ico_list$iucn_sid) 
+
+ico_assess_raw <- ico_assess_raw %>% 
+  rename(iucn_sid = name) %>%
+  mutate(iucn_sid = as.integer(iucn_sid),
+         year     = as.integer(year)) %>% 
+  left_join(ico_list %>% 
+              select(iucn_sid, sciname) %>%
+              distinct(),
+            by = 'iucn_sid')
+
+write_csv(ico_assess_raw, file.path(dir_goal, scenario, 'int/ico_assessments_raw.csv'))
+
+```
+
+***
+
+``` {r clean_up_category_list}
+### Clean up the time series
+### iucn_sid | year | code | category | sciname
+
+ico_assess_raw <- read_csv(file.path(dir_goal, scenario, 'int/ico_assessments_raw.csv'))
+
+ico_assess <- ico_assess_raw %>%
+  rename(cat = code, cat_txt = category) %>%
+  mutate(cat = toupper(cat),
+         cat = str_replace(cat, 'LR/', ''),
+         cat = ifelse(cat %in% c('K', 'I'), 'DD', cat),
+         cat = ifelse(cat == 'NR', 'NE', cat),
+         cat = ifelse(str_detect(toupper(cat_txt), 'VERY RARE'), 'CR', cat),
+         cat = ifelse(str_detect(toupper(cat_txt), 'LESS RARE'), 'T', cat),
+         cat = ifelse(str_detect(toupper(cat_txt), 'STATUS INADEQUATELY KNOWN'), 'DD', cat),
+         cat = ifelse(cat == 'V', 'VU', cat), 
+         cat = ifelse(cat == 'E', 'EN', cat))
+
+### reclassifications:
+#  LC <- "LOWER RISK/LEAST CONCERN (LR/LC)"                         
+#  NT <- "LOWER RISK/NEAR THREATENED (LR/NT)"                       
+#  T  <- "THREATENED (T)" treat as "EN"
+#  VU <- "VULNERABLE (V)"                                           
+#  EN <- "ENDANGERED (E)"                                           
+#  LR/CD <- "LOWER RISK/CONSERVATION DEPENDENT (LR/CD)" treat as between VU and NT
+#  CR <- "VERY RARE AND BELIEVED TO BE DECREASING IN NUMBERS"       
+#  T  <- "LESS RARE BUT BELIEVED TO BE THREATENED-REQUIRES WATCHING"
+#  DD <- "INSUFFICIENTLY KNOWN (K)"                                 
+#  DD <- "INDETERMINATE (I)"                                        
+#  DD <- "STATUS INADEQUATELY KNOWN-SURVEY REQUIRED OR DATA SOUGHT" 
+#  NE <- "NOT RECOGNIZED (NR)"         
+pop_cat <- data.frame(cat       = c("LC", "NT", "VU", "EN", "CR", "EX", "T", "CD", "NE", "DD"), 
+                      cat_score = c(   0,  0.2,  0.4,  0.6,  0.8,  1.0, 0.6,  0.3,   NA,  NA))
+  
+ico_assess <- ico_assess %>% 
+  left_join(pop_cat, by = 'cat') %>%
+  filter(!is.na(cat_score) & !is.na(year)) %>%
+  arrange(iucn_sid, year)
+
+write_csv(ico_assess, file.path(dir_goal, scenario, 'int/ico_assess_clean.csv'))
+
+```
+
+***
+
+``` {r fill_out_category_time_series}
+
+ico_assess <- read_csv(file.path(dir_goal, scenario, 'int/ico_assess_clean.csv'))
+
+ico_assess_full <- ico_assess %>%
+  select(-sciname) %>%
+  arrange(iucn_sid, year) %>%
+  complete(year = full_seq(year, 1), nesting(iucn_sid)) %>%
+  group_by(iucn_sid) %>%
+  fill(cat, cat_txt, cat_score) %>% ### fills all the way to latest year (2015)
+  ungroup()
+
+ico_spp_cat <- ico_list %>% 
+  rename(cat_2016 = cat) %>%
+  left_join(ico_assess_full, by = c('iucn_sid'))
+
+### if no time series available, time series years will be NA.  Assign a list to
+### those NAs, then unnest it to create observations for those years.
+ico_spp_cat <- ico_spp_cat %>%
+  mutate(year = ifelse(is.na(year), 
+                       list(c(min(year, na.rm = TRUE):max(year, na.rm = TRUE))), 
+                       year)) %>% 
+  unnest(year)
+
+### NAs will be filled backward in time by starting from the most recent non-NA.
+### To do this, we'll swap any current-year NAs with the cat_score (meaning no
+### time series fill), and fill upwards instead of downwards.
+ico_spp_cat <- ico_spp_cat %>%
+  left_join(pop_cat %>% 
+              rename(cat_2016 = cat, cat_2016_score = cat_score), 
+            by = 'cat_2016') %>%
+  mutate(cat_score = ifelse(year == max(year, na.rm = TRUE) & is.na(cat), 
+                            cat_2016_score, 
+                            cat_score)) %>%
+  arrange(iucn_sid, year) %>%
+  group_by(iucn_sid) %>%
+  fill(cat, cat_score, cat_txt, .direction = 'up') %>%
+  ungroup()
+  
+write_csv(ico_spp_cat, file.path(dir_goal, scenario, 'int/ico_spp_cat.csv'))
+
+```
+
+***
+
+``` {r combine_ico_spp_cat_with_countries}
+
+ico_list_ts_abbr <- read_csv(file.path(dir_goal, scenario, 'int/ico_spp_cat.csv')) %>%
+  select(iucn_sid, sciname, year, cat, cat_score, ico_gl, ico_rgn_id) %>%
+  filter(year >= 2000)
+
+ico_spp_rgn <- read_csv(file.path(dir_goal, scenario, 'int/ico_spp_rgn.csv'))
+
+ico_spp_rgn_cat <- ico_list_ts_abbr %>% 
+  full_join(ico_spp_rgn, by = c('iucn_sid', 'sciname'))
+
+# ico_2015 <- ico_spp_rgn_cat %>%
+#   filter(year == 2015)
+# 
+# ex <- ico_spp_rgn_cat %>%
+#   filter(str_detect(tolower(distribution_code), 'extinct')) %>%
+#   filter(year == 2015)
+# 
+# ex2 <- ico_spp_rgn_cat %>%
+#   filter(sciname %in% ex$sciname) %>%
+#   filter(rgn_name %in% ex$rgn_name) %>%
+#   filter(year == 2015)
+### How to deal with "extinct" locally?  when did species go extinct? 
+### But we're only really looking at the last ten-fifteen years, so
+### maybe not important - just set all years to extinct for that region
+
+ico_spp_rgn_cat <- ico_spp_rgn_cat %>%
+  mutate(cat = ifelse(str_detect(presence, '^Extinct'), 'EX', cat), ### ^ indicates start of string
+         cat_score = ifelse(cat == 'EX', 1, cat_score)) %>%
+  filter(ico_gl | ico_rgn_id == rgn_id) ### Keep (all globally iconic) and (regionally iconic in region only)
+
+write_csv(ico_spp_rgn_cat, file.path(dir_goal, scenario, 'int/ico_spp_rgn_cat.csv'))
+
+```
+
+***
+``` {r calc_status_and_trend}
+### Report and summarize regional iconic species status
+
+ico_spp_rgn_cat <- read_csv(file.path(dir_goal, scenario, 'int/ico_spp_rgn_cat.csv'))
+
+# Report out for toolbox format (rgn_id | sciname | category or popn_trend for each species within a region).
+# Note: in toolbox, group_by(rgn_id, sciname) and then summarize(category = mean(category)) to
+#   average any parent/subpop species listings before aggregating to overall average per region.
+
+ico_status_raw <- ico_spp_rgn_cat %>%
+  select(rgn_id, rgn_name, sciname, iucn_sid, cat, cat_score, year) %>%
+  arrange(rgn_id, desc(year), sciname)
+
+ico_status_calc <- ico_status_raw %>%
+  group_by(rgn_id, rgn_name, year) %>%
+  summarize(mean_cat = round(mean(cat_score, na.rm = TRUE), 5), ### since DDs are still in, use na.rm = TRUE
+            ico_status = 1 - mean_cat,
+            n_spp = n()) 
+
+
+ico_trend <- data.frame()
+for (i in 2010:max(ico_status_calc$year, na.rm = TRUE)) { # i <- 2013
+  tmp_status <- ico_status_calc %>%
+    filter(year <= i & year > (i - 10)) ### trend based on 10-year average since assessments are sporadic
+  tmp_trend <- tmp_status %>%
+    group_by(rgn_id) %>%
+    do(trend_lm = lm(ico_status ~ year, data = .)$coefficients[2]) %>%
+    mutate(year  = i,
+           trend_lm  = as.numeric(trend_lm),
+           ico_trend = round(trend_lm * 5, 5))
+  ico_trend <- ico_trend %>%
+    bind_rows(tmp_trend)
+}
+
+ico_sum <- ico_status_raw %>%
+  left_join(ico_status_calc, by = c('rgn_id', 'rgn_name', 'year')) %>%
+  left_join(ico_trend, by = c('rgn_id', 'year'))
+
+write_csv(ico_sum, file.path(dir_goal, scenario, 'summary/ico_summary.csv'))
+# Report out for finalized status and trend values per region.
+
+write_csv(ico_status_raw,  file.path(dir_goal, scenario, 'output/ico_status_raw.csv'))
+write_csv(ico_status_calc, file.path(dir_goal, scenario, 'output/ico_status_calc.csv'))
+write_csv(ico_trend,       file.path(dir_goal, scenario, 'output/ico_trend.csv'))
+
+```
+
+### Iconic Species full list (year == 2015)
+
+`r DT::datatable(ico_status_raw %>% filter(year == 2015))`
+
+### Iconic Species processed status and trend by region (year == 2015)
+
+`r DT::datatable(ico_status_calc %>% filter(year == 2015), caption = 'ICO status')`
+
+`r DT::datatable(ico_trend %>% filter(year == 2015) %>% select(-trend_lm), caption = 'ICO trend')`
+
+***
+
+### Plot scores time series
+
+``` {r spp_plot_scores_over_time, fig.height = 4, fig.width = 6, fig.align = 'center'}
+library(ggplot2)
+library(plotly)
+
+status_ts_plot <- ggplot(ico_sum %>%
+                           filter(!is.na(rgn_id)),
+                         aes(x = year, y = ico_status, color = rgn_id, group = rgn_id)) +
+#  ggtheme_plot +
+  geom_line(size = 2) +
+#  scale_colour_brewer(palette = 'PRGn') +
+  labs(x = 'year',
+       y = 'ICO status',
+       title = 'ICO status over time',
+       color = 'Region')
+
+ggplotly(status_ts_plot)
+
+trend_ts_plot <- ggplot(ico_sum %>%
+                           filter(!is.na(rgn_id) &!is.na(ico_trend)),
+                         aes(x = year, y = ico_trend, color = rgn_id, group = rgn_id)) +
+#  ggtheme_plot +
+  geom_line(size = 2) +
+#  scale_colour_brewer(palette = 'PRGn') +
+  labs(x = 'year',
+       y = 'ICO trend',
+       title = 'ICO trend over time',
+       color = 'Region')
+
+ggplotly(trend_ts_plot)
+```
+
+***
+
+### Compare scores OHI 2016 vs OHI 2015 
+
+``` {r spp_plot_scores_vs_2015, fig.height = 4, fig.width = 6, fig.align = 'center'}
+
+ico_2015 <- read_csv('~/github/ohi-global/eez2013/scores.csv') %>%
+  filter(goal == 'ICO' & dimension %in% c('status', 'trend')) %>%
+  spread(key = dimension, value = score) %>%
+  select(-goal)
+
+ico_15_16 <- ico_sum %>%
+  filter(year == max(year)) %>% 
+  select(rgn_id, rgn_name, st_16 = ico_status, tr_16 = ico_trend, n_spp) %>%
+  distinct() %>%
+  full_join(ico_2015 %>%
+              rename(rgn_id = region_id, st_15 = status, tr_15 = trend),
+            by = 'rgn_id') %>%
+  mutate(st_16 = st_16 * 100)
+  
+st_15_16_plot <- ggplot(ico_15_16 %>%
+                           filter(!is.na(rgn_id)),
+                         aes(x = st_15, y = st_16, color = n_spp, key = rgn_name, key2 = rgn_id)) +
+  geom_point(alpha = .6) +
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  labs(x = 'ICO status v2015',
+       y = 'ICO status v2016',
+       title = 'ICO status comparison')
+
+ggplotly(st_15_16_plot)
+ggsave(file.path(dir_goal, scenario, 'int/scatterplot_status_15v16.png'))
+
+tr_15_16_plot <- ggplot(ico_15_16 %>%
+                           filter(!is.na(rgn_id)),
+                         aes(x = tr_15, y = tr_16, color = n_spp, key = rgn_name, key2 = rgn_id)) +
+  geom_point(alpha = .6) +
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  labs(x = 'ICO trend v2015',
+       y = 'ICO trend v2016',
+       title = 'ICO trend comparison')
+
+ggplotly(tr_15_16_plot)
+ggsave(file.path(dir_goal, scenario, 'int/scatterplot_trend_15v16.png'))
+
+```
+
+``` {r eval = FALSE}
+
+# ICO outlier check:
+# 
+#   1 Cocos Island 60 -> 75
+#  59 Belgium      63 -> 60
+# 164 Belize       60 -> 73
+# 208 Singapore    60 -> 77
+# 210 Japan        53 -> 63
+
+rgns <- c(1, 59, 164, 208, 210)
+x15st_tr <- read_csv('~/github/ohi-global/eez2013/layers/ico_spp_extinction_status.csv') %>%
+  filter(rgn_id %in% rgns) %>%
+  full_join(read_csv('~/github/ohi-global/eez2013/layers/ico_spp_popn_trend.csv') %>%
+              filter(rgn_id %in% rgns),
+            by = c('rgn_id', 'sciname'))
+x16st_tr <- ico_sum %>%
+  filter(year == 2015) %>%
+  filter(rgn_id %in% rgns) %>%
+  select(-year, -trend_lm)
+
+write_csv(x15st_tr, file.path(dir_goal, 'tmp_15.csv'))
+write_csv(x16st_tr, file.path(dir_goal, 'tmp_16.csv'))
+
+```
+
+***
