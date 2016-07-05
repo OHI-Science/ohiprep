@@ -408,8 +408,8 @@ write_csv(ico_spp_rgn_cat, file.path(dir_goal, scenario, 'int/ico_spp_rgn_cat.cs
 ```
 
 ***
-``` {r calc_status_and_trend}
-### Report and summarize regional iconic species status
+``` {r estimate_status_and_trend}
+### Report and summarize estimate of regional iconic species status
 
 ico_spp_rgn_cat <- read_csv(file.path(dir_goal, scenario, 'int/ico_spp_rgn_cat.csv'))
 
@@ -420,12 +420,12 @@ ico_spp_rgn_cat <- read_csv(file.path(dir_goal, scenario, 'int/ico_spp_rgn_cat.c
 ico_status_raw <- ico_spp_rgn_cat %>%
   select(rgn_id, rgn_name, sciname, iucn_sid, cat, cat_score, year) %>%
   filter(!is.na(cat_score)) %>% ### remove any DDs
-  group_by(rgn_id, rgn_name, sciname, year) %>%
-  summarize(cat_score = mean(cat_score)) %>% 
   arrange(rgn_id, desc(year), sciname) %>%
   ungroup()
 
 ico_status_calc <- ico_status_raw %>%
+  group_by(rgn_id, rgn_name, sciname, year) %>%
+  summarize(cat_score = mean(cat_score)) %>% 
   group_by(rgn_id, rgn_name, year) %>%
   summarize(mean_cat = round(mean(cat_score), 5), 
             ico_status = (1 - mean_cat) * 100,
@@ -570,7 +570,7 @@ ggsave(file.path(dir_goal, scenario, 'Figs/scatterplot_trend_15v16.png'))
 
 ```
 
-``` {r eval = FALSE}
+``` {r outlier_checks, eval = FALSE}
 
 # ICO outlier check:
 # 
