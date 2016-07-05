@@ -42,12 +42,9 @@ if(!file.exists(file.path(dir_goal, scenario, 'README.md'))) {
 
 # Summary:  Iconic Species Subgoal (Sense of Place)
 
-This script prepares scores (status and trend) for Iconic Species in 
-British Columbia's coastal regions.  Spatial data from IUCN and Aquamaps is
-combined with extinction risk information from IUCN and conservation rank
-info based on NatureServe categories.
+This script prepares scores (status and trend) for Iconic Species in each global coastal region.  For each iconic marine species, the countries of occurrence are pulled from the IUCN API.  Extinction risk categories for each species are pulled based on current and past assessments; by tracking the assessed extinction risk over time, we can understand the trends of extinction risk for iconic species directly rather than using the "population trend" method from prior OHI assessments.
 
-The Iconic Species sub-goal model calculates a region's status based upon an unweighted average of species health for all 'iconic' species found within each BC reporting region.
+The Iconic Species sub-goal model calculates a region's status based upon an unweighted average of species health for all 'iconic' species found within each reporting region.
 
 From Halpern et al (2012):
 
@@ -315,7 +312,6 @@ pop_cat <- data.frame(cat       = c("LC", "NT", "VU", "EN", "CR", "EX", "T", "CD
   
 ico_assess <- ico_assess %>% 
   left_join(pop_cat, by = 'cat') %>%
-  filter(!is.na(cat_score) & !is.na(year)) %>%
   distinct() %>%
   arrange(iucn_sid, year)
 
@@ -408,7 +404,7 @@ write_csv(ico_spp_rgn_cat, file.path(dir_goal, scenario, 'int/ico_spp_rgn_cat.cs
 ```
 
 ***
-``` {r estimate_status_and_trend}
+``` {r report_status_and_trend}
 ### Report and summarize estimate of regional iconic species status
 
 ico_spp_rgn_cat <- read_csv(file.path(dir_goal, scenario, 'int/ico_spp_rgn_cat.csv'))
@@ -419,12 +415,12 @@ ico_spp_rgn_cat <- read_csv(file.path(dir_goal, scenario, 'int/ico_spp_rgn_cat.c
 
 ico_status_raw <- ico_spp_rgn_cat %>%
   select(rgn_id, rgn_name, sciname, iucn_sid, cat, cat_score, year) %>%
-  filter(!is.na(cat_score)) %>% ### remove any DDs
   arrange(rgn_id, desc(year), sciname) %>%
   ungroup()
 
 ico_status_calc <- ico_status_raw %>%
   group_by(rgn_id, rgn_name, sciname, year) %>%
+  filter(!is.na(cat_score)) %>% ### remove any DDs
   summarize(cat_score = mean(cat_score)) %>% 
   group_by(rgn_id, rgn_name, year) %>%
   summarize(mean_cat = round(mean(cat_score), 5), 
@@ -455,9 +451,18 @@ ico_sum <- ico_status_raw %>%
 write_csv(ico_sum, file.path(dir_goal, scenario, 'summary/ico_summary.csv'))
 # Report out for finalized status and trend values per region.
 
-write_csv(ico_status_raw,  file.path(dir_goal, scenario, 'output/ico_status_raw.csv'))
+ico_status_raw1 <- ico_status_raw %>%
+  dplyr::select(rgn_id, sciname, iucn_sid, year, category = cat)
+
+write_csv(ico_status_raw1, file.path(dir_goal, scenario, 'output/ico_status_raw.csv'))
 write_csv(ico_status_calc, file.path(dir_goal, scenario, 'output/ico_status_calc.csv'))
 write_csv(ico_trend,       file.path(dir_goal, scenario, 'output/ico_trend.csv'))
+
+
+ico_status_raw1[duplicated(ico_status_raw1 ), ] 
+### NOTE: if iucn_sid were removed, this would show duplicates due to subpops 
+### with same category.
+table(ico_status_raw1$category)
 
 ```
 
