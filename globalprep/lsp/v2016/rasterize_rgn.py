@@ -42,7 +42,7 @@ if not os.path.exists(rast_base):
 if not os.path.exists('%s/tmp' % dir_anx):
     os.makedirs('%s/tmp' % dir_anx)
 poly_eez_tmp  = '%s/tmp/regions_mol_eez.shp' % dir_anx
-rast_out      = '%s/rgn_mol_raster_500m/regions_mol.tif' % dir_anx
+rast_out      = '%s/rgn_mol_raster_500m/rgn_eez_mol_500mcell.tif' % dir_anx
 
 print ('output poly_eez_tmp = ' + poly_eez_tmp)
 print ('output rast_out     = ' + rast_out)
