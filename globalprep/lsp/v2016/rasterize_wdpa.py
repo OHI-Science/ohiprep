@@ -16,10 +16,7 @@ import arcpy, os, subprocess, csv, sys, socket
 from arcpy.sa import *
 
 # configuration based on machine name
-dirs =  {'git' :'C:/Users/ohara/Documents/github/ohiprep', 
-         'mazu':'M:',
-         'tmp' :'C:/Users/ohara/tmp'
-         }
+dirs =  {'mazu':'M:'}
          
 scenario = 'v2016'
 
@@ -28,11 +25,7 @@ print (dirs)
 
 # paths
 prod     = 'globalprep/lsp/%s'    % scenario             # name of product
-# dir_git  = '%s/%s' % (dirs['git'], prod)               # local github directory inside ohiprep
-# dir_tmp  = '%s/%s' % (dirs['tmp'], prod)               # local temp directory
 dir_anx      = '%s/git-annex/globalprep' % dirs['mazu']
-print ('dir_git = ' + dir_git)
-print ('dir_tmp = ' + dir_tmp)
 print ('dir_anx = ' + dir_anx)
 
 # inputs
@@ -49,9 +42,6 @@ print ('output raster = ' + rast_out)
 # initial env
 arcpy.CheckOutExtension('Spatial')
 arcpy.env.overwriteOutput = 1
-
-# workspace & scratch space
-# arcpy.env.scratchWorkspace = dir_tmp
 
 print ('Setting environment based on rast_base.')
 arcpy.env.snapRaster             = rast_base
