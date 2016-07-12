@@ -1,16 +1,18 @@
 ---
 title: 'OHI: Lasting Special Places '
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
-output: 
+output:
   html_document:
-    toc: true
-    number_sections: true
-    theme: cerulean
     highlight: haddock
-    includes: 
-      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+    includes:
+      in_header: ~/github/ohiprep/src/templates/ohi_hdr.html
+    number_sections: yes
+    theme: cerulean
+    toc: yes
   pdf_document:
-    toc: true
+    toc: yes
+  word_document:
+    toc: yes
 ---
 
 ```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
@@ -26,6 +28,7 @@ knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
 library(readr)
 library(tmap)
 
+
 source('~/github/ohiprep/src/R/common.R')
 
 goal     <- 'lsp'
@@ -36,7 +39,8 @@ dir_goal_anx  <- file.path(dir_anx,            goal, scenario)
 dir_data_wdpa <- file.path(dir_anx, '_raw_data/wdpa_mpa', 'd2016') 
 
 ### set up provenance tracking for this script:
-# source(file.path('~/github/ohibc', 'src/R/prov.R'))          
+library(provRmd)
+prov_setup()
 
 if(!file.exists(file.path(dir_goal, 'README.md'))) {
   warning(sprintf('No README detected in %s', dir_goal))
@@ -163,48 +167,58 @@ Comparing the global WDPA raster to the 3 nm offshore and 1 km inland rasters, w
 
 ``` {r lsp_zonal_stats, eval = TRUE}
 
-zonal_3nm_file <- file.path(dir_goal, 'int', 'zonal_stats_3nm.csv')
-zonal_1km_file <- file.path(dir_goal, 'int', 'zonal_stats_1km.csv')
+zonal_files <- c('zonal_3nm' =  file.path(dir_goal, 'int', 'zonal_stats_3nm.csv'),
+                 'zonal_1km' =  file.path(dir_goal, 'int', 'zonal_stats_1km.csv'),
+                 'zonal_eez' =  file.path(dir_goal, 'int', 'zonal_stats_eez.csv'))
 
-if(!file.exists(zonal_3nm_file) | !file.exists(zonal_1km_file)) {
+if(!all(file.exists(zonal_files))) {
   
   ### point to 500 m rasters for 3 nautical mile coastal regions, and 1 km inland coastal regions.
-  rast_3nm_file <- file.path(dir_anx, 'spatial/v2015/data/rgn_mol_raster_500m/rgn_offshore3nm_mol_500mcell.tif')
-  rast_1km_file <- file.path(dir_anx, 'spatial/v2015/data/rgn_mol_raster_500m/rgn_inland1km_mol_500mcell.tif')
-  
-  rast_3nm <- raster::raster(rast_3nm_file)
-  rast_1km <- raster::raster(rast_1km_file)
+  rgn_rast_list <- c(
+    'zonal_3nm' = file.path(dir_anx, 'spatial/d2014/data/rgn_mol_raster_500m/rgn_offshore3nm_mol_500mcell.tif'),
+    'zonal_1km' = file.path(dir_anx, 'spatial/d2014/data/rgn_mol_raster_500m/rgn_inland1km_mol_500mcell.tif'),
+    'zonal_eez' = file.path(dir_anx, 'spatial/d2014/data/rgn_mol_raster_500m/rgn_eez_mol_500mcell.tif'))
   
   ### NOTE: The crosstab function returns this warning - does it affect the
   ### outcomes, or does the function coerce the correct outcome?
       # Warning message:
       # In FUN(X[[i]], ...) : integer overflow - use sum(as.numeric(.))
   
-  ptm <- proc.time()
-  stats_3nm <- raster::crosstab(rast_wdpa, rast_3nm, useNA = TRUE, progress = 'text') %>%
-    as.data.frame()
-    setNames(c('year', 'rgn_id', 'n_cells')) %>%
-    mutate(year   = as.integer(as.character(year)),
-           rgn_id = as.integer(as.character(rgn_id))) %>%
-    arrange(rgn_id, year)
+  lsp_crosstab <- function(rgn_rast_file) {
+    rgn_rast <- raster::raster(rgn_rast_file)
+    message('Cross tabulating ', rgn_rast_file)
+    rast_df <- raster::crosstab(rast_wdpa, rgn_rast, useNA = TRUE, progress = 'text') %>%
+      as.data.frame() %>%
+      setNames(c('year', 'rgn_id', 'n_cells')) %>%
+      mutate(year   = as.integer(as.character(year)),
+             rgn_id = as.integer(as.character(rgn_id))) %>%
+      arrange(rgn_id, year)
+    
+    return(rast_df)
+  }
   
-  stats_1km <- raster::crosstab(rast_wdpa, rast_1km, useNA = TRUE, progress = 'text') %>%
-    as.data.frame() %>%
-    setNames(c('year', 'rgn_id', 'n_cells')) %>%
-    mutate(year   = as.integer(as.character(year)),
-           rgn_id = as.integer(as.character(rgn_id))) %>%
-    arrange(rgn_id, year)
+  # x <- lsp_crosstab(rgn_rast_list[3])
+  # write_csv(x, zonal_files[3])
+  ptm <- proc.time()
+  
+  zonal_dfs <- parallel::mclapply(rgn_rast_list, lsp_crosstab, mc.cores = 6) %>%
+    setNames(names(rgn_rast_list))
   
   message('Elapsed: ', (proc.time() - ptm)[3], ' sec')
   
+  for(zone in names(zonal_files)) {
+    message('Writing zonal dataframe to ', zonal_files[zone])
+    write_csv(zonal_dfs[zone], zonal_files[zone])
+  }
   
-  write_csv(stats_3nm, zonal_3nm_file)
-  write_csv(stats_1km, zonal_1km_file)
 } else {
-  message('Zonal stats layers already exist: \n  ', zonal_3nm_file, '\n  ', zonal_1km_file)
-  stats_3nm <- read_csv(file.path(dir_goal, 'int', 'zonal_stats_3nm.csv'))
-  stats_1km <- read_csv(file.path(dir_goal, 'int', 'zonal_stats_1km.csv'))
+  message('Zonal stats layers already exist: \n  ', paste(zonal_files, collapse = '\n  '))
 }
+
+stats_3nm <- read_csv(zonal_files['zonal_3nm'])
+stats_1km <- read_csv(zonal_files['zonal_1km'])
+stats_eez <- read_csv(zonal_files['zonal_eez'])
+
 
 ```
 
@@ -220,6 +234,12 @@ print(summary(stats_3nm))
 
 ``` {r}
 print(summary(stats_1km))
+```
+
+### Summary of zonal stats dataframes (entire EEZ):
+
+``` {r}
+print(summary(stats_eez))
 ```
 
 ***
@@ -270,8 +290,22 @@ prot_3nm <- stats_3nm %>%
   left_join(rgn_names, by = 'rgn_id') %>%
   distinct()
 
+prot_eez <- stats_eez %>%
+  group_by(rgn_id) %>%
+  mutate(n_cells_tot = sum(n_cells),
+         n_cells_cum = cumsum(n_cells),
+         a_tot_km2   = n_cells_tot / 4,
+         a_prot_km2  = n_cells_cum / 4) %>%
+  ungroup() %>%
+  filter(!is.na(year))  %>% ### this ditches non-protected cell counts but already counted in n_cells_tot
+  mutate(pct_prot   = round(n_cells_cum / n_cells_tot, 4),
+         lsp_status = round(ifelse(pct_prot > lsp_thresh, 100, (pct_prot / lsp_thresh) * 100), 2)) %>%
+  left_join(rgn_names, by = 'rgn_id') %>%
+  distinct()
+
 write_csv(prot_3nm, file.path(dir_goal, 'int', 'area_protected_3nm.csv'))
 write_csv(prot_1km, file.path(dir_goal, 'int', 'area_protected_1km.csv'))
+write_csv(prot_eez, file.path(dir_goal, 'int', 'area_protected_eez.csv'))
 
 ```
 
@@ -283,6 +317,10 @@ write_csv(prot_1km, file.path(dir_goal, 'int', 'area_protected_1km.csv'))
 ### Protected areas and status (1 km inland, 2015 only):
 
 `r DT::datatable(prot_1km %>% filter(year == 2015) %>% select(-year, -contains('cell')), caption = '1 kilometer inland zone - area in km^2^')`
+
+### Protected areas and status (full EEZ, 2015 only):
+
+`r DT::datatable(prot_eez %>% filter(year == 2015) %>% select(-year, -contains('cell')), caption = 'Full EEZ - area in km^2^')`
 
 ***
 
@@ -303,8 +341,15 @@ prot_df <- prot_1km %>%
                             a_prot_3nm = a_prot_km2,
                             a_tot_3nm  = a_tot_km2),
             by = c('rgn_id', 'rgn_name', 'year')) %>%
+  full_join(prot_eez %>% 
+              dplyr::select(rgn_id, year, rgn_name,
+                            lsp_st_eez = lsp_status,
+                            a_prot_eez = a_prot_km2,
+                            a_tot_eez  = a_tot_km2),
+            by = c('rgn_id', 'rgn_name', 'year')) %>%
   mutate(lsp_st_1km = ifelse(is.na(lsp_st_1km), 0, lsp_st_1km),
          lsp_st_3nm = ifelse(is.na(lsp_st_3nm), 0, lsp_st_3nm),
+         lsp_st_eez = ifelse(is.na(lsp_st_eez), 0, lsp_st_eez),
          lsp_status = (lsp_st_1km + lsp_st_3nm) / 2) %>%
   distinct()
 
@@ -312,8 +357,10 @@ write_csv(prot_df, file.path(dir_goal, 'int', 'area_protected_total.csv'))
 
 a_prot_inland_file   <- file.path(dir_goal, 'output', 'lsp_protected_inland1km.csv')
 a_prot_offshore_file <- file.path(dir_goal, 'output', 'lsp_protected_offshore3nm.csv')
+a_prot_eez_file      <- file.path(dir_goal, 'output', 'lsp_protected_eez.csv')
 a_tot_inland_file    <- file.path(dir_goal, 'output', 'lsp_a_total_inland1km.csv')
 a_tot_offshore_file  <- file.path(dir_goal, 'output', 'lsp_a_total_offshore3nm.csv')
+a_tot_eez_file       <- file.path(dir_goal, 'output', 'lsp_a_total_eez.csv')
 
 prot_df_recent <- prot_df %>%
   filter(year >= 2000) 
@@ -323,21 +370,21 @@ write_csv(prot_df_recent %>% select(rgn_id, year, a_prot_3nm), a_prot_offshore_f
 write_csv(prot_df_recent %>% select(rgn_id, year, a_tot_1km), a_tot_inland_file)
 write_csv(prot_df_recent %>% select(rgn_id, year, a_tot_3nm), a_tot_offshore_file)
 
+write_csv(prot_df_recent %>% select(rgn_id, year, a_prot_eez), a_prot_eez_file)
+write_csv(prot_df_recent %>% select(rgn_id, year, a_tot_eez), a_tot_eez_file)
+
 ```
 
 We can save outputs for the following layers:
-
-a_prot_inland_file   <- file.path(dir_goal, 'output', 'lsp_protected_inland1km.csv')
-a_prot_offshore_file <- file.path(dir_goal, 'output', 'lsp_protected_offshore3nm.csv')
-a_tot_inland_file    <- file.path(dir_goal, 'output', 'lsp_a_total_inland1km.csv')
-a_tot_offshore_file  <- file.path(dir_goal, 'output', 'lsp_a_total_offshore3nm.csv')
 
 * ``r a_prot_inland_file``: inland protected area (km^2^) for each region (since 2000)
 * ``r a_prot_offshore_file``: offshore protected area  (km^2^) for each region (since 2000)
 * ``r a_tot_inland_file``: inland 1 km total area (km^2^) for each region
 * ``r a_tot_offshore_file``: offshore 3 nm total area  (km^2^) for each region
+* ``r a_prot_eez_file``: EEZ protected area  (km^2^) for each region (since 2000) (for resilience)
+* ``r a_tot_eez_file``: EEZ total area (km^2^) for each region (for resilience)
 
-From these layers, we can also estimate the status and trend.  "Official" values will be determined in the toolbox.  
+From the inland and offshore layers, we can also estimate the status and trend.  "Official" values will be determined in the toolbox.  
 
 ``` {r estimate status and trend by year, eval = TRUE}
 status_file          <- file.path(dir_goal, 'output', 'lsp_status.csv')
@@ -415,7 +462,7 @@ ggsave(file.path(dir_goal, 'int/plot_v2015_v2016.png'), plot = lsp_plot_v2015)
 
 ```
 
-``` {r outlier_checks eval = FALSE}
+``` {r outlier_checks, eval = FALSE}
 
 ### LSP outlier check based on estimates
 #  88 Tristan da Cunha 100 -> 0   OK: STATUS changed from Designated to Inscribed (World Heritage Site in both years)
@@ -480,3 +527,6 @@ checks <- mpa2016 %>% filter(rgn_id %in% c(8, 90)) %>% filter(year > 2000) %>% r
 ```
 
 ***
+
+``` {r child = 'prov/prov_ftr2.Rmd'}
+```
