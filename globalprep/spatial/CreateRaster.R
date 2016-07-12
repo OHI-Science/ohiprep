@@ -67,7 +67,7 @@ freq(most_regions, progress="text", value=1) # missing
 freq(most_regions, progress="text", value=86)# not missing
 
 # merge the two rasters
-raster::cover(bad_regions_raster, most_regions, filename = file.path(save_loc, "sp_mol_raster_1km_2.tif"))
+raster::cover(bad_regions_raster, most_regions, filename = file.path(save_loc, "sp_mol_raster_1km.tif"))
 
 regions <- raster(file.path(save_loc, "sp_mol_raster_1km_2.tif"))
 freq(regions, progress="text", value=1) # not missing
