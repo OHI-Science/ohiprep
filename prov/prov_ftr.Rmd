@@ -1,0 +1,12 @@
+-----
+
+# Provenance
+
+- _Run ID: `r .script_prov_out_df$run_id` (`r .script_prov_out_df$run_hash %>% str_sub(1, 7)`); run tag: "`r .script_prov_out_df$run_tag`"_
+- _Run elapsed time: `r .script_prov_out_df$elapsed_time` seconds; run memory usage: `r .script_prov_out_df$memory_use` MB_
+- _System info: `r .script_prov_out_df$msg_sys`_
+- _Session info_
+    - _`r .script_prov_out_df$msg_ses`_
+    - _`r .script_prov_out_df$msg_base_pkgs`_
+    - _`r .script_prov_out_df$msg_att_pkgs`_
+
