@@ -1,5 +1,5 @@
 ---
-  title: 'OHIBC: Sea Level Rise Pressure layers prep'
+  title: 'OHI 2016: Sea Level Rise Pressure layers prep'
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
@@ -8,7 +8,7 @@ number_sections: true
 theme: cerulean
 highlight: haddock
 includes: 
-  in_header: '~/github/ohibc/src/templates/ohibc_hdr1.html'
+  in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
 pdf_document:
   toc: true
 ---
@@ -23,10 +23,14 @@ library(raster)
 library(rasterVis)
 library(ncdf4)
 library(RColorBrewer)
+library(doParallel)
+library(foreach)
+library(parallel)
+
 
 dir_git <- '~/github/ohiprep'
 source('~/github/ohiprep/src/R/common.R')
-### an OHIBC specific version of common.R
+
 dir_anx <- file.path(dir_M, 'git-annex/globalprep')
 
 ### set up proj4string options: WGS84
@@ -35,8 +39,10 @@ p4s_wgs84 <- '+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'
 ### Define spectral color scheme for plotting maps
 cols      = rev(colorRampPalette(brewer.pal(9, 'Spectral'))(255)) # rainbow color scheme
 
+
 # define mollweide projection
-mollCRS=crs('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs')
+
+mollCRS <- CRS('+proj=moll')
 
 ```
 
@@ -73,21 +79,19 @@ Reference: The altimeter products were produced and distributed by Aviso (http:/
 
 ## Data Prep
 
-### Read raw data as monthly means and convert to annual means
-
-Raw data in monthly mean sea level anomalies, at .25 degree grid globally, is processed into annual mean sea level anomalies.  These files are saved in git-annex as GeoTIFFs for later use.
+### Download files
 
 ``` {r download_files_and_unzip}
 
-reload <- FALSE
+reload <- TRUE
 
-dir_anx_aviso <- file.path(dir_M, 'git-annex/globalprep/_raw_data/AVISO_slr')
+dir_anx_aviso <- file.path(dir_M, 'git-annex/globalprep/_raw_data/AVISO_slr/d2016')
 
 if(reload) {
   ### Get filenames from AVISO FTP URL:
   library(RCurl)
   url <- "ftp://ftp.aviso.altimetry.fr/global/delayed-time/grids/climatology/monthly_mean/"
-  userpwd <- "nceas_ohara:diors54jh"
+  userpwd <- "ucsb_afflerbach:sioped54j"
   filenames <- getURL(url,
                       userpwd = userpwd,
                       ftp.use.epsv = FALSE,
@@ -101,8 +105,11 @@ if(reload) {
   
   ### Set up loop to download each file and save to git-annex:
   
-  ftp_dir <- 'ftp://nceas_ohara:diors54jh@ftp.aviso.altimetry.fr/global/delayed-time/grids/climatology/monthly_mean'
-  for (nc_file in filenames) { # nc_file <- filenames[2]
+  ftp_dir <- 'ftp://ucsb_afflerbach:sioped54j@ftp.aviso.altimetry.fr/global/delayed-time/grids/climatology/monthly_mean'
+  for (i in 274:length(filenames)) { # nc_file <- filenames[2]
+    print(i)
+    nc_file <- filenames[i]
+    
     download.file(url      = file.path(ftp_dir, nc_file),
                   destfile = file.path(dir_anx_aviso, 'msla_monthly_mean', nc_file),
                   mode     = 'wb')
@@ -118,65 +125,336 @@ if(reload) {
 }
 ```
 
+
+### Clip data to coastal cells
+
+All NetCDF files for each month over the 22 years is rasterized and all non-coastal bordering cells are removed. To do this we use `raster::boundaries()` with the `type = 'inner'` which turns all coastal cells bordering land to 1 and the rest of the cells to 0.
+
+
+```{r clip}
+
+#list all netCDF files
+nc_files <- list.files(file.path(dir_anx_aviso, 'msla_monthly_mean'),
+                       full.names = TRUE,pattern='.nc')
+
+ocean_big <- aggregate(ocean,c(25100, 30900))
+
+#--------------------------------------------------------------------
+## Testing boundaries() to get only coastal cells
+
+    r <- raster(nc_files[1])%>%
+      writeRaster(filename=file.path(dir_anx,'prs_slr/v2016/test/r.tif'))
+    
+    r_in <- boundaries(r,type='inner',asNA=T)%>%
+            rotate()%>%
+            writeRaster(filename=file.path(dir_anx,'prs_slr/v2016/test/r_inner_boundaries.tif'),overwrite=T)
+    #r_out <- boundaries(r,type='outer',asNA=T,filename=file.path(dir_anx,'prs_slr/v2016/test/r_outer_boundaries.tif'))
+
+## Using type='inner' we get all coastal cells bordering land. This is what we want to use for this pressure layer
+
+
+#--------------------------------------------------------------------
+
+## Function that rotates each monthly file, sets the long/lat projection, and keeps only coastal cells - saved to GitHub
+months_coast <- function(x){
+  
+  m_yr <- substr(x,108,115)
+    
+  #read in month raster
+  r <- raster(x)%>%rotate()
+  
+  #define projection of the raster before reprojecting
+  projection(r) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+  
+  r_mask <- mask(r,r_in,progress='text')
+
+  
+  writeRaster(r_mask,filename=paste0(dir_git,'/globalprep/prs_slr/v2016/int/msla_monthly_coast/msla_monthly_coast_',m_yr,'.tif'),overwrite=T)
+
+}
+
+#apply the clipping function to all 272 files
+mclapply(nc_files,months_coast,mc.cores=14)
+
+```
+
+```{r years}
+
+#years of interest
+
+years <- c(2010:2014)
+
+months <- c(1:12)
+
+```
+
+### Explore the data
+
+#### 1. How does mean sea level vary over months?
+
+```{r explore}
+
+#Looking at means and sd over time for each month
+
+files <- list.files(file.path(dir_git,
+                              'globalprep/prs_slr/v2016/int/msla_monthly_coast'),full.names=T)
+
+for (i in years){
+  
+  print(i)
+  
+  #get all files for the year i
+    yr_files <- files[which(substr(files,100,103)==i)]%>%stack()
+
+    names(yr_files) <- months
+    #plot & save
+    
+    png(paste0('figs/monthly_boxplot_',i,'.png'), width = 6, height = 4, units = 'in', res = 300 )
+    
+    print(bwplot(yr_files,xlab = 'Months',ylab = 'Mean Sea Level Anomaly (meters)'))
+
+    dev.off()
+}
+
+img <- png::readPNG('figs/month-boxplots-2011-2014.png')
+
+
+
+```
+
+#### 2. What is the distribution of mean and sd mean sea level from January 2010 - December 2014
+
+```{r}
+
+
+  #get all months for all years 2010-2014
+    yr_m_files <- files[which(substr(files,100,103) %in% years)]
+
+  #get unique names for each layer
+    layer_names <- unique(basename(yr_m_files) %>% 
+                      str_replace('msla_monthly_coast_', '') %>%
+                      substr(1, 8)) %>%
+                      sort()
+  #stack into a raster stack (nlayers = 60) and assign names
+    s <- stack(yr_m_files)
+    
+    names(s) <- layer_names
+    
+    #calculate the mean
+    
+    m <- calc(s,fun=mean,na.rm=T)
+    
+    #calculate the sd
+    
+    std <- calc(s,fun=function(x){sd(x,na.rm=T)})
+    
+    #plot + hist
+    
+    #plot & save
+    
+    png('figs/mean_sd_msla_2010_2014.png', width = 10, height = 4, units = 'in', res = 300 )
+    par(mfrow=c(1,2),
+         mai = c(1, 0.5, 1, 1))
+    
+    plot(m,axes=F,col=cols,box=F,colNA = 'dimgray',main='Mean SLA 2010-2014')
+    plot(std,axes=F,col=cols,box=F,colNA = 'dimgray',main = 'Standard Deviation SLA 2010-2014')
+    
+    dev.off()
+    
+    h <- stack(m,std)
+    names(h)<-c("Mean SL 2010-2014","St. Dev. 2010-2014")
+    
+    png('figs/mean_sd_msla_hist_2010_2014.png',width = 8, height = 4, units = 'in', res = 300)
+    histogram(h)
+
+    dev.off()
+
+```
+
+
+
+### Read raw data as monthly means and convert to annual means
+
+Raw data in monthly mean sea level anomalies, at .25 degree grid globally, is processed into annual mean sea level anomalies.  These files are saved in git-annex as GeoTIFFs for later use.
+
 ``` {r msla_monthly_to_annual}
 
-nc_files <- list.files(file.path(dir_anx_aviso, 'msla_monthly_mean'),
-                       full.names = TRUE)
-nc_files <- nc_files[str_detect(nc_files, '.nc') & !str_detect(nc_files, '.gz')]
+all_yrs <- c(1993:2014)
 
-years <- unique(basename(nc_files) %>% 
-                  str_replace('dt_global_allsat_msla_h_y', '') %>%
-                  substr(1, 4)) %>%
-  sort()
+for (j in 1:length(all_yrs)) {
+  
 
-for (j in 1:length(years)) { ### j <- 1
-  ### get the list of netCDF files associated with the appropriate year
-  msla_yr <- nc_files[str_detect(nc_files, years[j])]
+  msla_yr <- files[str_detect(files, as.character(all_yrs[j]))]
   ### set up an empty list to store rasters for this year
   rast_list_yr <- vector('list', length(msla_yr))
   
-  message('Generating annual MSLA raster for ', years[j])
+  message('Generating annual MSLA raster for ', all_yrs[j])
   
   ### Loop over all files for this year, read raster and assign to list for this year
   for (i in 1:length(msla_yr)) { ### i = 1
-    rast_list_yr[i] <- raster(msla_yr[i], nogit = TRUE) %>%
-      raster::rotate()
+    rast_list_yr[i] <- raster(msla_yr[i], nogit = TRUE)
   }
   
   ### brick all rasters for this year, and calc annual mean, then write as raster
   rbrick_yr <- brick(rast_list_yr)
-  rast_annual_mean <- calc(rbrick_yr, mean,na.rm=T)
   
-  rast_file <- file.path(dir_anx_aviso, 'msla_annual_mean', 
-                         sprintf('rast_msla_annual_%s.tif', years[j]))
+  rast_annual_mean <- calc(rbrick_yr, mean,na.rm=T)
+  #rast_annual_sd <- calc(rbrick_yr,fun=function(x){sd(x,na.rm=T)})
+  
+  rast_file <- file.path(dir_git, 'globalprep/prs_slr/v2016/int/msla_annual_mean', 
+                         sprintf('rast_msla_annual_%s.tif', all_yrs[j]))
+  #rast_file_sd <- file.path(dir_git, 'globalprep/prs_slr/v2016/int/msla_annual_sd', 
+                         #sprintf('rast_msla_annual_sd_%s.tif', years[j]))
+  
   message('Writing raster to ', rast_file)
-  writeRaster(rast_annual_mean, 
+  writeRaster(rast_annual_mean,
               rast_file,
               overwrite = TRUE,
               nogit = TRUE)
+
 }
 
 ```
 
-For analysis, convert the annual means into a raster brick with each layer representing a year.
+### Get reference point to rescale each annual raster layer
 
-``` {r }
-rast_files <- file.path(dir_anx_aviso, 'msla_annual_mean', 
-                        sprintf('rast_msla_annual_%s.tif', years))
+We want to use the reference period, 1993-2012, since this time period was used to calculate the raw data.
 
-rast_list <- vector('list', length(rast_files))
-for (i in 1:length(rast_files)) {
-  message('Reading raster from ', rast_files[i])
-  rast_list[[i]] <- raster(rast_files[i])
-}
+First calculate mean anomaly over this time period per cell, then get the 99.99th quantile.
 
-rbrick_sla <- brick(rast_list)
-names(rbrick_sla) <- years
+```{r ref}
 
-range_sla <- range(values(rbrick_sla), na.rm = TRUE)
+#stack all annual mean rasters from 1993 - 2012
+
+ref_list <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_mean'),pattern = '*.tif',full.names=T)[1:20]
+
+ref_mean <- stack(ref_list)%>%
+              calc(fun=function(x){mean(x,na.rm=T)})
+  
+histogram(ref_mean)
+ref <- quantile(ref_mean,prob=0.9999,na.rm=T)
+
+
 ```
 
-Range of annual mean sea level anomalies for global dataset: `r paste(range_sla, collapse = ' - ')` meters.
+#### Compare mean to aggregate dataset from Aviso
+
+```{r}
+
+ref_list_2 <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_mean'),pattern = '*.tif',full.names=T)[1:22]
+
+all_yr_mean <- stack(ref_list_2)%>%
+              calc(fun=function(x){(mean(x,na.rm=T))*0.0001})
+
+agg <- raster(file.path(dir_anx_aviso,'MSL_Map_MERGED_Global_IB_RWT_NoGIA_Adjust.nc'))%>%
+        rotate() #divide by 23 years to get mean mm per year
+
+agg_mask <- mask(agg,all_yr_mean)
+
+compare <- agg - all_yr_mean
+
+
+```
+
+The reference point is `r ref*100` mm per year (~2 inches).
+
+### Rescale each cell according to this reference point.
+```{r rescale}
+
+rescale_slr <- function(x){
+  
+  r <- raster(x)
+  
+  yr = substr(names(r)[1],18,21)
+  
+  out <- calc(r,fun=function(x){ifelse(x>ref,1,x/ref)})
+
+}
+
+l <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_mean'),pattern = '*.tif',full.names=T)
+mclapply(l,rescale_slr,mc.cores=14)
+
+```
+
+
+### Reproject to Mollweide and resample to 1km
+
+```{r reproj_resamp}
+
+# grab all annual means from 2006 - 2014
+annual <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_mean'),full.names = T,pattern='.tif')[1:22]
+
+
+# Read in ocean raster with cells at 1km. Use this as a template for resampling
+
+ocean = raster(file.path(dir_M,'git-annex/globalprep/spatial/ocean.tif'))
+
+
+registerDoParallel(10) 
+
+#utilize parallelization to rescale & reproject all rasters
+
+foreach(i = 1993:2010) %dopar% {
+  
+  yrs <- c(i,i+1,i+2,i+3,i+4)
+
+  r <- annual[which(substr(annual,96,99)%in%yrs)]%>%
+        stack()%>%
+          mean(na.rm=T)
+  
+  r[r<0]<-0
+  
+  #rescale & save to file
+  
+  r_resc <- calc(r,fun=function(x){ifelse(x>ref,1,x/ref)},filename = 
+                   paste0(file.path(dir_git),'/globalprep/prs_slr/v2016/int/msla_annual_rescale/msla_annual_rescaled_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
+  
+  #define projection of the raster before reprojecting
+  projection(r_resc) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+
+  #reproject raster to mollweide, resample to 1km
+  r <- projectRaster(r_resc,crs = mollCRS,over=T)%>%
+          resample(ocean, method = 'ngb', 
+                   filename = paste0(file.path(
+                      dir_anx),'/prs_slr/v2016/output/slr_moll_1km_rescaled_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
+}
+
+
+```
+
+### Plot
+
+```{r plot}
+
+resc <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_rescale'),full.names = T)%>%stack()
+
+plot(resc,col=cols)
+
+names <-substr(names(resc),22,30)
+
+names(resc)<-names
+
+histogram(resc)
+
+#look at non-rescaled data dist
+
+a <- stack(annual)
+histogram(a)
+
+
+out <- 
+  
+plot(ocean,col='cornsilk2',axes=F,box=F,main='Sea Level Rise Pressure 2010-2014',legend=F)
+plot(out[[5]],col=cols,axes=F,box=F,add=T)
+```
+
+
+
+
+
+
+
+
 
 
 ## Rescale values as pressures
@@ -219,9 +497,6 @@ plot(sla_delta[[nlayers(sla_delta)]],
 
 ocean = raster(file.path(dir_M,'git-annex/globalprep/spatial/ocean.tif'))
 
-library(doParallel)
-library(foreach)
-
 ## Multiprocessing cores
 # best to leave empty arguments; by default, the number of cores used for parallel 
 # execution is 1/2 the number of detected cores (if number is unspecified)
@@ -229,57 +504,53 @@ library(foreach)
 registerDoParallel(16) 
 
 #do some parallelization to reproject all rasters
-foreach(i = 1:nlayers(sla_delta))%dopar%{
+foreach(i = 1:nlayers(sla_delta)) %dopar% {
   
-  r <- sla_delta[[i]]%>%
-        projectRaster(crs = mollCRS)%>%
-          resample(ocean,filename = paste0(file.path(dir_anx, 'prs_slr/v2016/int/sla_delta_moll/sla_delta_moll_'),
+  r <- sla_delta[[i]]
+  
+  projection(r) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+
+  r <- projectRaster(r,crs = mollCRS,over=T)%>%
+          resample(ocean,filename = paste0(file.path(dir_anx, 'prs_slr/v2016/int/sla_delta_moll_1km/sla_delta_moll_1km_'),
                                               names(sla_delta[[i]]),'.tif'),overwrite=T)
 }
 
 ```
 
+Values below zero (drop in sea level) are set to zero.
 
-## Resample
+This difference value is rescaled from zero (no sea level rise) to 1 (at 99.99%ile of local slr).
 
-```{r resample_annual_changes, dependson = reproject_annual_changes}
+Pull in reference point from csv
+``` {r drop_negative_values}
 
-slr_proj_files = list.files(file.path(dir_anx,'prs_slr/v2016/int/sla_delta_moll'),full.names = T)
+slr_moll <- list.files(file.path(dir_M,'git-annex/globalprep/prs_slr/v2016/int/sla_delta_moll_1km'),full.names=T)
 
-slr_resamp <- function(file){
+slr_ref <- read.csv('../reference_points_pressures.csv',stringsAsFactors=F)%>%
+            filter(pressure == 'Sea Level Rise')%>%
+              dplyr::select(ref_point)
+
+slr_ref = as.numeric(slr_ref$ref_point[[1]])/1000 #turn mm into m
+
+resc <- function(x){
   
-  r <- raster(file)
+  yr <- substr(x,nchar(x)-7,nchar(x)-4)
+  r <- raster(x)
   
+  r[r<0]<-0
+
+  slr_resc <- calc(r, fun = function(x) ifelse(x > slr_ref, 1, x/slr_ref))
   
+  writeRaster(slr_resc,filename = paste0(file.path(dir_anx),'/prs_slr/v2016/int/sla_resc/slr_rescaled_',yr,'.tif')) #add year
 }
 
-sla_delta_resamp = raster(file.path(dir_M,'git-annex/globalprep/prs_slr/v2016/int/sla_delta_moll_brick.tif'))[[]]
-
+mclapply(slr_moll,resc,mc.cores=14)
 
 ```
 
-Interpolate change in sea level values, to fill gaps.  Use thin-plate spline method to interpolate.
 
+Interpolate change in sea level values, to fill gaps.
 ``` {r interpolate_bc_sla}
-### sea level rise = delta (sea level anomaly) so slr <- d(sla)
-bc_slr_int_file <- file.path(dir_goal, 'int/slr/rast_slr_int.tif')
-
-if(!file.exists(bc_slr_int_file)) {
-  message('Interpolating BC SL rise data')
-  bc_slr_int <- interpolate_brick(bc_sla_delta, subset_n = 2000)
-  
-  ### mask to regions
-  values(bc_slr_int)[is.na(values(rast_rgn))] <- NA
-  
-  message('Writing interpolated BC SLA delta to: ', bc_slr_int_file)
-  writeRaster(bc_slr_int, bc_slr_int_file, bandorder='BIL', overwrite = TRUE)
-  
-} else {
-  message('Reading interpolated BC SLA delta from: ', bc_slr_int_file)
-  
-  bc_slr_int <- brick(bc_slr_int_file)
-  names(bc_slr_int) <- names(bc_sla_delta)
-}
 
 plot_rast(bc_slr_int[[1]], 
           title = sprintf('delta SL anomaly %s', names(bc_slr_int)[1]), 
@@ -289,35 +560,6 @@ plot_rast(bc_slr_int[[nlayers(bc_slr_int)]],
           title = sprintf('delta SL anomaly %s', names(bc_slr_int)[nlayers(bc_slr_int)]), 
           scale_label = 'meters',
           rev_scale = TRUE)
-
-```
-
-Values below zero (drop in sea level) are set to zero.
-
-This difference value is rescaled from zero (no sea level rise) to 1 (at 99.99%ile of local slr).
-
-
-``` {r rescale_uv_pressures}
-
-### If SLR velocity is negative, set to zero
-bc_slr_pos <- bc_slr_int
-values(bc_slr_pos)[values(bc_slr_pos) < 0] <- 0
-
-plot_rast(bc_slr_pos, 
-          title = 'SLR pos velocity', 
-          scale_label = 'mm/yr',
-          rev_scale = TRUE)
-
-ref_pt = quantile(bc_slr_pos, prob=0.9999)
-
-bc_slr_resc <- calc(bc_slr_pos, fun = function(x) ifelse(x > ref_pt, 1, x/ref_pt))
-plot_rast(bc_slr_resc, 
-          title = 'rescaled SLR velocity', 
-          scale_label = 'scaled pressure',
-          rev_scale = TRUE)
-
-writeRaster(bc_slr_resc, file.path(dir_goal, 'output/slr/slr_rescaled.tif'), 
-            overwrite = TRUE)
 
 ```
 
@@ -339,7 +581,3 @@ write_csv(slr_rgn_mean, file.path(dir_goal, 'output/slr/slr_rgn_pressures.csv'))
 
 ```
 
------
-  
-  ``` {r child = file.path(dir_git, 'src/templates/ohibc_prov_ftr.Rmd')}
-```
