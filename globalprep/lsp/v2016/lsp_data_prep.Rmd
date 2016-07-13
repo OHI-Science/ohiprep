@@ -213,11 +213,11 @@ if(!all(file.exists(zonal_files))) {
   
 } else {
   message('Zonal stats layers already exist: \n  ', paste(zonal_files, collapse = '\n  '))
+  git_prov(zonal_files['zonal_1km'], filetype = 'output')
+  git_prov(zonal_files['zonal_3nm'], filetype = 'output')
+  git_prov(zonal_files['zonal_eez'], filetype = 'output')
 }
 
-stats_3nm <- read_csv(zonal_files['zonal_3nm'])
-stats_1km <- read_csv(zonal_files['zonal_1km'])
-stats_eez <- read_csv(zonal_files['zonal_eez'])
 
 
 ```
@@ -227,18 +227,21 @@ Once the WDPA raster is cross-tabulated against the OHI region rasters (both 3 n
 ### Summary of zonal stats dataframes (3 nm offshore):
 
 ``` {r}
+stats_3nm <- read_csv(zonal_files['zonal_3nm'])
 print(summary(stats_3nm))
 ```
 
 ### Summary of zonal stats dataframes (1 km inland):
 
 ``` {r}
+stats_1km <- read_csv(zonal_files['zonal_1km'])
 print(summary(stats_1km))
 ```
 
 ### Summary of zonal stats dataframes (entire EEZ):
 
 ``` {r}
+stats_eez <- read_csv(zonal_files['zonal_eez'])
 print(summary(stats_eez))
 ```
 
@@ -254,6 +257,10 @@ Finally we can calculate the status of a region for any given year by finding th
 
 
 ``` {r summarize_zonal_stats, eval = TRUE}
+
+stats_3nm <- read_csv(zonal_files['zonal_3nm'])
+stats_1km <- read_csv(zonal_files['zonal_1km'])
+stats_eez <- read_csv(zonal_files['zonal_eez'])
 
 lsp_thresh <- 0.30
 
@@ -330,6 +337,11 @@ The status is based on a simple arithmetic average of the inland and offshore st
 
 ``` {r combine_inland_and_offshore, eval = TRUE}
 
+prot_3nm <- read_csv(file.path(dir_goal, 'int', 'area_protected_3nm.csv'))
+prot_1km <- read_csv(file.path(dir_goal, 'int', 'area_protected_1km.csv'))
+prot_eez <- read_csv(file.path(dir_goal, 'int', 'area_protected_eez.csv'))
+
+
 prot_df <- prot_1km %>%
   dplyr::select(rgn_id, year, rgn_name,
                 lsp_st_1km = lsp_status,
@@ -387,6 +399,10 @@ We can save outputs for the following layers:
 From the inland and offshore layers, we can also estimate the status and trend.  "Official" values will be determined in the toolbox.  
 
 ``` {r estimate status and trend by year, eval = TRUE}
+
+prot_df_recent <- read_csv(file.path(dir_goal, 'int', 'area_protected_total.csv')) %>%
+  filter(year >= 2000) 
+
 status_file          <- file.path(dir_goal, 'output', 'lsp_status.csv')
 trend_file           <- file.path(dir_goal, 'output', 'lsp_trend.csv')
 
@@ -407,6 +423,7 @@ for (i in 2010:max(status_df$year, na.rm = TRUE)) { # i <- 2013
   trend_df <- trend_df %>%
     bind_rows(tmp_trend)
 }
+
 write_csv(trend_df, trend_file)
 
 ```
@@ -419,10 +436,16 @@ Year-by-year status and trend estimates will be saved:
 ### Status and trend estimates:
 
 ``` {r calc_lsp_status_trend_summary}
+rgn_names <- foreign::read.dbf(file.path(dir_anx, 'spatial/d2014/data/regions_gcs.dbf'),
+                               as.is = TRUE) %>%
+  filter(rgn_typ == 'eez') %>%
+  select(rgn_id, rgn_name = rgn_nam)
+
 lsp_status_trend_summary <- rgn_names %>% 
   left_join(status_df, by = 'rgn_id') %>% 
   left_join(trend_df, by = c('rgn_id', 'year')) %>%
   arrange(desc(year), rgn_id)
+
 ```
 
 `r DT::datatable(lsp_status_trend_summary, caption = 'LSP status and trend estimates')`
@@ -438,6 +461,8 @@ This large shift in actual total area (generally much larger than previously rep
 ``` {r plot_scores_vs_v2015, plotly = TRUE, eval = TRUE}
 library(ggplot2)
 library(plotly)
+
+prot_df <- read_csv(file.path(dir_goal, 'int', 'area_protected_total.csv'))
 
 ### check vs 2015 assessment (using eez2013 scores)
 lsp_v2015 <- read_csv('~/github/ohi-global/eez2013/scores.csv') %>%
@@ -528,5 +553,5 @@ checks <- mpa2016 %>% filter(rgn_id %in% c(8, 90)) %>% filter(year > 2000) %>% r
 
 ***
 
-``` {r child = 'prov/prov_ftr2.Rmd'}
+``` {r child = 'prov/prov_ftr3.Rmd'}
 ```
