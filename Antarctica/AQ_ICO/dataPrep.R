@@ -20,6 +20,8 @@ ico <- read.csv("Antarctica/AQ_ICO/raw/Antartica_iconic species_from_Katie_Apr_2
   
 
 # IUCN data for Antarctica
+
+#### NOTE: this seems to have changed recently.....track down older version
 iucn <- read.csv('globalprep/spp_ico/v2016/output/rgn_spp_aq.csv') %>%
   select(sciname, pop_cat, pop_trend, rgn_id)
 
@@ -28,7 +30,7 @@ iucn <- read.csv('globalprep/spp_ico/v2016/output/rgn_spp_aq.csv') %>%
 # "Berardius arnuxii", "Caperea marginata", "Globicephala melas",
 # "Lagenorhynchus obscurus", "Lissodelphis peronii", "Mesoplodon bowdoini",  
 # "Mesoplodon grayi", "Mesoplodon hectori", "Mesoplodon layardii", "Orcinus orca",
-# "Phocoena dioptrica", "Tasmacetus shepherdi" 
+# "Phocoena dioptrica", "Tasmacetus shepherdi", "Balaenoptera bonaerensis" 
 
 # not in Antarctic according to IUCN: "Cetorhinus maximus", "Isurus oxyrinchus", "Prionace glauca"
 
@@ -57,3 +59,19 @@ ico_trend <- iucn %>%
   select(sp_id = rgn_id, sciname, popn_trend=pop_trend) %>%
   unique()
 write.csv(ico_trend, 'Antarctica/AQ_ICO/data/ico_trend.csv', row.names=FALSE)
+
+### table for paper
+status <- read.csv("Antarctica/AQ_ICO/data/ico_status.csv") %>%
+  select(sciname, category) %>%
+  unique()
+trend <- read.csv("Antarctica/AQ_ICO/data/ico_trend.csv") %>%
+  select(sciname, popn_trend) %>%
+  unique()
+
+table <- left_join(status, trend) %>%
+  arrange(sciname)
+
+write.csv(table, 'Antarctica/AQ_ICO/data/table2.csv', row.names=FALSE)
+
+head(status)
+table(status$sciname)
