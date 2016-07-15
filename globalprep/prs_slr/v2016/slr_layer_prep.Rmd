@@ -17,6 +17,11 @@ pdf_document:
 knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
                       echo = FALSE, message = FALSE, warning = FALSE)
 
+#setting up provenance
+devtools::install_github('oharac/provRmd')
+library(provRmd)
+prov_setup()
+
 library(sp)        # the classes and methods that make up spatial ops in R
 library(rgdal)
 library(raster)
@@ -38,7 +43,6 @@ p4s_wgs84 <- '+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'
 
 ### Define spectral color scheme for plotting maps
 cols      = rev(colorRampPalette(brewer.pal(9, 'Spectral'))(255)) # rainbow color scheme
-
 
 # define mollweide projection
 
@@ -83,7 +87,7 @@ Reference: The altimeter products were produced and distributed by Aviso (http:/
 
 ``` {r download_files_and_unzip}
 
-reload <- TRUE
+reload <- FALSE
 
 dir_anx_aviso <- file.path(dir_M, 'git-annex/globalprep/_raw_data/AVISO_slr/d2016')
 
@@ -106,7 +110,7 @@ if(reload) {
   ### Set up loop to download each file and save to git-annex:
   
   ftp_dir <- 'ftp://ucsb_afflerbach:sioped54j@ftp.aviso.altimetry.fr/global/delayed-time/grids/climatology/monthly_mean'
-  for (i in 274:length(filenames)) { # nc_file <- filenames[2]
+  for (i in 1:length(filenames)) { # nc_file <- filenames[2]
     print(i)
     nc_file <- filenames[i]
     
@@ -131,23 +135,19 @@ if(reload) {
 All NetCDF files for each month over the 22 years is rasterized and all non-coastal bordering cells are removed. To do this we use `raster::boundaries()` with the `type = 'inner'` which turns all coastal cells bordering land to 1 and the rest of the cells to 0.
 
 
-```{r clip}
+```{r clip,eval=F}
 
 #list all netCDF files
 nc_files <- list.files(file.path(dir_anx_aviso, 'msla_monthly_mean'),
                        full.names = TRUE,pattern='.nc')
 
-ocean_big <- aggregate(ocean,c(25100, 30900))
-
 #--------------------------------------------------------------------
 ## Testing boundaries() to get only coastal cells
 
-    r <- raster(nc_files[1])%>%
-      writeRaster(filename=file.path(dir_anx,'prs_slr/v2016/test/r.tif'))
+    r <- raster(nc_files[1])
     
     r_in <- boundaries(r,type='inner',asNA=T)%>%
-            rotate()%>%
-            writeRaster(filename=file.path(dir_anx,'prs_slr/v2016/test/r_inner_boundaries.tif'),overwrite=T)
+            rotate(,filename=file.path(dir_git,'globalprep/prs_slr/v2016/int/r_inner_boundaries.tif'),overwrite=T)
     #r_out <- boundaries(r,type='outer',asNA=T,filename=file.path(dir_anx,'prs_slr/v2016/test/r_outer_boundaries.tif'))
 
 ## Using type='inner' we get all coastal cells bordering land. This is what we want to use for this pressure layer
@@ -161,7 +161,7 @@ months_coast <- function(x){
   m_yr <- substr(x,108,115)
     
   #read in month raster
-  r <- raster(x)%>%rotate()
+   r <- raster(x)%>%rotate()
   
   #define projection of the raster before reprojecting
   projection(r) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
@@ -173,8 +173,8 @@ months_coast <- function(x){
 
 }
 
-#apply the clipping function to all 272 files
-mclapply(nc_files,months_coast,mc.cores=14)
+#apply the clipping function to all files
+mclapply(nc_files[273:276],months_coast,mc.cores=14)
 
 ```
 
@@ -182,7 +182,7 @@ mclapply(nc_files,months_coast,mc.cores=14)
 
 #years of interest
 
-years <- c(2010:2014)
+years <- c(2010:2015)
 
 months <- c(1:12)
 
@@ -218,14 +218,11 @@ for (i in years){
 
 img <- png::readPNG('figs/month-boxplots-2011-2014.png')
 
-
-
 ```
 
-#### 2. What is the distribution of mean and sd mean sea level from January 2010 - December 2014
+#### 2. What is the distribution of mean and sd mean sea level from January 2010 - December 2015
 
 ```{r}
-
 
   #get all months for all years 2010-2014
     yr_m_files <- files[which(substr(files,100,103) %in% years)]
@@ -257,20 +254,19 @@ img <- png::readPNG('figs/month-boxplots-2011-2014.png')
          mai = c(1, 0.5, 1, 1))
     
     plot(m,axes=F,col=cols,box=F,colNA = 'dimgray',main='Mean SLA 2010-2014')
-    plot(std,axes=F,col=cols,box=F,colNA = 'dimgray',main = 'Standard Deviation SLA 2010-2014')
+    plot(std,axes=F,col=cols,box=F,colNA = 'dimgray',main = 'Standard Deviation SLA 2010-2015')
     
     dev.off()
     
     h <- stack(m,std)
-    names(h)<-c("Mean SL 2010-2014","St. Dev. 2010-2014")
+    names(h)<-c("Mean SL 2010-2015","St. Dev. 2010-2015")
     
-    png('figs/mean_sd_msla_hist_2010_2014.png',width = 8, height = 4, units = 'in', res = 300)
+    png('figs/mean_sd_msla_hist_2010_2015.png',width = 8, height = 4, units = 'in', res = 300)
     histogram(h)
 
     dev.off()
 
 ```
-
 
 
 ### Read raw data as monthly means and convert to annual means
@@ -279,7 +275,7 @@ Raw data in monthly mean sea level anomalies, at .25 degree grid globally, is pr
 
 ``` {r msla_monthly_to_annual}
 
-all_yrs <- c(1993:2014)
+all_yrs <- c(1993:2015)
 
 for (j in 1:length(all_yrs)) {
   
@@ -324,9 +320,11 @@ First calculate mean anomaly over this time period per cell, then get the 99.99t
 
 ```{r ref}
 
+annual_means <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_mean'),pattern = '*.tif',full.names=T)
+
 #stack all annual mean rasters from 1993 - 2012
 
-ref_list <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_mean'),pattern = '*.tif',full.names=T)[1:20]
+ref_list <- annual_means[1:20]
 
 ref_mean <- stack(ref_list)%>%
               calc(fun=function(x){mean(x,na.rm=T)})
@@ -341,10 +339,10 @@ ref <- quantile(ref_mean,prob=0.9999,na.rm=T)
 
 ```{r}
 
-ref_list_2 <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_mean'),pattern = '*.tif',full.names=T)[1:22]
+ref_list_2 <- annual_means[1:22]
 
 all_yr_mean <- stack(ref_list_2)%>%
-              calc(fun=function(x){(mean(x,na.rm=T))*0.0001})
+              calc(fun=function(x){(mean(x,na.rm=T))})
 
 agg <- raster(file.path(dir_anx_aviso,'MSL_Map_MERGED_Global_IB_RWT_NoGIA_Adjust.nc'))%>%
         rotate() #divide by 23 years to get mean mm per year
@@ -356,7 +354,39 @@ compare <- agg - all_yr_mean
 
 ```
 
-The reference point is `r ref*100` mm per year (~2 inches).
+## Calculate the rate of change over time per cell for each year
+
+```{r}
+
+registerDoParallel(10) 
+
+foreach(i = 1993:2011) %dopar% {
+  
+   yrs <- c(i,i+1,i+2,i+3,i+4)
+   time <- c(1:5)
+
+  r <- annual_means[which(substr(annual_means,96,99)%in%yrs)]%>%
+        stack()%>%
+          calc(fun=function(x){ if (is.na(x)){ NA } else {lm(x ~ time)$coefficients[2] }})
+  
+  writeRaster(r,filename = paste0(file.path(dir_git),'/globalprep/prs_slr/v2016/int/sla_rate_5yrs/sla_rate_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
+
+}
+
+s <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/sla_rate_5yrs'),full.names=T)%>%stack()
+
+# make a time variable (to be used in regression)
+time <- 1:nlayers(s)
+
+slr_rate <- calc(s,fun=function(x){ if (is.na(x)){ NA } else {lm(x ~ time)$coefficients[2] }})
+
+
+```
+
+
+
+
+The reference point is `r ref*0.01` mm per year.
 
 ### Rescale each cell according to this reference point.
 ```{r rescale}
@@ -371,8 +401,7 @@ rescale_slr <- function(x){
 
 }
 
-l <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_mean'),pattern = '*.tif',full.names=T)
-mclapply(l,rescale_slr,mc.cores=14)
+mclapply(annual_means,rescale_slr,mc.cores=14)
 
 ```
 
@@ -380,10 +409,6 @@ mclapply(l,rescale_slr,mc.cores=14)
 ### Reproject to Mollweide and resample to 1km
 
 ```{r reproj_resamp}
-
-# grab all annual means from 2006 - 2014
-annual <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_mean'),full.names = T,pattern='.tif')[1:22]
-
 
 # Read in ocean raster with cells at 1km. Use this as a template for resampling
 
@@ -398,7 +423,7 @@ foreach(i = 1993:2010) %dopar% {
   
   yrs <- c(i,i+1,i+2,i+3,i+4)
 
-  r <- annual[which(substr(annual,96,99)%in%yrs)]%>%
+  r <- annual_means[which(substr(annual_means,96,99)%in%yrs)]%>%
         stack()%>%
           mean(na.rm=T)
   
@@ -449,121 +474,6 @@ plot(out[[5]],col=cols,axes=F,box=F,add=T)
 ```
 
 
-
-
-
-
-
-
-
-
-## Rescale values as pressures
-
-Baseline sea level anomaly is based upon the count within 1993 to 1997.
-
-Change in mean sea level is determined by simple subtraction of the 1998-2014 rasters from the 1993-1997 mean raster.
-
-``` {r calc_delta_sl_anomalies}
-
-base_yrs <- 5
-names(rbrick_sla)[1:base_yrs]
-sla_baseline <-rbrick_sla[[1:base_yrs]] %>%
-  calc(mean,na.rm=T,filename = file.path(dir_M,'git-annex/globalprep/prs_slr/v2016/int/sla_baseline.tif'),overwrite=T)
-
-
-sla_study <- rbrick_sla[[(base_yrs + 1):nlayers(rbrick_sla)]]
-
-sla_delta <- sla_study - sla_baseline
-names(sla_delta) <- names(sla_study)
-
-#sla_delta_file <- file.path(dir_M, 'git-annex/globalprep/prs_slr/v2016/int/rast_sla_delta_raw.tif')
-#writeRaster(sla_delta, sla_delta_file, bandorder='BIL', overwrite = TRUE) ### Saving a brick to file which includes years 1998 - 2015
-
-plot(sla_delta[[1]], 
-          main = sprintf('Change in SL anomaly %s', names(sla_delta)[1]), 
-          col=cols,box=F,axes=F)
-plot(sla_delta[[nlayers(sla_delta)]], 
-          main = sprintf('Change in SL anomaly %s', names(sla_delta)[nlayers(sla_delta)]), 
-          col=cols,axes=F,box=F)
-
-```
-
-
-## Reproject to molleweide & Resample to 1km2 cells
-
-```{r reproject_annual_changes, dependson=calc_delta_sl_anomalies, eval=F}
-
-# Read in ocean raster with cells at 1km. Use this as a template for resampling
-
-ocean = raster(file.path(dir_M,'git-annex/globalprep/spatial/ocean.tif'))
-
-## Multiprocessing cores
-# best to leave empty arguments; by default, the number of cores used for parallel 
-# execution is 1/2 the number of detected cores (if number is unspecified)
-# You can also detect the number of Cores: ?detectCores
-registerDoParallel(16) 
-
-#do some parallelization to reproject all rasters
-foreach(i = 1:nlayers(sla_delta)) %dopar% {
-  
-  r <- sla_delta[[i]]
-  
-  projection(r) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
-
-  r <- projectRaster(r,crs = mollCRS,over=T)%>%
-          resample(ocean,filename = paste0(file.path(dir_anx, 'prs_slr/v2016/int/sla_delta_moll_1km/sla_delta_moll_1km_'),
-                                              names(sla_delta[[i]]),'.tif'),overwrite=T)
-}
-
-```
-
-Values below zero (drop in sea level) are set to zero.
-
-This difference value is rescaled from zero (no sea level rise) to 1 (at 99.99%ile of local slr).
-
-Pull in reference point from csv
-``` {r drop_negative_values}
-
-slr_moll <- list.files(file.path(dir_M,'git-annex/globalprep/prs_slr/v2016/int/sla_delta_moll_1km'),full.names=T)
-
-slr_ref <- read.csv('../reference_points_pressures.csv',stringsAsFactors=F)%>%
-            filter(pressure == 'Sea Level Rise')%>%
-              dplyr::select(ref_point)
-
-slr_ref = as.numeric(slr_ref$ref_point[[1]])/1000 #turn mm into m
-
-resc <- function(x){
-  
-  yr <- substr(x,nchar(x)-7,nchar(x)-4)
-  r <- raster(x)
-  
-  r[r<0]<-0
-
-  slr_resc <- calc(r, fun = function(x) ifelse(x > slr_ref, 1, x/slr_ref))
-  
-  writeRaster(slr_resc,filename = paste0(file.path(dir_anx),'/prs_slr/v2016/int/sla_resc/slr_rescaled_',yr,'.tif')) #add year
-}
-
-mclapply(slr_moll,resc,mc.cores=14)
-
-```
-
-
-Interpolate change in sea level values, to fill gaps.
-``` {r interpolate_bc_sla}
-
-plot_rast(bc_slr_int[[1]], 
-          title = sprintf('delta SL anomaly %s', names(bc_slr_int)[1]), 
-          scale_label = 'meters',
-          rev_scale = TRUE)
-plot_rast(bc_slr_int[[nlayers(bc_slr_int)]], 
-          title = sprintf('delta SL anomaly %s', names(bc_slr_int)[nlayers(bc_slr_int)]), 
-          scale_label = 'meters',
-          rev_scale = TRUE)
-
-```
-
-
 ## Calculate mean pressure by region by year
 
 Using 1000 m region ID raster to run zonal statistics on the pressures layers, calculate the regional average pressures for the study period, and save as a .csv.
@@ -581,3 +491,5 @@ write_csv(slr_rgn_mean, file.path(dir_goal, 'output/slr/slr_rgn_pressures.csv'))
 
 ```
 
+    ``` {r child = 'prov/prov_ftr2.Rmd'}
+    ```
