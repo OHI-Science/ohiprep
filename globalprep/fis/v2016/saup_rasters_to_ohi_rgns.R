@@ -4,7 +4,7 @@
 ## MRF: June 6 2016
 ###############################################
 install.packages("devtools")
-devtools::install_github("SeaAroundUs/rseaaroundus")
+devtools::install_github("SeaAroundUs/rseaaroundus",force=TRUE)
 
 library(reshape2)
 library(dplyr)
@@ -14,7 +14,7 @@ library(raster)
 
 source('src/R/common.R')
 
-ohi_regions <- readOGR(dsn = file.path(dir_M, "git-annex/globalprep/spatial/v2015/data"), layer="regions_gcs")  
+ohi_regions <- readOGR(dsn = file.path(dir_M, "git-annex/globalprep/spatial/d2014/data"), layer="regions_gcs")  
 inland <- ohi_regions[ohi_regions@data$rgn_typ == "eez-inland",]
 plot(inland)
 
