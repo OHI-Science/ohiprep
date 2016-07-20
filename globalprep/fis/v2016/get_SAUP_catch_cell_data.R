@@ -93,6 +93,17 @@ cells <- read.csv(file.path(dir_M,
                             "git-annex/globalprep/fis/v2015/raw/saup_rasters_to_ohi_fao_rgns_noLand.csv"))%>%
           rename(CellID=saup_cell_id)
 
+#5b. Check cells from raw data with cells we matched with
+
+uni_c <- unique(dt_results$CellID)
+length(uni_c) #153183
+uni_ohi_c <- unique(cells$CellID)
+length(uni_ohi_c) #180186
+
+diff <- setdiff(uni_ohi_c,uni_c)
+length(diff) #27475
+
+#this difference may be because the cells-to-ohi regions lookup table includes all global cells, but the SAUP data may only include cells where catch != 0.
 
 #6. Join allocation, taxon and entity data to results
 
@@ -101,10 +112,11 @@ all_data <- results_sub%>%
                         left_join(dt_taxon)%>%
                         left_join(dt_entity)%>%
                         left_join(cells)%>%
-                  mutate(catch_prop = AllocatedCatch * proportionArea)
+                  mutate(catch_prop = AllocatedCatch * proportionArea,
+                         year = my_year)
 
 catch_fao <- all_data%>%
-              group_by(fao_id,Scientific_Name)%>%
+              group_by(fao_id,Scientific_Name,Common_Name, TaxonKey)%>%
               summarise(catch = sum(catch_prop))
 
 
