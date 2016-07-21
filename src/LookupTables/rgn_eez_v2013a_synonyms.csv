@@ -26,7 +26,7 @@ region_id_2012,rgn_id_2013,rgn_nam_2013,rgn_key_2013,eez_iso3,rgn_typ
 17,20,"Korea, Rep.",KR,KOR,ohi_region
 17,20,"Korea, Republic of",KR,KOR,ohi_region
 17,20,Republic of Korea,KR,KOR,ohi_region
-16,21,"Korea, Dem. People's Rep.",KP,PRK,ohi_region
+16,21,"Korea, Dem. People’s Rep.",KP,PRK,ohi_region
 16,21,Democratic People's Republic of Korea,KP,PRK,ohi_region
 16,21,"Korea, Dem. People's Rep",KP,PRK,ohi_region
 16,21,"Korea, Dem. People's Rep. of",KP,PRK,ohi_region
@@ -168,6 +168,7 @@ region_id_2012,rgn_id_2013,rgn_nam_2013,rgn_key_2013,eez_iso3,rgn_typ
 159,209,"Macau, China",CN,CHN,ohi_region
 159,209,Province of China,CN,CHN,ohi_region
 163,214,"Egypt, Arab Rep.",EG,EGY,ohi_region
+167,219,Saint Pierre and Miqelon,PM,SPM,ohi_region
 167,219,St Pierre and Miquelon,PM,SPM,ohi_region
 167,219,St. Pierre and Miquelon,PM,SPM,ohi_region
 94,220,Saint Maarten (Dutch West Indies),SX,Southern Saint-Martin,ohi_region
@@ -220,6 +221,7 @@ region_id_2012,rgn_id_2013,rgn_nam_2013,rgn_key_2013,eez_iso3,rgn_typ
 ,,Burundi,,,landlocked
 ,,Central African Republic,,,landlocked
 ,,Chad,,,landlocked
+,,Czechia,,,landlocked
 ,,Czech Republic,,,landlocked
 ,,Czechoslovakia,,,landlocked
 ,,Ethiopia,,,landlocked
