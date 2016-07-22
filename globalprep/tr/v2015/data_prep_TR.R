@@ -29,12 +29,12 @@ setwd('~/github/ohiprep')
 source('src/R/common.R')
 library(readr)
 
-goal     <- 'globalprep/TourismRecreation'
+goal     <- 'globalprep/tr'
 scenario <- 'v2015'
 dir_anx  <- file.path(dir_neptune_data, 'git-annex', goal) 
-dir_git  <- file.path('~/github/ohiprep', goal)
-dir_data <- file.path(dir_git, scenario, 'data')
-dir_int  <- file.path(dir_git, scenario, 'intermediate')
+dir_git  <- file.path(goal, scenario)
+dir_data <- file.path(dir_git, 'data')
+dir_int  <- file.path(dir_git, 'intermediate')
 # dir_git points to TourismRecreation; dir_data and dir_int point to v201X/data and v201x/intermediate
 #   within the TourismRecreation directory.
 
