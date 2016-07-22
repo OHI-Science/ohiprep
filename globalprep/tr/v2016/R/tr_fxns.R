@@ -43,9 +43,9 @@ tr_prep_layers <- function(tr_layers, tr_data_files, reload = FALSE) {
     write_csv(tr_jobs_tot, tr_layers[['jobs_tot']])
     
     #   * tr_sustainability.csv from WEF TTCI
-    tr_sust <- read.csv(tr_data_files[['sust']], stringsAsFactors = FALSE) %>%
-      select(rgn_id, score)
-    write_csv(tr_sust, tr_layers[['sust']])
+    # tr_sust <- read.csv(tr_data_files[['sust']], stringsAsFactors = FALSE) %>%
+    #   select(rgn_id, score)
+    # write_csv(tr_sust, tr_layers[['sust']])
     
     #   * tr_jobs_tourism.csv from WTTC direct tourism employment and 
     #   * tr_jobs_pct_tourism.csv from WTTC direct tourism employment percentage
@@ -120,7 +120,7 @@ gapfill_flags <- function(data) {
 }
 
 
-gdp_gapfill <- function(data) {
+gdp_gapfill <- function(data) { #data <- tr_data_raw
   ### Gapfill GDP figures using CIA data to sub for missing WB data for 
   ### current year, so that the TTCI regression can include values.
   no_gdp <- data %>% filter(is.na(pcgdp) & year == year_max & is.na(S_score))  %>% arrange(rgn_name)
@@ -130,28 +130,6 @@ gdp_gapfill <- function(data) {
   # Myanmar | New Caledonia | North Korea | Northern Mariana Islands and Guam | Oman | R_union
   # Somalia | Syria | Taiwan | United Arab Emirates
   
-  gdp_cia <- read.csv('globalprep/TourismRecreation/raw/cia_gdp_pc_ppp.csv', stringsAsFactors = FALSE, header = FALSE)
-  
-  gdp_cia <- gdp_cia %>%
-    select(rgn_name = V2, pcgdp_cia = V4) %>%
-    mutate(pcgdp_cia = as.numeric(str_replace(pcgdp_cia, ',', '')))
-  
-  gdp_cia1 <- name_to_rgn(gdp_cia, 
-                          fld_name='rgn_name', flds_unique = c('rgn_name'), 
-                          fld_value='pcgdp_cia', add_rgn_name = TRUE, 
-                          collapse_fxn = 'mean',
-                          dir_lookup = '../ohiprep/src/LookupTables') %>%
-    mutate(year = year_max)  # technically, 2014 estimates, but call it 2013
-  
-  data <- data %>%
-    left_join(gdp_cia1 %>% select(-rgn_id),
-              by = c('rgn_name', 'year')) 
-  #   plot(pcgdp_cia ~ pcgdp, data = data1)
-  #   abline(0,  1, col = 'red')
-  data <- data %>%
-    mutate(gaps  = ifelse(is.na(pcgdp) & !is.na(pcgdp_cia), str_replace(gaps, 'G', 'c'), gaps),
-           pcgdp = ifelse(is.na(pcgdp) & !is.na(pcgdp_cia), pcgdp_cia, pcgdp)) %>%
-    select(-pcgdp_cia)
   
   gdp_r2_mean <- data %>%
     group_by(r2, year) %>%
@@ -159,8 +137,7 @@ gdp_gapfill <- function(data) {
   
   data1 <- data %>%
     left_join(gdp_r2_mean, by = c('r2', 'year')) %>%
-    mutate(gaps  = ifelse(is.na(pcgdp) & !is.na(gdp_r2), str_replace(gaps, 'G', 'r'), gaps),
-           pcgdp = ifelse(is.na(pcgdp) & !is.na(gdp_r2), gdp_r2, pcgdp)) %>%
+           mutate(pcgdp = ifelse(is.na(pcgdp), gdp_r2, pcgdp)) %>%
     select(-gdp_r2)
 
 # skip this - there are others as well; this doesn't add much value.  Rely on regional averages.

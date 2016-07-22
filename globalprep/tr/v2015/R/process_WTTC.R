@@ -16,7 +16,7 @@
 ##############################################################################=
 ### Libraries and such are set up within data_prep.R
 
-dir_wttc <- file.path(dir_git, '../WTTC_tourism')
+dir_wttc <- file.path(dir_M, 'git-annex/globalprep/_raw_data/WTTC/d2015')
   # backs out of TourismRecreation and then to WTTC_tourism directory
 
 
@@ -36,7 +36,7 @@ dir_wttc <- file.path(dir_git, '../WTTC_tourism')
 #                   Thousands of jobs  10.97360 16.327900 20.97170 21.39380  19.71360  30.54360  39.61110  44.13890  42.50190 ... 
 #                    Percentage share   0.65895  0.943581  1.15234  1.13635   1.00022   1.46309   1.81137   1.93826   1.79914 ...
 
-wttc_files <- list.files(path = file.path(dir_wttc, scenario, 'raw'), full.names = TRUE, pattern = glob2rx('*csv'))
+wttc_files <- list.files(path = file.path(dir_wttc, 'raw'), full.names = TRUE, pattern = glob2rx('*csv'))
 #   ~/github/ohiprep/globalprep/WTTC_tourism/v2015/raw/rgn_wttc_empd_2014.csv
 #   ~/github/ohiprep/globalprep/WTTC_tourism/v2015/raw/rgn_wttc_empt_2014.csv
 #   ~/github/ohiprep/globalprep/WTTC_tourism/v2015/raw/rgn_wttc_gdpt_2014.csv
@@ -91,7 +91,8 @@ empd <- empd %>%
 empd_rgn <- name_to_rgn(empd, 
                         fld_name='rgn_name', flds_unique=c('rgn_name','year', 'jobs_pct'), 
                         fld_value='jobs_ct', add_rgn_name = TRUE, 
-                        collapse_fxn = 'sum_na')
+                        collapse_fxn = 'sum_na',
+                        dir_lookup = "src/LookupTables")
 # ??? collapse_fxn = 'sum_na' is not summing them - leaves separate
 dupes <- unique(empd_rgn$rgn_name[duplicated(empd_rgn[ , 1:2])])
 cat(sprintf('Duplicated regions: \n%s\n', paste(dupes, collapse = ', ')))

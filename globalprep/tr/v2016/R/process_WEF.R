@@ -27,19 +27,12 @@
 ###   call name_to_rgn() from ohicore
 
 
-##############################################################################=
-### setup ----
-##############################################################################=
-### Libraries and such are set up within data_prep.R
-
-dir_wef  <- file.path(dir_anx, '../WEF-Economics')
-
 
 ##############################################################################=
 ### WEF TTCI formatting ----
 ##############################################################################=
 # read in files
-ttci_raw <- read.csv(file.path(dir_wef, scenario, 'raw', 'WEF_TTCR_Dataset_2015.csv'), 
+ttci_raw <- read.csv(dir_wef, 
                      skip = 3, check.names = FALSE, stringsAsFactors = FALSE)
 ### NOTE: check.names = FALSE because of Cote d'Ivoire has an accent circonflex over the 'o' (probably other issues in there too)
 
