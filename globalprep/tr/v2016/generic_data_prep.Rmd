@@ -127,6 +127,9 @@ tr_data_raw_gf <- tr_data_raw_gf %>%
   mutate(method = ifelse(is.na(Ep) & !is.na(Ep_pred_r2), "UN georegion (r2)", NA)) %>%
   mutate(method = ifelse(is.na(Ep) & is.na(Ep_pred_r2) & !is.na(Ep_pred_r1), "UN georegion (r1)", method)) 
 
+# check (these changed quite a bit):
+data.frame(filter(tr_data_raw_gf, r2_label=="Micronesia" & year==2013))
+
 tr_data_gf <- tr_data_raw_gf %>%
   select(rgn_id, year, gapfilled, method) 
 
