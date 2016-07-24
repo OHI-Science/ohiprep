@@ -215,7 +215,8 @@ DT::datatable(head(stks,n=100))
 
 ```
 
-
+#Citation information  
+Pauly D. and Zeller D. (Editors), 2015. Sea Around Us Concepts, Design and Data (seaaroundus.org)
 
 
 
