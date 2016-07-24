@@ -1,5 +1,5 @@
 ---
-title: "Preparing catch data for BBmsy calculations"
+title: "OHI 2016 - Food Provision: Preparing catch data for BBmsy calculations"
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
@@ -8,112 +8,232 @@ number_sections: true
 theme: cerulean
 highlight: haddock
 includes: 
-  in_header: '~/github/ohibc/src/templates/ohibc_hdr1.html'
+  in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
 pdf_document:
   toc: true
 ---
 
-This script takes the SAUP catch data and aggregates catch to **stock levels**. For the Ocean Health Index, we assume a stock is represented by the FAO region in which the species is caught.
 
-```{r setup, include=FALSE}
+# Summary
 
-library(dplyr)
-
-source('~/github/ohiprep/src/R/common.R')
-
-```
+This script takes the SAUP spatialized catch data and aggregates catch to **stock levels**. For the Ocean Health Index, we assume a stock is represented by the FAO region in which the species is caught.
 
 In order to aggregate to FAO regions, we associate catch per SAUP region to the FAO region it is found.
 
 For example, New Zealand is located entirely in FAO region 81. All catch reported by New Zealand will be aggregated by species to the FAO region. If a species was reported as caught in both New Zealand waters and in the High Seas of area 81, these two records will be combined into one by summing the catch.
 
+#Updates from previous assessment
+[Any significant changes in methods from previous analyses?]
+
+***
+# Data
+The Sea Around Us Project shared the spatialized catch data with OHI on joined to a lookup table that links SAUP region names and ids to the FAO region they are located in. The proportional area of each EEZ within the FAO region was also calculated for overlapping EEZs.
+
+
+Reference: 
+
+* Downloaded: June 27, 2016
+* Description: Tons per half degree cell with information on sector type, industry type, fishing entity, reporting status and taxonomic information
+* Native data resolution: Flatfiles (.dat) provided with information for 0.5 degree grid cells
+* Time range: 1950 - 2010
+* Format: Database (.dat) flatfiles
+
 ***
 
-The catch data was joined to a lookup table that links SAUP region names and ids to the FAO region they are located in. The proportional area of each EEZ within the FAO region was also calculated for overlapping EEZs.
+# Methods
 
-```{r rgns_table}
-# Read in the SAUP regions lookup table created in saup_rasters_to_ohi_rgns.R
+### Setup
 
-rgns <- read.csv('globalprep/fis/v2016/int/saup_rgn_to_fao.csv')
+``` {r setup, echo = FALSE, message = FALSE, warning = FALSE}
 
-DT::datatable(rgns)
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'figs/',
+                      echo = FALSE, message = FALSE, warning = FALSE)
+
+#setting up provenance
+# devtools::install_github('oharac/provRmd')
+# library(provRmd)
+# prov_setup()
+
+## Libraries
+library(readr)
+library(data.table)
+library(dplyr)
+
+
+## Paths for data
+path_data               = "/home/shares/ohi/git-annex/globalprep/_raw_data/SAUP/d2016/Data"
+file_allocation_data    = "SeaAroundUs/AllocationData.dat"
+file_allocation_results = "SeaAroundUs/AllocationResult.dat"
+file_taxon              = "SeaAroundUs/taxon.dat"
+file_entity             = "FishingEntity.dat"
+
+source('~/github/ohiprep/src/R/common.R')
 
 ```
 
-The catch data is linked to these regions and a unique **stock_id** is created by pasting the scientific name of the species and the FAO region together.
+### Load Data
 
-```{r catch_data}
-catch[catch$saup_id == 1071 & catch$TaxonKey==400323, ]
-## Master SAUP species list, however....
-## There are some repeats in the common names which are used to link to the saup catch data
-## In these cases, I will select the listing with the lowest taxonomic resolution.  
-## There is one species included in the group, and these have distinct regions, so I will add this info. to the common names
-taxon_lookup <- read.csv(file.path(dir_M, "git-annex/globalprep/_raw_data/SAUP/d2016/TaxonTable.csv"), stringsAsFactors=FALSE) %>%
-  dplyr::select(TaxonKey, common=Common.Name, Scientific.Name) %>%
-  mutate(common = ifelse(common %in% "Silver croaker", paste(common, Scientific.Name, sep=" "), common)) %>%
-  group_by(common) %>%
-  top_n(1, -TaxonKey) %>%
-  ungroup()
+These files are large so using the data.table package is recommended due to R memory limitations.
 
-  filter(taxon_lookup, common %in% c("Silver croaker", "Slipper lobster", "Smelt-whitings", "Snappers", "Soles", "Spiny lobsters")) %>%
-    arrange(common) 
-  
-  # Silver croaker Bairdiella chrysoura = USA (East Coast), USA (Gulf of Mexico)
-  # Silver croaker Pennahia argentata = China, Taiwan, Japan (Daito Islands), Japan (main islands), Korea (South), Hawaii Northwest Islands (USA)
+```{r load_data,eval=F}
 
-    
-#read in the catch data created in getSAUPdata.R  
-dat <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/raw/SAUP_catch_taxon_tons_eezs.csv'), stringsAsFactors = FALSE) %>%
-          rbind(read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/raw/SAUP_catch_taxon_tons_highseas.csv'), stringsAsFactors = FALSE)) %>%
-           filter(species != "Others") %>%
-            rename(common = species,
-                   saup_id = rgn_num,
-                   saup_name = rgn_name) %>%   
-           mutate(common = ifelse(common == "Silver croaker" & saup_name %in% c('USA (East Coast)', 'USA (Gulf of Mexico)'), 
-                                  "Silver croaker Bairdiella chrysoura", common)) %>%
-             mutate(common = ifelse(common == "Silver croaker" & 
-                                      saup_name %in% c('China', 'Taiwan', 'Japan (Daito Islands)', 'Japan (main islands)', 
-                                                      'Korea (South)', 'Hawaii Northwest Islands (USA)'), 
-                                  "Silver croaker Pennahia argentata", common)) %>%
-          group_by(year, common, saup_id, saup_name) %>%
-          summarize(tons = sum(tons)) %>%
-          ungroup() %>%
-           left_join(taxon_lookup, by = 'common')
+# load the Allocation info using fread, and define column names
+dt_data           <- fread(file.path(path_data,file_allocation_data), sep=";", header = FALSE)
+colnames(dt_data) <- c("UniversalDataID","DataLayerID","FishingEntityID", "Year", "TaxonKey",
+                       "InputTypeID", "sector_type_name", "catch_type_name", 
+                       "reporting_status_name")
 
 
-# next add in the region data and correct catch for saups that fall into multiple fao regions
-  # and use the fao region to create the stock id
-dat <-    dat %>%
-        left_join(rgns) %>%
-          mutate(prop_area = ifelse(saup_id > 1000, 1, prop_area)) %>%   ## fill in the high seas which are otherwise blank
-          mutate(tons = tons * prop_area) %>%   ### correction in catch because some saup regions include multiple fao regions
-          mutate(fao_rgn = ifelse(saup_id > 1000, saup_id - 1000, fao_rgn),
-                stock_id = gsub(" ", "_", paste(Scientific.Name, fao_rgn, sep='-'), fixed=TRUE))
+#load the Results data (largest file, usually takes up to 10 minutes to read!)
+dt_results           <- fread(file.path(path_data,file_allocation_results), sep=";", header = FALSE)
+colnames(dt_results) <- c("UniversalDataID","CellID","AllocatedCatch")
+# setkey(dt_results,UniversalDataID) # not necessary the data seems to be already ordered with the keys (univ and Cell IDs)
+
+
+#load the Taxon data
+dt_taxon           <- fread(file.path(path_data,file_taxon), sep=";", header = FALSE)
+colnames(dt_taxon) <- c("TaxonKey","Scientific_Name","Common_Name","FunctionalGroupDescription")
+setkey(dt_taxon,TaxonKey)
+
+
+#load the fishing entity data
+dt_entity           <- fread(file.path(path_data,file_entity), sep = ";", header=FALSE)
+colnames(dt_entity) <- c("FishingEntityID","Name")
+setkey(dt_entity,FishingEntityID)
+```
+
+#load the data that matches CellID to OHI regions and combine land and eez cells so we don't lose the land proportion
+
+There are a lot of cells that slighlty overlap the OHI regions shapefile, leaving them with a proportional area less than 1. This would cause us to lose catch when assigning catch to cells. To fix this, we define a vector of cellids that have a proportionArea <1 and are NOT duplicated (i.e. the other portion of the area missing is not accounted for) and assign a proportionArea of 1 to these cells.
+
+```{r cells, eval=F}
+cells <- read.csv(file.path(dir_M, "git-annex/globalprep/fis/v2015/raw/saup_rasters_to_ohi_rgns.csv"))%>%
+          rename(CellID=saup_cell_id)%>%
+          group_by(CellID,rgn_id)%>%
+          dplyr::summarise(area = sum(proportionArea))%>%
+          ungroup()
+
+#there are a lot of cells that slightly overlap the shapefile, leaving their proportionArea below 1. See this here:
+
+head(cells)
+
+## A tibble: 6 x 3
+# CellID rgn_id  area
+# <dbl>  <int> <dbl>
+# 1      8    260  0.04
+# 2      9    260  0.10
+# 3     10    260  0.10
+# 4     11    260  0.10
+# 5     12    260  0.10
+# 6     13    260  0.10
+
+# The remaining prorportional area of these cells does not exist in the data frame. If we use these area values to multiply by catch, we will
+# lose catch.
+
+#i get the list of cell ids that are duplicated, and use this list of values to adjust the area to equal 1 ONLY for those cells that are not duplicated
+
+dup <- cells%>%
+        dplyr::select(CellID)%>%
+        mutate(dup = duplicated(.))%>%
+        filter(dup==TRUE)%>%
+        collect%>%
+        .[["CellID"]]
+
+#read in the dataset matching each cell to an FAO region
+fao_cells <- read.csv( file.path(dir_M, "git-annex/globalprep/fis/v2015/raw/saup_rasters_to_fao_rgns.csv"))%>%
+              rename(CellID=saup_cell_id)
+
+cells_df <- cells%>%
+              mutate(area = ifelse(CellID %in% dup,area,1))%>%
+              left_join(fao_cells)%>%
+              mutate(area = ifelse(area>1,1,area)) #this is still wrong. I'm trying to fix incorrect proportional areas. 
+
+```
+
+### Load taxonomic resilience information
+
+```{r resilience}
 
 # add the taxon_resilence data to catch for b/bmsy calculations
-taxon_res = read.csv('globalprep/fis/v2016/int/taxon_resilience_lookup.csv', stringsAsFactors = FALSE) %>%
-  mutate(common = ifelse(common %in% "Silver croaker", paste(common, sciname, sep=" "), common)) %>%
-  dplyr::select(common, Resilience)
+taxon_res = read.csv('int/taxon_resilience_lookup.csv', stringsAsFactors = FALSE) %>%
+              mutate(common = ifelse(common %in% "Silver croaker", paste(common, sciname, sep=" "), common)) %>%
+              dplyr::select(Common_Name=common, Resilience)
+```
+
+***
+
+# Aggregate catch per region per year
+
+Using a for loop, aggregate catch per OHI region
+
+```{r, eval =F}
+
+df <- data.frame()
+
+
+for (i in 1950:2010){
+
+  print(i)
   
-catch <- dat %>%
-  left_join(taxon_res, by="common") %>%
-  dplyr::select(-saup_name, -prop_area)
+#1. subset the allocation data to year i
+data_yearly <- dt_data[Year==i,]
 
-#write.csv(catch, file.path(dir_M, 'git-annex/globalprep/fis/v2016/int/catch_saup.csv'), row.names=FALSE)
+#2. Now we want it ordered by UniversalDataID
+setkey(data_yearly,UniversalDataID)
 
-#Showing only 
-DT::datatable(head(dat,n=100),caption = 'Only showing the first 100 rows due to large size of this data')
+#3. Get unique UniversalDataID
+
+udi <- unique(data_yearly$UniversalDataID)
+
+#4. Subset results
+
+results_sub <- dt_results[UniversalDataID %in% udi]
+
+setkey(results_sub,UniversalDataID) #sort by UDI
+
+
+#5. Join allocation, taxon, entity, resilience data to results to create final catch dataset and removing all catch reported at non-species level
+
+
+all_data <- results_sub%>%
+               left_join(data_yearly)%>%
+               left_join(dt_taxon)%>%
+               left_join(dt_entity)%>%
+               left_join(cells_df)%>%
+               mutate(catch_prop = AllocatedCatch * area,
+                         year = i)%>%
+                group_by(fao_id, Scientific_Name, Common_Name, TaxonKey)%>%
+                summarise(catch = sum(catch_prop))%>%
+                ungroup()%>%
+                filter(TaxonKey>599999)%>%
+                mutate(year     = i,
+                       stock_id = gsub(" ", "_", paste(Scientific_Name, fao_id, sep='-'), fixed=TRUE))%>%
+                rename(fao_rgn  = fao_id,
+                       tons     = catch)%>%
+                left_join(taxon_res)
+
+
+
+df = rbind(df,all_data)
+
+}
+
+write.csv(df,file =  file.path(dir_M,'git-annex/globalprep/fis/v2016/int/spatial_catch_saup.csv'),row.names=FALSE)
+
 
 ```
 
+***
+
+# Filter out stocks that do not meet our conditions
 Filter out all stocks that don't meet our conditions
 
 (1) Keep all stocks that have at least 1000 tons mean annual harvest
 (2) Keep all stocks with time series of 20 years or more
 
-```{r prep_data_bbmsy}
+```{r prep_data_bbmsy, eval=F}
 
-catch <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/catch_saup.csv'))
+catch <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/spatial_catch_saup.csv'))
 
 #set variables to filter by
 min_yrs = 20
@@ -122,7 +242,7 @@ min_tons = 1000
 stks <- catch %>%
         filter(TaxonKey >= 600000,     #select only taxa identified to species
                tons > 0) %>%           #remove all records of 0 catch
-        group_by_(.dots = c("year", "common", "fao_rgn", "stock_id", "TaxonKey", "Resilience"))%>%
+        group_by_(.dots = c("year", "Scientific_Name", "Common_Name","fao_rgn", "stock_id", "TaxonKey", "Resilience"))%>%
                 summarize(tons = sum(tons))%>%
             ungroup()%>%
             group_by(stock_id)%>%
@@ -131,31 +251,18 @@ stks <- catch %>%
             ungroup()%>%
               filter(avg_ann_catch >= min_tons,
                      nyrs >= min_yrs)%>%
-            select(year,common,fao_rgn,stock_id,TaxonKey,Resilience,tons)
+            dplyr::select(year,Scientific_Name,Common_Name,fao_rgn,stock_id,TaxonKey,Resilience,tons)
 
 
-write.csv(stks, file = 'int/catch_pre_bbmsy.csv')
+#write.csv(stks, file = 'int/spatial_catch_pre_bbmsy.csv')
 
-
-# stks[stks$stock_id == 'Acetes_japonicus-61', ]
-# old[old$stock_id == 'Acetes_japonicus-61', ]
-# 
-# old <- read.csv("https://raw.githubusercontent.com/OHI-Science/ohiprep/master/globalprep/fis/v2016/int/catch_pre_bbmsy.csv") %>%
-#   rename(old_tons = tons) 
-# setdiff(old$stock_id, stks$stock_id)
-# setdiff(stks$stock_id, old$stock_id)
-# stks[stks$stock_id == 'Acetes_japonicus-61', ]
 
 DT::datatable(head(stks,n=100))
 
 
 ```
 
+***
 
-
-
-
-
-
-
-
+#Citation information  
+Pauly D. and Zeller D. (Editors), 2015. Sea Around Us Concepts, Design and Data (seaaroundus.org)
