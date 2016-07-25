@@ -1,0 +1,47 @@
+---
+title: 'OHI: [Clean Waters/Trash trend] '
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '../../../src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+[REFERENCE RMD FILE: https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/CW_trend_trash/v2016/cw_trend_trash_dataprep.html]
+
+#Summary
+We describe how we calculated global trash trends for the clean water goal of the OHI 2016 assessment.
+
+
+#Updates from previous assessment
+Previously, we used trends in coastal population as a proxy for trash trends.  This new data describes trends in mismanaged plastic waste.
+
+***
+
+#Data Source 
+**Reference**: Jambeck et al. 2016. Plastic waste inputs from land into the ocean. Science 347:768-771.
+
+**Description**:  Describes (Supplementary data) mismanaged plastic waste in 2010 and estimates mismanaged plastic waste in 2025. Using these data, we estimate trash trends for a 5 year period.
+
+**Native data resolution**: Country scale   
+
+**Format**:  Excel table in Supplementary data.
+
+***
+  
+#Methods
+
+```{r}
+## load necessary packages
+library(dplyr)
+library(tidyr)
+
+
+```
+
