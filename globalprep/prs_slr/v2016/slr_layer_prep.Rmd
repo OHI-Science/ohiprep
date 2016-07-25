@@ -18,9 +18,9 @@ knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
                       echo = FALSE, message = FALSE, warning = FALSE)
 
 #setting up provenance
-devtools::install_github('oharac/provRmd')
-library(provRmd)
-prov_setup()
+# devtools::install_github('oharac/provRmd')
+# library(provRmd)
+# prov_setup()
 
 library(sp)        # the classes and methods that make up spatial ops in R
 library(rgdal)
@@ -174,7 +174,7 @@ months_coast <- function(x){
 }
 
 #apply the clipping function to all files
-mclapply(nc_files[273:276],months_coast,mc.cores=14)
+mclapply(nc_files,months_coast,mc.cores=14)
 
 ```
 
@@ -277,10 +277,13 @@ Raw data in monthly mean sea level anomalies, at .25 degree grid globally, is pr
 
 all_yrs <- c(1993:2015)
 
-for (j in 1:length(all_yrs)) {
+registerDoParallel(14) 
+
+foreach (j = 1:length(all_yrs)) %dopar% {
   
 
-  msla_yr <- files[str_detect(files, as.character(all_yrs[j]))]
+  msla_yr <- nc_files[str_detect(nc_files, as.character(all_yrs[j]))]
+  
   ### set up an empty list to store rasters for this year
   rast_list_yr <- vector('list', length(msla_yr))
   
@@ -291,16 +294,13 @@ for (j in 1:length(all_yrs)) {
     rast_list_yr[i] <- raster(msla_yr[i], nogit = TRUE)
   }
   
-  ### brick all rasters for this year, and calc annual mean, then write as raster
-  rbrick_yr <- brick(rast_list_yr)
-  
-  rast_annual_mean <- calc(rbrick_yr, mean,na.rm=T)
-  #rast_annual_sd <- calc(rbrick_yr,fun=function(x){sd(x,na.rm=T)})
-  
+  ### stack all rasters for this year, and calc annual mean, then write as raster
+  rast_annual_mean <- brick(rast_list_yr)%>%
+                      calc(mean,na.rm=T)%>%
+                      rotate()
+
   rast_file <- file.path(dir_git, 'globalprep/prs_slr/v2016/int/msla_annual_mean', 
                          sprintf('rast_msla_annual_%s.tif', all_yrs[j]))
-  #rast_file_sd <- file.path(dir_git, 'globalprep/prs_slr/v2016/int/msla_annual_sd', 
-                         #sprintf('rast_msla_annual_sd_%s.tif', years[j]))
   
   message('Writing raster to ', rast_file)
   writeRaster(rast_annual_mean,
@@ -316,7 +316,7 @@ for (j in 1:length(all_yrs)) {
 
 We want to use the reference period, 1993-2012, since this time period was used to calculate the raw data.
 
-First calculate mean anomaly over this time period per cell, then get the 99.99th quantile.
+First calculate mean rate of increase in sea level over this period of time per coatsal cell, then get the 99.99th quantile.
 
 ```{r ref}
 
@@ -326,33 +326,47 @@ annual_means <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_
 
 ref_list <- annual_means[1:20]
 
+#calculate the mean rate of increase per year, reproject, resample, and mask with the ocean raster to make sure we 
+# include small pacific islands that we would otherwise lose with boundaries()
+
+# Read in ocean raster with cells at 1km. Use this as a template for resampling
+
+ocean = raster(file.path(dir_M,'git-annex/globalprep/spatial/ocean.tif'))
+
+time <- c(1:20)
 ref_mean <- stack(ref_list)%>%
-              calc(fun=function(x){mean(x,na.rm=T)})
+               calc(fun=function(x){ if (is.na(x)){ NA } else {lm(x ~ time)$coefficients[2] }})
+
+projection(ref_mean) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+
+#reproject raster to mollweide, resample to 1km, then mask with ocean and grab coastal cels
+  ref_1km <- projectRaster(ref_mean,crs = mollCRS,over=T)%>%
+                resample(ocean, method = 'ngb')%>%
+                mask(ocean,filename = paste0(file.path(
+                            dir_anx),'/prs_slr/v2016/int/ref_1km.tif'),overwrite=T)
+
+  bound <- boundaries(ref_1km, type='inner',asNA=T)
+
   
-histogram(ref_mean)
-ref <- quantile(ref_mean,prob=0.9999,na.rm=T)
+  ref_1km <- overlay(ref_1km,bound,fun=function(x,y){x*y},filename = paste0(file.path(
+                            dir_anx),'/prs_slr/v2016/int/ref_1km_coast.tif'),overwrite=T)
+  
+  ref_1km[ref_1km==0]<-NA
+  
+  writeRaster(ref_1km, paste0(file.path(
+                            dir_anx),'/prs_slr/v2016/int/ref_1km_coast_out.tif'),overwrite=T)
+        
+histogram(ref_1km)
+ref <- quantile(ref_1km,prob=0.9999,na.rm=T)
 
-
-```
-
-#### Compare mean to aggregate dataset from Aviso
-
-```{r}
-
-ref_list_2 <- annual_means[1:22]
-
-all_yr_mean <- stack(ref_list_2)%>%
-              calc(fun=function(x){(mean(x,na.rm=T))})
-
-agg <- raster(file.path(dir_anx_aviso,'MSL_Map_MERGED_Global_IB_RWT_NoGIA_Adjust.nc'))%>%
-        rotate() #divide by 23 years to get mean mm per year
-
-agg_mask <- mask(agg,all_yr_mean)
-
-compare <- agg - all_yr_mean
-
+#> ref
+#     99.99% 
+# 0.01729097 
 
 ```
+
+The reference point is a rate of change equal to `r ref*100` mm/year.
+
 
 ## Calculate the rate of change over time per cell for each year
 
@@ -362,8 +376,9 @@ registerDoParallel(10)
 
 foreach(i = 1993:2011) %dopar% {
   
+  #define the 5 years
    yrs <- c(i,i+1,i+2,i+3,i+4)
-   time <- c(1:5)
+   time <- c(1:5) #for the lm
 
   r <- annual_means[which(substr(annual_means,96,99)%in%yrs)]%>%
         stack()%>%
@@ -373,35 +388,30 @@ foreach(i = 1993:2011) %dopar% {
 
 }
 
-s <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/sla_rate_5yrs'),full.names=T)%>%stack()
-
-# make a time variable (to be used in regression)
-time <- 1:nlayers(s)
-
-slr_rate <- calc(s,fun=function(x){ if (is.na(x)){ NA } else {lm(x ~ time)$coefficients[2] }})
-
+s <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/sla_rate_5yrs'),full.names=T)
 
 ```
 
 
-
-
-The reference point is `r ref*0.01` mm per year.
-
 ### Rescale each cell according to this reference point.
+
 ```{r rescale}
 
-rescale_slr <- function(x){
+rescale_slr <- function(file){
   
-  r <- raster(x)
+  r <- raster(file)
   
-  yr = substr(names(r)[1],18,21)
+  yr = substr(file,85,93)
   
   out <- calc(r,fun=function(x){ifelse(x>ref,1,x/ref)})
+  
+  out[out<0]<-0
+  
+  writeRaster(out,filename = paste0(file.path(dir_git,'globalprep/prs_slr/v2016/int/sla_rate_5yrs_rescale/sla_rate_'),yr,'_rescaled.tif'),overwrite=T)
 
 }
 
-mclapply(annual_means,rescale_slr,mc.cores=14)
+mclapply(s,rescale_slr,mc.cores=14)
 
 ```
 
@@ -410,65 +420,48 @@ mclapply(annual_means,rescale_slr,mc.cores=14)
 
 ```{r reproj_resamp}
 
-# Read in ocean raster with cells at 1km. Use this as a template for resampling
-
-ocean = raster(file.path(dir_M,'git-annex/globalprep/spatial/ocean.tif'))
-
 
 registerDoParallel(10) 
 
 #utilize parallelization to rescale & reproject all rasters
 
-foreach(i = 1993:2010) %dopar% {
-  
-  yrs <- c(i,i+1,i+2,i+3,i+4)
+slr_reproj <- function(file){
 
-  r <- annual_means[which(substr(annual_means,96,99)%in%yrs)]%>%
-        stack()%>%
-          mean(na.rm=T)
+  r_resc<-raster(file)
   
-  r[r<0]<-0
-  
-  #rescale & save to file
-  
-  r_resc <- calc(r,fun=function(x){ifelse(x>ref,1,x/ref)},filename = 
-                   paste0(file.path(dir_git),'/globalprep/prs_slr/v2016/int/msla_annual_rescale/msla_annual_rescaled_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
+  yrs = substr(file,93,101)
   
   #define projection of the raster before reprojecting
   projection(r_resc) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 
   #reproject raster to mollweide, resample to 1km
   r <- projectRaster(r_resc,crs = mollCRS,over=T)%>%
-          resample(ocean, method = 'ngb', 
+          resample(ocean, method = 'ngb')%>%
+            mask(ref_1km,  #not sure if this is faster than boundaries() or not
                    filename = paste0(file.path(
-                      dir_anx),'/prs_slr/v2016/output/slr_moll_1km_rescaled_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
+                      dir_anx),'/prs_slr/v2016/output/slr_moll_1km_rescaled_',yrs,'.tif'),overwrite=T)
 }
 
-
+#list all files
+slr_rescale_files <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/sla_rate_5yrs_rescale'),full.names=T)
+mclapply(slr_rescale_files,slr_reproj,mc.cores=12)
 ```
 
 ### Plot
 
 ```{r plot}
 
-resc <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_rescale'),full.names = T)%>%stack()
+resc <- list.files(file.path(dir_anx,'prs_slr/v2016/output'),full.names = T)%>%stack()
 
 plot(resc,col=cols)
 
-names <-substr(names(resc),22,30)
+names <-substr(names(resc),23,31)
 
 names(resc)<-names
 
 histogram(resc)
 
-#look at non-rescaled data dist
 
-a <- stack(annual)
-histogram(a)
-
-
-out <- 
-  
 plot(ocean,col='cornsilk2',axes=F,box=F,main='Sea Level Rise Pressure 2010-2014',legend=F)
 plot(out[[5]],col=cols,axes=F,box=F,add=T)
 ```
