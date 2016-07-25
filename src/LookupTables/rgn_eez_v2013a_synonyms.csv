@@ -22,6 +22,7 @@ region_id_2012,rgn_id_2013,rgn_nam_2013,rgn_key_2013,eez_iso3,rgn_typ
 10,14,"Taiwan, Province of China",TW,TWN,ohi_region
 14,18,"Fiji, Republic of",FJ,FJI,ohi_region
 16,20,"Korea, South",KR,KOR,ohi_region
+16,20,"Korea, South (Republic of Korea)",KR,KOR,ohi_region
 17,20,Korea Republic of,KR,KOR,ohi_region
 17,20,"Korea, Rep.",KR,KOR,ohi_region
 17,20,"Korea, Republic of",KR,KOR,ohi_region
@@ -58,6 +59,7 @@ region_id_2012,rgn_id_2013,rgn_nam_2013,rgn_key_2013,eez_iso3,rgn_typ
 68,95,Falkland Islands (Islas Malvinas),FK,FLK,ohi_region
 68,95,Falkland Islands (Malvinas),FK,FLK,ohi_region
 73,100,Congo,CG,COG,ohi_region
+73,100,Congo Rep of,CG,COG,ohi_region
 73,100,Republic of Congo,CG,COG,ohi_region
 73,100,"Congo, R.+publique du",CG,COG,ohi_region
 73,100,"Congo, R_publique du",CG,COG,ohi_region
@@ -86,6 +88,7 @@ region_id_2012,rgn_id_2013,rgn_nam_2013,rgn_key_2013,eez_iso3,rgn_typ
 86,119,St Kitts and Nevis,KN,KNA,ohi_region
 86,119,St. Kitts & Nevis,KN,KNA,ohi_region
 86,119,St. Kitts and Nevis,KN,KNA,ohi_region
+87,120,Antigua & Barbuda,AG,ATG,ohi_region
 88,122,St Lucia,LC,LCA,ohi_region
 88,122,St. Lucia,LC,LCA,ohi_region
 83,123,Commonwealth of Dominica,DM,DOM,ohi_region
@@ -134,6 +137,7 @@ region_id_2012,rgn_id_2013,rgn_nam_2013,rgn_key_2013,eez_iso3,rgn_typ
 146,195,Cote d'ivorie,CI,CIV,ohi_region
 150,199,"Congo, Dem. Rep.",CD,COD,ohi_region
 150,199,"Congo, Dem. Rep. of the",CD,COD,ohi_region
+150,199,"Congo, Dem rep. of",CD,COD,ohi_region
 150,199,"Congo, Democratic Republic",CD,COD,ohi_region
 150,199,"Congo, Democratic Republic of the",CD,COD,ohi_region
 150,199,"Congo, The Democratic Republic of the",CD,COD,ohi_region
@@ -148,6 +152,7 @@ region_id_2012,rgn_id_2013,rgn_nam_2013,rgn_key_2013,eez_iso3,rgn_typ
 152,202,"Tanzania, United Republic of",TZ,TZA,ohi_region
 152,202,United Rep. of Tanzania,TZ,TZA,ohi_region
 152,202,United Republic of Tanzania,TZ,TZA,ohi_region
+155,205,Burma/Myanmar,MM,MMR,ohi_region
 155,205,Burma,MM,MMR,ohi_region
 157,207,Viet Nam,VN,VNM,ohi_region
 159,209,"China, Hong Kong SAR",CN,CHN,ohi_region
@@ -171,10 +176,12 @@ region_id_2012,rgn_id_2013,rgn_nam_2013,rgn_key_2013,eez_iso3,rgn_typ
 167,219,Saint Pierre and Miqelon,PM,SPM,ohi_region
 167,219,St Pierre and Miquelon,PM,SPM,ohi_region
 167,219,St. Pierre and Miquelon,PM,SPM,ohi_region
+167,219,Saint Pierre,PM,SPM,ohi_region
 94,220,Saint Maarten (Dutch West Indies),SX,Southern Saint-Martin,ohi_region
 94,220,Sint Maarten,SX,Southern Saint-Martin,ohi_region
 94,220,Sint Maarten (Dutch part),SX,Southern Saint-Martin,ohi_region
 94,220,"Sint Maarten, Dutch West Indies",SX,Southern Saint-Martin,ohi_region
+94,220,"Saint Maarten, DWI",SX,Southern Saint-Martin,ohi_region
 106,221,Northern Saint Martin,MF,Saint Martin,ohi_region
 106,221,Saint Martin,MF,Saint Martin,ohi_region
 106,221,St. Martin (French part),MF,Saint Martin,ohi_region
