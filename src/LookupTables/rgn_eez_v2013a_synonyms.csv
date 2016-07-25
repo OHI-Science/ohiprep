@@ -76,6 +76,7 @@ region_id_2012,rgn_id_2013,rgn_nam_2013,rgn_key_2013,eez_iso3,rgn_typ
 85,111,Turks and Caicos Is.,TC,TCA,ohi_region
 84,116,Puerto Rico,PR,PRI,ohi_region
 84,116,United States Virgin Islands,PR,PRI,ohi_region
+84,116,USVI,PR,PRI,ohi_region
 84,116,US Virgin Islands,PR,PRI,ohi_region
 84,116,Virgin Islands,PR,PRI,ohi_region
 84,116,Virgin Islands (U.S.),PR,PRI,ohi_region
