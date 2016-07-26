@@ -1,0 +1,221 @@
+rgn_id,rgn_name,year,layer,count,
+5,New Caledonia,2015,POP,273000,wb
+6,Vanuatu,2015,POP,264652,wb
+7,Solomon Islands,2015,POP,583591,wb
+8,Palau,2015,POP,21291,wb
+9,Micronesia,2015,POP,104460,wb
+10,Nauru,2015,POP,10222,wb
+11,Marshall Islands,2015,POP,52993,wb
+13,Northern Mariana Islands and Guam,2015,POP,224955,wb
+15,Philippines,2015,POP,100699395,wb
+16,Australia,2015,POP,23781169,wb
+17,Papua New Guinea,2015,POP,7619321,wb
+18,Fiji,2015,POP,892145,wb
+19,Tuvalu,2015,POP,9916,wb
+20,South Korea,2015,POP,50617045,wb
+21,North Korea,2015,POP,25155317,wb
+24,Cambodia,2015,POP,15577899,wb
+25,Thailand,2015,POP,67959359,wb
+28,Comoro Islands,2015,POP,788474,wb
+31,Seychelles,2015,POP,92900,wb
+37,Mauritius,2015,POP,1262605,wb
+39,Maldives,2015,POP,409163,wb
+40,Sri Lanka,2015,POP,20966000,wb
+41,Mozambique,2015,POP,27977863,wb
+42,Madagascar,2015,POP,24235390,wb
+43,Kenya,2015,POP,46050302,wb
+44,Somalia,2015,POP,10787104,wb
+46,Djibouti,2015,POP,887861,wb
+47,Yemen,2015,POP,26832215,wb
+48,Oman,2015,POP,4490541,wb
+49,Sudan,2015,POP,40234882,wb
+50,Saudi Arabia,2015,POP,31540372,wb
+51,Kuwait,2015,POP,3892115,wb
+52,Bahrain,2015,POP,1377237,wb
+53,Pakistan,2015,POP,188924874,wb
+54,United Arab Emirates,2015,POP,9156963,wb
+56,Cape Verde,2015,POP,520502,wb
+59,Belgium,2015,POP,11285721,wb
+60,Gibraltar,2015,POP,32217,wb
+61,Tunisia,2015,POP,11107800,wb
+62,Morocco,2015,POP,34377511,wb
+64,Mauritania,2015,POP,4067564,wb
+65,Gambia,2015,POP,1990924,wb
+66,Senegal,2015,POP,15129273,wb
+67,Libya,2015,POP,6278438,wb
+68,Malta,2015,POP,431333,wb
+69,Latvia,2015,POP,1978440,wb
+70,Estonia,2015,POP,1311998,wb
+71,Bulgaria,2015,POP,7177991,wb
+72,Romania,2015,POP,19832389,wb
+73,Russia,2015,POP,144096812,wb
+74,Georgia,2015,POP,3679000,wb
+75,Ukraine,2015,POP,45198200,wb
+76,Turkey,2015,POP,78665830,wb
+77,Syria,2015,POP,18502413,wb
+78,Lebanon,2015,POP,5850743,wb
+79,Israel,2015,POP,8380400,wb
+80,Greece,2015,POP,10823732,wb
+81,Cyprus,2015,POP,1165300,wb
+82,Albania,2015,POP,2889167,wb
+84,Algeria,2015,POP,39666519,wb
+96,Sierra Leone,2015,POP,6453184,wb
+97,Liberia,2015,POP,4503438,wb
+98,Togo,2015,POP,7304578,wb
+99,Benin,2015,POP,10879829,wb
+100,Republique du Congo,2015,POP,4620330,wb
+101,Namibia,2015,POP,2458830,wb
+102,South Africa,2015,POP,54956920.37,wb
+103,Sao Tome and Principe,2015,POP,190344,wb
+104,Equatorial Guinea,2015,POP,845060,wb
+106,Ghana,2015,POP,27409893,wb
+108,Bermuda,2015,POP,65235,wb
+110,Bahamas,2015,POP,388019,wb
+111,Turks and Caicos Islands,2015,POP,34339,wb
+112,Cuba,2015,POP,11389562,wb
+113,Cayman Islands,2015,POP,59967,wb
+114,Haiti,2015,POP,10711067,wb
+115,Dominican Republic,2015,POP,10528391,wb
+116,Puerto Rico and Virgin Islands of the United States,2015,POP,3577756,wb
+117,British Virgin Islands,2015,POP,30117,wb
+119,Saint Kitts and Nevis,2015,POP,55572,wb
+120,Antigua and Barbuda,2015,POP,91818,wb
+122,Saint Lucia,2015,POP,184999,wb
+123,Dominica,2015,POP,72680,wb
+124,Barbados,2015,POP,284215,wb
+125,Grenada,2015,POP,106825,wb
+126,Trinidad and Tobago,2015,POP,1360088,wb
+127,Saint Vincent and the Grenadines,2015,POP,109462,wb
+129,Panama,2015,POP,3929141,wb
+130,Costa Rica,2015,POP,4807850,wb
+131,Nicaragua,2015,POP,6082032,wb
+132,Colombia,2015,POP,48228704,wb
+133,Honduras,2015,POP,8075060,wb
+134,El Salvador,2015,POP,6126583,wb
+135,Mexico,2015,POP,127017224,wb
+136,Guatemala,2015,POP,16342897,wb
+137,Ecuador,2015,POP,16144363,wb
+138,Peru,2015,POP,31376670,wb
+139,Venezuela,2015,POP,31108083,wb
+141,Faeroe Islands,2015,POP,48199,wb
+143,Iceland,2015,POP,330823,wb
+145,Greenland,2015,POP,56114,wb
+147,French Polynesia,2015,POP,282764,wb
+151,American Samoa,2015,POP,55538,wb
+152,Samoa,2015,POP,193228,wb
+155,Tonga,2015,POP,106170,wb
+162,New Zealand,2015,POP,4595700,wb
+163,United States,2015,POP,321418820,wb
+164,Belize,2015,POP,359287,wb
+166,Jamaica,2015,POP,2725941,wb
+167,Guyana,2015,POP,767085,wb
+168,Suriname,2015,POP,542975,wb
+171,Brazil,2015,POP,207847528,wb
+172,Argentina,2015,POP,43416755,wb
+173,Uruguay,2015,POP,3431555,wb
+174,Finland,2015,POP,5482013,wb
+175,Denmark,2015,POP,5676002,wb
+176,Germany,2015,POP,81413145,wb
+177,Netherlands,2015,POP,16936520,wb
+178,Poland,2015,POP,37999494,wb
+179,France,2015,POP,66808385,wb
+180,United Kingdom,2015,POP,65138232,wb
+181,Ireland,2015,POP,4640703,wb
+182,Spain,2015,POP,46418269,wb
+183,Portugal,2015,POP,10348648,wb
+184,Italy,2015,POP,60802085,wb
+185,Monaco,2015,POP,37731,wb
+186,Montenegro,2015,POP,622388,wb
+187,Croatia,2015,POP,4224404,wb
+188,Slovenia,2015,POP,2063768,wb
+189,Lithuania,2015,POP,2910199,wb
+190,Qatar,2015,POP,2235355,wb
+191,Iran,2015,POP,79109272,wb
+192,Iraq,2015,POP,36423395,wb
+193,Guinea Bissau,2015,POP,1844325,wb
+194,Guinea,2015,POP,12608590,wb
+195,Ivory Coast,2015,POP,22701556,wb
+196,Nigeria,2015,POP,182201962,wb
+197,Cameroon,2015,POP,23344179,wb
+198,Gabon,2015,POP,1725292,wb
+199,Democratic Republic of the Congo,2015,POP,77266814,wb
+200,Angola,2015,POP,25021974,wb
+202,Tanzania,2015,POP,53470420,wb
+203,India,2015,POP,1311050527,wb
+204,Bangladesh,2015,POP,160995642,wb
+205,Myanmar,2015,POP,53897154,wb
+206,Malaysia,2015,POP,30331007,wb
+207,Vietnam,2015,POP,91703800,wb
+208,Singapore,2015,POP,5535002,wb
+209,China,2015,POP,1379113306,wb
+210,Japan,2015,POP,126958472,wb
+212,Kiribati,2015,POP,112423,wb
+214,Egypt,2015,POP,91508084,wb
+215,Jordan,2015,POP,7594547,wb
+216,Indonesia,2015,POP,257563815,wb
+218,Canada,2015,POP,35851774,wb
+220,Sint Maarten,2015,POP,38817,wb
+221,Northern Saint-Martin,2015,POP,31754,wb
+222,Sweden,2015,POP,9798871,wb
+223,Norway,2015,POP,5195921,wb
+224,Chile,2015,POP,17948141,wb
+227,Jersey,2015,POP,163692,wb
+228,Guernsey,2015,POP,163692,wb
+231,East Timor,2015,POP,1245015,wb
+232,Bosnia and Herzegovina,2015,POP,3810416,wb
+244,Curacao,2015,POP,158040,wb
+247,Brunei,2015,POP,423188,wb
+250,Aruba,2015,POP,103889,wb
+1,Cocos Islands,2015,POP,596,wiki
+2,Christmas Island,2015,POP,2072,wiki
+3,Norfolk Island,2015,POP,2210,wiki
+4,Macquarie Island,2015,POP,0,wiki
+12,Wake Island,2015,POP,150,wiki
+14,Taiwan,2015,POP,23510000,wiki
+26,Andaman and Nicobar,2015,POP,380500,wiki
+29,Mayotte,2015,POP,212645,wiki
+30,Glorioso Islands,2015,POP,0,wiki
+32,Reunion,2015,POP,843617,wiki
+33,Juan de Nova Island,2015,POP,0,wiki
+34,Bassas da India,2015,POP,0,wiki
+35,Ile Europa,2015,POP,0,wiki
+36,Ile Tromelin,2015,POP,0,wiki
+38,British Indian Ocean Territory,2015,POP,4239,wiki
+45,Eritrea,2015,POP,6333000,wiki
+55,Azores,2015,POP,245746,wiki
+57,Madeira,2015,POP,267785,wiki
+58,Canary Islands,2015,POP,2117519,wiki
+63,Western Sahara,2015,POP,513000,wiki
+85,Ascension,2015,POP,880,wiki
+86,Saint Helena,2015,POP,4255,wiki
+88,Tristan da Cunha,2015,POP,266,wiki
+89,South Georgia and the South Sandwich Islands,2015,POP,30,wiki
+90,Prince Edward Islands,2015,POP,0,wiki
+91,Crozet Islands,2015,POP,25,wiki
+92,Amsterdam Island and Saint Paul Island,2015,POP,0,wiki
+93,Kerguelen Islands,2015,POP,130,wiki
+94,Heard and McDonald Islands,2015,POP,0,wiki
+95,Falkland Islands,2015,POP,2932,wiki
+105,Bouvet Island,2015,POP,0,wiki
+107,Clipperton Island,2015,POP,0,wiki
+118,Anguilla,2015,POP,15094,wiki
+121,Montserrat,2015,POP,4900,wiki
+140,Guadeloupe and Martinique,2015,POP,789301,wiki
+144,Jan Mayen,2015,POP,18,wiki
+146,Pitcairn,2015,POP,56,wiki
+148,Line Group,2015,POP,6570,wiki
+149,Jarvis Island,2015,POP,0,wiki
+150,Palmyra Atoll,2015,POP,10,wiki
+153,Cook Islands,2015,POP,10900,wiki
+154,Niue,2015,POP,1190,wiki
+156,Tokelau,2015,POP,1411,wiki
+157,Phoenix Group,2015,POP,2760,wiki
+158,Howland Island and Baker Island,2015,POP,0,wiki
+159,Johnston Atoll,2015,POP,0,wiki
+161,Wallis and Futuna,2015,POP,15500,wiki
+169,French Guiana,2015,POP,250377,wiki
+219,Saint Pierre and Miquelon,2015,POP,6080,wiki
+237,Oecussi Ambeno,2015,POP,72230,wiki
+245,Bonaire,2015,POP,16541,wiki
+248,Saba,2015,POP,1824,wiki
+249,Sint Eustatius,2015,POP,3543,wiki
