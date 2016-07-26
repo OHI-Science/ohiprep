@@ -11,6 +11,7 @@ source('../ohiprep/src/R/common.R')
 
 library(raster)
 library(rgdal)
+library(sp)
 library(dplyr)
 
 # raster/zonal data
