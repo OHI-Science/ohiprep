@@ -115,6 +115,7 @@ warn_rgn <- warn_rgn %>%
 write.csv(warn_rgn, 'globalprep/tr/v2016/output/tr_travelwarnings.csv', row.names=FALSE)
 
 ###################################################################
+### NOTE: Script for this is now in "Supplementary_data"
 ### Step 4: Download and clean the World Bank data: total labor force and unemployment and ppppcgdp
 ### see mazu: globalprep/_raw_data/WorldBank/d2016 README.md for information
 ### Clean with: R/process_WorldBank.R (saves: intermediate/xxx.csv, files)
