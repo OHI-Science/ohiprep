@@ -130,21 +130,13 @@ The output of running COMSIR created 9 individual dataframes. This is a result o
 ```{r fit-comsir}
 
 all.stocks<-unique(catch$stock_id)
-##
-batch1.stocks<-all.stocks[1:317]
-batch2.stocks<-all.stocks[318:635]
-batch3.stocks<-all.stocks[636:700]
-batch4.stocks<-all.stocks[701:800]
-batch5.stocks<-all.stocks[801:1000]
-batch6.stocks<-all.stocks[1001:1050]
-batch7.stocks<-all.stocks[1051:1136]
 
 ##
 
 #for loop
 batches <- seq(1,1136,10)
 
-for (i in 105:length(batches)){
+for (i in 1:length(batches)){
   
   start <- batches[i]
   end <- start+9
