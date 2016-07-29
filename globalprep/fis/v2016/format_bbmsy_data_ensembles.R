@@ -42,7 +42,7 @@ new_b_bmsy(sscom, method="sscom")
 ## Previously, we tried to select CMSY priors based on 
 ## stock resilience scores, but ultimately, it looked like 
 ## the constrained prior worked best regardless of method
-## for details see: format_bbmsy_data.R
+## for details see: format_bbmsy_data.R_cmsy_explore.R
 # -------------------------------------------------------------------
 
 b_bmsy_cmsy <- read.csv('globalprep/fis/v2016/int/cmsy_b_bmsy_constrained_mean5yrs.csv') %>%
@@ -66,14 +66,56 @@ bmsy <- bmsy %>%
 #--------------------------------------------------------------------
 #### getting b/bmsy data to the correct spatial scale
 #-----------------------------------------------------------------------
-catch <- read.csv('globalprep/fis/v2016/data/mean_catch.csv')
-catch <- separate(catch, taxon_key_stock, c("TaxonKey", "species", "fao_id"), sep="-") %>%
+catch <- catch <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/spatial_catch_saup.csv'))%>%
+  rename(common = Common_Name)
+
+catch_old <- read.csv('globalprep/fis/v2016/data/mean_catch.csv')
+catch_old <- separate(catch_old, taxon_key_stock, c("TaxonKey", "species", "fao_id"), sep="-") %>%
   mutate(stock_id = paste(species, fao_id, sep = "-")) %>%
   mutate(fao_id = as.numeric(fao_id)) %>%
   mutate(rgn_id = as.numeric(rgn_id)) %>%
   mutate(TaxonKey = as.numeric(TaxonKey)) %>%
   filter(TaxonKey >= 600000) %>%
-  mutate(species = gsub("_", " ", species))
+  mutate(species = gsub("_", " ", species)) %>%
+  group_by(TaxonKey, fao_id, year, species) %>%
+  summarize(catch = sum(mean_catch))
+
+tmp <- filter(catch, fao_rgn==18 & year==2010) %>%
+  arrange(Scientific_Name)
+tmp_old <- filter(catch_old, fao_id==18 & year==2010) %>%
+  arrange(species)
+setdiff(tmp$Scientific_Name, tmp_old$species)
+setdiff(tmp_old$species, tmp$Scientific_Name)
+
+
+tmp <- filter(catch, fao_rgn==21 & year==2010) %>%
+  arrange(Scientific_Name)
+tmp_old <- filter(catch_old, fao_id==21 & year==2010) %>%
+  arrange(species)
+setdiff(tmp$Scientific_Name, tmp_old$species)
+setdiff(tmp_old$species, tmp$Scientific_Name)
+
+tmp <- filter(catch, fao_rgn==57 & year==2010) %>%
+  arrange(Scientific_Name)
+tmp_old <- filter(catch_old, fao_id==57 & year==2010) %>%
+  arrange(species)
+setdiff(tmp$Scientific_Name, tmp_old$species)
+setdiff(tmp_old$species, tmp$Scientific_Name)
+
+tmp <- filter(catch, fao_rgn==71 & year==2010) %>%
+  arrange(Scientific_Name)
+tmp_old <- filter(catch_old, fao_id==71 & year==2010) %>%
+  arrange(species)
+setdiff(tmp$Scientific_Name, tmp_old$species)
+setdiff(tmp_old$species, tmp$Scientific_Name)
+
+tmp <- filter(catch, fao_rgn==67 & year==2010) %>%
+  arrange(Scientific_Name)
+tmp_old <- filter(catch_old, fao_id==67 & year==2010) %>%
+  arrange(species)
+setdiff(tmp$Scientific_Name, tmp_old$species)
+setdiff(tmp_old$species, tmp$Scientific_Name)
+
 
 dim(unique(catch))
 

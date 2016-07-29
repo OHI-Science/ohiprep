@@ -22,8 +22,14 @@ saup_cells  <- getcells("POLYGON ((-180 90,-180 -90, 180 -90, 180 90, -180 90))"
 saup_rast   <- raster(ncol=720, nrow=360)
 saup_rast[] <- saup_cells
 
+## some overlap between these fao region polygons:
+plot(ohi_regions[ohi_regions@data$rgn_id %in% c(260,262),])
+plot(saup_rast, add=TRUE)
+plot(ohi_regions[ohi_regions@data$rgn_id %in% c(260),], add=TRUE)
+plot(ohi_regions[ohi_regions@data$rgn_id %in% c(262),], add=TRUE)
+
 plot(saup_rast)
-plot(ohi_regions, add=TRUE)
+plot(ohi_regions[ohi_regions@data$rgn_id==232,], add=TRUE)
 
 ohi_to_saup_raster        <- raster::extract(saup_rast, ohi_regions, weights = TRUE, normalizeWeights = FALSE, progress = 'text') 
 names(ohi_to_saup_raster) <- paste(ohi_regions@data$ant_typ, ohi_regions@data$ant_id, sep="_") 
