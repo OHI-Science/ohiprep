@@ -58,6 +58,7 @@ knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'figs/',
 library(readr)
 library(data.table)
 library(dplyr)
+library(parallel)
 
 
 ## Paths for data
@@ -139,14 +140,17 @@ dup <- cells%>%
         collect%>%
         .[["CellID"]]
 
-#read in the dataset matching each cell to an FAO region
+#read in the dataset matching each cell to an FAO region - use this to extract data for saup_catch_pre_bbmsy.csv
 fao_cells <- read.csv( file.path(dir_M, "git-annex/globalprep/fis/v2015/raw/saup_rasters_to_fao_rgns.csv"))%>%
-              rename(CellID=saup_cell_id)
+              rename(CellID=saup_cell_id)%>%
+            mutate(area = 1)  #adding this so that the following code can be used without adjusting the multiplication of catch and proportionArea
 
-cells_df <- cells%>%
-              mutate(area = ifelse(CellID %in% dup,area,1))%>%
-              left_join(fao_cells)%>%
-              mutate(area = ifelse(area>1,1,area)) #this is still wrong. I'm trying to fix incorrect proportional areas. 
+
+### This is probably going to change after Mel makes some updates for extracting OHI regions to cell ids
+# cells_df <- cells%>%
+#               mutate(area = ifelse(CellID %in% dup,area,1))%>%
+#               left_join(fao_cells)%>%
+#               mutate(area = ifelse(area>1,1,area)) #this is still wrong. I'm trying to fix incorrect proportional areas. 
 
 ```
 
@@ -199,13 +203,12 @@ all_data <- results_sub%>%
                left_join(data_yearly)%>%
                left_join(dt_taxon)%>%
                left_join(dt_entity)%>%
-               left_join(cells_df)%>%
+               left_join(cells)%>%
                mutate(catch_prop = AllocatedCatch * area,
                          year = i)%>%
                 group_by(fao_id, Scientific_Name, Common_Name, TaxonKey)%>%
                 summarise(catch = sum(catch_prop))%>%
                 ungroup()%>%
-                filter(TaxonKey>599999)%>%
                 mutate(year     = i,
                        stock_id = gsub(" ", "_", paste(Scientific_Name, fao_id, sep='-'), fixed=TRUE))%>%
                 rename(fao_rgn  = fao_id,
@@ -233,28 +236,77 @@ Filter out all stocks that don't meet our conditions
 
 ```{r prep_data_bbmsy, eval=F}
 
-catch <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/spatial_catch_saup.csv'))
+df <- data.frame()
+
+for (i in 1950:2010){
+  
+  print(i)
+  
+#1. subset the allocation data to year i
+data_yearly <- dt_data[Year==i,]
+
+#2. Now we want it ordered by UniversalDataID
+setkey(data_yearly,UniversalDataID)
+
+#3. Get unique UniversalDataID
+
+udi <- unique(data_yearly$UniversalDataID)
+
+#4. Subset results
+
+results_sub <- dt_results[UniversalDataID %in% udi]
+
+setkey(results_sub,UniversalDataID) #sort by UDI
+
+
+#5. Join allocation, taxon, entity, resilience data to results to create final catch dataset and removing all catch reported at non-species level
+
+all_data <- results_sub%>%
+               left_join(data_yearly)%>%
+              filter(TaxonKey>=60000)%>%         #select only taxa identified to species
+               left_join(dt_taxon)%>%
+               left_join(dt_entity)%>%
+               left_join(fao_cells)%>%
+                group_by(fao_id, Scientific_Name, Common_Name, TaxonKey)%>%
+                summarise(tons = sum(AllocatedCatch))%>%
+                ungroup()%>%
+                mutate(year     = i,
+                       stock_id = gsub(" ", "_", paste(Scientific_Name, fao_id, sep='-'), fixed=TRUE))%>%
+                rename(fao_rgn  = fao_id)%>%
+                left_join(taxon_res)%>%
+                filter(tons>0)%>%
+  group_by_(.dots = c("year", "Scientific_Name", "Common_Name","fao_rgn", "stock_id", "TaxonKey", "Resilience"))%>%
+                summarize(tons = sum(tons))%>%
+            ungroup()
+
+df <- rbind(df,all_data)
+
+}
+
+write.csv(df,file='int/fao_saup_catch.csv',row.names = FALSE)
+
+fao_catch_yrly = read.csv('int/fao_saup_catch.csv',stringsAsFactors = F)
+
 
 #set variables to filter by
 min_yrs = 20
 min_tons = 1000
 
-stks <- catch %>%
-        filter(TaxonKey >= 600000,     #select only taxa identified to species
-               tons > 0) %>%           #remove all records of 0 catch
-        group_by_(.dots = c("year", "Scientific_Name", "Common_Name","fao_rgn", "stock_id", "TaxonKey", "Resilience"))%>%
-                summarize(tons = sum(tons))%>%
-            ungroup()%>%
-            group_by(stock_id)%>%
-            mutate(nyrs = n(),
-                   avg_ann_catch = mean(tons))%>%
-            ungroup()%>%
-              filter(avg_ann_catch >= min_tons,
-                     nyrs >= min_yrs)%>%
-            dplyr::select(year,Scientific_Name,Common_Name,fao_rgn,stock_id,TaxonKey,Resilience,tons)
 
 
-#write.csv(stks, file = 'int/spatial_catch_pre_bbmsy.csv')
+stks <- fao_catch_yrly%>%  
+                    group_by(stock_id)%>%
+                    mutate(nyrs = n(),
+                           avg_ann_catch = mean(tons))%>%
+                    ungroup()%>%
+                      filter(avg_ann_catch >= min_tons,
+                             nyrs >= min_yrs)%>%
+                    dplyr::select(year,Scientific_Name,Common_Name,fao_rgn,stock_id,TaxonKey,Resilience,tons)
+
+
+
+
+write.csv(stks, file = 'int/spatial_catch_pre_bbmsy.csv')
 
 
 DT::datatable(head(stks,n=100))
