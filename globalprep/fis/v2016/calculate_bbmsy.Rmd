@@ -29,7 +29,7 @@ Read in catch data aggregated from half degree cell to OHI region (catch_data_pr
 
 ```{r catch_data}
 
-catch <- read.csv('int/spatial_catch_pre_bbmsy.csv')%>%
+catch <- read.csv('int/spatial_catch_pre_bbmsy.csv',stringsAsFactors=F)%>%
           rename(common = Common_Name)
 
 ```
@@ -210,7 +210,6 @@ test_stks <- sample(unique(catch$stock_id),5,replace=F)
  # [6] Mugil_cephalus-51           Oncorhynchus_gorbuscha-61   Drepane_punctata-51         Salmo_salar-27              Carcharhinus_sorrah-57 
 
 dat <- catch%>%filter(stock_id %in% test_stks)
-
 
 system.time(
 plyr::d_ply(catch,"stock_id", function(x) {
