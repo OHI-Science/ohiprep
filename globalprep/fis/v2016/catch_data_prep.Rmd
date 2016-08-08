@@ -16,14 +16,14 @@ pdf_document:
 
 # Summary
 
-This script takes the SAUP spatialized catch data and aggregates catch to **stock levels**. For the Ocean Health Index, we assume a stock is represented by the FAO region in which the species is caught.
+This script takes the Sea Around Us Project (SAUP) catch data, provided at a resolution of half-degree cells globally, and aggregates catch to **stock levels**. For the Ocean Health Index, we assume a stock is represented by the FAO region in which the species is caught.
 
-In order to aggregate to FAO regions, we associate catch per SAUP region to the FAO region it is found.
+In order to aggregate to FAO regions, we associate each cell to the FAO region and the OHI region in which it is located.
 
-For example, New Zealand is located entirely in FAO region 81. All catch reported by New Zealand will be aggregated by species to the FAO region. If a species was reported as caught in both New Zealand waters and in the High Seas of area 81, these two records will be combined into one by summing the catch.
+An example of our aggregation proces: New Zealand is located entirely in FAO region 81. All catch reported by New Zealand will be aggregated by species to the FAO region. If a species was reported as caught in both New Zealand waters and in the High Seas of area 81, these two records will be combined into one by summing the catch.
 
 #Updates from previous assessment
-[Any significant changes in methods from previous analyses?]
+The 2016 Food Provision goal now includes new data from the Sea Around Us Project that has been reported at a spatial resolution of half-degree cells. The spatial resolution previously was at the EEZ level. This improvement in data resolution allows OHI to more accurately represent stock locations and calculate BBmsy values. The data from SAUP has also been updated by SAUP to more accurately reflect catch history per country world wide.
 
 ***
 # Data
@@ -108,67 +108,116 @@ setkey(dt_entity,FishingEntityID)
 There are a lot of cells that slighlty overlap the OHI regions shapefile, leaving them with a proportional area less than 1. This would cause us to lose catch when assigning catch to cells. To fix this, we define a vector of cellids that have a proportionArea <1 and are NOT duplicated (i.e. the other portion of the area missing is not accounted for) and assign a proportionArea of 1 to these cells.
 
 ```{r cells, eval=F}
-cells <- read.csv(file.path(dir_M, "git-annex/globalprep/fis/v2015/raw/saup_rasters_to_ohi_rgns.csv"))%>%
-          rename(CellID=saup_cell_id)%>%
-          group_by(CellID,rgn_id)%>%
-          dplyr::summarise(area = sum(proportionArea))%>%
-          ungroup()
+###
 
-#there are a lot of cells that slightly overlap the shapefile, leaving their proportionArea below 1. See this here:
+cells_raw <- read.csv(file.path(dir_M, "git-annex/globalprep/fis/v2015/raw/saup_rasters_to_ohi_rgns.csv"))%>%
+              rename(CellID=saup_cell_id) %>%
+              group_by(CellID) %>%
+              mutate(total_area = sum(proportionArea)) 
 
-head(cells)
+### list of cells with areas > 1 (indicates something strange is going on)
+bad_ones <- filter(cells_raw, total_area>1) %>%
+              arrange(CellID) 
 
-## A tibble: 6 x 3
-# CellID rgn_id  area
-# <dbl>  <int> <dbl>
-# 1      8    260  0.04
-# 2      9    260  0.10
-# 3     10    260  0.10
-# 4     11    260  0.10
-# 5     12    260  0.10
-# 6     13    260  0.10
+data.frame(bad_ones)
 
-# The remaining prorportional area of these cells does not exist in the data frame. If we use these area values to multiply by catch, we will
-# lose catch.
+## get a list of cells that have eez or fao categories:
+## used later to determine whether cells with OHI regions but no FAO region are an issue:
+cells_water <- cells_raw %>%
+  group_by(CellID) %>%
+  mutate(cell_rgns = paste(sort(unique(rgn_typ)), collapse=", ")) %>%
+  arrange(CellID)
 
-#i get the list of cell ids that are duplicated, and use this list of values to adjust the area to equal 1 ONLY for those cells that are not duplicated
+# check this went ok:
+list <- table(cells_water$cell_rgns)
+list
+filter(cells_water, cell_rgns=="eez, land")
 
-dup <- cells%>%
-        dplyr::select(CellID)%>%
-        mutate(dup = duplicated(.))%>%
-        filter(dup==TRUE)%>%
-        collect%>%
-        .[["CellID"]]
-
-#read in the dataset matching each cell to an FAO region - use this to extract data for saup_catch_pre_bbmsy.csv
-fao_cells <- read.csv( file.path(dir_M, "git-annex/globalprep/fis/v2015/raw/saup_rasters_to_fao_rgns.csv"))%>%
-              rename(CellID=saup_cell_id)%>%
-            mutate(area = 1)  #adding this so that the following code can be used without adjusting the multiplication of catch and proportionArea
+## check that I got these right!  - these are right (JA - 8/8/26)
+eez_fao_cats <- c("eez", "eez-ccamlr", "eez-ccamlr, land-ccamlr", "eez-disputed",
+                  "eez-disputed, fao", "eez-disputed, land-disputed", "eez-disputed, land, land-disputed", "eez, eez-ccamlr",
+                  "eez, eez-disputed", "eez, eez-disputed, fao", "eez, eez-disputed, land", "eez, eez-disputed, land-disputed",
+                  "eez, eez-disputed, land, land-disputed", "eez, fao", "eez, land", "eez, land, land-noeez", "fao")                                   
+cells_water <- cells_water %>%
+  filter(CellID, cell_rgns %in% eez_fao_cats)
 
 
-### This is probably going to change after Mel makes some updates for extracting OHI regions to cell ids
-# cells_df <- cells%>%
-#               mutate(area = ifelse(CellID %in% dup,area,1))%>%
-#               left_join(fao_cells)%>%
-#               mutate(area = ifelse(area>1,1,area)) #this is still wrong. I'm trying to fix incorrect proportional areas. 
+## cells should have a total area of <=1, what causes some cells to have more...and is this a large problem
+## No, most cells are fine.
+## This seems to happen because of polygon overlap.
+## scenario 1: FAO region 262 overlaps other FAO region polygons by a small amount.  In this case a small proportion of the catch within a cell will
+## be assigned to two regions.  This will be a small error. (No correction)
+## scenario 2: In many cases, the total area is very close to one which may reflect rounding error and is not significant. (Usually no correction)
+## scenario 3: In some cases, the regions are small islands where there doesn't appear to be a hole so both the land and underlying eez are counted. ##            This can also occur along any eez/land boundary...but it looks like it mainly happens for islands. If the 
+##            overlap is for land/eez within the same region, this will be corrected. 
 
+
+cells <- read.csv(file.path(dir_M, "git-annex/globalprep/fis/v2015/raw/saup_rasters_to_ohi_rgns.csv")) %>%
+  rename(CellID=saup_cell_id) %>%
+  group_by(CellID, rgn_id) %>%   # groups land and eez data (that way the cell catch is fully applied to the region...rather than cutting the portion that overlaps land) 
+  dplyr::summarise(area = sum(proportionArea)) %>%
+  mutate(area = ifelse(area > 1, 1, area))%>%  ## this corrects when there is land/eez overlap within the same region resulting in cell area >1 (scenario 3 above)
+  ungroup()  
+
+## Remaining errors from scenario 1 and 2 above:  These are very small errors..nothing to be concerned about.
+bad_ones <- cells %>%
+  group_by(CellID) %>%
+  mutate(total_cell_area = sum(area)) %>%
+  filter(total_cell_area > 1) %>%
+  arrange(CellID) 
+data.frame(bad_ones)
+
+
+# get the list of cell ids that are duplicated, and use this list of values to adjust the area to equal 1 ONLY for those cells that are not duplicated
+
+
+## Id duplicated cells:
+dup <- cells$CellID[duplicated(cells$CellID)]
+
+## for some reason this is failing for me...
+# dup <- cells %>%
+#         dplyr::select(CellID) %>%
+#         mutate(dup = duplicated(.)) %>%
+#         filter(dup==TRUE) %>%
+#         collect %>%
+#         .[["CellID"]]
+
+## these are the cells that were cut off prematurely due to edge effects, etc.
+tmp <- filter(cells, !(CellID %in% dup) & area < 1)
+head(tmp)
+
+#read in the dataset matching each cell to an FAO region (need both OHI and FAO region for analysis)
+fao_cells <- read.csv( file.path(dir_M, "git-annex/globalprep/fis/v2015/raw/saup_rasters_to_fao_rgns.csv")) %>%
+              rename(CellID=saup_cell_id)
+
+cells_df <- cells %>%
+              mutate(area = ifelse(CellID %in% dup, area, 1))%>%  # if the cell doesn't cover >1 region, then change cell areas to one to capture entire cell's catch (these are <1 area due to edge effects)
+              left_join(fao_cells) 
+
+summary(cells_df)
+## One issue of concern:
+## Some regions aren't assigned and FAO region value (in places where land > 50% of cell cover)...and we need both for the analysis
+#84218/259200
+
+## check to see how many remain after we take out the land cells:
+
+cells_df_water <- cells_df %>%
+  filter(CellID %in% cells_water$CellID)
+summary(cells_df_water)
+#187/252083
+# N= 187...no too bad...does not seem worth fretting over
 ```
 
-### Load taxonomic resilience information
-
-```{r resilience}
-
-# add the taxon_resilence data to catch for b/bmsy calculations
-taxon_res = read.csv('int/taxon_resilience_lookup.csv', stringsAsFactors = FALSE) %>%
-              mutate(common = ifelse(common %in% "Silver croaker", paste(common, sciname, sep=" "), common)) %>%
-              dplyr::select(Common_Name=common, Resilience)
-```
 
 ***
 
 # Aggregate catch per region per year
 
-Using a for loop, aggregate catch per OHI region
+Using a for loop, aggregate catch per OHI region and FAO area. This catch will be used twice. 
+
+(1) The catch is used to weight scores per region. For this we need to use all catch records, including those not reported at the species level.
+
+(2) The catch data at species level is used to calculate stock status (BBmsy) per stock (remember that our definition of a stock is a species caught within a single FAO area).
 
 ```{r, eval =F}
 
@@ -203,17 +252,16 @@ all_data <- results_sub%>%
                left_join(data_yearly)%>%
                left_join(dt_taxon)%>%
                left_join(dt_entity)%>%
-               left_join(cells)%>%
+               left_join(cells_df_water)%>%
                mutate(catch_prop = AllocatedCatch * area,
                          year = i)%>%
-                group_by(fao_id, Scientific_Name, Common_Name, TaxonKey)%>%
+                group_by(rgn_id,fao_id, Scientific_Name, Common_Name, TaxonKey)%>%
                 summarise(catch = sum(catch_prop))%>%
                 ungroup()%>%
                 mutate(year     = i,
                        stock_id = gsub(" ", "_", paste(Scientific_Name, fao_id, sep='-'), fixed=TRUE))%>%
                 rename(fao_rgn  = fao_id,
-                       tons     = catch)%>%
-                left_join(taxon_res)
+                       tons     = catch)
 
 
 
@@ -226,83 +274,51 @@ write.csv(df,file =  file.path(dir_M,'git-annex/globalprep/fis/v2016/int/spatial
 
 ```
 
+### Load taxonomic resilience information
+
+```{r resilience}
+
+# add the taxon_resilence data to catch for b/bmsy calculations
+taxon_res = read.csv('int/taxon_resilience_lookup.csv', stringsAsFactors = FALSE) %>%
+              mutate(common = ifelse(common %in% "Silver croaker", paste(common, sciname, sep=" "), common)) %>%
+              dplyr::select(Common_Name=common, Resilience)
+```
+
 ***
 
-# Filter out stocks that do not meet our conditions
-Filter out all stocks that don't meet our conditions
+# Create catch data ready for BBmsy calculations
+
+Filter out all stocks that don't meet our conditions:
 
 (1) Keep all stocks that have at least 1000 tons mean annual harvest
 (2) Keep all stocks with time series of 20 years or more
 
 ```{r prep_data_bbmsy, eval=F}
 
-df <- data.frame()
-
-for (i in 1950:2010){
-  
-  print(i)
-  
-#1. subset the allocation data to year i
-data_yearly <- dt_data[Year==i,]
-
-#2. Now we want it ordered by UniversalDataID
-setkey(data_yearly,UniversalDataID)
-
-#3. Get unique UniversalDataID
-
-udi <- unique(data_yearly$UniversalDataID)
-
-#4. Subset results
-
-results_sub <- dt_results[UniversalDataID %in% udi]
-
-setkey(results_sub,UniversalDataID) #sort by UDI
-
-
-#5. Join allocation, taxon, entity, resilience data to results to create final catch dataset and removing all catch reported at non-species level
-
-all_data <- results_sub%>%
-               left_join(data_yearly)%>%
-              filter(TaxonKey>=60000)%>%         #select only taxa identified to species
-               left_join(dt_taxon)%>%
-               left_join(dt_entity)%>%
-               left_join(fao_cells)%>%
-                group_by(fao_id, Scientific_Name, Common_Name, TaxonKey)%>%
-                summarise(tons = sum(AllocatedCatch))%>%
-                ungroup()%>%
-                mutate(year     = i,
-                       stock_id = gsub(" ", "_", paste(Scientific_Name, fao_id, sep='-'), fixed=TRUE))%>%
-                rename(fao_rgn  = fao_id)%>%
-                left_join(taxon_res)%>%
-                filter(tons>0)%>%
-  group_by_(.dots = c("year", "Scientific_Name", "Common_Name","fao_rgn", "stock_id", "TaxonKey", "Resilience"))%>%
-                summarize(tons = sum(tons))%>%
-            ungroup()
-
-df <- rbind(df,all_data)
-
-}
-
-write.csv(df,file='int/fao_saup_catch.csv',row.names = FALSE)
-
-fao_catch_yrly = read.csv('int/fao_saup_catch.csv',stringsAsFactors = F)
-
-
 #set variables to filter by
 min_yrs = 20
 min_tons = 1000
 
+#read in catch data created above
+df <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/spatial_catch_saup.csv'),stringsAsFactors=F)
 
+#create dataset ready to run through catch only models
 
-stks <- fao_catch_yrly%>%  
-                    group_by(stock_id)%>%
-                    mutate(nyrs = n(),
-                           avg_ann_catch = mean(tons))%>%
-                    ungroup()%>%
-                      filter(avg_ann_catch >= min_tons,
-                             nyrs >= min_yrs)%>%
-                    dplyr::select(year,Scientific_Name,Common_Name,fao_rgn,stock_id,TaxonKey,Resilience,tons)
-
+    stks <- df%>%
+              filter(TaxonKey >= 600000,               #remove all records of catch reported at higher taxonomic levels than species
+                     tons     > 0)%>%                  #remove records of 0 catch
+              select(-rgn_id)%>%                       #remove rgn_id since we aggregate stocks to the FAO level   
+              group_by(stock_id,year,fao_rgn,Scientific_Name,Common_Name,TaxonKey)%>%
+              summarise(tons = sum(tons))%>%           #calculate total tons per stock
+              ungroup()%>%
+              group_by(stock_id)%>%
+              mutate(nyrs = n(),                       #get the total number of years the stock has records for   
+                     avg_ann_catch = mean(tons))%>%    #calculate the mean catch over all catch years
+              ungroup()%>%
+              filter(avg_ann_catch >= min_tons,        #keep only those stocks that meet our conditions
+                              nyrs >= min_yrs)%>%
+              left_join(taxon_res)%>%                  #add resilience information
+              dplyr::select(year,Scientific_Name,Common_Name,fao_rgn,stock_id,TaxonKey,Resilience,tons)
 
 
 
