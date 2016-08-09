@@ -1,19 +1,36 @@
 ---
-title: "Playing with datalimited models on SAUP data"
+title: "OHI 2016 - Food Provision: Calculating fisheries stock status"
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
-  toc: true
-number_sections: true
-theme: cerulean
-highlight: haddock
-includes: 
-  in_header: '~/github/ohibc/src/templates/ohibc_hdr1.html'
+    code_folding: show
+    toc: true
+    toc_depth: 1
+    toc_float: yes
+    number_sections: false
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
 pdf_document:
   toc: true
 ---
 
-```{r setup, include=FALSE}
+This analysis runs three catch-only models on the Sea Around Us catch data to estimate stock status (B/Bmsy). Stocks are defined by FAO areas and are limited to only those records where catch is reported at the species level. The three catch-only models are:  
+
+(1) Catch-MSY (CMSY ) model of [Martell and Froese (2012)](http://onlinelibrary.wiley.com/doi/10.1111/j.1467-2979.2012.00485.x/full), 
+
+(2) Catch-only- model with sampling-importance resampling (COMSIR) developed by Vasconcellos and Cochrane (2005);
+
+(3) State-space catch-only model (SSCOM) developed by [Thorson et al. (2013)](http://www.nrcresearchpress.com/doi/abs/10.1139/cjfas-2013-0280#.V6oqKCgrKUk).
+
+The `datalimited` R package, developed by Sean Anderson, is used to run each of these models on the dataset. As of 8/9/2016 this package is held in a private repository on GitHub.
+
+## Setup 
+
+```{r setup, message=F, warning=F}
+
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'figs/',message = FALSE, warning = FALSE)
 
 library(datalimited) #has the 4 catch only models
 library(dplyr)
@@ -25,7 +42,9 @@ source('~/github/ohiprep/src/R/common.R')
 
 ```
 
-Read in catch data aggregated from half degree cell to OHI region (catch_data_prep.Rmd).
+# Load catch data
+
+Read in catch data aggregated from half degree cell to OHI region [catch_data_prep.Rmd](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/fis/v2016/catch_data_prep.html).
 
 ```{r catch_data}
 
@@ -36,9 +55,7 @@ catch <- read.csv('int/spatial_catch_pre_bbmsy.csv',stringsAsFactors=F)%>%
 
 # Catch-MSY
 
-First run the catch-msy model.
-
-```{r cmsy}
+```{r cmsy, eval=F}
 
 if (!file.exists(file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits.rds"))) {
   
@@ -74,7 +91,7 @@ write.csv(cmsy_bbmsy,file='int/cmsy_bbmsy.csv')
 
 Explore why there are some NAs (I think non convergance)
 
-```{r nas}
+```{r nas, eval=F}
 
 nas <- cmsy_bbmsy%>%
   group_by(stock_id)%>%
@@ -86,9 +103,9 @@ nrow(nas)
 ```
 
 
-### Running cmsy with a uniform prior
+# Catch-MSY with a uniform prior
 
-```{r cmsy_uni_prior}
+```{r cmsy_uni_prior, eval=F}
 
 if (!file.exists(file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits-uni-prior.rds"))) {
 cmsy_fits_uni <- plyr::dlply(catch, c("stock_id", "common"), function(x) {
@@ -125,9 +142,9 @@ write.csv(cmsy_bbmsy_uni,file="int/cmsy_bbmsy_uni_prior.csv")
 
 # COMSIR
 
-The output of running COMSIR created 9 individual dataframes. This is a result of debugging. I kept getting a "missing value where TRUE/FALSE needed" error but wasn't able to identify what species was causing this.
+The output of running COMSIR created 57 individual dataframes. This is a result of debugging. I kept getting a "missing value where TRUE/FALSE needed" error but wasn't able to identify what species was causing this so I split the stocks into batches to run. After getting the error, often just rerunning the model would produce results without any changes.
 
-```{r fit-comsir}
+```{r fit-comsir, eval=F}
 
 all.stocks<-unique(catch$stock_id)
 
@@ -136,7 +153,7 @@ all.stocks<-unique(catch$stock_id)
 #for loop
 batches <- seq(1,1136,20)
 
-for (i in 56:length(batches)){
+for (i in 1:length(batches)){
   
   print(i)
   
@@ -187,7 +204,7 @@ comsir_bbmsy <- plyr::ldply(comsir_fits, function(x) {
 
 
 Combine the .csvs into one dataset.
-```{r combine_COMSIR}
+```{r combine_COMSIR, eval=F}
 
 files <- list.files('int/comsir',full.names=T)
 
@@ -202,7 +219,7 @@ write.csv(comsir_all,file='int/comsir_bbmsy.csv')
 
 # SSCOM
 
-```{r SSCOM}
+```{r SSCOM, eval=F}
 
 #trying SSCOM on just one stock
 
@@ -248,7 +265,7 @@ plyr::d_ply(catch,"stock_id", function(x) {
 
 Combine the SSCOM data
 
-```{r combine_sscom}
+```{r combine_sscom,eval=F}
 
 files <- list.files(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/sscom-fits'),full.names=T)
 
@@ -274,6 +291,12 @@ write.csv(sscom_all,file='int/sscom_bbmsy.csv')
 
 ```
 
+
+***
+
+# Citation information
+
+Anderson et al. (2016) Improving estimates of population status and trend with 2 superensemble models *Fish and Fisheries* (Under Review)
 
 
 
