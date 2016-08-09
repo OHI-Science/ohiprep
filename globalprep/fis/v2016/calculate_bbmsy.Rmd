@@ -19,7 +19,7 @@ library(datalimited) #has the 4 catch only models
 library(dplyr)
 library(stringr)
 library(doParallel)
-registerDoParallel(cores = 10)
+registerDoParallel(cores = 8)
 
 source('~/github/ohiprep/src/R/common.R')
 
@@ -134,12 +134,14 @@ all.stocks<-unique(catch$stock_id)
 ##
 
 #for loop
-batches <- seq(1,1136,10)
+batches <- seq(1,1136,20)
 
-for (i in 1:length(batches)){
+for (i in 56:length(batches)){
+  
+  print(i)
   
   start <- batches[i]
-  end <- start+9
+  end <- start+19
   
   batchn <- all.stocks[start:end]
   
@@ -156,7 +158,7 @@ comsir_fits <- plyr::dlply(input, c("stock_id", "common"), function(x) {
 
 
 #save the data as an RDS
-saveRDS(comsir_fits, file = paste0(file.path(dir_M),"/git-annex/globalprep/fis/v2016/int/comsir-fits_",i,".rds"))
+saveRDS(comsir_fits, file = paste0(file.path(dir_M),"/git-annex/globalprep/fis/v2016/int/comsir-fits/comsir-fits_",i,".rds"))
 
 
 fake_data <- data.frame(bbmsy_q2.5 = NA, bbmsy_q25 = NA, bbmsy_q50 = NA, 
@@ -221,7 +223,7 @@ plyr::d_ply(catch,"stock_id", function(x) {
       sscom(
         ct            = x$tons,
         yr            = x$year,
-        start_r       = resilience(dat$Resilience[1]),
+        start_r       = resilience(catch$Resilience[1]),
         NburninPrelim = 1000,  #1000
         NiterPrelim   = 2000,  #2000
         NthinPrelim   = 1,     # 1
