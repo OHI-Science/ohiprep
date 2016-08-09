@@ -1,6 +1,8 @@
 ## Ocean Health Index 2016: Fisheries Sub-goal
 
-See full data prep details [here](LINK TO HTML FILE).
+See full details for how the SAUP catch data was prepped [here](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/fis/v2016/catch_data_prep.html).
+
+See full details for how BBmsy was calculated [here](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/fis/v2016/calculate_bbmsy.html).
 
 If using these data, please see our [citation policy](http://ohi-science.org/citation-policy/).
 
