@@ -3,12 +3,15 @@ title: "OHI 2016 - Food Provision: Preparing catch data for BBmsy calculations"
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
-  toc: true
-number_sections: true
-theme: cerulean
-highlight: haddock
-includes: 
-  in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+    code_folding: show
+    toc: true
+    toc_depth: 1
+    toc_float: yes
+    number_sections: false
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
 pdf_document:
   toc: true
 ---
@@ -22,10 +25,11 @@ In order to aggregate to FAO regions, we associate each cell to the FAO region a
 
 An example of our aggregation proces: New Zealand is located entirely in FAO region 81. All catch reported by New Zealand will be aggregated by species to the FAO region. If a species was reported as caught in both New Zealand waters and in the High Seas of area 81, these two records will be combined into one by summing the catch.
 
-#Updates from previous assessment
+## Updates from previous assessment
 The 2016 Food Provision goal now includes new data from the Sea Around Us Project that has been reported at a spatial resolution of half-degree cells. The spatial resolution previously was at the EEZ level. This improvement in data resolution allows OHI to more accurately represent stock locations and calculate BBmsy values. The data from SAUP has also been updated by SAUP to more accurately reflect catch history per country world wide.
 
 ***
+
 # Data
 The Sea Around Us Project shared the spatialized catch data with OHI on joined to a lookup table that links SAUP region names and ids to the FAO region they are located in. The proportional area of each EEZ within the FAO region was also calculated for overlapping EEZs.
 
@@ -40,14 +44,11 @@ Reference:
 
 ***
 
-# Methods
+## Setup
 
-### Setup
+``` {r setup, message = FALSE, warning = FALSE}
 
-``` {r setup, echo = FALSE, message = FALSE, warning = FALSE}
-
-knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'figs/',
-                      echo = FALSE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'figs/',message = FALSE, warning = FALSE)
 
 #setting up provenance
 # devtools::install_github('oharac/provRmd')
@@ -72,7 +73,7 @@ source('~/github/ohiprep/src/R/common.R')
 
 ```
 
-### Load Data
+## Load Data
 
 These files are large so using the data.table package is recommended due to R memory limitations.
 
@@ -103,7 +104,7 @@ colnames(dt_entity) <- c("FishingEntityID","Name")
 setkey(dt_entity,FishingEntityID)
 ```
 
-#load the data that matches CellID to OHI regions and combine land and eez cells so we don't lose the land proportion
+# Fix Cell Issues
 
 There are a lot of cells that slighlty overlap the OHI regions shapefile, leaving them with a proportional area less than 1. This would cause us to lose catch when assigning catch to cells. To fix this, we define a vector of cellids that have a proportionArea <1 and are NOT duplicated (i.e. the other portion of the area missing is not accounted for) and assign a proportionArea of 1 to these cells.
 
@@ -211,7 +212,7 @@ summary(cells_df_water)
 
 ***
 
-# Aggregate catch per region per year
+# Aggregate catch
 
 Using a for loop, aggregate catch per OHI region and FAO area. This catch will be used twice. 
 
@@ -274,19 +275,20 @@ write.csv(df,file =  file.path(dir_M,'git-annex/globalprep/fis/v2016/int/spatial
 
 ```
 
-### Load taxonomic resilience information
 
-```{r resilience}
+***
+
+# Prep data for BBmsy calculations
+
+Load taxonomic resilience information
+
+```{r resilience,eval=F}
 
 # add the taxon_resilence data to catch for b/bmsy calculations
 taxon_res = read.csv('int/taxon_resilience_lookup.csv', stringsAsFactors = FALSE) %>%
               mutate(common = ifelse(common %in% "Silver croaker", paste(common, sciname, sep=" "), common)) %>%
               dplyr::select(Common_Name=common, Resilience)
 ```
-
-***
-
-# Create catch data ready for BBmsy calculations
 
 Filter out all stocks that don't meet our conditions:
 
@@ -323,7 +325,11 @@ df <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/spatial_catch
 
 
 write.csv(stks, file = 'int/spatial_catch_pre_bbmsy.csv')
+```
 
+```{r,echo=F}
+
+stks = read.csv('int/spatial_catch_pre_bbmsy.csv')
 
 DT::datatable(head(stks,n=100))
 
@@ -332,5 +338,6 @@ DT::datatable(head(stks,n=100))
 
 ***
 
-#Citation information  
+# Citation information
+
 Pauly D. and Zeller D. (Editors), 2015. Sea Around Us Concepts, Design and Data (seaaroundus.org)
