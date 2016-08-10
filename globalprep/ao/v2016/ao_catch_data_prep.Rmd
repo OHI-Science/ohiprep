@@ -1,5 +1,5 @@
 ---
-title: "OHI 2016 - Food Provision: Preparing catch data for BBmsy calculations"
+title: "OHI 2016 - Artisanal Opportunities: Preparing catch data"
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
@@ -19,14 +19,13 @@ pdf_document:
 
 # Summary
 
-This script takes the Sea Around Us Project (SAUP) catch data, provided at a resolution of half-degree cells globally, and aggregates catch to **stock levels**. For the Ocean Health Index, we assume a stock is represented by the FAO region in which the species is caught.
+This script takes the Sea Around Us Project (SAUP) catch data, provided at a resolution of half-degree cells globally, and aggregates catch by species per OHI and FAO region.
 
-In order to aggregate to FAO regions, we associate each cell to the FAO region and the OHI region in which it is located.
-
-An example of our aggregation proces: New Zealand is located entirely in FAO region 81. All catch reported by New Zealand will be aggregated by species to the FAO region. If a species was reported as caught in both New Zealand waters and in the High Seas of area 81, these two records will be combined into one by summing the catch.
+In order to aggregate, we associate each cell to the FAO region and the OHI region in which it is located.
 
 ## Updates from previous assessment
-The 2016 Food Provision goal now includes new data from the Sea Around Us Project that has been reported at a spatial resolution of half-degree cells. The spatial resolution previously was at the EEZ level. This improvement in data resolution allows OHI to more accurately represent stock locations and calculate BBmsy values. The data from SAUP has also been updated by SAUP to more accurately reflect catch history per country world wide.
+
+The 2016 Artisanal Opportunities goal now includes new data from the Sea Around Us Project that has been reported at a spatial resolution of half-degree cells. The spatial resolution previously was at the EEZ level. This improvement in data resolution, along with the identification of catch by sector, allows OHI to incorporate catch data at this level.
 
 ***
 
@@ -214,11 +213,9 @@ summary(cells_df_water)
 
 # Aggregate catch
 
-Using a for loop, aggregate catch per OHI region and FAO area. This catch will be used twice. 
+Using a for loop, aggregate catch per OHI region and FAO area. The catch is used to weight scores per region. For this we need to use all catch records, including those not reported at the species level.
 
-(1) The catch is used to weight scores per region. For this we need to use all catch records, including those not reported at the species level.
 
-(2) The catch data at species level is used to calculate stock status (BBmsy) per stock (remember that our definition of a stock is a species caught within a single FAO area).
 
 ```{r, eval =F}
 
@@ -251,6 +248,7 @@ setkey(results_sub,UniversalDataID) #sort by UDI
 
 all_data <- results_sub%>%
                left_join(data_yearly)%>%
+               filter(sector_type_name != "Industrial")%>%
                left_join(dt_taxon)%>%
                left_join(dt_entity)%>%
                left_join(cells_df_water)%>%
@@ -264,77 +262,15 @@ all_data <- results_sub%>%
                 rename(fao_rgn  = fao_id,
                        tons     = catch)
 
-
-
 df = rbind(df,all_data)
 
 }
 
-write.csv(df,file =  file.path(dir_M,'git-annex/globalprep/fis/v2016/int/spatial_catch_saup.csv'),row.names=FALSE)
+write.csv(df,file =  file.path(dir_M,'git-annex/globalprep/ao/v2016/int/ao_catch_saup.csv'),row.names=FALSE)
 
 
 ```
 
-
-***
-
-# Prep data for BBmsy calculations
-
-Load taxonomic resilience information
-
-```{r resilience,eval=F}
-
-# add the taxon_resilence data to catch for b/bmsy calculations
-taxon_res = read.csv('int/taxon_resilience_lookup.csv', stringsAsFactors = FALSE) %>%
-              mutate(common = ifelse(common %in% "Silver croaker", paste(common, sciname, sep=" "), common)) %>%
-              dplyr::select(Common_Name=common, Resilience)
-```
-
-Filter out all stocks that don't meet our conditions:
-
-(1) Keep all stocks that have at least 1000 tons mean annual harvest
-(2) Keep all stocks with time series of 20 years or more
-
-```{r prep_data_bbmsy, eval=F}
-
-#set variables to filter by
-min_yrs = 20
-min_tons = 1000
-
-#read in catch data created above
-df <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/spatial_catch_saup.csv'),stringsAsFactors=F)
-
-#create dataset ready to run through catch only models
-
-    stks <- df%>%
-              filter(TaxonKey >= 600000,               #remove all records of catch reported at higher taxonomic levels than species
-                     tons     > 0)%>%                  #remove records of 0 catch
-              select(-rgn_id)%>%                       #remove rgn_id since we aggregate stocks to the FAO level   
-              group_by(stock_id,year,fao_rgn,Scientific_Name,Common_Name,TaxonKey)%>%
-              summarise(tons = sum(tons))%>%           #calculate total tons per stock
-              ungroup()%>%
-              group_by(stock_id)%>%
-              mutate(nyrs = n(),                       #get the total number of years the stock has records for   
-                     avg_ann_catch = mean(tons))%>%    #calculate the mean catch over all catch years
-              ungroup()%>%
-              filter(avg_ann_catch >= min_tons,        #keep only those stocks that meet our conditions
-                              nyrs >= min_yrs)%>%
-              left_join(taxon_res)%>%                  #add resilience information
-              dplyr::select(year,Scientific_Name,Common_Name,fao_rgn,stock_id,TaxonKey,Resilience,tons)
-
-
-
-write.csv(stks, file = 'int/spatial_catch_pre_bbmsy.csv')
-```
-
-```{r,echo=F}
-
-stks = read.csv('int/spatial_catch_pre_bbmsy.csv')
-
-DT::datatable(head(stks,n=100))
-
-
-```
 
 ***
 
