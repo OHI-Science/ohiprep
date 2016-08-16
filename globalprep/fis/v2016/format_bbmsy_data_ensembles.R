@@ -9,8 +9,9 @@
 library(zoo)
 library(tidyr)
 library(dplyr)
+library(ggplot2)
 
-
+source('src/R/common.R')
 # -------------------------------------------------------------------
 ## Taking the 5 year running average of b/bmsy values to smooth data
 # -------------------------------------------------------------------
@@ -66,64 +67,25 @@ bmsy <- bmsy %>%
 #--------------------------------------------------------------------
 #### getting b/bmsy data to the correct spatial scale
 #-----------------------------------------------------------------------
-catch <- catch <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/spatial_catch_saup.csv'))%>%
-  rename(common = Common_Name)
+catch <- catch <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/spatial_catch_saup.csv')) %>%
+  rename(common = Common_Name, fao_id = fao_rgn, species=Scientific_Name)
+summary(catch)
+hist(log(catch$tons))
 
-catch_old <- read.csv('globalprep/fis/v2016/data/mean_catch.csv')
-catch_old <- separate(catch_old, taxon_key_stock, c("TaxonKey", "species", "fao_id"), sep="-") %>%
-  mutate(stock_id = paste(species, fao_id, sep = "-")) %>%
-  mutate(fao_id = as.numeric(fao_id)) %>%
-  mutate(rgn_id = as.numeric(rgn_id)) %>%
-  mutate(TaxonKey = as.numeric(TaxonKey)) %>%
-  filter(TaxonKey >= 600000) %>%
-  mutate(species = gsub("_", " ", species)) %>%
-  group_by(TaxonKey, fao_id, year, species) %>%
-  summarize(catch = sum(mean_catch))
+## a lot of catch data without fao region (constrained to some regions)
+tmp <- filter(catch, is.na(fao_id) & !is.na(rgn_id))
+#table(tmp$rgn_id, tmp$year)
+table(tmp$rgn_id[tmp$year==2010])
+sum(table(tmp$rgn_id[tmp$year==2010]))
+## and seems to be small ton values, so probably coastal cells with small coverage
+hist(log(tmp$tons)) 
 
-tmp <- filter(catch, fao_rgn==18 & year==2010) %>%
-  arrange(Scientific_Name)
-tmp_old <- filter(catch_old, fao_id==18 & year==2010) %>%
-  arrange(species)
-setdiff(tmp$Scientific_Name, tmp_old$species)
-setdiff(tmp_old$species, tmp$Scientific_Name)
-
-
-tmp <- filter(catch, fao_rgn==21 & year==2010) %>%
-  arrange(Scientific_Name)
-tmp_old <- filter(catch_old, fao_id==21 & year==2010) %>%
-  arrange(species)
-setdiff(tmp$Scientific_Name, tmp_old$species)
-setdiff(tmp_old$species, tmp$Scientific_Name)
-
-tmp <- filter(catch, fao_rgn==57 & year==2010) %>%
-  arrange(Scientific_Name)
-tmp_old <- filter(catch_old, fao_id==57 & year==2010) %>%
-  arrange(species)
-setdiff(tmp$Scientific_Name, tmp_old$species)
-setdiff(tmp_old$species, tmp$Scientific_Name)
-
-tmp <- filter(catch, fao_rgn==71 & year==2010) %>%
-  arrange(Scientific_Name)
-tmp_old <- filter(catch_old, fao_id==71 & year==2010) %>%
-  arrange(species)
-setdiff(tmp$Scientific_Name, tmp_old$species)
-setdiff(tmp_old$species, tmp$Scientific_Name)
-
-tmp <- filter(catch, fao_rgn==67 & year==2010) %>%
-  arrange(Scientific_Name)
-tmp_old <- filter(catch_old, fao_id==67 & year==2010) %>%
-  arrange(species)
-setdiff(tmp$Scientific_Name, tmp_old$species)
-setdiff(tmp_old$species, tmp$Scientific_Name)
-
-
-dim(unique(catch))
-
-intersect(catch$stock_id, bmsy$stock_id)
-setdiff(catch$stock_id, bmsy$stock_id)
-setdiff(bmsy$stock_id, catch$stock_id)  # these are some SAUP regions that were cut because they overlapped other regions
-
+## filter out non ohi eez regions from catch data and bind to b/bmsy data
 bmsy_fao_rgn <- catch %>%
+  filter(!is.na(rgn_id)) %>%
+  filter(!is.na(fao_id)) %>%
+  filter(rgn_id <= 250) %>%
+  filter(rgn_id != 213) %>%
   left_join(bmsy, by=c('stock_id', 'year'))
 head(bmsy_fao_rgn)
 summary(bmsy_fao_rgn)
@@ -140,22 +102,15 @@ ram_sp <- read.csv('globalprep/fis/v2016/ram/ram_extended.csv', stringsAsFactors
 # get a list of the ram species that are not in the catch data 
 # some of these were hand matched based on synonyms...these are saved in:
 # RAM_species_to_SAUP.csv
-tmp <- sort(setdiff(ram_sp$scientificname, bmsy_fao_rgn$species))
-#write.csv(tmp, "globalprep/fis/v2016/int/unmatched_RAM_species.csv", row.names=FALSE)
+# tmp <- sort(setdiff(ram_sp$scientificname, bmsy_fao_rgn$Scientific_Name))
+# write.csv(tmp, "globalprep/fis/v2016/int/unmatched_RAM_species.csv", row.names=FALSE)
 ram_name_corr <- read.csv("globalprep/fis/v2016/int/RAM_species_to_SAUP.csv", stringsAsFactors = FALSE) %>%
   filter(!is.na(SAUP_species))  # SAUP to RAM name conversion
 
 
-# the sepceies that are in the catch and ram data N=102
-sort(intersect(bmsy_fao_rgn$species, ram_sp$scientificname))
+# the species that are in the catch and ram data N=102
+sort(intersect(bmsy_fao_rgn$, ram_sp$scientificname))
 
-
-# a list of species in the SAUP data
-tmp <- bmsy_fao_rgn %>%
-  dplyr::select(TaxonKey, species) %>%
-  unique() %>%
-  arrange(species)
-write.csv(tmp, "globalprep/fis/v2016/int/SAUP_species.csv", row.names=FALSE)
 
 ###########################################
 ## read in the ram data and substitute names
@@ -177,6 +132,7 @@ length(unique(ram$stockid_ram))  #203 stocks that match our species
 ram <- filter(ram, rgn_id<250)
 length(unique(ram$stockid_ram))  #202 stocks that match our species and in the eez regions
 
+### This dataset has the actual B/Bmsy values:
 ram_bmsy <- read.csv('globalprep/fis/v2016/ram/ram_timeseries.csv') %>%
   dplyr::filter(tsid == "BdivBmsytouse-dimensionless") %>%
   dplyr::filter(!is.na(tsvalue)) %>%
@@ -232,43 +188,43 @@ ram_bmsy_gf_check1 <- ram_bmsy_gf %>%
   group_by(stockid_ram) %>%
   do({
     mod <- lm(ram_bmsy ~ year, data= filter(., year < 2010))  ### change year to test different accuracy levels based on # years of data used in lm
-    ram_bmsy_predict <- predict(mod, newdata=.[c('year')])
-    data.frame(., ram_bmsy_predict)
+    ram_bmsy_predict_error <- predict(mod, newdata=.[c('year')])
+    data.frame(., ram_bmsy_predict_error)
   })
 
-ggplot(data = filter(ram_bmsy_gf_check1, year==2010), aes(y=ram_bmsy_predict, x=ram_bmsy)) +
+ggplot(data = filter(ram_bmsy_gf_check1, year==2010), aes(y=ram_bmsy_predict_error, x=ram_bmsy)) +
          geom_point() +
          theme_bw() +
          geom_abline(slope=1, intercept=0, color="red")
-summary(lm(ram_bmsy_predict ~ ram_bmsy, data=filter(ram_bmsy_gf_check1, year==2010)))
+summary(lm(ram_bmsy_predict_error ~ ram_bmsy, data=filter(ram_bmsy_gf_check1, year==2010)))
 
 ram_bmsy_gf_check2 <- ram_bmsy_gf %>%
   group_by(stockid_ram) %>%
   do({
     mod <- lm(ram_bmsy ~ year, data= filter(., year < 2009))  ### change year to test different accuracy levels based on # years of data used in lm
-    ram_bmsy_predict <- predict(mod, newdata=.[c('year')])
-    data.frame(., ram_bmsy_predict)
+    ram_bmsy_predict_error <- predict(mod, newdata=.[c('year')])
+    data.frame(., ram_bmsy_predict_error)
   })
 
-ggplot(data = filter(ram_bmsy_gf_check2, year==2010), aes(y=ram_bmsy_predict, x=ram_bmsy)) +
+ggplot(data = filter(ram_bmsy_gf_check2, year==2010), aes(y=ram_bmsy_predict_error, x=ram_bmsy)) +
   geom_point() +
   theme_bw() +
   geom_abline(slope=1, intercept=0, color="red")
-summary(lm(ram_bmsy_predict ~ ram_bmsy, data=filter(ram_bmsy_gf_check2, year==2010)))
+summary(lm(ram_bmsy_predict_error ~ ram_bmsy, data=filter(ram_bmsy_gf_check2, year==2010)))
 
 ram_bmsy_gf_check3 <- ram_bmsy_gf %>%
   group_by(stockid_ram) %>%
   do({
     mod <- lm(ram_bmsy ~ year, data= filter(., year < 2008))  ### change year to test different accuracy levels based on # years of data used in lm
-    ram_bmsy_predict <- predict(mod, newdata=.[c('year')])
-    data.frame(., ram_bmsy_predict)
+    ram_bmsy_predict_error <- predict(mod, newdata=.[c('year')])
+    data.frame(., ram_bmsy_predict_error)
   })
 
-ggplot(data = filter(ram_bmsy_gf_check3, year==2010), aes(y=ram_bmsy_predict, x=ram_bmsy)) +
+ggplot(data = filter(ram_bmsy_gf_check3, year==2010), aes(y=ram_bmsy_predict_error, x=ram_bmsy)) +
   geom_point() +
   theme_bw() +
   geom_abline(slope=1, intercept=0, color="red")
-summary(lm(ram_bmsy_predict ~ ram_bmsy, data=filter(ram_bmsy_gf_check3, year==2010)))
+summary(lm(ram_bmsy_predict_error ~ ram_bmsy, data=filter(ram_bmsy_gf_check3, year==2010)))
 
 ##############################################
 ## End of error estimating
@@ -306,19 +262,19 @@ summary(bmsy_dl_ram)
 # -----------------------------------------------------------------
 
 ### this one describes RAM gapfilling:
-bbmsy_data <- bmsy_dl_ram %>%
+bbmsy_data_gf <- bmsy_dl_ram %>%
   mutate(bbmsy = ifelse(is.na(ram_bmsy), b_bmsy_cmsy, ram_bmsy)) %>%
+  mutate(ram = ifelse(!is.na(ram_bmsy), "RAM", "cmsy")) %>%
   filter(!is.na(bbmsy)) %>%
-  mutate(stock_id = paste(species, fao_id, sep="-")) %>%
-  select(rgn_id, stock_id, year, bbmsy, gapfilled) %>%
+  select(rgn_id, stock_id, year, bbmsy, gapfilled, ram) %>%
   filter(year >= 2005)
-write.csv(bbmsy_data, 'globalprep/fis/v2016/data/fis_bbmsy_gf_ram.csv', row.names = FALSE)
+write.csv(bbmsy_data_gf, 'globalprep/fis/v2016/data/fis_bbmsy_gf.csv', row.names = FALSE)
 
 ### This is the actual B/Bmsy data:
+### (ultimately decided it was best to go with cmsy data, rather than other b/bmsy values or ensembles, see below...)
 bbmsy_data <- bmsy_dl_ram %>%
   mutate(bbmsy = ifelse(is.na(ram_bmsy), b_bmsy_cmsy, ram_bmsy)) %>%
   filter(!is.na(bbmsy)) %>%
-  mutate(stock_id = paste(species, fao_id, sep="-")) %>%
   select(rgn_id, stock_id, year, bbmsy) %>%
   filter(year >= 2005)
 write.csv(bbmsy_data, 'globalprep/fis/v2016/data/fis_bbmsy.csv', row.names = FALSE)
@@ -328,8 +284,8 @@ write.csv(bbmsy_data, 'globalprep/fis/v2016/data/fis_bbmsy.csv', row.names = FAL
 # -------------------------------------------------------------------
 ### compare b/bmsy values
 # -----------------------------------------------------------------
-library(ggplot2)
-data <- filter(bmsy_dl_ram, ram_bmsy<2.5) %>%
+
+data <- filter(bmsy_dl_ram, ram_bmsy < 2.5) %>%  # ignore the very high values, these are impossible to fit
   filter(!is.na(stockid_ram)) %>%
   filter(year == 2010) %>%
   select( b_bmsy_cmsy, b_bmsy_comsir, b_bmsy_sscom, mean_all, ram_bmsy, stockid_ram) %>%
@@ -394,29 +350,24 @@ var(data$mean_all, data$ram_bmsy, na.rm=TRUE)
 
 
 ### 
+## Exporing ensemble approaches:
 
-mod1 <- lm(ram_bmsy ~ b_bmsy_cmsy, data=data)
-
-mod2 <- lm(ram_bmsy ~ b_bmsy_comsir, data=data)
-
-mod3 <- lm(ram_bmsy ~ b_bmsy_sscom, data=data)
-
-mod4 <- lm(ram_bmsy ~ mean_all, data=data)
-
+## 1. additive and interaction linear models that include all three variables
+## (this is an approximation because values are not based on cross-validation):
 mod5 <- lm(ram_bmsy ~ b_bmsy_cmsy + b_bmsy_comsir + b_bmsy_sscom , data=data)
-
-mod6 <- lm(ram_bmsy ~ b_bmsy_cmsy*b_bmsy_comsir*b_bmsy_sscom , data=data)
-
-AIC(mod1, mod2, mod3, mod4, mod5, mod6)
 summary(mod5)
 
+mod6 <- lm(ram_bmsy ~ b_bmsy_cmsy*b_bmsy_comsir*b_bmsy_sscom , data=data)
+summary(mod6)
+
+## 2. Generalized Boosted Regression Models
 library(caret)
 library(gbm)
 
 set.seed(227)
 samples <- sample(1:length(data$stockid_ram), length(data$stockid_ram)*0.75, replace = FALSE)
 training <- data[samples, ]
-testing <- data[-samples, ]
+testing <- data[-samples, ]  # 25% of the data
 
 ### GBM: weight the low values higher
 m_gbm <- gbm::gbm(ram_bmsy ~ b_bmsy_cmsy + b_bmsy_comsir + b_bmsy_sscom,
@@ -472,34 +423,28 @@ plot(testing$ram_bmsy, lm_predict)
 ### summary of data
 # -----------------------------------------------------------------
 
-bmsy_dl_ram %>%
+tmp <- bmsy_dl_ram %>%
   mutate(ram_data = ifelse(is.na(ram_bmsy), "no", "yes")) %>%
-  mutate(bbmsy = ifelse(is.na(ram_bmsy), b_bmsy_cmsy_con, ram_bmsy)) %>%
+  mutate(bbmsy = ifelse(is.na(ram_bmsy), b_bmsy_cmsy, ram_bmsy)) %>%
+  mutate(bbmsy_data = ifelse(!is.na(bbmsy), "yes", "no"))
+
+
+## Proportion of catch with a B/Bmsy values that is based on ram data
+tmp %>%
   filter(!is.na(bbmsy)) %>%
   group_by(ram_data, year) %>%
-  summarize(sum_mean_catch = sum(mean_catch)) %>%
+  summarize(sum_tons = sum(tons)) %>%
   group_by(year) %>%
-  summarize(prop_catch = sum_mean_catch[ram_data=="yes"]/(sum(sum_mean_catch)))
-# ~35% of catch with b/bmsy estimates
+  summarize(prop_catch_ram = sum_tons[ram_data=="yes"]/(sum(sum_tons))) %>%
+  data.frame()
+# ~30% of catch with ram b/bmsy estimates
 
-bmsy_dl_ram %>%
-  mutate(ram_data = ifelse(is.na(ram_bmsy), "no", "yes")) %>%
-  mutate(bbmsy = ifelse(is.na(ram_bmsy), b_bmsy_cmsy_con, ram_bmsy)) %>%
-  group_by(ram_data, year) %>%
-  summarize(sum_mean_catch = sum(mean_catch)) %>%
+## Proportion of catch with b/bmsy estimates
+tmp %>%
+  group_by(bbmsy_data, year) %>%
+  summarize(sum_tons = sum(tons)) %>%
   group_by(year) %>%
-  summarize(prop_catch = sum_mean_catch[ram_data=="yes"]/(sum(sum_mean_catch)))
+  summarize(prop_catch_bmsy = sum_tons[bbmsy_data=="yes"]/(sum(sum_tons))) %>%
+  data.frame()
+# ~47% of catch with ram b/bmsy estimates
 
-
-tmp <- bmsy_dl_ram %>%
-  mutate(ram = ifelse(is.na(ram_bmsy), "no", "yes")) %>%
-  group_by(rgn_id, ram, year) %>%
-  summarize(sum_mean_catch = sum(mean_catch)) %>%
-  spread(ram, sum_mean_catch) %>%
-  mutate(yes = ifelse(is.na(yes), 0, yes)) %>%
-  gather("ram", "sum_mean_catch", 3:4) %>%
-  group_by(rgn_id, year) %>%
-  summarize(prop_catch = ifelse(is.na(sum_mean_catch[ram=="yes"]), 0, sum_mean_catch[ram=="yes"])/(sum(sum_mean_catch))) %>%
-  filter(year==2010)
-
-hist(tmp$prop_catch)
