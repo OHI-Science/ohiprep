@@ -43,7 +43,13 @@ new_b_bmsy(sscom, method="sscom")
 ## Previously, we tried to select CMSY priors based on 
 ## stock resilience scores, but ultimately, it looked like 
 ## the constrained prior worked best regardless of method
-## for details see: format_bbmsy_data.R_cmsy_explore.R
+### NOTE: 5 year running average of cmsy derived b/bmsy values do seem to perform 
+### slightly better.
+## cor.coefficients
+##                     no_avg     5_year_avg
+## resilience based    0.04       0.007
+## uniform             0.01       -0.03
+## constrained         0.14       0.12
 # -------------------------------------------------------------------
 
 b_bmsy_cmsy <- read.csv('globalprep/fis/v2016/int/cmsy_b_bmsy_constrained_mean5yrs.csv') %>%

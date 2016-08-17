@@ -13,54 +13,41 @@ source('../ohiprep/src/R/common.R') # set dir_neptune_data
 # (sample size should stay the same after below)
 # --------------------------
 
-## SAUP catch data:
-data <- read.csv(file.path(dir_M, 'git-annex/globalprep/fis/v2016/int/catch_saup.csv'))
-filter(data, stock_id == "Conger_myriaster-71")
-filter(data, stock_id == "Gadus_macrocephalus-71")
-filter(data, stock_id == "Pseudopleuronectes_herzensteini-71")
+catch <- catch <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/spatial_catch_saup.csv')) %>%
+  rename(common = Common_Name, fao_id = fao_rgn, species=Scientific_Name)
+summary(catch)
 
-data <- data %>%
-  dplyr::select(year, saup_rgn = saup_id, fao_rgn, stock_id, TaxonKey, tons) %>%
-  group_by(saup_rgn, fao_rgn, TaxonKey, stock_id, year) %>%
+## filter out non ohi eez regions
+catch <- catch %>%
+  filter(!is.na(rgn_id)) %>%
+  filter(!is.na(fao_id)) %>%
+  filter(rgn_id <= 250) %>%
+  filter(rgn_id != 213)
+
+catch <- catch %>%
+  dplyr::select(year, rgn_id, fao_id, stock_id, TaxonKey, tons) %>%
+  group_by(rgn_id, fao_id, TaxonKey, stock_id, year) %>%
   summarize(catch = sum(tons)) %>%
   ungroup()
 
-## SAUP to OHI region data
-region <- read.csv("globalprep/fis/v2016/int/saup_to_ohi_key.csv")
-dups <- region[duplicated(region$saup_rgn), ]
-region[region$saup_rgn %in% dups$saup_rgn, ] #duplicates, 
-###### dups occur because a few SAUP regions have lower resolution than OHI regions.
-###### This causes the sample size of the following merge to increase, but this is ok.  
-
+data.frame(filter(catch, stock_id == "Elasmobranchii-57" & rgn_id==1))
+data.frame(filter(catch, stock_id == "Carcharhinidae-57" & rgn_id==1))
 #---------------------------------------------
-#  Convert from SAUP regions to OHI regions
+# for years with no reported catch, add zero values
+# (after first reported catch)
 # --------------------------------------------
 
-data_ohi_rgns <- data %>%
-  left_join(region, by="saup_rgn") 
-
-
-# some saup regions do not correspond to any ohi regions
-# region 156 is China, but this polygon overlaps other polygons that better reflect our regions
-# region 910 is South Orkney Island, which we include in our Antarctica analysis
-# regions >1000 represent the high seas.  These should all be safe to cut for the eez analysis.
-
-### correcting for saup regions represented by more than one ohi-region
-### and then summing catch by ohi region (many ohi regions are composed of >1 saup region)
-
-data_ohi_rgns <- data_ohi_rgns %>%
-  filter(!is.na(ohi_rgn)) %>%
-  mutate(catch_corr = catch * percent_saup) %>%
-  group_by(fao_rgn, TaxonKey, stock_id, year, ohi_rgn) %>%
-  summarize(catch = sum(catch_corr)) %>%
-  ungroup()
-
-#---------------------------------------------
-### Sort data by year and include zeros only after
-### first catch 
-# --------------------------------------------
-data_ohi_rgns_fc <- data_ohi_rgns %>%
-  group_by(fao_rgn, TaxonKey, stock_id, ohi_rgn) %>%
+## these data have no zero catch values, so this is added here:
+catch_zeros <- catch %>%
+  spread(year, catch) %>%
+  data.frame() %>%
+  gather("year", "catch", num_range("X", 1950:2010)) %>%
+  mutate(year = as.numeric(gsub("X", "", year))) %>%
+  mutate(catch = ifelse(is.na(catch), 0, catch))
+  
+## this part eliminates the zero catch values prior to the first reported non-zero catch   
+catch_zeros <- catch_zeros %>%
+  group_by(fao_id, TaxonKey, stock_id, rgn_id) %>%
   arrange(year) %>%
   mutate(cum_catch = cumsum(catch)) %>%
   filter(cum_catch > 0) %>%
@@ -73,19 +60,21 @@ data_ohi_rgns_fc <- data_ohi_rgns %>%
 ### These data are used to weight the RAM b/bmys values 
 # --------------------------------------------
 
-mean_catch <- data_ohi_rgns_fc %>%
+mean_catch <- catch_zeros %>%
   filter(year >= 1980) %>%
-  group_by(ohi_rgn, fao_rgn, TaxonKey, stock_id) %>%
+  group_by(rgn_id, fao_id, TaxonKey, stock_id) %>%
   mutate(mean_catch=mean(catch, na.rm=TRUE))%>%
   filter(mean_catch != 0)  %>%      ## some stocks have no reported catch for time period
   ungroup()
+filter(mean_catch, stock_id == "Elasmobranchii-57" & rgn_id==1)
+
+data.frame(filter(mean_catch, stock_id == "Carcharhinidae-57" & rgn_id==1))
 
 #---------------------------------------------
 # Toolbox formatting and save
 # --------------------------------------------
 mean_catch_toolbox <- mean_catch %>%
-  mutate(taxon_key_stock = paste(TaxonKey, stock_id, sep = "-")) %>%
-  dplyr::select(rgn_id=ohi_rgn, taxon_key_stock, year, mean_catch) %>%
+  dplyr::select(rgn_id, TaxonKey, stock_id, year, mean_catch) %>%
   filter(year>=2005) %>%  # filter to include only analysis years
   data.frame()
 
@@ -98,9 +87,9 @@ write.csv(mean_catch_toolbox, "globalprep/fis/v2016/data/mean_catch.csv", row.na
 # --------------------------------------------
 
 total_catch_FP <- mean_catch %>%
-  group_by(ohi_rgn, year) %>%
+  group_by(rgn_id, year) %>%
   summarize(fis_catch = sum(catch)) %>%
-  dplyr::select(rgn_id = ohi_rgn, year, fis_catch) %>%
+  dplyr::select(rgn_id, year, fis_catch) %>%
   filter(year >= 2005) # filter to include only the relevant analysis years
 
 write.csv(total_catch_FP, "globalprep/fis/v2016/data/FP_fis_catch.csv", row.names=FALSE)
@@ -108,6 +97,7 @@ write.csv(total_catch_FP, "globalprep/fis/v2016/data/FP_fis_catch.csv", row.name
 #############################################################
 #############################################################
 # Do calculations for high seas
+# NOTE: will do this later on...
 #############################################################
 
 data_hs_rgns <- data %>%
