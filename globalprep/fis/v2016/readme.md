@@ -55,7 +55,7 @@ A description of some of the files so far:
 * format_bbmsy_data.R: Used to explore and combine various B/Bmsy scores into a single score.  This also merges in the RAM B/Bmsy scores when they are available. Also gets the B/Bmsy values to the correct spatial scale.
  
     - fis_bbmsy.csv: Final B/Bmsy scores used for ohi-global calculations
-    - fis_bbmsy_gf_ram.csv: Gapfilling done on RAM data when scores didn't go to 2010
+    - fis_bbmsy_gf.csv: Gapfilling done on RAM data when scores didn't go to 2010
     
    
    
