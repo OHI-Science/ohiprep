@@ -1,4 +1,4 @@
-"rgn_id","stock_id","year","bbmsy","gapfilled","ram"
+"rgn_id","stock_id","year","bbmsy","gapfilled","bbmsy_data_source"
 1,"Alopias_superciliosus-57",2005,1.13733747335202,NA,"cmsy"
 1,"Alopias_vulpinus-57",2005,0.902514603399943,NA,"cmsy"
 1,"Auxis_thazard-57",2005,1.42411030043164,NA,"cmsy"
