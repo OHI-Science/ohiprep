@@ -72,21 +72,23 @@ bmsy <- bmsy %>%
 
 #--------------------------------------------------------------------
 #### getting b/bmsy data to the correct spatial scale
+#### need a value for each fao/ohi-region combination 
+#### (not just FAO)
 #-----------------------------------------------------------------------
 catch <- catch <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/spatial_catch_saup.csv')) %>%
   rename(common = Common_Name, fao_id = fao_rgn, species=Scientific_Name)
 summary(catch)
 hist(log(catch$tons))
 
-## a lot of catch data without fao region (constrained to some regions)
+## a lot of catch data with an ohi-region but no fao region (constrained to some regions)
 tmp <- filter(catch, is.na(fao_id) & !is.na(rgn_id))
 #table(tmp$rgn_id, tmp$year)
 table(tmp$rgn_id[tmp$year==2010])
 sum(table(tmp$rgn_id[tmp$year==2010]))
-## and seems to be small ton values, so probably coastal cells with small coverage
+## and seems to be a relatively small amount of the catch
 hist(log(tmp$tons)) 
 
-## filter out non ohi eez regions from catch data and bind to b/bmsy data
+## filter out catch records without region identifiersand bind to b/bmsy data
 bmsy_fao_rgn <- catch %>%
   filter(!is.na(rgn_id)) %>%
   filter(!is.na(fao_id)) %>%
@@ -100,7 +102,10 @@ summary(bmsy_fao_rgn)
 # -------------------------------------------------------------------
 ### Read in RAM data and format
 # -----------------------------------------------------------------
-#correcting mismatches in names: figure out mismatches and make correction csv file
+
+#### In this section, I am just getting a list of the species that are in the RAM data, but 
+#### not in the SAUP catch data.  I am hand checking these to find potential synonyms
+#### and creating a synonym master file that can be used to align the datasets.
 ram_sp <- read.csv('globalprep/fis/v2016/ram/ram_extended.csv', stringsAsFactors = FALSE) %>%
   dplyr::select(scientificname) %>%
   unique()
@@ -115,7 +120,7 @@ ram_name_corr <- read.csv("globalprep/fis/v2016/int/RAM_species_to_SAUP.csv", st
 
 
 # the species that are in the catch and ram data N=102
-sort(intersect(bmsy_fao_rgn$, ram_sp$scientificname))
+sort(intersect(bmsy_fao_rgn$species, ram_sp$scientificname))
 
 
 ###########################################
@@ -128,7 +133,7 @@ ram <- read.csv('globalprep/fis/v2016/ram/ram_extended.csv', , stringsAsFactors 
   left_join(ram_name_corr, by="RAM_species") %>%
   mutate(species = ifelse(!is.na(SAUP_species), SAUP_species, RAM_species)) %>%
   select(stockid_ram = stockid, rgn_id, fao_id, species)
-length(unique(ram$stockid_ram))  #237 stocks
+length(unique(ram$stockid_ram))  #237 stocks with RAM B/Bmsy data
 
 ## filter out the species that have no match in the SAUP data
 ram <- filter(ram, species %in% bmsy_fao_rgn$species)
@@ -241,8 +246,10 @@ ram_bmsy_gf <- ram_bmsy_gf %>%
   mutate(ram_bmsy = ifelse(is.na(ram_bmsy), ram_bmsy_predict, ram_bmsy)) %>%
   select(stockid_ram, year, ram_bmsy, gapfilled)
 
-setdiff(ram_bmsy_gf$stockid_ram, ram$stockid_ram) # these are the ones with no species match in the SAUP data...ok
+## 202 RAM species
+setdiff(ram_bmsy_gf$stockid_ram, ram$stockid_ram) # these have B/Bmsy data, but no species match in the SAUP data...ok
 setdiff(ram$stockid_ram, ram_bmsy_gf$stockid_ram) # these got cut due to not having at least 3 years of data from 2005-2010
+## 202 - 36 = 166 stocks with RAM data
 
 ram_data <- ram %>% 
   left_join(ram_bmsy_gf, by="stockid_ram") %>%
@@ -270,9 +277,9 @@ summary(bmsy_dl_ram)
 ### this one describes RAM gapfilling:
 bbmsy_data_gf <- bmsy_dl_ram %>%
   mutate(bbmsy = ifelse(is.na(ram_bmsy), b_bmsy_cmsy, ram_bmsy)) %>%
-  mutate(ram = ifelse(!is.na(ram_bmsy), "RAM", "cmsy")) %>%
+  mutate(bbmsy_data_source = ifelse(!is.na(ram_bmsy), "RAM", "cmsy")) %>%
   filter(!is.na(bbmsy)) %>%
-  select(rgn_id, stock_id, year, bbmsy, gapfilled, ram) %>%
+  select(rgn_id, stock_id, year, bbmsy, gapfilled, bbmsy_data_source) %>%
   filter(year >= 2005)
 write.csv(bbmsy_data_gf, 'globalprep/fis/v2016/data/fis_bbmsy_gf.csv', row.names = FALSE)
 
