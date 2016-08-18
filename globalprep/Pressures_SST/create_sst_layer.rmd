@@ -72,7 +72,7 @@ cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color sc
 ## Create 5 year averages and calculate difference from historical mean
 ```{r, message=F,warning=F, eval=F}
 
-  l   <- list.files(file.path(dir_N,'git-annex/globalprep/Pressures_SST/v2015/tmp'),pattern='annual_pos_anomalies',full.names=TRUE)
+  l   <- list.files(file.path(dir_M,'git-annex/globalprep/Pressures_SST/v2015/tmp'),pattern='annual_pos_anomalies',full.names=TRUE)
   
 # Get 5 year aggregates
 
