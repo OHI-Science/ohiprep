@@ -125,9 +125,9 @@ data.frame(bad_ones)
 ## get a list of cells that have eez or fao categories:
 ## used later to determine whether cells with OHI regions but no FAO region are an issue:
 cells_water <- cells_raw %>%
-  group_by(CellID) %>%
-  mutate(cell_rgns = paste(sort(unique(rgn_typ)), collapse=", ")) %>%
-  arrange(CellID)
+                group_by(CellID) %>%
+                mutate(cell_rgns = paste(sort(unique(rgn_typ)), collapse=", ")) %>%
+                arrange(CellID)
 
 # check this went ok:
 list <- table(cells_water$cell_rgns)
