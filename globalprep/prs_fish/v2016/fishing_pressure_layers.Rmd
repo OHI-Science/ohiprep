@@ -1,0 +1,80 @@
+---
+title: 'OHI 2016 - Commerical Fishing Pressure Layers '
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    code_folding: show
+    toc: true
+    toc_depth: 1
+    toc_float: yes
+    number_sections: false
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+pdf_document:
+  toc: true
+---
+
+#Summary
+
+The commercial fishing pressure layers use data from the Sea Around Us Project
+
+
+
+#Updates from previous assessment
+[Any significant changes in methods from previous analyses?]
+
+***
+
+#Data Source [NOTE: can be copied from README.md in rawdata file]
+**Reference**: [citation for source data; website, literature, contact information. Version of data (if relevant). Screenshots if a series of menus had to be navigated to obtain the data.]
+
+**Downloaded**: [date downloaded or received]
+
+**Description**:  [e.g., surface aragonite state]
+
+**Native data resolution**: [e.g., 1 degree, 30 m, etc.]   
+
+**Time range**: [e.g., 1880-1899, monthly data provided for each year] 
+
+**Format**:  [e.g. NetCDF]
+
+***
+  
+#Methods
+
+##Setup
+
+```{r setup,message=FALSE,warning=FALSE,verbose=FALSE}
+
+#set options for all chunks in code
+knitr::opts_chunk$set(warning=FALSE, message=FALSE,fig.width=6, fig.height=6)
+source("~/github/ohiprep/src/R/common.R")
+
+#ocean raster at 1km
+  ocean = raster(file.path(dir_M, 'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
+  
+#set mollweide projection CRS
+  mollCRS=crs('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs')
+
+  
+```
+
+
+## Bring in catch by gear (high and low bycatch) at 1km2
+
+These rasters were created in this [dataprep.R](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/prs_fish/v2015/dataprep.R) script
+
+```{r}
+gear_hb = raster(file.path(dir_N,'git-annex/globalprep/prs_fish/v2015/gear_prop_hb_moll_1km_ocean.tif'))
+gear_lb = raster(file.path(dir_N,'git-annex/globalprep/prs_fish/v2015/gear_prop_lb_moll_1km_ocean.tif'))
+```
+
+
+
+
+***
+
+#Citation information  
+[citation information: include if these data will have their own specific citation.]
