@@ -108,7 +108,8 @@ summary(bmsy_fao_rgn)
 #### and creating a synonym master file that can be used to align the datasets.
 ram_sp <- read.csv('globalprep/fis/v2016/ram/ram_extended.csv', stringsAsFactors = FALSE) %>%
   dplyr::select(scientificname) %>%
-  unique()
+  unique() %>%
+  arrange(scientificname)
 
 # get a list of the ram species that are not in the catch data 
 # some of these were hand matched based on synonyms...these are saved in:
@@ -268,7 +269,7 @@ bmsy_dl_ram <- bmsy_fao_rgn %>%
   left_join(ram_data, by=c('rgn_id', 'fao_id', "species", "year"))
 head(bmsy_dl_ram) 
 summary(bmsy_dl_ram)
-
+#Thunnus alalunga
 
 # -------------------------------------------------------------------
 ### final formatting of data
