@@ -1,0 +1,384 @@
+FAO_name,species,exclude,alias,notes,notes_2,Taxon_code
+[Boleophthalmus pectinirostris],Great blue spotted mudskipper,1,NA,,Chinese medicine,F
+[Chondracanthus chamissoi],[Chondracanthus chamissoi],1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+[Porphyra columbina],[Porphyra columbina],1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+[Solea spp],Soles nei,0,NA,,,F
+[Spirulina maxima],[Spirulina maxima],1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Abalones nei,Abalones nei,0,NA,,,BI
+Akiami paste shrimp,Akiami paste shrimp,0,NA,,,SH
+Amberjacks nei,Amberjacks nei,0,NA,,,F
+American bull frog,American bull frog,0,NA,,,OTHER
+American cupped oyster,American cupped oyster,0,NA,,,BI
+Anadara clams nei,Anadara clams nei,0,NA,,,BI
+Aquatic invertebrates nei,Aquatic invertebrates nei,0,NA,,,INV
+Aquatic plants nei,Aquatic plants nei,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Arctic char,Arctic char,0,NA,,,F
+Areolate grouper,Areolate grouper,0,NA,,,F
+Atipa,Atipa,1,NA,freshwater,,F
+Atlantic bluefin tuna,Atlantic bluefin tuna,0,NA,,,F
+Atlantic cod,Atlantic cod,0,NA,,,F
+Atlantic ditch shrimp,Atlantic ditch shrimp,0,NA,,,SH
+Atlantic halibut,Atlantic halibut,0,NA,,,F
+Atlantic salmon,Atlantic salmon,0,NA,,,F
+Atlantic spadefish,Atlantic spadefish,1,NA,mixed use: gamefish/aquarium/food,,F
+Atlantic wolffish,Atlantic wolffish,0,NA,,,F
+Australian mussel,Australian mussel,0,NA,,,BI
+Babberlocks,Babberlocks,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Bagrid catfish,Bagrid catfish,1,NA,freshwater,,F
+Ballan wrasse,Ballan wrasse,0,NA,,,F
+Baltic prawn,Baltic prawn,0,NA,,,SH
+Banana prawn,Banana prawn,0,NA,,,SH
+Banded carpet shell,Banded carpet shell,0,NA,,,BI
+Barramundi(=Giant seaperch),Barramundi,0,NA,,,F
+Bastard halibut,Bastard halibut,0,NA,,,F
+Bastard halibuts nei,Bastard halibuts nei,0,NA,,,F
+Bear paw clam,Bear paw clam,0,NA,,,BI
+Big-scale sand smelt,Big-scale sand smelt,0,Silversides(=Sand smelts) nei,,,F
+Bigeye trevally,Bigeye trevally,0,NA,,,F
+Bighead carp,Bighead carp,1,NA,freshwater,,F
+Black ark,Black ark,0,blood cockle,,,BI
+Black bullhead,Black bullhead,1,NA,freshwater,,F
+Black catfishes nei,Black catfishes nei,1,NA,freshwater,,F
+Black grouper,Black grouper,0,Groupers nei,,,F
+Black seabass,Black seabass,0,NA,,,F
+Blackchin tilapia,Blackchin tilapia,1,NA,freshwater,,F
+Blackhead seabream,Blackhead seabream,0,NA,,,F
+Blacklip abalone,Blacklip abalone,0,NA,,,BI
+Blacklip pearl oyster,Blacklip pearl oyster,0,NA,,,BI
+Blackspot(=red) seabream,Blackspot(=red) seabream,0,NA,,,F
+Blood cockle,Blood cockle,0,NA,,,BI
+Blue crab,Blue crab,0,NA,,,CRUST
+Blue mussel,Blue mussel,0,NA,,,BI
+Blue shrimp,Blue shrimp,0,NA,,,SH
+Blue swimming crab,Blue swimming crab,0,NA,,,CRUST
+Blue tilapia,Blue tilapia,1,NA,freshwater,,F
+Bluefish,Bluefish,0,NA,,,F
+Bluegill,Bluegill,1,NA,freshwater,,F
+Bluespot mullet,Bluespot mullet,0,NA,,,F
+Bright green nori,Bright green nori,1,NA,seaweed mixed: animal feed/fertilizer/food,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Brill,Brill,0,NA,,,F
+Brine shrimp,Brine shrimp,0,NA,,,SH
+Brown meagre,Brown meagre,0,NA,,,F
+Brown seaweeds,Brown seaweeds,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Brown tiger prawn,Brown tiger prawn,0,NA,,,SH
+Brown-marbled grouper,Brown-marbled grouper,0,NA,,,F
+Butter clam,Butter clam,0,NA,,,BI
+Callinectes swimcrabs nei,Callinectes swimcrabs nei,0,NA,,,CRUST
+Caramote prawn,Caramote prawn,0,NA,,,SH
+Carpet shells nei,Carpet shells nei,0,NA,,,BI
+Caulerpa seaweeds,Caulerpa seaweeds,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Chars nei,Chars nei,0,NA,,,F
+Chilean flat oyster,Chilean flat oyster,0,NA,,,BI
+Chilean mussel,Chilean mussel,0,NA,,,BI
+Chinook(=Spring=King) salmon,Chinook(=Spring=King)salmon,0,NA,,,F
+Cholga mussel,Cholga mussel,0,NA,,,BI
+Choro mussel,Choro mussel,0,NA,,,BI
+Chum(=Keta=Dog) salmon,Chum(=Keta=Dog)salmon,0,NA,,,F
+"Clams, etc. nei","Clams, etc. nei",0,NA,,,BI
+Cobia,Cobia,0,NA,,,F
+Cockles nei,Cockles nei,0,NA,,,BI
+Coho(=Silver) salmon,Coho(=Silver)salmon,0,NA,,,F
+Common carp,Common carp,1,NA,freshwater,,F
+Common cuttlefish,Common cuttlefish,0,NA,,,CEPH
+Common dentex,Common dentex,0,NA,,,F
+Common edible cockle,Common edible cockle,0,NA,,,BI
+Common pandora,Common pandora,0,NA,,,F
+Common prawn,Common prawn,0,NA,,,SH
+Common snook,Common snook,0,NA,,,F
+Common sole,Common sole,0,NA,,,F
+Common two-banded seabream,Common two-banded seabream,0,NA,,,F
+Constricted tagelus,Constricted tagelus,1,NA,freshwater,,BI
+Cortez oyster,Cortez oyster,0,NA,,,BI
+Crevalle jack,Crevalle jack,0,NA,,,F
+Crimson seabream,Crimson seabream,0,NA,,,F
+"Croakers, drums nei","Croakers, drums nei",0,NA,,,F
+Crocus giant clam,Crocus giant clam,0,NA,,,BI
+Cupped oysters nei,Cupped oysters nei,0,NA,,,BI
+Cyprinids nei,Cyprinids nei,1,NA,freshwater,,F
+Daggertooth pike conger,Daggertooth pike conger,0,NA,,,F
+Diphos sanguin,Diphos sanguin,0,"Clams, etc. nei",,,BI
+Donax clams,Donax clams,0,NA,,,BI
+Dotted gizzard shad,Dotted gizzard shad,0,NA,,,F
+Drums nei,Drums nei,0,NA,,,F
+Dulse,Dulse,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Eastern king prawn,Eastern king prawn,0,NA,,,SH
+Eastern school shrimp,Eastern school shrimp,0,NA,,,SH
+Elkhorn sea moss,Elkhorn sea moss,1,NA,seaweed: mixed use,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Elongate giant clam,Elongate giant clam,0,NA,,,BI
+Eucheuma seaweeds nei,Eucheuma seaweeds nei,1,NA,seaweed: mixed use,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+European eel,European eel,0,NA,,,F
+European flat oyster,European flat oyster,0,NA,,,BI
+European flounder,European flounder,0,NA,,,F
+European seabass,European seabass,0,NA,,,F
+European whitefish,European whitefish,0,NA,,,F
+False abalone,False abalone,0,NA,,,BI
+Filefishes nei,Filefishes nei,0,NA,,,F
+"Filefishes, leatherjackets nei","Filefishes, leatherjackets nei",0,NA,,,F
+Finfishes nei,Finfishes nei,0,NA,,,F
+Flat and cupped oysters nei,Flat and cupped oysters nei,0,NA,,,BI
+Flat oysters nei,Flat oysters nei,0,NA,,,BI
+Flatfishes nei,Flatfishes nei,0,NA,,,F
+Flathead grey mullet,Flathead grey mullet,0,NA,,,F
+Flathead lobster,Flathead lobster,0,NA,,,CRUST
+Fleshy prawn,Fleshy prawn,0,NA,,,SH
+Florida pompano,Florida pompano,0,NA,,,F
+Fluted giant clam,Fluted giant clam,0,NA,,,BI
+Fourfinger threadfin,Fourfinger threadfin,0,NA,,,F
+Fragile codium,Fragile codium,1,NA,seaweed: mixed use,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Freshwater fishes nei,Freshwater fishes nei,1,NA,freshwater,,F
+Freshwater siluroids nei,Freshwater siluroids nei,1,NA,freshwater,,F
+Fusiform sargassum,Fusiform sargassum,1,NA,seaweed: mixed use,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Gasar cupped oyster,Gasar cupped oyster,0,NA,,,BI
+Gastropods nei,Gastropods nei,0,NA,,,BI
+Gazami crab,Gazami crab,0,NA,,,CRUST
+Gelidium seaweeds,Gelidium seaweeds,1,NA,seaweed: agar,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Giant clam,Giant clam,0,NA,,,BI
+Giant clams nei,Giant clams nei,0,NA,,,BI
+Giant grouper,Giant grouper,0,Groupers nei,,,F
+Giant kelp,Giant kelp,1,NA,"seaweed, algin",food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Giant river prawn,Giant river prawn,1,NA,freshwater,,SH
+Giant tiger prawn,Giant tiger prawn,0,NA,,,SH
+Gilthead seabream,Gilthead seabream,0,NA,,,F
+Globose clam,Globose clam,0,NA,,,BI
+Gobies nei,Gobies nei,0,NA,,,F
+Golden carpet shell,Golden carpet shell,0,NA,,,BI
+Golden trevally,Golden trevally,0,NA,,,F
+Goldlined seabream,Goldlined seabream,0,NA,,,F
+Goldsilk seabream,Goldsilk seabream,0,NA,,,F
+Gracilaria seaweeds,Gracilaria seaweeds,1,NA,seaweed mixed: agar/food,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Grand ark,Grand ark,0,Anadara clams nei,,,BI
+Grass carp(=White amur),Grass carp(=White amur),1,NA,freshwater,,F
+Greasy grouper,Greasy grouper,0,NA,,,F
+Greasyback shrimp,Greasyback shrimp,0,NA,,,SH
+Great Atlantic scallop,Great Atlantic scallop,0,NA,,,BI
+Great blue spotted mudskipper,Great blue spotted mudskipper,1,NA,was excluded,Chinese medicine,F
+Greater amberjack,Greater amberjack,0,NA,,,F
+Green crab,Green crab,0,NA,,,CRUST
+Green humphead parrotfish,Green humphead parrotfish,0,NA,,,F
+Green laver,Green laver,1,NA,seaweed; was excluded,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Green mussel,Green mussel,0,NA,,,BI
+Green tiger prawn,Green tiger prawn,0,NA,,,SH
+Green turtle,Green turtle,1,NA,was excluded,,OTHER
+Grooved carpet shell,Grooved carpet shell,0,NA,,,BI
+Groundfishes nei,Groundfishes nei,0,NA,,,F
+Groupers nei,Groupers nei,0,NA,,,F
+"Groupers, seabasses nei","Groupers, seabasses nei",0,NA,,,F
+"Gudgeons, sleepers nei","Gudgeons, sleepers nei",0,NA,,,F
+Haddock,Haddock,0,NA,,,F
+Harpoon seaweeds,Harpoon seaweeds,1,NA,seaweed: cosmetic/antiparasitic/agar,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Hong Kong grouper,Hong Kong grouper,0,NA,,,F
+Hooded oyster,Hooded oyster,0,NA,,,BI
+Horned turban,Horned turban,0,NA,,,BI
+Horse mussels nei,Horse mussels nei,0,NA,,,BI
+Humpback grouper,Humpback grouper,0,NA,,,F
+Indian backwater oyster,Indian backwater oyster,0,NA,,,BI
+Indian white prawn,Indian white prawn,0,NA,,,SH
+Indo-Pacific swamp crab,Indo-Pacific swamp crab,0,NA,,,CRUST
+Indonesian snakehead,Indonesian snakehead,0,NA,,,F
+Inflated ark,Inflated ark,0,NA,,,BI
+"Jacks, crevalles nei","Jacks, crevalles nei",0,NA,,,F
+Japanese abalone,Japanese abalone,0,NA,,,BI
+Japanese amberjack,Japanese amberjack,0,NA,,,F
+Japanese carpet shell,Japanese carpet shell,0,NA,,,BI
+Japanese eel,Japanese eel,0,NA,,,F
+Japanese hard clam,Japanese hard clam,0,NA,,,BI
+Japanese isinglass,Japanese isinglass,1,NA,seaweed: agar/food,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Japanese jack mackerel,Japanese jack mackerel,0,NA,,,F
+Japanese kelp,Japanese kelp,1,NA,seaweed: was excluded,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Japanese meagre,Japanese meagre,0,NA,,,F
+Japanese sea cucumber,Japanese sea cucumber,0,NA,,,NS-INV
+Japanese seabass,Japanese seabass,0,NA,,,F
+Japanese seabream,Blackspot(=red) seabream,0,NA,,,F
+Japanese spiny lobster,Japanese spiny lobster,0,NA,,,CRUST
+Jellyfishes nei,Jellyfishes nei,0,NA,,,NS-INV
+John's snapper,John's snapper,0,NA,,,F
+Kelp nei,Kelp nei,1,NA,seaweed: mixed use,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Korean mussel,Korean mussel,0,NA,,,BI
+Korean rockfish,Korean rockfish,0,NA,,,F
+Kuruma prawn,Kuruma prawn,0,NA,,,SH
+Large yellow croaker,Large yellow croaker,0,NA,,,F
+Largemouth black bass,Largemouth black bass,0,NA,,,F
+Laver (Nori),Laver (Nori),1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Lebranche mullet,Lebranche mullet,0,NA,,,F
+Lefteye flounders nei,Lefteye flounders nei,0,NA,,,F
+Longfin yellowtail,Longfin yellowtail,0,Amberjacks nei,,,F
+Mackerels nei,Mackerels nei,0,NA,,,F
+Malabar grouper,Malabar grouper,0,NA,,,F
+Malabar trevally,Malabar trevally,0,NA,,,F
+Mangrove cupped oyster,Mangrove cupped oyster,0,NA,,,BI
+Mangrove red snapper,Mangrove red snapper,0,NA,,,F
+Marble goby,Marble goby,0,NA,,,F
+Marbled spinefoot,Marbled spinefoot,0,NA,,,F
+Marine crabs nei,Marine crabs nei,0,NA,,,CRUST
+Marine crustaceans nei,Marine crustaceans nei,0,NA,,,CRUST
+Marine fishes nei,Marine fishes nei,0,NA,,,F
+Marine molluscs nei,Marine molluscs nei,0,NA,,,MOLL
+Masu(=Cherry) salmon,Masu(=Cherry) salmon,0,NA,,,F
+Meagre,Meagre,0,NA,,,F
+Mediterranean mussel,Mediterranean mussel,0,NA,,,BI
+Metapenaeus shrimps nei,Metapenaeus shrimps nei,0,NA,,,F
+Mi-iuy (brown) croaker,Mi-iuy (brown) croaker,0,"Croakers, drums nei",,,F
+Milkfish,Milkfish,0,NA,,,F
+Mojarras(=Silver-biddies) nei,Mojarras(=Silver-biddies) nei,0,NA,,,F
+Mozambique tilapia,Mozambique tilapia,1,NA,freshwater,,F
+Mozuku,Mozuku,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Mud spiny lobster,Mud spiny lobster,0,NA,,,CRUST
+Mullets nei,Mullets nei,0,NA,,,F
+Natantian decapods nei,Natantian decapods nei,0,NA,,,CRUST
+New Zealand mussel,New Zealand mussel,0,NA,,,BI
+Nile perch,Nile perch,1,Snooks(=Robalos) nei,freshwater,,F
+Nile tilapia,Nile tilapia,1,NA,freshwater,,F
+Nori nei,Nori nei,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Northern quahog(=Hard clam),Northern quahog(=Hard clam),0,NA,,,BI
+Northern white shrimp,Northern white shrimp,0,NA,,,SH
+Octopuses nei,Octopuses nei,0,NA,,,CEPH
+"Octopuses, etc. nei","Octopuses, etc. nei",0,NA,,,CEPH
+Okhotsk atka mackerel,Okhotsk atka mackerel,0,NA,,,F
+Olympia oyster,Olympia oyster,0,NA,,,BI
+Orange mud crab,Orange mud crab,0,NA,,,CRUST
+Orange-spotted grouper,Orange-spotted grouper,0,NA,,,F
+Orbicular batfish,Orbicular batfish,1,NA,aquarium,,F
+Oriental cyclina,Oriental cyclina,1,NA,was excluded,,BI
+Pacific bluefin tuna,Pacific bluefin tuna,0,NA,,,F
+Pacific calico scallop,Pacific calico scallop,0,NA,,,BI
+Pacific cupped oyster,Pacific cupped oyster,0,NA,,,BI
+Pacific geoduck,Pacific geoduck,0,NA,,,BI
+Pacific horse clam,Pacific horse clam,0,NA,,,BI
+Pacific lion's paw,Pacific lion's paw,0,NA,,,BI
+Pacific littleneck clam,Pacific littleneck clam,0,NA,,,BI
+Palaemonid shrimps nei,Palaemonid shrimps nei,0,NA,,,SH
+Palinurid spiny lobsters nei,Palinurid spiny lobsters nei,0,NA,,,CRUST
+Pangas catfishes nei,Pangas catfishes nei,1,NA,freshwater,,F
+Papuan black snapper,Papuan black snapper,0,NA,,,F
+Pargo breams nei,Pargo breams nei,0,NA,,,F
+Pearl oyster shells nei,Pearl oyster shells nei,0,NA,,,BI
+Pen shells nei,Pen shells nei,0,NA,,,BI
+Penaeus shrimps nei,Penaeus shrimps nei,0,NA,,,SH
+Penguin wing oyster,Penguin wing oyster,0,NA,,,BI
+Peppery furrow,Peppery furrow,0,NA,,,BI
+Percoids nei,Percoids nei,0,NA,,,F
+Periwinkles nei,Periwinkles nei,0,NA,,,BI
+Perlemoen abalone,Perlemoen abalone,0,NA,,,BI
+Peruvian calico scallop,Peruvian calico scallop,0,NA,,,BI
+Pod razor shell,Pod razor shell,0,NA,,,BI
+Pollack,Pollack,0,NA,,,F
+Pompano,Florida pompano,0,NA,,,F
+Pompanos nei,Pompano,0,NA,,,F
+"Porgies, seabreams nei","Porgies, seabreams nei",0,NA,,,F
+Portunus swimcrabs nei,Portunus swimcrabs nei,0,NA,,,CRUST
+Pullet carpet shell,Pullet carpet shell,0,NA,,,BI
+Queen conch,Stromboid conchs nei,0,NA,,,BI
+Queen scallop,Queen scallop,0,NA,,,BI
+Rainbow trout,Rainbow trout,0,NA,,,F
+Red abalone,Red abalone,0,NA,,,BI
+Red bait,Red bait,0,NA,,,TUN
+Red drum,Red drum,0,NA,,,F
+Red porgy,Red porgy,0,NA,,,F
+Red seaweeds,Red seaweeds,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Red swamp crawfish,Red swamp crawfish,1,NA,freshwater,,F
+Redtail prawn,Redtail prawn,0,NA,,,SH
+Righteye flounders nei,Righteye flounders nei,0,NA,,,F
+River eels nei,River eels nei,1,NA,freshwater,,F
+River Plata mussel,River Plata mussel,1,NA,freshwater,,BI
+Rooster venus,Rooster venus,0,NA,,,BI
+Russell's snapper,Russell's snapper,0,NA,,,F
+Sabaki tilapia,Sabaki tilapia,1,NA,freshwater,,F
+Salmonids nei,Salmonids nei,0,NA,,,F
+Salmonoids nei,Salmonoids nei,0,NA,,,F
+Sand fish,Holothuria scabra,0,Sea cucumbers nei,,,NS-INV
+Sand gaper,Sand gaper,0,NA,,,BI
+Sandfish,Holothuria scabra,0,Sea cucumbers nei,,,NS-INV
+Sargo breams nei,Sargo breams nei,0,NA,,,F
+Scallops nei,Scallops nei,0,NA,,,BI
+Scats,Scats,0,NA,,,F
+Sciaenas nei,Meagre,0,NA,,,F
+Scorpionfishes nei,Scorpionfishes nei,0,NA,,,F
+Sea belt,Sea belt,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Sea cucumbers nei,Sea cucumbers nei,0,NA,,,NS-INV
+Sea mussels nei,Sea mussels nei,0,NA,,,BI
+Sea snails,Sea snails,0,NA,,,BI
+Sea squirts nei,Sea squirts nei,0,NA,,,TUN
+Sea trout,Sea trout,0,NA,,,F
+Sea urchins nei,Sea urchins nei,0,NA,,,URCH
+Seabasses nei,Seabasses nei,0,NA,,,F
+Seaweeds nei,Seaweeds nei,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Senegalese sole,Senegalese sole,0,NA,,,F
+Sharpsnout seabream,Sharpsnout seabream,0,NA,,,F
+Shi drum,Shi drum,0,NA,,,F
+Short-finned eel,Short-finned eel,1,NA,freshwater,,F
+Silver barb,Silver barb,1,NA,freshwater,,F
+Silver carp,Silver carp,1,NA,freshwater,,F
+Silver seabream,Silver seabream,1,NA,freshwater,,F
+Silversides(=Sand smelts) nei,Silversides(=Sand smelts) nei,1,NA,freshwater,,F
+Sixfinger threadfin,Sixfinger threadfin,0,NA,,,F
+Slipper cupped oyster,Slipper cupped oyster,0,NA,,,BI
+Smooth giant clam,Smooth giant clam,0,NA,,,BI
+Smooth mactra,Smooth mactra,0,NA,,,BI
+Snappers nei,Snappers nei,0,NA,,,F
+"Snappers, jobfishes nei","Snappers, jobfishes nei",0,NA,,,F
+Snooks(=Robalos) nei,Snooks(=Robalos) nei,0,NA,,,F
+Snubnose pompano,Snubnose pompano,0,NA,,,F
+So-iuy mullet,So-iuy mullet,0,NA,,,F
+Sobaity seabream,Sobaity seabream,0,NA,,,F
+Sockeye(=Red) salmon,Sockeye(=Red)salmon,0,NA,,,F
+Solen razor clams nei,Solen razor clams nei,0,NA,,,BI
+Soles nei,Soles nei,0,NA,,,F
+South American rock mussel,South American rock mussel,0,NA,,,BI
+Southern Australia scallop,Southern Australia scallop,0,NA,,,BI
+Southern bluefin tuna,Southern bluefin tuna,0,NA,,,F
+Southern white shrimp,Southern white shrimp,0,NA,,,SH
+Speckled shrimp,Speckled shrimp,0,NA,,,SH
+Spinefeet(=Rabbitfishes) nei,Spinefeet(=Rabbitfishes) nei,0,Metapenaeus shrimps nei,,,F
+Spinous spider crab,Spinous spider crab,0,NA,,,CRUST
+Spiny eucheuma,Spiny eucheuma,1,NA,seaweed:carrageenan,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Spiny lobsters nei,Spiny lobsters nei,0,NA,,,CRUST
+Spotted coralgrouper,Spotted coralgrouper,0,NA,,,F
+Spotted rose snapper,Spotted rose snapper,0,NA,,,F
+Spotted seabass,Spotted seabass,0,NA,,,F
+Spotted wolffish,Spotted wolffish,0,NA,,,F
+Squaretail mullet,Squaretail mullet,0,NA,,,F
+Stony sea urchin,Stony sea urchin,0,NA,,,URCH
+Streaked spinefoot,Streaked spinefoot,0,NA,,,F
+"Striped bass, hybrid","Striped bass, hybrid",0,NA,,,F
+Striped venus,Striped venus,0,NA,,,BI
+Stromboid conchs nei,Stromboid conchs nei,0,NA,,,BI
+Sturgeons nei,Sturgeons nei,0,NA,,,F
+"Swimming crabs, etc. nei","Swimming crabs, etc. nei",0,NA,,,CRUST
+Sydney cupped oyster,Sydney cupped oyster,0,NA,,,BI
+Tangle,Tangle,1,NA,industrial uses,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Tarpon,Tarpon,0,NA,,,F
+Thinlip grey mullet,Thinlip grey mullet,0,NA,,,F
+Tiger pufferfish,Tiger pufferfish,0,Puffers nei,,,F
+Tilapias nei,Tilapias nei,1,NA,freshwater,,F
+Torpedo-shaped catfishes nei,Torpedo-shaped catfishes nei,1,NA,freshwater,,F
+Tropical spiny lobsters nei,Tropical spiny lobsters nei,0,NA,,,CRUST
+Trumpet emperor,Trumpet emperor,0,NA,,,F
+Tuberculate abalone,Tuberculate abalone,0,NA,,,BI
+Turbot,Turbot,0,NA,,,F
+Two-spot red snapper,Two-spot red snapper,0,NA,,,F
+Variegated scallop,Variegated scallop,0,NA,,,BI
+Venus clams nei,Venus clams nei,0,NA,,,BI
+Waigieu seaperch,Waigieu seaperch,0,NA,,,F
+Wakame,Wakame,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Wakame nei,Wakame nei,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Warty gracilaria,Warty gracilaria,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
+Warty venus,Warty venus,0,NA,,,BI
+White seabream,White seabream,0,NA,,,F
+White trevally,White trevally,0,NA,,,F
+White-spotted spinefoot,White-spotted spinefoot,0,NA,,,F
+Whiteleg shrimp,Whiteleg shrimp,0,NA,,,SH
+Whitemouth croaker,Whitemouth croaker,0,NA,,,F
+Yellowback seabream,Yellowback seabream,0,NA,,,F
+Yellowfin seabream,Yellowfin seabream,0,NA,,,F
+Yellowfin tuna,Yellowfin tuna,0,NA,,,F
+Yesso scallop,Yesso scallop,0,NA,,,BI
+Longrayed whiptail,Longrayed whiptail,0,NA,,,F
+Yellowtail amberjack,Yellowtail amberjack,0,Amberjacks nei,,,F
+Great Mediterranean scallop,Great Mediterranean scallop,0,NA,,,BI
+Mediterranean shore crab,Mediterranean shore crab,0,NA,,,CRUST
+Giant kelps nei,Giant kelps nei,1,NA,seaweed,,AL
+Green seaweeds,Green seaweeds,1,NA,seaweed,,AL
+Beluga,Beluga sturgeon,0,NA,,,F
+Striped bass,Striped bass,0,NA,,,F
+Pink dentex,Pink dentex,0,NA,,,F
+Trouts nei,Trouts nei,0,NA,,,F
