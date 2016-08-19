@@ -16,14 +16,16 @@ output:
 [REFERENCE RMD FILE: https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/mar/v2016/mar_dataprep.html]
 
 #Summary
-This analysis converts FAO mariculture data into the OHI 2016 global mariculture status score.
+This analysis converts FAO mariculture data into the OHI 2016 global mariculture status score.  This also calculates the genetic escapee from mariculture pressure data.
 
 #Updates from previous assessment
+New year of FAO mariculture yield data, but no changes to sustainability or genetic escapee data or general methods.  Code has been improved from last year.  
 
 ***
 
 #Data Source 
-**Reference**:      http://www.fao.org/fishery/statistics/software/fishstatj/en#downlApp
+**Reference**:      
+    http://www.fao.org/fishery/statistics/software/fishstatj/en#downlApp
      Release date: March 2016 
 FAO Global Aquaculture Production Quantity 1950_2014
 
@@ -38,18 +40,19 @@ FAO Global Aquaculture Production Quantity 1950_2014
 #Methods
 ```{r}
 # load libraries, set directories
-# source('../ohiprep/src/R/common.R') # set dir_neptune_data
 library(ohicore)  #devtools::install_github('ohi-science/ohicore@dev')
 library(dplyr)
 library(stringr)
 library(tidyr)
 
-####
+## comment out when knitting
+#setwd("globalprep/mar/v2016")
+
+
 ### Load FAO-specific user-defined functions
-source('globalprep/mar/v2016/mar_fxs.R') # functions specific to mariculture
-source('globalprep/np/v2016/R/np_fxn.R')  
-source('src/R/fao_fxn.R') # function for reading FAO files
-source('src/R/common.R')
+source('mar_fxs.R') # functions specific to mariculture dealing with compound countries
+source('../../../src/R/fao_fxn.R') # function for cleaning FAO files
+source('../../../src/R/common.R') # directory locations
 
 ```
 
@@ -58,7 +61,7 @@ source('src/R/common.R')
 Clean mariculture data: Filter freshwater mariculture, make long format, and clean FAO codes.
 ```{r}
 
-mar <- read.csv('C:/Users/Melanie/Desktop/FAO_mariculture/d2016/GlobalAquacultureProduction_Quantity_1950_2014.csv', check.names=F, stringsAsFactors=F) ; head(mar) 
+mar <- read.csv(file.path(dir_M, 'git-annex/globalprep/_raw_data/FAO_mariculture/d2016/GlobalAquacultureProduction_Quantity_1950_2014.csv'), check.names=F, stringsAsFactors=F) ; head(mar) 
 
 mar <- mar %>%
   rename(country = `Country (Country)`,
@@ -84,7 +87,7 @@ mar <- mar %>%
 Update species names and exclude non-food species.
 ```{r}
 
-mar_sp <- read.csv('globalprep/mar/v2016/raw/species_list.csv', stringsAsFactors=FALSE) %>%
+mar_sp <- read.csv('raw/species_list.csv', stringsAsFactors=FALSE) %>%
   select(FAO_name, species, exclude, alias, Taxon_code)
 new.spp <- setdiff(mar$FAO_name, mar_sp$FAO_name)
 new.spp # check: if dim has 0 rows it means all match
@@ -103,7 +106,7 @@ mar <- mar %>%
     summarize(value = sum(value)) %>% 
   ungroup()
 
-# remove extra fields, and restore table name
+# remove extra fields
 mar = mar %>% 
   select(country, fao, environment, species, year, value, Taxon_code)
 
@@ -128,7 +131,7 @@ Convert country names to OHI regions
 # Yugoslavia SFR: no longer a country after 1992
 
 mar <- mar %>%
-  mutate(country = ifelse(country=="Réunion", "Reunion", country)) %>%  # this one is hard to get right
+  mutate(country = ifelse(country=="R\xe9union", "Reunion", country)) %>%  # this one is hard to get right
   mar_split()  # function in mar_fxs.R
 
 mar_rgn <- name_2_rgn(df_in = mar, 
@@ -141,7 +144,6 @@ mar_rgn <- mar_rgn %>%
   group_by(fao, environment, species, year, Taxon_code, rgn_id) %>%
   summarize(value = sum(value, na.rm=TRUE)) %>%
   ungroup()
-
 
 ```
 
@@ -181,7 +183,7 @@ mar_rgn_gf = mar_rgn_gf %>%
 
 ```
 
-Add a unique identifier per cultivated stock.
+Add a unique identifier per cultivated stock that describes species, fao region, and environment.
 ```{r}
 
 # add a unique identifier per cultivated stock
@@ -199,7 +201,7 @@ maric <- mar_rgn_gf
 Save file to estimate total mariculture yield per country.
 ```{r}
 
-write.csv(maric, 'globalprep/mar/v2016/output/MAR_FP_data.csv', row.names=FALSE)
+write.csv(maric, 'output/MAR_FP_data.csv', row.names=FALSE)
 
 ```
 
@@ -212,7 +214,7 @@ Convert country names to OHI region names.
 ```{r}
 
 # Trujillo sustainability data:
-sus = read.csv('globalprep/mar/v2016/raw/Truj_label_sust.csv', stringsAsFactors = FALSE, na.strings = NA) # upload file with trujillo scores by label
+sus = read.csv('raw/Truj_label_sust.csv', stringsAsFactors = FALSE, na.strings = NA)
 
 ## these need to be re-added (get cut when associated with region ids)
 sus_no_rgn <- filter(sus, is.na(country))
@@ -228,6 +230,7 @@ sus_rgn <- bind_rows(sus_rgn, sus_no_rgn)
 setdiff(sus_rgn$species_fao, maric$species) # species that are no longer have mariculture industry or are not included due to being freshwater or non-food
 
 sort(setdiff(maric$species, sus_rgn$species_fao)) # species with no Trujillo data
+
 ```
 
 # FAO maricultue and sustainability scores
@@ -320,27 +323,27 @@ mar_sus_final = mar_sus_gf %>%
 mar_harvest_tonnes = mar_sus_final %>%
   select(rgn_id, taxa_code, year, tonnes)
 anyDuplicated(mar_harvest_tonnes)
-write.csv(mar_harvest_tonnes, 'globalprep/mar/v2016/output/mar_harvest_tonnes.csv', row.names=F)
+write.csv(mar_harvest_tonnes, 'output/mar_harvest_tonnes.csv', row.names=F)
 
 mar_harvest_tonnes_gf = mar_sus_final %>%
   select(rgn_id, taxa_code, year, tonnes=gapfill_fao)
-write.csv(mar_harvest_tonnes, 'globalprep/mar/v2016/output/mar_harvest_tonnes_gf.csv', row.names=F)
+write.csv(mar_harvest_tonnes, 'output/mar_harvest_tonnes_gf.csv', row.names=F)
 
 
 mar_sustainability_score = mar_sus_final %>% 
   select(rgn_id, taxa_code, sust_coeff = Sust) %>% 
   unique()
 anyDuplicated(mar_sustainability_score)
-write.csv(mar_sustainability_score, 'globalprep/mar/v2016/output/mar_sustainability.csv', row.names=F)
+write.csv(mar_sustainability_score, 'output/mar_sustainability.csv', row.names=F)
 
 mar_sustainability_score_gf = mar_sus_final %>% 
   select(rgn_id, taxa_code, sust_coeff = gapfill_sus) %>% 
   unique()
-write.csv(mar_sustainability_score, 'globalprep/mar/v2016/output/mar_sustainability_gf.csv', row.names=F)
+write.csv(mar_sustainability_score, 'output/mar_sustainability_gf.csv', row.names=F)
 
 ```
 
-## Genetic escapes data
+# Genetic escapes data
 
 These data are used as a pressure layer to describe the risk of genetic escapees due to mariculture.
 
@@ -381,7 +384,7 @@ mar_esc = mar_esc %>%
 
 ```
 
-This joins the sustainability data that is gapfilled either at the species level (average of specific species/genera across regions) or at a higher course taxonomic levels and documents which data are gapfilled and how.
+Join the sustainability data that is gapfilled either at the species level (average of specific species/genera across regions) or at a higher course taxonomic levels and documents which data are gapfilled and how.
 ```{r}
 ## Gapfilled at the species/genera level:
 gf_species_esc <- filter(esc, gapfill != "actuals" & match_type == "species") %>%
@@ -437,7 +440,7 @@ genEscapes_gf <- tonnes_esc %>%
   select(rgn_id, pressures.score=genEscapes) %>%
   mutate(pressures.score=ifelse(pressures.score=="NaN", NA, pressures.score)) %>%
   data.frame()
-write.csv(genEscapes_gf, 'globalprep/mar/v2016/data/GenEsc_v2016_gf.csv', row.names=FALSE)
+write.csv(genEscapes_gf, 'output/GenEsc_v2016_gf.csv', row.names=FALSE)
 
 # create the escapee data layers:
 for(year in 2012:2016){ #year=2016
@@ -445,7 +448,7 @@ data_year <- year-2
     data <- genEscapes %>%
     filter(year == data_year) %>%
     select(rgn_id, genEscapes)
-write.csv(data, sprintf('globalprep/mar/v2016/output/GenEsc_v%s.csv', year), row.names=FALSE)  
+write.csv(data, sprintf('output/GenEsc_v%s.csv', year), row.names=FALSE)  
 }
 
 
