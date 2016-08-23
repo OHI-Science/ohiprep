@@ -1,0 +1,127 @@
+---
+title: 'OHI 2016: Prepping Primary Productivity data for Commerical Fishing Pressure Layers '
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    code_folding: show
+    toc: true
+    toc_depth: 1
+    toc_float: yes
+    number_sections: false
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+pdf_document:
+  toc: true
+---
+
+#Summary
+
+This script calculates mean annual net primary production values globally from 2003 to 2015. This data is used to standardize pressures of commercial fishing.
+
+
+#Updates from previous assessment
+
+We were able to incorporate 2 more years of data, 2014 and 2015.
+
+***
+
+#Data Source
+
+**Reference**: Behrenfeld, M.J. and Falkowski, P.G., 1997. Photosynthetic rates derived from satellite‐based chlorophyll concentration. Limnology and oceanography, 42(1), pp.1-20. 
+
+**Downloaded**: July 30, 2016
+
+**Description**:  Monthly Net Primary Production  (mg C / m2 / day)
+
+**Native data resolution**: 0.083 x 0.083 degree grid   
+
+**Time range**: 2002 - 2015, monthly. Only partial data provided for 2002. OHI uses 2003 - 2015.
+
+**Format**:  XYZ format
+
+***
+  
+# Setup
+
+```{r setup, eval = F, message = F,warning = F}
+
+library(fields)
+library(raster)
+library(doParallel)
+library(foreach)
+library(parallel)
+
+source("~/github/ohiprep/src/R/common.R")
+source('vgpm_func.R')
+
+#paths
+
+dir_git <- file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/VGPM_primary_productivity')
+
+#unzip all files
+tars <- list.files(file.path(dir_M,'git-annex/globalprep/_raw_data/VGPM_primary_productivity/d2016'),full.names=T, pattern = '.tar')
+
+lapply(tars,untar, exdir = file.path(dir_M,'git-annex/globalprep/_raw_data/VGPM_primary_productivity/d2016'))
+
+```
+
+# Create monthly rasters
+
+This code sources a function, `vgpm.raster` that transforms the raw .xyz files into GeoTIFFs.
+
+```{r runFunction, eval = F}
+
+files = list.files(file.path(dir_M,'git-annex/globalprep/_raw_data/VGPM_primary_productivity/d2016'), full.names=TRUE, pattern = '.gz')
+
+registerDoParallel(12)
+
+foreach (file = files) %dopar%{
+  
+  print(file)
+  vgpm.raster(file, w.lon, e.lon, n.lat, s.lat, log = TRUE, 
+              color = tim.colors(30))
+}
+
+
+```
+
+# Get mean annual npp
+
+Calculate the mean annual Net Primary Production per year and save as rasters.
+
+```{r, eval = F}
+
+#global ocean raster at 1km
+
+ocean = raster(file.path(dir_M,'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
+
+
+# set mollweide projection
+moll_crs = CRS("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs")
+
+registerDoParallel(7)
+
+foreach (i = 2004:2015) %dopar%{
+  
+  print(i)
+  
+  l    = list.files(file.path(dir_git,'int/rasterized_rawdata'),pattern=as.character(i),full.names=T)%>%
+          stack()%>%
+          calc(fun=function(x){mean(x,na.rm=T)})%>%
+            projectRaster(.,crs=moll_crs, over = T,filename = paste0(file.path(dir_git,'int/annual_npp/annual_mean_npp_'),i,'.tif',sep=''),overwrite=T)
+  
+  
+  out  = raster::resample(l,ocean,method='ngb',
+                 filename=paste0(file.path(dir_git,'int/annual_npp/annual_mean_npp_moll_1km_'),i,'.tif',sep=''),overwrite=T)
+  
+}
+
+```
+***
+
+##Citation information  
+Behrenfeld, M.J. and Falkowski, P.G., 1997. Photosynthetic rates derived from satellite‐based chlorophyll concentration. Limnology and oceanography, 42(1), pp.1-20.
+
+Downloaded from http://www.science.oregonstate.edu/ocean.productivity/standard.product.php
