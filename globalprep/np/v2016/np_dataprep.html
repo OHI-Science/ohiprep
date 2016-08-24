@@ -9,7 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Compiled on Wed Aug 24 12:07:13 2016 by frazier" />
+<meta name="author" content="Compiled on Wed Aug 24 12:53:09 2016 by frazier" />
 
 
 <title>OHI: Natural Products</title>
@@ -142,7 +142,7 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">OHI: Natural Products</h1>
-<h4 class="author"><em><em>Compiled on Wed Aug 24 12:07:13 2016 by frazier</em></em></h4>
+<h4 class="author"><em><em>Compiled on Wed Aug 24 12:53:09 2016 by frazier</em></em></h4>
 
 </div>
 
@@ -1449,1546 +1449,2308 @@ old &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="
 new &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;int/tonnes.csv&quot;</span>)
 old &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;../v2014_test/intermediate/tonnes.csv&quot;</span>)
 
-<span class="kw">filter</span>(new, rgn_id==<span class="dv">45</span>) %&gt;%
+<span class="kw">filter</span>(new, rgn_id==<span class="dv">115</span>) %&gt;%
 <span class="st">  </span><span class="kw">arrange</span>(commodity, year)</code></pre></div>
-<pre><code>##     rgn_id rgn_name                                              commodity
-## 1       45  Eritrea                                     Coral and the like
-## 2       45  Eritrea                                     Coral and the like
-## 3       45  Eritrea                                     Coral and the like
-## 4       45  Eritrea                                     Coral and the like
-## 5       45  Eritrea                                     Coral and the like
-## 6       45  Eritrea                                     Coral and the like
-## 7       45  Eritrea                                     Coral and the like
-## 8       45  Eritrea                                     Coral and the like
-## 9       45  Eritrea                                     Coral and the like
-## 10      45  Eritrea                                     Coral and the like
-## 11      45  Eritrea                                     Coral and the like
-## 12      45  Eritrea                                     Coral and the like
-## 13      45  Eritrea                                     Coral and the like
-## 14      45  Eritrea                                     Coral and the like
-## 15      45  Eritrea                                     Coral and the like
-## 16      45  Eritrea                                     Coral and the like
-## 17      45  Eritrea                                     Coral and the like
-## 18      45  Eritrea                                     Coral and the like
-## 19      45  Eritrea                                     Coral and the like
-## 20      45  Eritrea                                     Coral and the like
-## 21      45  Eritrea                                     Coral and the like
-## 22      45  Eritrea                                     Coral and the like
-## 23      45  Eritrea                                     Coral and the like
-## 24      45  Eritrea                                     Coral and the like
-## 25      45  Eritrea                                     Coral and the like
-## 26      45  Eritrea                                     Coral and the like
-## 27      45  Eritrea                                     Coral and the like
-## 28      45  Eritrea                                     Coral and the like
-## 29      45  Eritrea                                     Coral and the like
-## 30      45  Eritrea                                     Coral and the like
-## 31      45  Eritrea                                     Coral and the like
-## 32      45  Eritrea                                     Coral and the like
-## 33      45  Eritrea                                     Coral and the like
-## 34      45  Eritrea                                     Coral and the like
-## 35      45  Eritrea                                     Coral and the like
-## 36      45  Eritrea                                     Coral and the like
-## 37      45  Eritrea                                     Coral and the like
-## 38      45  Eritrea                                     Coral and the like
-## 39      45  Eritrea                        Miscellaneous corals and shells
-## 40      45  Eritrea                        Miscellaneous corals and shells
-## 41      45  Eritrea                        Miscellaneous corals and shells
-## 42      45  Eritrea                        Miscellaneous corals and shells
-## 43      45  Eritrea                        Miscellaneous corals and shells
-## 44      45  Eritrea                        Miscellaneous corals and shells
-## 45      45  Eritrea                        Miscellaneous corals and shells
-## 46      45  Eritrea                        Miscellaneous corals and shells
-## 47      45  Eritrea                        Miscellaneous corals and shells
-## 48      45  Eritrea                        Miscellaneous corals and shells
-## 49      45  Eritrea                        Miscellaneous corals and shells
-## 50      45  Eritrea                        Miscellaneous corals and shells
-## 51      45  Eritrea                        Miscellaneous corals and shells
-## 52      45  Eritrea                        Miscellaneous corals and shells
-## 53      45  Eritrea                        Miscellaneous corals and shells
-## 54      45  Eritrea                        Miscellaneous corals and shells
-## 55      45  Eritrea                        Miscellaneous corals and shells
-## 56      45  Eritrea                        Miscellaneous corals and shells
-## 57      45  Eritrea                        Miscellaneous corals and shells
-## 58      45  Eritrea                        Miscellaneous corals and shells
-## 59      45  Eritrea                        Miscellaneous corals and shells
-## 60      45  Eritrea                        Miscellaneous corals and shells
-## 61      45  Eritrea                        Miscellaneous corals and shells
-## 62      45  Eritrea                        Miscellaneous corals and shells
-## 63      45  Eritrea                        Miscellaneous corals and shells
-## 64      45  Eritrea                        Miscellaneous corals and shells
-## 65      45  Eritrea                        Miscellaneous corals and shells
-## 66      45  Eritrea                        Miscellaneous corals and shells
-## 67      45  Eritrea                        Miscellaneous corals and shells
-## 68      45  Eritrea                        Miscellaneous corals and shells
-## 69      45  Eritrea                        Miscellaneous corals and shells
-## 70      45  Eritrea                        Miscellaneous corals and shells
-## 71      45  Eritrea                        Miscellaneous corals and shells
-## 72      45  Eritrea                        Miscellaneous corals and shells
-## 73      45  Eritrea                        Miscellaneous corals and shells
-## 74      45  Eritrea                        Miscellaneous corals and shells
-## 75      45  Eritrea                        Miscellaneous corals and shells
-## 76      45  Eritrea                        Miscellaneous corals and shells
-## 77      45  Eritrea                                    Ornamental fish nei
-## 78      45  Eritrea                                    Ornamental fish nei
-## 79      45  Eritrea                                    Ornamental fish nei
-## 80      45  Eritrea                                    Ornamental fish nei
-## 81      45  Eritrea                                    Ornamental fish nei
-## 82      45  Eritrea                                    Ornamental fish nei
-## 83      45  Eritrea                                    Ornamental fish nei
-## 84      45  Eritrea                                    Ornamental fish nei
-## 85      45  Eritrea                                    Ornamental fish nei
-## 86      45  Eritrea                                    Ornamental fish nei
-## 87      45  Eritrea                                    Ornamental fish nei
-## 88      45  Eritrea                                    Ornamental fish nei
-## 89      45  Eritrea                                    Ornamental fish nei
-## 90      45  Eritrea                                    Ornamental fish nei
-## 91      45  Eritrea                                    Ornamental fish nei
-## 92      45  Eritrea                                    Ornamental fish nei
-## 93      45  Eritrea                                    Ornamental fish nei
-## 94      45  Eritrea                                    Ornamental fish nei
-## 95      45  Eritrea                                    Ornamental fish nei
-## 96      45  Eritrea                                    Ornamental fish nei
-## 97      45  Eritrea                                    Ornamental fish nei
-## 98      45  Eritrea                                    Ornamental fish nei
-## 99      45  Eritrea                                    Ornamental fish nei
-## 100     45  Eritrea                                    Ornamental fish nei
-## 101     45  Eritrea                                    Ornamental fish nei
-## 102     45  Eritrea                                    Ornamental fish nei
-## 103     45  Eritrea                                    Ornamental fish nei
-## 104     45  Eritrea                                    Ornamental fish nei
-## 105     45  Eritrea                                    Ornamental fish nei
-## 106     45  Eritrea                                    Ornamental fish nei
-## 107     45  Eritrea                                    Ornamental fish nei
-## 108     45  Eritrea                                    Ornamental fish nei
-## 109     45  Eritrea                                    Ornamental fish nei
-## 110     45  Eritrea                                    Ornamental fish nei
-## 111     45  Eritrea                                    Ornamental fish nei
-## 112     45  Eritrea                                    Ornamental fish nei
-## 113     45  Eritrea                                    Ornamental fish nei
-## 114     45  Eritrea                                    Ornamental fish nei
-## 115     45  Eritrea                              Ornamental saltwater fish
-## 116     45  Eritrea                              Ornamental saltwater fish
-## 117     45  Eritrea                              Ornamental saltwater fish
-## 118     45  Eritrea                              Ornamental saltwater fish
-## 119     45  Eritrea                              Ornamental saltwater fish
-## 120     45  Eritrea                              Ornamental saltwater fish
-## 121     45  Eritrea                              Ornamental saltwater fish
-## 122     45  Eritrea                              Ornamental saltwater fish
-## 123     45  Eritrea                              Ornamental saltwater fish
-## 124     45  Eritrea                              Ornamental saltwater fish
-## 125     45  Eritrea                              Ornamental saltwater fish
-## 126     45  Eritrea                              Ornamental saltwater fish
-## 127     45  Eritrea                              Ornamental saltwater fish
-## 128     45  Eritrea                              Ornamental saltwater fish
-## 129     45  Eritrea                              Ornamental saltwater fish
-## 130     45  Eritrea                              Ornamental saltwater fish
-## 131     45  Eritrea                              Ornamental saltwater fish
-## 132     45  Eritrea                              Ornamental saltwater fish
-## 133     45  Eritrea                              Ornamental saltwater fish
-## 134     45  Eritrea                              Ornamental saltwater fish
-## 135     45  Eritrea                              Ornamental saltwater fish
-## 136     45  Eritrea                              Ornamental saltwater fish
-## 137     45  Eritrea                              Ornamental saltwater fish
-## 138     45  Eritrea                              Ornamental saltwater fish
-## 139     45  Eritrea                              Ornamental saltwater fish
-## 140     45  Eritrea                              Ornamental saltwater fish
-## 141     45  Eritrea                              Ornamental saltwater fish
-## 142     45  Eritrea                              Ornamental saltwater fish
-## 143     45  Eritrea                              Ornamental saltwater fish
-## 144     45  Eritrea                              Ornamental saltwater fish
-## 145     45  Eritrea                              Ornamental saltwater fish
-## 146     45  Eritrea                              Ornamental saltwater fish
-## 147     45  Eritrea                              Ornamental saltwater fish
-## 148     45  Eritrea                              Ornamental saltwater fish
-## 149     45  Eritrea                              Ornamental saltwater fish
-## 150     45  Eritrea                              Ornamental saltwater fish
-## 151     45  Eritrea                              Ornamental saltwater fish
-## 152     45  Eritrea                              Ornamental saltwater fish
-## 153     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 154     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 155     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 156     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 157     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 158     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 159     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 160     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 161     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 162     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 163     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 164     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 165     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 166     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 167     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 168     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 169     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 170     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 171     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 172     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 173     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 174     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 175     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 176     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 177     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 178     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 179     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 180     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 181     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 182     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 183     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 184     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 185     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 186     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 187     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 188     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 189     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 190     45  Eritrea Other seaweeds and aquatic plants and products thereof
-##         product year tonnes
-## 1        corals 1976     NA
-## 2        corals 1977     NA
-## 3        corals 1978     NA
-## 4        corals 1979     NA
-## 5        corals 1980     NA
-## 6        corals 1981     NA
-## 7        corals 1982     NA
-## 8        corals 1983     NA
-## 9        corals 1984     NA
-## 10       corals 1985     NA
-## 11       corals 1986     NA
-## 12       corals 1987     NA
-## 13       corals 1988     NA
-## 14       corals 1989     NA
-## 15       corals 1990     NA
-## 16       corals 1991     NA
-## 17       corals 1992     NA
-## 18       corals 1993     NA
-## 19       corals 1994     NA
-## 20       corals 1995     NA
-## 21       corals 1996     NA
-## 22       corals 1997     NA
-## 23       corals 1998     NA
-## 24       corals 1999     NA
-## 25       corals 2000   11.0
-## 26       corals 2001     NA
-## 27       corals 2002     NA
-## 28       corals 2003     NA
-## 29       corals 2004     NA
-## 30       corals 2005  139.0
-## 31       corals 2006    0.0
-## 32       corals 2007   36.0
-## 33       corals 2008    0.0
-## 34       corals 2009    0.0
-## 35       corals 2010    0.0
-## 36       corals 2011    0.0
-## 37       corals 2012    0.0
-## 38       corals 2013    0.0
-## 39       shells 1976     NA
-## 40       shells 1977     NA
-## 41       shells 1978     NA
-## 42       shells 1979     NA
-## 43       shells 1980     NA
-## 44       shells 1981     NA
-## 45       shells 1982     NA
-## 46       shells 1983     NA
-## 47       shells 1984     NA
-## 48       shells 1985     NA
-## 49       shells 1986     NA
-## 50       shells 1987     NA
-## 51       shells 1988     NA
-## 52       shells 1989     NA
-## 53       shells 1990     NA
-## 54       shells 1991     NA
-## 55       shells 1992     NA
-## 56       shells 1993     NA
-## 57       shells 1994     NA
-## 58       shells 1995     NA
-## 59       shells 1996     NA
-## 60       shells 1997     NA
-## 61       shells 1998     NA
-## 62       shells 1999     NA
-## 63       shells 2000     NA
-## 64       shells 2001     NA
-## 65       shells 2002     NA
-## 66       shells 2003  143.0
-## 67       shells 2004  147.0
-## 68       shells 2005    0.0
-## 69       shells 2006    0.0
-## 70       shells 2007    0.0
-## 71       shells 2008    0.0
-## 72       shells 2009    0.0
-## 73       shells 2010    0.0
-## 74       shells 2011    0.0
-## 75       shells 2012    0.0
-## 76       shells 2013    0.0
-## 77  ornamentals 1976     NA
-## 78  ornamentals 1977     NA
-## 79  ornamentals 1978     NA
-## 80  ornamentals 1979     NA
-## 81  ornamentals 1980     NA
-## 82  ornamentals 1981     NA
-## 83  ornamentals 1982     NA
-## 84  ornamentals 1983     NA
-## 85  ornamentals 1984     NA
-## 86  ornamentals 1985     NA
-## 87  ornamentals 1986     NA
-## 88  ornamentals 1987     NA
-## 89  ornamentals 1988     NA
-## 90  ornamentals 1989     NA
-## 91  ornamentals 1990     NA
-## 92  ornamentals 1991     NA
-## 93  ornamentals 1992     NA
-## 94  ornamentals 1993     NA
-## 95  ornamentals 1994     NA
-## 96  ornamentals 1995    0.1
-## 97  ornamentals 1996    1.0
-## 98  ornamentals 1997    2.0
-## 99  ornamentals 1998    0.1
-## 100 ornamentals 1999    0.1
-## 101 ornamentals 2000     NA
-## 102 ornamentals 2001     NA
-## 103 ornamentals 2002     NA
-## 104 ornamentals 2003     NA
-## 105 ornamentals 2004     NA
-## 106 ornamentals 2005     NA
-## 107 ornamentals 2006     NA
-## 108 ornamentals 2007     NA
-## 109 ornamentals 2008    3.0
-## 110 ornamentals 2009    1.0
-## 111 ornamentals 2010    0.1
-## 112 ornamentals 2011    0.1
-## 113 ornamentals 2012    0.0
-## 114 ornamentals 2013    0.0
-## 115 ornamentals 1976     NA
-## 116 ornamentals 1977     NA
-## 117 ornamentals 1978     NA
-## 118 ornamentals 1979     NA
-## 119 ornamentals 1980     NA
-## 120 ornamentals 1981     NA
-## 121 ornamentals 1982     NA
-## 122 ornamentals 1983     NA
-## 123 ornamentals 1984     NA
-## 124 ornamentals 1985     NA
-## 125 ornamentals 1986     NA
-## 126 ornamentals 1987     NA
-## 127 ornamentals 1988     NA
-## 128 ornamentals 1989     NA
-## 129 ornamentals 1990     NA
-## 130 ornamentals 1991     NA
-## 131 ornamentals 1992     NA
-## 132 ornamentals 1993     NA
-## 133 ornamentals 1994     NA
-## 134 ornamentals 1995     NA
-## 135 ornamentals 1996     NA
-## 136 ornamentals 1997     NA
-## 137 ornamentals 1998     NA
-## 138 ornamentals 1999     NA
-## 139 ornamentals 2000     NA
-## 140 ornamentals 2001     NA
-## 141 ornamentals 2002     NA
-## 142 ornamentals 2003     NA
-## 143 ornamentals 2004     NA
-## 144 ornamentals 2005     NA
-## 145 ornamentals 2006     NA
-## 146 ornamentals 2007     NA
-## 147 ornamentals 2008    2.0
-## 148 ornamentals 2009    1.0
-## 149 ornamentals 2010    0.0
-## 150 ornamentals 2011    0.0
-## 151 ornamentals 2012    0.0
-## 152 ornamentals 2013    0.0
-## 153    seaweeds 1976     NA
-## 154    seaweeds 1977     NA
-## 155    seaweeds 1978     NA
-## 156    seaweeds 1979     NA
-## 157    seaweeds 1980     NA
-## 158    seaweeds 1981     NA
-## 159    seaweeds 1982     NA
-## 160    seaweeds 1983     NA
-## 161    seaweeds 1984     NA
-## 162    seaweeds 1985     NA
-## 163    seaweeds 1986     NA
-## 164    seaweeds 1987     NA
-## 165    seaweeds 1988     NA
-## 166    seaweeds 1989     NA
-## 167    seaweeds 1990     NA
-## 168    seaweeds 1991     NA
-## 169    seaweeds 1992     NA
-## 170    seaweeds 1993     NA
-## 171    seaweeds 1994     NA
-## 172    seaweeds 1995     NA
-## 173    seaweeds 1996     NA
-## 174    seaweeds 1997     NA
-## 175    seaweeds 1998     NA
-## 176    seaweeds 1999     NA
-## 177    seaweeds 2000     NA
-## 178    seaweeds 2001     NA
-## 179    seaweeds 2002     NA
-## 180    seaweeds 2003   13.0
-## 181    seaweeds 2004    0.1
-## 182    seaweeds 2005    5.0
-## 183    seaweeds 2006    0.0
-## 184    seaweeds 2007    0.0
-## 185    seaweeds 2008    0.0
-## 186    seaweeds 2009    0.0
-## 187    seaweeds 2010    0.0
-## 188    seaweeds 2011    0.0
-## 189    seaweeds 2012    0.0
-## 190    seaweeds 2013    0.0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">filter</span>(old, rgn_id==<span class="dv">45</span>) %&gt;%
+<pre><code>##     rgn_id           rgn_name
+## 1      115 Dominican Republic
+## 2      115 Dominican Republic
+## 3      115 Dominican Republic
+## 4      115 Dominican Republic
+## 5      115 Dominican Republic
+## 6      115 Dominican Republic
+## 7      115 Dominican Republic
+## 8      115 Dominican Republic
+## 9      115 Dominican Republic
+## 10     115 Dominican Republic
+## 11     115 Dominican Republic
+## 12     115 Dominican Republic
+## 13     115 Dominican Republic
+## 14     115 Dominican Republic
+## 15     115 Dominican Republic
+## 16     115 Dominican Republic
+## 17     115 Dominican Republic
+## 18     115 Dominican Republic
+## 19     115 Dominican Republic
+## 20     115 Dominican Republic
+## 21     115 Dominican Republic
+## 22     115 Dominican Republic
+## 23     115 Dominican Republic
+## 24     115 Dominican Republic
+## 25     115 Dominican Republic
+## 26     115 Dominican Republic
+## 27     115 Dominican Republic
+## 28     115 Dominican Republic
+## 29     115 Dominican Republic
+## 30     115 Dominican Republic
+## 31     115 Dominican Republic
+## 32     115 Dominican Republic
+## 33     115 Dominican Republic
+## 34     115 Dominican Republic
+## 35     115 Dominican Republic
+## 36     115 Dominican Republic
+## 37     115 Dominican Republic
+## 38     115 Dominican Republic
+## 39     115 Dominican Republic
+## 40     115 Dominican Republic
+## 41     115 Dominican Republic
+## 42     115 Dominican Republic
+## 43     115 Dominican Republic
+## 44     115 Dominican Republic
+## 45     115 Dominican Republic
+## 46     115 Dominican Republic
+## 47     115 Dominican Republic
+## 48     115 Dominican Republic
+## 49     115 Dominican Republic
+## 50     115 Dominican Republic
+## 51     115 Dominican Republic
+## 52     115 Dominican Republic
+## 53     115 Dominican Republic
+## 54     115 Dominican Republic
+## 55     115 Dominican Republic
+## 56     115 Dominican Republic
+## 57     115 Dominican Republic
+## 58     115 Dominican Republic
+## 59     115 Dominican Republic
+## 60     115 Dominican Republic
+## 61     115 Dominican Republic
+## 62     115 Dominican Republic
+## 63     115 Dominican Republic
+## 64     115 Dominican Republic
+## 65     115 Dominican Republic
+## 66     115 Dominican Republic
+## 67     115 Dominican Republic
+## 68     115 Dominican Republic
+## 69     115 Dominican Republic
+## 70     115 Dominican Republic
+## 71     115 Dominican Republic
+## 72     115 Dominican Republic
+## 73     115 Dominican Republic
+## 74     115 Dominican Republic
+## 75     115 Dominican Republic
+## 76     115 Dominican Republic
+## 77     115 Dominican Republic
+## 78     115 Dominican Republic
+## 79     115 Dominican Republic
+## 80     115 Dominican Republic
+## 81     115 Dominican Republic
+## 82     115 Dominican Republic
+## 83     115 Dominican Republic
+## 84     115 Dominican Republic
+## 85     115 Dominican Republic
+## 86     115 Dominican Republic
+## 87     115 Dominican Republic
+## 88     115 Dominican Republic
+## 89     115 Dominican Republic
+## 90     115 Dominican Republic
+## 91     115 Dominican Republic
+## 92     115 Dominican Republic
+## 93     115 Dominican Republic
+## 94     115 Dominican Republic
+## 95     115 Dominican Republic
+## 96     115 Dominican Republic
+## 97     115 Dominican Republic
+## 98     115 Dominican Republic
+## 99     115 Dominican Republic
+## 100    115 Dominican Republic
+## 101    115 Dominican Republic
+## 102    115 Dominican Republic
+## 103    115 Dominican Republic
+## 104    115 Dominican Republic
+## 105    115 Dominican Republic
+## 106    115 Dominican Republic
+## 107    115 Dominican Republic
+## 108    115 Dominican Republic
+## 109    115 Dominican Republic
+## 110    115 Dominican Republic
+## 111    115 Dominican Republic
+## 112    115 Dominican Republic
+## 113    115 Dominican Republic
+## 114    115 Dominican Republic
+## 115    115 Dominican Republic
+## 116    115 Dominican Republic
+## 117    115 Dominican Republic
+## 118    115 Dominican Republic
+## 119    115 Dominican Republic
+## 120    115 Dominican Republic
+## 121    115 Dominican Republic
+## 122    115 Dominican Republic
+## 123    115 Dominican Republic
+## 124    115 Dominican Republic
+## 125    115 Dominican Republic
+## 126    115 Dominican Republic
+## 127    115 Dominican Republic
+## 128    115 Dominican Republic
+## 129    115 Dominican Republic
+## 130    115 Dominican Republic
+## 131    115 Dominican Republic
+## 132    115 Dominican Republic
+## 133    115 Dominican Republic
+## 134    115 Dominican Republic
+## 135    115 Dominican Republic
+## 136    115 Dominican Republic
+## 137    115 Dominican Republic
+## 138    115 Dominican Republic
+## 139    115 Dominican Republic
+## 140    115 Dominican Republic
+## 141    115 Dominican Republic
+## 142    115 Dominican Republic
+## 143    115 Dominican Republic
+## 144    115 Dominican Republic
+## 145    115 Dominican Republic
+## 146    115 Dominican Republic
+## 147    115 Dominican Republic
+## 148    115 Dominican Republic
+## 149    115 Dominican Republic
+## 150    115 Dominican Republic
+## 151    115 Dominican Republic
+## 152    115 Dominican Republic
+## 153    115 Dominican Republic
+## 154    115 Dominican Republic
+## 155    115 Dominican Republic
+## 156    115 Dominican Republic
+## 157    115 Dominican Republic
+## 158    115 Dominican Republic
+## 159    115 Dominican Republic
+## 160    115 Dominican Republic
+## 161    115 Dominican Republic
+## 162    115 Dominican Republic
+## 163    115 Dominican Republic
+## 164    115 Dominican Republic
+## 165    115 Dominican Republic
+## 166    115 Dominican Republic
+## 167    115 Dominican Republic
+## 168    115 Dominican Republic
+## 169    115 Dominican Republic
+## 170    115 Dominican Republic
+## 171    115 Dominican Republic
+## 172    115 Dominican Republic
+## 173    115 Dominican Republic
+## 174    115 Dominican Republic
+## 175    115 Dominican Republic
+## 176    115 Dominican Republic
+## 177    115 Dominican Republic
+## 178    115 Dominican Republic
+## 179    115 Dominican Republic
+## 180    115 Dominican Republic
+## 181    115 Dominican Republic
+## 182    115 Dominican Republic
+## 183    115 Dominican Republic
+## 184    115 Dominican Republic
+## 185    115 Dominican Republic
+## 186    115 Dominican Republic
+## 187    115 Dominican Republic
+## 188    115 Dominican Republic
+## 189    115 Dominican Republic
+## 190    115 Dominican Republic
+## 191    115 Dominican Republic
+## 192    115 Dominican Republic
+## 193    115 Dominican Republic
+## 194    115 Dominican Republic
+## 195    115 Dominican Republic
+## 196    115 Dominican Republic
+## 197    115 Dominican Republic
+## 198    115 Dominican Republic
+## 199    115 Dominican Republic
+## 200    115 Dominican Republic
+## 201    115 Dominican Republic
+## 202    115 Dominican Republic
+## 203    115 Dominican Republic
+## 204    115 Dominican Republic
+## 205    115 Dominican Republic
+## 206    115 Dominican Republic
+## 207    115 Dominican Republic
+## 208    115 Dominican Republic
+## 209    115 Dominican Republic
+## 210    115 Dominican Republic
+## 211    115 Dominican Republic
+## 212    115 Dominican Republic
+## 213    115 Dominican Republic
+## 214    115 Dominican Republic
+## 215    115 Dominican Republic
+## 216    115 Dominican Republic
+## 217    115 Dominican Republic
+## 218    115 Dominican Republic
+## 219    115 Dominican Republic
+## 220    115 Dominican Republic
+## 221    115 Dominican Republic
+## 222    115 Dominican Republic
+## 223    115 Dominican Republic
+## 224    115 Dominican Republic
+## 225    115 Dominican Republic
+## 226    115 Dominican Republic
+## 227    115 Dominican Republic
+## 228    115 Dominican Republic
+## 229    115 Dominican Republic
+## 230    115 Dominican Republic
+## 231    115 Dominican Republic
+## 232    115 Dominican Republic
+## 233    115 Dominican Republic
+## 234    115 Dominican Republic
+## 235    115 Dominican Republic
+## 236    115 Dominican Republic
+## 237    115 Dominican Republic
+## 238    115 Dominican Republic
+## 239    115 Dominican Republic
+## 240    115 Dominican Republic
+## 241    115 Dominican Republic
+## 242    115 Dominican Republic
+## 243    115 Dominican Republic
+## 244    115 Dominican Republic
+## 245    115 Dominican Republic
+## 246    115 Dominican Republic
+## 247    115 Dominican Republic
+## 248    115 Dominican Republic
+## 249    115 Dominican Republic
+## 250    115 Dominican Republic
+## 251    115 Dominican Republic
+## 252    115 Dominican Republic
+## 253    115 Dominican Republic
+## 254    115 Dominican Republic
+## 255    115 Dominican Republic
+## 256    115 Dominican Republic
+## 257    115 Dominican Republic
+## 258    115 Dominican Republic
+## 259    115 Dominican Republic
+## 260    115 Dominican Republic
+## 261    115 Dominican Republic
+## 262    115 Dominican Republic
+## 263    115 Dominican Republic
+## 264    115 Dominican Republic
+## 265    115 Dominican Republic
+## 266    115 Dominican Republic
+## 267    115 Dominican Republic
+## 268    115 Dominican Republic
+## 269    115 Dominican Republic
+## 270    115 Dominican Republic
+## 271    115 Dominican Republic
+## 272    115 Dominican Republic
+## 273    115 Dominican Republic
+## 274    115 Dominican Republic
+## 275    115 Dominican Republic
+## 276    115 Dominican Republic
+## 277    115 Dominican Republic
+## 278    115 Dominican Republic
+## 279    115 Dominican Republic
+## 280    115 Dominican Republic
+## 281    115 Dominican Republic
+## 282    115 Dominican Republic
+## 283    115 Dominican Republic
+## 284    115 Dominican Republic
+## 285    115 Dominican Republic
+## 286    115 Dominican Republic
+## 287    115 Dominican Republic
+## 288    115 Dominican Republic
+## 289    115 Dominican Republic
+## 290    115 Dominican Republic
+## 291    115 Dominican Republic
+## 292    115 Dominican Republic
+## 293    115 Dominican Republic
+## 294    115 Dominican Republic
+## 295    115 Dominican Republic
+## 296    115 Dominican Republic
+## 297    115 Dominican Republic
+## 298    115 Dominican Republic
+## 299    115 Dominican Republic
+## 300    115 Dominican Republic
+## 301    115 Dominican Republic
+## 302    115 Dominican Republic
+## 303    115 Dominican Republic
+## 304    115 Dominican Republic
+##                                                  commodity     product
+## 1                                            Agar agar nei    seaweeds
+## 2                                            Agar agar nei    seaweeds
+## 3                                            Agar agar nei    seaweeds
+## 4                                            Agar agar nei    seaweeds
+## 5                                            Agar agar nei    seaweeds
+## 6                                            Agar agar nei    seaweeds
+## 7                                            Agar agar nei    seaweeds
+## 8                                            Agar agar nei    seaweeds
+## 9                                            Agar agar nei    seaweeds
+## 10                                           Agar agar nei    seaweeds
+## 11                                           Agar agar nei    seaweeds
+## 12                                           Agar agar nei    seaweeds
+## 13                                           Agar agar nei    seaweeds
+## 14                                           Agar agar nei    seaweeds
+## 15                                           Agar agar nei    seaweeds
+## 16                                           Agar agar nei    seaweeds
+## 17                                           Agar agar nei    seaweeds
+## 18                                           Agar agar nei    seaweeds
+## 19                                           Agar agar nei    seaweeds
+## 20                                           Agar agar nei    seaweeds
+## 21                                           Agar agar nei    seaweeds
+## 22                                           Agar agar nei    seaweeds
+## 23                                           Agar agar nei    seaweeds
+## 24                                           Agar agar nei    seaweeds
+## 25                                           Agar agar nei    seaweeds
+## 26                                           Agar agar nei    seaweeds
+## 27                                           Agar agar nei    seaweeds
+## 28                                           Agar agar nei    seaweeds
+## 29                                           Agar agar nei    seaweeds
+## 30                                           Agar agar nei    seaweeds
+## 31                                           Agar agar nei    seaweeds
+## 32                                           Agar agar nei    seaweeds
+## 33                                           Agar agar nei    seaweeds
+## 34                                           Agar agar nei    seaweeds
+## 35                                           Agar agar nei    seaweeds
+## 36                                           Agar agar nei    seaweeds
+## 37                                           Agar agar nei    seaweeds
+## 38                                           Agar agar nei    seaweeds
+## 39                                      Coral and the like      corals
+## 40                                      Coral and the like      corals
+## 41                                      Coral and the like      corals
+## 42                                      Coral and the like      corals
+## 43                                      Coral and the like      corals
+## 44                                      Coral and the like      corals
+## 45                                      Coral and the like      corals
+## 46                                      Coral and the like      corals
+## 47                                      Coral and the like      corals
+## 48                                      Coral and the like      corals
+## 49                                      Coral and the like      corals
+## 50                                      Coral and the like      corals
+## 51                                      Coral and the like      corals
+## 52                                      Coral and the like      corals
+## 53                                      Coral and the like      corals
+## 54                                      Coral and the like      corals
+## 55                                      Coral and the like      corals
+## 56                                      Coral and the like      corals
+## 57                                      Coral and the like      corals
+## 58                                      Coral and the like      corals
+## 59                                      Coral and the like      corals
+## 60                                      Coral and the like      corals
+## 61                                      Coral and the like      corals
+## 62                                      Coral and the like      corals
+## 63                                      Coral and the like      corals
+## 64                                      Coral and the like      corals
+## 65                                      Coral and the like      corals
+## 66                                      Coral and the like      corals
+## 67                                      Coral and the like      corals
+## 68                                      Coral and the like      corals
+## 69                                      Coral and the like      corals
+## 70                                      Coral and the like      corals
+## 71                                      Coral and the like      corals
+## 72                                      Coral and the like      corals
+## 73                                      Coral and the like      corals
+## 74                                      Coral and the like      corals
+## 75                                      Coral and the like      corals
+## 76                                      Coral and the like      corals
+## 77                                     Fish body oils, nei    fish_oil
+## 78                                     Fish body oils, nei    fish_oil
+## 79                                     Fish body oils, nei    fish_oil
+## 80                                     Fish body oils, nei    fish_oil
+## 81                                     Fish body oils, nei    fish_oil
+## 82                                     Fish body oils, nei    fish_oil
+## 83                                     Fish body oils, nei    fish_oil
+## 84                                     Fish body oils, nei    fish_oil
+## 85                                     Fish body oils, nei    fish_oil
+## 86                                     Fish body oils, nei    fish_oil
+## 87                                     Fish body oils, nei    fish_oil
+## 88                                     Fish body oils, nei    fish_oil
+## 89                                     Fish body oils, nei    fish_oil
+## 90                                     Fish body oils, nei    fish_oil
+## 91                                     Fish body oils, nei    fish_oil
+## 92                                     Fish body oils, nei    fish_oil
+## 93                                     Fish body oils, nei    fish_oil
+## 94                                     Fish body oils, nei    fish_oil
+## 95                                     Fish body oils, nei    fish_oil
+## 96                                     Fish body oils, nei    fish_oil
+## 97                                     Fish body oils, nei    fish_oil
+## 98                                     Fish body oils, nei    fish_oil
+## 99                                     Fish body oils, nei    fish_oil
+## 100                                    Fish body oils, nei    fish_oil
+## 101                                    Fish body oils, nei    fish_oil
+## 102                                    Fish body oils, nei    fish_oil
+## 103                                    Fish body oils, nei    fish_oil
+## 104                                    Fish body oils, nei    fish_oil
+## 105                                    Fish body oils, nei    fish_oil
+## 106                                    Fish body oils, nei    fish_oil
+## 107                                    Fish body oils, nei    fish_oil
+## 108                                    Fish body oils, nei    fish_oil
+## 109                                    Fish body oils, nei    fish_oil
+## 110                                    Fish body oils, nei    fish_oil
+## 111                                    Fish body oils, nei    fish_oil
+## 112                                    Fish body oils, nei    fish_oil
+## 113                                    Fish body oils, nei    fish_oil
+## 114                                    Fish body oils, nei    fish_oil
+## 115                                   Fish liver oils, nei    fish_oil
+## 116                                   Fish liver oils, nei    fish_oil
+## 117                                   Fish liver oils, nei    fish_oil
+## 118                                   Fish liver oils, nei    fish_oil
+## 119                                   Fish liver oils, nei    fish_oil
+## 120                                   Fish liver oils, nei    fish_oil
+## 121                                   Fish liver oils, nei    fish_oil
+## 122                                   Fish liver oils, nei    fish_oil
+## 123                                   Fish liver oils, nei    fish_oil
+## 124                                   Fish liver oils, nei    fish_oil
+## 125                                   Fish liver oils, nei    fish_oil
+## 126                                   Fish liver oils, nei    fish_oil
+## 127                                   Fish liver oils, nei    fish_oil
+## 128                                   Fish liver oils, nei    fish_oil
+## 129                                   Fish liver oils, nei    fish_oil
+## 130                                   Fish liver oils, nei    fish_oil
+## 131                                   Fish liver oils, nei    fish_oil
+## 132                                   Fish liver oils, nei    fish_oil
+## 133                                   Fish liver oils, nei    fish_oil
+## 134                                   Fish liver oils, nei    fish_oil
+## 135                                   Fish liver oils, nei    fish_oil
+## 136                                   Fish liver oils, nei    fish_oil
+## 137                                   Fish liver oils, nei    fish_oil
+## 138                                   Fish liver oils, nei    fish_oil
+## 139                                   Fish liver oils, nei    fish_oil
+## 140                                   Fish liver oils, nei    fish_oil
+## 141                                   Fish liver oils, nei    fish_oil
+## 142                                   Fish liver oils, nei    fish_oil
+## 143                                   Fish liver oils, nei    fish_oil
+## 144                                   Fish liver oils, nei    fish_oil
+## 145                                   Fish liver oils, nei    fish_oil
+## 146                                   Fish liver oils, nei    fish_oil
+## 147                                   Fish liver oils, nei    fish_oil
+## 148                                   Fish liver oils, nei    fish_oil
+## 149                                   Fish liver oils, nei    fish_oil
+## 150                                   Fish liver oils, nei    fish_oil
+## 151                                   Fish liver oils, nei    fish_oil
+## 152                                   Fish liver oils, nei    fish_oil
+## 153                                    Natural sponges nei     sponges
+## 154                                    Natural sponges nei     sponges
+## 155                                    Natural sponges nei     sponges
+## 156                                    Natural sponges nei     sponges
+## 157                                    Natural sponges nei     sponges
+## 158                                    Natural sponges nei     sponges
+## 159                                    Natural sponges nei     sponges
+## 160                                    Natural sponges nei     sponges
+## 161                                    Natural sponges nei     sponges
+## 162                                    Natural sponges nei     sponges
+## 163                                    Natural sponges nei     sponges
+## 164                                    Natural sponges nei     sponges
+## 165                                    Natural sponges nei     sponges
+## 166                                    Natural sponges nei     sponges
+## 167                                    Natural sponges nei     sponges
+## 168                                    Natural sponges nei     sponges
+## 169                                    Natural sponges nei     sponges
+## 170                                    Natural sponges nei     sponges
+## 171                                    Natural sponges nei     sponges
+## 172                                    Natural sponges nei     sponges
+## 173                                    Natural sponges nei     sponges
+## 174                                    Natural sponges nei     sponges
+## 175                                    Natural sponges nei     sponges
+## 176                                    Natural sponges nei     sponges
+## 177                                    Natural sponges nei     sponges
+## 178                                    Natural sponges nei     sponges
+## 179                                    Natural sponges nei     sponges
+## 180                                    Natural sponges nei     sponges
+## 181                                    Natural sponges nei     sponges
+## 182                                    Natural sponges nei     sponges
+## 183                                    Natural sponges nei     sponges
+## 184                                    Natural sponges nei     sponges
+## 185                                    Natural sponges nei     sponges
+## 186                                    Natural sponges nei     sponges
+## 187                                    Natural sponges nei     sponges
+## 188                                    Natural sponges nei     sponges
+## 189                                    Natural sponges nei     sponges
+## 190                                    Natural sponges nei     sponges
+## 191                                    Ornamental fish nei ornamentals
+## 192                                    Ornamental fish nei ornamentals
+## 193                                    Ornamental fish nei ornamentals
+## 194                                    Ornamental fish nei ornamentals
+## 195                                    Ornamental fish nei ornamentals
+## 196                                    Ornamental fish nei ornamentals
+## 197                                    Ornamental fish nei ornamentals
+## 198                                    Ornamental fish nei ornamentals
+## 199                                    Ornamental fish nei ornamentals
+## 200                                    Ornamental fish nei ornamentals
+## 201                                    Ornamental fish nei ornamentals
+## 202                                    Ornamental fish nei ornamentals
+## 203                                    Ornamental fish nei ornamentals
+## 204                                    Ornamental fish nei ornamentals
+## 205                                    Ornamental fish nei ornamentals
+## 206                                    Ornamental fish nei ornamentals
+## 207                                    Ornamental fish nei ornamentals
+## 208                                    Ornamental fish nei ornamentals
+## 209                                    Ornamental fish nei ornamentals
+## 210                                    Ornamental fish nei ornamentals
+## 211                                    Ornamental fish nei ornamentals
+## 212                                    Ornamental fish nei ornamentals
+## 213                                    Ornamental fish nei ornamentals
+## 214                                    Ornamental fish nei ornamentals
+## 215                                    Ornamental fish nei ornamentals
+## 216                                    Ornamental fish nei ornamentals
+## 217                                    Ornamental fish nei ornamentals
+## 218                                    Ornamental fish nei ornamentals
+## 219                                    Ornamental fish nei ornamentals
+## 220                                    Ornamental fish nei ornamentals
+## 221                                    Ornamental fish nei ornamentals
+## 222                                    Ornamental fish nei ornamentals
+## 223                                    Ornamental fish nei ornamentals
+## 224                                    Ornamental fish nei ornamentals
+## 225                                    Ornamental fish nei ornamentals
+## 226                                    Ornamental fish nei ornamentals
+## 227                                    Ornamental fish nei ornamentals
+## 228                                    Ornamental fish nei ornamentals
+## 229                              Ornamental saltwater fish ornamentals
+## 230                              Ornamental saltwater fish ornamentals
+## 231                              Ornamental saltwater fish ornamentals
+## 232                              Ornamental saltwater fish ornamentals
+## 233                              Ornamental saltwater fish ornamentals
+## 234                              Ornamental saltwater fish ornamentals
+## 235                              Ornamental saltwater fish ornamentals
+## 236                              Ornamental saltwater fish ornamentals
+## 237                              Ornamental saltwater fish ornamentals
+## 238                              Ornamental saltwater fish ornamentals
+## 239                              Ornamental saltwater fish ornamentals
+## 240                              Ornamental saltwater fish ornamentals
+## 241                              Ornamental saltwater fish ornamentals
+## 242                              Ornamental saltwater fish ornamentals
+## 243                              Ornamental saltwater fish ornamentals
+## 244                              Ornamental saltwater fish ornamentals
+## 245                              Ornamental saltwater fish ornamentals
+## 246                              Ornamental saltwater fish ornamentals
+## 247                              Ornamental saltwater fish ornamentals
+## 248                              Ornamental saltwater fish ornamentals
+## 249                              Ornamental saltwater fish ornamentals
+## 250                              Ornamental saltwater fish ornamentals
+## 251                              Ornamental saltwater fish ornamentals
+## 252                              Ornamental saltwater fish ornamentals
+## 253                              Ornamental saltwater fish ornamentals
+## 254                              Ornamental saltwater fish ornamentals
+## 255                              Ornamental saltwater fish ornamentals
+## 256                              Ornamental saltwater fish ornamentals
+## 257                              Ornamental saltwater fish ornamentals
+## 258                              Ornamental saltwater fish ornamentals
+## 259                              Ornamental saltwater fish ornamentals
+## 260                              Ornamental saltwater fish ornamentals
+## 261                              Ornamental saltwater fish ornamentals
+## 262                              Ornamental saltwater fish ornamentals
+## 263                              Ornamental saltwater fish ornamentals
+## 264                              Ornamental saltwater fish ornamentals
+## 265                              Ornamental saltwater fish ornamentals
+## 266                              Ornamental saltwater fish ornamentals
+## 267 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 268 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 269 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 270 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 271 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 272 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 273 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 274 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 275 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 276 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 277 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 278 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 279 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 280 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 281 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 282 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 283 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 284 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 285 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 286 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 287 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 288 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 289 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 290 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 291 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 292 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 293 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 294 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 295 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 296 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 297 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 298 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 299 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 300 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 301 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 302 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 303 Other seaweeds and aquatic plants and products thereof    seaweeds
+## 304 Other seaweeds and aquatic plants and products thereof    seaweeds
+##     year tonnes
+## 1   1976     NA
+## 2   1977     NA
+## 3   1978     NA
+## 4   1979     NA
+## 5   1980     NA
+## 6   1981     NA
+## 7   1982     NA
+## 8   1983     NA
+## 9   1984     NA
+## 10  1985     NA
+## 11  1986     NA
+## 12  1987     NA
+## 13  1988     NA
+## 14  1989     NA
+## 15  1990     NA
+## 16  1991     NA
+## 17  1992     NA
+## 18  1993     NA
+## 19  1994     NA
+## 20  1995     NA
+## 21  1996     NA
+## 22  1997     NA
+## 23  1998     NA
+## 24  1999     NA
+## 25  2000     NA
+## 26  2001     NA
+## 27  2002     NA
+## 28  2003     NA
+## 29  2004     NA
+## 30  2005    0.1
+## 31  2006    0.0
+## 32  2007    0.1
+## 33  2008    1.0
+## 34  2009    0.0
+## 35  2010    0.0
+## 36  2011    0.0
+## 37  2012    7.0
+## 38  2013    1.0
+## 39  1976     NA
+## 40  1977     NA
+## 41  1978     NA
+## 42  1979     NA
+## 43  1980     NA
+## 44  1981     NA
+## 45  1982     NA
+## 46  1983     NA
+## 47  1984     NA
+## 48  1985     NA
+## 49  1986     NA
+## 50  1987     NA
+## 51  1988     NA
+## 52  1989     NA
+## 53  1990     NA
+## 54  1991     NA
+## 55  1992     NA
+## 56  1993     NA
+## 57  1994     NA
+## 58  1995     NA
+## 59  1996     NA
+## 60  1997   37.0
+## 61  1998    0.1
+## 62  1999   19.0
+## 63  2000    2.0
+## 64  2001    0.0
+## 65  2002    0.1
+## 66  2003   21.0
+## 67  2004    0.1
+## 68  2005   15.0
+## 69  2006   37.0
+## 70  2007    0.1
+## 71  2008    0.1
+## 72  2009    0.0
+## 73  2010    3.0
+## 74  2011   10.0
+## 75  2012    0.1
+## 76  2013    0.0
+## 77  1976    0.1
+## 78  1977     NA
+## 79  1978     NA
+## 80  1979     NA
+## 81  1980     NA
+## 82  1981     NA
+## 83  1982     NA
+## 84  1983    0.1
+## 85  1984    0.1
+## 86  1985     NA
+## 87  1986     NA
+## 88  1987     NA
+## 89  1988     NA
+## 90  1989     NA
+## 91  1990     NA
+## 92  1991     NA
+## 93  1992     NA
+## 94  1993     NA
+## 95  1994     NA
+## 96  1995     NA
+## 97  1996     NA
+## 98  1997    0.1
+## 99  1998    1.0
+## 100 1999    0.1
+## 101 2000    1.0
+## 102 2001    0.1
+## 103 2002    0.1
+## 104 2003    0.1
+## 105 2004    0.0
+## 106 2005    0.0
+## 107 2006    0.1
+## 108 2007    0.0
+## 109 2008    0.0
+## 110 2009    0.0
+## 111 2010    0.0
+## 112 2011    0.1
+## 113 2012    4.0
+## 114 2013    0.1
+## 115 1976     NA
+## 116 1977     NA
+## 117 1978     NA
+## 118 1979     NA
+## 119 1980     NA
+## 120 1981     NA
+## 121 1982     NA
+## 122 1983     NA
+## 123 1984     NA
+## 124 1985     NA
+## 125 1986     NA
+## 126 1987     NA
+## 127 1988     NA
+## 128 1989     NA
+## 129 1990     NA
+## 130 1991     NA
+## 131 1992     NA
+## 132 1993     NA
+## 133 1994     NA
+## 134 1995     NA
+## 135 1996     NA
+## 136 1997     NA
+## 137 1998     NA
+## 138 1999    0.1
+## 139 2000     NA
+## 140 2001    0.1
+## 141 2002     NA
+## 142 2003    0.1
+## 143 2004     NA
+## 144 2005    0.1
+## 145 2006    0.0
+## 146 2007    0.0
+## 147 2008    2.0
+## 148 2009    0.1
+## 149 2010    0.0
+## 150 2011    0.0
+## 151 2012    0.0
+## 152 2013    0.0
+## 153 1976     NA
+## 154 1977     NA
+## 155 1978     NA
+## 156 1979     NA
+## 157 1980     NA
+## 158 1981     NA
+## 159 1982     NA
+## 160 1983     NA
+## 161 1984     NA
+## 162 1985     NA
+## 163 1986     NA
+## 164 1987     NA
+## 165 1988     NA
+## 166 1989     NA
+## 167 1990     NA
+## 168 1991     NA
+## 169 1992     NA
+## 170 1993     NA
+## 171 1994     NA
+## 172 1995     NA
+## 173 1996     NA
+## 174 1997     NA
+## 175 1998     NA
+## 176 1999     NA
+## 177 2000     NA
+## 178 2001     NA
+## 179 2002     NA
+## 180 2003     NA
+## 181 2004    0.1
+## 182 2005    0.0
+## 183 2006    0.0
+## 184 2007    0.0
+## 185 2008    0.0
+## 186 2009    0.0
+## 187 2010    0.0
+## 188 2011    0.0
+## 189 2012    0.0
+## 190 2013    0.0
+## 191 1976     NA
+## 192 1977     NA
+## 193 1978     NA
+## 194 1979    0.1
+## 195 1980     NA
+## 196 1981     NA
+## 197 1982     NA
+## 198 1983     NA
+## 199 1984     NA
+## 200 1985     NA
+## 201 1986     NA
+## 202 1987     NA
+## 203 1988     NA
+## 204 1989     NA
+## 205 1990     NA
+## 206 1991     NA
+## 207 1992     NA
+## 208 1993     NA
+## 209 1994     NA
+## 210 1995    0.1
+## 211 1996     NA
+## 212 1997     NA
+## 213 1998     NA
+## 214 1999     NA
+## 215 2000     NA
+## 216 2001     NA
+## 217 2002   33.0
+## 218 2003   36.0
+## 219 2004   19.0
+## 220 2005   48.0
+## 221 2006   20.0
+## 222 2007   62.0
+## 223 2008   45.0
+## 224 2009   40.0
+## 225 2010   44.0
+## 226 2011   45.0
+## 227 2012     NA
+## 228 2013     NA
+## 229 1976     NA
+## 230 1977     NA
+## 231 1978     NA
+## 232 1979     NA
+## 233 1980     NA
+## 234 1981     NA
+## 235 1982     NA
+## 236 1983     NA
+## 237 1984     NA
+## 238 1985     NA
+## 239 1986     NA
+## 240 1987     NA
+## 241 1988     NA
+## 242 1989     NA
+## 243 1990     NA
+## 244 1991     NA
+## 245 1992     NA
+## 246 1993     NA
+## 247 1994     NA
+## 248 1995     NA
+## 249 1996     NA
+## 250 1997     NA
+## 251 1998     NA
+## 252 1999     NA
+## 253 2000     NA
+## 254 2001     NA
+## 255 2002     NA
+## 256 2003     NA
+## 257 2004     NA
+## 258 2005     NA
+## 259 2006     NA
+## 260 2007     NA
+## 261 2008     NA
+## 262 2009     NA
+## 263 2010     NA
+## 264 2011     NA
+## 265 2012    8.0
+## 266 2013    0.0
+## 267 1976     NA
+## 268 1977     NA
+## 269 1978     NA
+## 270 1979     NA
+## 271 1980     NA
+## 272 1981     NA
+## 273 1982     NA
+## 274 1983     NA
+## 275 1984     NA
+## 276 1985     NA
+## 277 1986     NA
+## 278 1987     NA
+## 279 1988     NA
+## 280 1989     NA
+## 281 1990     NA
+## 282 1991     NA
+## 283 1992     NA
+## 284 1993     NA
+## 285 1994     NA
+## 286 1995     NA
+## 287 1996     NA
+## 288 1997     NA
+## 289 1998     NA
+## 290 1999     NA
+## 291 2000     NA
+## 292 2001     NA
+## 293 2002     NA
+## 294 2003    0.1
+## 295 2004    0.0
+## 296 2005    0.0
+## 297 2006    0.0
+## 298 2007    0.1
+## 299 2008    0.0
+## 300 2009    0.0
+## 301 2010    0.0
+## 302 2011    0.0
+## 303 2012    0.0
+## 304 2013    0.0</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">filter</span>(old, rgn_id==<span class="dv">115</span>) %&gt;%
 <span class="st">  </span><span class="kw">arrange</span>(commodity, year)</code></pre></div>
 <pre><code>##     rgn_id                                              commodity
-## 1       45                                     Coral and the like
-## 2       45                                     Coral and the like
-## 3       45                                     Coral and the like
-## 4       45                                     Coral and the like
-## 5       45                                     Coral and the like
-## 6       45                                     Coral and the like
-## 7       45                                     Coral and the like
-## 8       45                                     Coral and the like
-## 9       45                                     Coral and the like
-## 10      45                                     Coral and the like
-## 11      45                                     Coral and the like
-## 12      45                                     Coral and the like
-## 13      45                                     Coral and the like
-## 14      45                                     Coral and the like
-## 15      45                                     Coral and the like
-## 16      45                                     Coral and the like
-## 17      45                                     Coral and the like
-## 18      45                                     Coral and the like
-## 19      45                                     Coral and the like
-## 20      45                                     Coral and the like
-## 21      45                                     Coral and the like
-## 22      45                                     Coral and the like
-## 23      45                                     Coral and the like
-## 24      45                                     Coral and the like
-## 25      45                                     Coral and the like
-## 26      45                                     Coral and the like
-## 27      45                                     Coral and the like
-## 28      45                                     Coral and the like
-## 29      45                                     Coral and the like
-## 30      45                                     Coral and the like
-## 31      45                                     Coral and the like
-## 32      45                                     Coral and the like
-## 33      45                                     Coral and the like
-## 34      45                                     Coral and the like
-## 35      45                                     Coral and the like
-## 36      45                                     Coral and the like
-## 37      45                        Miscellaneous corals and shells
-## 38      45                        Miscellaneous corals and shells
-## 39      45                        Miscellaneous corals and shells
-## 40      45                        Miscellaneous corals and shells
-## 41      45                        Miscellaneous corals and shells
-## 42      45                        Miscellaneous corals and shells
-## 43      45                        Miscellaneous corals and shells
-## 44      45                        Miscellaneous corals and shells
-## 45      45                        Miscellaneous corals and shells
-## 46      45                        Miscellaneous corals and shells
-## 47      45                        Miscellaneous corals and shells
-## 48      45                        Miscellaneous corals and shells
-## 49      45                        Miscellaneous corals and shells
-## 50      45                        Miscellaneous corals and shells
-## 51      45                        Miscellaneous corals and shells
-## 52      45                        Miscellaneous corals and shells
-## 53      45                        Miscellaneous corals and shells
-## 54      45                        Miscellaneous corals and shells
-## 55      45                        Miscellaneous corals and shells
-## 56      45                        Miscellaneous corals and shells
-## 57      45                        Miscellaneous corals and shells
-## 58      45                        Miscellaneous corals and shells
-## 59      45                        Miscellaneous corals and shells
-## 60      45                        Miscellaneous corals and shells
-## 61      45                        Miscellaneous corals and shells
-## 62      45                        Miscellaneous corals and shells
-## 63      45                        Miscellaneous corals and shells
-## 64      45                        Miscellaneous corals and shells
-## 65      45                        Miscellaneous corals and shells
-## 66      45                        Miscellaneous corals and shells
-## 67      45                        Miscellaneous corals and shells
-## 68      45                        Miscellaneous corals and shells
-## 69      45                        Miscellaneous corals and shells
-## 70      45                        Miscellaneous corals and shells
-## 71      45                        Miscellaneous corals and shells
-## 72      45                        Miscellaneous corals and shells
-## 73      45                                    Ornamental fish nei
-## 74      45                                    Ornamental fish nei
-## 75      45                                    Ornamental fish nei
-## 76      45                                    Ornamental fish nei
-## 77      45                                    Ornamental fish nei
-## 78      45                                    Ornamental fish nei
-## 79      45                                    Ornamental fish nei
-## 80      45                                    Ornamental fish nei
-## 81      45                                    Ornamental fish nei
-## 82      45                                    Ornamental fish nei
-## 83      45                                    Ornamental fish nei
-## 84      45                                    Ornamental fish nei
-## 85      45                                    Ornamental fish nei
-## 86      45                                    Ornamental fish nei
-## 87      45                                    Ornamental fish nei
-## 88      45                                    Ornamental fish nei
-## 89      45                                    Ornamental fish nei
-## 90      45                                    Ornamental fish nei
-## 91      45                                    Ornamental fish nei
-## 92      45                                    Ornamental fish nei
-## 93      45                                    Ornamental fish nei
-## 94      45                                    Ornamental fish nei
-## 95      45                                    Ornamental fish nei
-## 96      45                                    Ornamental fish nei
-## 97      45                                    Ornamental fish nei
-## 98      45                                    Ornamental fish nei
-## 99      45                                    Ornamental fish nei
-## 100     45                                    Ornamental fish nei
-## 101     45                                    Ornamental fish nei
-## 102     45                                    Ornamental fish nei
-## 103     45                                    Ornamental fish nei
-## 104     45                                    Ornamental fish nei
-## 105     45                                    Ornamental fish nei
-## 106     45                                    Ornamental fish nei
-## 107     45                                    Ornamental fish nei
-## 108     45                                    Ornamental fish nei
-## 109     45                              Ornamental saltwater fish
-## 110     45                              Ornamental saltwater fish
-## 111     45                              Ornamental saltwater fish
-## 112     45                              Ornamental saltwater fish
-## 113     45                              Ornamental saltwater fish
-## 114     45                              Ornamental saltwater fish
-## 115     45                              Ornamental saltwater fish
-## 116     45                              Ornamental saltwater fish
-## 117     45                              Ornamental saltwater fish
-## 118     45                              Ornamental saltwater fish
-## 119     45                              Ornamental saltwater fish
-## 120     45                              Ornamental saltwater fish
-## 121     45                              Ornamental saltwater fish
-## 122     45                              Ornamental saltwater fish
-## 123     45                              Ornamental saltwater fish
-## 124     45                              Ornamental saltwater fish
-## 125     45                              Ornamental saltwater fish
-## 126     45                              Ornamental saltwater fish
-## 127     45                              Ornamental saltwater fish
-## 128     45                              Ornamental saltwater fish
-## 129     45                              Ornamental saltwater fish
-## 130     45                              Ornamental saltwater fish
-## 131     45                              Ornamental saltwater fish
-## 132     45                              Ornamental saltwater fish
-## 133     45                              Ornamental saltwater fish
-## 134     45                              Ornamental saltwater fish
-## 135     45                              Ornamental saltwater fish
-## 136     45                              Ornamental saltwater fish
-## 137     45                              Ornamental saltwater fish
-## 138     45                              Ornamental saltwater fish
-## 139     45                              Ornamental saltwater fish
-## 140     45                              Ornamental saltwater fish
-## 141     45                              Ornamental saltwater fish
-## 142     45                              Ornamental saltwater fish
-## 143     45                              Ornamental saltwater fish
-## 144     45                              Ornamental saltwater fish
-## 145     45 Other seaweeds and aquatic plants and products thereof
-## 146     45 Other seaweeds and aquatic plants and products thereof
-## 147     45 Other seaweeds and aquatic plants and products thereof
-## 148     45 Other seaweeds and aquatic plants and products thereof
-## 149     45 Other seaweeds and aquatic plants and products thereof
-## 150     45 Other seaweeds and aquatic plants and products thereof
-## 151     45 Other seaweeds and aquatic plants and products thereof
-## 152     45 Other seaweeds and aquatic plants and products thereof
-## 153     45 Other seaweeds and aquatic plants and products thereof
-## 154     45 Other seaweeds and aquatic plants and products thereof
-## 155     45 Other seaweeds and aquatic plants and products thereof
-## 156     45 Other seaweeds and aquatic plants and products thereof
-## 157     45 Other seaweeds and aquatic plants and products thereof
-## 158     45 Other seaweeds and aquatic plants and products thereof
-## 159     45 Other seaweeds and aquatic plants and products thereof
-## 160     45 Other seaweeds and aquatic plants and products thereof
-## 161     45 Other seaweeds and aquatic plants and products thereof
-## 162     45 Other seaweeds and aquatic plants and products thereof
-## 163     45 Other seaweeds and aquatic plants and products thereof
-## 164     45 Other seaweeds and aquatic plants and products thereof
-## 165     45 Other seaweeds and aquatic plants and products thereof
-## 166     45 Other seaweeds and aquatic plants and products thereof
-## 167     45 Other seaweeds and aquatic plants and products thereof
-## 168     45 Other seaweeds and aquatic plants and products thereof
-## 169     45 Other seaweeds and aquatic plants and products thereof
-## 170     45 Other seaweeds and aquatic plants and products thereof
-## 171     45 Other seaweeds and aquatic plants and products thereof
-## 172     45 Other seaweeds and aquatic plants and products thereof
-## 173     45 Other seaweeds and aquatic plants and products thereof
-## 174     45 Other seaweeds and aquatic plants and products thereof
-## 175     45 Other seaweeds and aquatic plants and products thereof
-## 176     45 Other seaweeds and aquatic plants and products thereof
-## 177     45 Other seaweeds and aquatic plants and products thereof
-## 178     45 Other seaweeds and aquatic plants and products thereof
-## 179     45 Other seaweeds and aquatic plants and products thereof
-## 180     45 Other seaweeds and aquatic plants and products thereof
-##         product year tonnes rgn_name
-## 1        corals 1976     NA  Eritrea
-## 2        corals 1977     NA  Eritrea
-## 3        corals 1978     NA  Eritrea
-## 4        corals 1979     NA  Eritrea
-## 5        corals 1980     NA  Eritrea
-## 6        corals 1981     NA  Eritrea
-## 7        corals 1982     NA  Eritrea
-## 8        corals 1983     NA  Eritrea
-## 9        corals 1984     NA  Eritrea
-## 10       corals 1985     NA  Eritrea
-## 11       corals 1986     NA  Eritrea
-## 12       corals 1987     NA  Eritrea
-## 13       corals 1988     NA  Eritrea
-## 14       corals 1989     NA  Eritrea
-## 15       corals 1990     NA  Eritrea
-## 16       corals 1991     NA  Eritrea
-## 17       corals 1992     NA  Eritrea
-## 18       corals 1993     NA  Eritrea
-## 19       corals 1994     NA  Eritrea
-## 20       corals 1995     NA  Eritrea
-## 21       corals 1996     NA  Eritrea
-## 22       corals 1997     NA  Eritrea
-## 23       corals 1998     NA  Eritrea
-## 24       corals 1999     NA  Eritrea
-## 25       corals 2000   11.0  Eritrea
-## 26       corals 2001     NA  Eritrea
-## 27       corals 2002     NA  Eritrea
-## 28       corals 2003     NA  Eritrea
-## 29       corals 2004     NA  Eritrea
-## 30       corals 2005  139.0  Eritrea
-## 31       corals 2006    0.0  Eritrea
-## 32       corals 2007   36.0  Eritrea
-## 33       corals 2008    0.0  Eritrea
-## 34       corals 2009    0.0  Eritrea
-## 35       corals 2010    0.0  Eritrea
-## 36       corals 2011    0.0  Eritrea
-## 37       shells 1976     NA  Eritrea
-## 38       shells 1977     NA  Eritrea
-## 39       shells 1978     NA  Eritrea
-## 40       shells 1979     NA  Eritrea
-## 41       shells 1980     NA  Eritrea
-## 42       shells 1981     NA  Eritrea
-## 43       shells 1982     NA  Eritrea
-## 44       shells 1983     NA  Eritrea
-## 45       shells 1984     NA  Eritrea
-## 46       shells 1985     NA  Eritrea
-## 47       shells 1986     NA  Eritrea
-## 48       shells 1987     NA  Eritrea
-## 49       shells 1988     NA  Eritrea
-## 50       shells 1989     NA  Eritrea
-## 51       shells 1990     NA  Eritrea
-## 52       shells 1991     NA  Eritrea
-## 53       shells 1992     NA  Eritrea
-## 54       shells 1993     NA  Eritrea
-## 55       shells 1994     NA  Eritrea
-## 56       shells 1995     NA  Eritrea
-## 57       shells 1996     NA  Eritrea
-## 58       shells 1997     NA  Eritrea
-## 59       shells 1998     NA  Eritrea
-## 60       shells 1999     NA  Eritrea
-## 61       shells 2000     NA  Eritrea
-## 62       shells 2001     NA  Eritrea
-## 63       shells 2002     NA  Eritrea
-## 64       shells 2003  143.0  Eritrea
-## 65       shells 2004  147.0  Eritrea
-## 66       shells 2005    0.0  Eritrea
-## 67       shells 2006    0.0  Eritrea
-## 68       shells 2007    0.0  Eritrea
-## 69       shells 2008    0.0  Eritrea
-## 70       shells 2009    0.0  Eritrea
-## 71       shells 2010    0.0  Eritrea
-## 72       shells 2011    0.0  Eritrea
-## 73  ornamentals 1976     NA  Eritrea
-## 74  ornamentals 1977     NA  Eritrea
-## 75  ornamentals 1978     NA  Eritrea
-## 76  ornamentals 1979     NA  Eritrea
-## 77  ornamentals 1980     NA  Eritrea
-## 78  ornamentals 1981     NA  Eritrea
-## 79  ornamentals 1982     NA  Eritrea
-## 80  ornamentals 1983     NA  Eritrea
-## 81  ornamentals 1984     NA  Eritrea
-## 82  ornamentals 1985     NA  Eritrea
-## 83  ornamentals 1986     NA  Eritrea
-## 84  ornamentals 1987     NA  Eritrea
-## 85  ornamentals 1988     NA  Eritrea
-## 86  ornamentals 1989     NA  Eritrea
-## 87  ornamentals 1990     NA  Eritrea
-## 88  ornamentals 1991     NA  Eritrea
-## 89  ornamentals 1992     NA  Eritrea
-## 90  ornamentals 1993     NA  Eritrea
-## 91  ornamentals 1994     NA  Eritrea
-## 92  ornamentals 1995    0.1  Eritrea
-## 93  ornamentals 1996    1.0  Eritrea
-## 94  ornamentals 1997    2.0  Eritrea
-## 95  ornamentals 1998    0.1  Eritrea
-## 96  ornamentals 1999    0.1  Eritrea
-## 97  ornamentals 2000     NA  Eritrea
-## 98  ornamentals 2001     NA  Eritrea
-## 99  ornamentals 2002     NA  Eritrea
-## 100 ornamentals 2003     NA  Eritrea
-## 101 ornamentals 2004     NA  Eritrea
-## 102 ornamentals 2005     NA  Eritrea
-## 103 ornamentals 2006     NA  Eritrea
-## 104 ornamentals 2007     NA  Eritrea
-## 105 ornamentals 2008    3.0  Eritrea
-## 106 ornamentals 2009    1.0  Eritrea
-## 107 ornamentals 2010    0.1  Eritrea
-## 108 ornamentals 2011    0.1  Eritrea
-## 109 ornamentals 1976     NA  Eritrea
-## 110 ornamentals 1977     NA  Eritrea
-## 111 ornamentals 1978     NA  Eritrea
-## 112 ornamentals 1979     NA  Eritrea
-## 113 ornamentals 1980     NA  Eritrea
-## 114 ornamentals 1981     NA  Eritrea
-## 115 ornamentals 1982     NA  Eritrea
-## 116 ornamentals 1983     NA  Eritrea
-## 117 ornamentals 1984     NA  Eritrea
-## 118 ornamentals 1985     NA  Eritrea
-## 119 ornamentals 1986     NA  Eritrea
-## 120 ornamentals 1987     NA  Eritrea
-## 121 ornamentals 1988     NA  Eritrea
-## 122 ornamentals 1989     NA  Eritrea
-## 123 ornamentals 1990     NA  Eritrea
-## 124 ornamentals 1991     NA  Eritrea
-## 125 ornamentals 1992     NA  Eritrea
-## 126 ornamentals 1993     NA  Eritrea
-## 127 ornamentals 1994     NA  Eritrea
-## 128 ornamentals 1995     NA  Eritrea
-## 129 ornamentals 1996     NA  Eritrea
-## 130 ornamentals 1997     NA  Eritrea
-## 131 ornamentals 1998     NA  Eritrea
-## 132 ornamentals 1999     NA  Eritrea
-## 133 ornamentals 2000     NA  Eritrea
-## 134 ornamentals 2001     NA  Eritrea
-## 135 ornamentals 2002     NA  Eritrea
-## 136 ornamentals 2003     NA  Eritrea
-## 137 ornamentals 2004     NA  Eritrea
-## 138 ornamentals 2005     NA  Eritrea
-## 139 ornamentals 2006     NA  Eritrea
-## 140 ornamentals 2007     NA  Eritrea
-## 141 ornamentals 2008    2.0  Eritrea
-## 142 ornamentals 2009    1.0  Eritrea
-## 143 ornamentals 2010    0.0  Eritrea
-## 144 ornamentals 2011    0.0  Eritrea
-## 145    seaweeds 1976     NA  Eritrea
-## 146    seaweeds 1977     NA  Eritrea
-## 147    seaweeds 1978     NA  Eritrea
-## 148    seaweeds 1979     NA  Eritrea
-## 149    seaweeds 1980     NA  Eritrea
-## 150    seaweeds 1981     NA  Eritrea
-## 151    seaweeds 1982     NA  Eritrea
-## 152    seaweeds 1983     NA  Eritrea
-## 153    seaweeds 1984     NA  Eritrea
-## 154    seaweeds 1985     NA  Eritrea
-## 155    seaweeds 1986     NA  Eritrea
-## 156    seaweeds 1987     NA  Eritrea
-## 157    seaweeds 1988     NA  Eritrea
-## 158    seaweeds 1989     NA  Eritrea
-## 159    seaweeds 1990     NA  Eritrea
-## 160    seaweeds 1991     NA  Eritrea
-## 161    seaweeds 1992     NA  Eritrea
-## 162    seaweeds 1993     NA  Eritrea
-## 163    seaweeds 1994     NA  Eritrea
-## 164    seaweeds 1995     NA  Eritrea
-## 165    seaweeds 1996     NA  Eritrea
-## 166    seaweeds 1997     NA  Eritrea
-## 167    seaweeds 1998     NA  Eritrea
-## 168    seaweeds 1999     NA  Eritrea
-## 169    seaweeds 2000     NA  Eritrea
-## 170    seaweeds 2001     NA  Eritrea
-## 171    seaweeds 2002     NA  Eritrea
-## 172    seaweeds 2003   13.0  Eritrea
-## 173    seaweeds 2004    0.1  Eritrea
-## 174    seaweeds 2005    5.0  Eritrea
-## 175    seaweeds 2006    0.0  Eritrea
-## 176    seaweeds 2007    0.0  Eritrea
-## 177    seaweeds 2008    0.0  Eritrea
-## 178    seaweeds 2009    0.0  Eritrea
-## 179    seaweeds 2010    0.0  Eritrea
-## 180    seaweeds 2011    0.0  Eritrea</code></pre>
+## 1      115                                          Agar agar nei
+## 2      115                                          Agar agar nei
+## 3      115                                          Agar agar nei
+## 4      115                                          Agar agar nei
+## 5      115                                          Agar agar nei
+## 6      115                                          Agar agar nei
+## 7      115                                          Agar agar nei
+## 8      115                                          Agar agar nei
+## 9      115                                          Agar agar nei
+## 10     115                                          Agar agar nei
+## 11     115                                          Agar agar nei
+## 12     115                                          Agar agar nei
+## 13     115                                          Agar agar nei
+## 14     115                                          Agar agar nei
+## 15     115                                          Agar agar nei
+## 16     115                                          Agar agar nei
+## 17     115                                          Agar agar nei
+## 18     115                                          Agar agar nei
+## 19     115                                          Agar agar nei
+## 20     115                                          Agar agar nei
+## 21     115                                          Agar agar nei
+## 22     115                                          Agar agar nei
+## 23     115                                          Agar agar nei
+## 24     115                                          Agar agar nei
+## 25     115                                          Agar agar nei
+## 26     115                                          Agar agar nei
+## 27     115                                          Agar agar nei
+## 28     115                                          Agar agar nei
+## 29     115                                          Agar agar nei
+## 30     115                                          Agar agar nei
+## 31     115                                          Agar agar nei
+## 32     115                                          Agar agar nei
+## 33     115                                          Agar agar nei
+## 34     115                                          Agar agar nei
+## 35     115                                          Agar agar nei
+## 36     115                                          Agar agar nei
+## 37     115                                     Coral and the like
+## 38     115                                     Coral and the like
+## 39     115                                     Coral and the like
+## 40     115                                     Coral and the like
+## 41     115                                     Coral and the like
+## 42     115                                     Coral and the like
+## 43     115                                     Coral and the like
+## 44     115                                     Coral and the like
+## 45     115                                     Coral and the like
+## 46     115                                     Coral and the like
+## 47     115                                     Coral and the like
+## 48     115                                     Coral and the like
+## 49     115                                     Coral and the like
+## 50     115                                     Coral and the like
+## 51     115                                     Coral and the like
+## 52     115                                     Coral and the like
+## 53     115                                     Coral and the like
+## 54     115                                     Coral and the like
+## 55     115                                     Coral and the like
+## 56     115                                     Coral and the like
+## 57     115                                     Coral and the like
+## 58     115                                     Coral and the like
+## 59     115                                     Coral and the like
+## 60     115                                     Coral and the like
+## 61     115                                     Coral and the like
+## 62     115                                     Coral and the like
+## 63     115                                     Coral and the like
+## 64     115                                     Coral and the like
+## 65     115                                     Coral and the like
+## 66     115                                     Coral and the like
+## 67     115                                     Coral and the like
+## 68     115                                     Coral and the like
+## 69     115                                     Coral and the like
+## 70     115                                     Coral and the like
+## 71     115                                     Coral and the like
+## 72     115                                     Coral and the like
+## 73     115                                    Fish body oils, nei
+## 74     115                                    Fish body oils, nei
+## 75     115                                    Fish body oils, nei
+## 76     115                                    Fish body oils, nei
+## 77     115                                    Fish body oils, nei
+## 78     115                                    Fish body oils, nei
+## 79     115                                    Fish body oils, nei
+## 80     115                                    Fish body oils, nei
+## 81     115                                    Fish body oils, nei
+## 82     115                                    Fish body oils, nei
+## 83     115                                    Fish body oils, nei
+## 84     115                                    Fish body oils, nei
+## 85     115                                    Fish body oils, nei
+## 86     115                                    Fish body oils, nei
+## 87     115                                    Fish body oils, nei
+## 88     115                                    Fish body oils, nei
+## 89     115                                    Fish body oils, nei
+## 90     115                                    Fish body oils, nei
+## 91     115                                    Fish body oils, nei
+## 92     115                                    Fish body oils, nei
+## 93     115                                    Fish body oils, nei
+## 94     115                                    Fish body oils, nei
+## 95     115                                    Fish body oils, nei
+## 96     115                                    Fish body oils, nei
+## 97     115                                    Fish body oils, nei
+## 98     115                                    Fish body oils, nei
+## 99     115                                    Fish body oils, nei
+## 100    115                                    Fish body oils, nei
+## 101    115                                    Fish body oils, nei
+## 102    115                                    Fish body oils, nei
+## 103    115                                    Fish body oils, nei
+## 104    115                                    Fish body oils, nei
+## 105    115                                    Fish body oils, nei
+## 106    115                                    Fish body oils, nei
+## 107    115                                    Fish body oils, nei
+## 108    115                                    Fish body oils, nei
+## 109    115                                   Fish liver oils, nei
+## 110    115                                   Fish liver oils, nei
+## 111    115                                   Fish liver oils, nei
+## 112    115                                   Fish liver oils, nei
+## 113    115                                   Fish liver oils, nei
+## 114    115                                   Fish liver oils, nei
+## 115    115                                   Fish liver oils, nei
+## 116    115                                   Fish liver oils, nei
+## 117    115                                   Fish liver oils, nei
+## 118    115                                   Fish liver oils, nei
+## 119    115                                   Fish liver oils, nei
+## 120    115                                   Fish liver oils, nei
+## 121    115                                   Fish liver oils, nei
+## 122    115                                   Fish liver oils, nei
+## 123    115                                   Fish liver oils, nei
+## 124    115                                   Fish liver oils, nei
+## 125    115                                   Fish liver oils, nei
+## 126    115                                   Fish liver oils, nei
+## 127    115                                   Fish liver oils, nei
+## 128    115                                   Fish liver oils, nei
+## 129    115                                   Fish liver oils, nei
+## 130    115                                   Fish liver oils, nei
+## 131    115                                   Fish liver oils, nei
+## 132    115                                   Fish liver oils, nei
+## 133    115                                   Fish liver oils, nei
+## 134    115                                   Fish liver oils, nei
+## 135    115                                   Fish liver oils, nei
+## 136    115                                   Fish liver oils, nei
+## 137    115                                   Fish liver oils, nei
+## 138    115                                   Fish liver oils, nei
+## 139    115                                   Fish liver oils, nei
+## 140    115                                   Fish liver oils, nei
+## 141    115                                   Fish liver oils, nei
+## 142    115                                   Fish liver oils, nei
+## 143    115                                   Fish liver oils, nei
+## 144    115                                   Fish liver oils, nei
+## 145    115                                    Natural sponges nei
+## 146    115                                    Natural sponges nei
+## 147    115                                    Natural sponges nei
+## 148    115                                    Natural sponges nei
+## 149    115                                    Natural sponges nei
+## 150    115                                    Natural sponges nei
+## 151    115                                    Natural sponges nei
+## 152    115                                    Natural sponges nei
+## 153    115                                    Natural sponges nei
+## 154    115                                    Natural sponges nei
+## 155    115                                    Natural sponges nei
+## 156    115                                    Natural sponges nei
+## 157    115                                    Natural sponges nei
+## 158    115                                    Natural sponges nei
+## 159    115                                    Natural sponges nei
+## 160    115                                    Natural sponges nei
+## 161    115                                    Natural sponges nei
+## 162    115                                    Natural sponges nei
+## 163    115                                    Natural sponges nei
+## 164    115                                    Natural sponges nei
+## 165    115                                    Natural sponges nei
+## 166    115                                    Natural sponges nei
+## 167    115                                    Natural sponges nei
+## 168    115                                    Natural sponges nei
+## 169    115                                    Natural sponges nei
+## 170    115                                    Natural sponges nei
+## 171    115                                    Natural sponges nei
+## 172    115                                    Natural sponges nei
+## 173    115                                    Natural sponges nei
+## 174    115                                    Natural sponges nei
+## 175    115                                    Natural sponges nei
+## 176    115                                    Natural sponges nei
+## 177    115                                    Natural sponges nei
+## 178    115                                    Natural sponges nei
+## 179    115                                    Natural sponges nei
+## 180    115                                    Natural sponges nei
+## 181    115                                    Ornamental fish nei
+## 182    115                                    Ornamental fish nei
+## 183    115                                    Ornamental fish nei
+## 184    115                                    Ornamental fish nei
+## 185    115                                    Ornamental fish nei
+## 186    115                                    Ornamental fish nei
+## 187    115                                    Ornamental fish nei
+## 188    115                                    Ornamental fish nei
+## 189    115                                    Ornamental fish nei
+## 190    115                                    Ornamental fish nei
+## 191    115                                    Ornamental fish nei
+## 192    115                                    Ornamental fish nei
+## 193    115                                    Ornamental fish nei
+## 194    115                                    Ornamental fish nei
+## 195    115                                    Ornamental fish nei
+## 196    115                                    Ornamental fish nei
+## 197    115                                    Ornamental fish nei
+## 198    115                                    Ornamental fish nei
+## 199    115                                    Ornamental fish nei
+## 200    115                                    Ornamental fish nei
+## 201    115                                    Ornamental fish nei
+## 202    115                                    Ornamental fish nei
+## 203    115                                    Ornamental fish nei
+## 204    115                                    Ornamental fish nei
+## 205    115                                    Ornamental fish nei
+## 206    115                                    Ornamental fish nei
+## 207    115                                    Ornamental fish nei
+## 208    115                                    Ornamental fish nei
+## 209    115                                    Ornamental fish nei
+## 210    115                                    Ornamental fish nei
+## 211    115                                    Ornamental fish nei
+## 212    115                                    Ornamental fish nei
+## 213    115                                    Ornamental fish nei
+## 214    115                                    Ornamental fish nei
+## 215    115                                    Ornamental fish nei
+## 216    115                                    Ornamental fish nei
+## 217    115 Other seaweeds and aquatic plants and products thereof
+## 218    115 Other seaweeds and aquatic plants and products thereof
+## 219    115 Other seaweeds and aquatic plants and products thereof
+## 220    115 Other seaweeds and aquatic plants and products thereof
+## 221    115 Other seaweeds and aquatic plants and products thereof
+## 222    115 Other seaweeds and aquatic plants and products thereof
+## 223    115 Other seaweeds and aquatic plants and products thereof
+## 224    115 Other seaweeds and aquatic plants and products thereof
+## 225    115 Other seaweeds and aquatic plants and products thereof
+## 226    115 Other seaweeds and aquatic plants and products thereof
+## 227    115 Other seaweeds and aquatic plants and products thereof
+## 228    115 Other seaweeds and aquatic plants and products thereof
+## 229    115 Other seaweeds and aquatic plants and products thereof
+## 230    115 Other seaweeds and aquatic plants and products thereof
+## 231    115 Other seaweeds and aquatic plants and products thereof
+## 232    115 Other seaweeds and aquatic plants and products thereof
+## 233    115 Other seaweeds and aquatic plants and products thereof
+## 234    115 Other seaweeds and aquatic plants and products thereof
+## 235    115 Other seaweeds and aquatic plants and products thereof
+## 236    115 Other seaweeds and aquatic plants and products thereof
+## 237    115 Other seaweeds and aquatic plants and products thereof
+## 238    115 Other seaweeds and aquatic plants and products thereof
+## 239    115 Other seaweeds and aquatic plants and products thereof
+## 240    115 Other seaweeds and aquatic plants and products thereof
+## 241    115 Other seaweeds and aquatic plants and products thereof
+## 242    115 Other seaweeds and aquatic plants and products thereof
+## 243    115 Other seaweeds and aquatic plants and products thereof
+## 244    115 Other seaweeds and aquatic plants and products thereof
+## 245    115 Other seaweeds and aquatic plants and products thereof
+## 246    115 Other seaweeds and aquatic plants and products thereof
+## 247    115 Other seaweeds and aquatic plants and products thereof
+## 248    115 Other seaweeds and aquatic plants and products thereof
+## 249    115 Other seaweeds and aquatic plants and products thereof
+## 250    115 Other seaweeds and aquatic plants and products thereof
+## 251    115 Other seaweeds and aquatic plants and products thereof
+## 252    115 Other seaweeds and aquatic plants and products thereof
+##         product year tonnes           rgn_name
+## 1      seaweeds 1976     NA Dominican Republic
+## 2      seaweeds 1977     NA Dominican Republic
+## 3      seaweeds 1978     NA Dominican Republic
+## 4      seaweeds 1979     NA Dominican Republic
+## 5      seaweeds 1980     NA Dominican Republic
+## 6      seaweeds 1981     NA Dominican Republic
+## 7      seaweeds 1982     NA Dominican Republic
+## 8      seaweeds 1983     NA Dominican Republic
+## 9      seaweeds 1984     NA Dominican Republic
+## 10     seaweeds 1985     NA Dominican Republic
+## 11     seaweeds 1986     NA Dominican Republic
+## 12     seaweeds 1987     NA Dominican Republic
+## 13     seaweeds 1988     NA Dominican Republic
+## 14     seaweeds 1989     NA Dominican Republic
+## 15     seaweeds 1990     NA Dominican Republic
+## 16     seaweeds 1991     NA Dominican Republic
+## 17     seaweeds 1992     NA Dominican Republic
+## 18     seaweeds 1993     NA Dominican Republic
+## 19     seaweeds 1994     NA Dominican Republic
+## 20     seaweeds 1995     NA Dominican Republic
+## 21     seaweeds 1996     NA Dominican Republic
+## 22     seaweeds 1997     NA Dominican Republic
+## 23     seaweeds 1998     NA Dominican Republic
+## 24     seaweeds 1999     NA Dominican Republic
+## 25     seaweeds 2000     NA Dominican Republic
+## 26     seaweeds 2001     NA Dominican Republic
+## 27     seaweeds 2002     NA Dominican Republic
+## 28     seaweeds 2003     NA Dominican Republic
+## 29     seaweeds 2004     NA Dominican Republic
+## 30     seaweeds 2005   25.0 Dominican Republic
+## 31     seaweeds 2006    0.0 Dominican Republic
+## 32     seaweeds 2007    0.1 Dominican Republic
+## 33     seaweeds 2008    1.0 Dominican Republic
+## 34     seaweeds 2009    0.0 Dominican Republic
+## 35     seaweeds 2010    0.0 Dominican Republic
+## 36     seaweeds 2011    0.0 Dominican Republic
+## 37       corals 1976     NA Dominican Republic
+## 38       corals 1977     NA Dominican Republic
+## 39       corals 1978     NA Dominican Republic
+## 40       corals 1979     NA Dominican Republic
+## 41       corals 1980     NA Dominican Republic
+## 42       corals 1981     NA Dominican Republic
+## 43       corals 1982     NA Dominican Republic
+## 44       corals 1983     NA Dominican Republic
+## 45       corals 1984     NA Dominican Republic
+## 46       corals 1985     NA Dominican Republic
+## 47       corals 1986     NA Dominican Republic
+## 48       corals 1987     NA Dominican Republic
+## 49       corals 1988     NA Dominican Republic
+## 50       corals 1989     NA Dominican Republic
+## 51       corals 1990     NA Dominican Republic
+## 52       corals 1991     NA Dominican Republic
+## 53       corals 1992     NA Dominican Republic
+## 54       corals 1993     NA Dominican Republic
+## 55       corals 1994     NA Dominican Republic
+## 56       corals 1995     NA Dominican Republic
+## 57       corals 1996     NA Dominican Republic
+## 58       corals 1997   37.0 Dominican Republic
+## 59       corals 1998    0.1 Dominican Republic
+## 60       corals 1999   19.0 Dominican Republic
+## 61       corals 2000    2.0 Dominican Republic
+## 62       corals 2001    0.0 Dominican Republic
+## 63       corals 2002    0.1 Dominican Republic
+## 64       corals 2003   21.0 Dominican Republic
+## 65       corals 2004    0.1 Dominican Republic
+## 66       corals 2005   15.0 Dominican Republic
+## 67       corals 2006   37.0 Dominican Republic
+## 68       corals 2007    0.1 Dominican Republic
+## 69       corals 2008    0.1 Dominican Republic
+## 70       corals 2009    0.0 Dominican Republic
+## 71       corals 2010    3.0 Dominican Republic
+## 72       corals 2011   10.0 Dominican Republic
+## 73     fish_oil 1976    0.1 Dominican Republic
+## 74     fish_oil 1977     NA Dominican Republic
+## 75     fish_oil 1978     NA Dominican Republic
+## 76     fish_oil 1979     NA Dominican Republic
+## 77     fish_oil 1980     NA Dominican Republic
+## 78     fish_oil 1981     NA Dominican Republic
+## 79     fish_oil 1982     NA Dominican Republic
+## 80     fish_oil 1983    0.1 Dominican Republic
+## 81     fish_oil 1984    0.1 Dominican Republic
+## 82     fish_oil 1985     NA Dominican Republic
+## 83     fish_oil 1986     NA Dominican Republic
+## 84     fish_oil 1987     NA Dominican Republic
+## 85     fish_oil 1988     NA Dominican Republic
+## 86     fish_oil 1989     NA Dominican Republic
+## 87     fish_oil 1990     NA Dominican Republic
+## 88     fish_oil 1991     NA Dominican Republic
+## 89     fish_oil 1992     NA Dominican Republic
+## 90     fish_oil 1993     NA Dominican Republic
+## 91     fish_oil 1994     NA Dominican Republic
+## 92     fish_oil 1995     NA Dominican Republic
+## 93     fish_oil 1996     NA Dominican Republic
+## 94     fish_oil 1997    0.1 Dominican Republic
+## 95     fish_oil 1998    1.0 Dominican Republic
+## 96     fish_oil 1999    0.1 Dominican Republic
+## 97     fish_oil 2000    1.0 Dominican Republic
+## 98     fish_oil 2001    0.1 Dominican Republic
+## 99     fish_oil 2002    0.1 Dominican Republic
+## 100    fish_oil 2003    0.1 Dominican Republic
+## 101    fish_oil 2004    0.0 Dominican Republic
+## 102    fish_oil 2005    0.0 Dominican Republic
+## 103    fish_oil 2006    0.1 Dominican Republic
+## 104    fish_oil 2007    0.0 Dominican Republic
+## 105    fish_oil 2008    0.0 Dominican Republic
+## 106    fish_oil 2009    0.0 Dominican Republic
+## 107    fish_oil 2010    0.0 Dominican Republic
+## 108    fish_oil 2011    0.1 Dominican Republic
+## 109    fish_oil 1976     NA Dominican Republic
+## 110    fish_oil 1977     NA Dominican Republic
+## 111    fish_oil 1978     NA Dominican Republic
+## 112    fish_oil 1979     NA Dominican Republic
+## 113    fish_oil 1980     NA Dominican Republic
+## 114    fish_oil 1981     NA Dominican Republic
+## 115    fish_oil 1982     NA Dominican Republic
+## 116    fish_oil 1983     NA Dominican Republic
+## 117    fish_oil 1984     NA Dominican Republic
+## 118    fish_oil 1985     NA Dominican Republic
+## 119    fish_oil 1986     NA Dominican Republic
+## 120    fish_oil 1987     NA Dominican Republic
+## 121    fish_oil 1988     NA Dominican Republic
+## 122    fish_oil 1989     NA Dominican Republic
+## 123    fish_oil 1990     NA Dominican Republic
+## 124    fish_oil 1991     NA Dominican Republic
+## 125    fish_oil 1992     NA Dominican Republic
+## 126    fish_oil 1993     NA Dominican Republic
+## 127    fish_oil 1994     NA Dominican Republic
+## 128    fish_oil 1995     NA Dominican Republic
+## 129    fish_oil 1996     NA Dominican Republic
+## 130    fish_oil 1997     NA Dominican Republic
+## 131    fish_oil 1998     NA Dominican Republic
+## 132    fish_oil 1999    0.1 Dominican Republic
+## 133    fish_oil 2000     NA Dominican Republic
+## 134    fish_oil 2001    0.1 Dominican Republic
+## 135    fish_oil 2002     NA Dominican Republic
+## 136    fish_oil 2003    0.1 Dominican Republic
+## 137    fish_oil 2004     NA Dominican Republic
+## 138    fish_oil 2005    4.0 Dominican Republic
+## 139    fish_oil 2006    0.0 Dominican Republic
+## 140    fish_oil 2007    0.0 Dominican Republic
+## 141    fish_oil 2008    2.0 Dominican Republic
+## 142    fish_oil 2009    0.1 Dominican Republic
+## 143    fish_oil 2010    0.0 Dominican Republic
+## 144    fish_oil 2011    0.0 Dominican Republic
+## 145     sponges 1976     NA Dominican Republic
+## 146     sponges 1977     NA Dominican Republic
+## 147     sponges 1978     NA Dominican Republic
+## 148     sponges 1979     NA Dominican Republic
+## 149     sponges 1980     NA Dominican Republic
+## 150     sponges 1981     NA Dominican Republic
+## 151     sponges 1982     NA Dominican Republic
+## 152     sponges 1983     NA Dominican Republic
+## 153     sponges 1984     NA Dominican Republic
+## 154     sponges 1985     NA Dominican Republic
+## 155     sponges 1986     NA Dominican Republic
+## 156     sponges 1987     NA Dominican Republic
+## 157     sponges 1988     NA Dominican Republic
+## 158     sponges 1989     NA Dominican Republic
+## 159     sponges 1990     NA Dominican Republic
+## 160     sponges 1991     NA Dominican Republic
+## 161     sponges 1992     NA Dominican Republic
+## 162     sponges 1993     NA Dominican Republic
+## 163     sponges 1994     NA Dominican Republic
+## 164     sponges 1995     NA Dominican Republic
+## 165     sponges 1996     NA Dominican Republic
+## 166     sponges 1997     NA Dominican Republic
+## 167     sponges 1998     NA Dominican Republic
+## 168     sponges 1999     NA Dominican Republic
+## 169     sponges 2000     NA Dominican Republic
+## 170     sponges 2001     NA Dominican Republic
+## 171     sponges 2002     NA Dominican Republic
+## 172     sponges 2003     NA Dominican Republic
+## 173     sponges 2004    0.1 Dominican Republic
+## 174     sponges 2005    0.0 Dominican Republic
+## 175     sponges 2006    0.0 Dominican Republic
+## 176     sponges 2007    0.0 Dominican Republic
+## 177     sponges 2008    0.0 Dominican Republic
+## 178     sponges 2009    0.0 Dominican Republic
+## 179     sponges 2010    0.0 Dominican Republic
+## 180     sponges 2011    0.0 Dominican Republic
+## 181 ornamentals 1976     NA Dominican Republic
+## 182 ornamentals 1977     NA Dominican Republic
+## 183 ornamentals 1978     NA Dominican Republic
+## 184 ornamentals 1979    0.1 Dominican Republic
+## 185 ornamentals 1980     NA Dominican Republic
+## 186 ornamentals 1981     NA Dominican Republic
+## 187 ornamentals 1982     NA Dominican Republic
+## 188 ornamentals 1983     NA Dominican Republic
+## 189 ornamentals 1984     NA Dominican Republic
+## 190 ornamentals 1985     NA Dominican Republic
+## 191 ornamentals 1986     NA Dominican Republic
+## 192 ornamentals 1987     NA Dominican Republic
+## 193 ornamentals 1988     NA Dominican Republic
+## 194 ornamentals 1989     NA Dominican Republic
+## 195 ornamentals 1990     NA Dominican Republic
+## 196 ornamentals 1991     NA Dominican Republic
+## 197 ornamentals 1992     NA Dominican Republic
+## 198 ornamentals 1993     NA Dominican Republic
+## 199 ornamentals 1994     NA Dominican Republic
+## 200 ornamentals 1995    0.1 Dominican Republic
+## 201 ornamentals 1996     NA Dominican Republic
+## 202 ornamentals 1997     NA Dominican Republic
+## 203 ornamentals 1998     NA Dominican Republic
+## 204 ornamentals 1999     NA Dominican Republic
+## 205 ornamentals 2000     NA Dominican Republic
+## 206 ornamentals 2001     NA Dominican Republic
+## 207 ornamentals 2002   33.0 Dominican Republic
+## 208 ornamentals 2003   36.0 Dominican Republic
+## 209 ornamentals 2004   19.0 Dominican Republic
+## 210 ornamentals 2005   48.0 Dominican Republic
+## 211 ornamentals 2006   20.0 Dominican Republic
+## 212 ornamentals 2007   62.0 Dominican Republic
+## 213 ornamentals 2008   45.0 Dominican Republic
+## 214 ornamentals 2009   40.0 Dominican Republic
+## 215 ornamentals 2010   44.0 Dominican Republic
+## 216 ornamentals 2011   45.0 Dominican Republic
+## 217    seaweeds 1976     NA Dominican Republic
+## 218    seaweeds 1977     NA Dominican Republic
+## 219    seaweeds 1978     NA Dominican Republic
+## 220    seaweeds 1979     NA Dominican Republic
+## 221    seaweeds 1980     NA Dominican Republic
+## 222    seaweeds 1981     NA Dominican Republic
+## 223    seaweeds 1982     NA Dominican Republic
+## 224    seaweeds 1983     NA Dominican Republic
+## 225    seaweeds 1984     NA Dominican Republic
+## 226    seaweeds 1985     NA Dominican Republic
+## 227    seaweeds 1986     NA Dominican Republic
+## 228    seaweeds 1987     NA Dominican Republic
+## 229    seaweeds 1988     NA Dominican Republic
+## 230    seaweeds 1989     NA Dominican Republic
+## 231    seaweeds 1990     NA Dominican Republic
+## 232    seaweeds 1991     NA Dominican Republic
+## 233    seaweeds 1992     NA Dominican Republic
+## 234    seaweeds 1993     NA Dominican Republic
+## 235    seaweeds 1994     NA Dominican Republic
+## 236    seaweeds 1995     NA Dominican Republic
+## 237    seaweeds 1996     NA Dominican Republic
+## 238    seaweeds 1997     NA Dominican Republic
+## 239    seaweeds 1998     NA Dominican Republic
+## 240    seaweeds 1999     NA Dominican Republic
+## 241    seaweeds 2000     NA Dominican Republic
+## 242    seaweeds 2001     NA Dominican Republic
+## 243    seaweeds 2002     NA Dominican Republic
+## 244    seaweeds 2003    0.1 Dominican Republic
+## 245    seaweeds 2004    0.0 Dominican Republic
+## 246    seaweeds 2005    0.0 Dominican Republic
+## 247    seaweeds 2006    0.0 Dominican Republic
+## 248    seaweeds 2007    0.1 Dominican Republic
+## 249    seaweeds 2008    0.0 Dominican Republic
+## 250    seaweeds 2009    0.0 Dominican Republic
+## 251    seaweeds 2010    0.0 Dominican Republic
+## 252    seaweeds 2011    0.0 Dominican Republic</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">new &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;int/usd.csv&quot;</span>)
-<span class="kw">filter</span>(new, rgn_id==<span class="dv">45</span>) %&gt;%
+<span class="kw">filter</span>(new, rgn_id==<span class="dv">152</span>) %&gt;%
 <span class="st">  </span><span class="kw">arrange</span>(commodity, year)</code></pre></div>
-<pre><code>##     rgn_id rgn_name                                              commodity
-## 1       45  Eritrea                                     Coral and the like
-## 2       45  Eritrea                                     Coral and the like
-## 3       45  Eritrea                                     Coral and the like
-## 4       45  Eritrea                                     Coral and the like
-## 5       45  Eritrea                                     Coral and the like
-## 6       45  Eritrea                                     Coral and the like
-## 7       45  Eritrea                                     Coral and the like
-## 8       45  Eritrea                                     Coral and the like
-## 9       45  Eritrea                                     Coral and the like
-## 10      45  Eritrea                                     Coral and the like
-## 11      45  Eritrea                                     Coral and the like
-## 12      45  Eritrea                                     Coral and the like
-## 13      45  Eritrea                                     Coral and the like
-## 14      45  Eritrea                                     Coral and the like
-## 15      45  Eritrea                                     Coral and the like
-## 16      45  Eritrea                                     Coral and the like
-## 17      45  Eritrea                                     Coral and the like
-## 18      45  Eritrea                                     Coral and the like
-## 19      45  Eritrea                                     Coral and the like
-## 20      45  Eritrea                                     Coral and the like
-## 21      45  Eritrea                                     Coral and the like
-## 22      45  Eritrea                                     Coral and the like
-## 23      45  Eritrea                                     Coral and the like
-## 24      45  Eritrea                                     Coral and the like
-## 25      45  Eritrea                                     Coral and the like
-## 26      45  Eritrea                                     Coral and the like
-## 27      45  Eritrea                                     Coral and the like
-## 28      45  Eritrea                                     Coral and the like
-## 29      45  Eritrea                                     Coral and the like
-## 30      45  Eritrea                                     Coral and the like
-## 31      45  Eritrea                                     Coral and the like
-## 32      45  Eritrea                                     Coral and the like
-## 33      45  Eritrea                                     Coral and the like
-## 34      45  Eritrea                                     Coral and the like
-## 35      45  Eritrea                                     Coral and the like
-## 36      45  Eritrea                                     Coral and the like
-## 37      45  Eritrea                                     Coral and the like
-## 38      45  Eritrea                                     Coral and the like
-## 39      45  Eritrea                        Miscellaneous corals and shells
-## 40      45  Eritrea                        Miscellaneous corals and shells
-## 41      45  Eritrea                        Miscellaneous corals and shells
-## 42      45  Eritrea                        Miscellaneous corals and shells
-## 43      45  Eritrea                        Miscellaneous corals and shells
-## 44      45  Eritrea                        Miscellaneous corals and shells
-## 45      45  Eritrea                        Miscellaneous corals and shells
-## 46      45  Eritrea                        Miscellaneous corals and shells
-## 47      45  Eritrea                        Miscellaneous corals and shells
-## 48      45  Eritrea                        Miscellaneous corals and shells
-## 49      45  Eritrea                        Miscellaneous corals and shells
-## 50      45  Eritrea                        Miscellaneous corals and shells
-## 51      45  Eritrea                        Miscellaneous corals and shells
-## 52      45  Eritrea                        Miscellaneous corals and shells
-## 53      45  Eritrea                        Miscellaneous corals and shells
-## 54      45  Eritrea                        Miscellaneous corals and shells
-## 55      45  Eritrea                        Miscellaneous corals and shells
-## 56      45  Eritrea                        Miscellaneous corals and shells
-## 57      45  Eritrea                        Miscellaneous corals and shells
-## 58      45  Eritrea                        Miscellaneous corals and shells
-## 59      45  Eritrea                        Miscellaneous corals and shells
-## 60      45  Eritrea                        Miscellaneous corals and shells
-## 61      45  Eritrea                        Miscellaneous corals and shells
-## 62      45  Eritrea                        Miscellaneous corals and shells
-## 63      45  Eritrea                        Miscellaneous corals and shells
-## 64      45  Eritrea                        Miscellaneous corals and shells
-## 65      45  Eritrea                        Miscellaneous corals and shells
-## 66      45  Eritrea                        Miscellaneous corals and shells
-## 67      45  Eritrea                        Miscellaneous corals and shells
-## 68      45  Eritrea                        Miscellaneous corals and shells
-## 69      45  Eritrea                        Miscellaneous corals and shells
-## 70      45  Eritrea                        Miscellaneous corals and shells
-## 71      45  Eritrea                        Miscellaneous corals and shells
-## 72      45  Eritrea                        Miscellaneous corals and shells
-## 73      45  Eritrea                        Miscellaneous corals and shells
-## 74      45  Eritrea                        Miscellaneous corals and shells
-## 75      45  Eritrea                        Miscellaneous corals and shells
-## 76      45  Eritrea                        Miscellaneous corals and shells
-## 77      45  Eritrea                                    Ornamental fish nei
-## 78      45  Eritrea                                    Ornamental fish nei
-## 79      45  Eritrea                                    Ornamental fish nei
-## 80      45  Eritrea                                    Ornamental fish nei
-## 81      45  Eritrea                                    Ornamental fish nei
-## 82      45  Eritrea                                    Ornamental fish nei
-## 83      45  Eritrea                                    Ornamental fish nei
-## 84      45  Eritrea                                    Ornamental fish nei
-## 85      45  Eritrea                                    Ornamental fish nei
-## 86      45  Eritrea                                    Ornamental fish nei
-## 87      45  Eritrea                                    Ornamental fish nei
-## 88      45  Eritrea                                    Ornamental fish nei
-## 89      45  Eritrea                                    Ornamental fish nei
-## 90      45  Eritrea                                    Ornamental fish nei
-## 91      45  Eritrea                                    Ornamental fish nei
-## 92      45  Eritrea                                    Ornamental fish nei
-## 93      45  Eritrea                                    Ornamental fish nei
-## 94      45  Eritrea                                    Ornamental fish nei
-## 95      45  Eritrea                                    Ornamental fish nei
-## 96      45  Eritrea                                    Ornamental fish nei
-## 97      45  Eritrea                                    Ornamental fish nei
-## 98      45  Eritrea                                    Ornamental fish nei
-## 99      45  Eritrea                                    Ornamental fish nei
-## 100     45  Eritrea                                    Ornamental fish nei
-## 101     45  Eritrea                                    Ornamental fish nei
-## 102     45  Eritrea                                    Ornamental fish nei
-## 103     45  Eritrea                                    Ornamental fish nei
-## 104     45  Eritrea                                    Ornamental fish nei
-## 105     45  Eritrea                                    Ornamental fish nei
-## 106     45  Eritrea                                    Ornamental fish nei
-## 107     45  Eritrea                                    Ornamental fish nei
-## 108     45  Eritrea                                    Ornamental fish nei
-## 109     45  Eritrea                                    Ornamental fish nei
-## 110     45  Eritrea                                    Ornamental fish nei
-## 111     45  Eritrea                                    Ornamental fish nei
-## 112     45  Eritrea                                    Ornamental fish nei
-## 113     45  Eritrea                                    Ornamental fish nei
-## 114     45  Eritrea                                    Ornamental fish nei
-## 115     45  Eritrea                              Ornamental saltwater fish
-## 116     45  Eritrea                              Ornamental saltwater fish
-## 117     45  Eritrea                              Ornamental saltwater fish
-## 118     45  Eritrea                              Ornamental saltwater fish
-## 119     45  Eritrea                              Ornamental saltwater fish
-## 120     45  Eritrea                              Ornamental saltwater fish
-## 121     45  Eritrea                              Ornamental saltwater fish
-## 122     45  Eritrea                              Ornamental saltwater fish
-## 123     45  Eritrea                              Ornamental saltwater fish
-## 124     45  Eritrea                              Ornamental saltwater fish
-## 125     45  Eritrea                              Ornamental saltwater fish
-## 126     45  Eritrea                              Ornamental saltwater fish
-## 127     45  Eritrea                              Ornamental saltwater fish
-## 128     45  Eritrea                              Ornamental saltwater fish
-## 129     45  Eritrea                              Ornamental saltwater fish
-## 130     45  Eritrea                              Ornamental saltwater fish
-## 131     45  Eritrea                              Ornamental saltwater fish
-## 132     45  Eritrea                              Ornamental saltwater fish
-## 133     45  Eritrea                              Ornamental saltwater fish
-## 134     45  Eritrea                              Ornamental saltwater fish
-## 135     45  Eritrea                              Ornamental saltwater fish
-## 136     45  Eritrea                              Ornamental saltwater fish
-## 137     45  Eritrea                              Ornamental saltwater fish
-## 138     45  Eritrea                              Ornamental saltwater fish
-## 139     45  Eritrea                              Ornamental saltwater fish
-## 140     45  Eritrea                              Ornamental saltwater fish
-## 141     45  Eritrea                              Ornamental saltwater fish
-## 142     45  Eritrea                              Ornamental saltwater fish
-## 143     45  Eritrea                              Ornamental saltwater fish
-## 144     45  Eritrea                              Ornamental saltwater fish
-## 145     45  Eritrea                              Ornamental saltwater fish
-## 146     45  Eritrea                              Ornamental saltwater fish
-## 147     45  Eritrea                              Ornamental saltwater fish
-## 148     45  Eritrea                              Ornamental saltwater fish
-## 149     45  Eritrea                              Ornamental saltwater fish
-## 150     45  Eritrea                              Ornamental saltwater fish
-## 151     45  Eritrea                              Ornamental saltwater fish
-## 152     45  Eritrea                              Ornamental saltwater fish
-## 153     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 154     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 155     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 156     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 157     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 158     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 159     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 160     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 161     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 162     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 163     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 164     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 165     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 166     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 167     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 168     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 169     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 170     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 171     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 172     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 173     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 174     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 175     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 176     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 177     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 178     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 179     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 180     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 181     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 182     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 183     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 184     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 185     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 186     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 187     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 188     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 189     45  Eritrea Other seaweeds and aquatic plants and products thereof
-## 190     45  Eritrea Other seaweeds and aquatic plants and products thereof
-##         product year usd
-## 1        corals 1976  NA
-## 2        corals 1977  NA
-## 3        corals 1978  NA
-## 4        corals 1979  NA
-## 5        corals 1980  NA
-## 6        corals 1981  NA
-## 7        corals 1982  NA
-## 8        corals 1983  NA
-## 9        corals 1984  NA
-## 10       corals 1985  NA
-## 11       corals 1986  NA
-## 12       corals 1987  NA
-## 13       corals 1988  NA
-## 14       corals 1989  NA
-## 15       corals 1990  NA
-## 16       corals 1991  NA
-## 17       corals 1992  NA
-## 18       corals 1993  NA
-## 19       corals 1994  NA
-## 20       corals 1995  NA
-## 21       corals 1996  NA
-## 22       corals 1997  NA
-## 23       corals 1998  NA
-## 24       corals 1999  NA
-## 25       corals 2000  14
-## 26       corals 2001  NA
-## 27       corals 2002  NA
-## 28       corals 2003  NA
-## 29       corals 2004  NA
-## 30       corals 2005  51
-## 31       corals 2006   0
-## 32       corals 2007  22
-## 33       corals 2008   0
-## 34       corals 2009   0
-## 35       corals 2010   0
-## 36       corals 2011   0
-## 37       corals 2012   0
-## 38       corals 2013   0
-## 39       shells 1976  NA
-## 40       shells 1977  NA
-## 41       shells 1978  NA
-## 42       shells 1979  NA
-## 43       shells 1980  NA
-## 44       shells 1981  NA
-## 45       shells 1982  NA
-## 46       shells 1983  NA
-## 47       shells 1984  NA
-## 48       shells 1985  NA
-## 49       shells 1986  NA
-## 50       shells 1987  NA
-## 51       shells 1988  NA
-## 52       shells 1989  NA
-## 53       shells 1990  NA
-## 54       shells 1991  NA
-## 55       shells 1992  NA
-## 56       shells 1993  NA
-## 57       shells 1994  NA
-## 58       shells 1995  NA
-## 59       shells 1996  NA
-## 60       shells 1997  NA
-## 61       shells 1998  NA
-## 62       shells 1999  NA
-## 63       shells 2000  NA
-## 64       shells 2001  NA
-## 65       shells 2002  NA
-## 66       shells 2003 574
-## 67       shells 2004  62
-## 68       shells 2005   0
-## 69       shells 2006   0
-## 70       shells 2007   0
-## 71       shells 2008   0
-## 72       shells 2009   0
-## 73       shells 2010   0
-## 74       shells 2011   0
-## 75       shells 2012   0
-## 76       shells 2013   0
-## 77  ornamentals 1976  NA
-## 78  ornamentals 1977  NA
-## 79  ornamentals 1978  NA
-## 80  ornamentals 1979  NA
-## 81  ornamentals 1980  NA
-## 82  ornamentals 1981  NA
-## 83  ornamentals 1982  NA
-## 84  ornamentals 1983  NA
-## 85  ornamentals 1984  NA
-## 86  ornamentals 1985  NA
-## 87  ornamentals 1986  NA
-## 88  ornamentals 1987  NA
-## 89  ornamentals 1988  NA
-## 90  ornamentals 1989  NA
-## 91  ornamentals 1990  NA
-## 92  ornamentals 1991  NA
-## 93  ornamentals 1992  NA
-## 94  ornamentals 1993  NA
-## 95  ornamentals 1994  NA
-## 96  ornamentals 1995  53
-## 97  ornamentals 1996 119
-## 98  ornamentals 1997  98
-## 99  ornamentals 1998  14
-## 100 ornamentals 1999   5
-## 101 ornamentals 2000  NA
-## 102 ornamentals 2001  NA
-## 103 ornamentals 2002  NA
-## 104 ornamentals 2003  NA
-## 105 ornamentals 2004  NA
-## 106 ornamentals 2005  NA
-## 107 ornamentals 2006  NA
-## 108 ornamentals 2007  NA
-## 109 ornamentals 2008 150
-## 110 ornamentals 2009 114
-## 111 ornamentals 2010   8
-## 112 ornamentals 2011   4
-## 113 ornamentals 2012   0
-## 114 ornamentals 2013   0
-## 115 ornamentals 1976  NA
-## 116 ornamentals 1977  NA
-## 117 ornamentals 1978  NA
-## 118 ornamentals 1979  NA
-## 119 ornamentals 1980  NA
-## 120 ornamentals 1981  NA
-## 121 ornamentals 1982  NA
-## 122 ornamentals 1983  NA
-## 123 ornamentals 1984  NA
-## 124 ornamentals 1985  NA
-## 125 ornamentals 1986  NA
-## 126 ornamentals 1987  NA
-## 127 ornamentals 1988  NA
-## 128 ornamentals 1989  NA
-## 129 ornamentals 1990  NA
-## 130 ornamentals 1991  NA
-## 131 ornamentals 1992  NA
-## 132 ornamentals 1993  NA
-## 133 ornamentals 1994  NA
-## 134 ornamentals 1995  NA
-## 135 ornamentals 1996  NA
-## 136 ornamentals 1997  NA
-## 137 ornamentals 1998  NA
-## 138 ornamentals 1999  NA
-## 139 ornamentals 2000  NA
-## 140 ornamentals 2001  NA
-## 141 ornamentals 2002  NA
-## 142 ornamentals 2003  NA
-## 143 ornamentals 2004  NA
-## 144 ornamentals 2005  NA
-## 145 ornamentals 2006  NA
-## 146 ornamentals 2007  NA
-## 147 ornamentals 2008  33
-## 148 ornamentals 2009  13
-## 149 ornamentals 2010   0
-## 150 ornamentals 2011   0
-## 151 ornamentals 2012   0
-## 152 ornamentals 2013   0
-## 153    seaweeds 1976  NA
-## 154    seaweeds 1977  NA
-## 155    seaweeds 1978  NA
-## 156    seaweeds 1979  NA
-## 157    seaweeds 1980  NA
-## 158    seaweeds 1981  NA
-## 159    seaweeds 1982  NA
-## 160    seaweeds 1983  NA
-## 161    seaweeds 1984  NA
-## 162    seaweeds 1985  NA
-## 163    seaweeds 1986  NA
-## 164    seaweeds 1987  NA
-## 165    seaweeds 1988  NA
-## 166    seaweeds 1989  NA
-## 167    seaweeds 1990  NA
-## 168    seaweeds 1991  NA
-## 169    seaweeds 1992  NA
-## 170    seaweeds 1993  NA
-## 171    seaweeds 1994  NA
-## 172    seaweeds 1995  NA
-## 173    seaweeds 1996  NA
-## 174    seaweeds 1997  NA
-## 175    seaweeds 1998  NA
-## 176    seaweeds 1999  NA
-## 177    seaweeds 2000  NA
-## 178    seaweeds 2001  NA
-## 179    seaweeds 2002  NA
-## 180    seaweeds 2003  45
-## 181    seaweeds 2004   1
-## 182    seaweeds 2005  21
-## 183    seaweeds 2006   0
-## 184    seaweeds 2007   0
-## 185    seaweeds 2008   0
-## 186    seaweeds 2009   0
-## 187    seaweeds 2010   0
-## 188    seaweeds 2011   0
-## 189    seaweeds 2012   0
-## 190    seaweeds 2013   0</code></pre>
+<pre><code>##     rgn_id rgn_name
+## 1      152    Samoa
+## 2      152    Samoa
+## 3      152    Samoa
+## 4      152    Samoa
+## 5      152    Samoa
+## 6      152    Samoa
+## 7      152    Samoa
+## 8      152    Samoa
+## 9      152    Samoa
+## 10     152    Samoa
+## 11     152    Samoa
+## 12     152    Samoa
+## 13     152    Samoa
+## 14     152    Samoa
+## 15     152    Samoa
+## 16     152    Samoa
+## 17     152    Samoa
+## 18     152    Samoa
+## 19     152    Samoa
+## 20     152    Samoa
+## 21     152    Samoa
+## 22     152    Samoa
+## 23     152    Samoa
+## 24     152    Samoa
+## 25     152    Samoa
+## 26     152    Samoa
+## 27     152    Samoa
+## 28     152    Samoa
+## 29     152    Samoa
+## 30     152    Samoa
+## 31     152    Samoa
+## 32     152    Samoa
+## 33     152    Samoa
+## 34     152    Samoa
+## 35     152    Samoa
+## 36     152    Samoa
+## 37     152    Samoa
+## 38     152    Samoa
+## 39     152    Samoa
+## 40     152    Samoa
+## 41     152    Samoa
+## 42     152    Samoa
+## 43     152    Samoa
+## 44     152    Samoa
+## 45     152    Samoa
+## 46     152    Samoa
+## 47     152    Samoa
+## 48     152    Samoa
+## 49     152    Samoa
+## 50     152    Samoa
+## 51     152    Samoa
+## 52     152    Samoa
+## 53     152    Samoa
+## 54     152    Samoa
+## 55     152    Samoa
+## 56     152    Samoa
+## 57     152    Samoa
+## 58     152    Samoa
+## 59     152    Samoa
+## 60     152    Samoa
+## 61     152    Samoa
+## 62     152    Samoa
+## 63     152    Samoa
+## 64     152    Samoa
+## 65     152    Samoa
+## 66     152    Samoa
+## 67     152    Samoa
+## 68     152    Samoa
+## 69     152    Samoa
+## 70     152    Samoa
+## 71     152    Samoa
+## 72     152    Samoa
+## 73     152    Samoa
+## 74     152    Samoa
+## 75     152    Samoa
+## 76     152    Samoa
+## 77     152    Samoa
+## 78     152    Samoa
+## 79     152    Samoa
+## 80     152    Samoa
+## 81     152    Samoa
+## 82     152    Samoa
+## 83     152    Samoa
+## 84     152    Samoa
+## 85     152    Samoa
+## 86     152    Samoa
+## 87     152    Samoa
+## 88     152    Samoa
+## 89     152    Samoa
+## 90     152    Samoa
+## 91     152    Samoa
+## 92     152    Samoa
+## 93     152    Samoa
+## 94     152    Samoa
+## 95     152    Samoa
+## 96     152    Samoa
+## 97     152    Samoa
+## 98     152    Samoa
+## 99     152    Samoa
+## 100    152    Samoa
+## 101    152    Samoa
+## 102    152    Samoa
+## 103    152    Samoa
+## 104    152    Samoa
+## 105    152    Samoa
+## 106    152    Samoa
+## 107    152    Samoa
+## 108    152    Samoa
+## 109    152    Samoa
+## 110    152    Samoa
+## 111    152    Samoa
+## 112    152    Samoa
+## 113    152    Samoa
+## 114    152    Samoa
+## 115    152    Samoa
+## 116    152    Samoa
+## 117    152    Samoa
+## 118    152    Samoa
+## 119    152    Samoa
+## 120    152    Samoa
+## 121    152    Samoa
+## 122    152    Samoa
+## 123    152    Samoa
+## 124    152    Samoa
+## 125    152    Samoa
+## 126    152    Samoa
+## 127    152    Samoa
+## 128    152    Samoa
+## 129    152    Samoa
+## 130    152    Samoa
+## 131    152    Samoa
+## 132    152    Samoa
+## 133    152    Samoa
+## 134    152    Samoa
+## 135    152    Samoa
+## 136    152    Samoa
+## 137    152    Samoa
+## 138    152    Samoa
+## 139    152    Samoa
+## 140    152    Samoa
+## 141    152    Samoa
+## 142    152    Samoa
+## 143    152    Samoa
+## 144    152    Samoa
+## 145    152    Samoa
+## 146    152    Samoa
+## 147    152    Samoa
+## 148    152    Samoa
+## 149    152    Samoa
+## 150    152    Samoa
+## 151    152    Samoa
+## 152    152    Samoa
+## 153    152    Samoa
+## 154    152    Samoa
+## 155    152    Samoa
+## 156    152    Samoa
+## 157    152    Samoa
+## 158    152    Samoa
+## 159    152    Samoa
+## 160    152    Samoa
+## 161    152    Samoa
+## 162    152    Samoa
+## 163    152    Samoa
+## 164    152    Samoa
+## 165    152    Samoa
+## 166    152    Samoa
+## 167    152    Samoa
+## 168    152    Samoa
+## 169    152    Samoa
+## 170    152    Samoa
+## 171    152    Samoa
+## 172    152    Samoa
+## 173    152    Samoa
+## 174    152    Samoa
+## 175    152    Samoa
+## 176    152    Samoa
+## 177    152    Samoa
+## 178    152    Samoa
+## 179    152    Samoa
+## 180    152    Samoa
+## 181    152    Samoa
+## 182    152    Samoa
+## 183    152    Samoa
+## 184    152    Samoa
+## 185    152    Samoa
+## 186    152    Samoa
+## 187    152    Samoa
+## 188    152    Samoa
+## 189    152    Samoa
+## 190    152    Samoa
+##                                                      commodity     product
+## 1                                           Coral and the like      corals
+## 2                                           Coral and the like      corals
+## 3                                           Coral and the like      corals
+## 4                                           Coral and the like      corals
+## 5                                           Coral and the like      corals
+## 6                                           Coral and the like      corals
+## 7                                           Coral and the like      corals
+## 8                                           Coral and the like      corals
+## 9                                           Coral and the like      corals
+## 10                                          Coral and the like      corals
+## 11                                          Coral and the like      corals
+## 12                                          Coral and the like      corals
+## 13                                          Coral and the like      corals
+## 14                                          Coral and the like      corals
+## 15                                          Coral and the like      corals
+## 16                                          Coral and the like      corals
+## 17                                          Coral and the like      corals
+## 18                                          Coral and the like      corals
+## 19                                          Coral and the like      corals
+## 20                                          Coral and the like      corals
+## 21                                          Coral and the like      corals
+## 22                                          Coral and the like      corals
+## 23                                          Coral and the like      corals
+## 24                                          Coral and the like      corals
+## 25                                          Coral and the like      corals
+## 26                                          Coral and the like      corals
+## 27                                          Coral and the like      corals
+## 28                                          Coral and the like      corals
+## 29                                          Coral and the like      corals
+## 30                                          Coral and the like      corals
+## 31                                          Coral and the like      corals
+## 32                                          Coral and the like      corals
+## 33                                          Coral and the like      corals
+## 34                                          Coral and the like      corals
+## 35                                          Coral and the like      corals
+## 36                                          Coral and the like      corals
+## 37                                          Coral and the like      corals
+## 38                                          Coral and the like      corals
+## 39                             Miscellaneous corals and shells      shells
+## 40                             Miscellaneous corals and shells      shells
+## 41                             Miscellaneous corals and shells      shells
+## 42                             Miscellaneous corals and shells      shells
+## 43                             Miscellaneous corals and shells      shells
+## 44                             Miscellaneous corals and shells      shells
+## 45                             Miscellaneous corals and shells      shells
+## 46                             Miscellaneous corals and shells      shells
+## 47                             Miscellaneous corals and shells      shells
+## 48                             Miscellaneous corals and shells      shells
+## 49                             Miscellaneous corals and shells      shells
+## 50                             Miscellaneous corals and shells      shells
+## 51                             Miscellaneous corals and shells      shells
+## 52                             Miscellaneous corals and shells      shells
+## 53                             Miscellaneous corals and shells      shells
+## 54                             Miscellaneous corals and shells      shells
+## 55                             Miscellaneous corals and shells      shells
+## 56                             Miscellaneous corals and shells      shells
+## 57                             Miscellaneous corals and shells      shells
+## 58                             Miscellaneous corals and shells      shells
+## 59                             Miscellaneous corals and shells      shells
+## 60                             Miscellaneous corals and shells      shells
+## 61                             Miscellaneous corals and shells      shells
+## 62                             Miscellaneous corals and shells      shells
+## 63                             Miscellaneous corals and shells      shells
+## 64                             Miscellaneous corals and shells      shells
+## 65                             Miscellaneous corals and shells      shells
+## 66                             Miscellaneous corals and shells      shells
+## 67                             Miscellaneous corals and shells      shells
+## 68                             Miscellaneous corals and shells      shells
+## 69                             Miscellaneous corals and shells      shells
+## 70                             Miscellaneous corals and shells      shells
+## 71                             Miscellaneous corals and shells      shells
+## 72                             Miscellaneous corals and shells      shells
+## 73                             Miscellaneous corals and shells      shells
+## 74                             Miscellaneous corals and shells      shells
+## 75                             Miscellaneous corals and shells      shells
+## 76                             Miscellaneous corals and shells      shells
+## 77                                         Ornamental fish nei ornamentals
+## 78                                         Ornamental fish nei ornamentals
+## 79                                         Ornamental fish nei ornamentals
+## 80                                         Ornamental fish nei ornamentals
+## 81                                         Ornamental fish nei ornamentals
+## 82                                         Ornamental fish nei ornamentals
+## 83                                         Ornamental fish nei ornamentals
+## 84                                         Ornamental fish nei ornamentals
+## 85                                         Ornamental fish nei ornamentals
+## 86                                         Ornamental fish nei ornamentals
+## 87                                         Ornamental fish nei ornamentals
+## 88                                         Ornamental fish nei ornamentals
+## 89                                         Ornamental fish nei ornamentals
+## 90                                         Ornamental fish nei ornamentals
+## 91                                         Ornamental fish nei ornamentals
+## 92                                         Ornamental fish nei ornamentals
+## 93                                         Ornamental fish nei ornamentals
+## 94                                         Ornamental fish nei ornamentals
+## 95                                         Ornamental fish nei ornamentals
+## 96                                         Ornamental fish nei ornamentals
+## 97                                         Ornamental fish nei ornamentals
+## 98                                         Ornamental fish nei ornamentals
+## 99                                         Ornamental fish nei ornamentals
+## 100                                        Ornamental fish nei ornamentals
+## 101                                        Ornamental fish nei ornamentals
+## 102                                        Ornamental fish nei ornamentals
+## 103                                        Ornamental fish nei ornamentals
+## 104                                        Ornamental fish nei ornamentals
+## 105                                        Ornamental fish nei ornamentals
+## 106                                        Ornamental fish nei ornamentals
+## 107                                        Ornamental fish nei ornamentals
+## 108                                        Ornamental fish nei ornamentals
+## 109                                        Ornamental fish nei ornamentals
+## 110                                        Ornamental fish nei ornamentals
+## 111                                        Ornamental fish nei ornamentals
+## 112                                        Ornamental fish nei ornamentals
+## 113                                        Ornamental fish nei ornamentals
+## 114                                        Ornamental fish nei ornamentals
+## 115                                  Ornamental saltwater fish ornamentals
+## 116                                  Ornamental saltwater fish ornamentals
+## 117                                  Ornamental saltwater fish ornamentals
+## 118                                  Ornamental saltwater fish ornamentals
+## 119                                  Ornamental saltwater fish ornamentals
+## 120                                  Ornamental saltwater fish ornamentals
+## 121                                  Ornamental saltwater fish ornamentals
+## 122                                  Ornamental saltwater fish ornamentals
+## 123                                  Ornamental saltwater fish ornamentals
+## 124                                  Ornamental saltwater fish ornamentals
+## 125                                  Ornamental saltwater fish ornamentals
+## 126                                  Ornamental saltwater fish ornamentals
+## 127                                  Ornamental saltwater fish ornamentals
+## 128                                  Ornamental saltwater fish ornamentals
+## 129                                  Ornamental saltwater fish ornamentals
+## 130                                  Ornamental saltwater fish ornamentals
+## 131                                  Ornamental saltwater fish ornamentals
+## 132                                  Ornamental saltwater fish ornamentals
+## 133                                  Ornamental saltwater fish ornamentals
+## 134                                  Ornamental saltwater fish ornamentals
+## 135                                  Ornamental saltwater fish ornamentals
+## 136                                  Ornamental saltwater fish ornamentals
+## 137                                  Ornamental saltwater fish ornamentals
+## 138                                  Ornamental saltwater fish ornamentals
+## 139                                  Ornamental saltwater fish ornamentals
+## 140                                  Ornamental saltwater fish ornamentals
+## 141                                  Ornamental saltwater fish ornamentals
+## 142                                  Ornamental saltwater fish ornamentals
+## 143                                  Ornamental saltwater fish ornamentals
+## 144                                  Ornamental saltwater fish ornamentals
+## 145                                  Ornamental saltwater fish ornamentals
+## 146                                  Ornamental saltwater fish ornamentals
+## 147                                  Ornamental saltwater fish ornamentals
+## 148                                  Ornamental saltwater fish ornamentals
+## 149                                  Ornamental saltwater fish ornamentals
+## 150                                  Ornamental saltwater fish ornamentals
+## 151                                  Ornamental saltwater fish ornamentals
+## 152                                  Ornamental saltwater fish ornamentals
+## 153 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 154 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 155 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 156 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 157 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 158 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 159 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 160 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 161 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 162 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 163 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 164 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 165 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 166 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 167 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 168 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 169 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 170 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 171 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 172 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 173 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 174 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 175 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 176 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 177 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 178 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 179 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 180 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 181 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 182 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 183 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 184 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 185 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 186 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 187 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 188 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 189 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+## 190 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
+##     year   usd
+## 1   1976    NA
+## 2   1977    NA
+## 3   1978    NA
+## 4   1979    NA
+## 5   1980    NA
+## 6   1981    NA
+## 7   1982    NA
+## 8   1983    NA
+## 9   1984    NA
+## 10  1985    NA
+## 11  1986    NA
+## 12  1987    NA
+## 13  1988    NA
+## 14  1989    NA
+## 15  1990    NA
+## 16  1991    NA
+## 17  1992    NA
+## 18  1993    NA
+## 19  1994    NA
+## 20  1995    NA
+## 21  1996    NA
+## 22  1997    NA
+## 23  1998 152.0
+## 24  1999 160.0
+## 25  2000 311.0
+## 26  2001   0.0
+## 27  2002   0.0
+## 28  2003   0.0
+## 29  2004   0.0
+## 30  2005   0.0
+## 31  2006   0.0
+## 32  2007   0.0
+## 33  2008   0.0
+## 34  2009   0.0
+## 35  2010   0.0
+## 36  2011   0.0
+## 37  2012   0.0
+## 38  2013   0.0
+## 39  1976    NA
+## 40  1977    NA
+## 41  1978    NA
+## 42  1979    NA
+## 43  1980    NA
+## 44  1981    NA
+## 45  1982    NA
+## 46  1983    NA
+## 47  1984    NA
+## 48  1985    NA
+## 49  1986    NA
+## 50  1987    NA
+## 51  1988    NA
+## 52  1989    NA
+## 53  1990    NA
+## 54  1991    NA
+## 55  1992    NA
+## 56  1993    NA
+## 57  1994    NA
+## 58  1995    NA
+## 59  1996    NA
+## 60  1997    NA
+## 61  1998    NA
+## 62  1999    NA
+## 63  2000    NA
+## 64  2001    NA
+## 65  2002    NA
+## 66  2003    NA
+## 67  2004    NA
+## 68  2005  60.0
+## 69  2006    NA
+## 70  2007   0.1
+## 71  2008   1.0
+## 72  2009    NA
+## 73  2010    NA
+## 74  2011    NA
+## 75  2012    NA
+## 76  2013   0.1
+## 77  1976    NA
+## 78  1977    NA
+## 79  1978    NA
+## 80  1979    NA
+## 81  1980    NA
+## 82  1981    NA
+## 83  1982    NA
+## 84  1983    NA
+## 85  1984    NA
+## 86  1985    NA
+## 87  1986    NA
+## 88  1987    NA
+## 89  1988    NA
+## 90  1989    NA
+## 91  1990    NA
+## 92  1991    NA
+## 93  1992    NA
+## 94  1993    NA
+## 95  1994    NA
+## 96  1995  18.0
+## 97  1996   2.0
+## 98  1997   6.0
+## 99  1998  11.0
+## 100 1999  26.0
+## 101 2000    NA
+## 102 2001   0.1
+## 103 2002   1.0
+## 104 2003   0.1
+## 105 2004   0.1
+## 106 2005   0.1
+## 107 2006   0.0
+## 108 2007   1.0
+## 109 2008   0.1
+## 110 2009   0.0
+## 111 2010  48.0
+## 112 2011   0.0
+## 113 2012   0.0
+## 114 2013   0.0
+## 115 1976    NA
+## 116 1977    NA
+## 117 1978    NA
+## 118 1979    NA
+## 119 1980    NA
+## 120 1981    NA
+## 121 1982    NA
+## 122 1983    NA
+## 123 1984    NA
+## 124 1985    NA
+## 125 1986    NA
+## 126 1987    NA
+## 127 1988    NA
+## 128 1989    NA
+## 129 1990    NA
+## 130 1991    NA
+## 131 1992    NA
+## 132 1993    NA
+## 133 1994    NA
+## 134 1995    NA
+## 135 1996    NA
+## 136 1997    NA
+## 137 1998    NA
+## 138 1999    NA
+## 139 2000    NA
+## 140 2001    NA
+## 141 2002    NA
+## 142 2003    NA
+## 143 2004    NA
+## 144 2005    NA
+## 145 2006    NA
+## 146 2007    NA
+## 147 2008    NA
+## 148 2009    NA
+## 149 2010    NA
+## 150 2011    NA
+## 151 2012    NA
+## 152 2013   0.1
+## 153 1976    NA
+## 154 1977    NA
+## 155 1978    NA
+## 156 1979    NA
+## 157 1980    NA
+## 158 1981    NA
+## 159 1982    NA
+## 160 1983    NA
+## 161 1984    NA
+## 162 1985    NA
+## 163 1986    NA
+## 164 1987    NA
+## 165 1988    NA
+## 166 1989    NA
+## 167 1990    NA
+## 168 1991    NA
+## 169 1992    NA
+## 170 1993    NA
+## 171 1994    NA
+## 172 1995    NA
+## 173 1996    NA
+## 174 1997    NA
+## 175 1998    NA
+## 176 1999    NA
+## 177 2000    NA
+## 178 2001    NA
+## 179 2002    NA
+## 180 2003    NA
+## 181 2004    NA
+## 182 2005    NA
+## 183 2006    NA
+## 184 2007    NA
+## 185 2008    NA
+## 186 2009    NA
+## 187 2010    NA
+## 188 2011    NA
+## 189 2012   0.1
+## 190 2013   1.0</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">old &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;../v2014_test/intermediate/usd.csv&quot;</span>)
-<span class="kw">filter</span>(old, rgn_id==<span class="dv">45</span>) %&gt;%
+<span class="kw">filter</span>(old, rgn_id==<span class="dv">152</span>) %&gt;%
 <span class="st">  </span><span class="kw">arrange</span>(commodity, year)</code></pre></div>
-<pre><code>##     rgn_id                                              commodity
-## 1       45                                     Coral and the like
-## 2       45                                     Coral and the like
-## 3       45                                     Coral and the like
-## 4       45                                     Coral and the like
-## 5       45                                     Coral and the like
-## 6       45                                     Coral and the like
-## 7       45                                     Coral and the like
-## 8       45                                     Coral and the like
-## 9       45                                     Coral and the like
-## 10      45                                     Coral and the like
-## 11      45                                     Coral and the like
-## 12      45                                     Coral and the like
-## 13      45                                     Coral and the like
-## 14      45                                     Coral and the like
-## 15      45                                     Coral and the like
-## 16      45                                     Coral and the like
-## 17      45                                     Coral and the like
-## 18      45                                     Coral and the like
-## 19      45                                     Coral and the like
-## 20      45                                     Coral and the like
-## 21      45                                     Coral and the like
-## 22      45                                     Coral and the like
-## 23      45                                     Coral and the like
-## 24      45                                     Coral and the like
-## 25      45                                     Coral and the like
-## 26      45                                     Coral and the like
-## 27      45                                     Coral and the like
-## 28      45                                     Coral and the like
-## 29      45                                     Coral and the like
-## 30      45                                     Coral and the like
-## 31      45                                     Coral and the like
-## 32      45                                     Coral and the like
-## 33      45                                     Coral and the like
-## 34      45                                     Coral and the like
-## 35      45                                     Coral and the like
-## 36      45                                     Coral and the like
-## 37      45                        Miscellaneous corals and shells
-## 38      45                        Miscellaneous corals and shells
-## 39      45                        Miscellaneous corals and shells
-## 40      45                        Miscellaneous corals and shells
-## 41      45                        Miscellaneous corals and shells
-## 42      45                        Miscellaneous corals and shells
-## 43      45                        Miscellaneous corals and shells
-## 44      45                        Miscellaneous corals and shells
-## 45      45                        Miscellaneous corals and shells
-## 46      45                        Miscellaneous corals and shells
-## 47      45                        Miscellaneous corals and shells
-## 48      45                        Miscellaneous corals and shells
-## 49      45                        Miscellaneous corals and shells
-## 50      45                        Miscellaneous corals and shells
-## 51      45                        Miscellaneous corals and shells
-## 52      45                        Miscellaneous corals and shells
-## 53      45                        Miscellaneous corals and shells
-## 54      45                        Miscellaneous corals and shells
-## 55      45                        Miscellaneous corals and shells
-## 56      45                        Miscellaneous corals and shells
-## 57      45                        Miscellaneous corals and shells
-## 58      45                        Miscellaneous corals and shells
-## 59      45                        Miscellaneous corals and shells
-## 60      45                        Miscellaneous corals and shells
-## 61      45                        Miscellaneous corals and shells
-## 62      45                        Miscellaneous corals and shells
-## 63      45                        Miscellaneous corals and shells
-## 64      45                        Miscellaneous corals and shells
-## 65      45                        Miscellaneous corals and shells
-## 66      45                        Miscellaneous corals and shells
-## 67      45                        Miscellaneous corals and shells
-## 68      45                        Miscellaneous corals and shells
-## 69      45                        Miscellaneous corals and shells
-## 70      45                        Miscellaneous corals and shells
-## 71      45                        Miscellaneous corals and shells
-## 72      45                        Miscellaneous corals and shells
-## 73      45                                    Ornamental fish nei
-## 74      45                                    Ornamental fish nei
-## 75      45                                    Ornamental fish nei
-## 76      45                                    Ornamental fish nei
-## 77      45                                    Ornamental fish nei
-## 78      45                                    Ornamental fish nei
-## 79      45                                    Ornamental fish nei
-## 80      45                                    Ornamental fish nei
-## 81      45                                    Ornamental fish nei
-## 82      45                                    Ornamental fish nei
-## 83      45                                    Ornamental fish nei
-## 84      45                                    Ornamental fish nei
-## 85      45                                    Ornamental fish nei
-## 86      45                                    Ornamental fish nei
-## 87      45                                    Ornamental fish nei
-## 88      45                                    Ornamental fish nei
-## 89      45                                    Ornamental fish nei
-## 90      45                                    Ornamental fish nei
-## 91      45                                    Ornamental fish nei
-## 92      45                                    Ornamental fish nei
-## 93      45                                    Ornamental fish nei
-## 94      45                                    Ornamental fish nei
-## 95      45                                    Ornamental fish nei
-## 96      45                                    Ornamental fish nei
-## 97      45                                    Ornamental fish nei
-## 98      45                                    Ornamental fish nei
-## 99      45                                    Ornamental fish nei
-## 100     45                                    Ornamental fish nei
-## 101     45                                    Ornamental fish nei
-## 102     45                                    Ornamental fish nei
-## 103     45                                    Ornamental fish nei
-## 104     45                                    Ornamental fish nei
-## 105     45                                    Ornamental fish nei
-## 106     45                                    Ornamental fish nei
-## 107     45                                    Ornamental fish nei
-## 108     45                                    Ornamental fish nei
-## 109     45                              Ornamental saltwater fish
-## 110     45                              Ornamental saltwater fish
-## 111     45                              Ornamental saltwater fish
-## 112     45                              Ornamental saltwater fish
-## 113     45                              Ornamental saltwater fish
-## 114     45                              Ornamental saltwater fish
-## 115     45                              Ornamental saltwater fish
-## 116     45                              Ornamental saltwater fish
-## 117     45                              Ornamental saltwater fish
-## 118     45                              Ornamental saltwater fish
-## 119     45                              Ornamental saltwater fish
-## 120     45                              Ornamental saltwater fish
-## 121     45                              Ornamental saltwater fish
-## 122     45                              Ornamental saltwater fish
-## 123     45                              Ornamental saltwater fish
-## 124     45                              Ornamental saltwater fish
-## 125     45                              Ornamental saltwater fish
-## 126     45                              Ornamental saltwater fish
-## 127     45                              Ornamental saltwater fish
-## 128     45                              Ornamental saltwater fish
-## 129     45                              Ornamental saltwater fish
-## 130     45                              Ornamental saltwater fish
-## 131     45                              Ornamental saltwater fish
-## 132     45                              Ornamental saltwater fish
-## 133     45                              Ornamental saltwater fish
-## 134     45                              Ornamental saltwater fish
-## 135     45                              Ornamental saltwater fish
-## 136     45                              Ornamental saltwater fish
-## 137     45                              Ornamental saltwater fish
-## 138     45                              Ornamental saltwater fish
-## 139     45                              Ornamental saltwater fish
-## 140     45                              Ornamental saltwater fish
-## 141     45                              Ornamental saltwater fish
-## 142     45                              Ornamental saltwater fish
-## 143     45                              Ornamental saltwater fish
-## 144     45                              Ornamental saltwater fish
-## 145     45 Other seaweeds and aquatic plants and products thereof
-## 146     45 Other seaweeds and aquatic plants and products thereof
-## 147     45 Other seaweeds and aquatic plants and products thereof
-## 148     45 Other seaweeds and aquatic plants and products thereof
-## 149     45 Other seaweeds and aquatic plants and products thereof
-## 150     45 Other seaweeds and aquatic plants and products thereof
-## 151     45 Other seaweeds and aquatic plants and products thereof
-## 152     45 Other seaweeds and aquatic plants and products thereof
-## 153     45 Other seaweeds and aquatic plants and products thereof
-## 154     45 Other seaweeds and aquatic plants and products thereof
-## 155     45 Other seaweeds and aquatic plants and products thereof
-## 156     45 Other seaweeds and aquatic plants and products thereof
-## 157     45 Other seaweeds and aquatic plants and products thereof
-## 158     45 Other seaweeds and aquatic plants and products thereof
-## 159     45 Other seaweeds and aquatic plants and products thereof
-## 160     45 Other seaweeds and aquatic plants and products thereof
-## 161     45 Other seaweeds and aquatic plants and products thereof
-## 162     45 Other seaweeds and aquatic plants and products thereof
-## 163     45 Other seaweeds and aquatic plants and products thereof
-## 164     45 Other seaweeds and aquatic plants and products thereof
-## 165     45 Other seaweeds and aquatic plants and products thereof
-## 166     45 Other seaweeds and aquatic plants and products thereof
-## 167     45 Other seaweeds and aquatic plants and products thereof
-## 168     45 Other seaweeds and aquatic plants and products thereof
-## 169     45 Other seaweeds and aquatic plants and products thereof
-## 170     45 Other seaweeds and aquatic plants and products thereof
-## 171     45 Other seaweeds and aquatic plants and products thereof
-## 172     45 Other seaweeds and aquatic plants and products thereof
-## 173     45 Other seaweeds and aquatic plants and products thereof
-## 174     45 Other seaweeds and aquatic plants and products thereof
-## 175     45 Other seaweeds and aquatic plants and products thereof
-## 176     45 Other seaweeds and aquatic plants and products thereof
-## 177     45 Other seaweeds and aquatic plants and products thereof
-## 178     45 Other seaweeds and aquatic plants and products thereof
-## 179     45 Other seaweeds and aquatic plants and products thereof
-## 180     45 Other seaweeds and aquatic plants and products thereof
-##         product year usd rgn_name
-## 1        corals 1976  NA  Eritrea
-## 2        corals 1977  NA  Eritrea
-## 3        corals 1978  NA  Eritrea
-## 4        corals 1979  NA  Eritrea
-## 5        corals 1980  NA  Eritrea
-## 6        corals 1981  NA  Eritrea
-## 7        corals 1982  NA  Eritrea
-## 8        corals 1983  NA  Eritrea
-## 9        corals 1984  NA  Eritrea
-## 10       corals 1985  NA  Eritrea
-## 11       corals 1986  NA  Eritrea
-## 12       corals 1987  NA  Eritrea
-## 13       corals 1988  NA  Eritrea
-## 14       corals 1989  NA  Eritrea
-## 15       corals 1990  NA  Eritrea
-## 16       corals 1991  NA  Eritrea
-## 17       corals 1992  NA  Eritrea
-## 18       corals 1993  NA  Eritrea
-## 19       corals 1994  NA  Eritrea
-## 20       corals 1995  NA  Eritrea
-## 21       corals 1996  NA  Eritrea
-## 22       corals 1997  NA  Eritrea
-## 23       corals 1998  NA  Eritrea
-## 24       corals 1999  NA  Eritrea
-## 25       corals 2000  14  Eritrea
-## 26       corals 2001  NA  Eritrea
-## 27       corals 2002  NA  Eritrea
-## 28       corals 2003  NA  Eritrea
-## 29       corals 2004  NA  Eritrea
-## 30       corals 2005  51  Eritrea
-## 31       corals 2006   0  Eritrea
-## 32       corals 2007  22  Eritrea
-## 33       corals 2008   0  Eritrea
-## 34       corals 2009   0  Eritrea
-## 35       corals 2010   0  Eritrea
-## 36       corals 2011   0  Eritrea
-## 37       shells 1976  NA  Eritrea
-## 38       shells 1977  NA  Eritrea
-## 39       shells 1978  NA  Eritrea
-## 40       shells 1979  NA  Eritrea
-## 41       shells 1980  NA  Eritrea
-## 42       shells 1981  NA  Eritrea
-## 43       shells 1982  NA  Eritrea
-## 44       shells 1983  NA  Eritrea
-## 45       shells 1984  NA  Eritrea
-## 46       shells 1985  NA  Eritrea
-## 47       shells 1986  NA  Eritrea
-## 48       shells 1987  NA  Eritrea
-## 49       shells 1988  NA  Eritrea
-## 50       shells 1989  NA  Eritrea
-## 51       shells 1990  NA  Eritrea
-## 52       shells 1991  NA  Eritrea
-## 53       shells 1992  NA  Eritrea
-## 54       shells 1993  NA  Eritrea
-## 55       shells 1994  NA  Eritrea
-## 56       shells 1995  NA  Eritrea
-## 57       shells 1996  NA  Eritrea
-## 58       shells 1997  NA  Eritrea
-## 59       shells 1998  NA  Eritrea
-## 60       shells 1999  NA  Eritrea
-## 61       shells 2000  NA  Eritrea
-## 62       shells 2001  NA  Eritrea
-## 63       shells 2002  NA  Eritrea
-## 64       shells 2003 574  Eritrea
-## 65       shells 2004  62  Eritrea
-## 66       shells 2005   0  Eritrea
-## 67       shells 2006   0  Eritrea
-## 68       shells 2007   0  Eritrea
-## 69       shells 2008   0  Eritrea
-## 70       shells 2009   0  Eritrea
-## 71       shells 2010   0  Eritrea
-## 72       shells 2011   0  Eritrea
-## 73  ornamentals 1976  NA  Eritrea
-## 74  ornamentals 1977  NA  Eritrea
-## 75  ornamentals 1978  NA  Eritrea
-## 76  ornamentals 1979  NA  Eritrea
-## 77  ornamentals 1980  NA  Eritrea
-## 78  ornamentals 1981  NA  Eritrea
-## 79  ornamentals 1982  NA  Eritrea
-## 80  ornamentals 1983  NA  Eritrea
-## 81  ornamentals 1984  NA  Eritrea
-## 82  ornamentals 1985  NA  Eritrea
-## 83  ornamentals 1986  NA  Eritrea
-## 84  ornamentals 1987  NA  Eritrea
-## 85  ornamentals 1988  NA  Eritrea
-## 86  ornamentals 1989  NA  Eritrea
-## 87  ornamentals 1990  NA  Eritrea
-## 88  ornamentals 1991  NA  Eritrea
-## 89  ornamentals 1992  NA  Eritrea
-## 90  ornamentals 1993  NA  Eritrea
-## 91  ornamentals 1994  NA  Eritrea
-## 92  ornamentals 1995  53  Eritrea
-## 93  ornamentals 1996 119  Eritrea
-## 94  ornamentals 1997  98  Eritrea
-## 95  ornamentals 1998  14  Eritrea
-## 96  ornamentals 1999   5  Eritrea
-## 97  ornamentals 2000  NA  Eritrea
-## 98  ornamentals 2001  NA  Eritrea
-## 99  ornamentals 2002  NA  Eritrea
-## 100 ornamentals 2003  NA  Eritrea
-## 101 ornamentals 2004  NA  Eritrea
-## 102 ornamentals 2005  NA  Eritrea
-## 103 ornamentals 2006  NA  Eritrea
-## 104 ornamentals 2007  NA  Eritrea
-## 105 ornamentals 2008 150  Eritrea
-## 106 ornamentals 2009 114  Eritrea
-## 107 ornamentals 2010   8  Eritrea
-## 108 ornamentals 2011   4  Eritrea
-## 109 ornamentals 1976  NA  Eritrea
-## 110 ornamentals 1977  NA  Eritrea
-## 111 ornamentals 1978  NA  Eritrea
-## 112 ornamentals 1979  NA  Eritrea
-## 113 ornamentals 1980  NA  Eritrea
-## 114 ornamentals 1981  NA  Eritrea
-## 115 ornamentals 1982  NA  Eritrea
-## 116 ornamentals 1983  NA  Eritrea
-## 117 ornamentals 1984  NA  Eritrea
-## 118 ornamentals 1985  NA  Eritrea
-## 119 ornamentals 1986  NA  Eritrea
-## 120 ornamentals 1987  NA  Eritrea
-## 121 ornamentals 1988  NA  Eritrea
-## 122 ornamentals 1989  NA  Eritrea
-## 123 ornamentals 1990  NA  Eritrea
-## 124 ornamentals 1991  NA  Eritrea
-## 125 ornamentals 1992  NA  Eritrea
-## 126 ornamentals 1993  NA  Eritrea
-## 127 ornamentals 1994  NA  Eritrea
-## 128 ornamentals 1995  NA  Eritrea
-## 129 ornamentals 1996  NA  Eritrea
-## 130 ornamentals 1997  NA  Eritrea
-## 131 ornamentals 1998  NA  Eritrea
-## 132 ornamentals 1999  NA  Eritrea
-## 133 ornamentals 2000  NA  Eritrea
-## 134 ornamentals 2001  NA  Eritrea
-## 135 ornamentals 2002  NA  Eritrea
-## 136 ornamentals 2003  NA  Eritrea
-## 137 ornamentals 2004  NA  Eritrea
-## 138 ornamentals 2005  NA  Eritrea
-## 139 ornamentals 2006  NA  Eritrea
-## 140 ornamentals 2007  NA  Eritrea
-## 141 ornamentals 2008  33  Eritrea
-## 142 ornamentals 2009  13  Eritrea
-## 143 ornamentals 2010   0  Eritrea
-## 144 ornamentals 2011   0  Eritrea
-## 145    seaweeds 1976  NA  Eritrea
-## 146    seaweeds 1977  NA  Eritrea
-## 147    seaweeds 1978  NA  Eritrea
-## 148    seaweeds 1979  NA  Eritrea
-## 149    seaweeds 1980  NA  Eritrea
-## 150    seaweeds 1981  NA  Eritrea
-## 151    seaweeds 1982  NA  Eritrea
-## 152    seaweeds 1983  NA  Eritrea
-## 153    seaweeds 1984  NA  Eritrea
-## 154    seaweeds 1985  NA  Eritrea
-## 155    seaweeds 1986  NA  Eritrea
-## 156    seaweeds 1987  NA  Eritrea
-## 157    seaweeds 1988  NA  Eritrea
-## 158    seaweeds 1989  NA  Eritrea
-## 159    seaweeds 1990  NA  Eritrea
-## 160    seaweeds 1991  NA  Eritrea
-## 161    seaweeds 1992  NA  Eritrea
-## 162    seaweeds 1993  NA  Eritrea
-## 163    seaweeds 1994  NA  Eritrea
-## 164    seaweeds 1995  NA  Eritrea
-## 165    seaweeds 1996  NA  Eritrea
-## 166    seaweeds 1997  NA  Eritrea
-## 167    seaweeds 1998  NA  Eritrea
-## 168    seaweeds 1999  NA  Eritrea
-## 169    seaweeds 2000  NA  Eritrea
-## 170    seaweeds 2001  NA  Eritrea
-## 171    seaweeds 2002  NA  Eritrea
-## 172    seaweeds 2003  45  Eritrea
-## 173    seaweeds 2004   1  Eritrea
-## 174    seaweeds 2005  21  Eritrea
-## 175    seaweeds 2006   0  Eritrea
-## 176    seaweeds 2007   0  Eritrea
-## 177    seaweeds 2008   0  Eritrea
-## 178    seaweeds 2009   0  Eritrea
-## 179    seaweeds 2010   0  Eritrea
-## 180    seaweeds 2011   0  Eritrea</code></pre>
+<pre><code>##     rgn_id                       commodity     product year   usd rgn_name
+## 1      152              Coral and the like      corals 1976    NA    Samoa
+## 2      152              Coral and the like      corals 1977    NA    Samoa
+## 3      152              Coral and the like      corals 1978    NA    Samoa
+## 4      152              Coral and the like      corals 1979    NA    Samoa
+## 5      152              Coral and the like      corals 1980    NA    Samoa
+## 6      152              Coral and the like      corals 1981    NA    Samoa
+## 7      152              Coral and the like      corals 1982    NA    Samoa
+## 8      152              Coral and the like      corals 1983    NA    Samoa
+## 9      152              Coral and the like      corals 1984    NA    Samoa
+## 10     152              Coral and the like      corals 1985    NA    Samoa
+## 11     152              Coral and the like      corals 1986    NA    Samoa
+## 12     152              Coral and the like      corals 1987    NA    Samoa
+## 13     152              Coral and the like      corals 1988    NA    Samoa
+## 14     152              Coral and the like      corals 1989    NA    Samoa
+## 15     152              Coral and the like      corals 1990    NA    Samoa
+## 16     152              Coral and the like      corals 1991    NA    Samoa
+## 17     152              Coral and the like      corals 1992    NA    Samoa
+## 18     152              Coral and the like      corals 1993    NA    Samoa
+## 19     152              Coral and the like      corals 1994    NA    Samoa
+## 20     152              Coral and the like      corals 1995    NA    Samoa
+## 21     152              Coral and the like      corals 1996    NA    Samoa
+## 22     152              Coral and the like      corals 1997    NA    Samoa
+## 23     152              Coral and the like      corals 1998 152.0    Samoa
+## 24     152              Coral and the like      corals 1999 160.0    Samoa
+## 25     152              Coral and the like      corals 2000 311.0    Samoa
+## 26     152              Coral and the like      corals 2001   0.0    Samoa
+## 27     152              Coral and the like      corals 2002   0.0    Samoa
+## 28     152              Coral and the like      corals 2003   0.0    Samoa
+## 29     152              Coral and the like      corals 2004   0.0    Samoa
+## 30     152              Coral and the like      corals 2005   0.0    Samoa
+## 31     152              Coral and the like      corals 2006   0.0    Samoa
+## 32     152              Coral and the like      corals 2007   0.0    Samoa
+## 33     152              Coral and the like      corals 2008   0.0    Samoa
+## 34     152              Coral and the like      corals 2009   0.0    Samoa
+## 35     152              Coral and the like      corals 2010   0.0    Samoa
+## 36     152              Coral and the like      corals 2011   0.0    Samoa
+## 37     152 Miscellaneous corals and shells      shells 1976    NA    Samoa
+## 38     152 Miscellaneous corals and shells      shells 1977    NA    Samoa
+## 39     152 Miscellaneous corals and shells      shells 1978    NA    Samoa
+## 40     152 Miscellaneous corals and shells      shells 1979    NA    Samoa
+## 41     152 Miscellaneous corals and shells      shells 1980    NA    Samoa
+## 42     152 Miscellaneous corals and shells      shells 1981    NA    Samoa
+## 43     152 Miscellaneous corals and shells      shells 1982    NA    Samoa
+## 44     152 Miscellaneous corals and shells      shells 1983    NA    Samoa
+## 45     152 Miscellaneous corals and shells      shells 1984    NA    Samoa
+## 46     152 Miscellaneous corals and shells      shells 1985    NA    Samoa
+## 47     152 Miscellaneous corals and shells      shells 1986    NA    Samoa
+## 48     152 Miscellaneous corals and shells      shells 1987    NA    Samoa
+## 49     152 Miscellaneous corals and shells      shells 1988    NA    Samoa
+## 50     152 Miscellaneous corals and shells      shells 1989    NA    Samoa
+## 51     152 Miscellaneous corals and shells      shells 1990    NA    Samoa
+## 52     152 Miscellaneous corals and shells      shells 1991    NA    Samoa
+## 53     152 Miscellaneous corals and shells      shells 1992    NA    Samoa
+## 54     152 Miscellaneous corals and shells      shells 1993    NA    Samoa
+## 55     152 Miscellaneous corals and shells      shells 1994    NA    Samoa
+## 56     152 Miscellaneous corals and shells      shells 1995    NA    Samoa
+## 57     152 Miscellaneous corals and shells      shells 1996    NA    Samoa
+## 58     152 Miscellaneous corals and shells      shells 1997    NA    Samoa
+## 59     152 Miscellaneous corals and shells      shells 1998    NA    Samoa
+## 60     152 Miscellaneous corals and shells      shells 1999    NA    Samoa
+## 61     152 Miscellaneous corals and shells      shells 2000    NA    Samoa
+## 62     152 Miscellaneous corals and shells      shells 2001    NA    Samoa
+## 63     152 Miscellaneous corals and shells      shells 2002    NA    Samoa
+## 64     152 Miscellaneous corals and shells      shells 2003    NA    Samoa
+## 65     152 Miscellaneous corals and shells      shells 2004    NA    Samoa
+## 66     152 Miscellaneous corals and shells      shells 2005  60.0    Samoa
+## 67     152 Miscellaneous corals and shells      shells 2006   0.0    Samoa
+## 68     152 Miscellaneous corals and shells      shells 2007   0.1    Samoa
+## 69     152 Miscellaneous corals and shells      shells 2008   1.0    Samoa
+## 70     152 Miscellaneous corals and shells      shells 2009   0.0    Samoa
+## 71     152 Miscellaneous corals and shells      shells 2010   0.0    Samoa
+## 72     152 Miscellaneous corals and shells      shells 2011   0.0    Samoa
+## 73     152             Ornamental fish nei ornamentals 1976    NA    Samoa
+## 74     152             Ornamental fish nei ornamentals 1977    NA    Samoa
+## 75     152             Ornamental fish nei ornamentals 1978    NA    Samoa
+## 76     152             Ornamental fish nei ornamentals 1979    NA    Samoa
+## 77     152             Ornamental fish nei ornamentals 1980    NA    Samoa
+## 78     152             Ornamental fish nei ornamentals 1981    NA    Samoa
+## 79     152             Ornamental fish nei ornamentals 1982    NA    Samoa
+## 80     152             Ornamental fish nei ornamentals 1983    NA    Samoa
+## 81     152             Ornamental fish nei ornamentals 1984    NA    Samoa
+## 82     152             Ornamental fish nei ornamentals 1985    NA    Samoa
+## 83     152             Ornamental fish nei ornamentals 1986    NA    Samoa
+## 84     152             Ornamental fish nei ornamentals 1987    NA    Samoa
+## 85     152             Ornamental fish nei ornamentals 1988    NA    Samoa
+## 86     152             Ornamental fish nei ornamentals 1989    NA    Samoa
+## 87     152             Ornamental fish nei ornamentals 1990    NA    Samoa
+## 88     152             Ornamental fish nei ornamentals 1991    NA    Samoa
+## 89     152             Ornamental fish nei ornamentals 1992    NA    Samoa
+## 90     152             Ornamental fish nei ornamentals 1993    NA    Samoa
+## 91     152             Ornamental fish nei ornamentals 1994    NA    Samoa
+## 92     152             Ornamental fish nei ornamentals 1995  18.0    Samoa
+## 93     152             Ornamental fish nei ornamentals 1996   2.0    Samoa
+## 94     152             Ornamental fish nei ornamentals 1997   6.0    Samoa
+## 95     152             Ornamental fish nei ornamentals 1998  11.0    Samoa
+## 96     152             Ornamental fish nei ornamentals 1999  26.0    Samoa
+## 97     152             Ornamental fish nei ornamentals 2000    NA    Samoa
+## 98     152             Ornamental fish nei ornamentals 2001   0.1    Samoa
+## 99     152             Ornamental fish nei ornamentals 2002   1.0    Samoa
+## 100    152             Ornamental fish nei ornamentals 2003   0.1    Samoa
+## 101    152             Ornamental fish nei ornamentals 2004   0.1    Samoa
+## 102    152             Ornamental fish nei ornamentals 2005   0.1    Samoa
+## 103    152             Ornamental fish nei ornamentals 2006   0.0    Samoa
+## 104    152             Ornamental fish nei ornamentals 2007   1.0    Samoa
+## 105    152             Ornamental fish nei ornamentals 2008   0.1    Samoa
+## 106    152             Ornamental fish nei ornamentals 2009   0.0    Samoa
+## 107    152             Ornamental fish nei ornamentals 2010  48.0    Samoa
+## 108    152             Ornamental fish nei ornamentals 2011   0.0    Samoa</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">new &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">'output/np_harvest_tonnes.csv'</span>)
-<span class="kw">filter</span>(new, rgn_id==<span class="dv">45</span>)</code></pre></div>
-<pre><code>##    rgn_id     product year   tonnes
-## 1      45 ornamentals 1995 0.100000
-## 2      45 ornamentals 1996 0.550000
-## 3      45 ornamentals 1997 1.033333
-## 4      45 ornamentals 1998 0.800000
-## 5      45 ornamentals 1999 0.800000
-## 6      45 ornamentals 2000 0.550000
-## 7      45 ornamentals 2001 0.050000
-## 8      45 ornamentals 2002 0.025000
-## 9      45 ornamentals 2003 0.000000
-## 10     45 ornamentals 2004 0.000000
-## 11     45 ornamentals 2005 0.000000
-## 12     45 ornamentals 2006 0.000000
-## 13     45 ornamentals 2007 0.000000
-## 14     45 ornamentals 2008 0.750000
-## 15     45 ornamentals 2009 1.000000
-## 16     45 ornamentals 2010 1.025000
-## 17     45 ornamentals 2011 1.050000
-## 18     45 ornamentals 2012 0.300000
-## 19     45 ornamentals 2013 0.050000</code></pre>
+<span class="kw">filter</span>(new, rgn_id==<span class="dv">115</span>)</code></pre></div>
+<pre><code>##    rgn_id     product year      tonnes
+## 1     115      corals 1997 37.00000000
+## 2     115      corals 1998 18.55000000
+## 3     115      corals 1999 18.70000000
+## 4     115      corals 2000 14.52500000
+## 5     115      corals 2001  5.27500000
+## 6     115      corals 2002  5.27500000
+## 7     115      corals 2003  5.77500000
+## 8     115      corals 2004  5.30000000
+## 9     115      corals 2005  9.05000000
+## 10    115      corals 2006 18.27500000
+## 11    115      corals 2007 13.05000000
+## 12    115      corals 2008 13.05000000
+## 13    115      corals 2009  9.30000000
+## 14    115      corals 2010  0.80000000
+## 15    115      corals 2011  3.27500000
+## 16    115      corals 2012  3.27500000
+## 17    115      corals 2013  3.27500000
+## 18    115    fish_oil 1976  0.10000000
+## 19    115    fish_oil 1977  0.05000000
+## 20    115    fish_oil 1978  0.03333333
+## 21    115    fish_oil 1979  0.02500000
+## 22    115    fish_oil 1980  0.00000000
+## 23    115    fish_oil 1981  0.00000000
+## 24    115    fish_oil 1982  0.00000000
+## 25    115    fish_oil 1983  0.02500000
+## 26    115    fish_oil 1984  0.05000000
+## 27    115    fish_oil 1985  0.05000000
+## 28    115    fish_oil 1986  0.05000000
+## 29    115    fish_oil 1987  0.02500000
+## 30    115    fish_oil 1988  0.00000000
+## 31    115    fish_oil 1989  0.00000000
+## 32    115    fish_oil 1990  0.00000000
+## 33    115    fish_oil 1991  0.00000000
+## 34    115    fish_oil 1992  0.00000000
+## 35    115    fish_oil 1993  0.00000000
+## 36    115    fish_oil 1994  0.00000000
+## 37    115    fish_oil 1995  0.00000000
+## 38    115    fish_oil 1996  0.00000000
+## 39    115    fish_oil 1997  0.02500000
+## 40    115    fish_oil 1998  0.27500000
+## 41    115    fish_oil 1999  0.32500000
+## 42    115    fish_oil 2000  0.57500000
+## 43    115    fish_oil 2001  0.60000000
+## 44    115    fish_oil 2002  0.37500000
+## 45    115    fish_oil 2003  0.37500000
+## 46    115    fish_oil 2004  0.12500000
+## 47    115    fish_oil 2005  0.10000000
+## 48    115    fish_oil 2006  0.10000000
+## 49    115    fish_oil 2007  0.05000000
+## 50    115    fish_oil 2008  0.55000000
+## 51    115    fish_oil 2009  0.55000000
+## 52    115    fish_oil 2010  0.52500000
+## 53    115    fish_oil 2011  0.55000000
+## 54    115    fish_oil 2012  1.05000000
+## 55    115    fish_oil 2013  1.05000000
+## 56    115 ornamentals 1979  0.10000000
+## 57    115 ornamentals 1980  0.05000000
+## 58    115 ornamentals 1981  0.03333333
+## 59    115 ornamentals 1982  0.02500000
+## 60    115 ornamentals 1983  0.00000000
+## 61    115 ornamentals 1984  0.00000000
+## 62    115 ornamentals 1985  0.00000000
+## 63    115 ornamentals 1986  0.00000000
+## 64    115 ornamentals 1987  0.00000000
+## 65    115 ornamentals 1988  0.00000000
+## 66    115 ornamentals 1989  0.00000000
+## 67    115 ornamentals 1990  0.00000000
+## 68    115 ornamentals 1991  0.00000000
+## 69    115 ornamentals 1992  1.70996888
+## 70    115 ornamentals 1993  1.70996888
+## 71    115 ornamentals 1994 15.92812552
+## 72    115 ornamentals 1995 15.95312552
+## 73    115 ornamentals 1996 14.35865342
+## 74    115 ornamentals 1997 14.35865342
+## 75    115 ornamentals 1998  0.14049678
+## 76    115 ornamentals 1999  0.11549678
+## 77    115 ornamentals 2000  0.00000000
+## 78    115 ornamentals 2001  0.00000000
+## 79    115 ornamentals 2002  8.25000000
+## 80    115 ornamentals 2003 17.25000000
+## 81    115 ornamentals 2004 22.00000000
+## 82    115 ornamentals 2005 34.00000000
+## 83    115 ornamentals 2006 30.75000000
+## 84    115 ornamentals 2007 37.25000000
+## 85    115 ornamentals 2008 43.75000000
+## 86    115 ornamentals 2009 41.75000000
+## 87    115 ornamentals 2010 47.75000000
+## 88    115 ornamentals 2011 43.50000000
+## 89    115 ornamentals 2012 32.25000000
+## 90    115 ornamentals 2013 22.25000000
+## 91    115    seaweeds 2005  0.10000000
+## 92    115    seaweeds 2006  0.05000000
+## 93    115    seaweeds 2007  0.06666667
+## 94    115    seaweeds 2008  0.30000000
+## 95    115    seaweeds 2009  0.27500000
+## 96    115    seaweeds 2010  0.27500000
+## 97    115    seaweeds 2011  0.25000000
+## 98    115    seaweeds 2012  1.75000000
+## 99    115    seaweeds 2013  2.00000000</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">old &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">'../v2014_test/data/np_harvest_tonnes_eez2014_test-year_max_2011.csv'</span>)
-<span class="kw">filter</span>(old, rgn_id==<span class="dv">45</span>)</code></pre></div>
-<pre><code>##    rgn_id     product year   tonnes
-## 1      45 ornamentals 1995 0.100000
-## 2      45 ornamentals 1996 0.550000
-## 3      45 ornamentals 1997 1.033333
-## 4      45 ornamentals 1998 0.800000
-## 5      45 ornamentals 1999 0.800000
-## 6      45 ornamentals 2000 0.550000
-## 7      45 ornamentals 2001 0.050000
-## 8      45 ornamentals 2002 0.025000
-## 9      45 ornamentals 2003 0.000000
-## 10     45 ornamentals 2004 0.000000
-## 11     45 ornamentals 2005 0.000000
-## 12     45 ornamentals 2006 0.000000
-## 13     45 ornamentals 2007 0.000000
-## 14     45 ornamentals 2008 0.750000
-## 15     45 ornamentals 2009 1.000000
-## 16     45 ornamentals 2010 1.025000
-## 17     45 ornamentals 2011 1.050000</code></pre>
+<span class="kw">filter</span>(old, rgn_id==<span class="dv">115</span>)</code></pre></div>
+<pre><code>##    rgn_id     product year      tonnes
+## 1     115      corals 1997 37.00000000
+## 2     115      corals 1998 18.55000000
+## 3     115      corals 1999 18.70000000
+## 4     115      corals 2000 14.52500000
+## 5     115      corals 2001  5.27500000
+## 6     115      corals 2002  5.27500000
+## 7     115      corals 2003  5.77500000
+## 8     115      corals 2004  5.30000000
+## 9     115      corals 2005  9.05000000
+## 10    115      corals 2006 18.27500000
+## 11    115      corals 2007 13.05000000
+## 12    115      corals 2008 13.05000000
+## 13    115      corals 2009  9.30000000
+## 14    115      corals 2010  0.80000000
+## 15    115      corals 2011  3.27500000
+## 16    115    fish_oil 1976  0.10000000
+## 17    115    fish_oil 1977  0.05000000
+## 18    115    fish_oil 1978  0.03333333
+## 19    115    fish_oil 1979  0.02500000
+## 20    115    fish_oil 1980  0.00000000
+## 21    115    fish_oil 1981  0.00000000
+## 22    115    fish_oil 1982  0.00000000
+## 23    115    fish_oil 1983  0.02500000
+## 24    115    fish_oil 1984  0.05000000
+## 25    115    fish_oil 1985  0.05000000
+## 26    115    fish_oil 1986  0.05000000
+## 27    115    fish_oil 1987  0.02500000
+## 28    115    fish_oil 1988  0.00000000
+## 29    115    fish_oil 1989  0.00000000
+## 30    115    fish_oil 1990  0.00000000
+## 31    115    fish_oil 1991  0.00000000
+## 32    115    fish_oil 1992  0.00000000
+## 33    115    fish_oil 1993  0.00000000
+## 34    115    fish_oil 1994  0.00000000
+## 35    115    fish_oil 1995  0.00000000
+## 36    115    fish_oil 1996  0.00000000
+## 37    115    fish_oil 1997  0.02500000
+## 38    115    fish_oil 1998  0.27500000
+## 39    115    fish_oil 1999  0.32500000
+## 40    115    fish_oil 2000  0.57500000
+## 41    115    fish_oil 2001  0.60000000
+## 42    115    fish_oil 2002  0.37500000
+## 43    115    fish_oil 2003  0.37500000
+## 44    115    fish_oil 2004  0.12500000
+## 45    115    fish_oil 2005  1.07500000
+## 46    115    fish_oil 2006  1.07500000
+## 47    115    fish_oil 2007  1.02500000
+## 48    115    fish_oil 2008  1.52500000
+## 49    115    fish_oil 2009  0.55000000
+## 50    115    fish_oil 2010  0.52500000
+## 51    115    fish_oil 2011  0.55000000
+## 52    115 ornamentals 1979  0.10000000
+## 53    115 ornamentals 1980  0.05000000
+## 54    115 ornamentals 1981  0.03333333
+## 55    115 ornamentals 1982  0.02500000
+## 56    115 ornamentals 1983  0.00000000
+## 57    115 ornamentals 1984  0.00000000
+## 58    115 ornamentals 1985  0.00000000
+## 59    115 ornamentals 1986  0.00000000
+## 60    115 ornamentals 1987  0.00000000
+## 61    115 ornamentals 1988  0.00000000
+## 62    115 ornamentals 1989  0.00000000
+## 63    115 ornamentals 1990  0.00000000
+## 64    115 ornamentals 1991  0.00000000
+## 65    115 ornamentals 1992  1.60493516
+## 66    115 ornamentals 1993  1.60493516
+## 67    115 ornamentals 1994 15.75350367
+## 68    115 ornamentals 1995 15.77850367
+## 69    115 ornamentals 1996 14.17356850
+## 70    115 ornamentals 1997 14.17356850
+## 71    115 ornamentals 1998  0.02500000
+## 72    115 ornamentals 1999  0.00000000
+## 73    115 ornamentals 2000  0.00000000
+## 74    115 ornamentals 2001  7.93971285
+## 75    115 ornamentals 2002 16.18971285
+## 76    115 ornamentals 2003 25.18971285
+## 77    115 ornamentals 2004 29.93971285
+## 78    115 ornamentals 2005 34.00000000
+## 79    115 ornamentals 2006 30.75000000
+## 80    115 ornamentals 2007 37.25000000
+## 81    115 ornamentals 2008 43.75000000
+## 82    115 ornamentals 2009 41.75000000
+## 83    115 ornamentals 2010 47.75000000
+## 84    115 ornamentals 2011 43.50000000</code></pre>
 </div>
 
 

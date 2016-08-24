@@ -184,14 +184,15 @@ np_lowdata_filter <- function(h, nonzero_h_yr_min = 4) {
   h1 <- h %>%
     group_by(rgn_id, commodity) %>%
     mutate(
-      nonzero_n = sum(tonnes > 0 | usd > 0)) %>%
+      nonzero_n = sum(tonnes > 0 | usd > 0, na.rm=TRUE)) %>%
     filter(nonzero_n >= nonzero_h_yr_min) %>%
     ### Require at least 'nonzero_harvest_years_min' years of data; filter out all
     ###   commodities by region with fewer than this.  This prevents penalizing countries that
     ###   start experimental production but then stop, for example.
     select(-nonzero_n) %>%
     ### clean up temp columns
-    arrange(rgn_id, product, commodity, year)
+    arrange(rgn_id, product, commodity, year) %>%
+    ungroup()
   
   return(h1)
 }
