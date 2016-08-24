@@ -46,7 +46,7 @@ library(stringr)
 library(tidyr)
 
 ## comment out when knitting
-#setwd("globalprep/mar/v2016")
+setwd("globalprep/mar/v2016")
 
 
 ### Load FAO-specific user-defined functions
@@ -61,7 +61,7 @@ source('../../../src/R/common.R') # directory locations
 Clean mariculture data: Filter freshwater mariculture, make long format, and clean FAO codes.
 ```{r}
 
-mar <- read.csv(file.path(dir_M, 'git-annex/globalprep/_raw_data/FAO_mariculture/d2016/GlobalAquacultureProduction_Quantity_1950_2014.csv'), check.names=F, stringsAsFactors=F) ; head(mar) 
+mar <- read.csv(file.path(dir_M, 'git-annex/globalprep/_raw_data/FAO_mariculture/d2016/GlobalAquacultureProduction_Quantity_1950_2014.csv'), check.names=FALSE, stringsAsFactors=FALSE) ; head(mar) 
 
 mar <- mar %>%
   rename(country = `Country (Country)`,
@@ -142,7 +142,7 @@ mar_rgn <- name_2_rgn(df_in = mar,
 ### sum values of regions with multiple subregions
 mar_rgn <- mar_rgn %>%
   group_by(fao, environment, species, year, Taxon_code, rgn_id) %>%
-  summarize(value = sum(value, na.rm=TRUE)) %>%
+  summarize(value = sum(value)) %>%
   ungroup()
 
 ```
