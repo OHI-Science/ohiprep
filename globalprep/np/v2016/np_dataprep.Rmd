@@ -360,3 +360,51 @@ write.csv(tonnes_rel, 'output/np_harvest_tonnes_rel.csv', row.names = FALSE, na 
 
 
 ```
+
+Comparing against last year's data
+```{r}
+
+## Replique de Congo, due to revision of 2011 data for ornamentals (and only one product that isn't a big producer)
+new <- read.csv("int/tonnes.csv")
+old <- read.csv("../v2014_test/intermediate/tonnes.csv")
+
+filter(new, rgn_id==100) %>%
+  arrange(commodity, year)
+filter(old, rgn_id==100) %>%
+  arrange(commodity, year)
+
+new <- read.csv("int/usd.csv")
+filter(new, rgn_id==100) %>%
+  arrange(commodity, year)
+old <- read.csv("../v2014_test/intermediate/usd.csv")
+filter(old, rgn_id==100) %>%
+  arrange(commodity, year)
+
+new <- read.csv('output/np_harvest_tonnes.csv')
+filter(new, rgn_id==100)
+old <- read.csv('../v2014_test/data/np_harvest_tonnes_eez2014_test-year_max_2011.csv')
+filter(old, rgn_id==100)
+
+
+## 
+new <- read.csv("int/tonnes.csv")
+old <- read.csv("../v2014_test/intermediate/tonnes.csv")
+
+filter(new, rgn_id==45) %>%
+  arrange(commodity, year)
+filter(old, rgn_id==45) %>%
+  arrange(commodity, year)
+
+new <- read.csv("int/usd.csv")
+filter(new, rgn_id==45) %>%
+  arrange(commodity, year)
+old <- read.csv("../v2014_test/intermediate/usd.csv")
+filter(old, rgn_id==45) %>%
+  arrange(commodity, year)
+
+new <- read.csv('output/np_harvest_tonnes.csv')
+filter(new, rgn_id==45)
+old <- read.csv('../v2014_test/data/np_harvest_tonnes_eez2014_test-year_max_2011.csv')
+filter(old, rgn_id==45)
+
+```
