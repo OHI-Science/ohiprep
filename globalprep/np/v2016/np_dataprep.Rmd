@@ -356,7 +356,7 @@ write.csv(tonnes, 'output/np_harvest_tonnes.csv', row.names = FALSE, na = '')
 
 tonnes_rel <- j %>%
   select(rgn_id, product, year, tonnes_rel) 
-write.csv(tonnes, 'output/np_harvest_tonnes_rel.csv', row.names = FALSE, na = '')
+write.csv(tonnes_rel, 'output/np_harvest_tonnes_rel.csv', row.names = FALSE, na = '')
 
 
 ```
