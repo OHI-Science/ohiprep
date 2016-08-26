@@ -323,9 +323,6 @@ plot(Motion)
 
 print(Motion, file='uv.html')
 
-
-
-
 ```
 
 ***

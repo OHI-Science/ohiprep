@@ -46,7 +46,7 @@ library(stringr)
 library(tidyr)
 
 ## comment out when knitting
-setwd("globalprep/mar/v2016")
+#setwd("globalprep/mar/v2016")
 
 
 ### Load FAO-specific user-defined functions
@@ -447,7 +447,7 @@ for(year in 2012:2016){ #year=2016
 data_year <- year-2
     data <- genEscapes %>%
     filter(year == data_year) %>%
-    select(rgn_id, genEscapes)
+    select(rgn_id, pressure_score = genEscapes)
 write.csv(data, sprintf('output/GenEsc_v%s.csv', year), row.names=FALSE)  
 }
 
