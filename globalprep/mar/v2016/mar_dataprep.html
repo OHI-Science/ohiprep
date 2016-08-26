@@ -9,7 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Compiled on Fri Aug 19 12:59:44 2016 by frazier" />
+<meta name="author" content="Compiled on Fri Aug 26 14:27:52 2016 by frazier" />
 
 
 <title>OHI: Mariculture</title>
@@ -142,7 +142,7 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">OHI: Mariculture</h1>
-<h4 class="author"><em><em>Compiled on Fri Aug 19 12:59:44 2016 by frazier</em></em></h4>
+<h4 class="author"><em><em>Compiled on Fri Aug 26 14:27:52 2016 by frazier</em></em></h4>
 
 </div>
 
@@ -208,7 +208,7 @@ $(document).ready(function () {
 <div id="fao-mariculuture-data" class="section level1">
 <h1><span class="header-section-number">5</span> FAO Mariculuture data</h1>
 <p>Clean mariculture data: Filter freshwater mariculture, make long format, and clean FAO codes.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mar &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="kw">file.path</span>(dir_M, <span class="st">'git-annex/globalprep/_raw_data/FAO_mariculture/d2016/GlobalAquacultureProduction_Quantity_1950_2014.csv'</span>), <span class="dt">check.names=</span>F, <span class="dt">stringsAsFactors=</span>F) ; <span class="kw">head</span>(mar) </code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mar &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="kw">file.path</span>(dir_M, <span class="st">'git-annex/globalprep/_raw_data/FAO_mariculture/d2016/GlobalAquacultureProduction_Quantity_1950_2014.csv'</span>), <span class="dt">check.names=</span><span class="ot">FALSE</span>, <span class="dt">stringsAsFactors=</span><span class="ot">FALSE</span>) ; <span class="kw">head</span>(mar) </code></pre></div>
 <pre><code>##   Country (Country) Species (ASFIS species)
 ## 1       Afghanistan           Cyprinids nei
 ## 2       Afghanistan           Rainbow trout
@@ -364,7 +364,7 @@ mar_rgn &lt;-<span class="st"> </span><span class="kw">name_2_rgn</span>(<span c
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">### sum values of regions with multiple subregions
 mar_rgn &lt;-<span class="st"> </span>mar_rgn %&gt;%
 <span class="st">  </span><span class="kw">group_by</span>(fao, environment, species, year, Taxon_code, rgn_id) %&gt;%
-<span class="st">  </span><span class="kw">summarize</span>(<span class="dt">value =</span> <span class="kw">sum</span>(value, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)) %&gt;%
+<span class="st">  </span><span class="kw">summarize</span>(<span class="dt">value =</span> <span class="kw">sum</span>(value)) %&gt;%
 <span class="st">  </span><span class="kw">ungroup</span>()</code></pre></div>
 <div id="gapfilling" class="section level3">
 <h3><span class="header-section-number">5.0.1</span> Gapfilling</h3>
@@ -406,7 +406,7 @@ mar_rgn_gf =<span class="st"> </span><span class="kw">left_join</span>(mar_rgn_g
 <pre><code>## Joining, by = c(&quot;rgn_id&quot;, &quot;species&quot;, &quot;fao&quot;, &quot;environment&quot;)</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">maric &lt;-<span class="st"> </span>mar_rgn_gf</code></pre></div>
 <p>Save file to estimate total mariculture yield per country.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">write.csv</span>(maric, <span class="st">'output/MAR_FP_data.csv'</span>, <span class="dt">row.names=</span><span class="ot">FALSE</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">write.csv</span>(maric, <span class="st">'intermediate/MAR_FP_data.csv'</span>, <span class="dt">row.names=</span><span class="ot">FALSE</span>)</code></pre></div>
 </div>
 </div>
 <div id="trujillo-sustainability-scores" class="section level1">
@@ -1518,7 +1518,7 @@ for(year in <span class="dv">2012</span>:<span class="dv">2016</span>){ <span cl
 data_year &lt;-<span class="st"> </span>year<span class="dv">-2</span>
     data &lt;-<span class="st"> </span>genEscapes %&gt;%
 <span class="st">    </span><span class="kw">filter</span>(year ==<span class="st"> </span>data_year) %&gt;%
-<span class="st">    </span><span class="kw">select</span>(rgn_id, genEscapes)
+<span class="st">    </span><span class="kw">select</span>(rgn_id, <span class="dt">pressure_score =</span> genEscapes)
 <span class="kw">write.csv</span>(data, <span class="kw">sprintf</span>(<span class="st">'output/GenEsc_v%s.csv'</span>, year), <span class="dt">row.names=</span><span class="ot">FALSE</span>)  
 }</code></pre></div>
 <hr />
