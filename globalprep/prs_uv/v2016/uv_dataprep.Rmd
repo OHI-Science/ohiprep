@@ -29,15 +29,15 @@ pdf_document:
 #Data Source [NOTE: can be copied from README.md in rawdata file]
 **Reference**: [citation for source data; website, literature, contact information. Version of data (if relevant). Screenshots if a series of menus had to be navigated to obtain the data.]
 
-**Downloaded**: [date downloaded or received]
+**Downloaded**: 
 
-**Description**:  [e.g., surface aragonite state]
+**Description**:  
 
-**Native data resolution**: [e.g., 1 degree, 30 m, etc.]   
+**Native data resolution**:  
 
-**Time range**: [e.g., 1880-1899, monthly data provided for each year] 
+**Time range**: 2005-2015 
 
-**Format**:  [e.g. NetCDF]
+**Format**:  NetCDF
 
 ***
   
@@ -240,6 +240,91 @@ foreach(i = c(2007:2011)) %dopar% { #i=2005
 out <- list.files(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/output'),pattern = '_rescaled_moll_1km.tif',full.names=T)%>%stack()
 
 plot(out,box=F,col=cols,axes=F)
+
+```
+
+
+#Extract data for each region
+```{r}
+setwd('globalprep/prs_uv/v2016')
+
+source('../../../src/R/common.R')
+
+library(raster)
+library(rgdal)
+library(dplyr)
+
+# raster/zonal data
+
+zones <- raster(file.path(dir_M, "git-annex/globalprep/spatial/d2014/data/rgn_mol_raster_1km/sp_mol_raster_1km.tif"))  # raster data
+rgn_data <- read.csv(file.path(dir_M, "git-annex/globalprep/spatial/d2014/data/rgn_mol_raster_1km/regionData.csv"))    # data for sp_id's used in raster
+
+
+
+# get raster data:
+rasts <- list.files(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/output'))
+rasts <- rasts[grep("rescaled", rasts)]
+
+pressure_stack <- stack()
+for(raster in rasts){ # raster = "uv_2007_2011-2005-2009_rescaled_moll_1km.tif"
+  tmp <- raster(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/output', raster))
+  pressure_stack <- stack(pressure_stack, tmp)
+}
+
+# extract data for each region:
+regions_stats <- zonal(pressure_stack,  zones, fun="mean", na.rm=TRUE, progress="text")
+regions_stats2 <- data.frame(regions_stats)
+setdiff(regions_stats2$zone, rgn_data$ant_id) # antarctica regions are in there, makes sense....no land
+setdiff(rgn_data$ant_id, regions_stats2$zone) # 213 is in there, that makes sense (Antarctica)
+
+data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="rgn_id", by.y="zone") %>%
+  gather("year", "pressure_score", starts_with("uv")) 
+
+uv_data <- data %>%
+  mutate(year = substring(year, 9, 12)) %>%
+  mutate(year = as.numeric(year)) %>%
+  mutate(year = year + 1) %>%
+  filter(ant_typ == "eez") %>%
+  dplyr::select(rgn_id, rgn_nam, year, pressure_score)
+
+write.csv(uv_data, "int/slr.csv", row.names=FALSE)
+
+## save toolbox data for different years/regions
+
+# function to extract data more easily
+saveData <- function(newYear){ # newYear= 2012
+  
+  criteria_year <- ~year == newYear
+
+    uv  <- uv_data %>%
+      filter_(criteria_year) %>%
+      dplyr::select(rgn_id, pressure_score) %>%
+      arrange(rgn_id)
+  
+  write.csv(uv, sprintf('output/uv_%s.csv', newYear), row.names=FALSE)
+}
+
+
+### extract data 
+for(newYear in (max(uv_data$year) - 4):(max(uv_data$year))){
+  saveData(newYear)
+}
+
+
+### try visualizing the data using googleVis plot
+library(googleVis)
+plotData <- uv_data %>%
+  dplyr::select(rgn_nam, year, pressure_score)
+
+Motion=gvisMotionChart(plotData, 
+                       idvar="rgn_nam", 
+                       timevar="year")
+plot(Motion)
+
+print(Motion, file='uv.html')
+
+
+
 
 ```
 
