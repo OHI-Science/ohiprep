@@ -116,7 +116,7 @@ np_harvest_preclip <- function(h) {
     
     select(-year_beg, -year_last, -no_data) %>%
     ### cleans up all columns created in this function
-    
+    ungroup() %>%    
     arrange(rgn_id, product, commodity, year)
 
   return(h1)
@@ -140,6 +140,7 @@ np_harvest_gapflag <- function(h) {
         ifelse(no_data & year == year_last, 'endfill',
         ifelse(is.na(tonnes) | is.na(usd), 'tbd',
         'none')))) %>%
+    ungroup() %>%
       ### ??? Barf. that is ugly.  Is there a way to use switch() here?
       ### ??? Also: preference for gap-filling flags?  This indicates the type of gap-filling that will be required, but 
       ###     does not indicate that the gap-filling has actually occurred yet.
@@ -171,6 +172,7 @@ np_zerofill <- function(h) {
       tonnes    = ifelse(is.na(tonnes) & usd==0, 0, tonnes),
       usd       = ifelse(is.na(usd) & tonnes==0, 0, usd)) %>%
       ### for years where one side is zero and the other is NA, fill NA with zero. 
+    ungroup() %>%
     arrange(rgn_id, product, commodity, year)
   
   return(h1)
@@ -225,7 +227,8 @@ np_regr_coef <- function(h, scope = 'rgn_id', vars = 'tdy') {
       commodity   = as.character(commodity), 
       usd_ix0     = coef(mdl)['(Intercept)'],
       usd_coef    = coef(mdl)['usd'],
-      yr_tns_coef = ifelse(vars=='tdy', coef(mdl)['year'], 0))
+      yr_tns_coef = ifelse(vars=='tdy', coef(mdl)['year'], 0)) %>%
+    ungroup()
   
   m_usd <- h %>%
     mutate(usd_nas = sum(is.na(usd))) %>%
@@ -236,7 +239,8 @@ np_regr_coef <- function(h, scope = 'rgn_id', vars = 'tdy') {
       commodity   = as.character(commodity), 
       tonnes_ix0  = coef(mdl)['(Intercept)'],
       tonnes_coef = coef(mdl)['tonnes'],
-      yr_usd_coef = ifelse(vars=='tdy', coef(mdl)['year'], 0))
+      yr_usd_coef = ifelse(vars=='tdy', coef(mdl)['year'], 0)) %>%
+    ungroup()
 
   if(dim(m_tonnes)[1]==0) {      
     # m_tonnes = no data; can't full_join, mutate manually
@@ -331,7 +335,7 @@ np_end_fill <- function(h) {
       usd_prev    = lag(usd, order_by=year),
       tonnes      = ifelse((gapfill=='endfill' & year==year_last & year_prev==year-1), tonnes_prev, tonnes),
       usd         = ifelse((gapfill=='endfill' & year==year_last & year_prev==year-1), usd_prev, usd)) %>%
-  
+   ungroup() %>%
     select(-tonnes_prev, -usd_prev, -year_prev, -year_last) %>%
       ### clean up regression model gap-fill variables and end-fill variables.
     arrange(rgn_id, product, commodity, year)
@@ -359,7 +363,9 @@ np_datacheck <- function(h) {
       tns_unique_pairs = length(unique(tonnes[paired])),
       unique_pairs = min(usd_unique_pairs, tns_unique_pairs),
       count_no_data = sum(no_data)
-    )
+    ) %>%
+    ungroup()
+  
   return(data_check)
 }
   

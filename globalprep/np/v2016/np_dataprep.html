@@ -9,7 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Compiled on Wed Aug 24 12:53:09 2016 by frazier" />
+<meta name="author" content="Compiled on Wed Aug 24 14:22:26 2016 by frazier" />
 
 
 <title>OHI: Natural Products</title>
@@ -142,7 +142,7 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">OHI: Natural Products</h1>
-<h4 class="author"><em><em>Compiled on Wed Aug 24 12:53:09 2016 by frazier</em></em></h4>
+<h4 class="author"><em><em>Compiled on Wed Aug 24 14:22:26 2016 by frazier</em></em></h4>
 
 </div>
 
@@ -718,734 +718,6 @@ tonnes_rel &lt;-<span class="st"> </span>j %&gt;%
 <span class="kw">write.csv</span>(tonnes_rel, <span class="st">'output/np_harvest_tonnes_rel.csv'</span>, <span class="dt">row.names =</span> <span class="ot">FALSE</span>, <span class="dt">na =</span> <span class="st">''</span>)</code></pre></div>
 <p>Comparing against last year’s data</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Replique de Congo, due to revision of 2011 data for ornamentals (and only one product that isn't a big producer)
-new &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;int/tonnes.csv&quot;</span>)
-old &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;../v2014_test/intermediate/tonnes.csv&quot;</span>)
-
-<span class="kw">filter</span>(new, rgn_id==<span class="dv">100</span>) %&gt;%
-<span class="st">  </span><span class="kw">arrange</span>(commodity, year)</code></pre></div>
-<pre><code>##     rgn_id            rgn_name            commodity     product year
-## 1      100 Republique du Congo  Fish body oils, nei    fish_oil 1976
-## 2      100 Republique du Congo  Fish body oils, nei    fish_oil 1977
-## 3      100 Republique du Congo  Fish body oils, nei    fish_oil 1978
-## 4      100 Republique du Congo  Fish body oils, nei    fish_oil 1979
-## 5      100 Republique du Congo  Fish body oils, nei    fish_oil 1980
-## 6      100 Republique du Congo  Fish body oils, nei    fish_oil 1981
-## 7      100 Republique du Congo  Fish body oils, nei    fish_oil 1982
-## 8      100 Republique du Congo  Fish body oils, nei    fish_oil 1983
-## 9      100 Republique du Congo  Fish body oils, nei    fish_oil 1984
-## 10     100 Republique du Congo  Fish body oils, nei    fish_oil 1985
-## 11     100 Republique du Congo  Fish body oils, nei    fish_oil 1986
-## 12     100 Republique du Congo  Fish body oils, nei    fish_oil 1987
-## 13     100 Republique du Congo  Fish body oils, nei    fish_oil 1988
-## 14     100 Republique du Congo  Fish body oils, nei    fish_oil 1989
-## 15     100 Republique du Congo  Fish body oils, nei    fish_oil 1990
-## 16     100 Republique du Congo  Fish body oils, nei    fish_oil 1991
-## 17     100 Republique du Congo  Fish body oils, nei    fish_oil 1992
-## 18     100 Republique du Congo  Fish body oils, nei    fish_oil 1993
-## 19     100 Republique du Congo  Fish body oils, nei    fish_oil 1994
-## 20     100 Republique du Congo  Fish body oils, nei    fish_oil 1995
-## 21     100 Republique du Congo  Fish body oils, nei    fish_oil 1996
-## 22     100 Republique du Congo  Fish body oils, nei    fish_oil 1997
-## 23     100 Republique du Congo  Fish body oils, nei    fish_oil 1998
-## 24     100 Republique du Congo  Fish body oils, nei    fish_oil 1999
-## 25     100 Republique du Congo  Fish body oils, nei    fish_oil 2000
-## 26     100 Republique du Congo  Fish body oils, nei    fish_oil 2001
-## 27     100 Republique du Congo  Fish body oils, nei    fish_oil 2002
-## 28     100 Republique du Congo  Fish body oils, nei    fish_oil 2003
-## 29     100 Republique du Congo  Fish body oils, nei    fish_oil 2004
-## 30     100 Republique du Congo  Fish body oils, nei    fish_oil 2005
-## 31     100 Republique du Congo  Fish body oils, nei    fish_oil 2006
-## 32     100 Republique du Congo  Fish body oils, nei    fish_oil 2007
-## 33     100 Republique du Congo  Fish body oils, nei    fish_oil 2008
-## 34     100 Republique du Congo  Fish body oils, nei    fish_oil 2009
-## 35     100 Republique du Congo  Fish body oils, nei    fish_oil 2010
-## 36     100 Republique du Congo  Fish body oils, nei    fish_oil 2011
-## 37     100 Republique du Congo  Fish body oils, nei    fish_oil 2012
-## 38     100 Republique du Congo  Fish body oils, nei    fish_oil 2013
-## 39     100 Republique du Congo Fish liver oils, nei    fish_oil 1976
-## 40     100 Republique du Congo Fish liver oils, nei    fish_oil 1977
-## 41     100 Republique du Congo Fish liver oils, nei    fish_oil 1978
-## 42     100 Republique du Congo Fish liver oils, nei    fish_oil 1979
-## 43     100 Republique du Congo Fish liver oils, nei    fish_oil 1980
-## 44     100 Republique du Congo Fish liver oils, nei    fish_oil 1981
-## 45     100 Republique du Congo Fish liver oils, nei    fish_oil 1982
-## 46     100 Republique du Congo Fish liver oils, nei    fish_oil 1983
-## 47     100 Republique du Congo Fish liver oils, nei    fish_oil 1984
-## 48     100 Republique du Congo Fish liver oils, nei    fish_oil 1985
-## 49     100 Republique du Congo Fish liver oils, nei    fish_oil 1986
-## 50     100 Republique du Congo Fish liver oils, nei    fish_oil 1987
-## 51     100 Republique du Congo Fish liver oils, nei    fish_oil 1988
-## 52     100 Republique du Congo Fish liver oils, nei    fish_oil 1989
-## 53     100 Republique du Congo Fish liver oils, nei    fish_oil 1990
-## 54     100 Republique du Congo Fish liver oils, nei    fish_oil 1991
-## 55     100 Republique du Congo Fish liver oils, nei    fish_oil 1992
-## 56     100 Republique du Congo Fish liver oils, nei    fish_oil 1993
-## 57     100 Republique du Congo Fish liver oils, nei    fish_oil 1994
-## 58     100 Republique du Congo Fish liver oils, nei    fish_oil 1995
-## 59     100 Republique du Congo Fish liver oils, nei    fish_oil 1996
-## 60     100 Republique du Congo Fish liver oils, nei    fish_oil 1997
-## 61     100 Republique du Congo Fish liver oils, nei    fish_oil 1998
-## 62     100 Republique du Congo Fish liver oils, nei    fish_oil 1999
-## 63     100 Republique du Congo Fish liver oils, nei    fish_oil 2000
-## 64     100 Republique du Congo Fish liver oils, nei    fish_oil 2001
-## 65     100 Republique du Congo Fish liver oils, nei    fish_oil 2002
-## 66     100 Republique du Congo Fish liver oils, nei    fish_oil 2003
-## 67     100 Republique du Congo Fish liver oils, nei    fish_oil 2004
-## 68     100 Republique du Congo Fish liver oils, nei    fish_oil 2005
-## 69     100 Republique du Congo Fish liver oils, nei    fish_oil 2006
-## 70     100 Republique du Congo Fish liver oils, nei    fish_oil 2007
-## 71     100 Republique du Congo Fish liver oils, nei    fish_oil 2008
-## 72     100 Republique du Congo Fish liver oils, nei    fish_oil 2009
-## 73     100 Republique du Congo Fish liver oils, nei    fish_oil 2010
-## 74     100 Republique du Congo Fish liver oils, nei    fish_oil 2011
-## 75     100 Republique du Congo Fish liver oils, nei    fish_oil 2012
-## 76     100 Republique du Congo Fish liver oils, nei    fish_oil 2013
-## 77     100 Republique du Congo  Ornamental fish nei ornamentals 1976
-## 78     100 Republique du Congo  Ornamental fish nei ornamentals 1977
-## 79     100 Republique du Congo  Ornamental fish nei ornamentals 1978
-## 80     100 Republique du Congo  Ornamental fish nei ornamentals 1979
-## 81     100 Republique du Congo  Ornamental fish nei ornamentals 1980
-## 82     100 Republique du Congo  Ornamental fish nei ornamentals 1981
-## 83     100 Republique du Congo  Ornamental fish nei ornamentals 1982
-## 84     100 Republique du Congo  Ornamental fish nei ornamentals 1983
-## 85     100 Republique du Congo  Ornamental fish nei ornamentals 1984
-## 86     100 Republique du Congo  Ornamental fish nei ornamentals 1985
-## 87     100 Republique du Congo  Ornamental fish nei ornamentals 1986
-## 88     100 Republique du Congo  Ornamental fish nei ornamentals 1987
-## 89     100 Republique du Congo  Ornamental fish nei ornamentals 1988
-## 90     100 Republique du Congo  Ornamental fish nei ornamentals 1989
-## 91     100 Republique du Congo  Ornamental fish nei ornamentals 1990
-## 92     100 Republique du Congo  Ornamental fish nei ornamentals 1991
-## 93     100 Republique du Congo  Ornamental fish nei ornamentals 1992
-## 94     100 Republique du Congo  Ornamental fish nei ornamentals 1993
-## 95     100 Republique du Congo  Ornamental fish nei ornamentals 1994
-## 96     100 Republique du Congo  Ornamental fish nei ornamentals 1995
-## 97     100 Republique du Congo  Ornamental fish nei ornamentals 1996
-## 98     100 Republique du Congo  Ornamental fish nei ornamentals 1997
-## 99     100 Republique du Congo  Ornamental fish nei ornamentals 1998
-## 100    100 Republique du Congo  Ornamental fish nei ornamentals 1999
-## 101    100 Republique du Congo  Ornamental fish nei ornamentals 2000
-## 102    100 Republique du Congo  Ornamental fish nei ornamentals 2001
-## 103    100 Republique du Congo  Ornamental fish nei ornamentals 2002
-## 104    100 Republique du Congo  Ornamental fish nei ornamentals 2003
-## 105    100 Republique du Congo  Ornamental fish nei ornamentals 2004
-## 106    100 Republique du Congo  Ornamental fish nei ornamentals 2005
-## 107    100 Republique du Congo  Ornamental fish nei ornamentals 2006
-## 108    100 Republique du Congo  Ornamental fish nei ornamentals 2007
-## 109    100 Republique du Congo  Ornamental fish nei ornamentals 2008
-## 110    100 Republique du Congo  Ornamental fish nei ornamentals 2009
-## 111    100 Republique du Congo  Ornamental fish nei ornamentals 2010
-## 112    100 Republique du Congo  Ornamental fish nei ornamentals 2011
-## 113    100 Republique du Congo  Ornamental fish nei ornamentals 2012
-## 114    100 Republique du Congo  Ornamental fish nei ornamentals 2013
-##     tonnes
-## 1       NA
-## 2       NA
-## 3       NA
-## 4       NA
-## 5       NA
-## 6       NA
-## 7     12.0
-## 8      0.0
-## 9     20.0
-## 10     0.0
-## 11     0.0
-## 12     0.0
-## 13     0.0
-## 14     0.0
-## 15     0.0
-## 16     0.0
-## 17     0.0
-## 18     0.0
-## 19     0.0
-## 20     0.0
-## 21     0.0
-## 22     0.0
-## 23     0.0
-## 24     0.0
-## 25     0.0
-## 26     0.0
-## 27     0.0
-## 28     0.0
-## 29     0.0
-## 30     0.0
-## 31     0.0
-## 32     0.0
-## 33     0.0
-## 34     0.0
-## 35     0.0
-## 36     0.0
-## 37     0.0
-## 38     0.0
-## 39      NA
-## 40      NA
-## 41      NA
-## 42      NA
-## 43      NA
-## 44      NA
-## 45      NA
-## 46      NA
-## 47      NA
-## 48      NA
-## 49      NA
-## 50      NA
-## 51      NA
-## 52      NA
-## 53      NA
-## 54      NA
-## 55      NA
-## 56      NA
-## 57      NA
-## 58     1.0
-## 59     0.0
-## 60     0.0
-## 61     0.0
-## 62     0.0
-## 63     0.0
-## 64     0.0
-## 65     0.0
-## 66     0.0
-## 67     0.0
-## 68     0.0
-## 69     0.0
-## 70     0.0
-## 71     0.0
-## 72     0.0
-## 73     0.0
-## 74     0.0
-## 75     0.0
-## 76     0.0
-## 77      NA
-## 78      NA
-## 79      NA
-## 80      NA
-## 81      NA
-## 82      NA
-## 83      NA
-## 84      NA
-## 85      NA
-## 86      NA
-## 87      NA
-## 88      NA
-## 89      NA
-## 90      NA
-## 91      NA
-## 92      NA
-## 93      NA
-## 94      NA
-## 95      NA
-## 96      NA
-## 97      NA
-## 98      NA
-## 99      NA
-## 100     NA
-## 101     NA
-## 102     NA
-## 103     NA
-## 104    0.1
-## 105     NA
-## 106    0.0
-## 107     NA
-## 108    0.0
-## 109    0.0
-## 110    0.0
-## 111    0.0
-## 112    0.0
-## 113    0.0
-## 114    0.0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">filter</span>(old, rgn_id==<span class="dv">100</span>) %&gt;%
-<span class="st">  </span><span class="kw">arrange</span>(commodity, year)</code></pre></div>
-<pre><code>##     rgn_id            commodity     product year tonnes
-## 1      100  Fish body oils, nei    fish_oil 1976     NA
-## 2      100  Fish body oils, nei    fish_oil 1977     NA
-## 3      100  Fish body oils, nei    fish_oil 1978     NA
-## 4      100  Fish body oils, nei    fish_oil 1979     NA
-## 5      100  Fish body oils, nei    fish_oil 1980     NA
-## 6      100  Fish body oils, nei    fish_oil 1981     NA
-## 7      100  Fish body oils, nei    fish_oil 1982   12.0
-## 8      100  Fish body oils, nei    fish_oil 1983    0.0
-## 9      100  Fish body oils, nei    fish_oil 1984   20.0
-## 10     100  Fish body oils, nei    fish_oil 1985    0.0
-## 11     100  Fish body oils, nei    fish_oil 1986    0.0
-## 12     100  Fish body oils, nei    fish_oil 1987    0.0
-## 13     100  Fish body oils, nei    fish_oil 1988    0.0
-## 14     100  Fish body oils, nei    fish_oil 1989    0.0
-## 15     100  Fish body oils, nei    fish_oil 1990    0.0
-## 16     100  Fish body oils, nei    fish_oil 1991    0.0
-## 17     100  Fish body oils, nei    fish_oil 1992    0.0
-## 18     100  Fish body oils, nei    fish_oil 1993    0.0
-## 19     100  Fish body oils, nei    fish_oil 1994    0.0
-## 20     100  Fish body oils, nei    fish_oil 1995    0.0
-## 21     100  Fish body oils, nei    fish_oil 1996    0.0
-## 22     100  Fish body oils, nei    fish_oil 1997    0.0
-## 23     100  Fish body oils, nei    fish_oil 1998    0.0
-## 24     100  Fish body oils, nei    fish_oil 1999    0.0
-## 25     100  Fish body oils, nei    fish_oil 2000    0.0
-## 26     100  Fish body oils, nei    fish_oil 2001    0.0
-## 27     100  Fish body oils, nei    fish_oil 2002    0.0
-## 28     100  Fish body oils, nei    fish_oil 2003    0.0
-## 29     100  Fish body oils, nei    fish_oil 2004    0.0
-## 30     100  Fish body oils, nei    fish_oil 2005    0.0
-## 31     100  Fish body oils, nei    fish_oil 2006    0.0
-## 32     100  Fish body oils, nei    fish_oil 2007    0.0
-## 33     100  Fish body oils, nei    fish_oil 2008    0.0
-## 34     100  Fish body oils, nei    fish_oil 2009    0.0
-## 35     100  Fish body oils, nei    fish_oil 2010    0.0
-## 36     100  Fish body oils, nei    fish_oil 2011    0.0
-## 37     100 Fish liver oils, nei    fish_oil 1976     NA
-## 38     100 Fish liver oils, nei    fish_oil 1977     NA
-## 39     100 Fish liver oils, nei    fish_oil 1978     NA
-## 40     100 Fish liver oils, nei    fish_oil 1979     NA
-## 41     100 Fish liver oils, nei    fish_oil 1980     NA
-## 42     100 Fish liver oils, nei    fish_oil 1981     NA
-## 43     100 Fish liver oils, nei    fish_oil 1982     NA
-## 44     100 Fish liver oils, nei    fish_oil 1983     NA
-## 45     100 Fish liver oils, nei    fish_oil 1984     NA
-## 46     100 Fish liver oils, nei    fish_oil 1985     NA
-## 47     100 Fish liver oils, nei    fish_oil 1986     NA
-## 48     100 Fish liver oils, nei    fish_oil 1987     NA
-## 49     100 Fish liver oils, nei    fish_oil 1988     NA
-## 50     100 Fish liver oils, nei    fish_oil 1989     NA
-## 51     100 Fish liver oils, nei    fish_oil 1990     NA
-## 52     100 Fish liver oils, nei    fish_oil 1991     NA
-## 53     100 Fish liver oils, nei    fish_oil 1992     NA
-## 54     100 Fish liver oils, nei    fish_oil 1993     NA
-## 55     100 Fish liver oils, nei    fish_oil 1994     NA
-## 56     100 Fish liver oils, nei    fish_oil 1995    1.0
-## 57     100 Fish liver oils, nei    fish_oil 1996    0.0
-## 58     100 Fish liver oils, nei    fish_oil 1997    0.0
-## 59     100 Fish liver oils, nei    fish_oil 1998    0.0
-## 60     100 Fish liver oils, nei    fish_oil 1999    0.0
-## 61     100 Fish liver oils, nei    fish_oil 2000    0.0
-## 62     100 Fish liver oils, nei    fish_oil 2001    0.0
-## 63     100 Fish liver oils, nei    fish_oil 2002    0.0
-## 64     100 Fish liver oils, nei    fish_oil 2003    0.0
-## 65     100 Fish liver oils, nei    fish_oil 2004    0.0
-## 66     100 Fish liver oils, nei    fish_oil 2005    0.0
-## 67     100 Fish liver oils, nei    fish_oil 2006    0.0
-## 68     100 Fish liver oils, nei    fish_oil 2007    0.0
-## 69     100 Fish liver oils, nei    fish_oil 2008    0.0
-## 70     100 Fish liver oils, nei    fish_oil 2009    0.0
-## 71     100 Fish liver oils, nei    fish_oil 2010    0.0
-## 72     100 Fish liver oils, nei    fish_oil 2011    0.0
-## 73     100  Ornamental fish nei ornamentals 1976     NA
-## 74     100  Ornamental fish nei ornamentals 1977     NA
-## 75     100  Ornamental fish nei ornamentals 1978     NA
-## 76     100  Ornamental fish nei ornamentals 1979     NA
-## 77     100  Ornamental fish nei ornamentals 1980     NA
-## 78     100  Ornamental fish nei ornamentals 1981     NA
-## 79     100  Ornamental fish nei ornamentals 1982     NA
-## 80     100  Ornamental fish nei ornamentals 1983     NA
-## 81     100  Ornamental fish nei ornamentals 1984     NA
-## 82     100  Ornamental fish nei ornamentals 1985     NA
-## 83     100  Ornamental fish nei ornamentals 1986     NA
-## 84     100  Ornamental fish nei ornamentals 1987     NA
-## 85     100  Ornamental fish nei ornamentals 1988     NA
-## 86     100  Ornamental fish nei ornamentals 1989     NA
-## 87     100  Ornamental fish nei ornamentals 1990     NA
-## 88     100  Ornamental fish nei ornamentals 1991     NA
-## 89     100  Ornamental fish nei ornamentals 1992     NA
-## 90     100  Ornamental fish nei ornamentals 1993     NA
-## 91     100  Ornamental fish nei ornamentals 1994     NA
-## 92     100  Ornamental fish nei ornamentals 1995     NA
-## 93     100  Ornamental fish nei ornamentals 1996     NA
-## 94     100  Ornamental fish nei ornamentals 1997     NA
-## 95     100  Ornamental fish nei ornamentals 1998     NA
-## 96     100  Ornamental fish nei ornamentals 1999     NA
-## 97     100  Ornamental fish nei ornamentals 2000     NA
-## 98     100  Ornamental fish nei ornamentals 2001     NA
-## 99     100  Ornamental fish nei ornamentals 2002     NA
-## 100    100  Ornamental fish nei ornamentals 2003    0.1
-## 101    100  Ornamental fish nei ornamentals 2004     NA
-## 102    100  Ornamental fish nei ornamentals 2005     NA
-## 103    100  Ornamental fish nei ornamentals 2006     NA
-## 104    100  Ornamental fish nei ornamentals 2007    0.0
-## 105    100  Ornamental fish nei ornamentals 2008    0.0
-## 106    100  Ornamental fish nei ornamentals 2009    0.0
-## 107    100  Ornamental fish nei ornamentals 2010    0.0
-## 108    100  Ornamental fish nei ornamentals 2011    3.0
-##                rgn_name
-## 1   Republique du Congo
-## 2   Republique du Congo
-## 3   Republique du Congo
-## 4   Republique du Congo
-## 5   Republique du Congo
-## 6   Republique du Congo
-## 7   Republique du Congo
-## 8   Republique du Congo
-## 9   Republique du Congo
-## 10  Republique du Congo
-## 11  Republique du Congo
-## 12  Republique du Congo
-## 13  Republique du Congo
-## 14  Republique du Congo
-## 15  Republique du Congo
-## 16  Republique du Congo
-## 17  Republique du Congo
-## 18  Republique du Congo
-## 19  Republique du Congo
-## 20  Republique du Congo
-## 21  Republique du Congo
-## 22  Republique du Congo
-## 23  Republique du Congo
-## 24  Republique du Congo
-## 25  Republique du Congo
-## 26  Republique du Congo
-## 27  Republique du Congo
-## 28  Republique du Congo
-## 29  Republique du Congo
-## 30  Republique du Congo
-## 31  Republique du Congo
-## 32  Republique du Congo
-## 33  Republique du Congo
-## 34  Republique du Congo
-## 35  Republique du Congo
-## 36  Republique du Congo
-## 37  Republique du Congo
-## 38  Republique du Congo
-## 39  Republique du Congo
-## 40  Republique du Congo
-## 41  Republique du Congo
-## 42  Republique du Congo
-## 43  Republique du Congo
-## 44  Republique du Congo
-## 45  Republique du Congo
-## 46  Republique du Congo
-## 47  Republique du Congo
-## 48  Republique du Congo
-## 49  Republique du Congo
-## 50  Republique du Congo
-## 51  Republique du Congo
-## 52  Republique du Congo
-## 53  Republique du Congo
-## 54  Republique du Congo
-## 55  Republique du Congo
-## 56  Republique du Congo
-## 57  Republique du Congo
-## 58  Republique du Congo
-## 59  Republique du Congo
-## 60  Republique du Congo
-## 61  Republique du Congo
-## 62  Republique du Congo
-## 63  Republique du Congo
-## 64  Republique du Congo
-## 65  Republique du Congo
-## 66  Republique du Congo
-## 67  Republique du Congo
-## 68  Republique du Congo
-## 69  Republique du Congo
-## 70  Republique du Congo
-## 71  Republique du Congo
-## 72  Republique du Congo
-## 73  Republique du Congo
-## 74  Republique du Congo
-## 75  Republique du Congo
-## 76  Republique du Congo
-## 77  Republique du Congo
-## 78  Republique du Congo
-## 79  Republique du Congo
-## 80  Republique du Congo
-## 81  Republique du Congo
-## 82  Republique du Congo
-## 83  Republique du Congo
-## 84  Republique du Congo
-## 85  Republique du Congo
-## 86  Republique du Congo
-## 87  Republique du Congo
-## 88  Republique du Congo
-## 89  Republique du Congo
-## 90  Republique du Congo
-## 91  Republique du Congo
-## 92  Republique du Congo
-## 93  Republique du Congo
-## 94  Republique du Congo
-## 95  Republique du Congo
-## 96  Republique du Congo
-## 97  Republique du Congo
-## 98  Republique du Congo
-## 99  Republique du Congo
-## 100 Republique du Congo
-## 101 Republique du Congo
-## 102 Republique du Congo
-## 103 Republique du Congo
-## 104 Republique du Congo
-## 105 Republique du Congo
-## 106 Republique du Congo
-## 107 Republique du Congo
-## 108 Republique du Congo</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">new &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;int/usd.csv&quot;</span>)
-<span class="kw">filter</span>(new, rgn_id==<span class="dv">100</span>) %&gt;%
-<span class="st">  </span><span class="kw">arrange</span>(commodity, year)</code></pre></div>
-<pre><code>##     rgn_id            rgn_name            commodity     product year usd
-## 1      100 Republique du Congo  Fish body oils, nei    fish_oil 1976  NA
-## 2      100 Republique du Congo  Fish body oils, nei    fish_oil 1977  NA
-## 3      100 Republique du Congo  Fish body oils, nei    fish_oil 1978  NA
-## 4      100 Republique du Congo  Fish body oils, nei    fish_oil 1979  NA
-## 5      100 Republique du Congo  Fish body oils, nei    fish_oil 1980  NA
-## 6      100 Republique du Congo  Fish body oils, nei    fish_oil 1981  NA
-## 7      100 Republique du Congo  Fish body oils, nei    fish_oil 1982  37
-## 8      100 Republique du Congo  Fish body oils, nei    fish_oil 1983   0
-## 9      100 Republique du Congo  Fish body oils, nei    fish_oil 1984  42
-## 10     100 Republique du Congo  Fish body oils, nei    fish_oil 1985   0
-## 11     100 Republique du Congo  Fish body oils, nei    fish_oil 1986   0
-## 12     100 Republique du Congo  Fish body oils, nei    fish_oil 1987   0
-## 13     100 Republique du Congo  Fish body oils, nei    fish_oil 1988   0
-## 14     100 Republique du Congo  Fish body oils, nei    fish_oil 1989   0
-## 15     100 Republique du Congo  Fish body oils, nei    fish_oil 1990   0
-## 16     100 Republique du Congo  Fish body oils, nei    fish_oil 1991   0
-## 17     100 Republique du Congo  Fish body oils, nei    fish_oil 1992   0
-## 18     100 Republique du Congo  Fish body oils, nei    fish_oil 1993   0
-## 19     100 Republique du Congo  Fish body oils, nei    fish_oil 1994   0
-## 20     100 Republique du Congo  Fish body oils, nei    fish_oil 1995   0
-## 21     100 Republique du Congo  Fish body oils, nei    fish_oil 1996   0
-## 22     100 Republique du Congo  Fish body oils, nei    fish_oil 1997   0
-## 23     100 Republique du Congo  Fish body oils, nei    fish_oil 1998   0
-## 24     100 Republique du Congo  Fish body oils, nei    fish_oil 1999   0
-## 25     100 Republique du Congo  Fish body oils, nei    fish_oil 2000   0
-## 26     100 Republique du Congo  Fish body oils, nei    fish_oil 2001   0
-## 27     100 Republique du Congo  Fish body oils, nei    fish_oil 2002   0
-## 28     100 Republique du Congo  Fish body oils, nei    fish_oil 2003   0
-## 29     100 Republique du Congo  Fish body oils, nei    fish_oil 2004   0
-## 30     100 Republique du Congo  Fish body oils, nei    fish_oil 2005   0
-## 31     100 Republique du Congo  Fish body oils, nei    fish_oil 2006   0
-## 32     100 Republique du Congo  Fish body oils, nei    fish_oil 2007   0
-## 33     100 Republique du Congo  Fish body oils, nei    fish_oil 2008   0
-## 34     100 Republique du Congo  Fish body oils, nei    fish_oil 2009   0
-## 35     100 Republique du Congo  Fish body oils, nei    fish_oil 2010   0
-## 36     100 Republique du Congo  Fish body oils, nei    fish_oil 2011   0
-## 37     100 Republique du Congo  Fish body oils, nei    fish_oil 2012   0
-## 38     100 Republique du Congo  Fish body oils, nei    fish_oil 2013   0
-## 39     100 Republique du Congo Fish liver oils, nei    fish_oil 1976  NA
-## 40     100 Republique du Congo Fish liver oils, nei    fish_oil 1977  NA
-## 41     100 Republique du Congo Fish liver oils, nei    fish_oil 1978  NA
-## 42     100 Republique du Congo Fish liver oils, nei    fish_oil 1979  NA
-## 43     100 Republique du Congo Fish liver oils, nei    fish_oil 1980  NA
-## 44     100 Republique du Congo Fish liver oils, nei    fish_oil 1981  NA
-## 45     100 Republique du Congo Fish liver oils, nei    fish_oil 1982  NA
-## 46     100 Republique du Congo Fish liver oils, nei    fish_oil 1983  NA
-## 47     100 Republique du Congo Fish liver oils, nei    fish_oil 1984  NA
-## 48     100 Republique du Congo Fish liver oils, nei    fish_oil 1985  NA
-## 49     100 Republique du Congo Fish liver oils, nei    fish_oil 1986  NA
-## 50     100 Republique du Congo Fish liver oils, nei    fish_oil 1987  NA
-## 51     100 Republique du Congo Fish liver oils, nei    fish_oil 1988  NA
-## 52     100 Republique du Congo Fish liver oils, nei    fish_oil 1989  NA
-## 53     100 Republique du Congo Fish liver oils, nei    fish_oil 1990  NA
-## 54     100 Republique du Congo Fish liver oils, nei    fish_oil 1991  NA
-## 55     100 Republique du Congo Fish liver oils, nei    fish_oil 1992  NA
-## 56     100 Republique du Congo Fish liver oils, nei    fish_oil 1993  NA
-## 57     100 Republique du Congo Fish liver oils, nei    fish_oil 1994  NA
-## 58     100 Republique du Congo Fish liver oils, nei    fish_oil 1995   1
-## 59     100 Republique du Congo Fish liver oils, nei    fish_oil 1996   0
-## 60     100 Republique du Congo Fish liver oils, nei    fish_oil 1997   0
-## 61     100 Republique du Congo Fish liver oils, nei    fish_oil 1998   0
-## 62     100 Republique du Congo Fish liver oils, nei    fish_oil 1999   0
-## 63     100 Republique du Congo Fish liver oils, nei    fish_oil 2000   0
-## 64     100 Republique du Congo Fish liver oils, nei    fish_oil 2001   0
-## 65     100 Republique du Congo Fish liver oils, nei    fish_oil 2002   0
-## 66     100 Republique du Congo Fish liver oils, nei    fish_oil 2003   0
-## 67     100 Republique du Congo Fish liver oils, nei    fish_oil 2004   0
-## 68     100 Republique du Congo Fish liver oils, nei    fish_oil 2005   0
-## 69     100 Republique du Congo Fish liver oils, nei    fish_oil 2006   0
-## 70     100 Republique du Congo Fish liver oils, nei    fish_oil 2007   0
-## 71     100 Republique du Congo Fish liver oils, nei    fish_oil 2008   0
-## 72     100 Republique du Congo Fish liver oils, nei    fish_oil 2009   0
-## 73     100 Republique du Congo Fish liver oils, nei    fish_oil 2010   0
-## 74     100 Republique du Congo Fish liver oils, nei    fish_oil 2011   0
-## 75     100 Republique du Congo Fish liver oils, nei    fish_oil 2012   0
-## 76     100 Republique du Congo Fish liver oils, nei    fish_oil 2013   0
-## 77     100 Republique du Congo  Ornamental fish nei ornamentals 1976  NA
-## 78     100 Republique du Congo  Ornamental fish nei ornamentals 1977  NA
-## 79     100 Republique du Congo  Ornamental fish nei ornamentals 1978  NA
-## 80     100 Republique du Congo  Ornamental fish nei ornamentals 1979  NA
-## 81     100 Republique du Congo  Ornamental fish nei ornamentals 1980  NA
-## 82     100 Republique du Congo  Ornamental fish nei ornamentals 1981  NA
-## 83     100 Republique du Congo  Ornamental fish nei ornamentals 1982  NA
-## 84     100 Republique du Congo  Ornamental fish nei ornamentals 1983  NA
-## 85     100 Republique du Congo  Ornamental fish nei ornamentals 1984  NA
-## 86     100 Republique du Congo  Ornamental fish nei ornamentals 1985  NA
-## 87     100 Republique du Congo  Ornamental fish nei ornamentals 1986  NA
-## 88     100 Republique du Congo  Ornamental fish nei ornamentals 1987  NA
-## 89     100 Republique du Congo  Ornamental fish nei ornamentals 1988  NA
-## 90     100 Republique du Congo  Ornamental fish nei ornamentals 1989  NA
-## 91     100 Republique du Congo  Ornamental fish nei ornamentals 1990  NA
-## 92     100 Republique du Congo  Ornamental fish nei ornamentals 1991  NA
-## 93     100 Republique du Congo  Ornamental fish nei ornamentals 1992  NA
-## 94     100 Republique du Congo  Ornamental fish nei ornamentals 1993  NA
-## 95     100 Republique du Congo  Ornamental fish nei ornamentals 1994  NA
-## 96     100 Republique du Congo  Ornamental fish nei ornamentals 1995   3
-## 97     100 Republique du Congo  Ornamental fish nei ornamentals 1996  85
-## 98     100 Republique du Congo  Ornamental fish nei ornamentals 1997  77
-## 99     100 Republique du Congo  Ornamental fish nei ornamentals 1998  77
-## 100    100 Republique du Congo  Ornamental fish nei ornamentals 1999  82
-## 101    100 Republique du Congo  Ornamental fish nei ornamentals 2000  96
-## 102    100 Republique du Congo  Ornamental fish nei ornamentals 2001 132
-## 103    100 Republique du Congo  Ornamental fish nei ornamentals 2002 187
-## 104    100 Republique du Congo  Ornamental fish nei ornamentals 2003 180
-## 105    100 Republique du Congo  Ornamental fish nei ornamentals 2004  83
-## 106    100 Republique du Congo  Ornamental fish nei ornamentals 2005   0
-## 107    100 Republique du Congo  Ornamental fish nei ornamentals 2006 131
-## 108    100 Republique du Congo  Ornamental fish nei ornamentals 2007   0
-## 109    100 Republique du Congo  Ornamental fish nei ornamentals 2008   0
-## 110    100 Republique du Congo  Ornamental fish nei ornamentals 2009   0
-## 111    100 Republique du Congo  Ornamental fish nei ornamentals 2010   0
-## 112    100 Republique du Congo  Ornamental fish nei ornamentals 2011   0
-## 113    100 Republique du Congo  Ornamental fish nei ornamentals 2012   0
-## 114    100 Republique du Congo  Ornamental fish nei ornamentals 2013   0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">old &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;../v2014_test/intermediate/usd.csv&quot;</span>)
-<span class="kw">filter</span>(old, rgn_id==<span class="dv">100</span>) %&gt;%
-<span class="st">  </span><span class="kw">arrange</span>(commodity, year)</code></pre></div>
-<pre><code>##     rgn_id            commodity     product year usd            rgn_name
-## 1      100  Fish body oils, nei    fish_oil 1976  NA Republique du Congo
-## 2      100  Fish body oils, nei    fish_oil 1977  NA Republique du Congo
-## 3      100  Fish body oils, nei    fish_oil 1978  NA Republique du Congo
-## 4      100  Fish body oils, nei    fish_oil 1979  NA Republique du Congo
-## 5      100  Fish body oils, nei    fish_oil 1980  NA Republique du Congo
-## 6      100  Fish body oils, nei    fish_oil 1981  NA Republique du Congo
-## 7      100  Fish body oils, nei    fish_oil 1982  37 Republique du Congo
-## 8      100  Fish body oils, nei    fish_oil 1983   0 Republique du Congo
-## 9      100  Fish body oils, nei    fish_oil 1984  42 Republique du Congo
-## 10     100  Fish body oils, nei    fish_oil 1985   0 Republique du Congo
-## 11     100  Fish body oils, nei    fish_oil 1986   0 Republique du Congo
-## 12     100  Fish body oils, nei    fish_oil 1987   0 Republique du Congo
-## 13     100  Fish body oils, nei    fish_oil 1988   0 Republique du Congo
-## 14     100  Fish body oils, nei    fish_oil 1989   0 Republique du Congo
-## 15     100  Fish body oils, nei    fish_oil 1990   0 Republique du Congo
-## 16     100  Fish body oils, nei    fish_oil 1991   0 Republique du Congo
-## 17     100  Fish body oils, nei    fish_oil 1992   0 Republique du Congo
-## 18     100  Fish body oils, nei    fish_oil 1993   0 Republique du Congo
-## 19     100  Fish body oils, nei    fish_oil 1994   0 Republique du Congo
-## 20     100  Fish body oils, nei    fish_oil 1995   0 Republique du Congo
-## 21     100  Fish body oils, nei    fish_oil 1996   0 Republique du Congo
-## 22     100  Fish body oils, nei    fish_oil 1997   0 Republique du Congo
-## 23     100  Fish body oils, nei    fish_oil 1998   0 Republique du Congo
-## 24     100  Fish body oils, nei    fish_oil 1999   0 Republique du Congo
-## 25     100  Fish body oils, nei    fish_oil 2000   0 Republique du Congo
-## 26     100  Fish body oils, nei    fish_oil 2001   0 Republique du Congo
-## 27     100  Fish body oils, nei    fish_oil 2002   0 Republique du Congo
-## 28     100  Fish body oils, nei    fish_oil 2003   0 Republique du Congo
-## 29     100  Fish body oils, nei    fish_oil 2004   0 Republique du Congo
-## 30     100  Fish body oils, nei    fish_oil 2005   0 Republique du Congo
-## 31     100  Fish body oils, nei    fish_oil 2006   0 Republique du Congo
-## 32     100  Fish body oils, nei    fish_oil 2007   0 Republique du Congo
-## 33     100  Fish body oils, nei    fish_oil 2008   0 Republique du Congo
-## 34     100  Fish body oils, nei    fish_oil 2009   0 Republique du Congo
-## 35     100  Fish body oils, nei    fish_oil 2010   0 Republique du Congo
-## 36     100  Fish body oils, nei    fish_oil 2011   0 Republique du Congo
-## 37     100 Fish liver oils, nei    fish_oil 1976  NA Republique du Congo
-## 38     100 Fish liver oils, nei    fish_oil 1977  NA Republique du Congo
-## 39     100 Fish liver oils, nei    fish_oil 1978  NA Republique du Congo
-## 40     100 Fish liver oils, nei    fish_oil 1979  NA Republique du Congo
-## 41     100 Fish liver oils, nei    fish_oil 1980  NA Republique du Congo
-## 42     100 Fish liver oils, nei    fish_oil 1981  NA Republique du Congo
-## 43     100 Fish liver oils, nei    fish_oil 1982  NA Republique du Congo
-## 44     100 Fish liver oils, nei    fish_oil 1983  NA Republique du Congo
-## 45     100 Fish liver oils, nei    fish_oil 1984  NA Republique du Congo
-## 46     100 Fish liver oils, nei    fish_oil 1985  NA Republique du Congo
-## 47     100 Fish liver oils, nei    fish_oil 1986  NA Republique du Congo
-## 48     100 Fish liver oils, nei    fish_oil 1987  NA Republique du Congo
-## 49     100 Fish liver oils, nei    fish_oil 1988  NA Republique du Congo
-## 50     100 Fish liver oils, nei    fish_oil 1989  NA Republique du Congo
-## 51     100 Fish liver oils, nei    fish_oil 1990  NA Republique du Congo
-## 52     100 Fish liver oils, nei    fish_oil 1991  NA Republique du Congo
-## 53     100 Fish liver oils, nei    fish_oil 1992  NA Republique du Congo
-## 54     100 Fish liver oils, nei    fish_oil 1993  NA Republique du Congo
-## 55     100 Fish liver oils, nei    fish_oil 1994  NA Republique du Congo
-## 56     100 Fish liver oils, nei    fish_oil 1995   1 Republique du Congo
-## 57     100 Fish liver oils, nei    fish_oil 1996   0 Republique du Congo
-## 58     100 Fish liver oils, nei    fish_oil 1997   0 Republique du Congo
-## 59     100 Fish liver oils, nei    fish_oil 1998   0 Republique du Congo
-## 60     100 Fish liver oils, nei    fish_oil 1999   0 Republique du Congo
-## 61     100 Fish liver oils, nei    fish_oil 2000   0 Republique du Congo
-## 62     100 Fish liver oils, nei    fish_oil 2001   0 Republique du Congo
-## 63     100 Fish liver oils, nei    fish_oil 2002   0 Republique du Congo
-## 64     100 Fish liver oils, nei    fish_oil 2003   0 Republique du Congo
-## 65     100 Fish liver oils, nei    fish_oil 2004   0 Republique du Congo
-## 66     100 Fish liver oils, nei    fish_oil 2005   0 Republique du Congo
-## 67     100 Fish liver oils, nei    fish_oil 2006   0 Republique du Congo
-## 68     100 Fish liver oils, nei    fish_oil 2007   0 Republique du Congo
-## 69     100 Fish liver oils, nei    fish_oil 2008   0 Republique du Congo
-## 70     100 Fish liver oils, nei    fish_oil 2009   0 Republique du Congo
-## 71     100 Fish liver oils, nei    fish_oil 2010   0 Republique du Congo
-## 72     100 Fish liver oils, nei    fish_oil 2011   0 Republique du Congo
-## 73     100  Ornamental fish nei ornamentals 1976  NA Republique du Congo
-## 74     100  Ornamental fish nei ornamentals 1977  NA Republique du Congo
-## 75     100  Ornamental fish nei ornamentals 1978  NA Republique du Congo
-## 76     100  Ornamental fish nei ornamentals 1979  NA Republique du Congo
-## 77     100  Ornamental fish nei ornamentals 1980  NA Republique du Congo
-## 78     100  Ornamental fish nei ornamentals 1981  NA Republique du Congo
-## 79     100  Ornamental fish nei ornamentals 1982  NA Republique du Congo
-## 80     100  Ornamental fish nei ornamentals 1983  NA Republique du Congo
-## 81     100  Ornamental fish nei ornamentals 1984  NA Republique du Congo
-## 82     100  Ornamental fish nei ornamentals 1985  NA Republique du Congo
-## 83     100  Ornamental fish nei ornamentals 1986  NA Republique du Congo
-## 84     100  Ornamental fish nei ornamentals 1987  NA Republique du Congo
-## 85     100  Ornamental fish nei ornamentals 1988  NA Republique du Congo
-## 86     100  Ornamental fish nei ornamentals 1989  NA Republique du Congo
-## 87     100  Ornamental fish nei ornamentals 1990  NA Republique du Congo
-## 88     100  Ornamental fish nei ornamentals 1991  NA Republique du Congo
-## 89     100  Ornamental fish nei ornamentals 1992  NA Republique du Congo
-## 90     100  Ornamental fish nei ornamentals 1993  NA Republique du Congo
-## 91     100  Ornamental fish nei ornamentals 1994  NA Republique du Congo
-## 92     100  Ornamental fish nei ornamentals 1995   3 Republique du Congo
-## 93     100  Ornamental fish nei ornamentals 1996  85 Republique du Congo
-## 94     100  Ornamental fish nei ornamentals 1997  77 Republique du Congo
-## 95     100  Ornamental fish nei ornamentals 1998  77 Republique du Congo
-## 96     100  Ornamental fish nei ornamentals 1999  82 Republique du Congo
-## 97     100  Ornamental fish nei ornamentals 2000  96 Republique du Congo
-## 98     100  Ornamental fish nei ornamentals 2001 132 Republique du Congo
-## 99     100  Ornamental fish nei ornamentals 2002 187 Republique du Congo
-## 100    100  Ornamental fish nei ornamentals 2003 180 Republique du Congo
-## 101    100  Ornamental fish nei ornamentals 2004  83 Republique du Congo
-## 102    100  Ornamental fish nei ornamentals 2005  NA Republique du Congo
-## 103    100  Ornamental fish nei ornamentals 2006 131 Republique du Congo
-## 104    100  Ornamental fish nei ornamentals 2007   0 Republique du Congo
-## 105    100  Ornamental fish nei ornamentals 2008   0 Republique du Congo
-## 106    100  Ornamental fish nei ornamentals 2009   0 Republique du Congo
-## 107    100  Ornamental fish nei ornamentals 2010   0 Republique du Congo
-## 108    100  Ornamental fish nei ornamentals 2011 117 Republique du Congo</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">new &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">'output/np_harvest_tonnes.csv'</span>)
-<span class="kw">filter</span>(new, rgn_id==<span class="dv">100</span>)</code></pre></div>
-<pre><code>##    rgn_id     product year     tonnes
-## 1     100 ornamentals 1995 0.00000000
-## 2     100 ornamentals 1996 0.00000000
-## 3     100 ornamentals 1997 0.00000000
-## 4     100 ornamentals 1998 0.00000000
-## 5     100 ornamentals 1999 0.08998214
-## 6     100 ornamentals 2000 0.52932202
-## 7     100 ornamentals 2001 1.59291462
-## 8     100 ornamentals 2002 3.51816926
-## 9     100 ornamentals 2003 3.45318712
-## 10    100 ornamentals 2004 3.98844747
-## 11    100 ornamentals 2005 2.92485486
-## 12    100 ornamentals 2006 2.92282047
-## 13    100 ornamentals 2007 2.89782047
-## 14    100 ornamentals 2008 1.92322024
-## 15    100 ornamentals 2009 1.92322024
-## 16    100 ornamentals 2010 0.00000000
-## 17    100 ornamentals 2011 0.00000000
-## 18    100 ornamentals 2012 0.00000000
-## 19    100 ornamentals 2013 0.00000000</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">old &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">'../v2014_test/data/np_harvest_tonnes_eez2014_test-year_max_2011.csv'</span>)
-<span class="kw">filter</span>(old, rgn_id==<span class="dv">100</span>)</code></pre></div>
-<pre><code>##    rgn_id     product year      tonnes
-## 1     100 ornamentals 1995 0.000000000
-## 2     100 ornamentals 1996 0.000000000
-## 3     100 ornamentals 1997 0.000000000
-## 4     100 ornamentals 1998 0.000000000
-## 5     100 ornamentals 1999 0.006764426
-## 6     100 ornamentals 2000 0.025950857
-## 7     100 ornamentals 2001 0.064707942
-## 8     100 ornamentals 2002 0.129209513
-## 9     100 ornamentals 2003 0.147445087
-## 10    100 ornamentals 2004 0.174712341
-## 11    100 ornamentals 2005 0.135955256
-## 12    100 ornamentals 2006 0.149250151
-## 13    100 ornamentals 2007 0.124250151
-## 14    100 ornamentals 2008 0.077796466
-## 15    100 ornamentals 2009 0.077796466
-## 16    100 ornamentals 2010 0.000000000
-## 17    100 ornamentals 2011 0.750000000</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## 
 new &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;int/tonnes.csv&quot;</span>)
 old &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;../v2014_test/intermediate/tonnes.csv&quot;</span>)
 
@@ -2875,882 +2147,1998 @@ old &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="
 ## 251    seaweeds 2010    0.0 Dominican Republic
 ## 252    seaweeds 2011    0.0 Dominican Republic</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">new &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;int/usd.csv&quot;</span>)
-<span class="kw">filter</span>(new, rgn_id==<span class="dv">152</span>) %&gt;%
+<span class="kw">filter</span>(new, rgn_id==<span class="dv">100</span>) %&gt;%
 <span class="st">  </span><span class="kw">arrange</span>(commodity, year)</code></pre></div>
-<pre><code>##     rgn_id rgn_name
-## 1      152    Samoa
-## 2      152    Samoa
-## 3      152    Samoa
-## 4      152    Samoa
-## 5      152    Samoa
-## 6      152    Samoa
-## 7      152    Samoa
-## 8      152    Samoa
-## 9      152    Samoa
-## 10     152    Samoa
-## 11     152    Samoa
-## 12     152    Samoa
-## 13     152    Samoa
-## 14     152    Samoa
-## 15     152    Samoa
-## 16     152    Samoa
-## 17     152    Samoa
-## 18     152    Samoa
-## 19     152    Samoa
-## 20     152    Samoa
-## 21     152    Samoa
-## 22     152    Samoa
-## 23     152    Samoa
-## 24     152    Samoa
-## 25     152    Samoa
-## 26     152    Samoa
-## 27     152    Samoa
-## 28     152    Samoa
-## 29     152    Samoa
-## 30     152    Samoa
-## 31     152    Samoa
-## 32     152    Samoa
-## 33     152    Samoa
-## 34     152    Samoa
-## 35     152    Samoa
-## 36     152    Samoa
-## 37     152    Samoa
-## 38     152    Samoa
-## 39     152    Samoa
-## 40     152    Samoa
-## 41     152    Samoa
-## 42     152    Samoa
-## 43     152    Samoa
-## 44     152    Samoa
-## 45     152    Samoa
-## 46     152    Samoa
-## 47     152    Samoa
-## 48     152    Samoa
-## 49     152    Samoa
-## 50     152    Samoa
-## 51     152    Samoa
-## 52     152    Samoa
-## 53     152    Samoa
-## 54     152    Samoa
-## 55     152    Samoa
-## 56     152    Samoa
-## 57     152    Samoa
-## 58     152    Samoa
-## 59     152    Samoa
-## 60     152    Samoa
-## 61     152    Samoa
-## 62     152    Samoa
-## 63     152    Samoa
-## 64     152    Samoa
-## 65     152    Samoa
-## 66     152    Samoa
-## 67     152    Samoa
-## 68     152    Samoa
-## 69     152    Samoa
-## 70     152    Samoa
-## 71     152    Samoa
-## 72     152    Samoa
-## 73     152    Samoa
-## 74     152    Samoa
-## 75     152    Samoa
-## 76     152    Samoa
-## 77     152    Samoa
-## 78     152    Samoa
-## 79     152    Samoa
-## 80     152    Samoa
-## 81     152    Samoa
-## 82     152    Samoa
-## 83     152    Samoa
-## 84     152    Samoa
-## 85     152    Samoa
-## 86     152    Samoa
-## 87     152    Samoa
-## 88     152    Samoa
-## 89     152    Samoa
-## 90     152    Samoa
-## 91     152    Samoa
-## 92     152    Samoa
-## 93     152    Samoa
-## 94     152    Samoa
-## 95     152    Samoa
-## 96     152    Samoa
-## 97     152    Samoa
-## 98     152    Samoa
-## 99     152    Samoa
-## 100    152    Samoa
-## 101    152    Samoa
-## 102    152    Samoa
-## 103    152    Samoa
-## 104    152    Samoa
-## 105    152    Samoa
-## 106    152    Samoa
-## 107    152    Samoa
-## 108    152    Samoa
-## 109    152    Samoa
-## 110    152    Samoa
-## 111    152    Samoa
-## 112    152    Samoa
-## 113    152    Samoa
-## 114    152    Samoa
-## 115    152    Samoa
-## 116    152    Samoa
-## 117    152    Samoa
-## 118    152    Samoa
-## 119    152    Samoa
-## 120    152    Samoa
-## 121    152    Samoa
-## 122    152    Samoa
-## 123    152    Samoa
-## 124    152    Samoa
-## 125    152    Samoa
-## 126    152    Samoa
-## 127    152    Samoa
-## 128    152    Samoa
-## 129    152    Samoa
-## 130    152    Samoa
-## 131    152    Samoa
-## 132    152    Samoa
-## 133    152    Samoa
-## 134    152    Samoa
-## 135    152    Samoa
-## 136    152    Samoa
-## 137    152    Samoa
-## 138    152    Samoa
-## 139    152    Samoa
-## 140    152    Samoa
-## 141    152    Samoa
-## 142    152    Samoa
-## 143    152    Samoa
-## 144    152    Samoa
-## 145    152    Samoa
-## 146    152    Samoa
-## 147    152    Samoa
-## 148    152    Samoa
-## 149    152    Samoa
-## 150    152    Samoa
-## 151    152    Samoa
-## 152    152    Samoa
-## 153    152    Samoa
-## 154    152    Samoa
-## 155    152    Samoa
-## 156    152    Samoa
-## 157    152    Samoa
-## 158    152    Samoa
-## 159    152    Samoa
-## 160    152    Samoa
-## 161    152    Samoa
-## 162    152    Samoa
-## 163    152    Samoa
-## 164    152    Samoa
-## 165    152    Samoa
-## 166    152    Samoa
-## 167    152    Samoa
-## 168    152    Samoa
-## 169    152    Samoa
-## 170    152    Samoa
-## 171    152    Samoa
-## 172    152    Samoa
-## 173    152    Samoa
-## 174    152    Samoa
-## 175    152    Samoa
-## 176    152    Samoa
-## 177    152    Samoa
-## 178    152    Samoa
-## 179    152    Samoa
-## 180    152    Samoa
-## 181    152    Samoa
-## 182    152    Samoa
-## 183    152    Samoa
-## 184    152    Samoa
-## 185    152    Samoa
-## 186    152    Samoa
-## 187    152    Samoa
-## 188    152    Samoa
-## 189    152    Samoa
-## 190    152    Samoa
-##                                                      commodity     product
-## 1                                           Coral and the like      corals
-## 2                                           Coral and the like      corals
-## 3                                           Coral and the like      corals
-## 4                                           Coral and the like      corals
-## 5                                           Coral and the like      corals
-## 6                                           Coral and the like      corals
-## 7                                           Coral and the like      corals
-## 8                                           Coral and the like      corals
-## 9                                           Coral and the like      corals
-## 10                                          Coral and the like      corals
-## 11                                          Coral and the like      corals
-## 12                                          Coral and the like      corals
-## 13                                          Coral and the like      corals
-## 14                                          Coral and the like      corals
-## 15                                          Coral and the like      corals
-## 16                                          Coral and the like      corals
-## 17                                          Coral and the like      corals
-## 18                                          Coral and the like      corals
-## 19                                          Coral and the like      corals
-## 20                                          Coral and the like      corals
-## 21                                          Coral and the like      corals
-## 22                                          Coral and the like      corals
-## 23                                          Coral and the like      corals
-## 24                                          Coral and the like      corals
-## 25                                          Coral and the like      corals
-## 26                                          Coral and the like      corals
-## 27                                          Coral and the like      corals
-## 28                                          Coral and the like      corals
-## 29                                          Coral and the like      corals
-## 30                                          Coral and the like      corals
-## 31                                          Coral and the like      corals
-## 32                                          Coral and the like      corals
-## 33                                          Coral and the like      corals
-## 34                                          Coral and the like      corals
-## 35                                          Coral and the like      corals
-## 36                                          Coral and the like      corals
-## 37                                          Coral and the like      corals
-## 38                                          Coral and the like      corals
-## 39                             Miscellaneous corals and shells      shells
-## 40                             Miscellaneous corals and shells      shells
-## 41                             Miscellaneous corals and shells      shells
-## 42                             Miscellaneous corals and shells      shells
-## 43                             Miscellaneous corals and shells      shells
-## 44                             Miscellaneous corals and shells      shells
-## 45                             Miscellaneous corals and shells      shells
-## 46                             Miscellaneous corals and shells      shells
-## 47                             Miscellaneous corals and shells      shells
-## 48                             Miscellaneous corals and shells      shells
-## 49                             Miscellaneous corals and shells      shells
-## 50                             Miscellaneous corals and shells      shells
-## 51                             Miscellaneous corals and shells      shells
-## 52                             Miscellaneous corals and shells      shells
-## 53                             Miscellaneous corals and shells      shells
-## 54                             Miscellaneous corals and shells      shells
-## 55                             Miscellaneous corals and shells      shells
-## 56                             Miscellaneous corals and shells      shells
-## 57                             Miscellaneous corals and shells      shells
-## 58                             Miscellaneous corals and shells      shells
-## 59                             Miscellaneous corals and shells      shells
-## 60                             Miscellaneous corals and shells      shells
-## 61                             Miscellaneous corals and shells      shells
-## 62                             Miscellaneous corals and shells      shells
-## 63                             Miscellaneous corals and shells      shells
-## 64                             Miscellaneous corals and shells      shells
-## 65                             Miscellaneous corals and shells      shells
-## 66                             Miscellaneous corals and shells      shells
-## 67                             Miscellaneous corals and shells      shells
-## 68                             Miscellaneous corals and shells      shells
-## 69                             Miscellaneous corals and shells      shells
-## 70                             Miscellaneous corals and shells      shells
-## 71                             Miscellaneous corals and shells      shells
-## 72                             Miscellaneous corals and shells      shells
-## 73                             Miscellaneous corals and shells      shells
-## 74                             Miscellaneous corals and shells      shells
-## 75                             Miscellaneous corals and shells      shells
-## 76                             Miscellaneous corals and shells      shells
-## 77                                         Ornamental fish nei ornamentals
-## 78                                         Ornamental fish nei ornamentals
-## 79                                         Ornamental fish nei ornamentals
-## 80                                         Ornamental fish nei ornamentals
-## 81                                         Ornamental fish nei ornamentals
-## 82                                         Ornamental fish nei ornamentals
-## 83                                         Ornamental fish nei ornamentals
-## 84                                         Ornamental fish nei ornamentals
-## 85                                         Ornamental fish nei ornamentals
-## 86                                         Ornamental fish nei ornamentals
-## 87                                         Ornamental fish nei ornamentals
-## 88                                         Ornamental fish nei ornamentals
-## 89                                         Ornamental fish nei ornamentals
-## 90                                         Ornamental fish nei ornamentals
-## 91                                         Ornamental fish nei ornamentals
-## 92                                         Ornamental fish nei ornamentals
-## 93                                         Ornamental fish nei ornamentals
-## 94                                         Ornamental fish nei ornamentals
-## 95                                         Ornamental fish nei ornamentals
-## 96                                         Ornamental fish nei ornamentals
-## 97                                         Ornamental fish nei ornamentals
-## 98                                         Ornamental fish nei ornamentals
-## 99                                         Ornamental fish nei ornamentals
-## 100                                        Ornamental fish nei ornamentals
-## 101                                        Ornamental fish nei ornamentals
-## 102                                        Ornamental fish nei ornamentals
-## 103                                        Ornamental fish nei ornamentals
-## 104                                        Ornamental fish nei ornamentals
-## 105                                        Ornamental fish nei ornamentals
-## 106                                        Ornamental fish nei ornamentals
-## 107                                        Ornamental fish nei ornamentals
-## 108                                        Ornamental fish nei ornamentals
-## 109                                        Ornamental fish nei ornamentals
-## 110                                        Ornamental fish nei ornamentals
-## 111                                        Ornamental fish nei ornamentals
-## 112                                        Ornamental fish nei ornamentals
-## 113                                        Ornamental fish nei ornamentals
-## 114                                        Ornamental fish nei ornamentals
-## 115                                  Ornamental saltwater fish ornamentals
-## 116                                  Ornamental saltwater fish ornamentals
-## 117                                  Ornamental saltwater fish ornamentals
-## 118                                  Ornamental saltwater fish ornamentals
-## 119                                  Ornamental saltwater fish ornamentals
-## 120                                  Ornamental saltwater fish ornamentals
-## 121                                  Ornamental saltwater fish ornamentals
-## 122                                  Ornamental saltwater fish ornamentals
-## 123                                  Ornamental saltwater fish ornamentals
-## 124                                  Ornamental saltwater fish ornamentals
-## 125                                  Ornamental saltwater fish ornamentals
-## 126                                  Ornamental saltwater fish ornamentals
-## 127                                  Ornamental saltwater fish ornamentals
-## 128                                  Ornamental saltwater fish ornamentals
-## 129                                  Ornamental saltwater fish ornamentals
-## 130                                  Ornamental saltwater fish ornamentals
-## 131                                  Ornamental saltwater fish ornamentals
-## 132                                  Ornamental saltwater fish ornamentals
-## 133                                  Ornamental saltwater fish ornamentals
-## 134                                  Ornamental saltwater fish ornamentals
-## 135                                  Ornamental saltwater fish ornamentals
-## 136                                  Ornamental saltwater fish ornamentals
-## 137                                  Ornamental saltwater fish ornamentals
-## 138                                  Ornamental saltwater fish ornamentals
-## 139                                  Ornamental saltwater fish ornamentals
-## 140                                  Ornamental saltwater fish ornamentals
-## 141                                  Ornamental saltwater fish ornamentals
-## 142                                  Ornamental saltwater fish ornamentals
-## 143                                  Ornamental saltwater fish ornamentals
-## 144                                  Ornamental saltwater fish ornamentals
-## 145                                  Ornamental saltwater fish ornamentals
-## 146                                  Ornamental saltwater fish ornamentals
-## 147                                  Ornamental saltwater fish ornamentals
-## 148                                  Ornamental saltwater fish ornamentals
-## 149                                  Ornamental saltwater fish ornamentals
-## 150                                  Ornamental saltwater fish ornamentals
-## 151                                  Ornamental saltwater fish ornamentals
-## 152                                  Ornamental saltwater fish ornamentals
-## 153 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 154 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 155 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 156 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 157 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 158 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 159 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 160 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 161 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 162 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 163 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 164 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 165 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 166 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 167 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 168 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 169 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 170 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 171 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 172 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 173 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 174 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 175 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 176 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 177 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 178 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 179 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 180 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 181 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 182 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 183 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 184 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 185 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 186 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 187 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 188 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 189 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-## 190 Seaweeds and other algae, unfit for human consumption, nei    seaweeds
-##     year   usd
-## 1   1976    NA
-## 2   1977    NA
-## 3   1978    NA
-## 4   1979    NA
-## 5   1980    NA
-## 6   1981    NA
-## 7   1982    NA
-## 8   1983    NA
-## 9   1984    NA
-## 10  1985    NA
-## 11  1986    NA
-## 12  1987    NA
-## 13  1988    NA
-## 14  1989    NA
-## 15  1990    NA
-## 16  1991    NA
-## 17  1992    NA
-## 18  1993    NA
-## 19  1994    NA
-## 20  1995    NA
-## 21  1996    NA
-## 22  1997    NA
-## 23  1998 152.0
-## 24  1999 160.0
-## 25  2000 311.0
-## 26  2001   0.0
-## 27  2002   0.0
-## 28  2003   0.0
-## 29  2004   0.0
-## 30  2005   0.0
-## 31  2006   0.0
-## 32  2007   0.0
-## 33  2008   0.0
-## 34  2009   0.0
-## 35  2010   0.0
-## 36  2011   0.0
-## 37  2012   0.0
-## 38  2013   0.0
-## 39  1976    NA
-## 40  1977    NA
-## 41  1978    NA
-## 42  1979    NA
-## 43  1980    NA
-## 44  1981    NA
-## 45  1982    NA
-## 46  1983    NA
-## 47  1984    NA
-## 48  1985    NA
-## 49  1986    NA
-## 50  1987    NA
-## 51  1988    NA
-## 52  1989    NA
-## 53  1990    NA
-## 54  1991    NA
-## 55  1992    NA
-## 56  1993    NA
-## 57  1994    NA
-## 58  1995    NA
-## 59  1996    NA
-## 60  1997    NA
-## 61  1998    NA
-## 62  1999    NA
-## 63  2000    NA
-## 64  2001    NA
-## 65  2002    NA
-## 66  2003    NA
-## 67  2004    NA
-## 68  2005  60.0
-## 69  2006    NA
-## 70  2007   0.1
-## 71  2008   1.0
-## 72  2009    NA
-## 73  2010    NA
-## 74  2011    NA
-## 75  2012    NA
-## 76  2013   0.1
-## 77  1976    NA
-## 78  1977    NA
-## 79  1978    NA
-## 80  1979    NA
-## 81  1980    NA
-## 82  1981    NA
-## 83  1982    NA
-## 84  1983    NA
-## 85  1984    NA
-## 86  1985    NA
-## 87  1986    NA
-## 88  1987    NA
-## 89  1988    NA
-## 90  1989    NA
-## 91  1990    NA
-## 92  1991    NA
-## 93  1992    NA
-## 94  1993    NA
-## 95  1994    NA
-## 96  1995  18.0
-## 97  1996   2.0
-## 98  1997   6.0
-## 99  1998  11.0
-## 100 1999  26.0
-## 101 2000    NA
-## 102 2001   0.1
-## 103 2002   1.0
-## 104 2003   0.1
-## 105 2004   0.1
-## 106 2005   0.1
-## 107 2006   0.0
-## 108 2007   1.0
-## 109 2008   0.1
-## 110 2009   0.0
-## 111 2010  48.0
-## 112 2011   0.0
-## 113 2012   0.0
-## 114 2013   0.0
-## 115 1976    NA
-## 116 1977    NA
-## 117 1978    NA
-## 118 1979    NA
-## 119 1980    NA
-## 120 1981    NA
-## 121 1982    NA
-## 122 1983    NA
-## 123 1984    NA
-## 124 1985    NA
-## 125 1986    NA
-## 126 1987    NA
-## 127 1988    NA
-## 128 1989    NA
-## 129 1990    NA
-## 130 1991    NA
-## 131 1992    NA
-## 132 1993    NA
-## 133 1994    NA
-## 134 1995    NA
-## 135 1996    NA
-## 136 1997    NA
-## 137 1998    NA
-## 138 1999    NA
-## 139 2000    NA
-## 140 2001    NA
-## 141 2002    NA
-## 142 2003    NA
-## 143 2004    NA
-## 144 2005    NA
-## 145 2006    NA
-## 146 2007    NA
-## 147 2008    NA
-## 148 2009    NA
-## 149 2010    NA
-## 150 2011    NA
-## 151 2012    NA
-## 152 2013   0.1
-## 153 1976    NA
-## 154 1977    NA
-## 155 1978    NA
-## 156 1979    NA
-## 157 1980    NA
-## 158 1981    NA
-## 159 1982    NA
-## 160 1983    NA
-## 161 1984    NA
-## 162 1985    NA
-## 163 1986    NA
-## 164 1987    NA
-## 165 1988    NA
-## 166 1989    NA
-## 167 1990    NA
-## 168 1991    NA
-## 169 1992    NA
-## 170 1993    NA
-## 171 1994    NA
-## 172 1995    NA
-## 173 1996    NA
-## 174 1997    NA
-## 175 1998    NA
-## 176 1999    NA
-## 177 2000    NA
-## 178 2001    NA
-## 179 2002    NA
-## 180 2003    NA
-## 181 2004    NA
-## 182 2005    NA
-## 183 2006    NA
-## 184 2007    NA
-## 185 2008    NA
-## 186 2009    NA
-## 187 2010    NA
-## 188 2011    NA
-## 189 2012   0.1
-## 190 2013   1.0</code></pre>
+<pre><code>##     rgn_id            rgn_name            commodity     product year usd
+## 1      100 Republique du Congo  Fish body oils, nei    fish_oil 1976  NA
+## 2      100 Republique du Congo  Fish body oils, nei    fish_oil 1977  NA
+## 3      100 Republique du Congo  Fish body oils, nei    fish_oil 1978  NA
+## 4      100 Republique du Congo  Fish body oils, nei    fish_oil 1979  NA
+## 5      100 Republique du Congo  Fish body oils, nei    fish_oil 1980  NA
+## 6      100 Republique du Congo  Fish body oils, nei    fish_oil 1981  NA
+## 7      100 Republique du Congo  Fish body oils, nei    fish_oil 1982  37
+## 8      100 Republique du Congo  Fish body oils, nei    fish_oil 1983   0
+## 9      100 Republique du Congo  Fish body oils, nei    fish_oil 1984  42
+## 10     100 Republique du Congo  Fish body oils, nei    fish_oil 1985   0
+## 11     100 Republique du Congo  Fish body oils, nei    fish_oil 1986   0
+## 12     100 Republique du Congo  Fish body oils, nei    fish_oil 1987   0
+## 13     100 Republique du Congo  Fish body oils, nei    fish_oil 1988   0
+## 14     100 Republique du Congo  Fish body oils, nei    fish_oil 1989   0
+## 15     100 Republique du Congo  Fish body oils, nei    fish_oil 1990   0
+## 16     100 Republique du Congo  Fish body oils, nei    fish_oil 1991   0
+## 17     100 Republique du Congo  Fish body oils, nei    fish_oil 1992   0
+## 18     100 Republique du Congo  Fish body oils, nei    fish_oil 1993   0
+## 19     100 Republique du Congo  Fish body oils, nei    fish_oil 1994   0
+## 20     100 Republique du Congo  Fish body oils, nei    fish_oil 1995   0
+## 21     100 Republique du Congo  Fish body oils, nei    fish_oil 1996   0
+## 22     100 Republique du Congo  Fish body oils, nei    fish_oil 1997   0
+## 23     100 Republique du Congo  Fish body oils, nei    fish_oil 1998   0
+## 24     100 Republique du Congo  Fish body oils, nei    fish_oil 1999   0
+## 25     100 Republique du Congo  Fish body oils, nei    fish_oil 2000   0
+## 26     100 Republique du Congo  Fish body oils, nei    fish_oil 2001   0
+## 27     100 Republique du Congo  Fish body oils, nei    fish_oil 2002   0
+## 28     100 Republique du Congo  Fish body oils, nei    fish_oil 2003   0
+## 29     100 Republique du Congo  Fish body oils, nei    fish_oil 2004   0
+## 30     100 Republique du Congo  Fish body oils, nei    fish_oil 2005   0
+## 31     100 Republique du Congo  Fish body oils, nei    fish_oil 2006   0
+## 32     100 Republique du Congo  Fish body oils, nei    fish_oil 2007   0
+## 33     100 Republique du Congo  Fish body oils, nei    fish_oil 2008   0
+## 34     100 Republique du Congo  Fish body oils, nei    fish_oil 2009   0
+## 35     100 Republique du Congo  Fish body oils, nei    fish_oil 2010   0
+## 36     100 Republique du Congo  Fish body oils, nei    fish_oil 2011   0
+## 37     100 Republique du Congo  Fish body oils, nei    fish_oil 2012   0
+## 38     100 Republique du Congo  Fish body oils, nei    fish_oil 2013   0
+## 39     100 Republique du Congo Fish liver oils, nei    fish_oil 1976  NA
+## 40     100 Republique du Congo Fish liver oils, nei    fish_oil 1977  NA
+## 41     100 Republique du Congo Fish liver oils, nei    fish_oil 1978  NA
+## 42     100 Republique du Congo Fish liver oils, nei    fish_oil 1979  NA
+## 43     100 Republique du Congo Fish liver oils, nei    fish_oil 1980  NA
+## 44     100 Republique du Congo Fish liver oils, nei    fish_oil 1981  NA
+## 45     100 Republique du Congo Fish liver oils, nei    fish_oil 1982  NA
+## 46     100 Republique du Congo Fish liver oils, nei    fish_oil 1983  NA
+## 47     100 Republique du Congo Fish liver oils, nei    fish_oil 1984  NA
+## 48     100 Republique du Congo Fish liver oils, nei    fish_oil 1985  NA
+## 49     100 Republique du Congo Fish liver oils, nei    fish_oil 1986  NA
+## 50     100 Republique du Congo Fish liver oils, nei    fish_oil 1987  NA
+## 51     100 Republique du Congo Fish liver oils, nei    fish_oil 1988  NA
+## 52     100 Republique du Congo Fish liver oils, nei    fish_oil 1989  NA
+## 53     100 Republique du Congo Fish liver oils, nei    fish_oil 1990  NA
+## 54     100 Republique du Congo Fish liver oils, nei    fish_oil 1991  NA
+## 55     100 Republique du Congo Fish liver oils, nei    fish_oil 1992  NA
+## 56     100 Republique du Congo Fish liver oils, nei    fish_oil 1993  NA
+## 57     100 Republique du Congo Fish liver oils, nei    fish_oil 1994  NA
+## 58     100 Republique du Congo Fish liver oils, nei    fish_oil 1995   1
+## 59     100 Republique du Congo Fish liver oils, nei    fish_oil 1996   0
+## 60     100 Republique du Congo Fish liver oils, nei    fish_oil 1997   0
+## 61     100 Republique du Congo Fish liver oils, nei    fish_oil 1998   0
+## 62     100 Republique du Congo Fish liver oils, nei    fish_oil 1999   0
+## 63     100 Republique du Congo Fish liver oils, nei    fish_oil 2000   0
+## 64     100 Republique du Congo Fish liver oils, nei    fish_oil 2001   0
+## 65     100 Republique du Congo Fish liver oils, nei    fish_oil 2002   0
+## 66     100 Republique du Congo Fish liver oils, nei    fish_oil 2003   0
+## 67     100 Republique du Congo Fish liver oils, nei    fish_oil 2004   0
+## 68     100 Republique du Congo Fish liver oils, nei    fish_oil 2005   0
+## 69     100 Republique du Congo Fish liver oils, nei    fish_oil 2006   0
+## 70     100 Republique du Congo Fish liver oils, nei    fish_oil 2007   0
+## 71     100 Republique du Congo Fish liver oils, nei    fish_oil 2008   0
+## 72     100 Republique du Congo Fish liver oils, nei    fish_oil 2009   0
+## 73     100 Republique du Congo Fish liver oils, nei    fish_oil 2010   0
+## 74     100 Republique du Congo Fish liver oils, nei    fish_oil 2011   0
+## 75     100 Republique du Congo Fish liver oils, nei    fish_oil 2012   0
+## 76     100 Republique du Congo Fish liver oils, nei    fish_oil 2013   0
+## 77     100 Republique du Congo  Ornamental fish nei ornamentals 1976  NA
+## 78     100 Republique du Congo  Ornamental fish nei ornamentals 1977  NA
+## 79     100 Republique du Congo  Ornamental fish nei ornamentals 1978  NA
+## 80     100 Republique du Congo  Ornamental fish nei ornamentals 1979  NA
+## 81     100 Republique du Congo  Ornamental fish nei ornamentals 1980  NA
+## 82     100 Republique du Congo  Ornamental fish nei ornamentals 1981  NA
+## 83     100 Republique du Congo  Ornamental fish nei ornamentals 1982  NA
+## 84     100 Republique du Congo  Ornamental fish nei ornamentals 1983  NA
+## 85     100 Republique du Congo  Ornamental fish nei ornamentals 1984  NA
+## 86     100 Republique du Congo  Ornamental fish nei ornamentals 1985  NA
+## 87     100 Republique du Congo  Ornamental fish nei ornamentals 1986  NA
+## 88     100 Republique du Congo  Ornamental fish nei ornamentals 1987  NA
+## 89     100 Republique du Congo  Ornamental fish nei ornamentals 1988  NA
+## 90     100 Republique du Congo  Ornamental fish nei ornamentals 1989  NA
+## 91     100 Republique du Congo  Ornamental fish nei ornamentals 1990  NA
+## 92     100 Republique du Congo  Ornamental fish nei ornamentals 1991  NA
+## 93     100 Republique du Congo  Ornamental fish nei ornamentals 1992  NA
+## 94     100 Republique du Congo  Ornamental fish nei ornamentals 1993  NA
+## 95     100 Republique du Congo  Ornamental fish nei ornamentals 1994  NA
+## 96     100 Republique du Congo  Ornamental fish nei ornamentals 1995   3
+## 97     100 Republique du Congo  Ornamental fish nei ornamentals 1996  85
+## 98     100 Republique du Congo  Ornamental fish nei ornamentals 1997  77
+## 99     100 Republique du Congo  Ornamental fish nei ornamentals 1998  77
+## 100    100 Republique du Congo  Ornamental fish nei ornamentals 1999  82
+## 101    100 Republique du Congo  Ornamental fish nei ornamentals 2000  96
+## 102    100 Republique du Congo  Ornamental fish nei ornamentals 2001 132
+## 103    100 Republique du Congo  Ornamental fish nei ornamentals 2002 187
+## 104    100 Republique du Congo  Ornamental fish nei ornamentals 2003 180
+## 105    100 Republique du Congo  Ornamental fish nei ornamentals 2004  83
+## 106    100 Republique du Congo  Ornamental fish nei ornamentals 2005   0
+## 107    100 Republique du Congo  Ornamental fish nei ornamentals 2006 131
+## 108    100 Republique du Congo  Ornamental fish nei ornamentals 2007   0
+## 109    100 Republique du Congo  Ornamental fish nei ornamentals 2008   0
+## 110    100 Republique du Congo  Ornamental fish nei ornamentals 2009   0
+## 111    100 Republique du Congo  Ornamental fish nei ornamentals 2010   0
+## 112    100 Republique du Congo  Ornamental fish nei ornamentals 2011   0
+## 113    100 Republique du Congo  Ornamental fish nei ornamentals 2012   0
+## 114    100 Republique du Congo  Ornamental fish nei ornamentals 2013   0</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">old &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;../v2014_test/intermediate/usd.csv&quot;</span>)
-<span class="kw">filter</span>(old, rgn_id==<span class="dv">152</span>) %&gt;%
+<span class="kw">filter</span>(old, rgn_id==<span class="dv">100</span>) %&gt;%
 <span class="st">  </span><span class="kw">arrange</span>(commodity, year)</code></pre></div>
-<pre><code>##     rgn_id                       commodity     product year   usd rgn_name
-## 1      152              Coral and the like      corals 1976    NA    Samoa
-## 2      152              Coral and the like      corals 1977    NA    Samoa
-## 3      152              Coral and the like      corals 1978    NA    Samoa
-## 4      152              Coral and the like      corals 1979    NA    Samoa
-## 5      152              Coral and the like      corals 1980    NA    Samoa
-## 6      152              Coral and the like      corals 1981    NA    Samoa
-## 7      152              Coral and the like      corals 1982    NA    Samoa
-## 8      152              Coral and the like      corals 1983    NA    Samoa
-## 9      152              Coral and the like      corals 1984    NA    Samoa
-## 10     152              Coral and the like      corals 1985    NA    Samoa
-## 11     152              Coral and the like      corals 1986    NA    Samoa
-## 12     152              Coral and the like      corals 1987    NA    Samoa
-## 13     152              Coral and the like      corals 1988    NA    Samoa
-## 14     152              Coral and the like      corals 1989    NA    Samoa
-## 15     152              Coral and the like      corals 1990    NA    Samoa
-## 16     152              Coral and the like      corals 1991    NA    Samoa
-## 17     152              Coral and the like      corals 1992    NA    Samoa
-## 18     152              Coral and the like      corals 1993    NA    Samoa
-## 19     152              Coral and the like      corals 1994    NA    Samoa
-## 20     152              Coral and the like      corals 1995    NA    Samoa
-## 21     152              Coral and the like      corals 1996    NA    Samoa
-## 22     152              Coral and the like      corals 1997    NA    Samoa
-## 23     152              Coral and the like      corals 1998 152.0    Samoa
-## 24     152              Coral and the like      corals 1999 160.0    Samoa
-## 25     152              Coral and the like      corals 2000 311.0    Samoa
-## 26     152              Coral and the like      corals 2001   0.0    Samoa
-## 27     152              Coral and the like      corals 2002   0.0    Samoa
-## 28     152              Coral and the like      corals 2003   0.0    Samoa
-## 29     152              Coral and the like      corals 2004   0.0    Samoa
-## 30     152              Coral and the like      corals 2005   0.0    Samoa
-## 31     152              Coral and the like      corals 2006   0.0    Samoa
-## 32     152              Coral and the like      corals 2007   0.0    Samoa
-## 33     152              Coral and the like      corals 2008   0.0    Samoa
-## 34     152              Coral and the like      corals 2009   0.0    Samoa
-## 35     152              Coral and the like      corals 2010   0.0    Samoa
-## 36     152              Coral and the like      corals 2011   0.0    Samoa
-## 37     152 Miscellaneous corals and shells      shells 1976    NA    Samoa
-## 38     152 Miscellaneous corals and shells      shells 1977    NA    Samoa
-## 39     152 Miscellaneous corals and shells      shells 1978    NA    Samoa
-## 40     152 Miscellaneous corals and shells      shells 1979    NA    Samoa
-## 41     152 Miscellaneous corals and shells      shells 1980    NA    Samoa
-## 42     152 Miscellaneous corals and shells      shells 1981    NA    Samoa
-## 43     152 Miscellaneous corals and shells      shells 1982    NA    Samoa
-## 44     152 Miscellaneous corals and shells      shells 1983    NA    Samoa
-## 45     152 Miscellaneous corals and shells      shells 1984    NA    Samoa
-## 46     152 Miscellaneous corals and shells      shells 1985    NA    Samoa
-## 47     152 Miscellaneous corals and shells      shells 1986    NA    Samoa
-## 48     152 Miscellaneous corals and shells      shells 1987    NA    Samoa
-## 49     152 Miscellaneous corals and shells      shells 1988    NA    Samoa
-## 50     152 Miscellaneous corals and shells      shells 1989    NA    Samoa
-## 51     152 Miscellaneous corals and shells      shells 1990    NA    Samoa
-## 52     152 Miscellaneous corals and shells      shells 1991    NA    Samoa
-## 53     152 Miscellaneous corals and shells      shells 1992    NA    Samoa
-## 54     152 Miscellaneous corals and shells      shells 1993    NA    Samoa
-## 55     152 Miscellaneous corals and shells      shells 1994    NA    Samoa
-## 56     152 Miscellaneous corals and shells      shells 1995    NA    Samoa
-## 57     152 Miscellaneous corals and shells      shells 1996    NA    Samoa
-## 58     152 Miscellaneous corals and shells      shells 1997    NA    Samoa
-## 59     152 Miscellaneous corals and shells      shells 1998    NA    Samoa
-## 60     152 Miscellaneous corals and shells      shells 1999    NA    Samoa
-## 61     152 Miscellaneous corals and shells      shells 2000    NA    Samoa
-## 62     152 Miscellaneous corals and shells      shells 2001    NA    Samoa
-## 63     152 Miscellaneous corals and shells      shells 2002    NA    Samoa
-## 64     152 Miscellaneous corals and shells      shells 2003    NA    Samoa
-## 65     152 Miscellaneous corals and shells      shells 2004    NA    Samoa
-## 66     152 Miscellaneous corals and shells      shells 2005  60.0    Samoa
-## 67     152 Miscellaneous corals and shells      shells 2006   0.0    Samoa
-## 68     152 Miscellaneous corals and shells      shells 2007   0.1    Samoa
-## 69     152 Miscellaneous corals and shells      shells 2008   1.0    Samoa
-## 70     152 Miscellaneous corals and shells      shells 2009   0.0    Samoa
-## 71     152 Miscellaneous corals and shells      shells 2010   0.0    Samoa
-## 72     152 Miscellaneous corals and shells      shells 2011   0.0    Samoa
-## 73     152             Ornamental fish nei ornamentals 1976    NA    Samoa
-## 74     152             Ornamental fish nei ornamentals 1977    NA    Samoa
-## 75     152             Ornamental fish nei ornamentals 1978    NA    Samoa
-## 76     152             Ornamental fish nei ornamentals 1979    NA    Samoa
-## 77     152             Ornamental fish nei ornamentals 1980    NA    Samoa
-## 78     152             Ornamental fish nei ornamentals 1981    NA    Samoa
-## 79     152             Ornamental fish nei ornamentals 1982    NA    Samoa
-## 80     152             Ornamental fish nei ornamentals 1983    NA    Samoa
-## 81     152             Ornamental fish nei ornamentals 1984    NA    Samoa
-## 82     152             Ornamental fish nei ornamentals 1985    NA    Samoa
-## 83     152             Ornamental fish nei ornamentals 1986    NA    Samoa
-## 84     152             Ornamental fish nei ornamentals 1987    NA    Samoa
-## 85     152             Ornamental fish nei ornamentals 1988    NA    Samoa
-## 86     152             Ornamental fish nei ornamentals 1989    NA    Samoa
-## 87     152             Ornamental fish nei ornamentals 1990    NA    Samoa
-## 88     152             Ornamental fish nei ornamentals 1991    NA    Samoa
-## 89     152             Ornamental fish nei ornamentals 1992    NA    Samoa
-## 90     152             Ornamental fish nei ornamentals 1993    NA    Samoa
-## 91     152             Ornamental fish nei ornamentals 1994    NA    Samoa
-## 92     152             Ornamental fish nei ornamentals 1995  18.0    Samoa
-## 93     152             Ornamental fish nei ornamentals 1996   2.0    Samoa
-## 94     152             Ornamental fish nei ornamentals 1997   6.0    Samoa
-## 95     152             Ornamental fish nei ornamentals 1998  11.0    Samoa
-## 96     152             Ornamental fish nei ornamentals 1999  26.0    Samoa
-## 97     152             Ornamental fish nei ornamentals 2000    NA    Samoa
-## 98     152             Ornamental fish nei ornamentals 2001   0.1    Samoa
-## 99     152             Ornamental fish nei ornamentals 2002   1.0    Samoa
-## 100    152             Ornamental fish nei ornamentals 2003   0.1    Samoa
-## 101    152             Ornamental fish nei ornamentals 2004   0.1    Samoa
-## 102    152             Ornamental fish nei ornamentals 2005   0.1    Samoa
-## 103    152             Ornamental fish nei ornamentals 2006   0.0    Samoa
-## 104    152             Ornamental fish nei ornamentals 2007   1.0    Samoa
-## 105    152             Ornamental fish nei ornamentals 2008   0.1    Samoa
-## 106    152             Ornamental fish nei ornamentals 2009   0.0    Samoa
-## 107    152             Ornamental fish nei ornamentals 2010  48.0    Samoa
-## 108    152             Ornamental fish nei ornamentals 2011   0.0    Samoa</code></pre>
+<pre><code>##     rgn_id            commodity     product year usd            rgn_name
+## 1      100  Fish body oils, nei    fish_oil 1976  NA Republique du Congo
+## 2      100  Fish body oils, nei    fish_oil 1977  NA Republique du Congo
+## 3      100  Fish body oils, nei    fish_oil 1978  NA Republique du Congo
+## 4      100  Fish body oils, nei    fish_oil 1979  NA Republique du Congo
+## 5      100  Fish body oils, nei    fish_oil 1980  NA Republique du Congo
+## 6      100  Fish body oils, nei    fish_oil 1981  NA Republique du Congo
+## 7      100  Fish body oils, nei    fish_oil 1982  37 Republique du Congo
+## 8      100  Fish body oils, nei    fish_oil 1983   0 Republique du Congo
+## 9      100  Fish body oils, nei    fish_oil 1984  42 Republique du Congo
+## 10     100  Fish body oils, nei    fish_oil 1985   0 Republique du Congo
+## 11     100  Fish body oils, nei    fish_oil 1986   0 Republique du Congo
+## 12     100  Fish body oils, nei    fish_oil 1987   0 Republique du Congo
+## 13     100  Fish body oils, nei    fish_oil 1988   0 Republique du Congo
+## 14     100  Fish body oils, nei    fish_oil 1989   0 Republique du Congo
+## 15     100  Fish body oils, nei    fish_oil 1990   0 Republique du Congo
+## 16     100  Fish body oils, nei    fish_oil 1991   0 Republique du Congo
+## 17     100  Fish body oils, nei    fish_oil 1992   0 Republique du Congo
+## 18     100  Fish body oils, nei    fish_oil 1993   0 Republique du Congo
+## 19     100  Fish body oils, nei    fish_oil 1994   0 Republique du Congo
+## 20     100  Fish body oils, nei    fish_oil 1995   0 Republique du Congo
+## 21     100  Fish body oils, nei    fish_oil 1996   0 Republique du Congo
+## 22     100  Fish body oils, nei    fish_oil 1997   0 Republique du Congo
+## 23     100  Fish body oils, nei    fish_oil 1998   0 Republique du Congo
+## 24     100  Fish body oils, nei    fish_oil 1999   0 Republique du Congo
+## 25     100  Fish body oils, nei    fish_oil 2000   0 Republique du Congo
+## 26     100  Fish body oils, nei    fish_oil 2001   0 Republique du Congo
+## 27     100  Fish body oils, nei    fish_oil 2002   0 Republique du Congo
+## 28     100  Fish body oils, nei    fish_oil 2003   0 Republique du Congo
+## 29     100  Fish body oils, nei    fish_oil 2004   0 Republique du Congo
+## 30     100  Fish body oils, nei    fish_oil 2005   0 Republique du Congo
+## 31     100  Fish body oils, nei    fish_oil 2006   0 Republique du Congo
+## 32     100  Fish body oils, nei    fish_oil 2007   0 Republique du Congo
+## 33     100  Fish body oils, nei    fish_oil 2008   0 Republique du Congo
+## 34     100  Fish body oils, nei    fish_oil 2009   0 Republique du Congo
+## 35     100  Fish body oils, nei    fish_oil 2010   0 Republique du Congo
+## 36     100  Fish body oils, nei    fish_oil 2011   0 Republique du Congo
+## 37     100 Fish liver oils, nei    fish_oil 1976  NA Republique du Congo
+## 38     100 Fish liver oils, nei    fish_oil 1977  NA Republique du Congo
+## 39     100 Fish liver oils, nei    fish_oil 1978  NA Republique du Congo
+## 40     100 Fish liver oils, nei    fish_oil 1979  NA Republique du Congo
+## 41     100 Fish liver oils, nei    fish_oil 1980  NA Republique du Congo
+## 42     100 Fish liver oils, nei    fish_oil 1981  NA Republique du Congo
+## 43     100 Fish liver oils, nei    fish_oil 1982  NA Republique du Congo
+## 44     100 Fish liver oils, nei    fish_oil 1983  NA Republique du Congo
+## 45     100 Fish liver oils, nei    fish_oil 1984  NA Republique du Congo
+## 46     100 Fish liver oils, nei    fish_oil 1985  NA Republique du Congo
+## 47     100 Fish liver oils, nei    fish_oil 1986  NA Republique du Congo
+## 48     100 Fish liver oils, nei    fish_oil 1987  NA Republique du Congo
+## 49     100 Fish liver oils, nei    fish_oil 1988  NA Republique du Congo
+## 50     100 Fish liver oils, nei    fish_oil 1989  NA Republique du Congo
+## 51     100 Fish liver oils, nei    fish_oil 1990  NA Republique du Congo
+## 52     100 Fish liver oils, nei    fish_oil 1991  NA Republique du Congo
+## 53     100 Fish liver oils, nei    fish_oil 1992  NA Republique du Congo
+## 54     100 Fish liver oils, nei    fish_oil 1993  NA Republique du Congo
+## 55     100 Fish liver oils, nei    fish_oil 1994  NA Republique du Congo
+## 56     100 Fish liver oils, nei    fish_oil 1995   1 Republique du Congo
+## 57     100 Fish liver oils, nei    fish_oil 1996   0 Republique du Congo
+## 58     100 Fish liver oils, nei    fish_oil 1997   0 Republique du Congo
+## 59     100 Fish liver oils, nei    fish_oil 1998   0 Republique du Congo
+## 60     100 Fish liver oils, nei    fish_oil 1999   0 Republique du Congo
+## 61     100 Fish liver oils, nei    fish_oil 2000   0 Republique du Congo
+## 62     100 Fish liver oils, nei    fish_oil 2001   0 Republique du Congo
+## 63     100 Fish liver oils, nei    fish_oil 2002   0 Republique du Congo
+## 64     100 Fish liver oils, nei    fish_oil 2003   0 Republique du Congo
+## 65     100 Fish liver oils, nei    fish_oil 2004   0 Republique du Congo
+## 66     100 Fish liver oils, nei    fish_oil 2005   0 Republique du Congo
+## 67     100 Fish liver oils, nei    fish_oil 2006   0 Republique du Congo
+## 68     100 Fish liver oils, nei    fish_oil 2007   0 Republique du Congo
+## 69     100 Fish liver oils, nei    fish_oil 2008   0 Republique du Congo
+## 70     100 Fish liver oils, nei    fish_oil 2009   0 Republique du Congo
+## 71     100 Fish liver oils, nei    fish_oil 2010   0 Republique du Congo
+## 72     100 Fish liver oils, nei    fish_oil 2011   0 Republique du Congo
+## 73     100  Ornamental fish nei ornamentals 1976  NA Republique du Congo
+## 74     100  Ornamental fish nei ornamentals 1977  NA Republique du Congo
+## 75     100  Ornamental fish nei ornamentals 1978  NA Republique du Congo
+## 76     100  Ornamental fish nei ornamentals 1979  NA Republique du Congo
+## 77     100  Ornamental fish nei ornamentals 1980  NA Republique du Congo
+## 78     100  Ornamental fish nei ornamentals 1981  NA Republique du Congo
+## 79     100  Ornamental fish nei ornamentals 1982  NA Republique du Congo
+## 80     100  Ornamental fish nei ornamentals 1983  NA Republique du Congo
+## 81     100  Ornamental fish nei ornamentals 1984  NA Republique du Congo
+## 82     100  Ornamental fish nei ornamentals 1985  NA Republique du Congo
+## 83     100  Ornamental fish nei ornamentals 1986  NA Republique du Congo
+## 84     100  Ornamental fish nei ornamentals 1987  NA Republique du Congo
+## 85     100  Ornamental fish nei ornamentals 1988  NA Republique du Congo
+## 86     100  Ornamental fish nei ornamentals 1989  NA Republique du Congo
+## 87     100  Ornamental fish nei ornamentals 1990  NA Republique du Congo
+## 88     100  Ornamental fish nei ornamentals 1991  NA Republique du Congo
+## 89     100  Ornamental fish nei ornamentals 1992  NA Republique du Congo
+## 90     100  Ornamental fish nei ornamentals 1993  NA Republique du Congo
+## 91     100  Ornamental fish nei ornamentals 1994  NA Republique du Congo
+## 92     100  Ornamental fish nei ornamentals 1995   3 Republique du Congo
+## 93     100  Ornamental fish nei ornamentals 1996  85 Republique du Congo
+## 94     100  Ornamental fish nei ornamentals 1997  77 Republique du Congo
+## 95     100  Ornamental fish nei ornamentals 1998  77 Republique du Congo
+## 96     100  Ornamental fish nei ornamentals 1999  82 Republique du Congo
+## 97     100  Ornamental fish nei ornamentals 2000  96 Republique du Congo
+## 98     100  Ornamental fish nei ornamentals 2001 132 Republique du Congo
+## 99     100  Ornamental fish nei ornamentals 2002 187 Republique du Congo
+## 100    100  Ornamental fish nei ornamentals 2003 180 Republique du Congo
+## 101    100  Ornamental fish nei ornamentals 2004  83 Republique du Congo
+## 102    100  Ornamental fish nei ornamentals 2005  NA Republique du Congo
+## 103    100  Ornamental fish nei ornamentals 2006 131 Republique du Congo
+## 104    100  Ornamental fish nei ornamentals 2007   0 Republique du Congo
+## 105    100  Ornamental fish nei ornamentals 2008   0 Republique du Congo
+## 106    100  Ornamental fish nei ornamentals 2009   0 Republique du Congo
+## 107    100  Ornamental fish nei ornamentals 2010   0 Republique du Congo
+## 108    100  Ornamental fish nei ornamentals 2011 117 Republique du Congo</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">new &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">'output/np_harvest_tonnes.csv'</span>)
-<span class="kw">filter</span>(new, rgn_id==<span class="dv">115</span>)</code></pre></div>
-<pre><code>##    rgn_id     product year      tonnes
-## 1     115      corals 1997 37.00000000
-## 2     115      corals 1998 18.55000000
-## 3     115      corals 1999 18.70000000
-## 4     115      corals 2000 14.52500000
-## 5     115      corals 2001  5.27500000
-## 6     115      corals 2002  5.27500000
-## 7     115      corals 2003  5.77500000
-## 8     115      corals 2004  5.30000000
-## 9     115      corals 2005  9.05000000
-## 10    115      corals 2006 18.27500000
-## 11    115      corals 2007 13.05000000
-## 12    115      corals 2008 13.05000000
-## 13    115      corals 2009  9.30000000
-## 14    115      corals 2010  0.80000000
-## 15    115      corals 2011  3.27500000
-## 16    115      corals 2012  3.27500000
-## 17    115      corals 2013  3.27500000
-## 18    115    fish_oil 1976  0.10000000
-## 19    115    fish_oil 1977  0.05000000
-## 20    115    fish_oil 1978  0.03333333
-## 21    115    fish_oil 1979  0.02500000
-## 22    115    fish_oil 1980  0.00000000
-## 23    115    fish_oil 1981  0.00000000
-## 24    115    fish_oil 1982  0.00000000
-## 25    115    fish_oil 1983  0.02500000
-## 26    115    fish_oil 1984  0.05000000
-## 27    115    fish_oil 1985  0.05000000
-## 28    115    fish_oil 1986  0.05000000
-## 29    115    fish_oil 1987  0.02500000
-## 30    115    fish_oil 1988  0.00000000
-## 31    115    fish_oil 1989  0.00000000
-## 32    115    fish_oil 1990  0.00000000
-## 33    115    fish_oil 1991  0.00000000
-## 34    115    fish_oil 1992  0.00000000
-## 35    115    fish_oil 1993  0.00000000
-## 36    115    fish_oil 1994  0.00000000
-## 37    115    fish_oil 1995  0.00000000
-## 38    115    fish_oil 1996  0.00000000
-## 39    115    fish_oil 1997  0.02500000
-## 40    115    fish_oil 1998  0.27500000
-## 41    115    fish_oil 1999  0.32500000
-## 42    115    fish_oil 2000  0.57500000
-## 43    115    fish_oil 2001  0.60000000
-## 44    115    fish_oil 2002  0.37500000
-## 45    115    fish_oil 2003  0.37500000
-## 46    115    fish_oil 2004  0.12500000
-## 47    115    fish_oil 2005  0.10000000
-## 48    115    fish_oil 2006  0.10000000
-## 49    115    fish_oil 2007  0.05000000
-## 50    115    fish_oil 2008  0.55000000
-## 51    115    fish_oil 2009  0.55000000
-## 52    115    fish_oil 2010  0.52500000
-## 53    115    fish_oil 2011  0.55000000
-## 54    115    fish_oil 2012  1.05000000
-## 55    115    fish_oil 2013  1.05000000
-## 56    115 ornamentals 1979  0.10000000
-## 57    115 ornamentals 1980  0.05000000
-## 58    115 ornamentals 1981  0.03333333
-## 59    115 ornamentals 1982  0.02500000
-## 60    115 ornamentals 1983  0.00000000
-## 61    115 ornamentals 1984  0.00000000
-## 62    115 ornamentals 1985  0.00000000
-## 63    115 ornamentals 1986  0.00000000
-## 64    115 ornamentals 1987  0.00000000
-## 65    115 ornamentals 1988  0.00000000
-## 66    115 ornamentals 1989  0.00000000
-## 67    115 ornamentals 1990  0.00000000
-## 68    115 ornamentals 1991  0.00000000
-## 69    115 ornamentals 1992  1.70996888
-## 70    115 ornamentals 1993  1.70996888
-## 71    115 ornamentals 1994 15.92812552
-## 72    115 ornamentals 1995 15.95312552
-## 73    115 ornamentals 1996 14.35865342
-## 74    115 ornamentals 1997 14.35865342
-## 75    115 ornamentals 1998  0.14049678
-## 76    115 ornamentals 1999  0.11549678
-## 77    115 ornamentals 2000  0.00000000
-## 78    115 ornamentals 2001  0.00000000
-## 79    115 ornamentals 2002  8.25000000
-## 80    115 ornamentals 2003 17.25000000
-## 81    115 ornamentals 2004 22.00000000
-## 82    115 ornamentals 2005 34.00000000
-## 83    115 ornamentals 2006 30.75000000
-## 84    115 ornamentals 2007 37.25000000
-## 85    115 ornamentals 2008 43.75000000
-## 86    115 ornamentals 2009 41.75000000
-## 87    115 ornamentals 2010 47.75000000
-## 88    115 ornamentals 2011 43.50000000
-## 89    115 ornamentals 2012 32.25000000
-## 90    115 ornamentals 2013 22.25000000
-## 91    115    seaweeds 2005  0.10000000
-## 92    115    seaweeds 2006  0.05000000
-## 93    115    seaweeds 2007  0.06666667
-## 94    115    seaweeds 2008  0.30000000
-## 95    115    seaweeds 2009  0.27500000
-## 96    115    seaweeds 2010  0.27500000
-## 97    115    seaweeds 2011  0.25000000
-## 98    115    seaweeds 2012  1.75000000
-## 99    115    seaweeds 2013  2.00000000</code></pre>
+<span class="kw">filter</span>(new, rgn_id==<span class="dv">100</span>)</code></pre></div>
+<pre><code>##    rgn_id     product year     tonnes
+## 1     100 ornamentals 1995 0.00000000
+## 2     100 ornamentals 1996 0.00000000
+## 3     100 ornamentals 1997 0.00000000
+## 4     100 ornamentals 1998 0.00000000
+## 5     100 ornamentals 1999 0.08998214
+## 6     100 ornamentals 2000 0.52932202
+## 7     100 ornamentals 2001 1.59291462
+## 8     100 ornamentals 2002 3.51816926
+## 9     100 ornamentals 2003 3.45318712
+## 10    100 ornamentals 2004 3.98844747
+## 11    100 ornamentals 2005 2.92485486
+## 12    100 ornamentals 2006 2.92282047
+## 13    100 ornamentals 2007 2.89782047
+## 14    100 ornamentals 2008 1.92322024
+## 15    100 ornamentals 2009 1.92322024
+## 16    100 ornamentals 2010 0.00000000
+## 17    100 ornamentals 2011 0.00000000
+## 18    100 ornamentals 2012 0.00000000
+## 19    100 ornamentals 2013 0.00000000</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">old &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">'../v2014_test/data/np_harvest_tonnes_eez2014_test-year_max_2011.csv'</span>)
-<span class="kw">filter</span>(old, rgn_id==<span class="dv">115</span>)</code></pre></div>
+<span class="kw">filter</span>(old, rgn_id==<span class="dv">100</span>)</code></pre></div>
 <pre><code>##    rgn_id     product year      tonnes
-## 1     115      corals 1997 37.00000000
-## 2     115      corals 1998 18.55000000
-## 3     115      corals 1999 18.70000000
-## 4     115      corals 2000 14.52500000
-## 5     115      corals 2001  5.27500000
-## 6     115      corals 2002  5.27500000
-## 7     115      corals 2003  5.77500000
-## 8     115      corals 2004  5.30000000
-## 9     115      corals 2005  9.05000000
-## 10    115      corals 2006 18.27500000
-## 11    115      corals 2007 13.05000000
-## 12    115      corals 2008 13.05000000
-## 13    115      corals 2009  9.30000000
-## 14    115      corals 2010  0.80000000
-## 15    115      corals 2011  3.27500000
-## 16    115    fish_oil 1976  0.10000000
-## 17    115    fish_oil 1977  0.05000000
-## 18    115    fish_oil 1978  0.03333333
-## 19    115    fish_oil 1979  0.02500000
-## 20    115    fish_oil 1980  0.00000000
-## 21    115    fish_oil 1981  0.00000000
-## 22    115    fish_oil 1982  0.00000000
-## 23    115    fish_oil 1983  0.02500000
-## 24    115    fish_oil 1984  0.05000000
-## 25    115    fish_oil 1985  0.05000000
-## 26    115    fish_oil 1986  0.05000000
-## 27    115    fish_oil 1987  0.02500000
-## 28    115    fish_oil 1988  0.00000000
-## 29    115    fish_oil 1989  0.00000000
-## 30    115    fish_oil 1990  0.00000000
-## 31    115    fish_oil 1991  0.00000000
-## 32    115    fish_oil 1992  0.00000000
-## 33    115    fish_oil 1993  0.00000000
-## 34    115    fish_oil 1994  0.00000000
-## 35    115    fish_oil 1995  0.00000000
-## 36    115    fish_oil 1996  0.00000000
-## 37    115    fish_oil 1997  0.02500000
-## 38    115    fish_oil 1998  0.27500000
-## 39    115    fish_oil 1999  0.32500000
-## 40    115    fish_oil 2000  0.57500000
-## 41    115    fish_oil 2001  0.60000000
-## 42    115    fish_oil 2002  0.37500000
-## 43    115    fish_oil 2003  0.37500000
-## 44    115    fish_oil 2004  0.12500000
-## 45    115    fish_oil 2005  1.07500000
-## 46    115    fish_oil 2006  1.07500000
-## 47    115    fish_oil 2007  1.02500000
-## 48    115    fish_oil 2008  1.52500000
-## 49    115    fish_oil 2009  0.55000000
-## 50    115    fish_oil 2010  0.52500000
-## 51    115    fish_oil 2011  0.55000000
-## 52    115 ornamentals 1979  0.10000000
-## 53    115 ornamentals 1980  0.05000000
-## 54    115 ornamentals 1981  0.03333333
-## 55    115 ornamentals 1982  0.02500000
-## 56    115 ornamentals 1983  0.00000000
-## 57    115 ornamentals 1984  0.00000000
-## 58    115 ornamentals 1985  0.00000000
-## 59    115 ornamentals 1986  0.00000000
-## 60    115 ornamentals 1987  0.00000000
-## 61    115 ornamentals 1988  0.00000000
-## 62    115 ornamentals 1989  0.00000000
-## 63    115 ornamentals 1990  0.00000000
-## 64    115 ornamentals 1991  0.00000000
-## 65    115 ornamentals 1992  1.60493516
-## 66    115 ornamentals 1993  1.60493516
-## 67    115 ornamentals 1994 15.75350367
-## 68    115 ornamentals 1995 15.77850367
-## 69    115 ornamentals 1996 14.17356850
-## 70    115 ornamentals 1997 14.17356850
-## 71    115 ornamentals 1998  0.02500000
-## 72    115 ornamentals 1999  0.00000000
-## 73    115 ornamentals 2000  0.00000000
-## 74    115 ornamentals 2001  7.93971285
-## 75    115 ornamentals 2002 16.18971285
-## 76    115 ornamentals 2003 25.18971285
-## 77    115 ornamentals 2004 29.93971285
-## 78    115 ornamentals 2005 34.00000000
-## 79    115 ornamentals 2006 30.75000000
-## 80    115 ornamentals 2007 37.25000000
-## 81    115 ornamentals 2008 43.75000000
-## 82    115 ornamentals 2009 41.75000000
-## 83    115 ornamentals 2010 47.75000000
-## 84    115 ornamentals 2011 43.50000000</code></pre>
+## 1     100 ornamentals 1995 0.000000000
+## 2     100 ornamentals 1996 0.000000000
+## 3     100 ornamentals 1997 0.000000000
+## 4     100 ornamentals 1998 0.000000000
+## 5     100 ornamentals 1999 0.006764426
+## 6     100 ornamentals 2000 0.025950857
+## 7     100 ornamentals 2001 0.064707942
+## 8     100 ornamentals 2002 0.129209513
+## 9     100 ornamentals 2003 0.147445087
+## 10    100 ornamentals 2004 0.174712341
+## 11    100 ornamentals 2005 0.135955256
+## 12    100 ornamentals 2006 0.149250151
+## 13    100 ornamentals 2007 0.124250151
+## 14    100 ornamentals 2008 0.077796466
+## 15    100 ornamentals 2009 0.077796466
+## 16    100 ornamentals 2010 0.000000000
+## 17    100 ornamentals 2011 0.750000000</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## 
+new &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;int/tonnes.csv&quot;</span>)
+old &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;../v2014_test/intermediate/tonnes.csv&quot;</span>)
+
+<span class="kw">filter</span>(new, rgn_id==<span class="dv">66</span>) %&gt;%
+<span class="st">  </span><span class="kw">arrange</span>(commodity, year)</code></pre></div>
+<pre><code>##     rgn_id rgn_name                                              commodity
+## 1       66  Senegal                                     Clupeoid oils, nei
+## 2       66  Senegal                                     Clupeoid oils, nei
+## 3       66  Senegal                                     Clupeoid oils, nei
+## 4       66  Senegal                                     Clupeoid oils, nei
+## 5       66  Senegal                                     Clupeoid oils, nei
+## 6       66  Senegal                                     Clupeoid oils, nei
+## 7       66  Senegal                                     Clupeoid oils, nei
+## 8       66  Senegal                                     Clupeoid oils, nei
+## 9       66  Senegal                                     Clupeoid oils, nei
+## 10      66  Senegal                                     Clupeoid oils, nei
+## 11      66  Senegal                                     Clupeoid oils, nei
+## 12      66  Senegal                                     Clupeoid oils, nei
+## 13      66  Senegal                                     Clupeoid oils, nei
+## 14      66  Senegal                                     Clupeoid oils, nei
+## 15      66  Senegal                                     Clupeoid oils, nei
+## 16      66  Senegal                                     Clupeoid oils, nei
+## 17      66  Senegal                                     Clupeoid oils, nei
+## 18      66  Senegal                                     Clupeoid oils, nei
+## 19      66  Senegal                                     Clupeoid oils, nei
+## 20      66  Senegal                                     Clupeoid oils, nei
+## 21      66  Senegal                                     Clupeoid oils, nei
+## 22      66  Senegal                                     Clupeoid oils, nei
+## 23      66  Senegal                                     Clupeoid oils, nei
+## 24      66  Senegal                                     Clupeoid oils, nei
+## 25      66  Senegal                                     Clupeoid oils, nei
+## 26      66  Senegal                                     Clupeoid oils, nei
+## 27      66  Senegal                                     Clupeoid oils, nei
+## 28      66  Senegal                                     Clupeoid oils, nei
+## 29      66  Senegal                                     Clupeoid oils, nei
+## 30      66  Senegal                                     Clupeoid oils, nei
+## 31      66  Senegal                                     Clupeoid oils, nei
+## 32      66  Senegal                                     Clupeoid oils, nei
+## 33      66  Senegal                                     Clupeoid oils, nei
+## 34      66  Senegal                                     Clupeoid oils, nei
+## 35      66  Senegal                                     Clupeoid oils, nei
+## 36      66  Senegal                                     Clupeoid oils, nei
+## 37      66  Senegal                                     Clupeoid oils, nei
+## 38      66  Senegal                                     Clupeoid oils, nei
+## 39      66  Senegal                                     Coral and the like
+## 40      66  Senegal                                     Coral and the like
+## 41      66  Senegal                                     Coral and the like
+## 42      66  Senegal                                     Coral and the like
+## 43      66  Senegal                                     Coral and the like
+## 44      66  Senegal                                     Coral and the like
+## 45      66  Senegal                                     Coral and the like
+## 46      66  Senegal                                     Coral and the like
+## 47      66  Senegal                                     Coral and the like
+## 48      66  Senegal                                     Coral and the like
+## 49      66  Senegal                                     Coral and the like
+## 50      66  Senegal                                     Coral and the like
+## 51      66  Senegal                                     Coral and the like
+## 52      66  Senegal                                     Coral and the like
+## 53      66  Senegal                                     Coral and the like
+## 54      66  Senegal                                     Coral and the like
+## 55      66  Senegal                                     Coral and the like
+## 56      66  Senegal                                     Coral and the like
+## 57      66  Senegal                                     Coral and the like
+## 58      66  Senegal                                     Coral and the like
+## 59      66  Senegal                                     Coral and the like
+## 60      66  Senegal                                     Coral and the like
+## 61      66  Senegal                                     Coral and the like
+## 62      66  Senegal                                     Coral and the like
+## 63      66  Senegal                                     Coral and the like
+## 64      66  Senegal                                     Coral and the like
+## 65      66  Senegal                                     Coral and the like
+## 66      66  Senegal                                     Coral and the like
+## 67      66  Senegal                                     Coral and the like
+## 68      66  Senegal                                     Coral and the like
+## 69      66  Senegal                                     Coral and the like
+## 70      66  Senegal                                     Coral and the like
+## 71      66  Senegal                                     Coral and the like
+## 72      66  Senegal                                     Coral and the like
+## 73      66  Senegal                                     Coral and the like
+## 74      66  Senegal                                     Coral and the like
+## 75      66  Senegal                                     Coral and the like
+## 76      66  Senegal                                     Coral and the like
+## 77      66  Senegal                                    Fish body oils, nei
+## 78      66  Senegal                                    Fish body oils, nei
+## 79      66  Senegal                                    Fish body oils, nei
+## 80      66  Senegal                                    Fish body oils, nei
+## 81      66  Senegal                                    Fish body oils, nei
+## 82      66  Senegal                                    Fish body oils, nei
+## 83      66  Senegal                                    Fish body oils, nei
+## 84      66  Senegal                                    Fish body oils, nei
+## 85      66  Senegal                                    Fish body oils, nei
+## 86      66  Senegal                                    Fish body oils, nei
+## 87      66  Senegal                                    Fish body oils, nei
+## 88      66  Senegal                                    Fish body oils, nei
+## 89      66  Senegal                                    Fish body oils, nei
+## 90      66  Senegal                                    Fish body oils, nei
+## 91      66  Senegal                                    Fish body oils, nei
+## 92      66  Senegal                                    Fish body oils, nei
+## 93      66  Senegal                                    Fish body oils, nei
+## 94      66  Senegal                                    Fish body oils, nei
+## 95      66  Senegal                                    Fish body oils, nei
+## 96      66  Senegal                                    Fish body oils, nei
+## 97      66  Senegal                                    Fish body oils, nei
+## 98      66  Senegal                                    Fish body oils, nei
+## 99      66  Senegal                                    Fish body oils, nei
+## 100     66  Senegal                                    Fish body oils, nei
+## 101     66  Senegal                                    Fish body oils, nei
+## 102     66  Senegal                                    Fish body oils, nei
+## 103     66  Senegal                                    Fish body oils, nei
+## 104     66  Senegal                                    Fish body oils, nei
+## 105     66  Senegal                                    Fish body oils, nei
+## 106     66  Senegal                                    Fish body oils, nei
+## 107     66  Senegal                                    Fish body oils, nei
+## 108     66  Senegal                                    Fish body oils, nei
+## 109     66  Senegal                                    Fish body oils, nei
+## 110     66  Senegal                                    Fish body oils, nei
+## 111     66  Senegal                                    Fish body oils, nei
+## 112     66  Senegal                                    Fish body oils, nei
+## 113     66  Senegal                                    Fish body oils, nei
+## 114     66  Senegal                                    Fish body oils, nei
+## 115     66  Senegal                                   Fish liver oils, nei
+## 116     66  Senegal                                   Fish liver oils, nei
+## 117     66  Senegal                                   Fish liver oils, nei
+## 118     66  Senegal                                   Fish liver oils, nei
+## 119     66  Senegal                                   Fish liver oils, nei
+## 120     66  Senegal                                   Fish liver oils, nei
+## 121     66  Senegal                                   Fish liver oils, nei
+## 122     66  Senegal                                   Fish liver oils, nei
+## 123     66  Senegal                                   Fish liver oils, nei
+## 124     66  Senegal                                   Fish liver oils, nei
+## 125     66  Senegal                                   Fish liver oils, nei
+## 126     66  Senegal                                   Fish liver oils, nei
+## 127     66  Senegal                                   Fish liver oils, nei
+## 128     66  Senegal                                   Fish liver oils, nei
+## 129     66  Senegal                                   Fish liver oils, nei
+## 130     66  Senegal                                   Fish liver oils, nei
+## 131     66  Senegal                                   Fish liver oils, nei
+## 132     66  Senegal                                   Fish liver oils, nei
+## 133     66  Senegal                                   Fish liver oils, nei
+## 134     66  Senegal                                   Fish liver oils, nei
+## 135     66  Senegal                                   Fish liver oils, nei
+## 136     66  Senegal                                   Fish liver oils, nei
+## 137     66  Senegal                                   Fish liver oils, nei
+## 138     66  Senegal                                   Fish liver oils, nei
+## 139     66  Senegal                                   Fish liver oils, nei
+## 140     66  Senegal                                   Fish liver oils, nei
+## 141     66  Senegal                                   Fish liver oils, nei
+## 142     66  Senegal                                   Fish liver oils, nei
+## 143     66  Senegal                                   Fish liver oils, nei
+## 144     66  Senegal                                   Fish liver oils, nei
+## 145     66  Senegal                                   Fish liver oils, nei
+## 146     66  Senegal                                   Fish liver oils, nei
+## 147     66  Senegal                                   Fish liver oils, nei
+## 148     66  Senegal                                   Fish liver oils, nei
+## 149     66  Senegal                                   Fish liver oils, nei
+## 150     66  Senegal                                   Fish liver oils, nei
+## 151     66  Senegal                                   Fish liver oils, nei
+## 152     66  Senegal                                   Fish liver oils, nei
+## 153     66  Senegal                                    Ornamental fish nei
+## 154     66  Senegal                                    Ornamental fish nei
+## 155     66  Senegal                                    Ornamental fish nei
+## 156     66  Senegal                                    Ornamental fish nei
+## 157     66  Senegal                                    Ornamental fish nei
+## 158     66  Senegal                                    Ornamental fish nei
+## 159     66  Senegal                                    Ornamental fish nei
+## 160     66  Senegal                                    Ornamental fish nei
+## 161     66  Senegal                                    Ornamental fish nei
+## 162     66  Senegal                                    Ornamental fish nei
+## 163     66  Senegal                                    Ornamental fish nei
+## 164     66  Senegal                                    Ornamental fish nei
+## 165     66  Senegal                                    Ornamental fish nei
+## 166     66  Senegal                                    Ornamental fish nei
+## 167     66  Senegal                                    Ornamental fish nei
+## 168     66  Senegal                                    Ornamental fish nei
+## 169     66  Senegal                                    Ornamental fish nei
+## 170     66  Senegal                                    Ornamental fish nei
+## 171     66  Senegal                                    Ornamental fish nei
+## 172     66  Senegal                                    Ornamental fish nei
+## 173     66  Senegal                                    Ornamental fish nei
+## 174     66  Senegal                                    Ornamental fish nei
+## 175     66  Senegal                                    Ornamental fish nei
+## 176     66  Senegal                                    Ornamental fish nei
+## 177     66  Senegal                                    Ornamental fish nei
+## 178     66  Senegal                                    Ornamental fish nei
+## 179     66  Senegal                                    Ornamental fish nei
+## 180     66  Senegal                                    Ornamental fish nei
+## 181     66  Senegal                                    Ornamental fish nei
+## 182     66  Senegal                                    Ornamental fish nei
+## 183     66  Senegal                                    Ornamental fish nei
+## 184     66  Senegal                                    Ornamental fish nei
+## 185     66  Senegal                                    Ornamental fish nei
+## 186     66  Senegal                                    Ornamental fish nei
+## 187     66  Senegal                                    Ornamental fish nei
+## 188     66  Senegal                                    Ornamental fish nei
+## 189     66  Senegal                                    Ornamental fish nei
+## 190     66  Senegal                                    Ornamental fish nei
+## 191     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 192     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 193     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 194     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 195     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 196     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 197     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 198     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 199     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 200     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 201     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 202     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 203     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 204     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 205     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 206     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 207     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 208     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 209     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 210     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 211     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 212     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 213     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 214     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 215     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 216     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 217     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 218     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 219     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 220     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 221     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 222     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 223     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 224     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 225     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 226     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 227     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 228     66  Senegal Other seaweeds and aquatic plants and products thereof
+##         product year tonnes
+## 1      fish_oil 1976     NA
+## 2      fish_oil 1977     NA
+## 3      fish_oil 1978     NA
+## 4      fish_oil 1979  374.0
+## 5      fish_oil 1980    5.0
+## 6      fish_oil 1981  253.0
+## 7      fish_oil 1982     NA
+## 8      fish_oil 1983     NA
+## 9      fish_oil 1984     NA
+## 10     fish_oil 1985   15.0
+## 11     fish_oil 1986    3.0
+## 12     fish_oil 1987   10.0
+## 13     fish_oil 1988     NA
+## 14     fish_oil 1989   32.0
+## 15     fish_oil 1990   45.0
+## 16     fish_oil 1991   30.0
+## 17     fish_oil 1992   24.0
+## 18     fish_oil 1993   19.0
+## 19     fish_oil 1994     NA
+## 20     fish_oil 1995     NA
+## 21     fish_oil 1996     NA
+## 22     fish_oil 1997     NA
+## 23     fish_oil 1998   21.0
+## 24     fish_oil 1999    0.0
+## 25     fish_oil 2000   10.0
+## 26     fish_oil 2001    0.0
+## 27     fish_oil 2002    0.0
+## 28     fish_oil 2003    0.0
+## 29     fish_oil 2004    0.0
+## 30     fish_oil 2005    0.0
+## 31     fish_oil 2006    0.0
+## 32     fish_oil 2007    0.0
+## 33     fish_oil 2008    0.0
+## 34     fish_oil 2009    0.0
+## 35     fish_oil 2010    0.0
+## 36     fish_oil 2011    0.0
+## 37     fish_oil 2012    0.0
+## 38     fish_oil 2013    0.0
+## 39       corals 1976     NA
+## 40       corals 1977     NA
+## 41       corals 1978     NA
+## 42       corals 1979     NA
+## 43       corals 1980     NA
+## 44       corals 1981     NA
+## 45       corals 1982     NA
+## 46       corals 1983     NA
+## 47       corals 1984     NA
+## 48       corals 1985     NA
+## 49       corals 1986     NA
+## 50       corals 1987     NA
+## 51       corals 1988     NA
+## 52       corals 1989     NA
+## 53       corals 1990     NA
+## 54       corals 1991     NA
+## 55       corals 1992     NA
+## 56       corals 1993     NA
+## 57       corals 1994     NA
+## 58       corals 1995     NA
+## 59       corals 1996     NA
+## 60       corals 1997     NA
+## 61       corals 1998 1250.0
+## 62       corals 1999   23.0
+## 63       corals 2000    0.0
+## 64       corals 2001    0.0
+## 65       corals 2002    4.0
+## 66       corals 2003    0.0
+## 67       corals 2004    0.0
+## 68       corals 2005    0.0
+## 69       corals 2006    0.0
+## 70       corals 2007    0.0
+## 71       corals 2008    0.1
+## 72       corals 2009   22.0
+## 73       corals 2010    1.0
+## 74       corals 2011  202.0
+## 75       corals 2012   51.0
+## 76       corals 2013   19.0
+## 77     fish_oil 1976     NA
+## 78     fish_oil 1977     NA
+## 79     fish_oil 1978     NA
+## 80     fish_oil 1979     NA
+## 81     fish_oil 1980     NA
+## 82     fish_oil 1981     NA
+## 83     fish_oil 1982     NA
+## 84     fish_oil 1983     NA
+## 85     fish_oil 1984     NA
+## 86     fish_oil 1985     NA
+## 87     fish_oil 1986     NA
+## 88     fish_oil 1987     NA
+## 89     fish_oil 1988     NA
+## 90     fish_oil 1989     NA
+## 91     fish_oil 1990     NA
+## 92     fish_oil 1991     NA
+## 93     fish_oil 1992     NA
+## 94     fish_oil 1993     NA
+## 95     fish_oil 1994     NA
+## 96     fish_oil 1995     NA
+## 97     fish_oil 1996     NA
+## 98     fish_oil 1997     NA
+## 99     fish_oil 1998     NA
+## 100    fish_oil 1999     NA
+## 101    fish_oil 2000     NA
+## 102    fish_oil 2001     NA
+## 103    fish_oil 2002     NA
+## 104    fish_oil 2003     NA
+## 105    fish_oil 2004   10.0
+## 106    fish_oil 2005    0.0
+## 107    fish_oil 2006    0.0
+## 108    fish_oil 2007   26.0
+## 109    fish_oil 2008  400.0
+## 110    fish_oil 2009    9.0
+## 111    fish_oil 2010    0.0
+## 112    fish_oil 2011    0.0
+## 113    fish_oil 2012   44.0
+## 114    fish_oil 2013  177.0
+## 115    fish_oil 1976     NA
+## 116    fish_oil 1977     NA
+## 117    fish_oil 1978     NA
+## 118    fish_oil 1979     NA
+## 119    fish_oil 1980     NA
+## 120    fish_oil 1981     NA
+## 121    fish_oil 1982     NA
+## 122    fish_oil 1983     NA
+## 123    fish_oil 1984     NA
+## 124    fish_oil 1985     NA
+## 125    fish_oil 1986     NA
+## 126    fish_oil 1987     NA
+## 127    fish_oil 1988     NA
+## 128    fish_oil 1989     NA
+## 129    fish_oil 1990     NA
+## 130    fish_oil 1991     NA
+## 131    fish_oil 1992     NA
+## 132    fish_oil 1993     NA
+## 133    fish_oil 1994     NA
+## 134    fish_oil 1995  120.0
+## 135    fish_oil 1996   84.0
+## 136    fish_oil 1997     NA
+## 137    fish_oil 1998     NA
+## 138    fish_oil 1999    1.0
+## 139    fish_oil 2000     NA
+## 140    fish_oil 2001     NA
+## 141    fish_oil 2002   24.0
+## 142    fish_oil 2003     NA
+## 143    fish_oil 2004    4.0
+## 144    fish_oil 2005     NA
+## 145    fish_oil 2006    4.0
+## 146    fish_oil 2007   14.0
+## 147    fish_oil 2008  628.0
+## 148    fish_oil 2009   14.0
+## 149    fish_oil 2010    0.0
+## 150    fish_oil 2011   30.0
+## 151    fish_oil 2012    0.0
+## 152    fish_oil 2013   72.0
+## 153 ornamentals 1976     NA
+## 154 ornamentals 1977     NA
+## 155 ornamentals 1978     NA
+## 156 ornamentals 1979     NA
+## 157 ornamentals 1980     NA
+## 158 ornamentals 1981     NA
+## 159 ornamentals 1982     NA
+## 160 ornamentals 1983     NA
+## 161 ornamentals 1984     NA
+## 162 ornamentals 1985     NA
+## 163 ornamentals 1986     NA
+## 164 ornamentals 1987     NA
+## 165 ornamentals 1988     NA
+## 166 ornamentals 1989     NA
+## 167 ornamentals 1990     NA
+## 168 ornamentals 1991     NA
+## 169 ornamentals 1992     NA
+## 170 ornamentals 1993     NA
+## 171 ornamentals 1994     NA
+## 172 ornamentals 1995     NA
+## 173 ornamentals 1996     NA
+## 174 ornamentals 1997     NA
+## 175 ornamentals 1998     NA
+## 176 ornamentals 1999     NA
+## 177 ornamentals 2000     NA
+## 178 ornamentals 2001     NA
+## 179 ornamentals 2002     NA
+## 180 ornamentals 2003    0.0
+## 181 ornamentals 2004    0.0
+## 182 ornamentals 2005    0.0
+## 183 ornamentals 2006    0.0
+## 184 ornamentals 2007    0.0
+## 185 ornamentals 2008    0.0
+## 186 ornamentals 2009    0.0
+## 187 ornamentals 2010    0.0
+## 188 ornamentals 2011    0.0
+## 189 ornamentals 2012    0.0
+## 190 ornamentals 2013    0.0
+## 191    seaweeds 1976     NA
+## 192    seaweeds 1977     NA
+## 193    seaweeds 1978     NA
+## 194    seaweeds 1979     NA
+## 195    seaweeds 1980     NA
+## 196    seaweeds 1981     NA
+## 197    seaweeds 1982     NA
+## 198    seaweeds 1983     NA
+## 199    seaweeds 1984     NA
+## 200    seaweeds 1985     NA
+## 201    seaweeds 1986     NA
+## 202    seaweeds 1987     NA
+## 203    seaweeds 1988     NA
+## 204    seaweeds 1989     NA
+## 205    seaweeds 1990     NA
+## 206    seaweeds 1991     NA
+## 207    seaweeds 1992     NA
+## 208    seaweeds 1993     NA
+## 209    seaweeds 1994     NA
+## 210    seaweeds 1995     NA
+## 211    seaweeds 1996     NA
+## 212    seaweeds 1997     NA
+## 213    seaweeds 1998  560.0
+## 214    seaweeds 1999     NA
+## 215    seaweeds 2000    7.0
+## 216    seaweeds 2001   21.0
+## 217    seaweeds 2002   66.0
+## 218    seaweeds 2003   78.0
+## 219    seaweeds 2004   55.0
+## 220    seaweeds 2005   14.0
+## 221    seaweeds 2006   11.0
+## 222    seaweeds 2007    0.1
+## 223    seaweeds 2008    0.0
+## 224    seaweeds 2009   25.0
+## 225    seaweeds 2010   26.0
+## 226    seaweeds 2011   19.0
+## 227    seaweeds 2012   45.0
+## 228    seaweeds 2013   36.0</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">filter</span>(old, rgn_id==<span class="dv">66</span>) %&gt;%
+<span class="st">  </span><span class="kw">arrange</span>(commodity, year)</code></pre></div>
+<pre><code>##     rgn_id                                              commodity  product
+## 1       66                                     Clupeoid oils, nei fish_oil
+## 2       66                                     Clupeoid oils, nei fish_oil
+## 3       66                                     Clupeoid oils, nei fish_oil
+## 4       66                                     Clupeoid oils, nei fish_oil
+## 5       66                                     Clupeoid oils, nei fish_oil
+## 6       66                                     Clupeoid oils, nei fish_oil
+## 7       66                                     Clupeoid oils, nei fish_oil
+## 8       66                                     Clupeoid oils, nei fish_oil
+## 9       66                                     Clupeoid oils, nei fish_oil
+## 10      66                                     Clupeoid oils, nei fish_oil
+## 11      66                                     Clupeoid oils, nei fish_oil
+## 12      66                                     Clupeoid oils, nei fish_oil
+## 13      66                                     Clupeoid oils, nei fish_oil
+## 14      66                                     Clupeoid oils, nei fish_oil
+## 15      66                                     Clupeoid oils, nei fish_oil
+## 16      66                                     Clupeoid oils, nei fish_oil
+## 17      66                                     Clupeoid oils, nei fish_oil
+## 18      66                                     Clupeoid oils, nei fish_oil
+## 19      66                                     Clupeoid oils, nei fish_oil
+## 20      66                                     Clupeoid oils, nei fish_oil
+## 21      66                                     Clupeoid oils, nei fish_oil
+## 22      66                                     Clupeoid oils, nei fish_oil
+## 23      66                                     Clupeoid oils, nei fish_oil
+## 24      66                                     Clupeoid oils, nei fish_oil
+## 25      66                                     Clupeoid oils, nei fish_oil
+## 26      66                                     Clupeoid oils, nei fish_oil
+## 27      66                                     Clupeoid oils, nei fish_oil
+## 28      66                                     Clupeoid oils, nei fish_oil
+## 29      66                                     Clupeoid oils, nei fish_oil
+## 30      66                                     Clupeoid oils, nei fish_oil
+## 31      66                                     Clupeoid oils, nei fish_oil
+## 32      66                                     Clupeoid oils, nei fish_oil
+## 33      66                                     Clupeoid oils, nei fish_oil
+## 34      66                                     Clupeoid oils, nei fish_oil
+## 35      66                                     Clupeoid oils, nei fish_oil
+## 36      66                                     Clupeoid oils, nei fish_oil
+## 37      66                                     Coral and the like   corals
+## 38      66                                     Coral and the like   corals
+## 39      66                                     Coral and the like   corals
+## 40      66                                     Coral and the like   corals
+## 41      66                                     Coral and the like   corals
+## 42      66                                     Coral and the like   corals
+## 43      66                                     Coral and the like   corals
+## 44      66                                     Coral and the like   corals
+## 45      66                                     Coral and the like   corals
+## 46      66                                     Coral and the like   corals
+## 47      66                                     Coral and the like   corals
+## 48      66                                     Coral and the like   corals
+## 49      66                                     Coral and the like   corals
+## 50      66                                     Coral and the like   corals
+## 51      66                                     Coral and the like   corals
+## 52      66                                     Coral and the like   corals
+## 53      66                                     Coral and the like   corals
+## 54      66                                     Coral and the like   corals
+## 55      66                                     Coral and the like   corals
+## 56      66                                     Coral and the like   corals
+## 57      66                                     Coral and the like   corals
+## 58      66                                     Coral and the like   corals
+## 59      66                                     Coral and the like   corals
+## 60      66                                     Coral and the like   corals
+## 61      66                                     Coral and the like   corals
+## 62      66                                     Coral and the like   corals
+## 63      66                                     Coral and the like   corals
+## 64      66                                     Coral and the like   corals
+## 65      66                                     Coral and the like   corals
+## 66      66                                     Coral and the like   corals
+## 67      66                                     Coral and the like   corals
+## 68      66                                     Coral and the like   corals
+## 69      66                                     Coral and the like   corals
+## 70      66                                     Coral and the like   corals
+## 71      66                                     Coral and the like   corals
+## 72      66                                     Coral and the like   corals
+## 73      66                                    Fish body oils, nei fish_oil
+## 74      66                                    Fish body oils, nei fish_oil
+## 75      66                                    Fish body oils, nei fish_oil
+## 76      66                                    Fish body oils, nei fish_oil
+## 77      66                                    Fish body oils, nei fish_oil
+## 78      66                                    Fish body oils, nei fish_oil
+## 79      66                                    Fish body oils, nei fish_oil
+## 80      66                                    Fish body oils, nei fish_oil
+## 81      66                                    Fish body oils, nei fish_oil
+## 82      66                                    Fish body oils, nei fish_oil
+## 83      66                                    Fish body oils, nei fish_oil
+## 84      66                                    Fish body oils, nei fish_oil
+## 85      66                                    Fish body oils, nei fish_oil
+## 86      66                                    Fish body oils, nei fish_oil
+## 87      66                                    Fish body oils, nei fish_oil
+## 88      66                                    Fish body oils, nei fish_oil
+## 89      66                                    Fish body oils, nei fish_oil
+## 90      66                                    Fish body oils, nei fish_oil
+## 91      66                                    Fish body oils, nei fish_oil
+## 92      66                                    Fish body oils, nei fish_oil
+## 93      66                                    Fish body oils, nei fish_oil
+## 94      66                                    Fish body oils, nei fish_oil
+## 95      66                                    Fish body oils, nei fish_oil
+## 96      66                                    Fish body oils, nei fish_oil
+## 97      66                                    Fish body oils, nei fish_oil
+## 98      66                                    Fish body oils, nei fish_oil
+## 99      66                                    Fish body oils, nei fish_oil
+## 100     66                                    Fish body oils, nei fish_oil
+## 101     66                                    Fish body oils, nei fish_oil
+## 102     66                                    Fish body oils, nei fish_oil
+## 103     66                                    Fish body oils, nei fish_oil
+## 104     66                                    Fish body oils, nei fish_oil
+## 105     66                                    Fish body oils, nei fish_oil
+## 106     66                                    Fish body oils, nei fish_oil
+## 107     66                                    Fish body oils, nei fish_oil
+## 108     66                                    Fish body oils, nei fish_oil
+## 109     66                                   Fish liver oils, nei fish_oil
+## 110     66                                   Fish liver oils, nei fish_oil
+## 111     66                                   Fish liver oils, nei fish_oil
+## 112     66                                   Fish liver oils, nei fish_oil
+## 113     66                                   Fish liver oils, nei fish_oil
+## 114     66                                   Fish liver oils, nei fish_oil
+## 115     66                                   Fish liver oils, nei fish_oil
+## 116     66                                   Fish liver oils, nei fish_oil
+## 117     66                                   Fish liver oils, nei fish_oil
+## 118     66                                   Fish liver oils, nei fish_oil
+## 119     66                                   Fish liver oils, nei fish_oil
+## 120     66                                   Fish liver oils, nei fish_oil
+## 121     66                                   Fish liver oils, nei fish_oil
+## 122     66                                   Fish liver oils, nei fish_oil
+## 123     66                                   Fish liver oils, nei fish_oil
+## 124     66                                   Fish liver oils, nei fish_oil
+## 125     66                                   Fish liver oils, nei fish_oil
+## 126     66                                   Fish liver oils, nei fish_oil
+## 127     66                                   Fish liver oils, nei fish_oil
+## 128     66                                   Fish liver oils, nei fish_oil
+## 129     66                                   Fish liver oils, nei fish_oil
+## 130     66                                   Fish liver oils, nei fish_oil
+## 131     66                                   Fish liver oils, nei fish_oil
+## 132     66                                   Fish liver oils, nei fish_oil
+## 133     66                                   Fish liver oils, nei fish_oil
+## 134     66                                   Fish liver oils, nei fish_oil
+## 135     66                                   Fish liver oils, nei fish_oil
+## 136     66                                   Fish liver oils, nei fish_oil
+## 137     66                                   Fish liver oils, nei fish_oil
+## 138     66                                   Fish liver oils, nei fish_oil
+## 139     66                                   Fish liver oils, nei fish_oil
+## 140     66                                   Fish liver oils, nei fish_oil
+## 141     66                                   Fish liver oils, nei fish_oil
+## 142     66                                   Fish liver oils, nei fish_oil
+## 143     66                                   Fish liver oils, nei fish_oil
+## 144     66                                   Fish liver oils, nei fish_oil
+## 145     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 146     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 147     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 148     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 149     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 150     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 151     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 152     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 153     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 154     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 155     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 156     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 157     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 158     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 159     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 160     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 161     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 162     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 163     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 164     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 165     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 166     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 167     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 168     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 169     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 170     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 171     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 172     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 173     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 174     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 175     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 176     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 177     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 178     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 179     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 180     66 Other seaweeds and aquatic plants and products thereof seaweeds
+##     year tonnes rgn_name
+## 1   1976     NA  Senegal
+## 2   1977     NA  Senegal
+## 3   1978     NA  Senegal
+## 4   1979  374.0  Senegal
+## 5   1980    5.0  Senegal
+## 6   1981  253.0  Senegal
+## 7   1982     NA  Senegal
+## 8   1983     NA  Senegal
+## 9   1984     NA  Senegal
+## 10  1985   15.0  Senegal
+## 11  1986    3.0  Senegal
+## 12  1987   10.0  Senegal
+## 13  1988     NA  Senegal
+## 14  1989   32.0  Senegal
+## 15  1990   45.0  Senegal
+## 16  1991   30.0  Senegal
+## 17  1992   24.0  Senegal
+## 18  1993   19.0  Senegal
+## 19  1994     NA  Senegal
+## 20  1995     NA  Senegal
+## 21  1996     NA  Senegal
+## 22  1997     NA  Senegal
+## 23  1998   21.0  Senegal
+## 24  1999    0.0  Senegal
+## 25  2000   10.0  Senegal
+## 26  2001    0.0  Senegal
+## 27  2002    0.0  Senegal
+## 28  2003    0.0  Senegal
+## 29  2004    0.0  Senegal
+## 30  2005    0.0  Senegal
+## 31  2006    0.0  Senegal
+## 32  2007    0.0  Senegal
+## 33  2008    0.0  Senegal
+## 34  2009    0.0  Senegal
+## 35  2010    0.0  Senegal
+## 36  2011    0.0  Senegal
+## 37  1976     NA  Senegal
+## 38  1977     NA  Senegal
+## 39  1978     NA  Senegal
+## 40  1979     NA  Senegal
+## 41  1980     NA  Senegal
+## 42  1981     NA  Senegal
+## 43  1982     NA  Senegal
+## 44  1983     NA  Senegal
+## 45  1984     NA  Senegal
+## 46  1985     NA  Senegal
+## 47  1986     NA  Senegal
+## 48  1987     NA  Senegal
+## 49  1988     NA  Senegal
+## 50  1989     NA  Senegal
+## 51  1990     NA  Senegal
+## 52  1991     NA  Senegal
+## 53  1992     NA  Senegal
+## 54  1993     NA  Senegal
+## 55  1994     NA  Senegal
+## 56  1995     NA  Senegal
+## 57  1996     NA  Senegal
+## 58  1997     NA  Senegal
+## 59  1998 1250.0  Senegal
+## 60  1999   23.0  Senegal
+## 61  2000    0.0  Senegal
+## 62  2001    0.0  Senegal
+## 63  2002    0.0  Senegal
+## 64  2003    0.0  Senegal
+## 65  2004    0.0  Senegal
+## 66  2005    0.0  Senegal
+## 67  2006    0.0  Senegal
+## 68  2007    0.0  Senegal
+## 69  2008    0.1  Senegal
+## 70  2009   22.0  Senegal
+## 71  2010    1.0  Senegal
+## 72  2011  202.0  Senegal
+## 73  1976     NA  Senegal
+## 74  1977     NA  Senegal
+## 75  1978     NA  Senegal
+## 76  1979     NA  Senegal
+## 77  1980     NA  Senegal
+## 78  1981     NA  Senegal
+## 79  1982     NA  Senegal
+## 80  1983     NA  Senegal
+## 81  1984     NA  Senegal
+## 82  1985     NA  Senegal
+## 83  1986     NA  Senegal
+## 84  1987     NA  Senegal
+## 85  1988     NA  Senegal
+## 86  1989     NA  Senegal
+## 87  1990     NA  Senegal
+## 88  1991     NA  Senegal
+## 89  1992     NA  Senegal
+## 90  1993     NA  Senegal
+## 91  1994     NA  Senegal
+## 92  1995     NA  Senegal
+## 93  1996     NA  Senegal
+## 94  1997     NA  Senegal
+## 95  1998     NA  Senegal
+## 96  1999     NA  Senegal
+## 97  2000     NA  Senegal
+## 98  2001     NA  Senegal
+## 99  2002    0.0  Senegal
+## 100 2003     NA  Senegal
+## 101 2004   10.0  Senegal
+## 102 2005    0.0  Senegal
+## 103 2006    0.0  Senegal
+## 104 2007   26.0  Senegal
+## 105 2008  400.0  Senegal
+## 106 2009    9.0  Senegal
+## 107 2010    0.0  Senegal
+## 108 2011    0.0  Senegal
+## 109 1976     NA  Senegal
+## 110 1977     NA  Senegal
+## 111 1978     NA  Senegal
+## 112 1979     NA  Senegal
+## 113 1980     NA  Senegal
+## 114 1981     NA  Senegal
+## 115 1982     NA  Senegal
+## 116 1983     NA  Senegal
+## 117 1984     NA  Senegal
+## 118 1985     NA  Senegal
+## 119 1986     NA  Senegal
+## 120 1987     NA  Senegal
+## 121 1988     NA  Senegal
+## 122 1989     NA  Senegal
+## 123 1990     NA  Senegal
+## 124 1991     NA  Senegal
+## 125 1992     NA  Senegal
+## 126 1993     NA  Senegal
+## 127 1994     NA  Senegal
+## 128 1995  120.0  Senegal
+## 129 1996   84.0  Senegal
+## 130 1997     NA  Senegal
+## 131 1998     NA  Senegal
+## 132 1999    1.0  Senegal
+## 133 2000     NA  Senegal
+## 134 2001     NA  Senegal
+## 135 2002    0.0  Senegal
+## 136 2003     NA  Senegal
+## 137 2004    4.0  Senegal
+## 138 2005     NA  Senegal
+## 139 2006    4.0  Senegal
+## 140 2007   14.0  Senegal
+## 141 2008  628.0  Senegal
+## 142 2009   14.0  Senegal
+## 143 2010    0.0  Senegal
+## 144 2011   30.0  Senegal
+## 145 1976     NA  Senegal
+## 146 1977     NA  Senegal
+## 147 1978     NA  Senegal
+## 148 1979     NA  Senegal
+## 149 1980     NA  Senegal
+## 150 1981     NA  Senegal
+## 151 1982     NA  Senegal
+## 152 1983     NA  Senegal
+## 153 1984     NA  Senegal
+## 154 1985     NA  Senegal
+## 155 1986     NA  Senegal
+## 156 1987     NA  Senegal
+## 157 1988     NA  Senegal
+## 158 1989     NA  Senegal
+## 159 1990     NA  Senegal
+## 160 1991     NA  Senegal
+## 161 1992     NA  Senegal
+## 162 1993     NA  Senegal
+## 163 1994     NA  Senegal
+## 164 1995     NA  Senegal
+## 165 1996     NA  Senegal
+## 166 1997     NA  Senegal
+## 167 1998  560.0  Senegal
+## 168 1999     NA  Senegal
+## 169 2000    7.0  Senegal
+## 170 2001   21.0  Senegal
+## 171 2002   37.0  Senegal
+## 172 2003   78.0  Senegal
+## 173 2004   55.0  Senegal
+## 174 2005   14.0  Senegal
+## 175 2006   11.0  Senegal
+## 176 2007    0.1  Senegal
+## 177 2008    0.0  Senegal
+## 178 2009   25.0  Senegal
+## 179 2010   26.0  Senegal
+## 180 2011   19.0  Senegal</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">new &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;int/usd.csv&quot;</span>)
+<span class="kw">filter</span>(new, rgn_id==<span class="dv">66</span>) %&gt;%
+<span class="st">  </span><span class="kw">arrange</span>(commodity, year)</code></pre></div>
+<pre><code>##     rgn_id rgn_name                                              commodity
+## 1       66  Senegal                                     Clupeoid oils, nei
+## 2       66  Senegal                                     Clupeoid oils, nei
+## 3       66  Senegal                                     Clupeoid oils, nei
+## 4       66  Senegal                                     Clupeoid oils, nei
+## 5       66  Senegal                                     Clupeoid oils, nei
+## 6       66  Senegal                                     Clupeoid oils, nei
+## 7       66  Senegal                                     Clupeoid oils, nei
+## 8       66  Senegal                                     Clupeoid oils, nei
+## 9       66  Senegal                                     Clupeoid oils, nei
+## 10      66  Senegal                                     Clupeoid oils, nei
+## 11      66  Senegal                                     Clupeoid oils, nei
+## 12      66  Senegal                                     Clupeoid oils, nei
+## 13      66  Senegal                                     Clupeoid oils, nei
+## 14      66  Senegal                                     Clupeoid oils, nei
+## 15      66  Senegal                                     Clupeoid oils, nei
+## 16      66  Senegal                                     Clupeoid oils, nei
+## 17      66  Senegal                                     Clupeoid oils, nei
+## 18      66  Senegal                                     Clupeoid oils, nei
+## 19      66  Senegal                                     Clupeoid oils, nei
+## 20      66  Senegal                                     Clupeoid oils, nei
+## 21      66  Senegal                                     Clupeoid oils, nei
+## 22      66  Senegal                                     Clupeoid oils, nei
+## 23      66  Senegal                                     Clupeoid oils, nei
+## 24      66  Senegal                                     Clupeoid oils, nei
+## 25      66  Senegal                                     Clupeoid oils, nei
+## 26      66  Senegal                                     Clupeoid oils, nei
+## 27      66  Senegal                                     Clupeoid oils, nei
+## 28      66  Senegal                                     Clupeoid oils, nei
+## 29      66  Senegal                                     Clupeoid oils, nei
+## 30      66  Senegal                                     Clupeoid oils, nei
+## 31      66  Senegal                                     Clupeoid oils, nei
+## 32      66  Senegal                                     Clupeoid oils, nei
+## 33      66  Senegal                                     Clupeoid oils, nei
+## 34      66  Senegal                                     Clupeoid oils, nei
+## 35      66  Senegal                                     Clupeoid oils, nei
+## 36      66  Senegal                                     Clupeoid oils, nei
+## 37      66  Senegal                                     Clupeoid oils, nei
+## 38      66  Senegal                                     Clupeoid oils, nei
+## 39      66  Senegal                                     Coral and the like
+## 40      66  Senegal                                     Coral and the like
+## 41      66  Senegal                                     Coral and the like
+## 42      66  Senegal                                     Coral and the like
+## 43      66  Senegal                                     Coral and the like
+## 44      66  Senegal                                     Coral and the like
+## 45      66  Senegal                                     Coral and the like
+## 46      66  Senegal                                     Coral and the like
+## 47      66  Senegal                                     Coral and the like
+## 48      66  Senegal                                     Coral and the like
+## 49      66  Senegal                                     Coral and the like
+## 50      66  Senegal                                     Coral and the like
+## 51      66  Senegal                                     Coral and the like
+## 52      66  Senegal                                     Coral and the like
+## 53      66  Senegal                                     Coral and the like
+## 54      66  Senegal                                     Coral and the like
+## 55      66  Senegal                                     Coral and the like
+## 56      66  Senegal                                     Coral and the like
+## 57      66  Senegal                                     Coral and the like
+## 58      66  Senegal                                     Coral and the like
+## 59      66  Senegal                                     Coral and the like
+## 60      66  Senegal                                     Coral and the like
+## 61      66  Senegal                                     Coral and the like
+## 62      66  Senegal                                     Coral and the like
+## 63      66  Senegal                                     Coral and the like
+## 64      66  Senegal                                     Coral and the like
+## 65      66  Senegal                                     Coral and the like
+## 66      66  Senegal                                     Coral and the like
+## 67      66  Senegal                                     Coral and the like
+## 68      66  Senegal                                     Coral and the like
+## 69      66  Senegal                                     Coral and the like
+## 70      66  Senegal                                     Coral and the like
+## 71      66  Senegal                                     Coral and the like
+## 72      66  Senegal                                     Coral and the like
+## 73      66  Senegal                                     Coral and the like
+## 74      66  Senegal                                     Coral and the like
+## 75      66  Senegal                                     Coral and the like
+## 76      66  Senegal                                     Coral and the like
+## 77      66  Senegal                                    Fish body oils, nei
+## 78      66  Senegal                                    Fish body oils, nei
+## 79      66  Senegal                                    Fish body oils, nei
+## 80      66  Senegal                                    Fish body oils, nei
+## 81      66  Senegal                                    Fish body oils, nei
+## 82      66  Senegal                                    Fish body oils, nei
+## 83      66  Senegal                                    Fish body oils, nei
+## 84      66  Senegal                                    Fish body oils, nei
+## 85      66  Senegal                                    Fish body oils, nei
+## 86      66  Senegal                                    Fish body oils, nei
+## 87      66  Senegal                                    Fish body oils, nei
+## 88      66  Senegal                                    Fish body oils, nei
+## 89      66  Senegal                                    Fish body oils, nei
+## 90      66  Senegal                                    Fish body oils, nei
+## 91      66  Senegal                                    Fish body oils, nei
+## 92      66  Senegal                                    Fish body oils, nei
+## 93      66  Senegal                                    Fish body oils, nei
+## 94      66  Senegal                                    Fish body oils, nei
+## 95      66  Senegal                                    Fish body oils, nei
+## 96      66  Senegal                                    Fish body oils, nei
+## 97      66  Senegal                                    Fish body oils, nei
+## 98      66  Senegal                                    Fish body oils, nei
+## 99      66  Senegal                                    Fish body oils, nei
+## 100     66  Senegal                                    Fish body oils, nei
+## 101     66  Senegal                                    Fish body oils, nei
+## 102     66  Senegal                                    Fish body oils, nei
+## 103     66  Senegal                                    Fish body oils, nei
+## 104     66  Senegal                                    Fish body oils, nei
+## 105     66  Senegal                                    Fish body oils, nei
+## 106     66  Senegal                                    Fish body oils, nei
+## 107     66  Senegal                                    Fish body oils, nei
+## 108     66  Senegal                                    Fish body oils, nei
+## 109     66  Senegal                                    Fish body oils, nei
+## 110     66  Senegal                                    Fish body oils, nei
+## 111     66  Senegal                                    Fish body oils, nei
+## 112     66  Senegal                                    Fish body oils, nei
+## 113     66  Senegal                                    Fish body oils, nei
+## 114     66  Senegal                                    Fish body oils, nei
+## 115     66  Senegal                                   Fish liver oils, nei
+## 116     66  Senegal                                   Fish liver oils, nei
+## 117     66  Senegal                                   Fish liver oils, nei
+## 118     66  Senegal                                   Fish liver oils, nei
+## 119     66  Senegal                                   Fish liver oils, nei
+## 120     66  Senegal                                   Fish liver oils, nei
+## 121     66  Senegal                                   Fish liver oils, nei
+## 122     66  Senegal                                   Fish liver oils, nei
+## 123     66  Senegal                                   Fish liver oils, nei
+## 124     66  Senegal                                   Fish liver oils, nei
+## 125     66  Senegal                                   Fish liver oils, nei
+## 126     66  Senegal                                   Fish liver oils, nei
+## 127     66  Senegal                                   Fish liver oils, nei
+## 128     66  Senegal                                   Fish liver oils, nei
+## 129     66  Senegal                                   Fish liver oils, nei
+## 130     66  Senegal                                   Fish liver oils, nei
+## 131     66  Senegal                                   Fish liver oils, nei
+## 132     66  Senegal                                   Fish liver oils, nei
+## 133     66  Senegal                                   Fish liver oils, nei
+## 134     66  Senegal                                   Fish liver oils, nei
+## 135     66  Senegal                                   Fish liver oils, nei
+## 136     66  Senegal                                   Fish liver oils, nei
+## 137     66  Senegal                                   Fish liver oils, nei
+## 138     66  Senegal                                   Fish liver oils, nei
+## 139     66  Senegal                                   Fish liver oils, nei
+## 140     66  Senegal                                   Fish liver oils, nei
+## 141     66  Senegal                                   Fish liver oils, nei
+## 142     66  Senegal                                   Fish liver oils, nei
+## 143     66  Senegal                                   Fish liver oils, nei
+## 144     66  Senegal                                   Fish liver oils, nei
+## 145     66  Senegal                                   Fish liver oils, nei
+## 146     66  Senegal                                   Fish liver oils, nei
+## 147     66  Senegal                                   Fish liver oils, nei
+## 148     66  Senegal                                   Fish liver oils, nei
+## 149     66  Senegal                                   Fish liver oils, nei
+## 150     66  Senegal                                   Fish liver oils, nei
+## 151     66  Senegal                                   Fish liver oils, nei
+## 152     66  Senegal                                   Fish liver oils, nei
+## 153     66  Senegal                                    Ornamental fish nei
+## 154     66  Senegal                                    Ornamental fish nei
+## 155     66  Senegal                                    Ornamental fish nei
+## 156     66  Senegal                                    Ornamental fish nei
+## 157     66  Senegal                                    Ornamental fish nei
+## 158     66  Senegal                                    Ornamental fish nei
+## 159     66  Senegal                                    Ornamental fish nei
+## 160     66  Senegal                                    Ornamental fish nei
+## 161     66  Senegal                                    Ornamental fish nei
+## 162     66  Senegal                                    Ornamental fish nei
+## 163     66  Senegal                                    Ornamental fish nei
+## 164     66  Senegal                                    Ornamental fish nei
+## 165     66  Senegal                                    Ornamental fish nei
+## 166     66  Senegal                                    Ornamental fish nei
+## 167     66  Senegal                                    Ornamental fish nei
+## 168     66  Senegal                                    Ornamental fish nei
+## 169     66  Senegal                                    Ornamental fish nei
+## 170     66  Senegal                                    Ornamental fish nei
+## 171     66  Senegal                                    Ornamental fish nei
+## 172     66  Senegal                                    Ornamental fish nei
+## 173     66  Senegal                                    Ornamental fish nei
+## 174     66  Senegal                                    Ornamental fish nei
+## 175     66  Senegal                                    Ornamental fish nei
+## 176     66  Senegal                                    Ornamental fish nei
+## 177     66  Senegal                                    Ornamental fish nei
+## 178     66  Senegal                                    Ornamental fish nei
+## 179     66  Senegal                                    Ornamental fish nei
+## 180     66  Senegal                                    Ornamental fish nei
+## 181     66  Senegal                                    Ornamental fish nei
+## 182     66  Senegal                                    Ornamental fish nei
+## 183     66  Senegal                                    Ornamental fish nei
+## 184     66  Senegal                                    Ornamental fish nei
+## 185     66  Senegal                                    Ornamental fish nei
+## 186     66  Senegal                                    Ornamental fish nei
+## 187     66  Senegal                                    Ornamental fish nei
+## 188     66  Senegal                                    Ornamental fish nei
+## 189     66  Senegal                                    Ornamental fish nei
+## 190     66  Senegal                                    Ornamental fish nei
+## 191     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 192     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 193     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 194     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 195     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 196     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 197     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 198     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 199     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 200     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 201     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 202     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 203     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 204     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 205     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 206     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 207     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 208     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 209     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 210     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 211     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 212     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 213     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 214     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 215     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 216     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 217     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 218     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 219     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 220     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 221     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 222     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 223     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 224     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 225     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 226     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 227     66  Senegal Other seaweeds and aquatic plants and products thereof
+## 228     66  Senegal Other seaweeds and aquatic plants and products thereof
+##         product year    usd
+## 1      fish_oil 1976     NA
+## 2      fish_oil 1977     NA
+## 3      fish_oil 1978     NA
+## 4      fish_oil 1979  150.0
+## 5      fish_oil 1980   16.0
+## 6      fish_oil 1981   69.0
+## 7      fish_oil 1982     NA
+## 8      fish_oil 1983     NA
+## 9      fish_oil 1984     NA
+## 10     fish_oil 1985    4.0
+## 11     fish_oil 1986    1.0
+## 12     fish_oil 1987   30.0
+## 13     fish_oil 1988     NA
+## 14     fish_oil 1989   90.0
+## 15     fish_oil 1990   42.0
+## 16     fish_oil 1991   60.0
+## 17     fish_oil 1992   33.0
+## 18     fish_oil 1993    3.0
+## 19     fish_oil 1994     NA
+## 20     fish_oil 1995     NA
+## 21     fish_oil 1996     NA
+## 22     fish_oil 1997     NA
+## 23     fish_oil 1998   24.0
+## 24     fish_oil 1999    0.0
+## 25     fish_oil 2000    2.0
+## 26     fish_oil 2001    0.0
+## 27     fish_oil 2002    0.0
+## 28     fish_oil 2003    0.0
+## 29     fish_oil 2004    0.0
+## 30     fish_oil 2005    0.0
+## 31     fish_oil 2006    0.0
+## 32     fish_oil 2007    0.0
+## 33     fish_oil 2008    0.0
+## 34     fish_oil 2009    0.0
+## 35     fish_oil 2010    0.0
+## 36     fish_oil 2011    0.0
+## 37     fish_oil 2012    0.0
+## 38     fish_oil 2013    0.0
+## 39       corals 1976     NA
+## 40       corals 1977     NA
+## 41       corals 1978     NA
+## 42       corals 1979     NA
+## 43       corals 1980     NA
+## 44       corals 1981     NA
+## 45       corals 1982     NA
+## 46       corals 1983     NA
+## 47       corals 1984     NA
+## 48       corals 1985     NA
+## 49       corals 1986     NA
+## 50       corals 1987     NA
+## 51       corals 1988     NA
+## 52       corals 1989     NA
+## 53       corals 1990     NA
+## 54       corals 1991     NA
+## 55       corals 1992     NA
+## 56       corals 1993     NA
+## 57       corals 1994     NA
+## 58       corals 1995     NA
+## 59       corals 1996     NA
+## 60       corals 1997     NA
+## 61       corals 1998 2106.0
+## 62       corals 1999   22.0
+## 63       corals 2000    0.0
+## 64       corals 2001    0.0
+## 65       corals 2002   32.0
+## 66       corals 2003    0.0
+## 67       corals 2004    0.0
+## 68       corals 2005    0.0
+## 69       corals 2006    0.0
+## 70       corals 2007    0.0
+## 71       corals 2008    0.1
+## 72       corals 2009    1.0
+## 73       corals 2010    2.0
+## 74       corals 2011   32.0
+## 75       corals 2012    8.0
+## 76       corals 2013    4.0
+## 77     fish_oil 1976     NA
+## 78     fish_oil 1977     NA
+## 79     fish_oil 1978     NA
+## 80     fish_oil 1979     NA
+## 81     fish_oil 1980     NA
+## 82     fish_oil 1981     NA
+## 83     fish_oil 1982     NA
+## 84     fish_oil 1983     NA
+## 85     fish_oil 1984     NA
+## 86     fish_oil 1985     NA
+## 87     fish_oil 1986     NA
+## 88     fish_oil 1987     NA
+## 89     fish_oil 1988     NA
+## 90     fish_oil 1989     NA
+## 91     fish_oil 1990     NA
+## 92     fish_oil 1991     NA
+## 93     fish_oil 1992     NA
+## 94     fish_oil 1993     NA
+## 95     fish_oil 1994     NA
+## 96     fish_oil 1995     NA
+## 97     fish_oil 1996     NA
+## 98     fish_oil 1997     NA
+## 99     fish_oil 1998     NA
+## 100    fish_oil 1999     NA
+## 101    fish_oil 2000     NA
+## 102    fish_oil 2001     NA
+## 103    fish_oil 2002     NA
+## 104    fish_oil 2003     NA
+## 105    fish_oil 2004   35.0
+## 106    fish_oil 2005    0.0
+## 107    fish_oil 2006    0.0
+## 108    fish_oil 2007  124.0
+## 109    fish_oil 2008  187.0
+## 110    fish_oil 2009    7.0
+## 111    fish_oil 2010    0.0
+## 112    fish_oil 2011    0.0
+## 113    fish_oil 2012    9.0
+## 114    fish_oil 2013  212.0
+## 115    fish_oil 1976     NA
+## 116    fish_oil 1977     NA
+## 117    fish_oil 1978     NA
+## 118    fish_oil 1979     NA
+## 119    fish_oil 1980     NA
+## 120    fish_oil 1981     NA
+## 121    fish_oil 1982     NA
+## 122    fish_oil 1983     NA
+## 123    fish_oil 1984     NA
+## 124    fish_oil 1985     NA
+## 125    fish_oil 1986     NA
+## 126    fish_oil 1987     NA
+## 127    fish_oil 1988     NA
+## 128    fish_oil 1989     NA
+## 129    fish_oil 1990     NA
+## 130    fish_oil 1991     NA
+## 131    fish_oil 1992     NA
+## 132    fish_oil 1993     NA
+## 133    fish_oil 1994     NA
+## 134    fish_oil 1995  100.0
+## 135    fish_oil 1996  109.0
+## 136    fish_oil 1997     NA
+## 137    fish_oil 1998     NA
+## 138    fish_oil 1999    3.0
+## 139    fish_oil 2000     NA
+## 140    fish_oil 2001     NA
+## 141    fish_oil 2002   40.0
+## 142    fish_oil 2003     NA
+## 143    fish_oil 2004   16.0
+## 144    fish_oil 2005     NA
+## 145    fish_oil 2006   19.0
+## 146    fish_oil 2007  256.0
+## 147    fish_oil 2008  287.0
+## 148    fish_oil 2009   71.0
+## 149    fish_oil 2010    0.0
+## 150    fish_oil 2011   80.0
+## 151    fish_oil 2012    0.0
+## 152    fish_oil 2013  134.0
+## 153 ornamentals 1976     NA
+## 154 ornamentals 1977     NA
+## 155 ornamentals 1978     NA
+## 156 ornamentals 1979     NA
+## 157 ornamentals 1980     NA
+## 158 ornamentals 1981     NA
+## 159 ornamentals 1982     NA
+## 160 ornamentals 1983     NA
+## 161 ornamentals 1984     NA
+## 162 ornamentals 1985     NA
+## 163 ornamentals 1986     NA
+## 164 ornamentals 1987     NA
+## 165 ornamentals 1988     NA
+## 166 ornamentals 1989     NA
+## 167 ornamentals 1990     NA
+## 168 ornamentals 1991     NA
+## 169 ornamentals 1992     NA
+## 170 ornamentals 1993     NA
+## 171 ornamentals 1994     NA
+## 172 ornamentals 1995     NA
+## 173 ornamentals 1996     NA
+## 174 ornamentals 1997     NA
+## 175 ornamentals 1998     NA
+## 176 ornamentals 1999     NA
+## 177 ornamentals 2000     NA
+## 178 ornamentals 2001     NA
+## 179 ornamentals 2002   11.0
+## 180 ornamentals 2003    0.0
+## 181 ornamentals 2004    0.0
+## 182 ornamentals 2005    0.0
+## 183 ornamentals 2006    0.0
+## 184 ornamentals 2007    0.0
+## 185 ornamentals 2008    0.0
+## 186 ornamentals 2009    0.0
+## 187 ornamentals 2010    0.0
+## 188 ornamentals 2011    0.0
+## 189 ornamentals 2012    0.0
+## 190 ornamentals 2013    0.0
+## 191    seaweeds 1976     NA
+## 192    seaweeds 1977     NA
+## 193    seaweeds 1978     NA
+## 194    seaweeds 1979     NA
+## 195    seaweeds 1980     NA
+## 196    seaweeds 1981     NA
+## 197    seaweeds 1982     NA
+## 198    seaweeds 1983     NA
+## 199    seaweeds 1984     NA
+## 200    seaweeds 1985     NA
+## 201    seaweeds 1986     NA
+## 202    seaweeds 1987     NA
+## 203    seaweeds 1988     NA
+## 204    seaweeds 1989     NA
+## 205    seaweeds 1990     NA
+## 206    seaweeds 1991     NA
+## 207    seaweeds 1992     NA
+## 208    seaweeds 1993     NA
+## 209    seaweeds 1994     NA
+## 210    seaweeds 1995     NA
+## 211    seaweeds 1996     NA
+## 212    seaweeds 1997     NA
+## 213    seaweeds 1998  343.0
+## 214    seaweeds 1999     NA
+## 215    seaweeds 2000   13.0
+## 216    seaweeds 2001   35.0
+## 217    seaweeds 2002   76.0
+## 218    seaweeds 2003  169.0
+## 219    seaweeds 2004  124.0
+## 220    seaweeds 2005   30.0
+## 221    seaweeds 2006   22.0
+## 222    seaweeds 2007    2.0
+## 223    seaweeds 2008    0.0
+## 224    seaweeds 2009   51.0
+## 225    seaweeds 2010   37.0
+## 226    seaweeds 2011   20.0
+## 227    seaweeds 2012  118.0
+## 228    seaweeds 2013   20.0</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">old &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;../v2014_test/intermediate/usd.csv&quot;</span>)
+<span class="kw">filter</span>(old, rgn_id==<span class="dv">66</span>) %&gt;%
+<span class="st">  </span><span class="kw">arrange</span>(commodity, year)</code></pre></div>
+<pre><code>##     rgn_id                                              commodity  product
+## 1       66                                     Clupeoid oils, nei fish_oil
+## 2       66                                     Clupeoid oils, nei fish_oil
+## 3       66                                     Clupeoid oils, nei fish_oil
+## 4       66                                     Clupeoid oils, nei fish_oil
+## 5       66                                     Clupeoid oils, nei fish_oil
+## 6       66                                     Clupeoid oils, nei fish_oil
+## 7       66                                     Clupeoid oils, nei fish_oil
+## 8       66                                     Clupeoid oils, nei fish_oil
+## 9       66                                     Clupeoid oils, nei fish_oil
+## 10      66                                     Clupeoid oils, nei fish_oil
+## 11      66                                     Clupeoid oils, nei fish_oil
+## 12      66                                     Clupeoid oils, nei fish_oil
+## 13      66                                     Clupeoid oils, nei fish_oil
+## 14      66                                     Clupeoid oils, nei fish_oil
+## 15      66                                     Clupeoid oils, nei fish_oil
+## 16      66                                     Clupeoid oils, nei fish_oil
+## 17      66                                     Clupeoid oils, nei fish_oil
+## 18      66                                     Clupeoid oils, nei fish_oil
+## 19      66                                     Clupeoid oils, nei fish_oil
+## 20      66                                     Clupeoid oils, nei fish_oil
+## 21      66                                     Clupeoid oils, nei fish_oil
+## 22      66                                     Clupeoid oils, nei fish_oil
+## 23      66                                     Clupeoid oils, nei fish_oil
+## 24      66                                     Clupeoid oils, nei fish_oil
+## 25      66                                     Clupeoid oils, nei fish_oil
+## 26      66                                     Clupeoid oils, nei fish_oil
+## 27      66                                     Clupeoid oils, nei fish_oil
+## 28      66                                     Clupeoid oils, nei fish_oil
+## 29      66                                     Clupeoid oils, nei fish_oil
+## 30      66                                     Clupeoid oils, nei fish_oil
+## 31      66                                     Clupeoid oils, nei fish_oil
+## 32      66                                     Clupeoid oils, nei fish_oil
+## 33      66                                     Clupeoid oils, nei fish_oil
+## 34      66                                     Clupeoid oils, nei fish_oil
+## 35      66                                     Clupeoid oils, nei fish_oil
+## 36      66                                     Clupeoid oils, nei fish_oil
+## 37      66                                     Coral and the like   corals
+## 38      66                                     Coral and the like   corals
+## 39      66                                     Coral and the like   corals
+## 40      66                                     Coral and the like   corals
+## 41      66                                     Coral and the like   corals
+## 42      66                                     Coral and the like   corals
+## 43      66                                     Coral and the like   corals
+## 44      66                                     Coral and the like   corals
+## 45      66                                     Coral and the like   corals
+## 46      66                                     Coral and the like   corals
+## 47      66                                     Coral and the like   corals
+## 48      66                                     Coral and the like   corals
+## 49      66                                     Coral and the like   corals
+## 50      66                                     Coral and the like   corals
+## 51      66                                     Coral and the like   corals
+## 52      66                                     Coral and the like   corals
+## 53      66                                     Coral and the like   corals
+## 54      66                                     Coral and the like   corals
+## 55      66                                     Coral and the like   corals
+## 56      66                                     Coral and the like   corals
+## 57      66                                     Coral and the like   corals
+## 58      66                                     Coral and the like   corals
+## 59      66                                     Coral and the like   corals
+## 60      66                                     Coral and the like   corals
+## 61      66                                     Coral and the like   corals
+## 62      66                                     Coral and the like   corals
+## 63      66                                     Coral and the like   corals
+## 64      66                                     Coral and the like   corals
+## 65      66                                     Coral and the like   corals
+## 66      66                                     Coral and the like   corals
+## 67      66                                     Coral and the like   corals
+## 68      66                                     Coral and the like   corals
+## 69      66                                     Coral and the like   corals
+## 70      66                                     Coral and the like   corals
+## 71      66                                     Coral and the like   corals
+## 72      66                                     Coral and the like   corals
+## 73      66                                    Fish body oils, nei fish_oil
+## 74      66                                    Fish body oils, nei fish_oil
+## 75      66                                    Fish body oils, nei fish_oil
+## 76      66                                    Fish body oils, nei fish_oil
+## 77      66                                    Fish body oils, nei fish_oil
+## 78      66                                    Fish body oils, nei fish_oil
+## 79      66                                    Fish body oils, nei fish_oil
+## 80      66                                    Fish body oils, nei fish_oil
+## 81      66                                    Fish body oils, nei fish_oil
+## 82      66                                    Fish body oils, nei fish_oil
+## 83      66                                    Fish body oils, nei fish_oil
+## 84      66                                    Fish body oils, nei fish_oil
+## 85      66                                    Fish body oils, nei fish_oil
+## 86      66                                    Fish body oils, nei fish_oil
+## 87      66                                    Fish body oils, nei fish_oil
+## 88      66                                    Fish body oils, nei fish_oil
+## 89      66                                    Fish body oils, nei fish_oil
+## 90      66                                    Fish body oils, nei fish_oil
+## 91      66                                    Fish body oils, nei fish_oil
+## 92      66                                    Fish body oils, nei fish_oil
+## 93      66                                    Fish body oils, nei fish_oil
+## 94      66                                    Fish body oils, nei fish_oil
+## 95      66                                    Fish body oils, nei fish_oil
+## 96      66                                    Fish body oils, nei fish_oil
+## 97      66                                    Fish body oils, nei fish_oil
+## 98      66                                    Fish body oils, nei fish_oil
+## 99      66                                    Fish body oils, nei fish_oil
+## 100     66                                    Fish body oils, nei fish_oil
+## 101     66                                    Fish body oils, nei fish_oil
+## 102     66                                    Fish body oils, nei fish_oil
+## 103     66                                    Fish body oils, nei fish_oil
+## 104     66                                    Fish body oils, nei fish_oil
+## 105     66                                    Fish body oils, nei fish_oil
+## 106     66                                    Fish body oils, nei fish_oil
+## 107     66                                    Fish body oils, nei fish_oil
+## 108     66                                    Fish body oils, nei fish_oil
+## 109     66                                   Fish liver oils, nei fish_oil
+## 110     66                                   Fish liver oils, nei fish_oil
+## 111     66                                   Fish liver oils, nei fish_oil
+## 112     66                                   Fish liver oils, nei fish_oil
+## 113     66                                   Fish liver oils, nei fish_oil
+## 114     66                                   Fish liver oils, nei fish_oil
+## 115     66                                   Fish liver oils, nei fish_oil
+## 116     66                                   Fish liver oils, nei fish_oil
+## 117     66                                   Fish liver oils, nei fish_oil
+## 118     66                                   Fish liver oils, nei fish_oil
+## 119     66                                   Fish liver oils, nei fish_oil
+## 120     66                                   Fish liver oils, nei fish_oil
+## 121     66                                   Fish liver oils, nei fish_oil
+## 122     66                                   Fish liver oils, nei fish_oil
+## 123     66                                   Fish liver oils, nei fish_oil
+## 124     66                                   Fish liver oils, nei fish_oil
+## 125     66                                   Fish liver oils, nei fish_oil
+## 126     66                                   Fish liver oils, nei fish_oil
+## 127     66                                   Fish liver oils, nei fish_oil
+## 128     66                                   Fish liver oils, nei fish_oil
+## 129     66                                   Fish liver oils, nei fish_oil
+## 130     66                                   Fish liver oils, nei fish_oil
+## 131     66                                   Fish liver oils, nei fish_oil
+## 132     66                                   Fish liver oils, nei fish_oil
+## 133     66                                   Fish liver oils, nei fish_oil
+## 134     66                                   Fish liver oils, nei fish_oil
+## 135     66                                   Fish liver oils, nei fish_oil
+## 136     66                                   Fish liver oils, nei fish_oil
+## 137     66                                   Fish liver oils, nei fish_oil
+## 138     66                                   Fish liver oils, nei fish_oil
+## 139     66                                   Fish liver oils, nei fish_oil
+## 140     66                                   Fish liver oils, nei fish_oil
+## 141     66                                   Fish liver oils, nei fish_oil
+## 142     66                                   Fish liver oils, nei fish_oil
+## 143     66                                   Fish liver oils, nei fish_oil
+## 144     66                                   Fish liver oils, nei fish_oil
+## 145     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 146     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 147     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 148     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 149     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 150     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 151     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 152     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 153     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 154     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 155     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 156     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 157     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 158     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 159     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 160     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 161     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 162     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 163     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 164     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 165     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 166     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 167     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 168     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 169     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 170     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 171     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 172     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 173     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 174     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 175     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 176     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 177     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 178     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 179     66 Other seaweeds and aquatic plants and products thereof seaweeds
+## 180     66 Other seaweeds and aquatic plants and products thereof seaweeds
+##     year    usd rgn_name
+## 1   1976     NA  Senegal
+## 2   1977     NA  Senegal
+## 3   1978     NA  Senegal
+## 4   1979  150.0  Senegal
+## 5   1980   16.0  Senegal
+## 6   1981   69.0  Senegal
+## 7   1982     NA  Senegal
+## 8   1983     NA  Senegal
+## 9   1984     NA  Senegal
+## 10  1985    4.0  Senegal
+## 11  1986    1.0  Senegal
+## 12  1987   30.0  Senegal
+## 13  1988     NA  Senegal
+## 14  1989   90.0  Senegal
+## 15  1990   42.0  Senegal
+## 16  1991   60.0  Senegal
+## 17  1992   33.0  Senegal
+## 18  1993    3.0  Senegal
+## 19  1994     NA  Senegal
+## 20  1995     NA  Senegal
+## 21  1996     NA  Senegal
+## 22  1997     NA  Senegal
+## 23  1998   24.0  Senegal
+## 24  1999    0.0  Senegal
+## 25  2000    2.0  Senegal
+## 26  2001    0.0  Senegal
+## 27  2002    0.0  Senegal
+## 28  2003    0.0  Senegal
+## 29  2004    0.0  Senegal
+## 30  2005    0.0  Senegal
+## 31  2006    0.0  Senegal
+## 32  2007    0.0  Senegal
+## 33  2008    0.0  Senegal
+## 34  2009    0.0  Senegal
+## 35  2010    0.0  Senegal
+## 36  2011    0.0  Senegal
+## 37  1976     NA  Senegal
+## 38  1977     NA  Senegal
+## 39  1978     NA  Senegal
+## 40  1979     NA  Senegal
+## 41  1980     NA  Senegal
+## 42  1981     NA  Senegal
+## 43  1982     NA  Senegal
+## 44  1983     NA  Senegal
+## 45  1984     NA  Senegal
+## 46  1985     NA  Senegal
+## 47  1986     NA  Senegal
+## 48  1987     NA  Senegal
+## 49  1988     NA  Senegal
+## 50  1989     NA  Senegal
+## 51  1990     NA  Senegal
+## 52  1991     NA  Senegal
+## 53  1992     NA  Senegal
+## 54  1993     NA  Senegal
+## 55  1994     NA  Senegal
+## 56  1995     NA  Senegal
+## 57  1996     NA  Senegal
+## 58  1997     NA  Senegal
+## 59  1998 2106.0  Senegal
+## 60  1999   22.0  Senegal
+## 61  2000    0.0  Senegal
+## 62  2001    0.0  Senegal
+## 63  2002    0.0  Senegal
+## 64  2003    0.0  Senegal
+## 65  2004    0.0  Senegal
+## 66  2005    0.0  Senegal
+## 67  2006    0.0  Senegal
+## 68  2007    0.0  Senegal
+## 69  2008    0.1  Senegal
+## 70  2009    1.0  Senegal
+## 71  2010    2.0  Senegal
+## 72  2011   32.0  Senegal
+## 73  1976     NA  Senegal
+## 74  1977     NA  Senegal
+## 75  1978     NA  Senegal
+## 76  1979     NA  Senegal
+## 77  1980     NA  Senegal
+## 78  1981     NA  Senegal
+## 79  1982     NA  Senegal
+## 80  1983     NA  Senegal
+## 81  1984     NA  Senegal
+## 82  1985     NA  Senegal
+## 83  1986     NA  Senegal
+## 84  1987     NA  Senegal
+## 85  1988     NA  Senegal
+## 86  1989     NA  Senegal
+## 87  1990     NA  Senegal
+## 88  1991     NA  Senegal
+## 89  1992     NA  Senegal
+## 90  1993     NA  Senegal
+## 91  1994     NA  Senegal
+## 92  1995     NA  Senegal
+## 93  1996     NA  Senegal
+## 94  1997     NA  Senegal
+## 95  1998     NA  Senegal
+## 96  1999     NA  Senegal
+## 97  2000     NA  Senegal
+## 98  2001     NA  Senegal
+## 99  2002    0.0  Senegal
+## 100 2003     NA  Senegal
+## 101 2004   35.0  Senegal
+## 102 2005    0.0  Senegal
+## 103 2006    0.0  Senegal
+## 104 2007  124.0  Senegal
+## 105 2008  187.0  Senegal
+## 106 2009    7.0  Senegal
+## 107 2010    0.0  Senegal
+## 108 2011    0.0  Senegal
+## 109 1976     NA  Senegal
+## 110 1977     NA  Senegal
+## 111 1978     NA  Senegal
+## 112 1979     NA  Senegal
+## 113 1980     NA  Senegal
+## 114 1981     NA  Senegal
+## 115 1982     NA  Senegal
+## 116 1983     NA  Senegal
+## 117 1984     NA  Senegal
+## 118 1985     NA  Senegal
+## 119 1986     NA  Senegal
+## 120 1987     NA  Senegal
+## 121 1988     NA  Senegal
+## 122 1989     NA  Senegal
+## 123 1990     NA  Senegal
+## 124 1991     NA  Senegal
+## 125 1992     NA  Senegal
+## 126 1993     NA  Senegal
+## 127 1994     NA  Senegal
+## 128 1995  100.0  Senegal
+## 129 1996  109.0  Senegal
+## 130 1997     NA  Senegal
+## 131 1998     NA  Senegal
+## 132 1999    3.0  Senegal
+## 133 2000     NA  Senegal
+## 134 2001     NA  Senegal
+## 135 2002    0.0  Senegal
+## 136 2003     NA  Senegal
+## 137 2004   16.0  Senegal
+## 138 2005     NA  Senegal
+## 139 2006   19.0  Senegal
+## 140 2007  256.0  Senegal
+## 141 2008  287.0  Senegal
+## 142 2009   71.0  Senegal
+## 143 2010    0.0  Senegal
+## 144 2011   80.0  Senegal
+## 145 1976     NA  Senegal
+## 146 1977     NA  Senegal
+## 147 1978     NA  Senegal
+## 148 1979     NA  Senegal
+## 149 1980     NA  Senegal
+## 150 1981     NA  Senegal
+## 151 1982     NA  Senegal
+## 152 1983     NA  Senegal
+## 153 1984     NA  Senegal
+## 154 1985     NA  Senegal
+## 155 1986     NA  Senegal
+## 156 1987     NA  Senegal
+## 157 1988     NA  Senegal
+## 158 1989     NA  Senegal
+## 159 1990     NA  Senegal
+## 160 1991     NA  Senegal
+## 161 1992     NA  Senegal
+## 162 1993     NA  Senegal
+## 163 1994     NA  Senegal
+## 164 1995     NA  Senegal
+## 165 1996     NA  Senegal
+## 166 1997     NA  Senegal
+## 167 1998  343.0  Senegal
+## 168 1999     NA  Senegal
+## 169 2000   13.0  Senegal
+## 170 2001   35.0  Senegal
+## 171 2002   29.0  Senegal
+## 172 2003  169.0  Senegal
+## 173 2004  124.0  Senegal
+## 174 2005   30.0  Senegal
+## 175 2006   22.0  Senegal
+## 176 2007    2.0  Senegal
+## 177 2008    0.0  Senegal
+## 178 2009   51.0  Senegal
+## 179 2010   37.0  Senegal
+## 180 2011   20.0  Senegal</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">new &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">'output/np_harvest_tonnes.csv'</span>) %&gt;%
+<span class="kw">filter</span>(rgn_id==<span class="dv">66</span>)
+old &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">'../v2014_test/data/np_harvest_tonnes_eez2014_test-year_max_2011.csv'</span>) %&gt;%
+<span class="kw">filter</span>(rgn_id==<span class="dv">66</span>)
+<span class="kw">left_join</span>(old, new, <span class="dt">by=</span><span class="kw">c</span>(<span class="st">&quot;rgn_id&quot;</span>, <span class="st">&quot;product&quot;</span>, <span class="st">&quot;year&quot;</span>))</code></pre></div>
+<pre><code>##    rgn_id  product year  tonnes.x  tonnes.y
+## 1      66   corals 1998 1250.0000 1250.0000
+## 2      66   corals 1999  636.5000  636.5000
+## 3      66   corals 2000  424.3333  424.3333
+## 4      66   corals 2001  318.2500  318.2500
+## 5      66   corals 2002    5.7500    6.7500
+## 6      66   corals 2003    0.0000    1.0000
+## 7      66   corals 2004    0.0000    1.0000
+## 8      66   corals 2005    0.0000    1.0000
+## 9      66   corals 2006    0.0000    0.0000
+## 10     66   corals 2007    0.0000    0.0000
+## 11     66   corals 2008    0.0250    0.0250
+## 12     66   corals 2009    5.5250    5.5250
+## 13     66   corals 2010    5.7750    5.7750
+## 14     66   corals 2011   56.2750   56.2750
+## 15     66 fish_oil 1979  374.0000  374.0000
+## 16     66 fish_oil 1980  189.5000  189.5000
+## 17     66 fish_oil 1981  210.6667  210.6667
+## 18     66 fish_oil 1982  158.0000  158.0000
+## 19     66 fish_oil 1983   64.5000   64.5000
+## 20     66 fish_oil 1984   63.2500   63.2500
+## 21     66 fish_oil 1985    3.7500    3.7500
+## 22     66 fish_oil 1986    4.5000    4.5000
+## 23     66 fish_oil 1987    7.0000    7.0000
+## 24     66 fish_oil 1988    7.0000    7.0000
+## 25     66 fish_oil 1989   11.2500   11.2500
+## 26     66 fish_oil 1990   21.7500   21.7500
+## 27     66 fish_oil 1991   26.7500   26.7500
+## 28     66 fish_oil 1992   32.7500   32.7500
+## 29     66 fish_oil 1993   29.5000   29.5000
+## 30     66 fish_oil 1994   18.2500   18.2500
+## 31     66 fish_oil 1995   40.7500   40.7500
+## 32     66 fish_oil 1996   55.7500   55.7500
+## 33     66 fish_oil 1997   51.0000   51.0000
+## 34     66 fish_oil 1998   56.2500   56.2500
+## 35     66 fish_oil 1999   26.5000   26.5000
+## 36     66 fish_oil 2000    8.0000    8.0000
+## 37     66 fish_oil 2001    8.0000    8.0000
+## 38     66 fish_oil 2002    2.7500    8.7500
+## 39     66 fish_oil 2003    2.5000    8.5000
+## 40     66 fish_oil 2004    3.5000    9.5000
+## 41     66 fish_oil 2005    3.5000    9.5000
+## 42     66 fish_oil 2006    4.5000    4.5000
+## 43     66 fish_oil 2007   14.5000   14.5000
+## 44     66 fish_oil 2008  268.0000  268.0000
+## 45     66 fish_oil 2009  273.7500  273.7500
+## 46     66 fish_oil 2010  272.7500  272.7500
+## 47     66 fish_oil 2011  270.2500  270.2500
+## 48     66 seaweeds 1998  560.0000  560.0000
+## 49     66 seaweeds 1999  280.0000  280.0000
+## 50     66 seaweeds 2000  189.0000  189.0000
+## 51     66 seaweeds 2001  147.0000  147.0000
+## 52     66 seaweeds 2002   16.2500   23.5000
+## 53     66 seaweeds 2003   35.7500   43.0000
+## 54     66 seaweeds 2004   47.7500   55.0000
+## 55     66 seaweeds 2005   46.0000   53.2500
+## 56     66 seaweeds 2006   39.5000   39.5000
+## 57     66 seaweeds 2007   20.0250   20.0250
+## 58     66 seaweeds 2008    6.2750    6.2750
+## 59     66 seaweeds 2009    9.0250    9.0250
+## 60     66 seaweeds 2010   12.7750   12.7750
+## 61     66 seaweeds 2011   17.5000   17.5000</code></pre>
 </div>
 
 
