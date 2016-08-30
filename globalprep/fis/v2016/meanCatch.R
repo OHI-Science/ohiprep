@@ -74,7 +74,8 @@ data.frame(filter(mean_catch, stock_id == "Carcharhinidae-57" & rgn_id==1))
 # Toolbox formatting and save
 # --------------------------------------------
 mean_catch_toolbox <- mean_catch %>%
-  dplyr::select(rgn_id, TaxonKey, stock_id, year, mean_catch) %>%
+  mutate(stock_id_taxonkey = paste(stock_id, TaxonKey, sep="_")) %>%
+  dplyr::select(rgn_id, stock_id_taxonkey, year, mean_catch) %>%
   filter(year>=2001) %>%  # filter to include only analysis years
   data.frame()
 
