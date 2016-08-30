@@ -5,9 +5,39 @@
 
 library(dplyr)
 library(tidyr)
+library(zoo)
 
 
-## created in "compare_bbmsy_data.R"
+# -------------------------------------------------------------------
+## Taking the 5 year running average of b/bmsy values to smooth data
+# -------------------------------------------------------------------
+
+cmsy <- read.csv('globalprep/fis/v2016/int/cmsy_bbmsy.csv') %>%
+  mutate(prior = 'constrained') %>%
+  filter(!is.na(bbmsy_mean))
+comsir <- read.csv('globalprep/fis/v2016/int/comsir_bbmsy.csv') %>%
+  mutate(prior = NA) %>%
+  filter(!is.na(bbmsy_mean))
+sscom <- read.csv('globalprep/fis/v2016/int/sscom_bbmsy.csv') %>%
+  mutate(prior=NA) %>%
+  filter(!is.na(bbmsy_mean))
+
+new_b_bmsy <- function(b_bmsy=constrained, method = "comsir"){
+  b_bmsy <- b_bmsy %>%
+    dplyr::select(stock_id, year, bbmsy_mean, prior, model) %>%
+    arrange(stock_id, year) %>%
+    group_by(stock_id) %>%
+    mutate(mean_5year = rollmean(bbmsy_mean, 5, align="right", fill=NA))
+  write.csv(b_bmsy, sprintf('globalprep/fis/v2016/int/%s_b_bmsy_%s_mean5yrs.csv', method, unique(b_bmsy$prior)), row.names=FALSE)
+} 
+
+new_b_bmsy(cmsy, method="cmsy")
+new_b_bmsy(comsir, method="comsir")
+new_b_bmsy(sscom, method="sscom")
+
+
+# The CMSY is th only one we end up using based on analysis in compare_bmsy_data.R
+
 cmsy <- read.csv('globalprep/fis/v2016/int/cmsy_b_bmsy_constrained_mean5yrs.csv') %>%
   select(stock_id, year, cmsy_bbmsy=mean_5year)
 
@@ -89,7 +119,7 @@ write.csv(bbmsy, "globalprep/fis/v2016/data/fis_bbmsy.csv", row.names=FALSE)
    arrange(rgn_id)
  
  hist(highs_filled$prop_high_bmsy, main="Scomberomorus_cavalla-31")
- "
+
  # list of B/Bmsy values over time for influential stocks with high B/Bmsy data
  
  tmp <- filter(data, stock_id %in% c("Katsuwonus_pelamis-71", "Clupea_harengus-27",
@@ -99,8 +129,16 @@ unique()
  
 write.csv(tmp, "globalprep/fis/v2016/int/influential_high_bbmsy.csv", row.names=FALSE)
  
- ### final formatting of data for toolbox
-Na remove etc.
+#########################################
+## checking data for toolbox
 
+# data should now go to 2001 and I checked a couple regions that went wrong previously
+# this looks good
 
+b <- read.csv('globalprep/fis/v2016/data/fis_bbmsy.csv')
+summary(b)
+filter(b, stock_id=="Katsuwonus_pelamis-27" & year==2010)
+filter(b, stock_id=="Katsuwonus_pelamis-71" & year==2010)
 
+c <- read.csv('globalprep/fis/v2016/data/mean_catch.csv')
+summary(c)
