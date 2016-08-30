@@ -6,39 +6,11 @@
 ## package
 ##############################################
 
-library(zoo)
 library(tidyr)
 library(dplyr)
 library(ggplot2)
 
 source('src/R/common.R')
-# -------------------------------------------------------------------
-## Taking the 5 year running average of b/bmsy values to smooth data
-# -------------------------------------------------------------------
-
-cmsy <- read.csv('globalprep/fis/v2016/int/cmsy_bbmsy.csv') %>%
-  mutate(prior = 'constrained') %>%
-  filter(!is.na(bbmsy_mean))
-comsir <- read.csv('globalprep/fis/v2016/int/comsir_bbmsy.csv') %>%
-  mutate(prior = NA) %>%
-  filter(!is.na(bbmsy_mean))
-sscom <- read.csv('globalprep/fis/v2016/int/sscom_bbmsy.csv') %>%
-  mutate(prior=NA) %>%
-  filter(!is.na(bbmsy_mean))
-
-new_b_bmsy <- function(b_bmsy=constrained, method = "comsir"){
-  b_bmsy <- b_bmsy %>%
-    dplyr::select(stock_id, year, bbmsy_mean, prior, model) %>%
-    arrange(stock_id, year) %>%
-    group_by(stock_id) %>%
-    mutate(mean_5year = rollmean(bbmsy_mean, 5, align="right", fill=NA))
-  write.csv(b_bmsy, sprintf('globalprep/fis/v2016/int/%s_b_bmsy_%s_mean5yrs.csv', method, unique(b_bmsy$prior)), row.names=FALSE)
-} 
-
-new_b_bmsy(cmsy, method="cmsy")
-new_b_bmsy(comsir, method="comsir")
-new_b_bmsy(sscom, method="sscom")
-
 #--------------------------------------------------------------------
 ## Previously, we tried to select CMSY priors based on 
 ## stock resilience scores, but ultimately, it looked like 
