@@ -20,6 +20,13 @@ This script downloads WGI data and prepares it for a pressures (1 - WGI) and res
 
 #Updates from previous assessment
 
+1.  Unpopulated regions now recieve an NA value (previously they receive the score of their administrative country).
+
+2. I made a slight change to the methods that changed the score of a few territories.  Previously, territories without scores received the same score as their administrative country.  Now territories receive the average value of their administrative country and the other territorial countries (of the same administrative country) that have scores (the WGI data includes scores for many territorial countries).  
+
+For example, in the past, Tokelau (territory of New Zealand) would have received New Zealand's score.   But now, it is the average of New Zealand and the territories: Cook Islands and Niue.
+
+
 ***
 
 #Data Source 
