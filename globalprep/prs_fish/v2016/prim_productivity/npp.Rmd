@@ -18,12 +18,12 @@ pdf_document:
 
 #Summary
 
-This script calculates mean annual net primary production values globally from 2003 to 2015. This data is used to standardize pressures of commercial fishing.
+This script calculates mean annual net primary production values globally from 2003 to 2015. This data is used to standardize commercial fishing pressures []().
 
 
 #Updates from previous assessment
 
-We were able to incorporate 2 more years of data, 2014 and 2015.
+Two additional years of data are incorporated; 2014 and 2015.
 
 ***
 
@@ -45,21 +45,26 @@ We were able to incorporate 2 more years of data, 2014 and 2015.
   
 # Setup
 
-```{r setup, eval = F, message = F,warning = F}
+```{r setup, message = F,warning = F}
 
 library(fields)
 library(raster)
 library(doParallel)
 library(foreach)
 library(parallel)
+library(RColorBrewer)
 
 source("~/github/ohiprep/src/R/common.R")
 source('vgpm_func.R')
 
+cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
+
 #paths
 
 dir_git <- file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/VGPM_primary_productivity')
+```
 
+```{r unzip, eval=F}
 #unzip all files
 tars <- list.files(file.path(dir_M,'git-annex/globalprep/_raw_data/VGPM_primary_productivity/d2016'),full.names=T, pattern = '.tar')
 
@@ -67,7 +72,7 @@ lapply(tars,untar, exdir = file.path(dir_M,'git-annex/globalprep/_raw_data/VGPM_
 
 ```
 
-# Create monthly rasters
+# .xyz to .tiff
 
 This code sources a function, `vgpm.raster` that transforms the raw .xyz files into GeoTIFFs.
 
@@ -87,7 +92,7 @@ foreach (file = files) %dopar%{
 
 ```
 
-# Get mean annual npp
+# Calculate mean annual NPP
 
 Calculate the mean annual Net Primary Production per year and save as rasters.
 
@@ -119,6 +124,15 @@ foreach (i = 2004:2015) %dopar%{
 }
 
 ```
+
+# Output
+
+```{r output}
+
+raster(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/VGPM_primary_productivity/int/annual_npp/annual_mean_npp_moll_1km_2015.tif'))%>%plot(col=cols,box=F,axes=F,main = 'Mean Net Primary Productivity (mg C/m2/day)')
+
+```
+
 ***
 
 ##Citation information  
