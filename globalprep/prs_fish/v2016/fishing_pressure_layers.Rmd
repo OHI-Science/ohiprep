@@ -1,5 +1,5 @@
 ---
-title: 'OHI 2016 - Commerical Fishing Pressure Layers '
+title: 'OHI 2016: Commercial Fishing Pressure Layers '
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
@@ -17,28 +17,35 @@ pdf_document:
 ---
 
 #Summary
+The commercial fishing pressure layers are created from catch data provided by the Sea Around Us Project and net primary production data from the Vertically Generalized Production Model [(VGPM)](http://www.science.oregonstate.edu/ocean.productivity/) as described in [Behrenfeld and Falkowski (1997)](http://www.science.oregonstate.edu/ocean.productivity/references/L&O%201997a.pdf)
 
-The commercial fishing pressure layers use data from the Sea Around Us Project
+Two layers are created in this analysis, commercial fishing pressure from **high bycatch** gear and **low bycatch** gear. Quantifying the amount of catch caught by these different categories of fishing gear is done by combining two different pieces of information. 
 
+1. The amount of fish catch caught per gear type was calculated for the first global Cumulative Human Impact analysis [(Halpern 2008)](http://science.sciencemag.org/content/319/5865/948).
 
+2. Total fish catch (tons) per half degree cell globally 
+
+The amount of catch caught per gear type has not been recalculated since 2008. The total proportion of catch caught per gear type is calculated from this original data, and then applied to the more recent catch data to get an updated estimate of catch per gear type. This assumes that the proportion of total catch caught by high and low bycatch has remained consistent since 2008.
 
 #Updates from previous assessment
-[Any significant changes in methods from previous analyses?]
+
+The fisheries catch data has been updated by the Sea Around Us Project and is provided at a spatial resolution of 0.5 degree. Previously, only aggregate catch at the country level was used.
 
 ***
 
-#Data Source [NOTE: can be copied from README.md in rawdata file]
-**Reference**: [citation for source data; website, literature, contact information. Version of data (if relevant). Screenshots if a series of menus had to be navigated to obtain the data.]
+#Data Source
 
-**Downloaded**: [date downloaded or received]
+**Reference**: Pauly D. and Zeller D. (Editors), 2015. Sea Around Us Concepts, Design and Data (seaaroundus.org)  
 
-**Description**:  [e.g., surface aragonite state]
+**Downloaded**: June 27, 2016 (sent by email from Ar'ash Tavakolie)  
 
-**Native data resolution**: [e.g., 1 degree, 30 m, etc.]   
+**Description**:  Catch per half degree cell (tons)  
 
-**Time range**: [e.g., 1880-1899, monthly data provided for each year] 
+**Native data resolution**: 0.5 degree    
 
-**Format**:  [e.g. NetCDF]
+**Time range**: 1950 - 2010  
+
+**Format**:  Tabular  
 
 ***
   
@@ -46,10 +53,22 @@ The commercial fishing pressure layers use data from the Sea Around Us Project
 
 ##Setup
 
+Load all relevant libraries including parallel processing packages.
+
 ```{r setup,message=FALSE,warning=FALSE,verbose=FALSE}
 
 #set options for all chunks in code
-knitr::opts_chunk$set(warning=FALSE, message=FALSE,fig.width=6, fig.height=6)
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+
+library(parallel)
+library(foreach)
+library(doParallel)
+library(raster)
+library(rasterVis)
+library(RColorBrewer)
+
+cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
+mytheme=rasterTheme(region=cols)
 source("~/github/ohiprep/src/R/common.R")
 
 #ocean raster at 1km
@@ -57,24 +76,187 @@ source("~/github/ohiprep/src/R/common.R")
   
 #set mollweide projection CRS
   mollCRS=crs('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs')
+  
+#paths
+ dir_git <- file.path(dir_M,'git-annex/globalprep/prs_fish/v2016')
 
   
 ```
 
 
-## Bring in catch by gear (high and low bycatch) at 1km2
+## Catch by gear type
 
-These rasters were created in this [dataprep.R](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/prs_fish/v2015/dataprep.R) script
+These two rasters are at a resolution of 1km2 and were created in this [dataprep.R](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/prs_fish/v2015/dataprep.R) script
 
-```{r}
-gear_hb = raster(file.path(dir_N,'git-annex/globalprep/prs_fish/v2015/gear_prop_hb_moll_1km_ocean.tif'))
-gear_lb = raster(file.path(dir_N,'git-annex/globalprep/prs_fish/v2015/gear_prop_lb_moll_1km_ocean.tif'))
+```{r gear_rasters}
+gear_hb = raster(file.path(dir_M,'git-annex/globalprep/prs_fish/v2015/gear_prop_hb_moll_1km_ocean.tif'))
+gear_lb = raster(file.path(dir_M,'git-annex/globalprep/prs_fish/v2015/gear_prop_lb_moll_1km_ocean.tif'))
+
+stack(gear_hb,gear_lb)%>%
+  `names<-`(c("High Bycatch Gear","Low Bycatch Gear"))%>%
+  levelplot(par.settings = mytheme, main = "Proportion of total catch caught by gear type")
+```
+
+## Net Primary Production (NPP)
+
+The Net Primary Production data was prepared in [npp.Rmd](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/prs_fish/v2016/prim_productivity/npp.html).
+
+```{r npp, eval=F}
+
+npp <- list.files(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/VGPM_primary_productivity/int/annual_npp'),pattern = 'moll_1km_',full.names=T)
+
+registerDoParallel(4)
+
+foreach (i = 2003:2006) %dopar%{
+  
+  yrs <- i:(i+4)
+  
+  s <- npp[which(substr(npp,120,123)%in%yrs)]%>%
+        stack()%>%
+        calc(fun=function(x){mean(x,na.rm=T)},filename = paste0(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/int/npp_5yrs/npp_'),i,'-',i+4,'.tif'))
+}
+
+
+```
+
+```{r npp_plot}
+
+raster(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/VGPM_primary_productivity/int/annual_npp/annual_mean_npp_moll_1km_2010.tif'))%>%plot(col=cols,box=F,axes=F,main = 'Mean Net Primary Productivity (mg C/m2/day) \n 2010')
+
+```
+
+# Annual catch rasters
+
+We only use catch data from 2003 - 2010 to calculate these layers since those are the time periods where we also have primary productivity data. And we don't need to go further back than 2003 since all OHI assessments will use this time period.
+
+```{r annual_catch, eval=F}
+
+catch_files <- list.files(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/yearly_saup_rasters'),full.names = T)[54:61]
+
+# function that takes each annual catch raster, reprojects and resamples, splits it according to high and low bycatch and then standardizes by npp for that year.
+
+fish_fun <- function(file){
+  
+  yr <- substr(file,74,77)
+  
+  r  <- raster(file)%>%
+         projectRaster(.,crs=mollCRS, over = T)%>%
+          raster::resample(ocean,method = 'ngb', filename=paste0(
+            file.path(dir_git,'int/annual_catch_moll_1km/annual_catch_moll_1km_'),yr,'.tif',sep=''),overwrite=T)
+  
+  hb <- overlay(r,gear_hb,fun=function(x,y){x*y},filename = paste0(file.path(dir_git,'int/annual_hb_catch/annual_hb_catch_'),yr,'.tif',sep=''),overwrite=T)
+    
+  lb <- overlay(r,gear_lb,fun=function(x,y){x*y},filename = paste0(file.path(dir_git,'int/annual_lb_catch/annual_lb_catch_'),yr,'.tif',sep=''),overwrite=T)
+  
+}
+
+mclapply(catch_files,fish_fun, mc.cores = 8)
+
 ```
 
 
+# Standardize
 
+Total catch per cell is standardized by the NPP values. This is done because the same fishing pressure can have different impacts depending on the productivity in the region. Mean atch values are calculated across a rolling window of five years.
+
+**NOTE:** This took a couple days to run
+
+```{r, eval =F}
+
+hb_files <- list.files(file.path(dir_git,'int/annual_hb_catch'),full.names=T)
+lb_files <- list.files(file.path(dir_git,'int/annual_lb_catch'),full.names=T)
+
+npp <- list.files(file.path(dir_git,'int/npp_5yrs'),full.names=T)
+
+foreach(i = 2003:2006) %dopar%{
+  
+   yrs <- i:(i+4)
+
+ #mean catch for 5 yrs
+ hb <- hb_files[which(substr(hb_files,90,93)%in%yrs)]%>%
+         stack()%>%
+         calc(fun=function(x){mean(x,na.rm=T)},filename = paste0(file.path(dir_git), '/int/hb_catch_5yrs/hb_',i,'-',i+4,'.tif'))
+   
+   hb <- raster(paste0(file.path(dir_git), '/int/hb_catch_5yrs/hb_',i,'-',i+4,'.tif'))
+ 
+lb <- lb_files[which(substr(lb_files,90,93)%in%yrs)]%>%
+        stack()%>%
+        calc(fun=function(x){mean(x,na.rm=T)},filename = paste0(file.path(dir_git), '/int/lb_catch_5yrs/lb_',i,'-',i+4,'.tif'))
+ 
+ 
+ pp <- npp[which(substr(npp,71,74)==i)]%>%raster()
+ 
+ hb_out <- hb/pp
+ writeRaster(hb_out,filename = paste0(file.path(dir_git), '/out/high_bycatch/hb_fish_pressure_',i,'-',i+4,'.tif'))
+
+ lb_out <- lb/pp
+ writeRaster(lb_out,filename = paste0(file.path(dir_git), '/out/low_bycatch/lb_fish_pressure_',i,'-',i+4,'.tif'))
+  
+}
+
+```
+
+# Rescale
+
+The data is first log transformed and then rescaled according to the 99.99th quantile.
+
+```{r rescale, eval = F}
+
+#list all files created above
+  hb_files = list.files(file.path(dir_git,"out/high_bycatch"),full.names=T)
+  lb_files = list.files(file.path(dir_git,"out/low_bycatch"),full.names=T)
+
+#take a look at one file and the data distribution to evaluate whether or not log transformation is applicable
+  #r_hb <- hb_files[which(substr(hb_files,88,91)==2003)]%>%raster()
+  #histogram(r_hb)
+  
+#apply a log transformation and rescale using the 99.99th quantile as a reference point  
+
+foreach(i = 2003:2006) %dopar%{
+  
+  r_hb     <- hb_files[which(substr(hb_files,88,91)==i)]%>%raster()%>%
+              calc(fun=function(x){ifelse(x>0,log(x+1),0)})
+  
+  ref      <- quantile(r_hb, prob = 0.9999)
+  
+  resc_log_hb <- calc(r_hb,fun=function(x){ifelse(x>ref,1,x/ref)})
+  
+  writeRaster(resc_log_hb,filename = paste0(file.path(dir_git), '/out/high_bycatch/hb_fish_pressure_rescaled_',i,'-',i+4,'.tif'),overwrite=T)
+  
+  #low bycatch
+  
+   r_lb     <- lb_files[which(substr(lb_files,87,90)==i)]%>%raster()%>%
+               calc(fun=function(x){ifelse(x>0,log(x+1),0)})
+  
+   ref      <- quantile(r_lb, prob = 0.9999)
+  
+   resc_log_lb <- calc(r_lb,fun=function(x){ifelse(x>ref,1,x/ref)})
+  
+  writeRaster(resc_log_lb,filename = paste0(file.path(dir_git), '/out/low_bycatch/lb_fish_pressure_rescaled_',i,'-',i+4,'.tif'),overwrite=T)
+  
+}
+
+```
+
+# Output
+
+```{r output}
+
+#high bycatch
+
+  hb_layer = raster(file.path(dir_git,"out/high_bycatch/hb_fish_pressure_rescaled_2006-2010.tif"))
+
+  plot(hb_layer,col=cols,box=F,axes=F,main = 'Commercial Fishing Pressure for OHI 2016 \n High Bycatch')
+
+
+#low bycatch
+  lb_layer = raster(file.path(dir_git,"out/low_bycatch/lb_fish_pressure_rescaled_2006-2010.tif"))
+  
+    plot(lb_layer,col=cols,box=F,axes=F,main = 'Commercial Fishing Pressure for OHI 2016 \n Low Bycatch')
+
+```
 
 ***
 
 #Citation information  
-[citation information: include if these data will have their own specific citation.]
+Pauly D. and Zeller D. (Editors), 2015. Sea Around Us Concepts, Design and Data (seaaroundus.org)
