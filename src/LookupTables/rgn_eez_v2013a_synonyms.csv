@@ -117,6 +117,7 @@ region_id_2012,rgn_id_2013,rgn_nam_2013,rgn_key_2013,eez_iso3,rgn_typ
 109,147,French Polynesia (Tuamotu),PF,PYF,ohi_region
 111,158,Howland Island,HB,Howland Island and Baker Island,ohi_region
 109,161,Wallis and Futuna Islands,WF,WLF,ohi_region
+109,161,Wallis and Futuna Is.,WF,WLF,ohi_region
 116,163,United States of America,US,USA,ohi_region
 119,167,British Guyana,GY,GUY,ohi_region
 120,168,Surinam,SR,SUR,ohi_region

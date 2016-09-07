@@ -16,28 +16,25 @@ pdf_document:
   toc: true
 ---
 
-[REFERENCE RMD FILE: https://rawgit.com/OHI-Science/ohiprep/master/globalprep/Pressures_OceanAcidification/v2015/oa_create_layer_2015.html]
-
 #Summary
 [general description: What data are being generated? Why (what project, etc.)? Upstream/downstream processing information that might be helpful?  Other information?]
 
 #Updates from previous assessment
-[Any significant changes in methods from previous analyses?]
+
+Previous assessments used data up to 2013. For OHI 2016, data for 2014 and 2015 were included.
+
 
 ***
 
-#Data Source [NOTE: can be copied from README.md in rawdata file]
-**Reference**: [citation for source data; website, literature, contact information. Version of data (if relevant). Screenshots if a series of menus had to be navigated to obtain the data.]
+#Data Source
 
-**Downloaded**: 
+**Reference**: The Ultraviolet Radiation pressures layer uses the [Aura OMI GLobal Surface UVB Data Product](http://disc.sci.gsfc.nasa.gov/Aura/data-holdings/OMI/omuvbd_v003.shtml).
 
-**Description**:  
+**Native Data Resolution**: 1 degree  
+**Values**: Level-3 OMI Surface UV Irradiance and Erythemal Dose- OMUVBd  
+**Time Range**: Daily data from 2005 - 2015  
+**Format**: HDF5  
 
-**Native data resolution**:  
-
-**Time range**: 2005-2015 
-
-**Format**:  NetCDF
 
 ***
   

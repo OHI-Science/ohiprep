@@ -26,6 +26,7 @@ library(sp)        # the classes and methods that make up spatial ops in R
 library(rgdal)
 library(raster)
 library(rasterVis)
+library(lattice)
 library(ncdf4)
 library(RColorBrewer)
 library(doParallel)
@@ -279,7 +280,7 @@ all_yrs <- c(1993:2015)
 
 registerDoParallel(14) 
 
-foreach (j = 1:length(all_yrs)) %dopar% {
+for (j in 1:length(all_yrs)) {
   
 
   msla_yr <- nc_files[str_detect(nc_files, as.character(all_yrs[j]))]
@@ -295,22 +296,71 @@ foreach (j = 1:length(all_yrs)) %dopar% {
   }
   
   ### stack all rasters for this year, and calc annual mean, then write as raster
-  rast_annual_mean <- brick(rast_list_yr)%>%
-                      calc(mean,na.rm=T)%>%
+  # rast_annual_mean <- brick(rast_list_yr)%>%
+  #                     calc(mean,na.rm=T)%>%
+  #                     rotate()
+  # 
+  # rast_file <- file.path(dir_git, 'globalprep/prs_slr/v2016/int/msla_annual_mean', 
+  #                        sprintf('rast_msla_annual_%s.tif', all_yrs[j]))
+  # 
+  ### stack all rasters for this year, and calc annual mean, then write as raster
+  rast_annual_sd <- brick(rast_list_yr)%>%
+                      calc(sd,na.rm=T)%>%
                       rotate()
 
-  rast_file <- file.path(dir_git, 'globalprep/prs_slr/v2016/int/msla_annual_mean', 
-                         sprintf('rast_msla_annual_%s.tif', all_yrs[j]))
+  rast_file_sd <- file.path(dir_git, 'globalprep/prs_slr/v2016/int/msla_annual_sd', 
+                         sprintf('rast_msla_annual_sd_%s.tif', all_yrs[j]))
   
-  message('Writing raster to ', rast_file)
-  writeRaster(rast_annual_mean,
-              rast_file,
+  #message('Writing raster to ', rast_file)
+  # writeRaster(rast_annual_mean,
+  #             rast_file,
+  #             overwrite = TRUE,
+  #             nogit = TRUE)
+  
+    writeRaster(rast_annual_sd,
+              rast_file_sd,
               overwrite = TRUE,
               nogit = TRUE)
 
 }
 
 ```
+
+
+
+
+#### 3. How does the data vary in the short and long term
+
+```{r temporal_variance}
+
+
+#Looking at means and sd over time for each month
+
+sd_files   <- list.files(file.path(dir_git, 'globalprep/prs_slr/v2016/int/msla_annual_sd'),full.names=T)
+mean_files <- list.files(file.path(dir_git, 'globalprep/prs_slr/v2016/int/msla_annual_mean'),full.names=T)
+
+
+for (i in years){
+  
+  print(i)
+  
+  #get all files for the year i
+    yr_files <- mean_files[which(substr(mean_files,109,112)==i)]%>%raster()
+    
+    yr_files <- mean_files%>%stack()
+
+    names(yr_files) <- years
+    #plot & save
+    
+    png(paste0('figs/yearly_means_boxplot_',i,'.png'), width = 10, height = 8, units = 'in', res = 300 )
+    
+    print(bwplot(yr_files,xlab = 'Years',ylab = 'Mean Sea Level Anomaly (meters)'))
+
+    dev.off()
+}
+
+```
+
 
 ### Get reference point to rescale each annual raster layer
 
