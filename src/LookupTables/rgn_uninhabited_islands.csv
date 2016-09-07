@@ -1,1 +1,22 @@
-rgn_id,rgn_nam,Southern_Island,Inhabited,h,h4,Macquarie Island,0,0,,12,Wake Island,,,150 people,130,Glorioso Islands,0,0,,133,Juan de Nova Island,0,0,,134,Bassas da India,0,0,,35,Ile Europa,0,0,,36,Ile Tromelin,0,0,,38,British Indian Ocean Territory,,,"~4000 people, military.",189,South Georgia and the South Sandwich Islands,1,1,,90,Prince Edward Islands,1,1,,91,Crozet Islands,1,0,,92,Amsterdam Island and Saint Paul Island,1,1,,93,Kerguelen Islands,1,1,,94,Heard and McDonald Islands,1,0,,105,Bouvet Island,1,0,,107,Clipperton Island,0,0,,144,Jan Mayen,,,18 people.,1149,Jarvis Island,0,0,,150,Palmyra Atoll,0,0,,158,Howland Island and Baker Island,0,0,,159,Johnston Atoll,0,0,,213,Antarctica,,,what did you do here?,1
+rgn_id,rgn_nam,Southern_Island,Inhabited,est_population
+4,Macquarie Island,1,0,
+12,Wake Island,0,1,94
+30,Glorioso Islands,1,0,
+33,Juan de Nova Island,1,0,
+34,Bassas da India,1,0,
+35,Ile Europa,1,0,
+36,Ile Tromelin,1,0,
+38,British Indian Ocean Territory,1,1,3000
+89,South Georgia and the South Sandwich Islands,1,1,30
+90,Prince Edward Islands,1,0,
+91,Crozet Islands,1,1,25
+92,Amsterdam Island and Saint Paul Island,1,0,
+93,Kerguelen Islands,1,1,80
+94,Heard and McDonald Islands,1,0,
+105,Bouvet Island,1,0,
+107,Clipperton Island,0,0,
+144,Jan Mayen,0,0,
+149,Jarvis Island,1,0,
+150,Palmyra Atoll,0,0,
+158,Howland Island and Baker Island,0,0,
+159,Johnston Atoll,0,0,
