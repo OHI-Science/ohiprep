@@ -20,9 +20,7 @@ This script downloads WGI data and prepares it for a pressures (1 - WGI) and res
 
 #Updates from previous assessment
 
-1.  Unpopulated regions now recieve an NA value (previously they receive the score of their administrative country).
-
-2. I made a slight change to the methods that changed the score of a few territories.  Previously, territories without scores received the same score as their administrative country.  Now territories receive the average value of their administrative country and the other territorial countries (of the same administrative country) that have scores (the WGI data includes scores for many territorial countries).  
+I made a slight change to the methods that changed the score of a few territories.  Previously, territories without scores received the same score as their administrative country.  Now territories receive the average value of their administrative country and the other territorial countries (of the same administrative country) that have scores (the WGI data includes scores for many territorial countries).  
 
 For example, in the past, Tokelau (territory of New Zealand) would have received New Zealand's score.   But now, it is the average of New Zealand and the territories: Cook Islands and Niue.
 
@@ -307,14 +305,14 @@ summary(d_gf2)
 
 # Uninhabited regions
 
-These regions will receive an NA for their score (when established population is < 100 people).
+These regions will receive an NA for their score (when established population is < 100 people).  We decided it would be better to give uninhabited regions the scores of their administrative countries.
 
 ```{r}
-uninhab <- read.csv('../../../src/LookupTables/rgn_uninhabited_islands.csv') %>%
-  filter(is.na(est_population) | est_population < 100)
-
-d_gf2 <- d_gf2 %>%
-  mutate(score = ifelse(rgn_id %in% uninhab$rgn_id, NA, score))
+# uninhab <- read.csv('../../../src/LookupTables/rgn_uninhabited_islands.csv') %>%
+#   filter(is.na(est_population) | est_population < 100)
+# 
+# d_gf2 <- d_gf2 %>%
+#   mutate(score = ifelse(rgn_id %in% uninhab$rgn_id, NA, score))
 
 ```
 
