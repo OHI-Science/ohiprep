@@ -1,0 +1,261 @@
+############################
+## Exploring fisheries
+## MRF Sep - 7 2016
+############################
+
+# load libraries, set directories
+library(ohicore)  #devtools::install_github('ohi-science/ohicore@dev')
+library(dplyr)
+library(stringr)
+library(tidyr)
+
+## comment out when knitting
+setwd("globalprep/fis/v2016")
+
+
+### Load FAO-specific user-defined functions
+source('../../../src/R/fao_fxn.R') # function for cleaning FAO files
+source('../../../src/R/common.R') # directory locations
+
+
+##############################################################
+##
+##
+##  Comparing the % unknown catch for different datasets
+##
+##
+##############################################################
+
+# Summary: more unks in 2016 SAUP data vs. previous data.
+# Impossible to compare SAUP and FAO because there are so many differences!
+
+######################################
+## get the FAO data ----
+######################################
+
+## FAO capture production data
+fis_fao_csv = read.csv(file.path(dir_M, 'git-annex/globalprep/_raw_data/FAO_capture/d2016/Global_capture_production_Quantity_1950-2014.csv'))
+
+m <- fis_fao_csv %>%
+  rename(country = Country..Country.,
+         species = Species..ASFIS.species.,
+         area = Fishing.area..FAO.major.fishing.area.,
+         Unit = Measure..Measure.) %>%
+  filter(Unit == "Quantity (tonnes)") %>%
+  filter(!(species %in% c("Freshwater fishes nei", "Red seaweeds", " Marine shells nei", " Hard corals, madrepores nei",
+                      "Brown seaweeds", "Aquatic plants nei", "Trochus shells nei", "Frogs", "Green seaweeds",
+                      "River and lake turtles nei", "Giant kelps nei", "Gracilaria seaweeds", "Seaweeds nei",
+                      "North European kelp", "Midway deep-sea coral", "Aka coral", "Wakame", "Freshwater drum",
+                      "Freshwater perches nei", "Freshwater river stingray nei", "Sea lettuces nei", "Sponges",
+                      "Spirulina nei", "Freshwater breams nei", "Freshwater crustaceans nei", "Freshwater fishes nei",
+                      "Freshwater gobies nei", "Freshwater minnow", "Freshwater molluscs nei",  "Freshwater mussel shells",
+                      "Freshwater prawns, shrimps nei", "Freshwater siluroids nei", "Freshwater sponge", "Gelidium seaweeds",
+                      "Bubble gum coral", "Bushy hard coral", "Gigartina seaweeds nei", "Japanese kelp", "Bull kelp",
+                      "Aquatic plants nei", "Carpet shells nei", "Chilean kelp", "Lacy sea lettuce", "Seaweeds nei",
+                      "Turban shells nei", "Trochus shells nei", "Pod razor shell", "Nori nei", "Marine shells nei",
+                      "Giant kelps nei"))) %>%
+  select(-Unit, -area)
+
+m %>%
+  filter(country=="Niue") %>%
+  select(country, species, X2010)
+
+m %>%
+  filter(country=="Turks and Caicos Is.") %>%
+  select(country, species, X2010)
+
+# sort(table(m$species))
+# sort(unique(m$species))
+
+m <- m %>%
+  gather("year", "value", 3:(ncol(m))) %>%
+  mutate(year = gsub("X", "", year)) %>%
+  fao_clean_data() %>%
+  filter(!is.na(value))
+
+m <- m %>%
+  mutate(category = ifelse(species %in% c("Marine fishes nei", "Aquatic invertebrates nei"), "unidentified", "identified")) %>%
+  group_by(country, year, category) %>%
+  summarize(value = sum(value)) %>%
+  ungroup() 
+
+m <- m %>%
+  mutate(country = as.character(country)) %>%
+  mutate(country = ifelse(country == "C\xf4te d'Ivoire", "Ivory Coast", country))
+
+
+### Function to convert to OHI region ID
+m_rgn <- name_2_rgn(df_in = m, 
+                        fld_name='country', 
+                        flds_unique=c('year', 'category'))
+
+# Duplicates are summed:
+m_rgn <- m_rgn %>%
+  group_by(rgn_id, rgn_name, category, year) %>%
+  summarize(value = sum(value)) %>%
+  ungroup()
+
+m_rgn <- m_rgn %>%
+  group_by(rgn_id, rgn_name, year) %>%
+  mutate(total_value = sum(value)) %>%
+  ungroup() %>%
+  mutate(per_unidentifed_FAO = value/total_value * 100) %>%
+  filter(category == "unidentified") %>%
+  select(rgn_id, rgn_name, year, per_unidentifed_FAO) %>%
+  filter(year==2010)
+
+
+######################################
+## get the SAUP 2016 data ----
+######################################
+saup_2016_raw <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/spatial_catch_saup.csv')) %>%
+  rename(common = Common_Name, fao_id = fao_rgn, species=Scientific_Name)
+summary(saup_2016_raw)
+
+saup_2016_raw %>%
+  filter(rgn_id==154 & year==2010) %>%
+  arrange(tons)
+
+saup_2016_raw %>%
+  filter(rgn_id==111 & year==2010) %>%
+  arrange(tons)
+
+## filter out non ohi eez regions
+saup_2016 <- saup_2016_raw %>%
+  filter(!is.na(rgn_id)) %>%
+  filter(!is.na(fao_id)) %>%
+  filter(rgn_id <= 250) %>%
+  filter(rgn_id != 213) %>%
+  mutate(species = as.character(species))
+
+sort(table(saup_2016$species[saup_2016$TaxonKey<=200000]))
+
+unknowns <- c("Cnidaria", "Miscellaneous diadromous fishes", "Marine groundfishes not identified",
+              "Miscellaneous aquatic invertebrates", "Marine finfishes not identified", "Miscellaneous marine crustaceans",
+              "Mollusca", "Marine pelagic fishes not identified", "Marine fishes not identified")
+saup_2016 <- saup_2016 %>%
+  dplyr::select(year, rgn_id, species, tons) %>%
+  mutate(category = ifelse(species %in% unknowns, "unidentified", "identified"))
+
+saup_2016 <- saup_2016 %>%
+  group_by(rgn_id, year, category) %>%
+  summarize(value = sum(tons)) %>%
+  ungroup() %>%
+  group_by(rgn_id, year) %>%
+  mutate(total_value = sum(value)) %>%
+  ungroup() %>%
+  mutate(per_unidentifed_SAU_2016 = value/total_value * 100) %>%
+  filter(category == "unidentified") %>%
+  select(rgn_id, year, per_unidentifed_SAU_2016) %>%
+  filter(year==2010)
+
+combined <- saup_2016 %>%
+  left_join(m_rgn, by=c("rgn_id", "year"))
+
+plot(combined$per_unidentifed_FAO, combined$per_unidentifed_SAU_2016)
+filter(combined, per_unidentifed_SAU_2016>70)
+abline(0,1, col="red")
+
+#####################################
+## SAUP 2015 data
+#####################################
+
+data <- read.csv(file.path(dir_M, 'git-annex/globalprep/SAUP_FIS_data/v2015/tmp/Catch_v16072015_summary.csv')) 
+data <- data %>%
+  mutate(EEZID = ifelse(EEZID==910, 0, EEZID)) %>%
+  group_by(EEZID, FAOAreaID, TaxonKey, Year) %>%
+  summarize(catch = sum(catch)) %>%
+  ungroup()
+
+## SAUP to OHI region data
+region <- read.csv("../../../src/LookupTables/new_saup_to_ohi_rgn.csv")
+dups <- region[duplicated(region$saup_id), ]
+region[region$saup_id %in% dups$saup_id, ] #duplicates, 
+###### dups occur because some SAUP regions have lower resolution than OHI regions.
+###### This causes the sample size of the following merge to increase, but this is ok.  
+###### They end up getting the same score.  
+
+species <- read.csv(file.path(dir_M, 
+                              'git-annex/globalprep/SAUP_FIS_data/v2015/raw/ohi_taxon.csv')) %>%
+  select(TaxonKey=taxonkey, species=scientific.name)
+
+saup_2015 <- data %>%
+  left_join(species, by="TaxonKey")
+
+
+##############################################################
+## converting SAUP regions to OHI regions:
+saup_2015 <- saup_2015 %>%
+  left_join(region, by=c("EEZID"="saup_id")) %>%   #N increases here due to SAUP regions that correspond to multiple OHI regions
+  mutate(ohi_id_2013 = ifelse(is.na(ohi_id_2013), 0, ohi_id_2013)) %>%  # All NA values are EEZID=0
+  dplyr::select(rgn_id=ohi_id_2013, species, TaxonKey, Year, catch) %>%
+  group_by(rgn_id, species, TaxonKey, Year) %>%
+  summarize(catch=sum(catch)) %>%  # N decreases due to OHI regions that are comprised of multiple SAUP regions
+  arrange(rgn_id, species, TaxonKey, Year) %>%
+  ungroup()
+
+data.frame(filter(saup_2015, TaxonKey <200000) %>%
+  select(species, TaxonKey) %>%
+  unique())
+
+unknowns <- c("Cnidaria", "Miscellaneous diadromous fishes", "Marine groundfishes not identified",
+              "Miscellaneous aquatic invertebrates", "Marine finfishes not identified", "Miscellaneous marine crustaceans",
+              "Mollusca", "Marine pelagic fishes not identified", "Marine fishes not identified")
+
+saup_2015 <- saup_2015 %>%
+  dplyr::select(year=Year, rgn_id, species, tons=catch) %>%
+  mutate(category = ifelse(species %in% unknowns, "unidentified", "identified"))
+
+saup_2015 <- saup_2015 %>%
+  group_by(rgn_id, year, category) %>%
+  summarize(value = sum(tons)) %>%
+  ungroup() %>%
+  group_by(rgn_id, year) %>%
+  mutate(total_value = sum(value)) %>%
+  ungroup() %>%
+  mutate(per_unidentifed_SAU_2015 = value/total_value * 100) %>%
+  filter(category == "unidentified") %>%
+  select(rgn_id, year, per_unidentifed_SAU_2015) %>%
+  filter(year==2010)
+
+combined <- combined %>%
+  left_join(saup_2015, by=c("rgn_id", "year"))
+
+plot(combined$per_unidentifed_SAU_2016.x, combined$per_unidentifed_SAU_2015, ylab="2015 SAUP", xlab="2016 SAUP")
+abline(0,1, col="red")
+
+
+
+##############################################################
+##
+##
+##  Trying a more detailed method of gapfilling using taxonomic information
+##
+##
+##############################################################
+
+taxa_data <- read.csv('data/taxon_info.csv') %>%
+  select(species, genus, family, order, class)
+
+bmsy <- read.csv('data/fis_bbmsy.csv')
+
+catch <- read.csv('data/mean_catch.csv') %>%
+  mutate(stock_id_taxonkey = as.character(stock_id_taxonkey)) %>%
+  separate(stock_id_taxonkey, c("species", "junk"), sep="-") %>%
+  mutate(species = gsub("_", " ", species)) %>%
+  left_join(taxa_data) 
+
+### we would need to get the taxonomic information in the table for these as well:  
+unidentified_taxa <- catch %>%
+  filter(is.na(genus)) %>%
+  select(taxa = species) %>%
+  unique()
+
+write.csv(unidentified_taxa, "int/unidentified_taxa.csv", row.names=FALSE)
+
+### figure out new Thailand score for 2010 data
+catch_t <- catch %>%
+  filter(rgn_id==25 & year==2010)
+
+
+
