@@ -6,6 +6,7 @@
 library(dplyr)
 library(tidyr)
 library(zoo)
+library(stringr)
 
 
 # -------------------------------------------------------------------
@@ -36,7 +37,7 @@ new_b_bmsy(comsir, method="comsir")
 new_b_bmsy(sscom, method="sscom")
 
 
-# The CMSY is th only one we end up using based on analysis in compare_bmsy_data.R
+# The CMSY is the only one we end up using based on analysis in compare_bmsy_data.R
 
 cmsy <- read.csv('globalprep/fis/v2016/int/cmsy_b_bmsy_constrained_mean5yrs.csv') %>%
   select(stock_id, year, cmsy_bbmsy=mean_5year)
@@ -46,7 +47,10 @@ ram <- read.csv("globalprep/fis/v2016/int/ram_bmsy.csv")
 
 
 ## Mean catch data created in "meanCatch.R"
-mean_catch <- read.csv("globalprep/fis/v2016/data/mean_catch.csv") 
+mean_catch <- read.csv("globalprep/fis/v2016/data/mean_catch.csv") %>%
+  mutate(stock_id_taxonkey = as.character(stock_id_taxonkey)) %>%
+  mutate(taxon_key = str_sub(stock_id_taxonkey, -6, -1)) %>%
+  mutate(stock_id = substr(stock_id_taxonkey, 1, nchar(stock_id_taxonkey)-7)) 
 
 
 ## combine data
@@ -60,7 +64,7 @@ intersect(ram$stock_id, mean_catch$stock_id) #188
 
 data <- mean_catch %>%
   left_join(ram, by=c('stock_id', "year")) %>%
-  group_by(rgn_id, TaxonKey, stock_id, year, mean_catch) %>%    ### some regions have more than one stock...these will be averaged
+  group_by(rgn_id, taxon_key, stock_id, year, mean_catch) %>%    ### some regions have more than one stock...these will be averaged
   summarize(ram_bmsy = mean(ram_bmsy, na.rm=TRUE),
             gapfilled = ifelse(all(is.na(gapfilled)), NA, max(gapfilled, na.rm=TRUE))) %>%
   left_join(cmsy, by=c("stock_id", "year")) %>%
@@ -72,7 +76,7 @@ data <- mean_catch %>%
    mutate(bmsy_data_source = ifelse(!is.na(ram_bmsy), "RAM", NA)) %>%
    mutate(bmsy_data_source = ifelse(is.na(bmsy_data_source) & !is.na(cmsy_bbmsy), "CMSY", bmsy_data_source)) %>%
    mutate(bbmsy = ifelse(is.na(ram_bmsy), cmsy_bbmsy, ram_bmsy)) %>%
-   select(rgn_id, stock_id, year, bbmsy, bmsy_data_source, RAM_gapfilled=gapfilled, mean_catch) %>%
+   select(rgn_id, stock_id, taxon_key, year, bbmsy, bmsy_data_source, RAM_gapfilled=gapfilled, mean_catch) %>%
    filter(year >= 2001) %>%
    unique()
  
@@ -142,3 +146,23 @@ filter(b, stock_id=="Katsuwonus_pelamis-71" & year==2010)
 
 c <- read.csv('globalprep/fis/v2016/data/mean_catch.csv')
 summary(c)
+
+ram <- read.csv("globalprep/fis/v2016/data/fis_bbmsy_gf.csv") 
+ram %>% filter(stock_id=="Engraulis_encrasicolus-37" & year=='2010')
+ram %>% filter(stock_id=="Sardina_pilchardus-37" & year=='2010')
+ram %>% filter(stock_id=="Xiphias_gladius-37" & year=='2010')
+
+
+#### Checking country rankings.
+### Why does Thailand score so well?
+
+data <- read.csv('globalprep/fis/v2016/data/fis_bbmsy_gf.csv') %>%
+  filter(rgn_id == 25 & year==2010) %>%
+  arrange(-mean_catch)
+data.frame(data[1:20,])
+dim(data)
+median(data$bbmsy, na.rm=TRUE)
+table(data$bmsy_data_source)
+
+sum(data$mean_catch[is.na(data$bmsy_data_source)])/ 
+  (sum(data$mean_catch[!is.na(data$bmsy_data_source)]) + sum(data$mean_catch[is.na(data$bmsy_data_source)]))
