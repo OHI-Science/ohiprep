@@ -286,12 +286,12 @@ catch <- read.csv('data/mean_catch.csv') %>%
   left_join(taxa_data) 
 
 ### we would need to get the taxonomic information in the table for these as well:  
-unidentified_taxa <- catch %>%
-  filter(is.na(genus)) %>%
-  select(taxa = species) %>%
-  unique()
+ # unidentified_taxa <- catch %>%
+ #   filter(is.na(genus)) %>%
+ #   select(taxa = species) %>%
+ #   unique()
 
-write.csv(unidentified_taxa, "int/unidentified_taxa.csv", row.names=FALSE)
+#write.csv(unidentified_taxa, "int/unidentified_taxa.csv", row.names=FALSE)
 
 ### figure out new Thailand score for 2010 data
 catch_t <- catch %>%
@@ -313,11 +313,11 @@ bmsy_func = function(sp,f){
   #filter bmsy table for all species with sp in the row and get median BBmsy
   
   bmsy_sub <- bmsy%>%
-              filter(fao == f)
+              filter(fao == f) #filter so fao area = f
   
-  b_df <- bmsy_sub[which(apply(bmsy_sub,1, function(r) any(r == sp))),]
+  b_df <- bmsy_sub[which(apply(bmsy_sub,1, function(r) any(r == sp))),] #subset the bmsy table where the "species" name (anything from genus to class) is found in any column/row
   
-  med <- median(b_df$bbmsy)
+  med <- median(b_df$bbmsy,na.rm=T) #get the median b/bmsy from all of the taxa
   
   return(med)
 }
@@ -341,4 +341,5 @@ non_sp_bbmsy_catch <- out%>%
                                !is.na(bbmsy))
 
 prop = sum(non_sp_bbmsy_catch$mean_catch)/tot
+prop
 #0.4255 (50% of catch)
