@@ -256,6 +256,155 @@ foreach(i = 2003:2006) %dopar%{
 
 ```
 
+# Extract the data by OHI region
+
+```{r extract, eval = F}
+
+setwd('globalprep/prs_fish/v2016')
+
+source("../../../src/R/common.R")
+
+#paths
+ dir_git <- file.path(dir_M,'git-annex/globalprep/prs_fish/v2016')
+
+
+library(raster)
+library(rgdal)
+library(dplyr)
+
+# raster/zonal data
+
+zones <- raster(file.path(dir_M, "git-annex/globalprep/spatial/d2014/data/rgn_mol_raster_1km/sp_mol_raster_1km.tif"))  # raster data
+rgn_data <- read.csv(file.path(dir_M, "git-annex/globalprep/spatial/d2014/data/rgn_mol_raster_1km/regionData.csv"))    # data for sp_id's used in raster
+
+
+### Low bycatch data first
+# get raster data:
+rasts <- list.files(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/out/low_bycatch'))
+rasts <- rasts[grep("rescaled", rasts)]
+
+pressure_stack <- stack()
+for(raster in rasts){ # raster = "lb_fish_pressure_rescaled_2003-2007.tif"
+  tmp <- raster(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/out/low_bycatch', raster))
+  pressure_stack <- stack(pressure_stack, tmp)
+}
+
+# extract data for each region:
+regions_stats <- zonal(pressure_stack,  zones, fun="mean", na.rm=TRUE, progress="text")
+regions_stats2 <- data.frame(regions_stats)
+setdiff(regions_stats2$zone, rgn_data$ant_id) # antarctica regions are in there, makes sense....no land
+setdiff(rgn_data$ant_id, regions_stats2$zone) # 213 is in there, that makes sense (Antarctica)
+
+data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="rgn_id", by.y="zone") %>%
+  gather("year", "pressure_score", starts_with("lb")) 
+
+lb_data <- data %>%
+  mutate(year = substring(year, 32, 35)) %>%
+  mutate(year = as.numeric(year)) %>%
+  mutate(year = year + 6) %>%
+  filter(ant_typ == "eez") %>%
+  dplyr::select(rgn_id, rgn_nam, year, pressure_score)
+
+write.csv(lb_data, "int/lb.csv", row.names=FALSE)
+
+## save toolbox data for different years/regions
+
+# function to extract data more easily
+saveData <- function(newYear){ # newYear= 2012
+  
+  criteria_year <- ~year == newYear
+
+    tmp  <- lb_data %>%
+      filter_(criteria_year) %>%
+      dplyr::select(rgn_id, pressure_score) %>%
+      arrange(rgn_id)
+  
+  write.csv(tmp, sprintf('output/comm_fish_lb_%s.csv', newYear), row.names=FALSE)
+}
+
+
+### extract data 
+for(newYear in (max(lb_data$year) - 3):(max(lb_data$year))){
+  saveData(newYear)
+}
+
+
+### try visualizing the data using googleVis plot
+library(googleVis)
+plotData <- lb_data %>%
+  dplyr::select(rgn_nam, year, pressure_score)
+
+Motion=gvisMotionChart(plotData, 
+                       idvar="rgn_nam", 
+                       timevar="year")
+plot(Motion)
+
+print(Motion, file='lb.html')
+ 
+### Get the high bycatch data 
+
+rasts <- list.files(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/out/high_bycatch'))
+rasts <- rasts[grep("rescaled", rasts)]
+
+pressure_stack <- stack()
+for(raster in rasts){ # raster = "lb_fish_pressure_rescaled_2003-2007.tif"
+  tmp <- raster(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/out/high_bycatch', raster))
+  pressure_stack <- stack(pressure_stack, tmp)
+}
+
+# extract data for each region:
+regions_stats <- zonal(pressure_stack,  zones, fun="mean", na.rm=TRUE, progress="text")
+regions_stats2 <- data.frame(regions_stats)
+setdiff(regions_stats2$zone, rgn_data$ant_id) # antarctica regions are in there, makes sense....no land
+setdiff(rgn_data$ant_id, regions_stats2$zone) # 213 is in there, that makes sense (Antarctica)
+
+data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="rgn_id", by.y="zone") %>%
+  gather("year", "pressure_score", starts_with("hb")) 
+
+hb_data <- data %>%
+  mutate(year = substring(year, 32, 35)) %>%
+  mutate(year = as.numeric(year)) %>%
+  mutate(year = year + 6) %>%
+  filter(ant_typ == "eez") %>%
+  dplyr::select(rgn_id, rgn_nam, year, pressure_score)
+
+write.csv(hb_data, "int/hb.csv", row.names=FALSE)
+
+## save toolbox data for different years/regions
+
+# function to extract data more easily
+saveData <- function(newYear){ # newYear= 2012
+  
+  criteria_year <- ~year == newYear
+
+    tmp  <- lb_data %>%
+      filter_(criteria_year) %>%
+      dplyr::select(rgn_id, pressure_score) %>%
+      arrange(rgn_id)
+  
+  write.csv(tmp, sprintf('output/comm_fish_hb_%s.csv', newYear), row.names=FALSE)
+}
+
+
+### extract data 
+for(newYear in (max(hb_data$year) - 3):(max(hb_data$year))){
+  saveData(newYear)
+}
+
+
+### try visualizing the data using googleVis plot
+library(googleVis)
+plotData <- hb_data %>%
+  dplyr::select(rgn_nam, year, pressure_score)
+
+Motion=gvisMotionChart(plotData, 
+                       idvar="rgn_nam", 
+                       timevar="year")
+plot(Motion)
+
+print(Motion, file='hb.html')
+
+```
 ***
 
 #Citation information  
