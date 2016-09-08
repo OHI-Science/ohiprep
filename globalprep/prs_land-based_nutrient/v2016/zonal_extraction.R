@@ -61,7 +61,7 @@ eez <- data %>%
   dplyr::filter(sp_type=="eez") %>%
   dplyr::select(rgn_id, pressure_score=mean) %>%
   dplyr::arrange(rgn_id)
-write.csv(eez, file.path(save_loc_data, "output/cw_fertilizers_score_2016.csv"))
+write.csv(eez, file.path(save_loc_data, "output/cw_fertilizers_score_2016.csv"), row.names=FALSE)
   
 
 ## extract at 3 nm (in addition to a pressure, this will be used for CW and the CW trend)
