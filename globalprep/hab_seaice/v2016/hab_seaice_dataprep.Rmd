@@ -1,0 +1,311 @@
+---
+title: 'OHI: Natural Products'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '../../../src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+  
+  [REFERENCE RMD FILE: https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/hab_seaice/v2016/hab_seaice_dataprep.html]
+
+#Notes
+If Sea Ice (or any other habitat data) is updated be sure to update the scripts in globalprep/hab_combined to merge the new data with the other habitat data!
+
+Check out PreparingSpatialFiles.R if spatial files change or to understand origination of spatial data files used here.
+
+#Summary
+This calls a series of scripts to download and analyze sea ice data for the habitat subgoal and coastal protection goal.  
+
+#Updates from previous assessment
+Have updated our method of calculating trend such that it reflects the proportional change in status over 5 years, rather than the absolute change in status over 5 years. Otherwise methods remain the same.
+
+***
+  
+  #Data Source 
+  **Reference**:      
+Cavalieri, D.J., Parkinson, C.L., Gloersen, P. and Zwally, H. (2014). Sea ice concentrations from Nimbus-7 SMMR and DMSP SMM/I-SSMIS passive microwave data. 1979-2014. Boulder, Colorado, USA: NASA National Snow and Ice Data Center Distributed Active Archive Center (http://dx.doi.org/10.5067/8GQ8LZQVL0VL).
+
+**Downloaded**: September 9 2016
+
+**Description**: Monthly sea ice extent data.
+
+Data are in the following FTP directory: 
+ftp://sidads.colorado.edu/pub/DATASETS/nsidc0051_gsfc_nasateam_seaice/final-gsfc/
+
+Within the final-gsfc directory are north and south directories 
+that contain data files, and a browse directory that contains browse image files. 
+Daily and monthly data are further separated into directories named daily and 
+monthly. For final daily data, there is also one directory for each year of 
+available data. For example, all of the north daily data for 1990 are in a 
+directory named /nsidc0051_gsfc_nasateam_seaice/final-gsfc/north/daily/1990/. 
+
+The directory structure is illustrated below; not all directory levels are shown. 
+The structure for each south directory matches that of the corresponding north 
+directory. Each browse directory is divided into a structure that reflects that 
+of the data. In this illustration, the year directories underneath final-gsfc 
+are representative placeholders; there are actually many such directories, each 
+named for the year of data it contains, such as 1987, 2000, etc.
+
+
+/nsidc0051_gsfc_nasateam_seaice
+. . /final-gsfc
+. . . . /browse
+. . . . . . /north
+. . . . . . . . /daily
+. . . . . . . . . . /year
+. . . . . . . . /monthly
+. . . . . . /south
+. . . . /north
+. . . . . . /daily
+. . . . . . . . /year
+. . . . . . /monthly
+. . . . /south
+
+For complete documentation and more information about data access, please see:
+
+http://nsidc.org/data/nsidc-0051.html
+
+If you wish to be notified of updates or corrections to these data,
+please register with NSIDC User Services by sending e-mail to:
+
+    nsidc@nsidc.org
+
+Identify yourself as a user of "Sea Ice Concentrations from Nimbus-7 SMMR and DMSP SSM/I-SSMIS 
+Passive Microwave Data (NSIDC-0051)." Include your name, e-mail address, postal address, and 
+telephone number.
+
+If you have questions, please contact NSIDC User Services.
+
+CONTACT INFORMATION:
+User Services
+National Snow and Ice Data Center
+CIRES, 449 UCB
+University of Colorado
+Boulder, CO USA 80309-0449
+Phone: +1 303-492-6199
+Fax: +1 303-492-2468
+E-mail: nsidc@nsidc.org
+
+**Time range**: 1970-2015
+
+***
+  
+#Methods
+
+```{r}
+# load libraries, set directories
+
+library(sp)
+library(raster)
+library(rgdal)
+library(fields) #colors in Status_Trend.R
+
+## comment out when knitting
+#setwd("globalprep/hab_seaice/v2016")
+
+
+source('../../../src/R/common.R') # directory locations
+
+```
+
+## Location of maps
+
+These maps were made by the PreparingSpatialFiles.R script.  If there are changes to the OHI regions, this script needs to be run.  Additionally, it is critical to walk through the ObtainingData.R script if any of the spatial files have been modified (this saves the files as spatial points).
+
+```{r}
+maps <- file.path(dir_M, "git-annex/globalprep/_raw_data/NSIDC_SeaIce/v2015")
+```
+
+## Establish parameters
+
+```{r}
+
+# identify the year to save raw data file (Need to create this file) 
+assessYear <- 'v2016'
+
+# final year of data:
+final.year <- 2015
+
+# Establish: CRS, website to collect data, data selection parameters
+pixel = 25000    # pixel dimension in meters for both x and y 
+# epsg projection 3411 - nsidc sea ice polar stereographic north (http://spatialreference.org/ref/epsg/3411/)
+# epsg projection 3412 - nsidc sea ice polar stereographic south (http://spatialreference.org/ref/epsg/3412/)
+prj.n = '+proj=stere +lat_0=90 +lat_ts=70 +lon_0=-45 +k=1 +x_0=0 +y_0=0 +a=6378273 +b=6356889.449 +units=m +no_defs'
+prj.s = '+proj=stere +lat_0=-90 +lat_ts=-70 +lon_0=0 +k=1 +x_0=0 +y_0=0 +a=6378273 +b=6356889.449 +units=m +no_defs'
+prj.mol = '+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
+
+# URL base (ub), filename format for final monthly data is nt_YYYYMM_SSS_vVV_R.bin
+ub.n = 'ftp://sidads.colorado.edu/pub/DATASETS/nsidc0051_gsfc_nasateam_seaice/final-gsfc/north/monthly'
+ub.s = 'ftp://sidads.colorado.edu/pub/DATASETS/nsidc0051_gsfc_nasateam_seaice/final-gsfc/south/monthly'
+
+poles = c('n','s')
+years = c(1979:final.year)  #Full range of data
+months = 1:12
+n.pym=length(poles)*length(years)*length(months)
+i.pym = 0
+t0 = Sys.time()
+
+```
+
+
+## Function 1: 
+Collects the data for each month/year from the website and add to raster stack that is saved in tmp folder as: n_rasters_points.rdata  or s_rasters_points.rdata. And, if it doesn't already exist, it converts the region shapefile into a raster points file.
+
+```{r, eval=FALSE}
+
+source("ObtainingData.R")
+
+```
+
+
+## Function 2: 
+Using the data from the .rdata files created in Function 1, this function calculates status and trend for shoreline ice and ice edge habitat.  Data is saved in intermediate folder: 
+
+* Habitat: n_IceEdgeHabitat.csv, s_IceEdgeHabitat.csv 
+* Coastal Protection: n_IceShoreProtection.csv, s_IceShoreProtection.csv  
+
+```{r, eval=FALSE}
+
+ref.years <- 1979:2000
+
+source("Status_Trend.R")
+
+```
+
+
+## Final calculations and organization
+
+```{r, eval=FALSE}
+
+n_edge <- read.csv("int/n_IceEdgeHabitat_ref1979to2000.csv")
+s_edge <- read.csv("int/s_IceEdgeHabitat_ref1979to2000.csv")
+edge <- rbind(n_edge, s_edge)
+edge  <- edge %>%
+  filter(Reference_avg1979to2000monthlypixels != 0) %>%
+  filter(!(rgn_id %in% c(59, 141, 219, 4, 172, 94))) %>%  #anomolous eez regions with very little ice cover
+  filter(!(rgn_id %in% c("248300", "258510", "258520", "258600", "258700"))) %>% # ccamlr: cut some regions due to minimal ice (<200 km2 per year - average of months)
+  filter(rgn_nam != "DISPUTED") %>%
+  mutate(habitat="seaice_edge")
+
+n_shore <- read.csv("int/n_IceShoreProtection_ref1979to2000.csv")
+s_shore <- read.csv("int/s_IceShoreProtection_ref1979to2000.csv")
+shore <- rbind(n_shore, s_shore)
+shore <- shore %>%
+filter(Reference_avg1979to2000monthlypixels != 0) %>%
+  filter(!(rgn_id %in% c(59, 89, 177, 178))) %>%  #anomolous eez regions with very little ice cover
+  filter(rgn_nam != "DISPUTED") %>%
+  mutate(habitat="seaice_shoreline")
+
+data <- rbind(edge, shore)
+data  <- data %>%
+  mutate(km2 = Reference_avg1979to2000monthlypixels/12 * (pixel/1000)^2)
+
+write.csv(data, "int/sea_ice.csv", row.names=FALSE)
+
+## ice health data subset/format/save
+iceHealth <- function(type ="eez", year=final.year){ 
+  criteria1 <- ~rgn_typ == type
+  dataYear <- paste("pctdevR", year, sep="_")
+  filterdata <- data %>%
+    filter_(criteria1) 
+  
+  filterdata <- subset(filterdata, select=c(rgn_id, habitat, get(dataYear)))
+  names(filterdata) <- c('rgn_id', 'habitat', 'health')
+  filterdata$health <- ifelse(filterdata$health>1, 1, filterdata$health)
+  write.csv(filterdata, sprintf("output/hab_ice_health_%s_%s.csv", type, year), row.names=FALSE)
+}
+
+## can also do fao and ccamlr by changing type (not sure if we will need this)
+iceHealth(type="eez", year='2015') # 2016 analysis
+iceHealth(type="eez", year='2014') # 2015 analysis
+iceHealth(type="eez", year='2013') # 2014 analysis
+iceHealth(type="eez", year='2012') # 2013 analysis
+iceHealth(type="eez", year='2011') # 2013 analysis
+
+
+## ice trend data subset/format/save
+iceTrend <- function(type ="eez", year=final.year){ 
+  criteria1 <- ~rgn_typ == type
+  dataYear <- sprintf("Trend_%sto%s_pctdevRperyr", year-4, year)
+  filterdata <- data %>%
+    filter_(criteria1) 
+  
+  filterdata <- subset(filterdata, select=c(rgn_id, habitat, get(dataYear)))
+  names(filterdata) <- c('rgn_id', 'habitat', 'trend')
+  filterdata$trend <- filterdata$trend*5
+   filterdata$trend <- ifelse(filterdata$trend>1, 1, filterdata$trend)
+   filterdata$trend <- ifelse(filterdata$trend<(-1), -1, filterdata$trend)
+  write.csv(filterdata, sprintf("output/hab_ice_trend_%s_%s.csv", type, year), row.names=FALSE)
+}
+
+## can also do fao and ccamlr by changing type (not sure if we will need this)
+iceTrend(type="eez", year=2015) # 2016 analysis
+iceTrend(type="eez", year=2014) # 2015 analysis
+iceTrend(type="eez", year=2013) # 2014 analysis
+iceTrend(type="eez", year=2012) # 2013 analysis
+iceTrend(type="eez", year=2011) # 2013 analysis
+
+## ice extent data subset/format/save
+iceExtent <- function(type ="eez"){ 
+  criteria1 <- ~rgn_typ == type
+
+  filterdata <- data %>%
+    filter_(criteria1) 
+  
+  filterdata <- subset(filterdata, select=c(rgn_id, habitat, km2))
+  write.csv(filterdata, sprintf("output/hab_ice_extent_%s.csv", type), row.names=FALSE)
+}
+
+## can also do fao and ccamlr by changing type (not sure if we will need this)
+iceExtent(type="eez") # all years
+
+```
+
+## Checking the data
+
+1. Compare to last year's data: There may be small changes to health, but in general, there should be a strong correlation between these data.  This is what we observed in the data.  However, we have changed our method of calculating trend (proportional change vs. absolute change), so there might be significant differences in these values.
+
+2. Pair with region names for sanity check.
+
+```{r}
+
+## Health
+old <- read.csv('../v2015/data/hab_ice_health_eez_2014.csv') %>%
+  select(rgn_id, habitat, old_health=health)
+
+new <- read.csv('output/hab_ice_health_eez_2014.csv') %>%
+  left_join(old)
+
+plot(new$old_health, new$health)
+abline(0,1, col="red")
+
+
+## Trend
+old <- read.csv('../v2015/data/hab_ice_trend_eez_2014.csv') %>%
+  select(rgn_id, habitat, old_trend=trend)
+
+new <- read.csv('output/hab_ice_trend_eez_2014.csv') %>%
+  left_join(old)
+
+plot(new$old_trend, new$trend)
+abline(0,1, col="red")
+
+## Pair with region names
+library(ohicore)
+
+regions <- rgn_master %>%
+  select(rgn_id = rgn_id_2013, rgn_name = rgn_nam_2013) %>%
+  unique()
+
+data <- read.csv('output/hab_ice_health_eez_2015.csv') %>%
+  left_join(regions, by="rgn_id") %>%
+  arrange(habitat, health)
+
+```
