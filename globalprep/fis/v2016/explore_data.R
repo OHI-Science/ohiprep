@@ -237,25 +237,69 @@ abline(0,1, col="red")
 taxa_data <- read.csv('data/taxon_info.csv') %>%
   select(species, genus, family, order, class)
 
-bmsy <- read.csv('data/fis_bbmsy.csv')
+bmsy <- read.csv('data/fis_bbmsy.csv') %>%
+  select(rgn_id, stock_id, year, bmsy=bbmsy)
 
 catch <- read.csv('data/mean_catch.csv') %>%
   mutate(stock_id_taxonkey = as.character(stock_id_taxonkey)) %>%
   separate(stock_id_taxonkey, c("species", "junk"), sep="-") %>%
   mutate(species = gsub("_", " ", species)) %>%
-  left_join(taxa_data) 
+  separate(junk, c("fao", "taxonkey"), sep="_") %>%
+  mutate(stock_id = paste(species, fao, sep="-")) %>%
+  mutate(stock_id = gsub(" ", "_", stock_id)) %>%
+  left_join(taxa_data, by="species") %>%
+  left_join(bmsy, by=c('rgn_id', 'stock_id', 'year'))
 
-### we would need to get the taxonomic information in the table for these as well:  
-unidentified_taxa <- catch %>%
-  filter(is.na(genus)) %>%
-  select(taxa = species) %>%
-  unique()
+## convert bmsy to score
+alpha <- 0.5
+beta <- 0.25
+lowerBuffer <- 0.95
+upperBuffer <- 1.05
 
-write.csv(unidentified_taxa, "int/unidentified_taxa.csv", row.names=FALSE)
+catch$score = ifelse(catch$bmsy < lowerBuffer, catch$bmsy,
+                 ifelse (catch$bmsy >= lowerBuffer & catch$bmsy <= upperBuffer, 1, NA))
+catch$score = ifelse(!is.na(catch$score), catch$score,  
+                 ifelse(1 - alpha*(catch$bmsy - upperBuffer) > beta,
+                        1 - alpha*(catch$bmsy - upperBuffer), 
+                        beta))
 
+
+# ### we would need to get the taxonomic information in the table for these as well:  
+# unidentified_taxa <- catch %>%
+#   filter(is.na(genus)) %>%
+#   select(taxa = species) %>%
+#   unique()
+# 
+# write.csv(unidentified_taxa, "int/unidentified_taxa.csv", row.names=FALSE)
+# 
 ### figure out new Thailand score for 2010 data
 catch_t <- catch %>%
   filter(rgn_id==25 & year==2010)
 
+tmp <- rbind(
+catch_t %>%
+  group_by(genus) %>%
+  summarize(mean = mean(score, na.rm=TRUE)) %>%
+  select(species=genus, mean),
+catch_t %>%
+  group_by(family) %>%
+  summarize(mean = mean(score, na.rm=TRUE)) %>%
+  select(species=family, mean),
+catch_t %>%
+  group_by(order) %>%
+  summarize(mean = mean(score, na.rm=TRUE)) %>%
+  select(species=order, mean),
+catch_t %>%
+  group_by(class) %>%
+  summarize(mean = mean(score, na.rm=TRUE)) %>%
+  select(species=class, mean)
+)
+
+tmp <- tmp %>%
+  filter(!is.na(mean))
+
+catch_t <- catch_t %>%
+  left_join(tmp, by="species") %>%
+  mutate(score2 = ifelse(!is.na(score), score, mean))
 
 
