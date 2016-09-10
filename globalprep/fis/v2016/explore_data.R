@@ -303,3 +303,87 @@ catch_t <- catch_t %>%
   mutate(score2 = ifelse(!is.na(score), score, mean))
 
 
+
+
+##############################################################
+##
+##                JAMIE'S EXPLORATIONS
+##  Trying a more detailed method of gapfilling using taxonomic information
+##
+##
+##############################################################
+
+taxa_data <- read.csv('data/taxon_info.csv') %>%
+  select(species, genus, family, order, class)
+
+bmsy <- read.csv('data/fis_bbmsy.csv')%>%
+          separate(stock_id,c('stock','fao'),sep = '-')%>%
+          mutate(species = str_replace_all(stock, "_"," "))%>%
+          select(-stock)%>%
+          filter(year==2010)%>%
+          left_join(taxa_data)
+
+catch <- read.csv('data/mean_catch.csv') %>%
+  mutate(stock_id_taxonkey = as.character(stock_id_taxonkey)) %>%
+  separate(stock_id_taxonkey, c("species", "junk"), sep="-") %>%
+  mutate(species = gsub("_", " ", species)) %>%
+  left_join(taxa_data) 
+
+### we would need to get the taxonomic information in the table for these as well:  
+ # unidentified_taxa <- catch %>%
+ #   filter(is.na(genus)) %>%
+ #   select(taxa = species) %>%
+ #   unique()
+
+#write.csv(unidentified_taxa, "int/unidentified_taxa.csv", row.names=FALSE)
+
+### figure out new Thailand score for 2010 data
+catch_t <- catch %>%
+  filter(rgn_id==25 & year==2010)%>%
+  separate(junk,c('fao','junk'),sep = '_')
+
+nrow(catch_t)
+#566
+
+non_sp <- catch_t%>%
+            filter(is.na(genus))
+
+nrow(non_sp)
+#304 (there are 304 taxa we don't have bbmsy estimates for for thailand)
+
+
+bmsy_func = function(sp,f){
+  
+  #filter bmsy table for all species with sp in the row and get median BBmsy
+  
+  bmsy_sub <- bmsy%>%
+              filter(fao == f) #filter so fao area = f
+  
+  b_df <- bmsy_sub[which(apply(bmsy_sub,1, function(r) any(r == sp))),] #subset the bmsy table where the "species" name (anything from genus to class) is found in any column/row
+  
+  med <- median(b_df$bbmsy,na.rm=T) #get the median b/bmsy from all of the taxa
+  
+  return(med)
+}
+
+out <- non_sp%>%
+  rowwise()%>%
+       mutate(bbmsy = bmsy_func(species,fao))%>%
+      full_join(catch_t)%>%
+      select(rgn_id,species,fao,junk,year,mean_catch,bbmsy)%>%
+      mutate(catch_prop = mean_catch/sum(.$mean_catch))
+
+#how many new bbmsy values?
+nrow(filter(out,!is.na(bbmsy)))
+#110 out of 292
+
+#how much additional catch are we getting bmsy for?
+
+tot = sum(out$mean_catch)
+non_sp_bbmsy_catch <- out%>%
+                        filter(species %in% non_sp$species,
+                               !is.na(bbmsy))
+
+prop = sum(non_sp_bbmsy_catch$mean_catch)/tot
+prop
+#0.4255 (50% of catch)
