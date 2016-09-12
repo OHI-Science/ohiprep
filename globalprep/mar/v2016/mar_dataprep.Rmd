@@ -201,7 +201,7 @@ maric <- mar_rgn_gf
 Save file to estimate total mariculture yield per country.
 ```{r}
 
-write.csv(maric, 'intermediate/MAR_FP_data.csv', row.names=FALSE)
+write.csv(maric, 'output/MAR_FP_data.csv', row.names=FALSE)
 
 ```
 
