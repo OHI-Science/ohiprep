@@ -1,7 +1,7 @@
 ###############################################
 ## Proportion FIS/(MAR+FIS) catch to calculate
 ## FP
-## MRF: Jul 28 2015
+## MRF: 9/12/2016
 ###############################################
 library(dplyr)
 library(tidyr)
@@ -19,7 +19,7 @@ fis <- read.csv("globalprep/fis/v2016/data/FP_fis_catch.csv") %>%
   select(rgn_id, year, fis_t = fis_catch)
 
 ## function to combine different years of data:
-extract <- function(scenarioYear, marYear, fisYear){ #scenarioYear=2015; marYear=2013; fisYear=2010
+extract <- function(scenarioYear, marYear, fisYear){ #scenarioYear=2012; marYear=2010; fisYear=2006
 fis_tmp <- fis[fis$year == fisYear, ] %>%
   select(rgn_id, fis_t)
 
