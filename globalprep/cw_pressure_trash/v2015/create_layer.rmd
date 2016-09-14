@@ -1,21 +1,24 @@
 ---
-title: "Create Marine Plastics Layer"
+title: "OHI 2015: Marine Plastics Layer"
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
+    code_folding: show
     toc: true
-    number_sections: true
+    toc_depth: 3
+    toc_float: yes
+    number_sections: false
     theme: cerulean
     highlight: haddock
     includes: 
-      in_header: '~/GitHub/ohiprep/src/templates/ohi_hdr.html'
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
   pdf_document:
     toc: true
 ---
 
 #Summary
 
-This data was used in the Clean Waters goal in OHI 2015
+This data was used in the Clean Waters goal for the 2015 global Ocean Health Index assessment
 
 ***
 
@@ -95,7 +98,8 @@ Data came to use logged (using base 10 log) so need to 'unlog' the data first
   name = unlist(strsplit(file,'/','.'))[3] #split filename, grab second string to use in naming tif
   r = raster(file)
   out = 10^r
-  #writeRaster(out,filename=paste0(data_wd,'v2015/tmp/unlog/unlog_',name,sep=''),overwrite=T,format='GTiff')
+  
+  writeRaster(out,filename=paste0(data_wd,'v2015/tmp/unlog/unlog_',name,sep=''),overwrite=T,format='GTiff')
   
 }
 
@@ -119,7 +123,10 @@ Data came to use logged (using base 10 log) so need to 'unlog' the data first
 ## Reproject to mollweide
 ```{r reproject, message=F, warning=F, eval=F}
 
-    projection(w_sum) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"    #define initial projection. Helps avoid errors when reprojecting to mollweide
+#defining initial projection. Helps avoid errors when reprojecting to mollweide
+    projection(w_sum) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"  
+
+
     projection(c_sum) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"  
     mollCRS <- CRS('+proj=moll') #set mollweide CRS
 
@@ -132,9 +139,9 @@ Data came to use logged (using base 10 log) so need to 'unlog' the data first
 
 ## Resample to 1km 
 ```{r resample, message=F,warning=F,eval=F}
-   # resamp_w   <- resample(w_moll,ocean,progress='text',filename=file.path(data_wd,'v2015/tmp/weight_sum_moll_1km.tif'),overwrite=T,method='ngb')
+    resamp_w   <- resample(w_moll,ocean,progress='text',filename=file.path(data_wd,'v2015/tmp/weight_sum_moll_1km.tif'),overwrite=T,method='ngb')
 
-  #  resamp_c   <- resample(c_moll,ocean,progress='text',filename=file.path(data_wd,'v2015/tmp/count_sum_moll_1km.tif'),overwrite=T,method='ngb')
+    resamp_c   <- resample(c_moll,ocean,progress='text',filename=file.path(data_wd,'v2015/tmp/count_sum_moll_1km.tif'),overwrite=T,method='ngb')
 
 ```
 
@@ -152,7 +159,7 @@ weight_moll_1km = raster(file.path(data_wd,'v2015/tmp/weight_sum_moll_1km.tif'))
 #     count_mask = mask(count_moll_1km,ocean,progress='text',filename = file.path(data_wd,'v2015/tmp/count_sum_moll_1km_clip.tif'),overwrite=T)
 #     weight_mask = mask(weight_moll_1km,ocean,progress='text',filename=file.path(data_wd,'v2015/tmp/weight_sum_moll_1km_clip.tif'),overwrite=T)
 
-    count_mask = raster(file.path(data_wd,'v2015/tmp/count_sum_moll_1km_clip.tif'))
+    count_mask  = raster(file.path(data_wd,'v2015/tmp/count_sum_moll_1km_clip.tif'))
     weight_mask = raster(file.path(data_wd,'v2015/tmp/weight_sum_moll_1km_clip.tif'))
     
     plot(count_mask,col=cols,main='Count density (pieces/km2)')
@@ -172,8 +179,10 @@ weight_moll_1km = raster(file.path(data_wd,'v2015/tmp/weight_sum_moll_1km.tif'))
     plot(c_log,col=cols,main='Count density\nlog(pieces/km2)')
 ```
 
-## Get 99.99th quantile
-```{r quantile,message=F,warning=F}
+## Reference point 
+
+The reference point is the 99.99th quantile of the data.
+```{r quantile,message=F,warning=F,eval=F}
 w_ref = quantile(w_log,prob=c(0.001,0.01,0.1,0.25,0.5,0.75,0.9,0.99,0.999,0.9999))
 c_ref = quantile(c_log,prob=c(0.001,0.01,0.1,0.25,0.5,0.75,0.9,0.99,0.999,0.9999))
 
@@ -184,7 +193,9 @@ histogram(w_log,main='Weight density (log(g/km2))')
 histogram(c_log,main='Count density (log(pieces/km2))')
 ```
 
-## Rescale to 99.99th quantile
+## Rescale
+
+Using the reference point, rescale the data so that all values are between 0 and 1.
 ```{r rescale, message=F,warning=F}
 # w_rescale = calc(w_log,fun=function(x){ifelse(x>w_99,1,x/w_99)},filename=file.path(data_wd,'v2015/output/weight_rescale.tif'),overwrite=T)
 
@@ -197,7 +208,10 @@ c_rescale = raster(file.path(data_wd,'v2015/output/count_rescale.tif'))
 #raster:plot(c_rescale,main='Pressure layer: count density (pieces/km2)',col=cols)
 ```
 
-## Compare count vs weight
+## Compare
+
+Compare the differences between weight and count data to help decide what layer to use
+
 ```{r compare,message=F,warning=FALSE}
 
 # This provides some general statistics and visualizations:
