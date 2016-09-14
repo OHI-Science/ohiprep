@@ -158,7 +158,8 @@ This is performed by taking the natural log of each value and then dividing by t
 d_stand <- d_gf %>%
 #  mutate(ln_value = log(value)) %>%
   mutate(ln_value = value) %>%
-  mutate(quantile_95 = quantile(ln_value, probs=0.99)) %>%
+  mutate(quantile_95 = max(ln_value, na.rm=TRUE)) %>%
+#  mutate(quantile_95 = quantile(ln_value, probs=0.99)) %>%
   mutate(value_stand = ln_value/quantile_95) %>%
   mutate(value_stand = ifelse(value_stand > 1, 1, value_stand))
 
