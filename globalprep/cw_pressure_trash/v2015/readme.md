@@ -1,6 +1,6 @@
 ##Marine Plastics Layer for OHI 2015
 
-This data was used in the 2015 OHI global analysis for the Clean Waters goal. Click [here](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/cw_pressure_trash/create_layer.html) for full methods. 
+This data was used in the 2015 OHI global analysis for the Clean Waters goal. Click [here](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/cw_pressure_trash/v2015/create_layer.html) for full methods. 
 
 If the methodology or data produced here is used in publication, please make attribution clear. Please see our [citation policy](http://ohi-science.org/citation-policy/).
 
