@@ -1,5 +1,5 @@
 ---
-title: 'OHI: Sea Surface Temperature Pressure Layer 2015 '
+title: 'OHI 2015: Sea Surface Temperature Pressure Layer'
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
