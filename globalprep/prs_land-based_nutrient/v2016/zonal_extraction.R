@@ -1,6 +1,8 @@
 #####################################################
 ## Exctracting nutrient pressure data for OHI 2016
 ## MRF: June 1 2016
+## MRF: Sep 16 2016 update: revising trend to proportion
+##      (rather than absolute...saved with "new" suffix)
 #####################################################
 
 source('../ohiprep/src/R/common.R')
@@ -95,27 +97,51 @@ data <- data %>%
   filter(!is.na(pressure_score))#NA is Antarctica - this is fine
 
 ## get previous years data
-old_data <- read.csv("globalprep/prs_land-based_nutrient/v2015/int/nutrients_plume_data.csv")
+old_data <- read.csv("globalprep/prs_land-based_nutrient/v2015/int/nutrients_plume_data_offshore_3nm.csv")
 old_data <- gather(old_data, "year", "pressure_score", starts_with("global"))
 old_data <- old_data %>%
   mutate(year = gsub("global_plumes_fert_", "", year)) %>%
   mutate(year = gsub("_raw_log_extend_scaled", "", year)) %>%
   mutate(year = as.numeric(as.character(year))) %>% 
-  filter(sp_type == "eez") %>%   # this doesn't really apply to high seas regions and Antarctica is all zeros
+  filter(rgn_type == "eez") %>%   # this doesn't really apply to high seas regions and Antarctica is all zeros
   dplyr::select(rgn_id, rgn_name, year, pressure_score)
 
 trend_data <- rbind(data, old_data)
 
 ## trend should be calculated on 3nm (not eez)
-scenario_year <- 2016
-  trend_data <- trend_data %>%
-    filter(year %in% (scenario_year-7):(scenario_year-3)) %>%
+
+for(scenario_year in 2012:2016){ #scenario_year=2012
+
+## NOTE: trends for 2012 are calculated with 3 years of data
+##      trends for 2013 are calculaed with 4 years of data, the other years are calculated with 5 years data
+trend_years <- (scenario_year-7):(scenario_year-3)
+adj_trend_year <- ifelse(scenario_year %in% 2016:2014, (scenario_year-7), 2007)
+
+
+  trends <- trend_data %>%
+    filter(!is.na(pressure_score)) %>%
     group_by(rgn_id) %>%
-    do(mdl = lm(pressure_score ~ year, data = .)) %>%
-    summarize(rgn_id,
-              trend = coef(mdl)['year'] * 5) %>%
-    ungroup()
-  write.csv(trend_data, file.path(save_loc_data, sprintf('output/cw_fertilizers_trend_%s.csv', scenario_year)), row.names=FALSE)
+    do(mdl = lm(pressure_score ~ year, data=., subset=year %in% trend_years),
+       adjust_trend = .$pressure_score[.$year == adj_trend_year]) %>%
+    summarize(rgn_id, trend = ifelse(coef(mdl)['year']==0, 0, coef(mdl)['year']/adjust_trend * 5)) %>%
+    ungroup() %>%
+    mutate(trend = ifelse(trend>1, 1, trend)) %>%
+    mutate(trend = ifelse(trend<(-1), (-1), trend)) %>%
+    mutate(trend = round(trend, 4)) %>%
+    dplyr::select(rgn_id, trend) 
+  
+  write.csv(trends, file.path(save_loc_data, sprintf('output/cw_fertilizers_trend_%s_new.csv', scenario_year)), row.names=FALSE)
+}
+  ## compare new and old trend values:
+  old <- read.csv('globalprep/prs_land-based_nutrient/v2015/output/cw_fertilizers_trend_2012.csv') %>%
+    dplyr::select(rgn_id, old_trend = trend)
+new <- read.csv(file.path(save_loc_data, 'output/cw_fertilizers_trend_2012_new.csv')) %>%
+  left_join(old, by="rgn_id")
+new
+plot(new$old_trend, new$trend)
+abline(0, 1, col="red")
+tmp <- filter(trend_data, rgn_id==219) %>%
+  arrange(year)
   
   library(googleVis)
   plotData <- data %>%
