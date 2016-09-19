@@ -191,3 +191,117 @@ plot(c,col=cols,box=F,axes=F,add=T, main = 'Difference between method 1 and 2')
 hist(c,breaks=50,main = 'Difference between OHI pressure layer from Mean Sea Level Anomaly \n and Pressure layer from aggregated mean sea level trend')
 
 ```
+
+
+# look at monthly climatologies
+
+```{r}
+
+clim_12_nc <- nc_open(file.path(dir_anx_aviso,'dt_global_allsat_msla_h_y1993_2015_m12.nc'))
+
+clim_12 <- raster(file.path(dir_anx_aviso,'dt_global_allsat_msla_h_y1993_2015_m12.nc'))
+
+#define projection of the raster before reprojecting
+projection(clim_12) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+
+hist(clim_12,breaks=50)
+
+#lets compare recent 2015 month 
+
+clim_2015 <- raster(file.path(dir_anx_aviso,'msla_monthly_mean/dt_global_allsat_msla_h_y2015_m12.nc'))
+projection(clim_2015) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+
+plot(clim_2015)
+
+#difference (compare recent december to climatology for december)
+
+d <- clim_2015 - clim_12
+hist(d,breaks=50)
+plot(d)
+
+```
+
+
+
+### Explore the data
+
+#### 1. How does mean sea level vary over months?
+
+```{r explore}
+
+#Looking at means and sd over time for each month
+
+files <- list.files(file.path(dir_git,
+                              'globalprep/prs_slr/v2016/int/msla_monthly_coast'),full.names=T)
+
+for (i in years){
+  
+  print(i)
+  
+  #get all files for the year i
+    yr_files <- files[which(substr(files,100,103)==i)]%>%stack()
+
+    names(yr_files) <- months
+    #plot & save
+    
+    png(paste0('figs/monthly_boxplot_',i,'.png'), width = 6, height = 4, units = 'in', res = 300 )
+    
+    print(bwplot(yr_files,xlab = 'Months',ylab = 'Mean Sea Level Anomaly (meters)'))
+
+    dev.off()
+}
+
+img <- png::readPNG('figs/month-boxplots-2011-2014.png')
+
+```
+
+#### 2. What is the distribution of mean and sd mean sea level from January 2010 - December 2015
+
+```{r}
+
+  #get all months for all years 2010-2014
+    yr_m_files <- files[which(substr(files,100,103) %in% years)]
+
+  #get unique names for each layer
+    layer_names <- unique(basename(yr_m_files) %>% 
+                      str_replace('msla_monthly_coast_', '') %>%
+                      substr(1, 8)) %>%
+                      sort()
+  #stack into a raster stack (nlayers = 60) and assign names
+    s <- stack(yr_m_files)
+    
+    names(s) <- layer_names
+    
+    #calculate the mean
+    
+    m <- calc(s,fun=mean,na.rm=T)
+    
+    #calculate the sd
+    
+    std <- calc(s,fun=function(x){sd(x,na.rm=T)})
+    
+    #plot + hist
+    
+    #plot & save
+    
+    png('figs/mean_sd_msla_2010_2014.png', width = 10, height = 4, units = 'in', res = 300 )
+    par(mfrow=c(1,2),
+         mai = c(1, 0.5, 1, 1))
+    
+    plot(m,axes=F,col=cols,box=F,colNA = 'dimgray',main='Mean SLA 2010-2014')
+    plot(std,axes=F,col=cols,box=F,colNA = 'dimgray',main = 'Standard Deviation SLA 2010-2015')
+    
+    dev.off()
+    
+    h <- stack(m,std)
+    names(h)<-c("Mean SL 2010-2015","St. Dev. 2010-2015")
+    
+    png('figs/mean_sd_msla_hist_2010_2015.png',width = 8, height = 4, units = 'in', res = 300)
+    histogram(h)
+
+    dev.off()
+
+```
+
+
+
