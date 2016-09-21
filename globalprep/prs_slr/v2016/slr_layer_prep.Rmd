@@ -147,23 +147,19 @@ if(reload) {
 ```
 
 
-### Clip data to coastal cells
+# Clip data to coastal cells
 
-All NetCDF files for each month over the 22 years is rasterized and all non-coastal bordering cells are removed. To do this we use `raster::boundaries()` with the `type = 'inner'` which turns all coastal cells bordering land to 1 and the rest of the cells to 0.
+All NetCDF files for each month over the 22 years is rasterized and all non-coastal bordering cells are removed. To do this we use a 3 nautical mile offshore buffer polygon to select all coastal cells. For this to work, the raw data cells need to be disaggregated by a factor of 8 in order for the mask to accurately select cells that fall within the polygons. 
 
 
-```{r clip,eval=F}
+```{r clip, eval=F}
 
 #list all netCDF files
 nc_files <- list.files(file.path(dir_anx_aviso, 'msla_monthly_mean'),
                        full.names = TRUE,pattern='.nc')
 
-#--------------------------------------------------------------------
 ## resampling raw data to smaller cell size, then create a raster of all coastal cells. The resampling needs to be done
 ## first to ensure we get the small islands that would otherwise be ignored at larger cell seizes
-
-# land <- readOGR(dsn= file.path(dir_anx,'spatial/d2014/data'),layer = 'regions_gcs')%>%
-#           subset(rgn_typ=='land')
 
 #offshore 3 nm polygon for all regions
 three_nm <- readOGR(dsn= file.path(dir_anx,'spatial/d2014/data'),layer = 'regions_offshore3nm_gcs')
@@ -176,20 +172,13 @@ three_nm <- readOGR(dsn= file.path(dir_anx,'spatial/d2014/data'),layer = 'region
     projection(r) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
     
     r_3nm_mask <- mask(r,three_nm, progress='text')
-    writeRaster(r_3nm_mask,filename = file.path(dir_anx,'prs_slr/v2016/int/rast_3nm_mask.tif'))
+    writeRaster(r_3nm_mask,filename = file.path(dir_git,'globalprep/prs_slr/v2016/int/rast_3nm_mask.tif'))
     
-    # r_in <- r%>%
-    #          mask(r_mask, inverse=T, filename = file.path(dir_anx,'prs_slr/v2016/int/land_mask.tif'),progress='text',overwrite=T)%>%
-    #           boundaries(type='inner',asNA=T)
-    # 
-    # r_in[r_in==0]<-NA
-    
-   # writeRaster(r_in,filename=file.path(dir_anx,'prs_slr/v2016/int/coastal_cells.tif'),overwrite=T)
+```
 
-## Using type='inner' we get all coastal cells bordering land. This is what we want to use for this pressure layer
+###
 
-
-#--------------------------------------------------------------------
+```{r, eval=F}
 
 ## Function that rotates each monthly file, sets the long/lat projection, and keeps only coastal cells - saved to GitHub
     
@@ -218,11 +207,11 @@ mclapply(nc_files,months_coast,mc.cores=6)
 ```
 
 
-### Read raw data as monthly means and convert to annual means
+### Annual mean sea level anomalies
 
-Raw data in monthly mean sea level anomalies, at .25 degree grid globally, is processed into annual mean sea level anomalies.
+Annual mean sea level anomaly rasters are derived from the monthly data. 
 
-``` {r msla_monthly_to_annual}
+``` {r msla_monthly_to_annual, eval=F}
 
 month_files <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_monthly_coast'),full.names=T)
 
@@ -249,7 +238,7 @@ foreach (j = all_yrs) %dopar% {
 
 The reference point is calculated across the 5 most recent years, 2011 - 2015.
 
-```{r ref}
+```{r ref, eval=F}
 
 annual_means <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_mean'),pattern = '*.tif',full.names=T)
 
@@ -278,13 +267,13 @@ ref_pos <- quantile(vals_pos,prob=0.9999,na.rm=T)
 #0.2523
 ```
 
+Since the reference point is very similar, I'm going to use the reference point across all values, not only positive.
+
 # Rescale 
 
-Rescale each of the 5 most recent years using the reference point
+Rescale each of year in the dataset from 0 to 1 using the reference point. If a value is greater than the reference point, it is automatically given a value of 1.
 
-```{r rescale}
-
-recent_yrs <- annual_means[which(substr(annual_means,96,99) %in% c(2011:2015))]
+```{r rescale, eval=F}
 
 resc_slr <- function(file){
 
@@ -297,7 +286,7 @@ resc_slr <- function(file){
 
 }
 
-mclapply(recent_yrs,resc_slr,mc.cores = 5)
+mclapply(annual_means,resc_slr,mc.cores = 3)
 
 ```
 
