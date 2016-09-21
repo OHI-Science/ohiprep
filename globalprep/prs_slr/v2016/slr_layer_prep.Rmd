@@ -193,8 +193,6 @@ three_nm <- readOGR(dsn= file.path(dir_anx,'spatial/d2014/data'),layer = 'region
 
 ## Function that rotates each monthly file, sets the long/lat projection, and keeps only coastal cells - saved to GitHub
     
-    registerDoParallel(6) 
-    
 months_coast <- function(x){
   
   m_yr <- substr(x,108,115)
@@ -215,18 +213,7 @@ months_coast <- function(x){
 }
 
 #apply the clipping function to all files
-mclapply(nc_files,months_coast,mc.cores=10)
-
-```
-
-
-```{r years}
-
-#years of interest
-
-years <- c(2010:2015)
-
-months <- c(1:12)
+mclapply(nc_files,months_coast,mc.cores=6)
 
 ```
 
@@ -241,7 +228,7 @@ month_files <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_m
 
 all_yrs <- c(1993:2015)
 
-registerDoParallel(10) 
+registerDoParallel(6) 
 
 foreach (j = all_yrs) %dopar% {
   
@@ -253,12 +240,6 @@ foreach (j = all_yrs) %dopar% {
   rast_annual_mean <- stack(msla_yr)%>%
                       calc(mean,na.rm=T)%>%
                       writeRaster(filename = paste0(file.path(dir_git),'/globalprep/prs_slr/v2016/int/msla_annual_mean/rast_msla_annual_',j,'.tif'),overwrite=T)
-
-
-  ### stack all rasters for this year, and calc annual standard deviation, then write as raster
-  rast_annual_sd <- stack(msla_yr)%>%
-                      calc(sd,na.rm=T)%>%
-                      writeRaster(filename = paste0(file.path(dir_git),'/globalprep/prs_slr/v2016/int/msla_annual_sd/rast_msla_annual_sd_',j,'.tif'),overwrite=T)
 
 }
 
@@ -272,11 +253,14 @@ The reference point is calculated across the 5 most recent years, 2011 - 2015.
 
 annual_means <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_mean'),pattern = '*.tif',full.names=T)
 
-#get data across all 5 years
+#get data across all years
 vals <- c()
-for(i in 2011:2015){
+
+for(i in 1993:2015){
   
-  m <- annual_means[which(substr(annual_means,96,99) == i)]%>%raster()%>%getValues
+  m <- annual_means[which(substr(annual_means,96,99) == i)]%>%
+    raster()%>%
+    getValues()
   
   vals <- c(vals,m)
   
@@ -284,15 +268,14 @@ for(i in 2011:2015){
 
 vals <- vals[!is.na(vals)]
 
-hist(vals)
+ref <- quantile(vals,prob = 0.9999,na.rm=T)
+#0.246225
 
 #set negative values to 0 before taking ref point
-vals[vals<0]<-0
+vals_pos = vals[vals >=0]
 
-hist(vals)
-
-ref <- quantile(vals,prob=0.9999,na.rm=T)
-
+ref_pos <- quantile(vals_pos,prob=0.9999,na.rm=T)
+#0.2523
 ```
 
 # Rescale 
@@ -319,22 +302,3 @@ mclapply(recent_yrs,resc_slr,mc.cores = 5)
 ```
 
 
-## Calculate mean pressure by region by year
-
-Using 1000 m region ID raster to run zonal statistics on the pressures layers, calculate the regional average pressures for the study period, and save as a .csv.
-
-``` {r calc_mean_pressures_by_year}
-
-slr_rgn_mean <- zonal(bc_slr_resc, rast_rgn, fun = 'mean') %>%
-  as.data.frame() %>%
-  rename(pressure = mean, rgn_id = zone) %>%
-  left_join(rgn_poly@data %>% select(rgn_id, rgn_name), by = 'rgn_id')
-
-knitr::kable(slr_rgn_mean)
-
-write_csv(slr_rgn_mean, file.path(dir_goal, 'output/slr/slr_rgn_pressures.csv'))
-
-```
-
-    ``` {r child = 'prov/prov_ftr2.Rmd'}
-    ```
