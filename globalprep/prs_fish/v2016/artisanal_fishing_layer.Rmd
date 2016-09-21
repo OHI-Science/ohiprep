@@ -1,0 +1,177 @@
+---
+title: 'OHI 2016: Artisanal Fishing Pressure Layer'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: html_document:
+    code_folding: show
+    toc: true
+    toc_depth: 1
+    toc_float: yes
+    number_sections: false
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+---
+
+#Summary
+
+#Updates from previous assessment
+
+
+***
+
+#Data Source
+
+**Reference**: Pauly D. and Zeller D. (Editors), 2015. Sea Around Us Concepts, Design and Data (seaaroundus.org)  
+
+**Downloaded**: June 27, 2016 (sent by email from Ar'ash Tavakolie)  
+
+**Description**:  Catch per half degree cell (tons)  
+
+**Native data resolution**: 0.5 degree    
+
+**Time range**: 1950 - 2010  
+
+**Format**:  Tabular  
+
+***
+  
+# Methods
+
+##Setup
+
+```{r setup,message=FALSE,warning=FALSE,verbose=FALSE}
+
+#set options for all chunks in code
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+
+library(parallel)
+library(foreach)
+library(doParallel)
+library(raster)
+library(rasterVis)
+library(RColorBrewer)
+
+cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
+mytheme=rasterTheme(region=cols)
+source("~/github/ohiprep/src/R/common.R")
+
+#ocean raster at 1km
+  ocean = raster(file.path(dir_M, 'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
+  
+#set mollweide projection CRS
+  mollCRS=crs('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs')
+  
+#paths
+ dir_anx <- file.path(dir_M,'git-annex/globalprep/prs_fish/v2016')
+
+```
+
+
+## Net Primary Productivity
+
+```{r npp}
+npp_files <- list.files(file.path(dir_anx,'VGPM_primary_productivity/int/annual_npp'),pattern = 'annual_mean_npp_2',full.names = T)
+
+plot(raster(npp_files[13]), col=cols, main = 'Net Primary Production 2015', axes=F)
+
+```
+
+## Standardize catch by NPP
+
+Although our catch data goes back to 1950, we only have net primary productivity data back to 2003. Therefore we can only create artisanal fishing pressure layers for the years 2003 - 2010. 
+
+```{r standardize}
+
+catch_files <- list.files('int/annual_artisanal_rasters',full.names=T)
+
+registerDoParallel(2)
+foreach (yr = c(2003:2010)) %dopar%{
+  
+  #1. Get artisanal catch raster
+  
+  art <- catch_files[substr(catch_files,30,33) == yr]%>%
+          raster()%>%
+          projectRaster(npp,over=T,method = 'ngb')
+  
+  npp <- npp_files[substr(npp_files,111,114)==yr]%>%
+          raster()
+
+  overlay(art,npp,fun=function(x,y){x/y},filename = paste0('int/artisanal_npp/artisanal_npp/',yr,'.tif'))  
+  
+}
+
+
+
+```
+
+## Mean catch over 5 years
+
+```{r mean_catch}
+
+art_files <- list.files('int/annual_artisanal_rasters',full.names=T)
+
+registerDoParallel(10)
+
+foreach (i = 1950:2006) %dopar%{
+  
+  yrs <- c(i:(i+4))
+  
+  out <- art_files[which(substr(art_files,30,33) %in% yrs)]%>%
+            stack()%>%
+            calc(fun=function(x){mean(x,na.rm=T)})
+  
+  
+  writeRaster(out,filename = paste0('int/mean_artisanal_5yr/mean_catch_',yrs[1],'_',yrs[5],'.tif'),overwrite=T)
+  
+}
+
+```
+
+## Rescale
+
+```{r rescale}
+
+mean_files <- list.files('int/mean_artisanal_5yr',full.names=T)
+
+foreach (i = 1950:2006) %dopar%{
+  
+  yrs <- c(i:(i+4))
+  
+  out <- art_files[which(substr(art_files,30,33) %in% yrs)]%>%
+            stack()%>%
+            calc(fun=function(x){mean(x,na.rm=T)})
+  
+  
+  writeRaster(out,filename = paste0('int/mean_artisanal_5yr/mean_catch_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
+  
+}
+
+
+```
+
+
+# Results
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
