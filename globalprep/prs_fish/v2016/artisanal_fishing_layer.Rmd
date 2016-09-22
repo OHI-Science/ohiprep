@@ -1,7 +1,8 @@
 ---
 title: 'OHI 2016: Artisanal Fishing Pressure Layer'
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
-output: html_document:
+output: 
+  html_document:
     code_folding: show
     toc: true
     toc_depth: 1
@@ -11,6 +12,8 @@ output: html_document:
     highlight: haddock
     includes: 
       in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+pdf_document:
+  toc: true
 ---
 
 #Summary
@@ -22,6 +25,7 @@ This pressure layer represents the spatial distribution of artisanal fishing pre
 The artisanal fisheries pressure layer has not been updated since the first global assessment in 2012. Previous methods are detailed in Halpern et al. (2008) where the layer was originally developed ([page 5 of supplement](http://science.sciencemag.org/content/sci/suppl/2008/02/12/319.5865.948.DC1/Halpern_SOM.pdf)).
 
 In brief, the original method used small-scale fisheries data provided by the FAO for just 59 countries. 
+
 > The Sea Around Us Project developed a multivariate regression model to isolate geographic, demographic, and socioeconomic variables that best predict the SAUP-validated artisanal catch rates from FAO (excluding values estimated by SAUP). The best and simplest model involved only two variables, length of coastline and unemployment rate. This model was used to predict artisanal catch values for countries without FAO-reported data. Finally, we distributed these national total catch values (CT) into 1 km2 cells. 
 
 ***
@@ -89,7 +93,7 @@ plot(raster(npp_files[13]), col=cols, main = 'Net Primary Production 2015', axes
 
 Although our catch data goes back to 1950, we only have net primary productivity data back to 2003. Therefore we can only create artisanal fishing pressure layers for the years 2003 - 2010. 
 
-```{r standardize}
+```{r standardize, eval=F}
 
 catch_files <- list.files('int/annual_artisanal_rasters',full.names=T)
 
@@ -113,11 +117,17 @@ foreach (yr = c(2003:2010)) %dopar%{
 
 ```
 
+```{r plot_art_npp}
+plot(ocean, col='cornsilk2', axes=F, main='Catch (tons) standardized by NPP \n 2010', legend=F) 
+plot(raster('int/artisanal_npp/artisanal_npp_2010.tif'),col=cols,axes=F,add=T)
+
+```
+
 ## Five year mean
 
 We calculate the means over a rolling window of 5 years to account for interannual variability. The data is log transformed.
 
-```{r mean_catch}
+```{r mean_catch, eval=F}
 
 art_npp <- list.files('int/artisanal_npp',full.names=T)
 
@@ -143,6 +153,7 @@ foreach (i = 2003:2006) %dopar%{
 Look at all catch data standardized by NPP from 2003 - 2010 and use the 99.99th quantile as the reference point.
 
 ```{r ref_point}
+art_npp <- list.files('int/artisanal_npp',full.names=T)
 
 #get data across all years
 vals <- c()
@@ -168,7 +179,7 @@ The reference point is `r ref`.
 
 ## Rescale
 
-```{r rescale}
+```{r rescale, eval=F}
 
 mean_files <- list.files('int/mean_artisanal',full.names=T, pattern = 'log')
 
@@ -176,7 +187,7 @@ foreach (i = 2003:2006) %dopar%{
   
   yrs <- c(i:(i+4))
   
-  out <- mean_files[which(substr(mean_files,31,34) == i)]%>%
+  out <- mean_files[which(substr(mean_files,34,37) == i)]%>%
             raster()%>%
             calc(fun=function(x){ifelse(x>ref,1,x/ref)})%>%
             resample(ocean,method='ngb',filename = paste0(file.path(dir_anx),'/out/artisanal/art_press_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
@@ -199,7 +210,6 @@ plot(r,col=cols,axes=F,box=F,add=T)
 
 histogram(r)
 
-
 ```
 
 ## Citation Information
@@ -211,23 +221,4 @@ Pauly D. and Zeller D. (Editors), 2015. Sea Around Us Concepts, Design and Data 
 Behrenfeld, M.J. and Falkowski, P.G., 1997. Photosynthetic rates derived from satellite‐based chlorophyll concentration. Limnology and oceanography, 42(1), pp.1-20.
 
 Downloaded from http://www.science.oregonstate.edu/ocean.productivity/standard.product.php
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
