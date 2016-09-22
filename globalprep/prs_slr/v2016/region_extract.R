@@ -24,9 +24,7 @@ rgn_data <- read.csv(file.path(dir_M, "git-annex/globalprep/spatial/d2014/data/r
 # save location
 save_loc <- "globalprep/prs_slr/v2016"
 
-#### Acid ----
-# read in acid data (should be 10 layers, with values 0 to 1)
-
+# read in raster files
 rasts <- list.files(slr_loc)
 
 pressure_stack <- stack()
@@ -49,8 +47,7 @@ data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="rgn_id", by.y="zone") %
   gather("year", "pressure_score", starts_with("slr")) 
 
 slr_data <- data %>%
-  mutate(year=gsub('slr_moll_1km_rescaled_', '', year)) %>%
-  mutate(year = substring(year, 6, 9)) %>%
+  mutate(year=gsub('slr_', '', year)) %>%
   mutate(year = as.numeric(year)) %>%
   filter(rgn_typ == "eez") %>%
   dplyr::select(rgn_id, rgn_nam, year, pressure_score)
@@ -62,7 +59,7 @@ write.csv(slr_data, file.path(save_loc, "int/slr.csv"), row.names=FALSE)
 # function to extract data more easily
 saveData <- function(newYear){
   
-  assessYear <- newYear + 2
+  assessYear <- newYear + 1
   criteria_year <- ~year == newYear
 
     slr  <- slr_data %>%
@@ -70,7 +67,7 @@ saveData <- function(newYear){
       dplyr::select(rgn_id, pressure_score) %>%
       arrange(rgn_id)
   
-  write.csv(slr, file.path(save_loc, sprintf('output/acid_%s.csv', assessYear)), row.names=FALSE)
+  write.csv(slr, file.path(save_loc, sprintf('output/slr_%s.csv', assessYear)), row.names=FALSE)
 }
 
 
