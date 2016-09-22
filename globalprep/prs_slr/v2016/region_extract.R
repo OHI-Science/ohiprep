@@ -28,7 +28,7 @@ save_loc <- "globalprep/prs_slr/v2016"
 rasts <- list.files(slr_loc)
 
 pressure_stack <- stack()
-for(raster in rasts){ #raster="oa_interpolated_cells.tif"
+for(raster in rasts){ #raster="slr_1993.tif"
   tmp <- raster(file.path(slr_loc, raster))
   pressure_stack <- stack(pressure_stack, tmp)
 }
@@ -40,8 +40,8 @@ click(pressure_stack[[5]])
 # extract data for each region:
 regions_stats <- zonal(pressure_stack,  zones, fun="mean", na.rm=TRUE, progress="text")
 regions_stats2 <- data.frame(regions_stats)
-setdiff(regions_stats2$zone, rgn_data$rgn_id) # antarctica regions are in there, makes sense....no land
-setdiff(rgn_data$rgn_id, regions_stats2$zone) # 213 is in there, that makes sense (Antarctica)
+setdiff(regions_stats2$zone, rgn_data$ant_id) # antarctica regions are in there, makes sense....no land
+setdiff(rgn_data$ant_id, regions_stats2$zone) # 213 is in there, that makes sense (Antarctica)
 
 data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="rgn_id", by.y="zone") %>%
   gather("year", "pressure_score", starts_with("slr")) 
