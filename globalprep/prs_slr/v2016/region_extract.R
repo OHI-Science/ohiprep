@@ -24,9 +24,7 @@ rgn_data <- read.csv(file.path(dir_M, "git-annex/globalprep/spatial/d2014/data/r
 # save location
 save_loc <- "globalprep/prs_slr/v2016"
 
-#### Acid ----
-# read in acid data (should be 10 layers, with values 0 to 1)
-
+# read in raster files
 rasts <- list.files(slr_loc)
 
 pressure_stack <- stack()
