@@ -1,6 +1,10 @@
-## Ocean Health Index 2016: Commercial Fishing Pressures
+## Ocean Health Index 2016: Fishing Pressures
 
-See full data prep details [here](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/prs_fish/v2016/fishing_pressure_layers.html).
+There are two types of fishing pressure layers used in the Ocean Health Index - Commercial and Artisanal
+
+See full data prep details for commercial fishing pressures [here](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/prs_fish/v2016/fishing_pressure_layers.html).
+
+See full data prep details for artisanal fishing pressures [here](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/prs_fish/v2016/artisanal_fishing_layer.html)
 
 See Net Primary Productivity data prep details [here](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/prs_fish/v2016/prim_productivity/npp.html)
 
