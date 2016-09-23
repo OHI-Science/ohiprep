@@ -81,8 +81,11 @@ setwd(file.path(dir_M,'git-annex/globalprep/prs_fish'))
     gear_prop_hb_gcs = overlay(hb_gcs,all_catch_gcs,fun=function(x,y){x/y},progress='text')
 
     
+    hb_wgs = stack(dem_d,dem_hb, pel_hb)%>%calc(.,fun=function(x){sum(x,na.rm=T)})
+    lb_wgs = stack(pel_lb, dem_lb)%>%calc(.,fun=function(x){sum(x,na.rm=T)})
     
-    
+    hb_prop_wgs = overlay(hb_wgs,all_catch_gcs,fun=function(x,y){x/y}, filename = 'v2015/gear_prop_hb_gcs.tif')
+    lb_prop_wgs = overlay(lb_wgs,all_catch_gcs,fun=function(x,y){x/y}, filename = 'v2015/gear_prop_lb_gcs.tif')
     
   # MOLLWEIDE  
     # reproject all original raster files
@@ -97,10 +100,10 @@ setwd(file.path(dir_M,'git-annex/globalprep/prs_fish'))
     # aggregate high and low bycatch
     
     hb = stack(dem_d_moll,dem_hb_moll,pel_hb_moll)%>%
-      calc(.,fun=function(x){sum(x)},progress='text')
+      calc(.,fun=function(x){sum(x,na.rm=T)},progress='text')
     
     lb = stack(pel_lb_moll,dem_lb_moll)%>%
-      calc(.,fun=function(x){sum(x)},progress='text')
+      calc(.,fun=function(x){sum(x,na.rm=T)},progress='text')
     
     # aggregate all catch
     
