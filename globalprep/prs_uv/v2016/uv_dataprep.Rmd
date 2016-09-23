@@ -250,7 +250,11 @@ foreach(i = c(2007:2011)) %dopar% { #i=2005
   out = projectRaster(diff,crs=mollCRS,progress='text',over=T)%>%
          resample(.,ocean,method='ngb',progress='text')%>%
           mask(.,ocean,filename=paste0(dir_M,'/git-annex/globalprep/prs_uv/v2016/output/uv_',min(yrs),'_',max(yrs),'-2005-2009_moll_1km.tif',sep=""),overwrite=T)
-  
+```
+
+# Rescale
+
+```{r rescale}
    resc_num         <- quantile(out,prob=0.9999) # calculate the 99.99th quantile  
 
   sprintf('Rescaling')
