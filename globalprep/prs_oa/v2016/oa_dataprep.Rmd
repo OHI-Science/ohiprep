@@ -349,7 +349,7 @@ We want to create a raster layer that shows all cells that were gap-filled. Sinc
 ```
 
 
-**References**  
+#Citation information  
 
 Woods Hole Oceanographic Institution. 2014 update to data originally published in: Feely, R.A., S.C. Doney, and
 S.R. Cooley. 2009. Ocean acidification: Present conditions and future changes in a high-CO2 world.
