@@ -250,15 +250,34 @@ foreach(i = c(2007:2011)) %dopar% { #i=2005
   out = projectRaster(diff,crs=mollCRS,progress='text',over=T)%>%
          resample(.,ocean,method='ngb',progress='text')%>%
           mask(.,ocean,filename=paste0(dir_M,'/git-annex/globalprep/prs_uv/v2016/output/uv_',min(yrs),'_',max(yrs),'-2005-2009_moll_1km.tif',sep=""),overwrite=T)
+}
 ```
 
 # Rescale
 
 ```{r rescale}
-   resc_num         <- quantile(out,prob=0.9999) # calculate the 99.99th quantile  
+out_files <- list.files(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/output'),full.names=T, pattern = '9_m')
 
-  sprintf('Rescaling')
+#get data across all years
+vals <- c()
 
+for(i in 1:5){
+  print(i)
+  m <- out_files[i]%>%
+    raster()%>%
+    getValues()
+  
+  vals <- c(vals,m)
+  
+}
+vals <- vals[!is.na(vals)]
+   resc_num         <- quantile(vals,prob=0.9999) # calculate the 99.99th quantile  
+
+
+foreach(i = c(2007:2011)) %dopar% { #i=2005
+  
+out_files
+  
   out_rescale = calc(out,fun=function(x){ifelse(x>0,ifelse(x>resc_num,1,x/resc_num),0)},
                      filename=paste0(dir_M,'/git-annex/globalprep/prs_uv/v2016/output/uv_',min(yrs),'_',max(yrs),'-2005-2009_rescaled_moll_1km.tif',sep=""),overwrite=T)
 }
