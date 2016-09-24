@@ -281,10 +281,9 @@ rgn_data <- read.csv(file.path(dir_M, "git-annex/globalprep/spatial/d2014/data/r
 ### Low bycatch data first
 # get raster data:
 rasts <- list.files(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/out/low_bycatch'))
-rasts <- rasts[grep("rescaled", rasts)]
 
 pressure_stack <- stack()
-for(raster in rasts){ # raster = "lb_fish_pressure_rescaled_2003-2007.tif"
+for(raster in rasts){ # raster = "lb_fish_pressure_2003-2007.tif"
   tmp <- raster(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/out/low_bycatch', raster))
   pressure_stack <- stack(pressure_stack, tmp)
 }
@@ -299,7 +298,7 @@ data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="rgn_id", by.y="zone") %
   gather("year", "pressure_score", starts_with("lb")) 
 
 lb_data <- data %>%
-  mutate(year = substring(year, 32, 35)) %>%
+  mutate(year = substring(year, 23, 26)) %>%
   mutate(year = as.numeric(year)) %>%
   mutate(year = year + 6) %>%
   filter(ant_typ == "eez") %>%
@@ -344,7 +343,6 @@ print(Motion, file='lb.html')
 ### Get the high bycatch data 
 
 rasts <- list.files(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/out/high_bycatch'))
-rasts <- rasts[grep("rescaled", rasts)]
 
 pressure_stack <- stack()
 for(raster in rasts){ # raster = "lb_fish_pressure_rescaled_2003-2007.tif"
@@ -362,7 +360,7 @@ data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="rgn_id", by.y="zone") %
   gather("year", "pressure_score", starts_with("hb")) 
 
 hb_data <- data %>%
-  mutate(year = substring(year, 32, 35)) %>%
+  mutate(year = substring(year, 23, 26)) %>%
   mutate(year = as.numeric(year)) %>%
   mutate(year = year + 6) %>%
   filter(ant_typ == "eez") %>%
