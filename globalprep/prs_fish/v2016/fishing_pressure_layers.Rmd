@@ -58,7 +58,7 @@ Load all relevant libraries including parallel processing packages.
 ```{r setup,message=FALSE,warning=FALSE,verbose=FALSE}
 
 #set options for all chunks in code
-knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+knitr::opts_chunk$set(warning=FALSE, message=FALSE,fig.width = 6, fig.height = 4, fig.path = 'figs/')
 
 library(parallel)
 library(foreach)
@@ -79,7 +79,6 @@ source("~/github/ohiprep/src/R/common.R")
   
 #paths
  dir_git <- file.path(dir_M,'git-annex/globalprep/prs_fish/v2016')
-
   
 ```
 
@@ -89,8 +88,9 @@ source("~/github/ohiprep/src/R/common.R")
 These two rasters are at a resolution of 1km2 and were created in this [dataprep.R](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/prs_fish/v2015/dataprep.R) script
 
 ```{r gear_rasters}
-gear_hb = raster(file.path(dir_M,'git-annex/globalprep/prs_fish/v2015/gear_prop_hb_moll_1km_ocean.tif'))
-gear_lb = raster(file.path(dir_M,'git-annex/globalprep/prs_fish/v2015/gear_prop_lb_moll_1km_ocean.tif'))
+
+gear_hb = raster(file.path(dir_M,'git-annex/globalprep/prs_fish/v2015/gear_prop_hb_gcs.tif'))
+gear_lb = raster(file.path(dir_M,'git-annex/globalprep/prs_fish/v2015/gear_prop_lb_gcs.tif'))
 
 stack(gear_hb,gear_lb)%>%
   `names<-`(c("High Bycatch Gear","Low Bycatch Gear"))%>%
@@ -101,61 +101,40 @@ stack(gear_hb,gear_lb)%>%
 
 The Net Primary Production data was prepared in [npp.Rmd](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/prs_fish/v2016/prim_productivity/npp.html).
 
-```{r npp, eval=F}
+```{r npp}
 
-npp <- list.files(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/VGPM_primary_productivity/int/annual_npp'),pattern = 'moll_1km_',full.names=T)
+npp <- list.files(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/VGPM_primary_productivity/int/annual_npp'),pattern = 'npp_2',full.names=T)
 
-registerDoParallel(4)
-
-foreach (i = 2003:2006) %dopar%{
-  
-  yrs <- i:(i+4)
-  
-  s <- npp[which(substr(npp,120,123)%in%yrs)]%>%
-        stack()%>%
-        calc(fun=function(x){mean(x,na.rm=T)},filename = paste0(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/int/npp_5yrs/npp_'),i,'-',i+4,'.tif'))
-}
-
-
+plot(raster(npp[13]),col=cols,axes=F,main = 'Net Primary Production (for)mg C/m2/day) \n 2015')
 ```
 
-```{r npp_plot}
-
-raster(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/VGPM_primary_productivity/int/annual_npp/annual_mean_npp_moll_1km_2010.tif'))%>%plot(col=cols,box=F,axes=F,main = 'Mean Net Primary Productivity (mg C/m2/day) \n 2010')
-
-```
-
-# Annual catch rasters
+## Annual catch 
 
 We only use catch data from 2003 - 2010 to calculate these layers since those are the time periods where we also have primary productivity data. And we don't need to go further back than 2003 since all OHI assessments will use this time period.
 
 ```{r annual_catch, eval=F}
 
-catch_files <- list.files(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/yearly_saup_rasters'),full.names = T)[54:61]
+catch_files <- list.files('int/annual_industrial_rasters',full.names = T)[54:61]
 
 # function that takes each annual catch raster, reprojects and resamples, splits it according to high and low bycatch and then standardizes by npp for that year.
 
 fish_fun <- function(file){
   
-  yr <- substr(file,74,77)
+  yr <- substr(file,31,34)
   
-  r  <- raster(file)%>%
-         projectRaster(.,crs=mollCRS, over = T)%>%
-          raster::resample(ocean,method = 'ngb', filename=paste0(
-            file.path(dir_git,'int/annual_catch_moll_1km/annual_catch_moll_1km_'),yr,'.tif',sep=''),overwrite=T)
+  r  <- raster(file)
   
   hb <- overlay(r,gear_hb,fun=function(x,y){x*y},filename = paste0(file.path(dir_git,'int/annual_hb_catch/annual_hb_catch_'),yr,'.tif',sep=''),overwrite=T)
-    
+      
   lb <- overlay(r,gear_lb,fun=function(x,y){x*y},filename = paste0(file.path(dir_git,'int/annual_lb_catch/annual_lb_catch_'),yr,'.tif',sep=''),overwrite=T)
   
 }
 
-mclapply(catch_files,fish_fun, mc.cores = 8)
+mclapply(catch_files,fish_fun, mc.cores = 6)
 
 ```
 
-
-# Standardize
+## Standardize by NPP
 
 Total catch per cell is standardized by the NPP values. This is done because the same fishing pressure can have different impacts depending on the productivity in the region. Mean atch values are calculated across a rolling window of five years.
 
@@ -166,95 +145,159 @@ Total catch per cell is standardized by the NPP values. This is done because the
 hb_files <- list.files(file.path(dir_git,'int/annual_hb_catch'),full.names=T)
 lb_files <- list.files(file.path(dir_git,'int/annual_lb_catch'),full.names=T)
 
-npp <- list.files(file.path(dir_git,'int/npp_5yrs'),full.names=T)
+registerDoParallel(6)
 
-foreach(i = 2003:2006) %dopar%{
+foreach (yr = c(2003:2010)) %dopar%{
   
-   yrs <- i:(i+4)
+  #1. get net primary production for that year
+  n <- npp[substr(npp,111,114)==yr]%>%
+          raster()
 
- #mean catch for 5 yrs
- hb <- hb_files[which(substr(hb_files,90,93)%in%yrs)]%>%
-         stack()%>%
-         calc(fun=function(x){mean(x,na.rm=T)},filename = paste0(file.path(dir_git), '/int/hb_catch_5yrs/hb_',i,'-',i+4,'.tif'))
-   
-   hb <- raster(paste0(file.path(dir_git), '/int/hb_catch_5yrs/hb_',i,'-',i+4,'.tif'))
- 
-lb <- lb_files[which(substr(lb_files,90,93)%in%yrs)]%>%
-        stack()%>%
-        calc(fun=function(x){mean(x,na.rm=T)},filename = paste0(file.path(dir_git), '/int/lb_catch_5yrs/lb_',i,'-',i+4,'.tif'))
- 
- 
- pp <- npp[which(substr(npp,71,74)==i)]%>%raster()
- 
- hb_out <- hb/pp
- writeRaster(hb_out,filename = paste0(file.path(dir_git), '/out/high_bycatch/hb_fish_pressure_',i,'-',i+4,'.tif'))
+  #2. Get bycatch rasters for the yr
+  cat_hb <- hb_files[substr(hb_files,90,93) == yr]%>%
+              raster()%>%
+              projectRaster(n,over=T,method = 'ngb')
+  cat_lb <- lb_files[substr(lb_files,90,93) == yr]%>%
+              raster()%>%
+              projectRaster(n,over=T,method = 'ngb')
+  
+  #3. Divide catch by npp and save to git-annex
+  overlay(cat_hb,n,fun=function(x,y){x/y},filename = paste0(dir_git,'/int/annual_catch_npp/hb_catch_npp_',yr,'.tif'), overwrite=T) 
+  overlay(cat_lb,n,fun=function(x,y){x/y},filename = paste0(dir_git,'/int/annual_catch_npp/lb_catch_npp_',yr,'.tif'), overwrite=T) 
+  
+}
+```
 
- lb_out <- lb/pp
- writeRaster(lb_out,filename = paste0(file.path(dir_git), '/out/low_bycatch/lb_fish_pressure_',i,'-',i+4,'.tif'))
+## Five year means
+
+Mean catch per cell is calculated over a rolling window of 5 years to account for interannual variability. The data is then log transformed.
+
+```{r mean_catch, eval=F}
+
+lb_npp <- list.files(file.path(dir_git,'/int/annual_catch_npp'),full.names=T, pattern = 'lb')
+hb_npp <- list.files(file.path(dir_git,'/int/annual_catch_npp'),full.names=T, pattern = 'hb')
+
+registerDoParallel(4)
+
+foreach (i = 2003:2006) %dopar%{
+  
+  yrs <- c(i:(i+4))
+  
+  out_lb <- lb_npp[which(substr(lb_npp,89,92) %in% yrs)]%>%
+            stack()%>%
+            calc(fun=function(x){mean(x,na.rm=T)}, filename = paste0(dir_git,'/int/mean_catch_5yr/mean_lb_catch_',yrs[1],'_',yrs[5],'.tif'),overwrite=T)%>%
+            calc(fun=function(x){log(x+1)})
+  
+  writeRaster(out_lb,filename = paste0(dir_git,'/int/mean_catch_5yr/mean_lb_catch_log',yrs[1],'_',yrs[5],'.tif'),overwrite=T)
+  
+    out_hb <- hb_npp[which(substr(hb_npp,89,92) %in% yrs)]%>%
+            stack()%>%
+            calc(fun=function(x){mean(x,na.rm=T)}, filename = paste0(dir_git,'/int/mean_catch_5yr/mean_hb_catch_',yrs[1],'_',yrs[5],'.tif'),overwrite=T)%>%
+            calc(fun=function(x){log(x+1)})
+  
+  writeRaster(out_hb,filename = paste0(dir_git,'/int/mean_catch_5yr/mean_hb_catch_log',yrs[1],'_',yrs[5],'.tif'),overwrite=T)
   
 }
 
 ```
 
-# Rescale
 
-The data is first log transformed and then rescaled according to the 99.99th quantile.
+## Reference Point
 
-```{r rescale, eval = F}
+Look at all catch data standardized by NPP from 2003 - 2010 and use the 99.99th quantile as the reference point.
 
-#list all files created above
-  hb_files = list.files(file.path(dir_git,"out/high_bycatch"),full.names=T)
-  lb_files = list.files(file.path(dir_git,"out/low_bycatch"),full.names=T)
+```{r ref_point}
 
-#take a look at one file and the data distribution to evaluate whether or not log transformation is applicable
-  #r_hb <- hb_files[which(substr(hb_files,88,91)==2003)]%>%raster()
-  #histogram(r_hb)
-  
-#apply a log transformation and rescale using the 99.99th quantile as a reference point  
+lb_npp <- list.files(file.path(dir_git,'/int/annual_catch_npp'),full.names=T, pattern = 'lb')
+hb_npp <- list.files(file.path(dir_git,'/int/annual_catch_npp'),full.names=T, pattern = 'hb')
 
-foreach(i = 2003:2006) %dopar%{
+# HIGH BYCATCH
+
+#get data across all years
+vals <- c()
+
+for(i in 2003:2010){
+
+  m <- hb_npp[which(substr(hb_npp,89,92) == i)]%>%
+    raster()%>%
+    getValues()
+
+  vals <- c(vals,m)
+
+}
+
+vals <- vals[!is.na(vals)]
+
+ref_hb <- log(quantile(vals,prob = 0.9999,na.rm=T)+1)
+
+
+#LOW BYCATCH
+
+#get data across all years
+vals <- c()
+
+for(i in 2003:2010){
+
+  m <- lb_npp[which(substr(lb_npp,89,92) == i)]%>%
+    raster()%>%
+    getValues()
+
+  vals <- c(vals,m)
+
+}
+
+vals <- vals[!is.na(vals)]
+
+ref_lb <- log(quantile(vals,prob = 0.9999,na.rm=T)+1)
+
+
+```
+
+
+The reference point is `r ref_hb` for high bycatch and `r ref_lb` for low bycatch.
+
+## Rescale
+
+```{r rescale, eval=F}
+
+mean_hb <- list.files(file.path(dir_git,'int/mean_catch_5yr'),full.names=T, pattern = 'hb_catch_log')
+mean_lb <- list.files(file.path(dir_git,'int/mean_catch_5yr'),full.names=T, pattern = 'lb_catch_log')
+
+registerDoParallel(4)
+
+foreach (i = 2003:2006) %dopar%{
   
-  r_hb     <- hb_files[which(substr(hb_files,88,91)==i)]%>%raster()%>%
-              calc(fun=function(x){ifelse(x>0,log(x+1),0)})
+  yrs <- c(i:(i+4))
   
-  ref      <- quantile(r_hb, prob = 0.9999)
+  out_hb <- mean_hb[which(substr(mean_hb,90,93) == i)]%>%
+            raster()%>%
+            calc(fun=function(x){ifelse(x>ref_hb,1,x/ref_hb)})%>%
+            resample(ocean,method='ngb',filename = paste0(file.path(dir_git),'/out/high_bycatch/hb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
   
-  resc_log_hb <- calc(r_hb,fun=function(x){ifelse(x>ref,1,x/ref)})
-  
-  writeRaster(resc_log_hb,filename = paste0(file.path(dir_git), '/out/high_bycatch/hb_fish_pressure_rescaled_',i,'-',i+4,'.tif'),overwrite=T)
-  
-  #low bycatch
-  
-   r_lb     <- lb_files[which(substr(lb_files,87,90)==i)]%>%raster()%>%
-               calc(fun=function(x){ifelse(x>0,log(x+1),0)})
-  
-   ref      <- quantile(r_lb, prob = 0.9999)
-  
-   resc_log_lb <- calc(r_lb,fun=function(x){ifelse(x>ref,1,x/ref)})
-  
-  writeRaster(resc_log_lb,filename = paste0(file.path(dir_git), '/out/low_bycatch/lb_fish_pressure_rescaled_',i,'-',i+4,'.tif'),overwrite=T)
+  out_lb <- mean_lb[which(substr(mean_lb,90,93) == i)]%>%
+            raster()%>%
+            calc(fun=function(x){ifelse(x>ref_lb,1,x/ref_lb)})%>%
+            resample(ocean,method='ngb',filename = paste0(file.path(dir_git),'/out/low_bycatch/lb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
   
 }
 
 ```
 
-# Output
+***
 
-```{r output}
+# Results
 
-#high bycatch
+```{r results}
 
-  hb_layer = raster(file.path(dir_git,"out/high_bycatch/hb_fish_pressure_rescaled_2006-2010.tif"))
+hb <- raster(file.path(dir_git,'out/high_bycatch/hb_fish_pressure_2006-2010.tif'))
+lb <- raster(file.path(dir_git,'out/low_bycatch/lb_fish_pressure_2006-2010.tif'))
 
-  plot(hb_layer,col=cols,box=F,axes=F,main = 'Commercial Fishing Pressure for OHI 2016 \n High Bycatch')
-
-
-#low bycatch
-  lb_layer = raster(file.path(dir_git,"out/low_bycatch/lb_fish_pressure_rescaled_2006-2010.tif"))
-  
-    plot(lb_layer,col=cols,box=F,axes=F,main = 'Commercial Fishing Pressure for OHI 2016 \n Low Bycatch')
+plot(hb,col=cols,main = 'High Bycatch Fishing Pressure Layer \n OHI 2016', axes = F)
+plot(lb, col=cols, main = 'Low Bycatch Fishing Pressure Layer \n OHI 2016', axes = F)
 
 ```
+
+***
 
 # Extract the data by OHI region
 
@@ -403,6 +446,7 @@ plot(Motion)
 print(Motion, file='hb.html')
 
 ```
+
 ***
 
 #Citation information  
