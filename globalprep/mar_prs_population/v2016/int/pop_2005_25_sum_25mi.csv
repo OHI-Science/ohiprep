@@ -1,0 +1,220 @@
+"rgn_id","rgn_name","pop_total"
+1,"Cocos Islands",444
+2,"Christmas Island",1299
+3,"Norfolk Island",2089
+4,"Macquarie Island",0
+5,"New Caledonia",237029
+6,"Vanuatu",221128
+7,"Solomon Islands",527226
+8,"Palau",21278
+9,"Micronesia",137594
+10,"Nauru",12737
+11,"Marshall Islands",53715
+12,"Wake Island",0
+13,"Northern Mariana Islands and Guam",261386
+14,"Taiwan",20583312
+15,"Philippines",75010314
+16,"Australia",16278670
+17,"Papua New Guinea",2363372
+19,"Tuvalu",9405
+20,"South Korea",39359452
+21,"North Korea",15374810
+24,"Cambodia",1146145
+25,"Thailand",22738130
+26,"Andaman and Nicobar",380911
+28,"Comoro Islands",816432
+29,"Mayotte",198429
+30,"Glorioso Islands",0
+31,"Seychelles",85758
+32,"Reunion",770458
+33,"Juan de Nova Island",0
+34,"Bassas da India",0
+35,"Ile Europa",0
+36,"Ile Tromelin",0
+37,"Mauritius",1207698
+38,"British Indian Ocean Territory",0
+39,"Maldives",237328
+40,"Sri Lanka",12968980
+41,"Mozambique",8246152
+42,"Madagascar",5768321
+43,"Kenya",2439203
+44,"Somalia",4398257
+45,"Eritrea",917114
+46,"Djibouti",597415
+47,"Yemen",4218747
+48,"Oman",2115272
+49,"Sudan",646664
+50,"Saudi Arabia",2785606
+51,"Kuwait",1962869
+52,"Bahrain",693044
+53,"Pakistan",12653312
+54,"United Arab Emirates",1611447
+55,"Azores",228514
+56,"Cape Verde",474958
+57,"Madeira",228297
+58,"Canary Islands",1703923
+59,"Belgium",3164555
+60,"Gibraltar",33897
+61,"Tunisia",6336508
+62,"Morocco",14742179
+63,"Western Sahara",92512
+64,"Mauritania",869504
+65,"Gambia",1183686
+66,"Senegal",6022456
+67,"Libya",3328898
+68,"Malta",397529
+69,"Latvia",1434135
+70,"Estonia",907279
+71,"Bulgaria",971788
+72,"Romania",863771
+73,"Russia",679049
+74,"Georgia",1089854
+75,"Ukraine",6690694
+76,"Turkey",29607767
+77,"Syria",2878515
+78,"Lebanon",3677572
+79,"Israel",7288432
+80,"Greece",9581836
+81,"Cyprus",814076
+82,"Albania",2110081
+84,"Algeria",14364586
+85,"Ascension",765
+86,"Saint Helena",5500
+88,"Tristan da Cunha",293
+89,"South Georgia and the South Sandwich Islands",0
+90,"Prince Edward Islands",0
+91,"Crozet Islands",0
+92,"Amsterdam Island and Saint Paul Island",0
+93,"Kerguelen Islands",0
+94,"Heard and McDonald Islands",0
+95,"Falkland Islands",2459
+96,"Sierra Leone",2301116
+97,"Liberia",1653701
+98,"Togo",1785468
+99,"Benin",2772409
+100,"Republique du Congo",723047
+101,"Namibia",124929
+102,"South Africa",12193423
+103,"Sao Tome and Principe",150310
+104,"Equatorial Guinea",283900
+105,"Bouvet Island",0
+106,"Ghana",6713644
+107,"Clipperton Island",0
+108,"Bermuda",64842
+110,"Bahamas",320158
+111,"Turks and Caicos Islands",19509
+112,"Cuba",10631238
+113,"Cayman Islands",44905
+114,"Haiti",8322688
+115,"Dominican Republic",7303687
+116,"Puerto Rico and Virgin Islands of the United States",4216122
+117,"British Virgin Islands",27019
+118,"Anguilla",12968
+119,"Saint Kitts and Nevis",37005
+120,"Antigua and Barbuda",65754
+121,"Montserrat",4461
+122,"Saint Lucia",155872
+123,"Dominica",70153
+124,"Barbados",272020
+125,"Grenada",105777
+126,"Trinidad and Tobago",1323152
+127,"Saint Vincent and the Grenadines",105401
+129,"Panama",3011141
+130,"Costa Rica",1826712
+131,"Nicaragua",2683237
+132,"Colombia",6562215
+133,"Honduras",2675436
+134,"El Salvador",5489293
+135,"Mexico",18933983
+136,"Guatemala",1766112
+137,"Ecuador",5417875
+138,"Peru",12557094
+139,"Venezuela",13801032
+140,"Guadeloupe and Martinique",801186
+141,"Faeroe Islands",48445
+143,"Iceland",283172
+144,"Jan Mayen",0
+145,"Greenland",56458
+146,"Pitcairn",68
+147,"French Polynesia",249692
+148,"Line Group",6876
+149,"Jarvis Island",0
+150,"Palmyra Atoll",0
+151,"American Samoa",78787
+152,"Samoa",153508
+153,"Cook Islands",18567
+154,"Niue",1882
+155,"Tonga",100374
+156,"Tokelau",1404
+157,"Phoenix Group",67
+158,"Howland Island and Baker Island",0
+159,"Johnston Atoll",0
+161,"Wallis and Futuna",12360
+162,"New Zealand",3681550
+163,"United States",97446632
+164,"Belize",185333
+166,"Jamaica",2692943
+167,"Guyana",508165
+168,"Suriname",379088
+169,"French Guiana",132559
+171,"Brazil",61062648
+172,"Argentina",15498586
+173,"Uruguay",2228445
+174,"Finland",2806095
+175,"Denmark",5189868
+176,"Germany",8432206
+177,"Netherlands",11614269
+178,"Poland",3068144
+179,"France",15152746
+180,"United Kingdom",40574860
+181,"Ireland",3449541
+182,"Spain",19975835
+183,"Portugal",7656752
+184,"Italy",32773809
+185,"Monaco",59308
+186,"Montenegro",248648
+187,"Croatia",1600339
+188,"Slovenia",344097
+189,"Lithuania",444854
+190,"Qatar",609164
+191,"Iran",2649643
+192,"Iraq",461532
+193,"Guinea Bissau",1055166
+194,"Guinea",1804492
+195,"Ivory Coast",4979793
+196,"Nigeria",21600998
+197,"Cameroon",1729841
+198,"Gabon",722199
+199,"Democratic Republic of the Congo",173981
+200,"Angola",3166046
+202,"Tanzania",5706083
+203,"India",152183998
+204,"Bangladesh",29303956
+205,"Myanmar",17099089
+206,"Malaysia",19137696
+207,"Vietnam",48692974
+208,"Singapore",4537801
+209,"China",226549764
+210,"Japan",110552443
+212,"Kiribati",76146
+214,"Egypt",18363192
+215,"Jordan",1267475
+216,"Indonesia",162587004
+218,"Canada",6443407
+219,"Saint Pierre and Miquelon",6424
+220,"Sint Maarten",54662
+221,"Northern Saint-Martin",61968
+222,"Sweden",5906793
+223,"Norway",3998694
+224,"Chile",5044886
+227,"Jersey",88452
+228,"Guernsey",56107
+231,"East Timor",727355
+232,"Bosnia and Herzegovina",517125
+237,"Oecussi Ambeno",59214
+244,"Curacao",164740
+245,"Bonaire",14433
+247,"Brunei",358085
+248,"Saba",1902
+249,"Sint Eustatius",3251
+250,"Aruba",118793
