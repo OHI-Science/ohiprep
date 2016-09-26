@@ -27,6 +27,7 @@ goal     <- 'globalprep/mar_prs_population'
 scenario <- 'v2016'
 
 ##############################################################################=
+### Pressure: hd_intertidal (coastal population density, proxy for habitat destruction)
 ### rescale population from zero to one for pressures purposes -----
 ##############################################################################=
 ### Rescaling population 
@@ -52,3 +53,15 @@ for(data_year in 2011:2015){
   
   write.csv(tmp, file.path(goal, scenario, sprintf("output/prs_pop_density_%s.csv", scenario_year)), row.names=FALSE)
 }
+
+
+##############################################################################=
+### Mariculture population data
+##############################################################################=
+
+pop_mar <- read.csv(file.path(goal, scenario, 'int/rgn_pop_dens_adjusted_2005-2015.csv'), stringsAsFactors = FALSE) %>%
+  select(rgn_id, year, popsum=pop) 
+
+
+write.csv(pop_mar, file.path(goal, scenario, "output/mar_pop_25mi.csv"), row.names=FALSE)
+
