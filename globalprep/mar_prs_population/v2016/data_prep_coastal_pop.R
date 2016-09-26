@@ -19,10 +19,6 @@
 ###
 ###########################################################################################
 
-##############################################################################=
-### setup -----
-##############################################################################=
-
 library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
 
 source('src/R/common.R')
@@ -54,5 +50,5 @@ for(data_year in 2011:2015){
   tmp <- tmp %>%
     select(rgn_id, pressure_score = dens_rescaled)
   
-  write.csv(tmp, file.path(goal, scenario, sprintf("output/prs_pop_density_%s.csv", scenario_year)))
+  write.csv(tmp, file.path(goal, scenario, sprintf("output/prs_pop_density_%s.csv", scenario_year)), row.names=FALSE)
 }
