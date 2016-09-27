@@ -42,7 +42,8 @@ pop <- read.csv(file.path(goal, scenario, 'int/rgn_pop_dens_adjusted_2005-2015.c
 # rgn_inland25mi_gcs
 
 # As a rough estimate, I am going to count the entire of area of Fiji as within 25 miles of the ocean.
-# This seems reasonable, however, it should be improved in the future
+# This appears to match the last numbers we generated, and seems reasonable.
+# However, this estimate should be improved in the future
 
 # data from here: http://countryeconomy.com/demography/population/fiji
 pop_18 <- data.frame(rgn_id = 18,
@@ -52,7 +53,7 @@ pop_18 <- data.frame(rgn_id = 18,
                      w_pop_adj = NA,
                      pop = c(861000, 868000, 875000, 881000, 885000, 892145),
                      adjusted = FALSE, 
-                     area_km2 = 7000)
+                     area_km2 = 18270)
 pop_18 <- pop_18 %>%
   mutate(pop_per_km2 = pop/area_km2)
 
