@@ -9,7 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Compiled on Tue Sep 27 13:37:15 2016 by afflerbach" />
+<meta name="author" content="Compiled on Tue Sep 27 13:52:52 2016 by afflerbach" />
 
 
 <title>OHI 2016 Pressure: Ultraviolet Radiation</title>
@@ -254,7 +254,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">OHI 2016 Pressure: Ultraviolet Radiation</h1>
-<h4 class="author"><em><em>Compiled on Tue Sep 27 13:37:15 2016 by afflerbach</em></em></h4>
+<h4 class="author"><em><em>Compiled on Tue Sep 27 13:52:52 2016 by afflerbach</em></em></h4>
 
 </div>
 
@@ -500,9 +500,7 @@ for(i in <span class="dv">1</span>:<span class="dv">5</span>){
   
 }
 
-resc_num  &lt;-<span class="st"> </span><span class="kw">quantile</span>(vals,<span class="dt">prob=</span><span class="fl">0.9999</span>,<span class="dt">na.rm=</span>T)
-   
-  <span class="co">#41 (99.99 quantile after 1:3 files)</span>
+resc_num  &lt;-<span class="st"> </span><span class="kw">quantile</span>(vals,<span class="dt">prob=</span><span class="fl">0.9999</span>,<span class="dt">na.rm=</span>T)<span class="co">#41 </span>
 
 <span class="kw">foreach</span>(<span class="dt">i =</span> <span class="kw">c</span>(<span class="dv">2007</span>:<span class="dv">2011</span>)) %dopar%<span class="st"> </span>{ <span class="co">#i=2005</span>
   
