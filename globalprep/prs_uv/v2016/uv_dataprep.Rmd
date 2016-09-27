@@ -276,9 +276,7 @@ for(i in 1:5){
   
 }
 
-resc_num  <- quantile(vals,prob=0.9999,na.rm=T)
-   
-  #41 (99.99 quantile after 1:3 files)
+resc_num  <- quantile(vals,prob=0.9999,na.rm=T)#41 
 
 foreach(i = c(2007:2011)) %dopar% { #i=2005
   
