@@ -327,7 +327,6 @@ rgn_data <- read.csv(file.path(dir_M, "git-annex/globalprep/spatial/d2014/data/r
 
 # get raster data:
 rasts <- list.files(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/output'))
-rasts <- rasts[grep("rescaled", rasts)]
 
 pressure_stack <- stack()
 for(raster in rasts){ # raster = "uv_2007_2011-2005-2009_rescaled_moll_1km.tif"
@@ -338,8 +337,8 @@ for(raster in rasts){ # raster = "uv_2007_2011-2005-2009_rescaled_moll_1km.tif"
 # extract data for each region:
 regions_stats <- zonal(pressure_stack,  zones, fun="mean", na.rm=TRUE, progress="text")
 regions_stats2 <- data.frame(regions_stats)
-setdiff(regions_stats2$zone, rgn_data$ant_id) # antarctica regions are in there, makes sense....no land
-setdiff(rgn_data$ant_id, regions_stats2$zone) # 213 is in there, that makes sense (Antarctica)
+setdiff(regions_stats2$zone, rgn_data$ant_id) 
+setdiff(rgn_data$ant_id, regions_stats2$zone) 
 
 data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="rgn_id", by.y="zone") %>%
   gather("year", "pressure_score", starts_with("uv")) 
@@ -356,6 +355,8 @@ write.csv(uv_data, "int/slr.csv", row.names=FALSE)
 ## save toolbox data for different years/regions
 
 # function to extract data more easily
+uv_data <- read.csv("int/slr.csv")
+
 saveData <- function(newYear){ # newYear= 2012
   
   criteria_year <- ~year == newYear
