@@ -100,56 +100,51 @@ foreach(i = 1986:2008)%dopar%{ #i=2005
 ```
 
 
+##Rescale
+
+The layers are rescaled using a single reference point, the 99.99th quantile across all difference rasters.
+
+```{r rescale, eval=F}
+
+diffs <- list.files('int',pattern = 'diff',full.names=T)
+
+#get data across all years
+vals <- c()
+
+for(i in 1:length(diffs)){
+  print(i)
   
-  projection(diff) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+  m <- diffs[i]%>%
+    raster()%>%
+    getValues()
   
-  out = projectRaster(diff,crs=mollCRS,progress='text',over=T)%>%
-         resample(.,ocean,method='ngb',progress='text')%>%
-          mask(.,ocean,filename=paste0(dir_M,'git-annex/globalprep/prs_sst/v2015/output/sst_',min(yrs),'_',max(yrs),'-1985_1989.tif',sep=""),overwrite=T)
+  vals <- c(vals,m)
   
-  ref = quantile(out,prob=0.9999) # calculate the 99.99th quantile  
+}
+
+resc_num  <- quantile(vals,prob=0.9999,na.rm=T) ### 128
+
+sprintf('Rescaling')
+
+foreach(i = 1:length(diffs)) %dopar%{
+
+  r             <- raster(diffs[i])
   
-  sprintf('Rescaling')
+  projection(r) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
   
-  out_rescale = calc(out,fun=function(x){ifelse(x>0,ifelse(x>ref,1,x/ref),0)},progress='text',
-                     filename=paste0(dir_M,'git-annex/globalprep/prs_sst/v2015/output/sst_',min(yrs),'_',max(yrs),'-1985_1989_rescaled.tif',sep=""),overwrite=T)
+  out = calc(r,fun=function(x){ifelse(x>0,ifelse(x>resc_num,1,x/resc_num),0)})%>%
+        projectRaster(r,crs=mollCRS,over=T)%>%
+        resample(.,ocean,method='ngb',filename=paste0(dir_M,'/git-annex/globalprep/prs_sst/v2016/output/sst_',min(yrs),'_',max(yrs),'-1985_1989.tif'),overwrite=T)
+
 }
 ```
 
-***  
 
-## Rescale rasters by 99.99th quantile
-```{r, message=F,warning=F, eval=F}    
-  ## figure out the scaling value:
-  rast_2012 <- raster(file.path(dir_M, 'git-annex/globalprep/prs_sst/v2015/output/sst_2005_2009-1985_1989.tif'))
-  quantile(rast_2012,prob=0.9999)  #118.4027
-  rast_2013 <- raster(file.path(dir_M, 'git-annex/globalprep/prs_sst/v2015/output/sst_2006_2010-1985_1989.tif'))
-  quantile(rast_2013,prob=0.9999)   #133.0371 
-  rast_2014 <- raster(file.path(dir_M, 'git-annex/globalprep/prs_sst/v2015/output/sst_2007_2011-1985_1989.tif'))
-  quantile(rast_2014,prob=0.9999)  #127.1995
-  rast_2015 <- raster(file.path(dir_M, 'git-annex/globalprep/prs_sst/v2015/output/sst_2008_2012-1985_1989.tif'))
-  quantile(rast_2015,prob=0.9999)  #130.5288
-```
- 
-*** 
+#Results
 
-## Rescale using maximum value across rasters   
+```{r results, eval = F}
 
-This is an alternate option to the 99.99th quantile
 
-```{r,message=F,warning=F, eval=F}
-  ref <- 133.0371 # maximum value across rasters
-  
-  for(i in 2005:2008){ #i=2005
-    print(i)
-    
-    final_yr <- c(i+4)
-
-  out <- raster(file.path(dir_Meptune_data, 
-                          sprintf('git-annex/globalprep/prs_sst/v2015/output/sst_%s_%s-1985_1989.tif', i, final_yr)))  
-  out_rescale = calc(out,fun=function(x){ifelse(x>0,ifelse(x>ref,1,x/ref),0)},progress='text',
-                     filename=paste0(dir_M,'git-annex/globalprep/prs_sst/v2015/output/sst_',i,'_',final_yr,'-1985_1989_rescaled_v2.tif',sep=""),overwrite=T)
-  }
 ```
 
 ***
