@@ -50,19 +50,17 @@ For **OHI 2016** we changed our methods and decided to use just one dataset that
 
 ***
 
-#Data Source
+# Data Source
 
-**Reference**: The Ultraviolet Radiation pressures layer uses the [Aura OMI GLobal Surface UVB Data Product](http://disc.sci.gsfc.nasa.gov/Aura/data-holdings/OMI/omuvbd_v003.shtml).
-
+**Reference**: The Ultraviolet Radiation pressures layer uses the [Aura OMI GLobal Surface UVB Data Product](http://disc.sci.gsfc.nasa.gov/Aura/data-holdings/OMI/omuvbd_v003.shtml).  
 **Native Data Resolution**: 1 degree  
 **Values**: Level-3 OMI Surface UV Irradiance and Erythemal Dose- OMUVBd  
 **Time Range**: Daily data from 2005 - 2015  
 **Format**: HDF5  
 
-
 ***
   
-#Methods
+#Methods  
 
 ## Setup
 
@@ -73,6 +71,7 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 source('~/github/ohiprep/src/R/common.R')
 library(raster)
 library(ncdf4)
+library(rgdal)
 library(rhdf5) #from bioconductor: http://bioconductor.org/packages/release/bioc/html/rhdf5.html
 library(ggplot2)
 library(RColorBrewer)
@@ -85,7 +84,10 @@ mths <- c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"
 days <- seq(1,358,7)
 
 #global ocean raster at 1km for resampling/projecting purposes
-  ocean   = raster(file.path(dir_M, 'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
+  ocean     <- raster(file.path(dir_M, 'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
+  ocean_shp <- readOGR(file.path(dir_M,'git-annex/globalprep/spatial/d2014/data'),layer = 'regions_gcs')
+  land      <- ocean_shp%>%
+                  subset(rgn_typ %in% c('land','land-disputed','land-noeez'))
   
 #set mollweide projection CRS
   mollCRS = crs('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs')
@@ -186,7 +188,7 @@ for(i in 1:52){
 ```
 
 
-# Compare to climatology
+## Compare to climatology
 
 Compare each week in each year to the climatology for that week. The climatology is equal to the mean plus one standard deviation
 
@@ -221,7 +223,7 @@ for (i in 2005:2015){
 ```
 
 
-# Calculate differences
+## Calculate differences
 
 Calculate the difference in total number of anomalies in recent 5 years (2011 - 2015) compared to first 5 years (2005-2009)
 
@@ -229,15 +231,14 @@ Calculate the difference in total number of anomalies in recent 5 years (2011 - 
 
 l   <- list.files('int',full.names=T)
 
-ref <- list.files('int',full.names=T)[1:5]%>%stack()%>%calc(.,fun=function(x){sum(x,na.rm=T)})
+ref <- list.files('int',full.names=T)[1:5]%>%stack()%>%
+        calc(.,fun=function(x){sum(x,na.rm=T)})
 
 library(parallel)
 
 registerDoParallel(5)
 
 foreach(i = c(2007:2011)) %dopar% { #i=2005
-
-  print(i)
 
   yrs <- c(i:(i+4))
   
@@ -247,56 +248,66 @@ foreach(i = c(2007:2011)) %dopar% { #i=2005
 
   projection(diff) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
   
-  out = projectRaster(diff,crs=mollCRS,progress='text',over=T)%>%
-         resample(.,ocean,method='ngb',progress='text')%>%
-          mask(.,ocean,filename=paste0(dir_M,'/git-annex/globalprep/prs_uv/v2016/output/uv_',min(yrs),'_',max(yrs),'-2005-2009_moll_1km.tif',sep=""),overwrite=T)
+  out = mask(diff,land,inverse=T, filename =paste0('int/annual_diff_ocean_',yrs[1], '_', yrs[5],'.tif'),overwrite=T)
 }
+
+
 ```
 
-# Rescale
+## Rescale
 
-```{r rescale}
-out_files <- list.files(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/output'),full.names=T, pattern = '9_m')
+```{r rescale, eval=F}
+
+out_files <- list.files('int',full.names=T, pattern = 'ocean')
 
 #get data across all years
 vals <- c()
 
 for(i in 1:5){
+  
   print(i)
   m <- out_files[i]%>%
     raster()%>%
     getValues()
   
+  na.omit(m)
+  
   vals <- c(vals,m)
   
 }
-vals <- vals[!is.na(vals)]
-   resc_num         <- quantile(vals,prob=0.9999) # calculate the 99.99th quantile  
 
+resc_num  <- quantile(vals,prob=0.9999,na.rm=T)#41 
 
 foreach(i = c(2007:2011)) %dopar% { #i=2005
   
-out_files
-  
-  out_rescale = calc(out,fun=function(x){ifelse(x>0,ifelse(x>resc_num,1,x/resc_num),0)},
-                     filename=paste0(dir_M,'/git-annex/globalprep/prs_uv/v2016/output/uv_',min(yrs),'_',max(yrs),'-2005-2009_rescaled_moll_1km.tif',sep=""),overwrite=T)
+ yrs <- c(i:(i+4))
+ 
+  out_rescale = out_files[substr(out_files,23,26)==i]%>%
+                 raster()%>%
+                  projectRaster(crs=mollCRS,progress='text',over=T)%>%
+                  calc(fun=function(x){ifelse(x>0,ifelse(x>resc_num,1,x/resc_num),0)})%>%
+                  resample(ocean,method='ngb', filename=paste0(dir_M,'/git-annex/globalprep/prs_uv/v2016/output/uv_',
+                                                               min(yrs),'_',max(yrs),'-2005_2009.tif',sep=""),overwrite=T)
 }
+
+
 
 ```
 
+***
 
-#Check results
+# Results
 
 ```{r output}
 
-out <- list.files(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/output'),pattern = '_rescaled_moll_1km.tif',full.names=T)%>%stack()
+out <- list.files(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/output'),full.names=T)[5]%>%raster()
 
-plot(out,box=F,col=cols,axes=F)
+plot(out,box=F,col=cols,axes=F,main = 'UV Pressure Layer \n OHI 2016')
 
 ```
 
 
-#Extract data for each region
+##Extract data for each region
 
 ```{r extract_region_results, eval=F}
 setwd('globalprep/prs_uv/v2016')
@@ -316,7 +327,6 @@ rgn_data <- read.csv(file.path(dir_M, "git-annex/globalprep/spatial/d2014/data/r
 
 # get raster data:
 rasts <- list.files(file.path(dir_M,'git-annex/globalprep/prs_uv/v2016/output'))
-rasts <- rasts[grep("rescaled", rasts)]
 
 pressure_stack <- stack()
 for(raster in rasts){ # raster = "uv_2007_2011-2005-2009_rescaled_moll_1km.tif"
@@ -327,8 +337,8 @@ for(raster in rasts){ # raster = "uv_2007_2011-2005-2009_rescaled_moll_1km.tif"
 # extract data for each region:
 regions_stats <- zonal(pressure_stack,  zones, fun="mean", na.rm=TRUE, progress="text")
 regions_stats2 <- data.frame(regions_stats)
-setdiff(regions_stats2$zone, rgn_data$ant_id) # antarctica regions are in there, makes sense....no land
-setdiff(rgn_data$ant_id, regions_stats2$zone) # 213 is in there, that makes sense (Antarctica)
+setdiff(regions_stats2$zone, rgn_data$ant_id) 
+setdiff(rgn_data$ant_id, regions_stats2$zone) 
 
 data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="rgn_id", by.y="zone") %>%
   gather("year", "pressure_score", starts_with("uv")) 
@@ -345,6 +355,8 @@ write.csv(uv_data, "int/slr.csv", row.names=FALSE)
 ## save toolbox data for different years/regions
 
 # function to extract data more easily
+uv_data <- read.csv("int/slr.csv")
+
 saveData <- function(newYear){ # newYear= 2012
   
   criteria_year <- ~year == newYear
@@ -381,4 +393,5 @@ print(Motion, file='uv.html')
 ***
 
 # Citation information  
+
 Jari Hovila, Antii Arola, and Johanna Tamminen (Oct ), OMI/Aura Surface UVB Irradiance and Erythemal Dose Daily L3 Global 1.0x1.0 deg Grid, version 003, NASA Goddard Space Flight Center, , Accessed [Enter User Data Access Date at] 10.5067/Aura/OMI/DATA3009
