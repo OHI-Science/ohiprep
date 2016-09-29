@@ -9,7 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Compiled on Fri Sep 23 13:28:35 2016 by afflerbach" />
+<meta name="author" content="Compiled on Thu Sep 29 15:05:55 2016 by afflerbach" />
 
 
 <title>OHI 2016: Commercial Fishing Pressure Layers</title>
@@ -254,7 +254,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">OHI 2016: Commercial Fishing Pressure Layers</h1>
-<h4 class="author"><em><em>Compiled on Fri Sep 23 13:28:35 2016 by afflerbach</em></em></h4>
+<h4 class="author"><em><em>Compiled on Thu Sep 29 15:05:55 2016 by afflerbach</em></em></h4>
 
 </div>
 
@@ -421,7 +421,7 @@ hb_npp &lt;-<span class="st"> </span><span class="kw">list.files</span>(<span cl
 vals &lt;-<span class="st"> </span><span class="kw">c</span>()
 
 for(i in <span class="dv">2003</span>:<span class="dv">2010</span>){
-
+<span class="co">#print(i)</span>
   m &lt;-<span class="st"> </span>hb_npp[<span class="kw">which</span>(<span class="kw">substr</span>(hb_npp,<span class="dv">89</span>,<span class="dv">92</span>) ==<span class="st"> </span>i)]%&gt;%
 <span class="st">    </span><span class="kw">raster</span>()%&gt;%
 <span class="st">    </span><span class="kw">getValues</span>()
@@ -429,8 +429,8 @@ for(i in <span class="dv">2003</span>:<span class="dv">2010</span>){
   vals &lt;-<span class="st"> </span><span class="kw">c</span>(vals,m)
 
 }
-
-vals &lt;-<span class="st"> </span>vals[!<span class="kw">is.na</span>(vals)]
+min_v_hb &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">min</span>(vals,<span class="dt">na.rm=</span>T)+<span class="dv">1</span>) <span class="co"># 0</span>
+max_v_hb &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">max</span>(vals,<span class="dt">na.rm=</span>T)+<span class="dv">1</span>) <span class="co"># 11.32801</span>
 
 ref_hb &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">quantile</span>(vals,<span class="dt">prob =</span> <span class="fl">0.9999</span>,<span class="dt">na.rm=</span>T)+<span class="dv">1</span>)
 
@@ -449,11 +449,12 @@ for(i in <span class="dv">2003</span>:<span class="dv">2010</span>){
   vals &lt;-<span class="st"> </span><span class="kw">c</span>(vals,m)
 
 }
+min_v_lb &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">min</span>(vals,<span class="dt">na.rm=</span>T)+<span class="dv">1</span>) <span class="co">#0</span>
+max_v_lb &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">max</span>(vals,<span class="dt">na.rm=</span>T)+<span class="dv">1</span>) <span class="co">#12.3698</span>
 
-vals &lt;-<span class="st"> </span>vals[!<span class="kw">is.na</span>(vals)]
 
 ref_lb &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">quantile</span>(vals,<span class="dt">prob =</span> <span class="fl">0.9999</span>,<span class="dt">na.rm=</span>T)+<span class="dv">1</span>)</code></pre></div>
-<p>The reference point is 10.2794476 for high bycatch and 11.2135922 for low bycatch.</p>
+<p>The reference point is 10.2794476 (0 - 11.3280141) for high bycatch and 11.2135922 (0 - 12.3269814) for low bycatch.</p>
 </div>
 <div id="rescale" class="section level2">
 <h2>Rescale</h2>
@@ -514,10 +515,9 @@ rgn_data &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span cl
 ### Low bycatch data first
 <span class="co"># get raster data:</span>
 rasts &lt;-<span class="st"> </span><span class="kw">list.files</span>(<span class="kw">file.path</span>(dir_M,<span class="st">'git-annex/globalprep/prs_fish/v2016/out/low_bycatch'</span>))
-rasts &lt;-<span class="st"> </span>rasts[<span class="kw">grep</span>(<span class="st">&quot;rescaled&quot;</span>, rasts)]
 
 pressure_stack &lt;-<span class="st"> </span><span class="kw">stack</span>()
-for(raster in rasts){ <span class="co"># raster = &quot;lb_fish_pressure_rescaled_2003-2007.tif&quot;</span>
+for(raster in rasts){ <span class="co"># raster = &quot;lb_fish_pressure_2003-2007.tif&quot;</span>
   tmp &lt;-<span class="st"> </span><span class="kw">raster</span>(<span class="kw">file.path</span>(dir_M,<span class="st">'git-annex/globalprep/prs_fish/v2016/out/low_bycatch'</span>, raster))
   pressure_stack &lt;-<span class="st"> </span><span class="kw">stack</span>(pressure_stack, tmp)
 }
@@ -532,7 +532,7 @@ data &lt;-<span class="st"> </span><span class="kw">merge</span>(rgn_data, regio
 <span class="st">  </span><span class="kw">gather</span>(<span class="st">&quot;year&quot;</span>, <span class="st">&quot;pressure_score&quot;</span>, <span class="kw">starts_with</span>(<span class="st">&quot;lb&quot;</span>)) 
 
 lb_data &lt;-<span class="st"> </span>data %&gt;%
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">year =</span> <span class="kw">substring</span>(year, <span class="dv">32</span>, <span class="dv">35</span>)) %&gt;%
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">year =</span> <span class="kw">substring</span>(year, <span class="dv">23</span>, <span class="dv">26</span>)) %&gt;%
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">year =</span> <span class="kw">as.numeric</span>(year)) %&gt;%
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">year =</span> year +<span class="st"> </span><span class="dv">6</span>) %&gt;%
 <span class="st">  </span><span class="kw">filter</span>(ant_typ ==<span class="st"> &quot;eez&quot;</span>) %&gt;%
@@ -577,7 +577,6 @@ Motion=<span class="kw">gvisMotionChart</span>(plotData,
 ### Get the high bycatch data 
 
 rasts &lt;-<span class="st"> </span><span class="kw">list.files</span>(<span class="kw">file.path</span>(dir_M,<span class="st">'git-annex/globalprep/prs_fish/v2016/out/high_bycatch'</span>))
-rasts &lt;-<span class="st"> </span>rasts[<span class="kw">grep</span>(<span class="st">&quot;rescaled&quot;</span>, rasts)]
 
 pressure_stack &lt;-<span class="st"> </span><span class="kw">stack</span>()
 for(raster in rasts){ <span class="co"># raster = &quot;lb_fish_pressure_rescaled_2003-2007.tif&quot;</span>
@@ -595,7 +594,7 @@ data &lt;-<span class="st"> </span><span class="kw">merge</span>(rgn_data, regio
 <span class="st">  </span><span class="kw">gather</span>(<span class="st">&quot;year&quot;</span>, <span class="st">&quot;pressure_score&quot;</span>, <span class="kw">starts_with</span>(<span class="st">&quot;hb&quot;</span>)) 
 
 hb_data &lt;-<span class="st"> </span>data %&gt;%
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">year =</span> <span class="kw">substring</span>(year, <span class="dv">32</span>, <span class="dv">35</span>)) %&gt;%
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">year =</span> <span class="kw">substring</span>(year, <span class="dv">23</span>, <span class="dv">26</span>)) %&gt;%
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">year =</span> <span class="kw">as.numeric</span>(year)) %&gt;%
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">year =</span> year +<span class="st"> </span><span class="dv">6</span>) %&gt;%
 <span class="st">  </span><span class="kw">filter</span>(ant_typ ==<span class="st"> &quot;eez&quot;</span>) %&gt;%

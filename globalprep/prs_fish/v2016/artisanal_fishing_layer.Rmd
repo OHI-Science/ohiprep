@@ -167,6 +167,10 @@ for(i in 2003:2010){
   vals <- c(vals,m)
 
 }
+min <- log(min(vals,na.rm=T)+1) #0
+max <- log(max(vals,na.rm=T)+1) #11.73944
+
+
 
 vals <- vals[!is.na(vals)]
 
@@ -175,7 +179,7 @@ ref <- log(quantile(vals,prob = 0.9999,na.rm=T)+1)
 
 ```
 
-The reference point is `r ref`.
+The reference point is `r ref`, the range of data is `r min` to `r max`.
 
 ## Rescale
 
