@@ -60,6 +60,7 @@ Since these data have already been calculated using a reference point, we only n
 ## Setup
 
 ``` {r setup, message = FALSE, warning = FALSE}
+
 knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'figs/',message = FALSE, warning = FALSE)
 
 #setting up provenance
@@ -261,7 +262,7 @@ annual_means <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_
 vals <- c()
 
 for(i in 1993:2015){
-  
+  print(i)
   m <- annual_means[which(substr(annual_means,96,99) == i)]%>%
     raster()%>%
     getValues()
@@ -269,6 +270,8 @@ for(i in 1993:2015){
   vals <- c(vals,m)
   
 }
+
+
 ```
 
 I want to compare the reference point if we only use positive values or all data values.

@@ -1,5 +1,5 @@
 ---
-title: 'OHI 2015: Sea Surface Temperature Pressure Layer'
+title: 'OHI 2016: Sea Surface Temperature Pressure Layer'
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
@@ -19,13 +19,13 @@ output:
 
 #Summary
 
-This script creates the Sea Surface Temperature (SST) layer for the 2015 global Ocean Health Index assessment.
+This script creates the Sea Surface Temperature (SST) layer for the 2016 global Ocean Health Index assessment.
 
 ***  
 
 #Updates from previous assessment
 
-The  data was updated using the same data source as previous assessments, but new years of data. CoRTAD v5 now has data from 1982 through 2012. Previous assessments used SST anomaly data up to 2010. The climatological mean for SST anomalies in previous asssessments used all years 1982-2010, and in this assessment we used the mean across all 30 years (1982-2012).
+The only difference in this layer is the reference point. For OHI 2015, each SST pressure layer was rescaled using the 99.99th quantile of the data from *within* each year. This has been changed to the 99.99th quantile across **all years**. It is a small difference, from 130 to 128 (number of anomalous weeks within a 5 year period).
 
 ***
 
@@ -72,7 +72,7 @@ land      <- ocean_shp%>%
 ***
 
 ## Create 5 year averages and calculate difference from historical mean
-```{r, message=F,warning=F, eval=F}
+```{r, eval=F}
 
   l   <- list.files(file.path(dir_M,'git-annex/globalprep/prs_sst/v2015/tmp'),pattern='annual_pos_anomalies',full.names=TRUE)
   
@@ -81,7 +81,7 @@ land      <- ocean_shp%>%
   ref <- stack(l[4:8])%>%sum(.) # This is the time period we are using for historical comparison (1985 - 1989)
 
   
-  registerDoParallel(5)  
+  registerDoParallel(10)  
   
 foreach(i = 1986:2008)%dopar%{ #i=2005
   
@@ -100,11 +100,11 @@ foreach(i = 1986:2008)%dopar%{ #i=2005
 ```
 
 
-##Rescale
+##Reference Point
 
 The layers are rescaled using a single reference point, the 99.99th quantile across all difference rasters.
 
-```{r rescale, eval=F}
+```{r ref}
 
 diffs <- list.files('int',pattern = 'diff',full.names=T)
 
@@ -122,28 +122,43 @@ for(i in 1:length(diffs)){
   
 }
 
-resc_num  <- quantile(vals,prob=0.9999,na.rm=T) ### 128
+#get min, max and 99.99th quantile
 
+min_v <- min(vals,na.rm=T)
+max_v <- max(vals,na.rm=T)
+resc_num  <- quantile(vals,prob=0.9999,na.rm=T) ### 128
+```
+
+The minimum value is `r min_v`, maximum value is `r max_v` and the reference point is `r resc_num`.
+
+## Rescaling
+
+```{r rescale, eval=F}
 sprintf('Rescaling')
 
 foreach(i = 1:length(diffs)) %dopar%{
 
   r             <- raster(diffs[i])
   
+  yrs           <- substr(diffs[i],20,28)
+  
   projection(r) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
   
-  out = calc(r,fun=function(x){ifelse(x>0,ifelse(x>resc_num,1,x/resc_num),0)})%>%
-        projectRaster(r,crs=mollCRS,over=T)%>%
-        resample(.,ocean,method='ngb',filename=paste0(dir_M,'/git-annex/globalprep/prs_sst/v2016/output/sst_',min(yrs),'_',max(yrs),'-1985_1989.tif'),overwrite=T)
+  out = projectRaster(r, crs=mollCRS,over=T)%>%
+        calc(.,fun=function(x){ifelse(x>0,ifelse(x>resc_num,1,x/resc_num),0)})%>%
+        resample(.,ocean,method='ngb',filename=paste0(dir_M,'/git-annex/globalprep/prs_sst/v2016/output/sst_',yrs,'_1985-1989.tif'),overwrite=T)
 
 }
 ```
 
+***
 
 #Results
 
-```{r results, eval = F}
+```{r results}
+res <- list.files(file.path(dir_M,'git-annex/globalprep/prs_sst/v2016/output'),full.names=T)
 
+plot(raster(res[23]),col=cols,axes=F,main = 'Sea Surface Temperature Pressure Layer \n OHI 2016')
 
 ```
 

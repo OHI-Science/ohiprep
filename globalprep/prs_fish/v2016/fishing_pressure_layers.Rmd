@@ -217,7 +217,7 @@ hb_npp <- list.files(file.path(dir_git,'/int/annual_catch_npp'),full.names=T, pa
 vals <- c()
 
 for(i in 2003:2010){
-
+#print(i)
   m <- hb_npp[which(substr(hb_npp,89,92) == i)]%>%
     raster()%>%
     getValues()
@@ -225,8 +225,8 @@ for(i in 2003:2010){
   vals <- c(vals,m)
 
 }
-
-vals <- vals[!is.na(vals)]
+min_v_hb <- log(min(vals,na.rm=T)+1) # 0
+max_v_hb <- log(max(vals,na.rm=T)+1) # 11.32801
 
 ref_hb <- log(quantile(vals,prob = 0.9999,na.rm=T)+1)
 
@@ -245,8 +245,9 @@ for(i in 2003:2010){
   vals <- c(vals,m)
 
 }
+min_v_lb <- log(min(vals,na.rm=T)+1) #0
+max_v_lb <- log(max(vals,na.rm=T)+1) #12.3698
 
-vals <- vals[!is.na(vals)]
 
 ref_lb <- log(quantile(vals,prob = 0.9999,na.rm=T)+1)
 
@@ -254,7 +255,7 @@ ref_lb <- log(quantile(vals,prob = 0.9999,na.rm=T)+1)
 ```
 
 
-The reference point is `r ref_hb` for high bycatch and `r ref_lb` for low bycatch.
+The reference point is `r ref_hb` (`r min_v_hb` - `r max_v_hb`) for high bycatch and `r ref_lb` (`r min_v_lb` - `r max_v_lb`) for low bycatch.
 
 ## Rescale
 
