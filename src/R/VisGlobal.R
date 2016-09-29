@@ -1,14 +1,18 @@
 #### functions to visualize global scores within a scenario and commit.
 
-changePlot <- function(repo="~/ohi-global", scenario="eez2013", commit="previous", fileSave){
+library(git2r)
+library(ggplot2)
+
+
+
+scatterPlot <- function(repo="~/ohi-global", scenario="eez2013", commit="previous", goal, dim="score", fileSave){
   #   scenario <- "eez2013"  ## options: 'eez2012', 'eez2013', 'eez2014', 'eez2015'
   #   commit <- "final_2014"   ## 'final_2014', 'previous', a commit code (ie., 'e30e7a4')
-  #   fileSave <- 'LSP_trend_update'
+  #   fileSave <- 'LSP_trend_data'
+  #   goal <- 'LSP'
   ## Useful code: repository(repo)
   ## Useful code: commits(repo)
   
-  # devtools::install_github('ropensci/git2r') # to get latest version
-
   repo2 <- sprintf("../%s", repo)
   
   if (commit == "previous") {
@@ -20,44 +24,6 @@ changePlot <- function(repo="~/ohi-global", scenario="eez2013", commit="previous
     } else {
       commit2 = commit
     }
-  }
-  
-  tmp <- git2r::remote_url(git2r::repository(repo2))
-  org <- stringr::str_split(tmp, "/")[[1]][4]
-  path = paste0(scenario, "/scores.csv")
-  data_old <- read_git_csv(paste(org, repo, sep = "/"), commit2, 
-                           path) %>% dplyr::select(goal, dimension, region_id, old_score = score)
-  data_new <- read.csv(file.path(path)) %>% dplyr::left_join(data_old, 
-                                                             by = c("goal", "dimension", "region_id")) %>% dplyr::mutate(change = score - 
-                                                                                                                           old_score)
-  ggplot(data_new, aes(x=goal, y=change, color=dimension)) +
-    #geom_point(shape=19, size=1) +
-    theme_bw() + 
-    labs(title=paste(scenario, commit, sep=" "), y="Change in score", x="") +
-    scale_x_discrete(limits = c("Index", "AO", "SPP", "BD", "HAB", "CP", "CS", "CW", "FIS", "FP", 
-                              "MAR", "ECO", "LE", "LIV", "NP", "LSP", "SP", "ICO", "TR")) +
-    scale_colour_brewer(palette="Dark2") +
-    geom_jitter(position = position_jitter(width=0.2, height=0), shape=19, size=1)
-  
-  ggsave(file.path(repo, 'figures/DataCheck', paste0(fileSave, "_changePlot_", Sys.Date(), '.png')), width=8, height=5)
-  write.csv(data_new, file.path(repo, 'figures/DataCheck', paste0(fileSave, "_diff_data_", Sys.Date(), '.csv')), row.names=FALSE)
-}
-
-
-scatterPlot <- function(repo="~/ohi-global", scenario="eez2013", commit="previous", goal, dim="score", fileSave){
-  #   scenario <- "eez2013"  ## options: 'eez2012', 'eez2013', 'eez2014', 'eez2015'
-  #   commit <- "final_2014"   ## 'final_2014', 'previous', a commit code (ie., 'e30e7a4')
-  #   fileSave <- 'LSP_trend_data'
-  #   goal <- 'LSP'
-  ## Useful code: repository(repo)
-  ## Useful code: commits(repo)
-  
-  if(commit=="previous"){
-    commit2 = substring(commits(repository(repo))[[1]]@sha, 1, 7)
-  } else{
-    if (commit == "final_2014"){
-      commit2 = '4da6b4a'
-    } else {commit2 = commit}
   }
   
   tmp <- git2r::remote_url(git2r::repository(repo2))
@@ -110,7 +76,7 @@ scatterPlot <- function(repo="~/ohi-global", scenario="eez2013", commit="previou
   }
   my.file.rename(from = "tmp_file.html", to = file.path("changePlot_figures", 
                                                         paste0(fileSave, "_changePlot_", Sys.Date(), ".html")))
-  #  ggsave(file.path(repo, 'figures/DataCheck', paste0(fileSave, "_scatterPlot_", Sys.Date(), '.png')), width=10, height=8)
+    ggsave(file.path('changePlot_figures', paste0(fileSave, "_scatterPlot_", Sys.Date(), '.png')), width=10, height=8)
 }
 
 
