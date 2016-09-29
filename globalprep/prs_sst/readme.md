@@ -1,24 +1,11 @@
-##Sea Surface Temperature Pressure Layer for OHI 2015
+## Ocean Health Index: Sea Surface Temperature Pressure
 
-If the methodology or data produced here is used in publication, please make attribution clear. Please see our [citation policy](http://ohi-science.org/citation-policy/).
+This folder describes the methods used to prepare data for the Sea Surface Temperature Pressure for the global OHI assessment.
 
-### Data
+The folders in this file include the metadata, R scripts, and data for each assessement year (i.e., the year the assessment was conducted).  The most current year represents the best available data and methods, and previous years are maintained for archival purposes.
 
-Data comes from [CoRTAD version 5](http://www.nodc.noaa.gov/sog/cortad/)
+Our [data managment SOP](https://rawgit.com/OHI-Science/ohiprep/master/src/dataOrganization_SOP.html) describes how we manage OHI global data, including a description of the file structure.
 
-**Native Data Resolution**: 4km   
-**Values**: Temperature in Kelvin  
-**Time Range**: 1982 - 2012 (weekly averages across all years)  
-**Format**: NetCDF  
+Please see our [citation policy](http://ohi-science.org/citation-policy/) if you use OHI data or methods.
 
-***
-
-### Methods Overview
-
-For full methods see [create_sst_layer.html](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/prs_sst/create_sst_layer.html):
-
-
-**Reference**
-
-Selig, E.R., K.S. Casey, and J.F. Bruno (2010), New insights into global patterns of ocean temperature anomalies: implications for coral reef health and management, Global Ecology and Biogeography, DOI: 10.1111/j.1466-8238.2009.00522.x.
-
+Thank you!

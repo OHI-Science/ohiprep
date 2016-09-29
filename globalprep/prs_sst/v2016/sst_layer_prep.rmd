@@ -1,0 +1,155 @@
+---
+title: 'OHI 2015: Sea Surface Temperature Pressure Layer'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    code_folding: show
+    toc: true
+    toc_depth: 3
+    toc_float: yes
+    number_sections: false
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+
+#Summary
+
+This script creates the Sea Surface Temperature (SST) layer for the 2015 global Ocean Health Index assessment.
+
+***  
+
+#Updates from previous assessment
+
+The  data was updated using the same data source as previous assessments, but new years of data. CoRTAD v5 now has data from 1982 through 2012. Previous assessments used SST anomaly data up to 2010. The climatological mean for SST anomalies in previous asssessments used all years 1982-2010, and in this assessment we used the mean across all 30 years (1982-2012).
+
+***
+
+#Data Source
+
+Data comes from [CoRTAD version 5](http://www.nodc.noaa.gov/sog/cortad/)
+
+**Native Data Resolution**: 4km   
+**Description**: Temperature in Kelvin  
+**Time Range**: 1982 - 2012 (weekly averages across all years)  
+**Format**: NetCDF  
+
+***  
+
+#Methods
+
+## Setup
+```{r setup, message=F,warning=F}
+
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'figs/',message = FALSE, warning = FALSE)
+
+source('~/github/ohiprep/src/R/common.R')
+
+library(raster)
+library(RColorBrewer)
+library(tidyverse)
+library(rgdal)
+library(doParallel)
+library(foreach)
+
+cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
+
+#ocean raster at 1km
+ocean = raster(file.path(dir_M, 'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
+ocean_shp <- readOGR(file.path(dir_M,'git-annex/globalprep/spatial/d2014/data'),layer = 'regions_gcs')
+land      <- ocean_shp%>%
+              subset(rgn_typ %in% c('land','land-disputed','land-noeez'))
+
+#set mollweide projection CRS
+  mollCRS=crs('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs')
+
+```
+
+***
+
+## Create 5 year averages and calculate difference from historical mean
+```{r, message=F,warning=F, eval=F}
+
+  l   <- list.files(file.path(dir_M,'git-annex/globalprep/prs_sst/v2015/tmp'),pattern='annual_pos_anomalies',full.names=TRUE)
+  
+# Get 5 year aggregates
+
+  ref <- stack(l[4:8])%>%sum(.) # This is the time period we are using for historical comparison (1985 - 1989)
+
+  
+  registerDoParallel(5)  
+  
+foreach(i = 1986:2008)%dopar%{ #i=2005
+  
+  print(i)
+  
+  yrs <- c(i:(i+4))
+  
+  s   <- stack(l[substr(l,81,84)%in%yrs])%>%sum(.)
+  
+  diff = overlay(s,ref,fun=function(x,y){x-y})%>% #calculate difference between recent 5 year mean and historical (1985-1989)
+          mask(land,inverse=T)
+  
+  writeRaster(diff,filename = paste0('int/sst_diff_ocean_',yrs[1], '-', yrs[5],'.tif'),overwrite=T)
+   
+}
+```
+
+
+##Rescale
+
+The layers are rescaled using a single reference point, the 99.99th quantile across all difference rasters.
+
+```{r rescale, eval=F}
+
+diffs <- list.files('int',pattern = 'diff',full.names=T)
+
+#get data across all years
+vals <- c()
+
+for(i in 1:length(diffs)){
+  print(i)
+  
+  m <- diffs[i]%>%
+    raster()%>%
+    getValues()
+  
+  vals <- c(vals,m)
+  
+}
+
+resc_num  <- quantile(vals,prob=0.9999,na.rm=T) ### 128
+
+sprintf('Rescaling')
+
+foreach(i = 1:length(diffs)) %dopar%{
+
+  r             <- raster(diffs[i])
+  
+  projection(r) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+  
+  out = calc(r,fun=function(x){ifelse(x>0,ifelse(x>resc_num,1,x/resc_num),0)})%>%
+        projectRaster(r,crs=mollCRS,over=T)%>%
+        resample(.,ocean,method='ngb',filename=paste0(dir_M,'/git-annex/globalprep/prs_sst/v2016/output/sst_',min(yrs),'_',max(yrs),'-1985_1989.tif'),overwrite=T)
+
+}
+```
+
+
+#Results
+
+```{r results, eval = F}
+
+
+```
+
+***
+
+# Citation information  
+
+Selig, E.R., K.S. Casey, and J.F. Bruno (2010), New insights into global patterns of ocean temperature anomalies: implications for coral reef health and management, Global Ecology and Biogeography, DOI: 10.1111/j.1466-8238.2009.00522.x.
+
