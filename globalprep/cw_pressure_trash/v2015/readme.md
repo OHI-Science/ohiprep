@@ -14,3 +14,5 @@ The data used here comes from [Eriksen et al. (2014)](http://journals.plos.org/p
 **Values**: Count (number/km2) and weight (g/km2) across 4 size classes  
 **Time Range**: N/A
 **Format**: GeoTIFF
+
+## NOTE: Oct 3 2016: MRF moved relevant files to summarize raster data at ohi region scale from "archive_PressuresRegionExtract"
