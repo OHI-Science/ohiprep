@@ -135,6 +135,8 @@ rgn_sani <- read.csv(layersave, stringsAsFactors = FALSE)
 ##############################################################################=
 # based from neptune_data:model/GL-NCEAS-Pressures_v2013a/model_pathogens.R
 
+
+### IN future: use these data: ohiprep:globalprep/mar_prs_population/v2016/output
 popn_density_file <- read.csv(file.path(dir_M, 
                                         'model/GL-NCEAS-CoastalPopulation_v2013/data', 
                                        'rgn_popsum_area_density_2005to2015_inland25mi.csv'))
