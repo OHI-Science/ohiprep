@@ -272,37 +272,100 @@ catch$score = ifelse(!is.na(catch$score), catch$score,
 # 
 # write.csv(unidentified_taxa, "int/unidentified_taxa.csv", row.names=FALSE)
 # 
-### figure out new Thailand score for 2010 data
-catch_t <- catch %>%
-  filter(rgn_id==25 & year==2010)
 
-tmp <- rbind(
-catch_t %>%
-  group_by(genus) %>%
-  summarize(mean = mean(score, na.rm=TRUE)) %>%
-  select(species=genus, mean),
-catch_t %>%
-  group_by(family) %>%
-  summarize(mean = mean(score, na.rm=TRUE)) %>%
-  select(species=family, mean),
-catch_t %>%
-  group_by(order) %>%
-  summarize(mean = mean(score, na.rm=TRUE)) %>%
-  select(species=order, mean),
-catch_t %>%
-  group_by(class) %>%
-  summarize(mean = mean(score, na.rm=TRUE)) %>%
-  select(species=class, mean)
-)
+score_gf <- rbind(
+catch %>%
+  group_by(genus, fao, year) %>%
+  summarize(median = median(score, na.rm=TRUE)) %>%
+  select(year, fao, species=genus, median),
+catch %>%
+  group_by(family, fao, year) %>%
+  summarize(median = median(score, na.rm=TRUE)) %>%
+  select(year, fao, species=family, median),
+catch %>%
+  group_by(order, fao, year) %>%
+  summarize(median = median(score, na.rm=TRUE)) %>%
+  select(year, fao, species=order, median),
+catch %>%
+  group_by(class, fao, year) %>%
+  summarize(median = median(score, na.rm=TRUE)) %>%
+  select(year, fao, species=class, median)
+) %>%
+  arrange(year, fao, species)
 
-tmp <- tmp %>%
-  filter(!is.na(mean))
+score_gf <- score_gf %>%
+  filter(!is.na(median))
 
-catch_t <- catch_t %>%
-  left_join(tmp, by="species") %>%
-  mutate(score2 = ifelse(!is.na(score), score, mean))
+catch_gf <- catch %>%
+  left_join(score_gf, by=c("species", "fao", "year")) %>%
+  rename(species_gf = median) %>%
+  left_join(score_gf, by=c("genus"="species", "fao", "year")) %>%
+  rename(genus_gf = median) %>%
+  left_join(score_gf, by=c("family"="species", "fao", "year")) %>%
+  rename(family_gf = median) %>%
+  left_join(score_gf, by=c("order"="species", "fao", "year")) %>%
+  rename(order_gf = median) %>%
+  left_join(score_gf, by=c("class"="species", "fao", "year")) %>%
+  rename(class_gf = median)
+  
+catch_gf <- catch_gf %>%
+  mutate(score_gf = NA) %>%
+  mutate(score_gf = ifelse(is.na(score_gf), species_gf, score_gf)) %>%
+  mutate(score_gf = ifelse(is.na(score_gf), genus_gf, score_gf)) %>%
+  mutate(score_gf = ifelse(is.na(score_gf), family_gf, score_gf)) %>%
+  mutate(score_gf = ifelse(is.na(score_gf), order_gf, score_gf)) %>%
+  mutate(score_gf = ifelse(is.na(score_gf), class_gf, score_gf)) %>%
+  group_by(rgn_id, year) %>%
+  mutate(score_gf = ifelse(is.na(score_gf), median(score, na.rm=TRUE), score_gf)) %>%
+  ungroup() 
 
+score_data <- catch_gf %>%
+  select(rgn_id, species, fao, taxonkey, year, mean_catch, score, score_gf)
 
+penaltyTable <- data.frame(TaxonPenaltyCode=1:6, 
+                           penalty=c(0.1, 0.25, 0.5, 0.8, 0.9, 1))
+
+score_data <- score_data %>%
+  mutate(TaxonPenaltyCode = as.numeric(substring(taxonkey, 1, 1))) %>%
+  left_join(penaltyTable, by='TaxonPenaltyCode') %>%
+  mutate(score_gf_penalty = score_gf * penalty) %>%
+  mutate(score_gapfilled = ifelse(is.na(score), "Median gapfilled", "none")) %>%
+  mutate(score = ifelse(is.na(score), score_gf_penalty, score))
+
+status_data <- score_data %>%
+  select(rgn_id, species, fao, year, mean_catch, score=score_gf_penalty)
+
+status_data <- status_data %>%
+  group_by(year, rgn_id) %>%
+  mutate(SumCatch = sum(mean_catch)) %>%
+  ungroup() %>%
+  mutate(wprop = mean_catch/SumCatch)
+
+status_data <- status_data %>%
+  group_by(rgn_id, year) %>%
+  summarize(status = prod(score^wprop)) %>%
+  ungroup()
+
+names <- read.csv('../../../../ohi-global/eez2016/layers/rgn_labels.csv') %>%
+  select(rgn_id, rgn_name = label)
+
+old <- read.csv('../../../../ohi-global/eez2016/scores.csv') %>%
+  filter(goal == "FIS") %>%
+  filter(dimension == "status") %>%
+  select(rgn_id = region_id, old_score = score)
+
+new <- status_data %>%
+  filter(year==2010) %>%
+  mutate(score = round(status*100, 1)) %>%
+  select(rgn_id, score) %>%
+  left_join(old, by="rgn_id") %>%
+  left_join(names, by="rgn_id") %>%
+  mutate(new_minus_old = score - old_score) %>%
+  arrange(new_minus_old)
+
+write.csv(new, "int/new_vs_old_gapfilling.csv", row.names=FALSE)
+plot(new$old_score, new$score, ylab="New gapfilling status", xlab="Old gapfilling status")
+abline(0,1, col="red")
 
 
 ##############################################################
