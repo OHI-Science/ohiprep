@@ -240,6 +240,14 @@ taxa_data <- read.csv('data/taxon_info.csv') %>%
 bmsy <- read.csv('data/fis_bbmsy.csv') %>%
   select(rgn_id, stock_id, year, bmsy=bbmsy)
 
+## High B/Bmsy values that are unfairly penalizing some regions
+high_bmsy <- c('Katsuwonus_pelamis-71', 'Clupea_harengus-27', 'Trachurus_capensis-47', 'Sardinella_aurita-34', 'Scomberomorus_cavalla-31')
+
+bmsy <- bmsy %>%
+  mutate(bmsy = ifelse(stock_id %in% high_bmsy, 1, bmsy))
+
+
+
 catch <- read.csv('data/mean_catch.csv') %>%
   mutate(stock_id_taxonkey = as.character(stock_id_taxonkey)) %>%
   separate(stock_id_taxonkey, c("species", "junk"), sep="-") %>%
