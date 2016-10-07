@@ -7,6 +7,7 @@
 ## We will use B/Bmsy scores (from the fisheries goal) of artisanally fished taxa to 
 ## estimate sustainability of AO
 
+library(ohicore)
 setwd("globalprep/ao/v2016")
 source("../../../src/R/common.R")
 
@@ -58,3 +59,22 @@ sus <- data2_penalty %>%
   summarize(sustainability = weighted.mean(score, tons))
 
 hist(sus$sustainability[sus$year==2010], main="sustainability scores in 2010")
+
+write.csv(sus, "output/ao_sustainability.csv", row.names=FALSE)
+
+### Gapfilling missing sustainability scores:
+sus_gf <- georegions %>%
+  left_join(sus, by="rgn_id")
+
+no_sus <- filter(sus_gf, is.na(sustainability))
+
+## select out the uninhabitated islands
+unin <- read.csv("../../../src/LookupTables/rgn_uninhabited_islands.csv")
+
+sus_gf <- sus_gf %>%
+  filter(!(rgn_id %in% unin$rgn_id))
+
+no_sus <- filter(sus_gf, is.na(sustainability))
+
+## All the countries without a sustainability score are uninhabited islands, so 
+## no need to gapfill this variable.
