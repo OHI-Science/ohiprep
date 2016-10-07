@@ -78,3 +78,20 @@ no_sus <- filter(sus_gf, is.na(sustainability))
 
 ## All the countries without a sustainability score are uninhabited islands, so 
 ## no need to gapfill this variable.
+
+
+sus <- read.csv("output/ao_sustainability.csv")
+
+rgn_names <- read.csv("../../../../ohi-global/eez2016/layers/rgn_labels.csv") %>%
+  select(rgn_id, label)
+
+sus <- sus %>%
+  left_join(rgn_names) %>%
+  select(year, sustainability, rgn_name=label)
+
+library(googleVis)
+Motion = gvisMotionChart(sus,
+                         idvar="rgn_name",
+                         timevar="year")
+plot(Motion)
+print(Motion, file="sustainability.html")
