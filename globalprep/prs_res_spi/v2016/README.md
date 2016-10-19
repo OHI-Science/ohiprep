@@ -1,8 +1,6 @@
-## Ocean Health Index: Mariculture subgoal
+## Ocean Health Index: Social Progress Index
 
-This folder describes the methods used to prepare data for the mariculture subgoal of the global OHI assessment.
-
-More information about this goal is available [here](http://ohi-science.org/goals/#mariculture).
+This folder describes the methods used to prepare data for the Social Progress Index (pressure and resilience) of the global OHI assessment.
 
 The folders in this file include the metadata, R scripts, and data for each assessement year (i.e., the year the assessment was conducted).  The most current year represents the best available data and methods, and previous years are maintained for archival purposes.
 
