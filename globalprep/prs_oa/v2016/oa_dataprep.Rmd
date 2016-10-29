@@ -21,7 +21,7 @@ output:
 This script takes the raw netCDF data and does the following:
 
    a. Calculates the annual mean for each of the 5 years in 2011-2015 (5 raster layers as output)  
-   b. Rescales each annual raster layer from 0 to 1 based on a biological threshold (&#937 <= 1) and the proportional change compared to a historical mean
+   b. Rescales each annual raster layer from 0 to 1 based on a biological threshold (&#937; <= 1) and the proportional change compared to a historical mean
    c. Interpolates the data to gap-fill for cells where there is no data
    d. Resamples the rescaled raster layer to 1km cell resolution
    e. Mask the resampled data to select only those cells within the ocean
@@ -349,7 +349,7 @@ We want to create a raster layer that shows all cells that were gap-filled. Sinc
 ```
 
 
-**References**  
+#Citation information  
 
 Woods Hole Oceanographic Institution. 2014 update to data originally published in: Feely, R.A., S.C. Doney, and
 S.R. Cooley. 2009. Ocean acidification: Present conditions and future changes in a high-CO2 world.

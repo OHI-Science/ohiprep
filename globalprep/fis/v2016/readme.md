@@ -1,6 +1,8 @@
 ## Ocean Health Index 2016: Fisheries Sub-goal
 
-See full data prep details [here](LINK TO HTML FILE).
+See full details for how the SAUP catch data was prepped [here](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/fis/v2016/catch_data_prep.html).
+
+See full details for how BBmsy was calculated [here](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/fis/v2016/calculate_bbmsy.html).
 
 If using these data, please see our [citation policy](http://ohi-science.org/citation-policy/).
 
@@ -9,11 +11,14 @@ If using these data, please see our [citation policy](http://ohi-science.org/cit
 ### Additional information
 A description of some of the files so far:
 
-NOTE: now catch data is int/catch_saup.csv...make sure dataprep script is in here...
-
 * saup_raster_data_download.R: Goal was to use the seaaroundus R package to download the SAUP raster cell data.  However, this will take too long. Abandoned, but keeping script as archive.
 
-* getSAUPdata.R: Uses the seaaroundus R package to download the catch data for each SAUP region. Outputs:
+* catch_data_prep.Rmd: Preps the spatialized catch data (at half degree cells) for use in goal weighting and stock status calculations. Outputs:
+  
+   - 'git-annex/globalprep/fis/v2016/int/spatial_catch_saup.csv'
+   - 'globalprep/fis/v2016/int/spatial_catch_pre_bbmsy.csv'
+
+* catch_data_prep_old.Rmd: Uses the seaaroundus R package to download the catch data for each SAUP region. This was used as a first round calculation but has been updated in catch_data_prep.Rmd. Outputs:
 
    - 'git-annex/globalprep/fis/raw/SAUP_catch_taxon_tons_eezs.csv'
    - 'git-annex/globalprep/fis/raw/SAUP_catch_taxon_tons_highseas.csv'
@@ -45,10 +50,12 @@ NOTE: now catch data is int/catch_saup.csv...make sure dataprep script is in her
  
    - stock_resil_06cutoff_2016.csv
    
+* calculate_bbmsy.Rmd: Calculates B/Bmsy estimates for all stocks using 3 catch only models   
+   
 * format_bbmsy_data.R: Used to explore and combine various B/Bmsy scores into a single score.  This also merges in the RAM B/Bmsy scores when they are available. Also gets the B/Bmsy values to the correct spatial scale.
  
     - fis_bbmsy.csv: Final B/Bmsy scores used for ohi-global calculations
-    - fis_bbmsy_gf_ram.csv: Gapfilling done on RAM data when scores didn't go to 2010
+    - fis_bbmsy_gf.csv: Gapfilling done on RAM data when scores didn't go to 2010
     
    
    

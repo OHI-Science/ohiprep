@@ -1,0 +1,279 @@
+---
+title: "OHI 2016 - Artisanal Opportunities: Preparing catch data"
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    code_folding: show
+    toc: true
+    toc_depth: 1
+    toc_float: yes
+    number_sections: false
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+pdf_document:
+  toc: true
+---
+
+
+# Summary
+
+This script takes the Sea Around Us Project (SAUP) catch data, provided at a resolution of half-degree cells globally, and aggregates catch by species per OHI and FAO region.
+
+In order to aggregate, we associate each cell to the FAO region and the OHI region in which it is located.
+
+## Updates from previous assessment
+
+The 2016 Artisanal Opportunities goal now includes new data from the Sea Around Us Project that has been reported at a spatial resolution of half-degree cells. The spatial resolution previously was at the EEZ level. This improvement in data resolution, along with the identification of catch by sector, allows OHI to incorporate catch data at this level.
+
+***
+
+# Data
+The Sea Around Us Project shared the spatialized catch data with OHI on joined to a lookup table that links SAUP region names and ids to the FAO region they are located in. The proportional area of each EEZ within the FAO region was also calculated for overlapping EEZs.
+
+
+Reference: 
+
+* Downloaded: June 27, 2016
+* Description: Tons per half degree cell with information on sector type, industry type, fishing entity, reporting status and taxonomic information
+* Native data resolution: Flatfiles (.dat) provided with information for 0.5 degree grid cells
+* Time range: 1950 - 2010
+* Format: Database (.dat) flatfiles
+
+***
+
+## Setup
+
+``` {r setup, message = FALSE, warning = FALSE}
+
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'figs/',message = FALSE, warning = FALSE)
+
+#setting up provenance
+# devtools::install_github('oharac/provRmd')
+# library(provRmd)
+# prov_setup()
+
+## Libraries
+library(readr)
+library(data.table)
+library(dplyr)
+library(parallel)
+
+
+## Paths for data
+path_data               = "/home/shares/ohi/git-annex/globalprep/_raw_data/SAUP/d2016/Data"
+file_allocation_data    = "SeaAroundUs/AllocationData.dat"
+file_allocation_results = "SeaAroundUs/AllocationResult.dat"
+file_taxon              = "SeaAroundUs/taxon.dat"
+file_entity             = "FishingEntity.dat"
+
+source('~/github/ohiprep/src/R/common.R')
+
+```
+
+## Load Data
+
+These files are large so using the data.table package is recommended due to R memory limitations.
+
+```{r load_data,eval=F}
+
+# load the Allocation info using fread, and define column names
+dt_data           <- fread(file.path(path_data,file_allocation_data), sep=";", header = FALSE)
+colnames(dt_data) <- c("UniversalDataID","DataLayerID","FishingEntityID", "Year", "TaxonKey",
+                       "InputTypeID", "sector_type_name", "catch_type_name", 
+                       "reporting_status_name")
+
+
+#load the Results data (largest file, usually takes up to 10 minutes to read!)
+dt_results           <- fread(file.path(path_data,file_allocation_results), sep=";", header = FALSE)
+colnames(dt_results) <- c("UniversalDataID","CellID","AllocatedCatch")
+# setkey(dt_results,UniversalDataID) # not necessary the data seems to be already ordered with the keys (univ and Cell IDs)
+
+
+#load the Taxon data
+dt_taxon           <- fread(file.path(path_data,file_taxon), sep=";", header = FALSE)
+colnames(dt_taxon) <- c("TaxonKey","Scientific_Name","Common_Name","FunctionalGroupDescription")
+setkey(dt_taxon,TaxonKey)
+
+
+#load the fishing entity data
+dt_entity           <- fread(file.path(path_data,file_entity), sep = ";", header=FALSE)
+colnames(dt_entity) <- c("FishingEntityID","Name")
+setkey(dt_entity,FishingEntityID)
+```
+
+# Fix Cell Issues
+
+There are a lot of cells that slighlty overlap the OHI regions shapefile, leaving them with a proportional area less than 1. This would cause us to lose catch when assigning catch to cells. To fix this, we define a vector of cellids that have a proportionArea <1 and are NOT duplicated (i.e. the other portion of the area missing is not accounted for) and assign a proportionArea of 1 to these cells.
+
+```{r cells, eval=F}
+###
+
+cells_raw <- read.csv(file.path(dir_M, "git-annex/globalprep/fis/v2015/raw/saup_rasters_to_ohi_rgns.csv"))%>%
+              rename(CellID=saup_cell_id) %>%
+              group_by(CellID) %>%
+              mutate(total_area = sum(proportionArea)) 
+
+### list of cells with areas > 1 (indicates something strange is going on)
+bad_ones <- filter(cells_raw, total_area>1) %>%
+              arrange(CellID) 
+
+data.frame(bad_ones)
+
+## get a list of cells that have eez or fao categories:
+## used later to determine whether cells with OHI regions but no FAO region are an issue:
+cells_water <- cells_raw %>%
+  group_by(CellID) %>%
+  mutate(cell_rgns = paste(sort(unique(rgn_typ)), collapse=", ")) %>%
+  arrange(CellID)
+
+# check this went ok:
+list <- table(cells_water$cell_rgns)
+list
+filter(cells_water, cell_rgns=="eez, land")
+
+## check that I got these right!  - these are right (JA - 8/8/26)
+eez_fao_cats <- c("eez", "eez-ccamlr", "eez-ccamlr, land-ccamlr", "eez-disputed",
+                  "eez-disputed, fao", "eez-disputed, land-disputed", "eez-disputed, land, land-disputed", "eez, eez-ccamlr",
+                  "eez, eez-disputed", "eez, eez-disputed, fao", "eez, eez-disputed, land", "eez, eez-disputed, land-disputed",
+                  "eez, eez-disputed, land, land-disputed", "eez, fao", "eez, land", "eez, land, land-noeez", "fao")                                   
+cells_water <- cells_water %>%
+  filter(CellID, cell_rgns %in% eez_fao_cats)
+
+
+## cells should have a total area of <=1, what causes some cells to have more...and is this a large problem
+## No, most cells are fine.
+## This seems to happen because of polygon overlap.
+## scenario 1: FAO region 262 overlaps other FAO region polygons by a small amount.  In this case a small proportion of the catch within a cell will
+## be assigned to two regions.  This will be a small error. (No correction)
+## scenario 2: In many cases, the total area is very close to one which may reflect rounding error and is not significant. (Usually no correction)
+## scenario 3: In some cases, the regions are small islands where there doesn't appear to be a hole so both the land and underlying eez are counted. ##            This can also occur along any eez/land boundary...but it looks like it mainly happens for islands. If the 
+##            overlap is for land/eez within the same region, this will be corrected. 
+
+
+cells <- read.csv(file.path(dir_M, "git-annex/globalprep/fis/v2015/raw/saup_rasters_to_ohi_rgns.csv")) %>%
+  rename(CellID=saup_cell_id) %>%
+  group_by(CellID, rgn_id) %>%   # groups land and eez data (that way the cell catch is fully applied to the region...rather than cutting the portion that overlaps land) 
+  dplyr::summarise(area = sum(proportionArea)) %>%
+  mutate(area = ifelse(area > 1, 1, area))%>%  ## this corrects when there is land/eez overlap within the same region resulting in cell area >1 (scenario 3 above)
+  ungroup()  
+
+## Remaining errors from scenario 1 and 2 above:  These are very small errors..nothing to be concerned about.
+bad_ones <- cells %>%
+  group_by(CellID) %>%
+  mutate(total_cell_area = sum(area)) %>%
+  filter(total_cell_area > 1) %>%
+  arrange(CellID) 
+data.frame(bad_ones)
+
+
+# get the list of cell ids that are duplicated, and use this list of values to adjust the area to equal 1 ONLY for those cells that are not duplicated
+
+
+## Id duplicated cells:
+dup <- cells$CellID[duplicated(cells$CellID)]
+
+## for some reason this is failing for me...
+# dup <- cells %>%
+#         dplyr::select(CellID) %>%
+#         mutate(dup = duplicated(.)) %>%
+#         filter(dup==TRUE) %>%
+#         collect %>%
+#         .[["CellID"]]
+
+## these are the cells that were cut off prematurely due to edge effects, etc.
+tmp <- filter(cells, !(CellID %in% dup) & area < 1)
+head(tmp)
+
+#read in the dataset matching each cell to an FAO region (need both OHI and FAO region for analysis)
+fao_cells <- read.csv( file.path(dir_M, "git-annex/globalprep/fis/v2015/raw/saup_rasters_to_fao_rgns.csv")) %>%
+              rename(CellID=saup_cell_id)
+
+cells_df <- cells %>%
+              mutate(area = ifelse(CellID %in% dup, area, 1))%>%  # if the cell doesn't cover >1 region, then change cell areas to one to capture entire cell's catch (these are <1 area due to edge effects)
+              left_join(fao_cells) 
+
+summary(cells_df)
+## One issue of concern:
+## Some regions aren't assigned and FAO region value (in places where land > 50% of cell cover)...and we need both for the analysis
+#84218/259200
+
+## check to see how many remain after we take out the land cells:
+
+cells_df_water <- cells_df %>%
+  filter(CellID %in% cells_water$CellID)
+summary(cells_df_water)
+#187/252083
+# N= 187...no too bad...does not seem worth fretting over
+```
+
+
+***
+
+# Aggregate catch
+
+Using a for loop, aggregate catch per OHI region and FAO area. The catch is used to weight scores per region. For this we need to use all catch records, including those not reported at the species level.
+
+
+
+```{r, eval =F}
+
+df <- data.frame()
+
+
+for (i in 1950:2010){
+
+  print(i)
+  
+#1. subset the allocation data to year i
+data_yearly <- dt_data[Year==i,]
+
+#2. Now we want it ordered by UniversalDataID
+setkey(data_yearly,UniversalDataID)
+
+#3. Get unique UniversalDataID
+
+udi <- unique(data_yearly$UniversalDataID)
+
+#4. Subset results
+
+results_sub <- dt_results[UniversalDataID %in% udi]
+
+setkey(results_sub,UniversalDataID) #sort by UDI
+
+
+#5. Join allocation, taxon, entity, resilience data to results to create final catch dataset and removing all catch reported at non-species level
+
+
+all_data <- results_sub%>%
+               left_join(data_yearly)%>%
+               filter(sector_type_name != "Industrial")%>%
+               left_join(dt_taxon)%>%
+               left_join(dt_entity)%>%
+               left_join(cells_df_water)%>%
+               mutate(catch_prop = AllocatedCatch * area,
+                         year = i)%>%
+                group_by(rgn_id,fao_id, Scientific_Name, Common_Name, TaxonKey)%>%
+                summarise(catch = sum(catch_prop))%>%
+                ungroup()%>%
+                mutate(year     = i,
+                       stock_id = gsub(" ", "_", paste(Scientific_Name, fao_id, sep='-'), fixed=TRUE))%>%
+                rename(fao_rgn  = fao_id,
+                       tons     = catch)
+
+df = rbind(df,all_data)
+
+}
+
+write.csv(df,file =  file.path(dir_M,'git-annex/globalprep/ao/v2016/int/ao_catch_saup.csv'),row.names=FALSE)
+
+
+```
+
+
+***
+
+# Citation information
+
+Pauly D. and Zeller D. (Editors), 2015. Sea Around Us Concepts, Design and Data (seaaroundus.org)

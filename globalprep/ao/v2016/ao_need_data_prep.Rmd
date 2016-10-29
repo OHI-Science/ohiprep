@@ -1,0 +1,262 @@
+---
+title: "OHI 2016 - Artisanal Opportunities: Preparing need data"
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    code_folding: show
+    toc: true
+    toc_depth: 1
+    toc_float: yes
+    number_sections: false
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+pdf_document:
+  toc: true
+---
+
+
+# Summary
+
+This script generates the "need" layer for the artisanal opportunities goal.  The "access" layer is located here: globalprep/res_mora_ao/v2013/data/r_mora_s4_2013a.csv.
+
+
+## Updates from previous assessment
+We now use the WDI R package to download these data.
+
+There is an initial gapfilling that occurs within a region when some years of data (2005-2015) are missing. A linear model is fit to the data occuring within the region and used to gapfill the missing years.
+
+Natural log of values is taken (as described in supplement) prior to standardizing.
+
+Standardization is now based on 99th quantile value across years 2005 to 2015 (vs. using the maximum value for each year).
+
+We now use the "constant" (vs. "current") USD to control for inflationary increases over time.  Here is a description of the [difference](https://datahelpdesk.worldbank.org/knowledgebase/articles/114942-what-is-the-difference-between-current-and-constan):
+
+> "Data reported in current (or “nominal”) prices for each year are in the value of the currency for that particular year. For example, current price data shown for 1990 are based on 1990 prices, for 2000 are based on 2000 prices, and so on. Other series in World Development Indicators (WDI) show data in "constant" or "real" terms. Constant series show the data for each year in the value of a particular base year. Thus, for example, data reported in constant 2010 prices show data for 1990, 2000, and all other years in 2010 prices. 
+
+> Current series are influenced by the effect of price inflation. Constant series are used to measure the true growth of a series, i.e. adjusting for the effects of price inflation. For example (using year one as the base year), suppose nominal Gross Domestic Product (GDP) rises from 100 billion to 110 billion, and inflation is about 4%. In real prices, the second year GDP would be approximately 106 billion, reflecting its true growth of 6%.
+
+> Except for rare instances of deflation (i.e. negative inflation), a country's current price series on a local currency basis will be higher than its constant price series in the years succeeding the constant price base year. However, this relationship does not hold when the data are converted to a common currency such as U.S. dollars. Many countries have had large devaluations of their currency since 1995 (particularly since 1998), which may cause the current dollar series to be lower than the constant dollar series.""
+
+***
+#Data Source 
+**Reference**: 
+
+**Downloaded**: Sep 13 2016
+
+**Description**:  
+GDP adjusted per capita by PPP (ppppcgdp)
+http://data.worldbank.org/indicator/NY.GDP.PCAP.PP.KD
+Reported at country scale.
+
+GDP per capita based on purchasing power parity (PPP). PPP GDP is gross domestic product converted to international dollars using purchasing power parity rates. An international dollar has the same purchasing power over GDP as the U.S. dollar has in the United States. GDP at purchaser's prices is the sum of gross value added by all resident producers in the economy plus any product taxes and minus any subsidies not included in the value of the products. It is calculated without making deductions for depreciation of fabricated assets or for depletion and degradation of natural resources. Data are in constant international dollars based on the 2011 ICP round.
+
+**Time range**: 1990-2015
+
+
+***
+# Methods
+
+## Setup
+
+``` {r setup, message = FALSE, warning = FALSE}
+
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'figs/', message = FALSE, warning = FALSE)
+
+#setting up provenance
+# devtools::install_github('oharac/provRmd')
+# library(provRmd)
+# prov_setup()
+
+library(ohicore) # devtools::install_github('ohi-science/ohicore@dev')
+library(dplyr)
+library(tidyr)
+library(WDI) # install.packages('WDI')
+library(stringr)
+
+# comment out when knitting:
+# setwd('globalprep/ao/v2016')
+
+# directory paths
+source('../../../src/R/common.R')
+
+```
+
+## Download and save data
+
+```{r load_data,eval=F}
+
+# check website to see what years are available
+yr_start = 1990
+yr_end   = 2015
+
+
+## get description of variables (NOTE: these descriptions appear out of date, they aren't in sync with the definitions of the World Bank):
+indicators <-  data.frame(WDI_data[[1]])
+#indicators[grep("NY.GDP.PCAP.PP.CD", indicators$indicator), ]  # current dollars (influenced by inflation, not being used)
+indicators[grep("NY.GDP.PCAP.PP.KD", indicators$indicator), ]  # constant dollars 
+
+# download the data
+gdppcppp = WDI(country = "all",
+               indicator = "NY.GDP.PCAP.PP.KD", 
+               start = yr_start, end=yr_end)
+
+#write.csv(gdppcppp, 'raw/raw_gdppcppp.csv', row.names=FALSE)
+
+```
+
+
+## Within country gapfilling
+
+When a country has some values, a within country regression model is used to predict the missing values.
+
+```{r}
+
+d <- read.csv('raw/raw_gdppcppp.csv') %>%
+  select(country, value=NY.GDP.PCAP.PP.KD, year) %>%
+  filter(year >= 2005) %>%
+  spread(year, value) %>%  ## fill in potentially missing values with NA
+  data.frame() %>%
+  gather(year, value, starts_with("X")) %>%
+  mutate(year = gsub("X", "", year)) %>%
+  mutate(year = as.numeric(year))
+
+## for the first case, if there is only one value use this value for all years
+## this is not ideal, but likely better than other forms of gapfilling
+
+d <- d %>%
+  group_by(country) %>%
+  mutate(value_num = sum(!is.na(value))) %>%
+  filter(value_num > 0) %>%    # filter out the countries with no data between 2005 and 2015   
+  mutate(value_num_gf = ifelse(value_num==1, mean(value, na.rm=TRUE), NA)) %>%
+  ungroup() %>%
+  mutate(value = ifelse(is.na(value), value_num_gf, value)) %>%
+  select(country, year, value, value_num)
+
+d_gf <- d %>%
+  group_by(country) %>%
+  do({
+    mod <- lm(value ~ year, data=.)
+    value_pred <- predict(mod, newdata=.[c('year')])
+    data.frame(., value_pred)
+  })
+
+d_gf <- d_gf %>%
+  ungroup() %>%
+  mutate(value = ifelse(is.na(value), value_pred, value)) %>%
+  mutate(gapfilled = ifelse(value_num==11, 0, 1)) %>%
+  mutate(method = ifelse(gapfilled==1, paste("lm based on N years data:", value_num, sep=" "), NA))
+  
+```
+
+## Calculate standardized values
+This is performed by taking the natural log of each value and then dividing by the 95th quantile of values across all years (from 2005 to 2015). 
+
+```{r}
+
+d_stand <- d_gf %>%
+  mutate(quantile_95 = quantile(value, probs=0.95)) %>%
+  mutate(value_stand = value/quantile_95) %>%
+  mutate(value_stand = ifelse(value_stand > 1, 1, value_stand))
+
+d_stand <- d_stand %>%
+  select(country, year, score=value_stand, gapfilled, method)
+
+plotData <- d_stand %>%
+  mutate(need = 1-score) %>%
+  dplyr::select(country, year, need)
+
+library(googleVis)
+
+Motion = gvisMotionChart(plotData,
+idvar="country",
+timevar="year")
+
+plot(Motion)
+
+print(Motion, file = file.path('slr_95q.html'))
+
+```
+
+
+# Convert country names to ohi regions
+
+```{r}
+
+### Function to convert to OHI region ID
+d_stand_rgn <- name_2_rgn(df_in = d_stand, 
+                       fld_name='country', 
+                       flds_unique=c('year'))
+
+
+### Combine the duplicate regions (we report these at lower resolution)
+### In this case, we take the average score weigthed by population
+population_weights <- read.csv('../../../../ohiprep/src/LookupTables/Pop_weight_ChinaSAR_USVIslPRico.csv')
+
+d_stand_rgn <- d_stand_rgn %>%
+  left_join(population_weights, by="country") %>%
+  mutate(population = ifelse(is.na(population), 1, population)) %>%
+  group_by(rgn_id, year) %>%
+  summarize(score = weighted.mean(score, population),
+            gapfilled = weighted.mean(gapfilled, population),
+            method = method[1]) %>%
+  ungroup() 
+
+d_stand_rgn <- d_stand_rgn %>%
+  filter(rgn_id <= 250)
+
+summary(d_stand_rgn)
+
+```
+
+# Gapfilling: part 2
+In this case, we gapfill regions with no data using UN geopolitical means.
+
+```{r}
+
+d_stand_gf <- data.frame(year=min(d_stand_rgn$year):max(d_stand_rgn$year)) %>% 
+  merge(georegions, by=NULL) 
+
+d_stand_gf <- d_stand_gf %>%  
+  left_join(d_stand_rgn, by = c("rgn_id", "year")) %>%
+  group_by(r2, year) %>%
+  mutate(r2_value = mean(score, na.rm=TRUE)) %>%
+  ungroup() %>%
+  group_by(r1, year) %>%
+  mutate(r1_value = mean(score, na.rm=TRUE)) %>%
+  ungroup() %>%
+  group_by(r0, year) %>%
+  mutate(r0_value = mean(score, na.rm=TRUE)) %>%
+  ungroup()
+
+d_stand_gf <- d_stand_gf %>%
+  mutate(gapfilled = ifelse(is.na(score) & !is.na(r2_value), "1", gapfilled)) %>%
+  mutate(method = ifelse(is.na(score) & !is.na(r2_value), "UN_geopolitical region avg, r2", method)) %>%
+  mutate(score = ifelse(is.na(score), r2_value, score)) %>%
+  mutate(gapfilled = ifelse(is.na(score) & !is.na(r1_value), "1", gapfilled)) %>%
+  mutate(method = ifelse(is.na(score) & !is.na(r1_value), "UN_geopolitical region avg, r1", method)) %>%
+  mutate(score = ifelse(is.na(score), r1_value, score)) %>%
+  mutate(gapfilled = ifelse(is.na(score) & !is.na(r0_value), "1", gapfilled)) %>%
+  mutate(method = ifelse(is.na(score) & !is.na(r0_value), "UN_geopolitical region avg, r0", method)) %>%
+  mutate(score = ifelse(is.na(score), r0_value, score))
+
+```
+
+
+# Save the data
+
+```{r}
+
+final <- d_stand_gf %>%
+  select(rgn_id, year, value=score)
+
+write.csv(final, "output/wb_gdppcppp_rescaled.csv", row.names=FALSE)
+
+final_gf <- d_stand_gf %>%
+  select(rgn_id, year, gapfilled, method)
+
+write.csv(final_gf, "output/wb_gdppcppp_rescaled_gf.csv", row.names=FALSE)
+
+
+```

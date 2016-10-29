@@ -1,0 +1,288 @@
+---
+title: 'OHI: Targeted harvest pressure'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '../../../src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+[REFERENCE RMD FILE: https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/np/v2016/targetharvest_dataprep.html]
+
+#Summary
+This analysis converts FAO capture production data into the OHI 2016 targeted harvest pressure data.  
+
+
+#Updates from previous assessment
+Corrected a couple typos in the targeted species master list.
+
+
+***
+
+#Data Source 
+    http://www.fao.org/fishery/statistics/software/fishstatj/en#downlApp
+     Release date: March 2016 
+FAO Global Capture Production Quantity 1950_2014
+
+**Downloaded**: July 29 2016
+
+**Description**:  Quantity (tonnes) of fisheries capture for each county, species, year.
+
+**Time range**: 1950-2014
+
+***
+
+```{r}
+
+# load libraries, set directories
+library(ohicore)  #devtools::install_github('ohi-science/ohicore@dev')
+library(dplyr)
+library(stringr)
+library(tidyr)
+
+## comment out when knitting
+#setwd("globalprep/prs_targetedharvest/v2016")
+
+
+### Load FAO-specific user-defined functions
+source('../../../src/R/fao_fxn.R') # function for cleaning FAO files
+source('../../../src/R/common.R') # directory locations
+
+
+```
+
+
+# Read in the raw data
+This includes the FAO capture production data and a list of the "target" species.
+
+```{r}
+
+## FAO capture production data
+fis_fao_csv = read.csv(file.path(dir_M, 'git-annex/globalprep/_raw_data/FAO_capture/d2016/Global_capture_production_Quantity_1950-2014.csv'))
+
+
+# species list 
+sp2grp = read.csv('raw/species2group.csv') %>%
+  filter(incl_excl == 'include') %>%
+  select(target, species); head(sp2grp)
+
+
+```
+
+
+# Clean the FAO data
+
+```{r}
+
+m <- fis_fao_csv %>%
+  rename(country = Country..Country.,
+         species = Species..ASFIS.species.,
+         area = Fishing.area..FAO.major.fishing.area.,
+         Unit = Measure..Measure.) %>%
+  select(-Unit)
+
+m <- m %>%
+  gather("year", "value", 4:(ncol(m))) %>%
+  mutate(year = gsub("X", "", year)) %>%
+    fao_clean_data() 
+
+m <- m %>%
+  mutate(species = as.character(species)) %>%
+  mutate(species = ifelse(species == "Henslow\x92s swimming crab", "Henslow's swimming crab", species))
+
+```
+
+# Identify the target species
+This analysis only includes target species.  The warning messages need to be checked and, if necessary, changes should be made to the raw/species2group.csv  
+
+```{r}
+
+# check for discrepancies in species list
+## seals are no longer included:
+spgroups = sort(as.character(unique(m$species)))
+groups = c('turtle', 'seal', 'whale', 'sea lion', 'dolphin', 'porpoise')
+for (group in groups) { #group='dolphin'
+possibles <- spgroups[grep(group, spgroups)]
+d_missing_l = setdiff(possibles, sp2grp$species)
+  if (length(d_missing_l)>0){
+    cat(sprintf("\nMISSING in the lookup the following species in target='%s'.\n    %s\n", 
+                group, paste(d_missing_l, collapse='\n    ')))
+  }
+}
+
+# check for species in lookup not found in data
+l_missing_d = setdiff(sp2grp$species, spgroups)
+if (length(l_missing_d)>0){
+  cat(sprintf('\nMISSING: These species in the lookup are not found in the FAO data \n'))
+  print(l_missing_d)
+}
+
+
+## filter data to include only target species ----
+m2 = m %>%
+  filter(species %in% sp2grp$species)
+unique(m2$area) # confirm these are all marine
+
+
+```
+
+
+# Summarize data
+
+```{r}
+
+# spread wide to expand years
+m_w = m2 %>%
+  spread(year, value) %>%
+  left_join(sp2grp, by='species'); head(m_w)
+
+
+# gather long by target
+m_l = m_w %>%
+  select(-area) %>%
+  gather(year, value, -country, -species, -target, na.rm=T) %>%
+  mutate(year = as.integer(as.character(year))) %>%
+  arrange(country, target, year); head(m_l)
+
+# explore Japan[210]
+m_l %>% 
+  group_by(country, target, year) %>%
+  summarize(value = sum(value)) %>% 
+  filter(country == 'Japan', target == 'cetacean', year >= 2000) 
+
+# summarize totals per region per year
+m_sum = m_l %>%
+  group_by(country, year) %>%
+  summarize(value = sum(value, na.rm=TRUE)) %>%
+  filter(value != 0) %>%
+  ungroup(); head(m_sum) 
+
+```
+
+# Assign country names to OHI regions
+
+```{r}
+
+
+m_sum <- m_sum %>%
+  mutate(country = as.character(country)) %>%
+  mutate(country = ifelse(country == "C\xf4te d'Ivoire", "Ivory Coast", country))
+
+
+### Function to convert to OHI region ID
+m_sum_rgn <- name_2_rgn(df_in = m_sum, 
+                       fld_name='country', 
+                       flds_unique=c('year'))
+
+# these are duplicates for the same region
+filter(m_sum_rgn, country %in% c("Guadeloupe", "Martinique"))
+
+# They will be summed:
+m_sum_rgn <- m_sum_rgn %>%
+  group_by(rgn_id, rgn_name, year) %>%
+  summarize(value = sum(value)) %>%
+  ungroup()
+
+```
+
+# Scale the data and save files
+For each scenario identify the maximum year, rescale and save the pressure layer.
+
+```{r}
+# identify  max and min years for each scenario and overall
+maxyear_all = max(m_sum_rgn$year, na.rm=T)
+scenario_maxyear = c('eez2016' = maxyear_all,  
+                     'eez2015' = maxyear_all - 1,
+                     'eez2014' = maxyear_all - 2,
+                     'eez2013' = maxyear_all - 3,
+                     'eez2012' = maxyear_all - 4)
+minyear_all = scenario_maxyear[length(scenario_maxyear)]
+
+# calculate and save for each scenario
+for (i in 1:length(names(scenario_maxyear))) { # i=1
+  
+  maxyear = scenario_maxyear[i]
+  scen = as.character(str_extract(names(scenario_maxyear)[i], "\\d{4}"))
+  
+  m_f = m_sum_rgn %>%
+    filter(year >= minyear_all & year <= maxyear) %>%
+    mutate(score = value / quantile(value, 0.95, na.rm = T)) %>% # * 1.10:  don't multiply by 1.10 since comparing to the max across all scenarios
+    mutate(score = ifelse(score>1, 1, score))
+  
+  head(m_f); summary(m_f)
+  
+  m_f_max = m_f %>%
+    filter(value == max(value, na.rm = TRUE))
+  
+  m_f_quantile_95  <- quantile(m_f$value, 0.95, na.rm=TRUE)
+   
+
+  message(sprintf('\n%s pressures scores for %d regions are rescaled to the 95th quantile in harvest since %s (%d-%d):', 
+                  names(scenario_maxyear)[i], length(unique(m_f$rgn_id)), names(minyear_all), minyear_all, maxyear))
+  message(sprintf('%s in %s: %d marine mammals and sea turtles harvested, and the 95th quantile is: %s ', 
+                  m_f_max$rgn_name, m_f_max$year, m_f_max$value, m_f_quantile_95))
+  # output displayed below  
+  
+  m_f = m_f %>%
+    filter(year == maxyear) %>%
+    select(rgn_id, pressure_score = score) %>%
+    arrange(rgn_id); head(m_f); summary(m_f)
+  
+  # any regions that did not have a catch should have score = 0 
+  rgns = rgn_master %>%
+    filter(rgn_typ == "eez") %>%
+    select(rgn_id = rgn_id_2013) %>%
+    filter(rgn_id < 255) %>%
+    unique() %>%
+    arrange(rgn_id)
+  
+  m_f_fin = rgns %>%
+    left_join(m_f) %>%
+    mutate(pressure_score = ifelse(is.na(pressure_score), 0, pressure_score)) %>%
+    arrange(rgn_id); head(m_f_fin); summary(m_f_fin)
+
+  filesave = sprintf('rgn_fao_targeted_%sa.csv', scen)
+  write.csv(m_f_fin, sprintf('output/fao_targeted_%s.csv', scen), row.names = FALSE)
+  
+  m_f_fin_gf <- m_f_fin %>%
+    mutate(gapfill = 0) %>%
+    select(rgn_id, gapfill)
+  
+    write.csv(m_f_fin_gf, sprintf('output/fao_targeted_gf_%s.csv', scen), row.names = FALSE)
+}
+
+```
+
+# Data check
+The data from last year and this year should be the same unless there were changes to underlying FAO data or the master species list.
+
+In this case, all of the regions looked very similar except region 141 (Faeroe Islands).  This was due to a change in the FAO data.
+
+```{r}
+new <- read.csv("output/fao_targeted_2015.csv")
+old <- read.csv("../v2015/data/rgn_fao_targeted_2015a.csv") %>%
+  select(rgn_id, pressure_score_old=pressure_score) %>%
+  left_join(new, by="rgn_id")
+old
+
+plot(pressure_score ~ pressure_score_old, data=old)
+abline(0, 1, col="red")
+
+## look at the species in the 2016 data:
+filter(m, country=="Faroe Islands") %>%
+  filter(year == 2013) %>%
+  filter(value>0)
+
+## look at the catch in the 2015 data:
+old <- read.csv(file.path(dir_M, "git-annex/globalprep/_raw_data/FAO_capture/d2015/FAO_captureproduction_1950_2013.csv")) %>%
+  filter(Country..Country.=="Faroe Islands") %>%
+  select(Country..Country., Common_Name_ASFIS_species, X2013)
+
+```
+

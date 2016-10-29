@@ -1,10 +1,8 @@
 ## Ocean Health Index: Species (Biodiversity) and Iconic Species (Sense of Place)
 
-[Example: https://github.com/OHI-Science/ohiprep/tree/master/globalprep/Pressures_OceanAcidification/v2015]
+See full data prep details: SPP v2016 [here](https://rawgit.com/OHI-Science/ohiprep/master/globalprep/spp_ico/v2016/spp_data_prep.html).
 
-See full data prep details: SPP v2016 [here](https://rawgit.com/OHI-Science/ohiprep/master/globalprep/spp_ico/v2016/data_prep_SPP.html).
-
-See full data prep details: ICO v2016 [TBD](https://rawgit.com/OHI-Science/ohiprep/master/globalprep/spp_ico/v2016/data_prep_ICO.html).
+See full data prep details: ICO v2016 [here](https://rawgit.com/OHI-Science/ohiprep/master/globalprep/spp_ico/v2016/ico_data_prep.html).
 
 If using these data, please see our [citation policy](http://ohi-science.org/citation-policy).
 
@@ -13,7 +11,7 @@ If using these data, please see our [citation policy](http://ohi-science.org/cit
 
 Structure of R Markdown files in this folder:
 
-* `data_prep_SPP.Rmd`: This is the master Rmd script for the Species subgoal.  It sources a number of other sub-scripts:
+* `data_prep_spp.Rmd`: This is the master Rmd script for the Species subgoal.  It sources a number of other sub-scripts:
     * `../R/am_extract_2015.R`: processes AquaMaps data from August 2015 (d2015) from .sql into .csv.
     * `../R/ingest_iucn.R`: gathers data from IUCN API to create a list of all IUCN-listed marine species including extinction risk, population trend, subpopulation, and other relevant info.
     * `spp_fxn.R`:  supporting functions for data processing and calculations

@@ -1,0 +1,306 @@
+---
+title: "OHI 2016 - Food Provision: Calculating fisheries stock status"
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    code_folding: show
+    toc: true
+    toc_depth: 1
+    toc_float: yes
+    number_sections: false
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+pdf_document:
+  toc: true
+---
+
+This analysis runs three catch-only models on the Sea Around Us catch data to estimate stock status (B/Bmsy). Stocks are defined by FAO areas and are limited to only those records where catch is reported at the species level. The three catch-only models are:  
+
+(1) Catch-MSY (CMSY ) model of [Martell and Froese (2012)](http://onlinelibrary.wiley.com/doi/10.1111/j.1467-2979.2012.00485.x/full), 
+
+(2) Catch-only- model with sampling-importance resampling (COMSIR) developed by Vasconcellos and Cochrane (2005);
+
+(3) State-space catch-only model (SSCOM) developed by [Thorson et al. (2013)](http://www.nrcresearchpress.com/doi/abs/10.1139/cjfas-2013-0280#.V6oqKCgrKUk).
+
+The `datalimited` R package, developed by Sean Anderson, is used to run each of these models on the dataset. As of 8/9/2016 this package is held in a private repository on GitHub.
+
+## Setup 
+
+```{r setup, message=F, warning=F}
+
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'figs/',message = FALSE, warning = FALSE)
+
+library(datalimited) #has the 4 catch only models
+library(dplyr)
+library(stringr)
+library(doParallel)
+registerDoParallel(cores = 8)
+
+source('~/github/ohiprep/src/R/common.R')
+
+```
+
+# Load catch data
+
+Read in catch data aggregated from half degree cell to OHI region [catch_data_prep.Rmd](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/fis/v2016/catch_data_prep.html).
+
+```{r catch_data}
+
+catch <- read.csv('int/spatial_catch_pre_bbmsy.csv',stringsAsFactors=F)%>%
+          rename(common = Common_Name)
+
+```
+
+# Catch-MSY
+
+```{r cmsy, eval=F}
+
+if (!file.exists(file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits.rds"))) {
+  
+cmsy_fits <- plyr::dlply(catch, c("stock_id", "common"), function(x) {
+  
+    #make sure the data is ordered from 1950 to 2010
+    x <- arrange(x,year)
+    out <- cmsy(ct = x$tons, yr = x$year,  start_r = resilience(x$Resilience[1]), 
+      reps = 2e4)
+    out$year <- x$year
+    out
+  }, .parallel = TRUE)
+saveRDS(cmsy_fits, file = file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits.rds"))
+} else {
+  cmsy_fits <- readRDS(file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits.rds"))
+}
+
+fake_data <- data.frame(bbmsy_q2.5 = NA, bbmsy_q25 = NA, bbmsy_q50 = NA, 
+  bbmsy_q75 = NA, bbmsy_q97.5 = NA)
+
+cmsy_bbmsy <- plyr::ldply(cmsy_fits, function(x) {
+  bbmsy_cmsy <- x$biomass[, -1] / x$bmsy
+  bbmsy_out <- tryCatch({
+    bbmsy_out <- summarize_bbmsy(bbmsy_cmsy)
+    bbmsy_out$year <- x$year
+    bbmsy_out}, error = function(e) fake_data)
+})
+cmsy_bbmsy$model <- "CMSY"
+
+write.csv(cmsy_bbmsy,file='int/cmsy_bbmsy.csv')
+
+```
+
+Explore why there are some NAs (I think non convergance)
+
+```{r nas, eval=F}
+
+nas <- cmsy_bbmsy%>%
+  group_by(stock_id)%>%
+  summarize(m = mean(bbmsy_mean))%>%
+  filter(is.na(m))
+
+nrow(nas)
+
+```
+
+
+# Catch-MSY with a uniform prior
+
+```{r cmsy_uni_prior, eval=F}
+
+if (!file.exists(file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits-uni-prior.rds"))) {
+cmsy_fits_uni <- plyr::dlply(catch, c("stock_id", "common"), function(x) {
+  
+  #make sure the data is ordered from 1950 to 2010
+     x <- arrange(x,year)
+     
+    out <- cmsy(x$tons, yr = x$year,  start_r = resilience(x$Resilience[1]), 
+      reps = 2e4, finalbio = c(0.01, 0.7))
+    out$year <- x$year
+    out
+  }, .parallel = TRUE)
+saveRDS(cmsy_fits_uni, file = file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits-uni-prior.rds"))
+} else {
+  cmsy_fits_uni <- readRDS(file.path(dir_M,"git-annex/globalprep/fis/v2016/int/cmsy-fits-uni-prior.rds"))
+}
+
+fake_data <- data.frame(bbmsy_q2.5 = NA, bbmsy_q25 = NA, bbmsy_q50 = NA, 
+  bbmsy_q75 = NA, bbmsy_q97.5 = NA)
+
+cmsy_bbmsy_uni <- plyr::ldply(cmsy_fits_uni, function(x) {
+  bbmsy_cmsy <- x$biomass[, -1] / x$bmsy
+  bbmsy_out <- tryCatch({
+    bbmsy_out <- summarize_bbmsy(bbmsy_cmsy)
+    bbmsy_out$year <- x$year
+    bbmsy_out}, error = function(e) fake_data)
+})
+cmsy_bbmsy_uni$model <- "CMSY_uniform"
+
+write.csv(cmsy_bbmsy_uni,file="int/cmsy_bbmsy_uni_prior.csv")
+
+```
+
+
+# COMSIR
+
+The output of running COMSIR created 57 individual dataframes. This is a result of debugging. I kept getting a "missing value where TRUE/FALSE needed" error but wasn't able to identify what species was causing this so I split the stocks into batches to run. After getting the error, often just rerunning the model would produce results without any changes.
+
+```{r fit-comsir, eval=F}
+
+all.stocks<-unique(catch$stock_id)
+
+##
+
+#for loop
+batches <- seq(1,1136,20)
+
+for (i in 1:length(batches)){
+  
+  print(i)
+  
+  start <- batches[i]
+  end <- start+19
+  
+  batchn <- all.stocks[start:end]
+  
+#subset the catch to match stocks in each of the 9 batches  
+#input<-subset(catch, stock_id%in%get(paste("batch",i,".stocks",sep="")))
+  input<-subset(catch, stock_id%in%batchn)
+  
+#run the comsir model function on each stock_id within input
+  
+comsir_fits <- plyr::dlply(input, c("stock_id", "common"), function(x) {
+    out <- comsir(ct = x$tons, yr = x$year,  start_r = resilience(x$Resilience[1]), 
+      nsim = 1e5, n_posterior = 5e3)
+  }, .parallel = TRUE)
+
+
+#save the data as an RDS
+saveRDS(comsir_fits, file = paste0(file.path(dir_M),"/git-annex/globalprep/fis/v2016/int/comsir-fits/comsir-fits_",i,".rds"))
+
+
+fake_data <- data.frame(bbmsy_q2.5 = NA, bbmsy_q25 = NA, bbmsy_q50 = NA, 
+  bbmsy_q75 = NA, bbmsy_q97.5 = NA)
+
+#take the fits and create a dataframe with the bbmsy
+
+comsir_bbmsy <- plyr::ldply(comsir_fits, function(x) {
+  tryCatch({
+    out <- reshape2::dcast(x$quantities, sample_id ~ yr, value.var = "bbmsy")[,-1]
+    out <- summarize_bbmsy(out)
+    out$year <- unique(x$quantities$yr)
+    out}, 
+    error = function(e) fake_data)
+})
+
+  #add model column defining COM-SIR
+  comsir_bbmsy$model <- "COM-SIR"
+  
+  #save as csv
+  write.csv(comsir_bbmsy,file=paste0("int/comsir/comsir-bbmsy_",i,".csv"))
+
+} 
+
+```
+
+
+Combine the .csvs into one dataset.
+```{r combine_COMSIR, eval=F}
+
+files <- list.files('int/comsir',full.names=T)
+
+tables <- lapply(files, read.csv)
+comsir_all <- do.call(rbind, tables)
+
+write.csv(comsir_all,file='int/comsir_bbmsy.csv')
+
+```
+
+
+
+# SSCOM
+
+```{r SSCOM, eval=F}
+
+#trying SSCOM on just one stock
+
+test_stks <- sample(unique(catch$stock_id),5,replace=F)
+
+ # [1] Tenualosa_ilisha-57         Arctoscopus_japonicus-71    Peprilus_triacanthus-31     Fenneropenaeus_chinensis-71 Umbrina_canariensis-47     
+ # [6] Mugil_cephalus-51           Oncorhynchus_gorbuscha-61   Drepane_punctata-51         Salmo_salar-27              Carcharhinus_sorrah-57 
+
+dat <- catch%>%filter(stock_id %in% test_stks)
+
+system.time(
+plyr::d_ply(catch,"stock_id", function(x) {
+
+    filename <- paste0(file.path(dir_M),'/git-annex/globalprep/fis/v2016/int/sscom-fits/sscom-',unique(x$stock_id)[1], ".rds")
+
+  if (!exists(filename)) {
+    out <- tryCatch({
+      sscom(
+        ct            = x$tons,
+        yr            = x$year,
+        start_r       = resilience(catch$Resilience[1]),
+        NburninPrelim = 1000,  #1000
+        NiterPrelim   = 2000,  #2000
+        NthinPrelim   = 1,     # 1
+        NchainsPrelim = 20,   #100
+        NburninJags   = 1e3,   #1e6
+        NiterJags     = 3e3,   #3e6
+        NthinJags     = 2,  #1000
+        Nchains       = 3,
+        return_jags   = TRUE)
+    }, error = function(e) NA)
+
+      out$output$species <- x$stock_id
+      out$bbmsy$species <- x$ctock_id
+      saveRDS(out, file = filename)
+    
+  }
+
+}, .parallel = TRUE))
+
+
+```
+
+Combine the SSCOM data
+
+```{r combine_sscom,eval=F}
+
+files <- list.files(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/sscom-fits'),full.names=T)
+
+
+tables <- lapply(files, 
+                 function(x){ 
+                   
+                   sp <- str_sub(x,70,nchar(x)-4)
+                   
+                   #read in RDS file
+                   df <- readRDS(x)
+                   #grab the bbmsy table from the RDS file
+                   b_df <- df$bbmsy%>%
+                            mutate(stock_id = sp,
+                                   model = "SSCOM")
+                   b_df
+                 })
+                   
+sscom_all <- do.call(rbind, tables)
+
+write.csv(sscom_all,file='int/sscom_bbmsy.csv')
+
+
+```
+
+
+***
+
+# Citation information
+
+Anderson et al. (2016) Improving estimates of population status and trend with 2 superensemble models *Fish and Fisheries* (Under Review)
+
+
+
+
+
+
+

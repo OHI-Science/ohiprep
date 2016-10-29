@@ -1,0 +1,33 @@
+Common name,sciname,category,popn_trend
+Emperor penguin,Aptenodytes forsteri,NT,Stable
+King penguin,Aptenodytes patagonicus,LC,Increasing
+Antarctic fur seal,Arctocephalus gazella,LC,Increasing
+Minke whale,Balaenoptera acutorostrata,LC,Stable
+Sei whale,Balaenoptera borealis,EN,Unknown
+Blue whale,Balaenoptera musculus,EN,Increasing
+Fin whale,Balaenoptera physalus,EN,Unknown
+Polar skua,Catharacta sp.,LC,Stable
+Snowy sheathbill,Chionis albus,LC,Stable
+Cape petrel,Daption capense,LC,Stable
+Wandering albatross,Diomedea exulans,VU,Decreasing
+Southern right whale,Eubalaena australis,LC,Increasing
+Macaroni penguin,Eudyptes chrysolophus,VU,Decreasing
+Leopard seal,Hydrurga leptonyx,LC,Unknown
+Southern bottlenose whale,Hyperoodon planifrons,LC,Unknown
+Hourglass dolphin,Lagenorhynchus cruciger,LC,Unknown
+Weddell seal,Leptonychotes weddellii,LC,Unknown
+Crabeater seal,Lobodon carcinophagus,LC,Unknown
+Southern giant petrel,Macronectes giganteus,LC,Increasing
+Humpback whale,Megaptera novaeangliae,LC,Increasing
+Southern elephant seal ,Mirounga leonina,LC,Unknown
+Wilson's storm petrel,Oceanites oceanicus,LC,Stable
+Ross seal ,Ommatophoca rossii,LC,Unknown
+Imperial shag,Phalacrocorax atriceps,LC,Unknown
+Sperm whale,Physeter macrocephalus,VU,Unknown
+Adelie Penguin,Pygoscelis adeliae,NT,Increasing
+Chinstrap penguin,Pygoscelis antarcticus,LC,Increasing
+Gentoo penguin,Pygoscelis papua,NT,Decreasing
+South polar skua,Stercorarius maccormicki,LC,Stable
+Black-browed albatross,Thalassarche melanophris,NT,Decreasing
+Common bottlenose dolphin,Tursiops truncatus,LC,Unknown
+Cuvier's beaked whale,Ziphius cavirostris,LC,Unknown
