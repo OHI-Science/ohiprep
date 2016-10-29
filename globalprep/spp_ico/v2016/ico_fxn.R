@@ -10,27 +10,27 @@ message(sprintf('scenario: currently set to \'%s\'\n\n', scenario))
 
 
 #############################################################################=
-get_ico_list <- function(reload = FALSE) {
+get_ico_list <- function(reload = TRUE) {
 ### This function loads the ico_global_list.csv to determine which species to
 ### consider for ICO (as well as global and regional ICO status); then attaches 
 ### this ICO species list to the IUCN master species list.  
 
-  ico_list_file <- file.path(dir_goal, scenario, 'int/ico_global_list.csv')
-  ico_raw_file <- file.path(dir_anx, 'ico/ico_global_list2011.csv')
+  ico_list_file <- file.path(dir_goal, 'int/ico_global_list.csv')
+  ico_raw_file <- file.path(dir_anx, 'ico/ico_global_list2016.csv')
   
   if(file.exists(ico_list_file) & !reload) {
     message(sprintf('Reading prepped iconic species list from: \n  %s\n', ico_list_file))
     ico_list <- read_csv(ico_list_file)
   } else {
     message(sprintf('Prepping new ICO list from raw iconic species list: \n  %s\n', ico_raw_file))
-    ico_list_raw <- read.csv(ico_raw_file, stringsAsFactors = FALSE) %>%
+    ico_list_raw <- read_csv(ico_raw_file) %>%
       select(rgn_name   = Country, 
-             comname    = Specie.Common.Name,  
-             sciname    = Specie.Scientific.Name, 
-             ico_flag   = Flagship.Species,
-             ico_local  = Priority.Species_Regional.and.Local,
-             ico_global = Priority.Species_Global,
-             ico_rgn    = Nation.Specific.List
+             comname    = `Specie Common Name`,  
+             sciname    = `Specie Scientific Name`, 
+             ico_flag   = `Flagship Species`,
+             ico_local  = `Priority Species_Regional and Local`,
+             ico_global = `Priority Species_Global`,
+             ico_rgn    = `Nation Specific List`
       )
     # clean up names
     ico_list_raw <- ico_list_raw %>%
@@ -131,7 +131,7 @@ get_ico_details_all <- function(ico_spp_list, reload = FALSE) {
     write_csv(ico_rgns, ico_rgns_file)
   } else {
     message(sprintf('Reading parent/subpop countries file from: \n  %s\n', ico_rgns_file))
-    ico_rgns <- read.csv(ico_rgns_file, stringsAsFactors = FALSE)
+    ico_rgns <- read_csv(ico_rgns_file)
   }
   ico_rgns <- ico_rgn_name_to_number(ico_rgns)
   return(ico_rgns)
@@ -143,7 +143,7 @@ ico_rgn_name_to_number <- function(ico_countries) {
   rgn_names <- read_csv(rgn_name_file) %>%
     rename(rgn_name = label)
   
-  rgn_iucn2ohi <- read.csv(file.path(dir_anx, 'rgns/rgns_iucn2ohi.csv'), stringsAsFactors = FALSE)
+  rgn_iucn2ohi <- read_csv(file.path(dir_anx, 'rgns/rgns_iucn2ohi.csv'))
   ico_countries <- ico_countries %>%
     left_join(rgn_names,
               by = 'rgn_name')
