@@ -205,7 +205,9 @@ generate_iucn_map_list <- function(reload = FALSE) {
     
     spp_iucn_maps <- data.frame()
     
-    for (spp_group in groups_list$shp_fn) { # spp_group <- groups_list$shp_fn[1]
+    for (spp_group in groups_list$shp_fn) { 
+      ### spp_group <- groups_list$shp_fn[1]
+      
       message(sprintf('Processing species group: %s...', tolower(spp_group)))
       spp_dbf <- foreign::read.dbf(file.path(dir_iucn_shp, sprintf('%s.dbf', spp_group)))
       
@@ -223,6 +225,7 @@ generate_iucn_map_list <- function(reload = FALSE) {
                       # iucn_subspecies = subspecies, iucn_class = class_name, iucn_order = order_name, iucn_family = family_nam,
                       iucn_subpop = subpop,
                       # cat_map = code,
+                      citation,
                       presence) %>% 
         mutate(id_no       = as.integer(id_no),
                spp_group   = as.character(spp_group),
