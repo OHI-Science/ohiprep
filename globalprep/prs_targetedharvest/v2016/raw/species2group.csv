@@ -1,0 +1,96 @@
+target,species,incl_excl
+cetacean,Atlantic spotted dolphin,include
+cetacean,Atlantic white-sided dolphin,include
+cetacean,Australian snubfin dolphin,include
+cetacean,Baird's beaked whale,include
+cetacean,Baleen whales nei,include
+cetacean,Beaked whales nei,include
+cetacean,Blainville's beaked whale,include
+cetacean,Blue whale,include
+cetacean,Bottlenose dolphin,include
+cetacean,Bowhead whale,include
+cetacean,Bryde's whale,include
+cetacean,Burmeister's porpoise,include
+cetacean,Clymene dolphin,include
+cetacean,Commerson's dolphin,include
+cetacean,Common dolphin,include
+cetacean,Cuvier's beaked whale,include
+cetacean,Dall's porpoise,include
+cetacean,Dolphins nei,include
+cetacean,Dusky dolphin,include
+cetacean,Dwarf sperm whale,include
+cetacean,False killer whale,include
+cetacean,Finless porpoise,include
+cetacean,Fin whale,include
+cetacean,Franciscana,include
+cetacean,Gervais' beaked whale,include
+cetacean,Gray whale,include
+cetacean,Guyana dolphin,include
+cetacean,Harbour porpoise,include
+cetacean,Hector's dolphin,include
+cetacean,Humpback whale,include
+cetacean,Indo-Pac. hump-backed dolphin,include
+cetacean,Indo-Pacif. bottlenose dolphin,include
+cetacean,Irrawaddy dolphin,include
+cetacean,Killer whale,include
+cetacean,Long-beaked common dolphin,include
+cetacean,Long-finned pilot whale,include
+cetacean,Melon-headed whale,include
+cetacean,Minke whale,include
+cetacean,Narwhal,include
+cetacean,Northern bottlenose whale,include
+cetacean,Northern right whale,include
+cetacean,Northern right whale dolphin,include
+cetacean,Pacific white-sided dolphin,include
+cetacean,Pantropical spotted dolphin,include
+cetacean,Peale's dolphin,include
+cetacean,Pilot whales nei,include
+cetacean,Pygmy sperm whale,include
+cetacean,Risso's dolphin,include
+cetacean,Rough-toothed dolphin,include
+cetacean,Sei whale,include
+cetacean,Short-finned pilot whale,include
+cetacean,South American sea lion,include
+cetacean,Southern right whale,include
+cetacean,Sowerby's beaked whale,include
+cetacean,Spectacled porpoise,include
+cetacean,Sperm whale,include
+cetacean,Spinner dolphin,include
+cetacean,Spotted dolphins nei,include
+cetacean,Stejneger's beaked whale,include
+cetacean,Strap-toothed whale,include
+cetacean,Striped dolphin,include
+cetacean,Toothed whales nei,include
+cetacean,Vaquita,include
+cetacean,Walrus,include
+cetacean,White-beaked dolphin,include
+cetacean,White whale,include
+turtle,Green turtle,include
+turtle,Hawksbill turtle,include
+turtle,Loggerhead turtle,include
+turtle,Marine turtles nei,include
+cetacean,Amazonian manatee,exclude
+cetacean,Aquatic mammals nei,exclude
+cetacean,Baikal seal,exclude
+cetacean,Boto,exclude
+cetacean,Tucuxi,exclude
+pinniped,Bearded seal,exclude
+pinniped,Caspian seal,exclude
+pinniped,Grey seal,exclude
+pinniped,Harbour seal,exclude
+pinniped,Harp seal,exclude
+pinniped,Hooded seal,exclude
+pinniped,Larga seal,exclude
+pinniped,Leopard seal,exclude
+pinniped,New Zealand fur seal,exclude
+pinniped,New Zealand sea lion,exclude
+pinniped,Northern fur seal,exclude
+pinniped,Ribbon seal,exclude
+pinniped,Ringed seal,exclude
+pinniped,Seals nei,exclude
+pinniped,South African fur seal,exclude
+pinniped,South American fur seal,exclude
+pinniped,Steller sea lion,exclude
+turtle,Chinese softshell turtle,exclude
+turtle,Diamond back terrapins,exclude
+turtle,River and lake turtles nei,exclude

@@ -1,0 +1,161 @@
+"Country","score","gapfill"
+"Finland",90.09,NA
+"Canada",89.49,NA
+"Denmark",89.39,NA
+"Australia",89.13,NA
+"Switzerland",88.87,NA
+"Sweden",88.8,NA
+"Norway",88.7,NA
+"Netherlands",88.65,NA
+"United Kingdom",88.58,NA
+"New Zealand",88.45,NA
+"Iceland",88.45,NA
+"Ireland",87.94,NA
+"Austria",86.6,NA
+"Japan",86.54,NA
+"Germany",86.42,NA
+"Belgium",86.19,NA
+"Spain",85.88,NA
+"France",84.79,NA
+"United States",84.62,NA
+"Slovenia",84.27,NA
+"Portugal",83.88,NA
+"Czech Republic",82.8,NA
+"Estonia",82.62,NA
+"Italy",82.49,NA
+"Chile",82.12,NA
+"Korea, Republic of",80.92,NA
+"Cyprus",80.75,NA
+"Uruguay",80.12,NA
+"Costa Rica",80.12,NA
+"Poland",79.76,NA
+"Slovakia",78.96,NA
+"Greece",78.27,NA
+"Croatia",77.68,NA
+"Lithuania",76.94,NA
+"Hungary",76.88,NA
+"Latvia",76.19,NA
+"Israel",75.32,NA
+"Argentina",75.2,NA
+"United Arab Emirates",73.69,NA
+"Mauritius",73.24,NA
+"Panama",73.02,NA
+"Romania",72.23,NA
+"Bulgaria",72.14,NA
+"Jamaica",71.94,NA
+"Kuwait",71.84,NA
+"Brazil",71.7,NA
+"Serbia",71.55,NA
+"Colombia",70.84,NA
+"Peru",70.09,NA
+"Malaysia",70.08,NA
+"Mexico",70.02,NA
+"Albania",69.78,NA
+"Ecuador",69.56,NA
+"Georgia",69.17,NA
+"Montenegro",68.17,NA
+"Tunisia",68,NA
+"Macedonia",67.88,NA
+"Turkey",67.82,NA
+"South Africa",67.6,NA
+"Paraguay",67.44,NA
+"Thailand",67.43,NA
+"Botswana",67.03,NA
+"Ukraine",66.43,NA
+"El Salvador",66.36,NA
+"Saudi Arabia",66.3,NA
+"Belarus",66.18,NA
+"Armenia",66.05,NA
+"Philippines",65.92,NA
+"Bosnia and Herzegovina",65.84,NA
+"Dominican Republic",65.65,NA
+"Jordan",65.43,NA
+"Bolivia",64.73,NA
+"Moldova",64.73,NA
+"Lebanon",64.42,NA
+"Russia",64.19,NA
+"Kazakhstan",63.86,NA
+"Azerbaijan",63.75,NA
+"Nicaragua",63.03,NA
+"Kyrgyzstan",62.91,NA
+"Mongolia",62.8,NA
+"Venezuela",62.6,NA
+"Indonesia",62.27,NA
+"Sri Lanka",62.21,NA
+"China",62.1,NA
+"Namibia",62.01,NA
+"Morocco",61.92,NA
+"Guatemala",61.68,NA
+"Algeria",61.18,NA
+"Egypt",60.74,NA
+"Honduras",60.64,NA
+"Uzbekistan",60.49,NA
+"Ghana",60.37,NA
+"Iran",59.45,NA
+"Tajikistan",58.78,NA
+"Nepal",57.4,NA
+"Senegal",55.64,NA
+"Cambodia",54.28,NA
+"India",53.92,NA
+"Kenya",53.72,NA
+"Malawi",53.44,NA
+"Bangladesh",52.73,NA
+"Laos",52.54,NA
+"Lesotho",52.39,NA
+"Iraq",52.28,NA
+"Rwanda",51.91,NA
+"Swaziland",51.76,NA
+"Uganda",50.69,NA
+"Benin",50.03,NA
+"Tanzania",49.99,NA
+"Myanmar",49.84,NA
+"Congo, Republic of",49.74,NA
+"Burkina Faso",49.34,NA
+"Pakistan",49.13,NA
+"Zimbabwe",49.11,NA
+"Togo",49.03,NA
+"Côte d'Ivoire",48.97,NA
+"Mozambique",47.96,NA
+"Cameroon",47.22,NA
+"Nigeria",46.49,NA
+"Djibouti",46.3,NA
+"Mali",46.24,NA
+"Mauritania",46.08,NA
+"Madagascar",45.91,NA
+"Liberia",45.07,NA
+"Sierra Leone",44.22,NA
+"Ethiopia",43.5,NA
+"Yemen",41.76,NA
+"Guinea",41.66,NA
+"Niger",41.63,NA
+"Angola",39.7,NA
+"Chad",36.38,NA
+"Afghanistan",35.89,NA
+"Central African Republic",30.03,NA
+"Bahrain",70.303562039373,"NutritionandBasicMedicalCare_gf"
+"Belize",68.6530515369738,"PersonalSafety_gf, PersonalFreedomandChoice_gf"
+"Bhutan",64.2963609744318,"NutritionandBasicMedicalCare_gf"
+"Burundi",43.1552890386012,"NutritionandBasicMedicalCare_gf"
+"Cape Verde",67.75906549825,"PersonalSafety_gf, PersonalFreedomandChoice_gf, ToleranceandInclusion_gf"
+"Comoros",54.4285206893367,"NutritionandBasicMedicalCare_gf PersonalSafety_gf"
+"Congo, Democratic Republic of",39.1645537108453,"NutritionandBasicMedicalCare_gf"
+"Cuba",63.0760972940646,"Shelter_gf, ToleranceandInclusion_gf"
+"Gabon",59.3002652009413,"AccesstoBasicKnowledge_gf"
+"Gambia, The",47.3238553872635,"ToleranceandInclusion_gf"
+"Guinea-Bissau",46.1254068393861,"Shelter_gf, AccesstoBasicKnowledge_gf, ToleranceandInclusion_gf"
+"Guyana",62.1348098168803,"PersonalFreedomandChoice_gf, ToleranceandInclusion_gf"
+"Haiti",45.5235058180195,"AccesstoBasicKnowledge_gf"
+"Libya",53.6293963682046,"WaterandSanitation_gf NutritionandBasicMedicalCare_gf"
+"Luxembourg",88.0900817147379,"PersonalSafety_gf"
+"Malta",79.5947722624871,"PersonalSafety_gf"
+"Oman",67.9575778834303,"AccesstoAdvancedEducation_gf, ToleranceandInclusion_gf"
+"Papua New Guinea",46.1475547037424,"Shelter_gf NutritionandBasicMedicalCare_gf, ToleranceandInclusion_gf"
+"Qatar",72.6899232148692,"NutritionandBasicMedicalCare_gf"
+"Singapore",81.7307886487417,"NutritionandBasicMedicalCare_gf, AccesstoBasicKnowledge_gf"
+"Sudan",37.0407258392822,"NutritionandBasicMedicalCare_gf"
+"Suriname",69.2826320651333,"PersonalSafety_gf"
+"Timor-Leste",55.90924676827,"EnvironmentalQuality_gf, ToleranceandInclusion_gf"
+"Trinidad and Tobago",70.8483019697236,"AccesstoBasicKnowledge_gf"
+"Turkmenistan",52.6579936833006,"AccesstoAdvancedEducation_gf"
+"Vietnam",60.2636948241945,"AccesstoBasicKnowledge_gf"
+"Zambia",51.33024758333,"AccesstoBasicKnowledge_gf"
