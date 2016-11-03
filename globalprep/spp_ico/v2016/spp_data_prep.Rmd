@@ -24,21 +24,21 @@ source('~/github/ohiprep/src/R/common.R')
 
 goal     <- 'globalprep/spp_ico'
 scenario <- 'v2016'
-dir_anx  <- file.path(dir_M, 'git-annex', goal) 
+dir_goal_anx   <- file.path(dir_M, 'git-annex', goal, scenario) 
 dir_data_am    <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'aquamaps', 'd2015') 
 dir_data_iucn  <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'iucn_spp', 'd2015') 
 dir_data_bird  <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'birdlife_intl', 'd2015') 
-dir_git  <- file.path('~/github/ohiprep', goal)
+dir_goal  <- file.path('~/github/ohiprep', goal, scenario)
 
 ### set up provenance tracking for this script:
 # source(file.path('~/github/ohibc', 'src/R/prov.R'))          
 
 
-source(file.path(dir_git, scenario, 'spp_fxn.R'))
-if(!file.exists(file.path(dir_git, 'README.md'))) {
-  warning(sprintf('No README detected in %s', dir_git))
+source(file.path(dir_goal, 'spp_fxn.R'))
+if(!file.exists(file.path(dir_goal, '../README.md'))) {
+  warning(sprintf('No README detected in %s', normalizePath(file.path(dir_goal, '../'))))
 }
-if(!file.exists(file.path(dir_git, scenario, 'README.md'))) {
+if(!file.exists(file.path(dir_goal, 'README.md'))) {
   warning(sprintf('No README detected in %s', file.path(dir_git, scenario)))
 }
 # SPP-specific and ICO-specific functions
@@ -179,7 +179,7 @@ source(file.path(dir_git, 'R/ingest_iucn.R'))
 
 ```
 
-`r knitr::kable(read_csv(file.path(dir_anx, scenario, 'int/spp_iucn_marine.csv'), n_max = 5), caption = 'IUCN marine species list and info from spp_iucn_marine.csv (first few rows)')`
+`r knitr::kable(read_csv(file.path(dir_goal_anx, 'int/spp_iucn_marine.csv'), n_max = 5), caption = 'IUCN marine species list and info from spp_iucn_marine.csv (first few rows)')`
  
 ## Generate full species lookup table
 
@@ -214,11 +214,11 @@ reload      <- FALSE
 source_pref <- 'iucn'
 fn_tag      <- ''
 
-source(file.path(dir_git, scenario, 'prep_spp_list.R'))
+source(file.path(dir_goal, 'prep_spp_list.R'))
 
 ```
 
-`r knitr::kable(read_csv(file.path(dir_anx, scenario, 'int/spp_all_cleaned.csv'), n_max = 5), caption = 'Combined species list from spp_all_cleaned.csv (first few rows)')`
+`r knitr::kable(read_csv(file.path(dir_goal_anx, 'int/spp_all_cleaned.csv'), n_max = 5), caption = 'Combined species list from spp_all_cleaned.csv (first few rows)')`
 
 ## Spatialize species information using AquaMaps and IUCN spatial data
 
@@ -238,7 +238,7 @@ The function `extract_loiczid_per_spp()` performs these functions, and is contai
 
 ``` {r Generate lookup IUCN species to LOICZID, eval = FALSE, echo = TRUE}
 
-spp_all <- read_csv(file.path(dir_anx, scenario, 'int/spp_all_cleaned.csv'))
+spp_all <- read_csv(file.path(dir_goal_anx, 'int/spp_all_cleaned.csv'))
 
 ### set up maps_list for all standard (non-bird) IUCN species...
 maps_list_iucn <- spp_all %>%
@@ -280,7 +280,7 @@ The following code chunk executes the functions that perform these tasks.  Note 
 
 ``` {r SPP Generate species per cell tables for Aquamaps and IUCN, echo = TRUE}
 
-spp_all <- read_csv(file.path(dir_anx, scenario, 'int/spp_all_cleaned.csv'))
+spp_all <- read_csv(file.path(dir_goal_anx, 'int/spp_all_cleaned.csv'))
 
 am_cells_spp_sum <- process_am_summary_per_cell(spp_all, fn_tag = '', prob_filter = 0, reload = FALSE) %>%
   read_csv(col_types = 'dddddc')
@@ -313,7 +313,7 @@ The script `spp_ico/v2016/layer_prep_spp_global.R` performs these tasks.
 
 ``` {r  SPP Global Summarize mean category and trend per cell and per region, echo = TRUE}
 
-source(file.path(dir_git, scenario, 'layer_prep_spp_global.R'))
+source(file.path(dir_goal, 'layer_prep_spp_global.R'))
 
 ```
 
@@ -323,13 +323,13 @@ These analyses are repeated for additional scenarios: 3 nautical mile coastal bu
 
 ``` {r SPP 3nm, echo = TRUE}
 
-source(file.path(dir_git, scenario, 'layer_prep_spp_3nm.R'))
+source(file.path(dir_goal, 'layer_prep_spp_3nm.R'))
 
 ```
 
 ``` {R SPP HS and Antarctic, echo = TRUE}
 
-source(file.path(dir_git, scenario, 'layer_prep_spp_hs_aq.R'))
+source(file.path(dir_goal, 'layer_prep_spp_hs_aq.R'))
 
 ```
 
@@ -337,7 +337,7 @@ source(file.path(dir_git, scenario, 'layer_prep_spp_hs_aq.R'))
 
 ``` {r SPP Generate species per cell tables for Aquamaps and IUCN without birds, echo = TRUE}
 
-spp_all_nobirds <- read_csv(file.path(dir_anx, scenario, 'int/spp_all_cleaned.csv')) %>%
+spp_all_nobirds <- read_csv(file.path(dir_goal_anx, 'int/spp_all_cleaned.csv')) %>%
   filter(!(spp_group == 'BOTW' & is.na(am_sid))) %>% ### remove any BOTW with no AquaMaps map
   mutate(spatial_source = ifelse(spp_group == 'BOTW', 'am', spatial_source))
 
@@ -360,12 +360,12 @@ sum_by_loiczid_file_nobirds  <- process_means_per_cell(am_cells_spp_sum_nobirds,
 
 ``` {r  SPP Global Summarize mean category and trend per cell and per region without birds, echo = TRUE}
 
-source(file.path(dir_git, scenario, 'layer_prep_spp_global_nobirds.R'))
+source(file.path(dir_goal, 'layer_prep_spp_global_nobirds.R'))
 
 library(ggplot2)
-nobirds_df <- read_csv(file.path(dir_git, scenario, 'output/spp_status_global.csv')) %>% 
+nobirds_df <- read_csv(file.path(dir_goal, 'output/spp_status_global.csv')) %>% 
   rename(status = score) %>%
-  left_join(read_csv(file.path(dir_git, scenario, 'output/spp_status_global_nobirds.csv'))  %>%
+  left_join(read_csv(file.path(dir_goal, 'output/spp_status_global_nobirds.csv'))  %>%
               rename(status_nobirds = score),
             by = 'rgn_id') %>%
   left_join(read_csv(file.path(dir_git, 'v2015', 'data/spp_status_global.csv'))  %>%
@@ -381,7 +381,7 @@ scatter_nobirds <- ggplot(nobirds_df, aes(x = status_nobirds, y = status)) +
   labs(x = 'Status: v2016 excluding Bird Life data',
        y = 'Status: v2015(blue), v2016 all (black)',
        title = 'SPP Status: excluding birds')
-ggsave(file.path(dir_git, scenario, 'Figs/scatterplot_spp_status_global_excl_bli.png'),
+ggsave(file.path(dir_goal, 'Figs/scatterplot_spp_status_global_excl_bli.png'),
        plot = scatter_nobirds)
   
 ```
@@ -434,10 +434,10 @@ for (pref_flag in pref_flag_vec) {   ### pref_flag  <- pref_flag_vec[1]
     spp_trend <- sum_by_rgn %>%
       dplyr::select(rgn_id, score = rgn_mean_trend)
     write_csv(spp_status, 
-              file.path(dir_git, scenario, 
+              file.path(dir_goal, 
                         sprintf('output/spp_status_global%s_prob%s.csv', pref_flag, prob_filt)))
     write_csv(spp_trend,  
-              file.path(dir_git, scenario, 
+              file.path(dir_goal, 
                         sprintf('output/spp_trend_global%s_prob%s.csv', pref_flag, prob_filt)))
   }
 }
@@ -450,9 +450,9 @@ The `calc_rgn_spp()` function takes in lookup tables of species by cell (for bot
 
 ``` {r species_by_region, echo = FALSE, eval = TRUE}
 
-iucn_cells_spp <- read_csv(file.path(dir_anx, scenario, 'int/iucn_cells_spp.csv'),
+iucn_cells_spp <- read_csv(file.path(dir_goal_anx, 'int/iucn_cells_spp.csv'),
                            col_types = 'cddddc')
-am_cells_spp   <- read_csv(file.path(dir_anx, scenario, 'int/am_cells_spp_prob0.csv'))
+am_cells_spp   <- read_csv(file.path(dir_goal_anx, 'int/am_cells_spp_prob0.csv'))
 
 ics_keyed     <- data.table(iucn_cells_spp, key = "loiczid") 
 acs_keyed     <- data.table(am_cells_spp,   key = "loiczid") 
@@ -467,10 +467,10 @@ rgn_spp_3nm <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_3nm, spp_all)
 rgn_spp_aq  <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_aq,  spp_all)
 rgn_spp_hs  <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_hs,  spp_all)
 
-write_csv(rgn_spp_gl,  file.path(dir_git, scenario, 'output/rgn_spp_gl.csv'))
-write_csv(rgn_spp_3nm, file.path(dir_git, scenario, 'output/rgn_spp_3nm.csv'))
-write_csv(rgn_spp_aq,  file.path(dir_git, scenario, 'output/rgn_spp_aq.csv'))
-write_csv(rgn_spp_hs,  file.path(dir_git, scenario, 'output/rgn_spp_hs.csv'))
+write_csv(rgn_spp_gl,  file.path(dir_goal, 'output/rgn_spp_gl.csv'))
+write_csv(rgn_spp_3nm, file.path(dir_goal, 'output/rgn_spp_3nm.csv'))
+write_csv(rgn_spp_aq,  file.path(dir_goal, 'output/rgn_spp_aq.csv'))
+write_csv(rgn_spp_hs,  file.path(dir_goal, 'output/rgn_spp_hs.csv'))
 ```
 
 `r knitr::kable(head(rgn_spp_gl), caption = 'Species by region - first few rows')`
@@ -479,7 +479,7 @@ write_csv(rgn_spp_hs,  file.path(dir_git, scenario, 'output/rgn_spp_hs.csv'))
 
 ``` {r plot_scores_vs_2015}
 ### commented out - uncomment to regenerate plots...
-# source(file.path(dir_git, scenario, 'score_plot_spp.R'))
+# source(file.path(dir_goal, 'score_plot_spp.R'))
 
 ```
 
