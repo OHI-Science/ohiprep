@@ -1,0 +1,612 @@
+"rgn_name","rgn_id","commodity","product","year","tonnes","usd","gapfill","NAnum","N_reg","N_gap"
+"Ireland",181,"Natural sponges raw","sponges",1980,0,0,"zero_fill",0,29,7
+"Philippines",15,"Ornamental fish nei","ornamentals",2000,5741,6737,"none",0,21,0
+"Belgium",59,"Fish body oils, nei","fish_oil",2005,26131,18470,"none",0,36,0
+"Cuba",112,"Other seaweeds and aquatic plants and products thereof","seaweeds",2004,3,61,"none",0,13,0
+"Barbados",124,"Other seaweeds and aquatic plants and products thereof","seaweeds",2004,0,0,"none",0,11,1
+"Estonia",70,"Fish body oils, nei","fish_oil",2011,1,28,"none",0,18,2
+"Portugal",183,"Halibuts, liver oils","fish_oil",1997,24,48,"none",0,16,1
+"Morocco",62,"Other seaweeds and aquatic plants and products thereof","seaweeds",2000,4767,5240,"none",0,19,0
+"Ireland",181,"Other seaweeds and aquatic plants and products thereof","seaweeds",2010,24409,11906,"none",0,24,0
+"Indonesia",216,"Cod liver oil","fish_oil",1999,41,338,"none",0,33,0
+"Dominican Republic",115,"Ornamental fish nei","ornamentals",1989,0,0,"zero_fill",0,21,12
+"Papua New Guinea",17,"Miscellaneous corals and shells","shells",2010,86,281,"none",0,14,2
+"Sri Lanka",40,"Coral and the like","corals",1995,416,540,"none",0,18,4
+"United States",163,"Agar agar nei","seaweeds",1998,111,778,"none",0,18,0
+"Bahrain",52,"Ornamental fish nei","ornamentals",2002,0,0,"none",0,17,1
+"South Korea",20,"Fish body oils, nei","fish_oil",1992,271,156,"none",0,35,0
+"Croatia",187,"Miscellaneous corals and shells","shells",2011,1,97,"none",0,11,1
+"Maldives",39,"Coral and the like","corals",2004,14,14,"none",0,16,0
+"Portugal",183,"Natural sponges raw","sponges",1986,0,0,"zero_fill",0,24,3
+"Sri Lanka",40,"Fish body oils, nei","fish_oil",1990,0,0,"zero_fill",0,27,0
+"Dominican Republic",115,"Ornamental fish nei","ornamentals",2002,33,88,"none",0,21,12
+"Brazil",171,"Ornamental fish nei","ornamentals",1995,256,4252,"none",0,36,0
+"Tunisia",61,"Coral and the like","corals",1995,7,1166,"none",0,22,0
+"Spain",182,"Fish body oils, nei","fish_oil",1988,1628,854,"none",0,36,0
+"Greece",80,"Shells nei","shells",2008,0,0,"none",0,36,0
+"Japan",210,"Fish body oils, nei","fish_oil",1979,189250,70193,"none",0,36,0
+"Kenya",43,"Fish body oils, nei","fish_oil",2003,5,24,"none",0,28,3
+"Germany",176,"Agar agar nei","seaweeds",2011,618,14635,"none",0,36,0
+"Japan",210,"Fish body oils, nei","fish_oil",2003,928,8352,"none",0,36,0
+"South Korea",20,"Other brown algae (laminaria, eisenia/ecklonia)","seaweeds",1993,655,1978,"none",0,24,0
+"Italy",184,"Miscellaneous corals and shells","shells",2001,1273,1604,"none",0,22,0
+"Peru",138,"Fish liver oils, nei","fish_oil",1998,513,179,"none",0,17,1
+"Madagascar",42,"Fish liver oils, nei","fish_oil",2008,0,0,"none",0,12,0
+"France",179,"Shells nei","shells",2007,0,0,"none",0,36,0
+"Iceland",143,"Herring oil","fish_oil",1985,110,29,"none",0,36,0
+"Morocco",62,"Fish body oils, nei","fish_oil",1985,5,2,"none",0,36,0
+"Sweden",222,"Ornamental saltwater fish","ornamentals",2000,2,18,"none",0,9,8
+"Honduras",133,"Fish body oils, nei","fish_oil",2010,138,146,"none",0,20,0
+"North Korea",21,"Coral and the like","corals",2009,421,46,"none",0,22,0
+"Australia",16,"Fish liver oils, nei","fish_oil",1991,79,158,"none",0,23,0
+"Turkey",76,"Cod liver oil","fish_oil",1984,3758,1319,"none",0,35,0
+"Croatia",187,"Agar agar nei","seaweeds",2008,1,14,"none",0,5,7
+"South Africa",102,"Natural sponges raw","sponges",2002,8,426,"none",0,15,0
+"Poland",178,"Miscellaneous corals and shells","shells",2010,491,675,"none",0,17,1
+"Marshall Islands",11,"Ornamental fish nei","ornamentals",2011,2,684,"none",0,12,19
+"Ecuador",137,"Ornamental fish nei","ornamentals",1988,12,16,"none",0,36,0
+"Peru",138,"Coral and the like","corals",2001,46,20,"none",0,14,1
+"Argentina",172,"Fish liver oils, nei","fish_oil",1995,5,229,"none",0,21,4
+"South Korea",20,"Fish liver oils, nei","fish_oil",2007,3395,2208,"none",0,36,0
+"Netherlands",177,"Agar agar nei","seaweeds",2007,97,1408,"none",0,35,1
+"Taiwan",14,"Fish body oils, nei","fish_oil",1985,0,0,"none",0,35,1
+"Papua New Guinea",17,"Fish body oils, nei","fish_oil",1991,15,76,"none",0,20,1
+"Mauritius",37,"Fish body oils, nei","fish_oil",2011,922,1634,"none",0,5,0
+"Turkey",76,"Fish liver oils, nei","fish_oil",2011,2,17,"none",0,18,0
+"Croatia",187,"Natural sponges raw","sponges",1997,5,242,"none",0,18,0
+"India",203,"Sardine oil","fish_oil",2010,12582,11268,"none",0,9,0
+"Angola",200,"Fish liver oils, nei","fish_oil",2011,160,15,"none",0,15,0
+"Eritrea",45,"Ornamental fish nei","ornamentals",2008,3,150,"none",0,12,5
+"Venezuela",139,"Coral and the like","corals",2002,14,32,"none",0,18,0
+"Germany",176,"Fish body oils, nei","fish_oil",1988,6200,3505,"none",0,36,0
+"Italy",184,"Shells nei","shells",1990,0,0,"none",0,36,0
+"Peru",138,"Fish body oils, nei","fish_oil",1980,0,0,"zero_fill",0,36,0
+"Mexico",135,"Ornamental fish nei","ornamentals",1983,1,5,"none",0,16,20
+"Taiwan",14,"Natural sponges raw","sponges",1994,5,35,"none",0,27,7
+"Jamaica",166,"Ornamental fish nei","ornamentals",2000,13,49,"none",0,12,24
+"French Polynesia",147,"Ornamental fish nei","ornamentals",1983,0,0,"none",0,29,7
+"South Korea",20,"Kelp meal","seaweeds",1983,170,57,"none",0,29,2
+"Belgium",59,"Fish liver oils, nei","fish_oil",1981,31,38,"none",0,36,0
+"Namibia",101,"Fish liver oils, nei","fish_oil",2002,3170,1109,"none",0,12,1
+"South Korea",20,"Agar agar in strips","seaweeds",1998,239,3352,"none",0,24,0
+"Malaysia",206,"Natural sponges nei","sponges",2009,0,0,"none",0,17,5
+"Russia",73,"Fish body oils, nei","fish_oil",1982,80,77,"none",0,36,0
+"Taiwan",14,"Agar agar nei","seaweeds",1982,0,0,"zero_fill",0,36,0
+"Netherlands",177,"Other seaweeds and aquatic plants and products thereof","seaweeds",1993,158,368,"none",0,24,0
+"Greece",80,"Other seaweeds and aquatic plants and products thereof","seaweeds",1989,30,19,"none",0,19,5
+"India",203,"Miscellaneous corals and shells","shells",1994,1438,115,"none",0,22,0
+"Indonesia",216,"Other seaweeds and aquatic plants and products thereof","seaweeds",1997,12698,10521,"none",0,22,0
+"Argentina",172,"Other seaweeds and aquatic plants and products thereof","seaweeds",1996,211,102,"none",0,21,0
+"South Korea",20,"Agar agar in powder","seaweeds",1993,120,2538,"none",0,24,0
+"Colombia",132,"Natural sponges nei","sponges",2010,13,174,"none",0,5,0
+"Indonesia",216,"Coral and the like","corals",1990,1713,10760,"none",0,22,0
+"Bangladesh",204,"Ornamental fish nei","ornamentals",1995,0,0,"zero_fill",0,28,0
+"Venezuela",139,"Natural sponges raw","sponges",2009,0,0,"none",0,13,1
+"Turkey",76,"Fish body oils, nei","fish_oil",2000,3604,1549,"none",0,33,3
+"Sweden",222,"Fish body oils, nei","fish_oil",2004,5812,10358,"none",0,36,0
+"Italy",184,"Ornamental saltwater fish","ornamentals",2008,210,1753,"none",0,24,0
+"Germany",176,"Halibuts, liver oils","fish_oil",2006,13,82,"none",0,15,2
+"Sao Tome and Principe",103,"Ornamental fish nei","ornamentals",2005,0,0,"zero_fill",0,11,4
+"Greece",80,"Shells nei","shells",2004,0,0,"none",0,36,0
+"Philippines",15,"Natural sponges raw","sponges",2000,14,249,"none",0,21,0
+"Japan",210,"Agar agar nei","seaweeds",1994,92,2708,"none",0,36,0
+"Saint Vincent and the Grenadines",127,"Fish body oils, nei","fish_oil",1983,0,0,"zero_fill",0,28,3
+"Taiwan",14,"Fish liver oils, nei","fish_oil",2011,17,285,"none",0,34,2
+"Greece",80,"Ornamental saltwater fish","ornamentals",1995,0,0,"none",0,17,4
+"Italy",184,"Miscellaneous corals and shells","shells",1999,1485,1894,"none",0,22,0
+"Norway",223,"Herring oil","fish_oil",1999,48378,26362,"none",0,17,0
+"Bangladesh",204,"Ornamental fish nei","ornamentals",2006,10,45,"none",0,28,0
+"South Korea",20,"Shells nei","shells",1984,1531,942,"none",0,30,0
+"Costa Rica",130,"Ornamental fish nei","ornamentals",1985,0,0,"zero_fill",0,27,1
+"United Kingdom",180,"Fish liver oils, nei","fish_oil",1978,1340,1325,"none",0,36,0
+"Sweden",222,"Fish body oils, nei","fish_oil",1983,2715,958,"none",0,36,0
+"Angola",200,"Fish body oils, nei","fish_oil",2009,0,0,"zero_fill",0,14,0
+"United States",163,"Coral and the like","corals",2003,17008,9549,"none",0,22,0
+"Madagascar",42,"Other edible seaweeds","seaweeds",1990,78,49,"none",0,25,0
+"Thailand",25,"Fish liver oils, nei","fish_oil",2007,23,336,"none",0,32,1
+"Iceland",143,"Redfish oil","fish_oil",2005,0,0,"none",0,36,0
+"Belgium",59,"Fish body oils, nei","fish_oil",1983,253,98,"none",0,36,0
+"Republique du Congo",100,"Ornamental fish nei","ornamentals",2009,0,0,"none",0,6,11
+"Chile",224,"Ornamental fish nei","ornamentals",2010,0,0,"none",0,12,7
+"France",179,"Other seaweeds and aquatic plants and products thereof","seaweeds",2005,2587,8714,"none",0,36,0
+"South Korea",20,"Undaria pinnafitida (brown algae)","seaweeds",2007,6462,17667,"none",0,27,0
+"Malaysia",206,"Fish body oils, nei","fish_oil",2006,51,286,"none",0,34,2
+"Portugal",183,"Miscellaneous corals and shells","shells",2005,0,0,"none",0,12,5
+"Sweden",222,"Natural sponges raw","sponges",2010,68,54,"none",0,7,10
+"Mozambique",41,"Miscellaneous corals and shells","shells",1998,220,145,"none",0,18,0
+"Japan",210,"Coral and the like","corals",1977,8,2288,"none",0,36,0
+"Philippines",15,"Fish body oils, nei","fish_oil",1998,0,0,"zero_fill",0,33,2
+"Barbados",124,"Ornamental fish nei","ornamentals",2003,3,24,"none",0,30,6
+"Greece",80,"Natural sponges raw","sponges",2007,4,503,"none",0,35,1
+"Libya",67,"Ornamental fish nei","ornamentals",2011,0,0,"none",0,13,2
+"Canada",218,"Herring oil","fish_oil",2008,2313,3274,"none",0,36,0
+"Thailand",25,"Agar agar nei","seaweeds",1996,17,243,"none",0,18,0
+"Denmark",175,"Agar agar nei","seaweeds",2001,6,85,"none",0,29,0
+"Thailand",25,"Fish body oils, nei","fish_oil",1991,0,0,"zero_fill",0,29,3
+"Philippines",15,"Natural sponges raw","sponges",1991,13,176,"none",0,21,0
+"Sweden",222,"Ornamental saltwater fish","ornamentals",2005,0,0,"none",0,9,8
+"Spain",182,"Coral and the like","corals",2009,0,0,"none",0,24,7
+"Malaysia",206,"Agar agar nei","seaweeds",2001,4,39,"none",0,18,0
+"Senegal",66,"Clupeoid oils, nei","fish_oil",1988,0,0,"zero_fill",0,33,0
+"Saudi Arabia",50,"Ornamental fish nei","ornamentals",2004,209,787,"none",0,19,0
+"Chile",224,"Fish body oils, nei","fish_oil",1989,141858,22690,"none",0,36,0
+"Finland",174,"Fish body oils, nei","fish_oil",1984,0,0,"zero_fill",0,25,4
+"Mauritius",37,"Ornamental fish nei","ornamentals",1993,7,72,"none",0,20,0
+"Estonia",70,"Fish body oils, nei","fish_oil",1995,14,3,"none",0,18,2
+"Spain",182,"Fish liver oils, nei","fish_oil",1996,1488,5113,"none",0,32,0
+"Guatemala",136,"Natural sponges raw","sponges",2010,0,0,"none",0,17,1
+"Philippines",15,"Coral and the like","corals",1998,1724,2559,"none",0,21,0
+"Slovenia",188,"Miscellaneous corals and shells","shells",2009,4,13,"none",0,12,6
+"Romania",72,"Ornamental fish nei","ornamentals",2000,0,0,"none",0,13,6
+"Latvia",69,"Other seaweeds and aquatic plants and products thereof","seaweeds",1998,1,7,"none",0,14,1
+"Morocco",62,"Agar agar nei","seaweeds",2009,868,20202,"none",0,18,0
+"Netherlands",177,"Ornamental saltwater fish","ornamentals",2004,73,1358,"none",0,23,1
+"Kenya",43,"Miscellaneous corals and shells","shells",2009,712,195,"none",0,9,0
+"Taiwan",14,"Laver, nei","seaweeds",1990,0,0,"zero_fill",0,33,1
+"Papua New Guinea",17,"Trochus shells","shells",2009,113,1105,"none",0,16,0
+"Spain",182,"Shells nei","shells",1983,227,62,"none",0,31,0
+"Malaysia",206,"Other seaweeds and aquatic plants and products thereof","seaweeds",2002,1817,3802,"none",0,18,4
+"Iceland",143,"Redfish oil","fish_oil",2006,0,0,"none",0,36,0
+"Chile",224,"Natural sponges raw","sponges",1997,0,0,"none",0,22,0
+"Latvia",69,"Fish body oils, nei","fish_oil",2001,615,277,"none",0,19,0
+"Tonga",155,"Miscellaneous corals and shells","shells",2001,0,0,"zero_fill",0,7,6
+"Portugal",183,"Ornamental saltwater fish","ornamentals",2011,5,1490,"none",0,22,2
+"India",203,"Shells nei","shells",2010,1289,1101,"none",0,12,0
+"Liberia",97,"Ornamental fish nei","ornamentals",2004,1,10,"none",0,8,4
+"Germany",176,"Halibuts, liver oils","fish_oil",1996,0,0,"none",0,15,2
+"Turkey",76,"Shells nei","shells",1979,679,4341,"none",0,36,0
+"Denmark",175,"Miscellaneous corals and shells","shells",1994,31327,2735,"none",0,18,0
+"Indonesia",216,"Cod liver oil","fish_oil",1998,3,22,"none",0,33,0
+"Philippines",15,"Fish body oils, nei","fish_oil",1989,0,0,"zero_fill",0,33,2
+"Sri Lanka",40,"Coral and the like","corals",1998,603,1225,"none",0,18,4
+"Malaysia",206,"Fish liver oils, nei","fish_oil",2008,596,788,"none",0,29,1
+"South Africa",102,"Fish body oils, nei","fish_oil",1982,2000,670,"none",0,36,0
+"Pakistan",53,"Coral and the like","corals",2002,49,10,"none",0,10,0
+"South Korea",20,"Fish liver oils, nei","fish_oil",1990,0,0,"none",0,36,0
+"Solomon Islands",7,"Coral and the like","corals",1998,391,1007,"none",0,14,0
+"Portugal",183,"Shark liver oil","fish_oil",1999,0,0,"none",0,29,0
+"India",203,"Miscellaneous corals and shells","shells",2006,0,0,"none",0,22,0
+"Fiji",18,"Coral and the like","corals",1993,109,340,"none",0,22,0
+"China",209,"Undaria pinnafitida (brown algae)","seaweeds",2009,11898,49374,"none",0,14,0
+"China",209,"Natural sponges nei","sponges",2003,0,0,"none",0,22,0
+"Tunisia",61,"Ornamental fish nei","ornamentals",2009,5,50,"none",0,21,1
+"Republique du Congo",100,"Ornamental fish nei","ornamentals",2005,0,0,"zero_fill",0,6,11
+"New Zealand",162,"Agar agar nei","seaweeds",1996,6,114,"none",0,18,0
+"Belgium",59,"Fish liver oils, nei","fish_oil",2004,121,372,"none",0,36,0
+"Barbados",124,"Ornamental fish nei","ornamentals",1986,0,0,"zero_fill",0,30,6
+"Latvia",69,"Other seaweeds and aquatic plants and products thereof","seaweeds",2002,83,44,"none",0,14,1
+"Turkey",76,"Agar agar nei","seaweeds",1998,1,5,"none",0,15,2
+"South Korea",20,"Sea snail shells","shells",2004,35,72,"none",0,24,0
+"Japan",210,"Shells nei","shells",2002,0,0,"none",0,36,0
+"Sweden",222,"Miscellaneous corals and shells","shells",2004,13,24,"none",0,16,2
+"El Salvador",134,"Coral and the like","corals",2008,240,86,"none",0,10,7
+"Malaysia",206,"Shells nei","shells",2010,0,0,"none",0,13,2
+"France",179,"Coral and the like","corals",1976,25,1544,"none",0,36,0
+"Somalia",44,"Miscellaneous corals and shells","shells",2010,13,4,"none",0,9,0
+"Tanzania",202,"Ornamental fish nei","ornamentals",2008,46,124,"none",0,12,9
+"Germany",176,"Shells nei","shells",1984,224,318,"none",0,36,0
+"Costa Rica",130,"Other seaweeds and aquatic plants and products thereof","seaweeds",1998,1,12,"none",0,18,4
+"Costa Rica",130,"Fish liver oils, nei","fish_oil",2001,2,5,"none",0,14,2
+"Belgium",59,"Other seaweeds and aquatic plants and products thereof","seaweeds",1996,63,303,"none",0,24,0
+"Micronesia",9,"Coral and the like","corals",2002,12,137,"none",0,13,1
+"Saint Vincent and the Grenadines",127,"Fish body oils, nei","fish_oil",1998,0,0,"zero_fill",0,28,3
+"Saint Vincent and the Grenadines",127,"Fish liver oils, nei","fish_oil",2004,0,0,"zero_fill",0,34,2
+"Thailand",25,"Fish liver oils, nei","fish_oil",1990,12,165,"none",0,32,1
+"Belgium",59,"Shells nei","shells",2001,0,0,"none",0,36,0
+"Germany",176,"Other seaweeds and aquatic plants and products thereof","seaweeds",2008,262,3422,"none",0,24,0
+"Maldives",39,"Fish liver oils, nei","fish_oil",2008,1,11,"none",0,10,1
+"Canada",218,"Fish body oils, nei","fish_oil",2006,4949,20692,"none",0,36,0
+"Greece",80,"Natural sponges other than raw","sponges",2008,195,952,"none",0,18,0
+"Guatemala",136,"Natural sponges raw","sponges",1997,0,0,"none",0,17,1
+"Portugal",183,"Shark liver oil","fish_oil",1993,0,0,"none",0,29,0
+"Jamaica",166,"Natural sponges raw","sponges",2003,0,0,"none",0,17,3
+"France",179,"Agar agar nei","seaweeds",1994,43,1935,"none",0,36,0
+"Barbados",124,"Other seaweeds and aquatic plants and products thereof","seaweeds",2010,0,0,"none",0,11,1
+"Denmark",175,"Natural sponges raw","sponges",2003,0,0,"zero_fill",0,23,13
+"Pakistan",53,"Coral and the like","corals",2008,0,0,"none",0,10,0
+"South Africa",102,"Fish liver oils, nei","fish_oil",1984,0,0,"zero_fill",0,33,1
+"India",203,"Miscellaneous corals and shells","shells",2002,0,0,"zero_fill",0,22,0
+"Egypt",214,"Natural sponges raw","sponges",2005,18,63,"none",0,13,4
+"Ukraine",75,"Agar agar nei","seaweeds",2011,0,0,"none",0,7,3
+"Trinidad and Tobago",126,"Ornamental fish nei","ornamentals",2011,3,118,"none",0,29,7
+"Madagascar",42,"Shark oil","fish_oil",2006,0,0,"none",0,20,0
+"Guatemala",136,"Natural sponges raw","sponges",1994,1,1,"none",0,17,1
+"South Korea",20,"Fish liver oils, nei","fish_oil",1977,71,67,"none",0,36,0
+"Nicaragua",131,"Coral and the like","corals",2006,70,28,"none",0,14,0
+"Peru",138,"Fish body oils, nei","fish_oil",1997,228886,89695,"none",0,36,0
+"Papua New Guinea",17,"Coral and the like","corals",1997,0,0,"zero_fill",0,13,3
+"Cuba",112,"Miscellaneous corals and shells","shells",1999,6,27,"none",0,11,2
+"Egypt",214,"Other seaweeds and aquatic plants and products thereof","seaweeds",2008,25,28,"none",0,18,0
+"United Kingdom",180,"Other seaweeds and aquatic plants and products thereof","seaweeds",1995,553,1644,"none",0,24,0
+"Ireland",181,"Other seaweeds and aquatic plants and products thereof","seaweeds",1998,1360,1185,"none",0,24,0
+"Argentina",172,"Ornamental fish nei","ornamentals",1987,1,9,"none",0,18,18
+"Finland",174,"Other seaweeds and aquatic plants and products thereof","seaweeds",2009,12,24,"none",0,11,6
+"Barbados",124,"Other seaweeds and aquatic plants and products thereof","seaweeds",2001,2,8,"none",0,11,1
+"Philippines",15,"Coral and the like","corals",2010,0,0,"none",0,21,0
+"Norway",223,"Fish body oils, nei","fish_oil",1984,76862,27197,"none",0,36,0
+"United Kingdom",180,"Shells nei","shells",1981,2485,1896,"none",0,36,0
+"Japan",210,"Cod liver oil","fish_oil",1979,847,778,"none",0,36,0
+"Tunisia",61,"Coral and the like","corals",1994,17,1253,"none",0,22,0
+"Jamaica",166,"Natural sponges raw","sponges",1999,0,0,"none",0,17,3
+"Panama",129,"Fish body oils, nei","fish_oil",2008,2103,2162,"none",0,36,0
+"Ecuador",137,"Fish body oils, nei","fish_oil",1993,0,0,"zero_fill",0,36,0
+"France",179,"Shells nei","shells",1995,0,0,"none",0,36,0
+"France",179,"Miscellaneous corals and shells","shells",1992,6512,2310,"none",0,22,0
+"Italy",184,"Agar agar nei","seaweeds",1976,11,92,"none",0,36,0
+"Indonesia",216,"Ornamental saltwater fish","ornamentals",1993,2040,5489,"none",0,31,0
+"Portugal",183,"Cod liver oil","fish_oil",2008,0,0,"none",0,35,1
+"Morocco",62,"Other seaweeds and aquatic plants and products thereof","seaweeds",2010,4768,9429,"none",0,19,0
+"Ireland",181,"Fish body oils, nei","fish_oil",1988,4395,873,"none",0,35,1
+"Madagascar",42,"Other edible seaweeds","seaweeds",1988,156,88,"none",0,25,0
+"India",203,"Ornamental fish nei","ornamentals",1992,4,145,"none",0,34,2
+"India",203,"Ornamental fish nei","ornamentals",1999,27,525,"none",0,34,2
+"Belgium",59,"Halibuts, liver oils","fish_oil",2006,0,0,"none",0,13,2
+"Belgium",59,"Other seaweeds and aquatic plants and products thereof","seaweeds",2002,253,990,"none",0,24,0
+"China",209,"Coral and the like","corals",1994,1956,1736,"none",0,22,0
+"India",203,"Cod liver oil","fish_oil",2001,149,1011,"none",0,12,0
+"Tanzania",202,"Fish body oils, nei","fish_oil",2010,4,1,"none",0,15,0
+"South Korea",20,"Oyster shells","shells",2008,4,13,"none",0,23,1
+"Indonesia",216,"Cod liver oil","fish_oil",1992,392,4046,"none",0,33,0
+"Norway",223,"Shark oil","fish_oil",2010,53,331,"none",0,22,2
+"Portugal",183,"Fish body oils, nei","fish_oil",1991,835,165,"none",0,36,0
+"Japan",210,"Shells nei","shells",1994,0,0,"none",0,36,0
+"Turkey",76,"Natural sponges raw","sponges",2001,2,36,"none",0,35,1
+"Australia",16,"Other seaweeds and aquatic plants and products thereof","seaweeds",1992,2138,1290,"none",0,22,0
+"North Korea",21,"Miscellaneous corals and shells","shells",2009,0,0,"none",0,10,0
+"Sweden",222,"Fish body oils, nei","fish_oil",2007,1567,14179,"none",0,36,0
+"Haiti",114,"Coral and the like","corals",2002,320,443,"none",0,14,0
+"Mexico",135,"Fish body oils, nei","fish_oil",2009,29399,15727,"none",0,29,1
+"Brazil",171,"Other seaweeds and aquatic plants and products thereof","seaweeds",2010,121,221,"none",0,21,1
+"Belgium",59,"Fish liver oils, nei","fish_oil",2011,21,119,"none",0,36,0
+"China",209,"Fish liver oils, nei","fish_oil",1992,170,366,"none",0,25,0
+"South Korea",20,"Other red algae","seaweeds",1994,9,282,"none",0,31,0
+"Portugal",183,"Fish liver oils, nei","fish_oil",1984,20,54,"none",0,36,0
+"Australia",16,"Mother of pearl shells","shells",2001,219,649,"none",0,16,0
+"Panama",129,"Fish body oils, nei","fish_oil",1980,13101,4685,"none",0,36,0
+"Sweden",222,"Fish liver oils, nei","fish_oil",1995,15,745,"none",0,34,0
+"Maldives",39,"Shark liver oil","fish_oil",1991,34,177,"none",0,32,0
+"France",179,"Other seaweeds and aquatic plants and products thereof","seaweeds",1998,5997,5392,"none",0,36,0
+"Turkey",76,"Agar agar nei","seaweeds",2009,1,15,"none",0,15,2
+"Slovenia",188,"Fish body oils, nei","fish_oil",2010,22,1268,"none",0,18,2
+"Japan",210,"Cod liver oil","fish_oil",1995,0,0,"none",0,36,0
+"United States",163,"Fish body oils, nei","fish_oil",1976,3330,1418,"none",0,36,0
+"Haiti",114,"Miscellaneous corals and shells","shells",2006,0,0,"none",0,11,1
+"French Polynesia",147,"Ornamental fish nei","ornamentals",2000,20,111,"none",0,29,7
+"South Africa",102,"Natural sponges raw","sponges",2000,3,96,"none",0,15,0
+"Portugal",183,"Agar agar nei","seaweeds",1994,146,2430,"none",0,36,0
+"Italy",184,"Fish liver oils, nei","fish_oil",1986,21,2,"none",0,36,0
+"Latvia",69,"Fish body oils, nei","fish_oil",2000,395,177,"none",0,19,0
+"Solomon Islands",7,"Other seaweeds and aquatic plants and products thereof","seaweeds",2009,150,170,"none",0,8,0
+"Argentina",172,"Ornamental fish nei","ornamentals",1985,0,0,"zero_fill",0,18,18
+"Pakistan",53,"Agar agar nei","seaweeds",2003,6,17,"none",0,7,2
+"Denmark",175,"Shells nei","shells",1985,33381,1379,"none",0,36,0
+"Uruguay",173,"Fish body oils, nei","fish_oil",2000,0,0,"none",0,32,0
+"Marshall Islands",11,"Coral and the like","corals",2005,34,120,"none",0,12,2
+"Taiwan",14,"Ornamental saltwater fish","ornamentals",2007,85,1644,"none",0,23,0
+"South Korea",20,"Agar agar nei","seaweeds",2002,84,1406,"none",0,31,0
+"Greece",80,"Natural sponges raw","sponges",2006,1,168,"none",0,35,1
+"Australia",16,"Fish body oils, nei","fish_oil",2005,260,1368,"none",0,34,2
+"Portugal",183,"Fish body oils, nei","fish_oil",1982,3239,1407,"none",0,36,0
+"Namibia",101,"Fish liver oils, nei","fish_oil",2000,28,40,"none",0,12,1
+"Mauritania",64,"Cod liver oil","fish_oil",2011,0,0,"none",0,12,0
+"Mexico",135,"Ornamental fish nei","ornamentals",1994,1,1,"none",0,16,20
+"Spain",182,"Coral and the like","corals",2000,0,0,"none",0,24,7
+"Madagascar",42,"Other edible seaweeds","seaweeds",1996,584,295,"none",0,25,0
+"Portugal",183,"Cod liver oil","fish_oil",2001,0,0,"none",0,35,1
+"Spain",182,"Other seaweeds and aquatic plants and products thereof","seaweeds",2010,135,1725,"none",0,24,0
+"Iceland",143,"Herring oil","fish_oil",1986,248,71,"none",0,36,0
+"Slovenia",188,"Fish body oils, nei","fish_oil",1997,0,0,"zero_fill",0,18,2
+"Iceland",143,"Redfish oil","fish_oil",2001,0,0,"none",0,36,0
+"Oman",48,"Coral and the like","corals",2001,30,5,"none",0,16,1
+"Portugal",183,"Other seaweeds and aquatic plants and products thereof","seaweeds",2005,28,152,"none",0,36,0
+"French Polynesia",147,"Shells nei","shells",2008,2381,5623,"none",0,15,0
+"Germany",176,"Other seaweeds and aquatic plants and products thereof","seaweeds",1996,164,1105,"none",0,24,0
+"Tunisia",61,"Miscellaneous corals and shells","shells",2001,5,809,"none",0,12,1
+"United Kingdom",180,"Shells nei","shells",1995,0,0,"none",0,36,0
+"India",203,"Other seaweeds and aquatic plants and products thereof","seaweeds",2007,126,1232,"none",0,18,0
+"North Korea",21,"Coral and the like","corals",1998,36,5,"none",0,22,0
+"Italy",184,"Fish liver oils, nei","fish_oil",2005,27,29,"none",0,36,0
+"Russia",73,"Natural sponges raw","sponges",2008,0,0,"none",0,12,0
+"Romania",72,"Natural sponges raw","sponges",2001,63,222,"none",0,20,0
+"Liberia",97,"Ornamental fish nei","ornamentals",2008,0,0,"none",0,8,4
+"Angola",200,"Fish body oils, nei","fish_oil",2002,0,0,"zero_fill",0,14,0
+"Tonga",155,"Other seaweeds and aquatic plants and products thereof","seaweeds",2009,0,0,"zero_fill",0,14,1
+"Bulgaria",71,"Ornamental fish nei","ornamentals",2011,0,0,"none",0,8,5
+"Philippines",15,"Ornamental fish nei","ornamentals",2009,0,0,"none",0,21,0
+"Taiwan",14,"Shells nei","shells",2005,11,5,"none",0,35,1
+"Ireland",181,"Agar agar nei","seaweeds",1985,52,324,"none",0,36,0
+"Egypt",214,"Ornamental fish nei","ornamentals",2008,5,4,"none",0,17,1
+"Honduras",133,"Fish body oils, nei","fish_oil",1999,0,0,"zero_fill",0,20,0
+"Malaysia",206,"Agar agar nei","seaweeds",2003,1,24,"none",0,18,0
+"Trinidad and Tobago",126,"Ornamental fish nei","ornamentals",1990,34,157,"none",0,29,7
+"Greece",80,"Other seaweeds and aquatic plants and products thereof","seaweeds",2010,11,98,"none",0,19,5
+"Ireland",181,"Shells nei","shells",1998,0,0,"none",0,31,5
+"Norway",223,"Other seaweeds and aquatic plants and products thereof","seaweeds",2007,2883,3184,"none",0,22,0
+"India",203,"Agar agar nei","seaweeds",1996,2,32,"none",0,18,0
+"Russia",73,"Fish liver oils, nei","fish_oil",1995,63,54,"none",0,19,1
+"Spain",182,"Other seaweeds and aquatic plants and products thereof","seaweeds",1990,305,564,"none",0,24,0
+"United Arab Emirates",54,"Fish body oils, nei","fish_oil",2001,30,28,"none",0,13,0
+"Japan",210,"Fish liver oils, nei","fish_oil",2004,79,1284,"none",0,36,0
+"Taiwan",14,"Coral and the like","corals",1982,37,48115,"none",0,36,0
+"Taiwan",14,"Ornamental saltwater fish","ornamentals",2005,89,1510,"none",0,23,0
+"France",179,"Shells nei","shells",2009,0,0,"none",0,36,0
+"Germany",176,"Halibuts, liver oils","fish_oil",2007,0,0,"none",0,15,2
+"Thailand",25,"Mother of pearl shells","shells",2002,81,77,"none",0,14,4
+"Iceland",143,"Fish liver oils, nei","fish_oil",1998,6,48,"none",0,36,0
+"Iceland",143,"Redfish oil","fish_oil",1976,1045,320,"none",0,36,0
+"Turkey",76,"Cod liver oil","fish_oil",1999,0,0,"none",0,35,0
+"India",203,"Fish body oils, nei","fish_oil",1982,405,166,"none",0,36,0
+"Honduras",133,"Ornamental fish nei","ornamentals",2003,0,0,"none",0,15,0
+"Chile",224,"Other seaweeds and aquatic plants and products thereof","seaweeds",1994,64752,39459,"none",0,22,0
+"United States",163,"Natural sponges raw","sponges",2008,559,2982,"none",0,22,0
+"Colombia",132,"Fish body oils, nei","fish_oil",2007,20,382,"none",0,15,5
+"South Korea",20,"Trochus shells","shells",2008,15,59,"none",0,22,1
+"South Korea",20,"Abalone shells","shells",1990,98,731,"none",0,24,0
+"Senegal",66,"Fish liver oils, nei","fish_oil",1997,0,0,"zero_fill",0,17,0
+"Belgium",59,"Ornamental saltwater fish","ornamentals",1988,20,174,"none",0,23,1
+"Indonesia",216,"Fish body oils, nei","fish_oil",1984,171,156,"none",0,30,2
+"South Korea",20,"Laver, nei","seaweeds",2005,113,2322,"none",0,24,0
+"Tanzania",202,"Other seaweeds and aquatic plants and products thereof","seaweeds",2007,11848,2729,"none",0,14,0
+"United Kingdom",180,"Ornamental saltwater fish","ornamentals",1996,43,720,"none",0,23,1
+"Brazil",171,"Ornamental fish nei","ornamentals",1994,275,3833,"none",0,36,0
+"Mexico",135,"Ornamental fish nei","ornamentals",1985,1,6,"none",0,16,20
+"Portugal",183,"Other seaweeds and aquatic plants and products thereof","seaweeds",1997,226,441,"none",0,36,0
+"Italy",184,"Natural sponges raw","sponges",2004,1,78,"none",0,30,6
+"Turks and Caicos Islands",111,"Miscellaneous corals and shells","shells",2005,5,19,"none",0,13,0
+"Madagascar",42,"Fish liver oils, nei","fish_oil",2003,6,14,"none",0,12,0
+"Morocco",62,"Coral and the like","corals",2001,158,658,"none",0,17,1
+"Namibia",101,"Fish liver oils, nei","fish_oil",2008,710,1240,"none",0,12,1
+"United Kingdom",180,"Natural sponges other than raw","sponges",2008,1,180,"none",0,17,1
+"South Korea",20,"Shark liver oil","fish_oil",1986,0,0,"none",0,33,3
+"Faeroe Islands",141,"Miscellaneous corals and shells","shells",2008,2373,80,"none",0,15,1
+"South Korea",20,"Fish body oils, nei","fish_oil",2001,2396,1533,"none",0,35,0
+"India",203,"Fish liver oils, nei","fish_oil",1998,24,191,"none",0,22,1
+"France",179,"Coral and the like","corals",2003,0,0,"none",0,36,0
+"Pakistan",53,"Ornamental fish nei","ornamentals",2008,19,31,"none",0,5,0
+"New Zealand",162,"Fish body oils, nei","fish_oil",2001,3167,1749,"none",0,28,0
+"Costa Rica",130,"Other seaweeds and aquatic plants and products thereof","seaweeds",2001,1,23,"none",0,18,4
+"Belgium",59,"Miscellaneous corals and shells","shells",1992,751,300,"none",0,22,0
+"Palau",8,"Coral and the like","corals",1999,38,4,"none",0,12,2
+"Yemen",47,"Fish liver oils, nei","fish_oil",2006,0,0,"zero_fill",0,7,0
+"Netherlands",177,"Miscellaneous corals and shells","shells",2008,3193,1734,"none",0,22,0
+"Taiwan",14,"Ornamental fish nei","ornamentals",2001,25,440,"none",0,32,4
+"South Korea",20,"Kelp meal","seaweeds",2002,0,0,"zero_fill",0,29,2
+"Madagascar",42,"Coral and the like","corals",1996,47,99,"none",0,22,0
+"Taiwan",14,"Laver, nei","seaweeds",2006,11,133,"none",0,33,1
+"United Kingdom",180,"Fish body oils, nei","fish_oil",2000,1485,4897,"none",0,36,0
+"Greece",80,"Shells nei","shells",1996,0,0,"none",0,36,0
+"South Korea",20,"Laver, dry","seaweeds",1998,1712,19025,"none",0,24,0
+"Brazil",171,"Coral and the like","corals",1994,7,12,"none",0,17,1
+"Portugal",183,"Fish body oils, nei","fish_oil",2003,1116,503,"none",0,36,0
+"Mexico",135,"Fish body oils, nei","fish_oil",1997,1587,548,"none",0,29,1
+"Australia",16,"Shells nei","shells",1985,184,426,"none",0,36,0
+"New Caledonia",5,"Ornamental fish nei","ornamentals",1986,3,45,"none",0,28,0
+"United States",163,"Agar agar nei","seaweeds",1994,62,335,"none",0,18,0
+"Latvia",69,"Other seaweeds and aquatic plants and products thereof","seaweeds",2006,1,24,"none",0,14,1
+"Poland",178,"Agar agar nei","seaweeds",1995,1,36,"none",0,17,0
+"Ecuador",137,"Other seaweeds and aquatic plants and products thereof","seaweeds",1999,8,107,"none",0,15,0
+"Singapore",208,"Fish body oils, nei","fish_oil",1994,36,41,"none",0,32,1
+"Norway",223,"Other seaweeds and aquatic plants and products thereof","seaweeds",2001,3665,2497,"none",0,22,0
+"Belgium",59,"Fish liver oils, nei","fish_oil",1994,74,146,"none",0,36,0
+"Panama",129,"Fish body oils, nei","fish_oil",1996,2323,679,"none",0,36,0
+"Taiwan",14,"Agar agar nei","seaweeds",2008,49,559,"none",0,36,0
+"Trinidad and Tobago",126,"Other seaweeds and aquatic plants and products thereof","seaweeds",2008,1,3,"none",0,10,7
+"Slovenia",188,"Agar agar nei","seaweeds",2011,13,249,"none",0,10,8
+"Panama",129,"Fish body oils, nei","fish_oil",1992,8566,2349,"none",0,36,0
+"Senegal",66,"Clupeoid oils, nei","fish_oil",1997,0,0,"zero_fill",0,33,0
+"Belgium",59,"Natural sponges raw","sponges",1994,7,238,"none",0,15,21
+"Greece",80,"Shells nei","shells",2011,0,0,"none",0,36,0
+"Norway",223,"Ornamental fish nei","ornamentals",1999,0,0,"none",0,26,6
+"Venezuela",139,"Coral and the like","corals",2000,3,14,"none",0,18,0
+"Taiwan",14,"Ornamental saltwater fish","ornamentals",2010,74,1614,"none",0,23,0
+"Tunisia",61,"Other seaweeds and aquatic plants and products thereof","seaweeds",2008,36,221,"none",0,17,0
+"India",203,"Fish body oils, nei","fish_oil",1978,262,184,"none",0,36,0
+"Peru",138,"Fish body oils, nei","fish_oil",1981,0,0,"zero_fill",0,36,0
+"Bangladesh",204,"Miscellaneous corals and shells","shells",2005,118,102,"none",0,7,0
+"Kenya",43,"Fish body oils, nei","fish_oil",1997,0,0,"zero_fill",0,28,3
+"Argentina",172,"Other seaweeds and aquatic plants and products thereof","seaweeds",1992,74,96,"none",0,21,0
+"South Korea",20,"Ornamental saltwater fish","ornamentals",1999,6,76,"none",0,31,4
+"Papua New Guinea",17,"Trochus shells","shells",2007,0,0,"none",0,16,0
+"Japan",210,"Ornamental fish nei","ornamentals",1995,109,8414,"none",0,24,0
+"South Korea",20,"Laver, nei","seaweeds",2004,200,2087,"none",0,24,0
+"New Zealand",162,"Fish body oils, nei","fish_oil",2009,2645,2493,"none",0,28,0
+"Netherlands",177,"Natural sponges raw","sponges",1993,0,0,"zero_fill",0,20,16
+"Belgium",59,"Fish body oils, nei","fish_oil",1982,149,52,"none",0,36,0
+"Madagascar",42,"Shark oil","fish_oil",2004,0,0,"none",0,20,0
+"Bahrain",52,"Ornamental fish nei","ornamentals",2001,0,0,"none",0,17,1
+"Taiwan",14,"Fish liver oils, nei","fish_oil",1976,18,55,"none",0,34,2
+"Sri Lanka",40,"Miscellaneous corals and shells","shells",2010,626,3640,"none",0,12,0
+"Netherlands",177,"Shells nei","shells",1983,11873,793,"none",0,36,0
+"Ireland",181,"Miscellaneous corals and shells","shells",1992,93,66,"none",0,22,0
+"Sri Lanka",40,"Coral and the like","corals",1996,673,743,"none",0,18,4
+"United Kingdom",180,"Fish body oils, nei","fish_oil",2001,1402,4983,"none",0,36,0
+"Bahrain",52,"Ornamental fish nei","ornamentals",2009,0,0,"none",0,17,1
+"South Korea",20,"Hizikia fusiforme (brown algae)","seaweeds",2010,2669,29622,"none",0,27,0
+"Norway",223,"Fish body oils, nei","fish_oil",1991,58633,18161,"none",0,36,0
+"Norway",223,"Shark oil","fish_oil",2009,40,322,"none",0,22,2
+"Uruguay",173,"Fish body oils, nei","fish_oil",1998,113,77,"none",0,32,0
+"Netherlands",177,"Natural sponges raw","sponges",2007,6,55,"none",0,20,16
+"Greece",80,"Fish body oils, nei","fish_oil",2001,271,106,"none",0,18,2
+"Tunisia",61,"Coral and the like","corals",2000,0,0,"none",0,22,0
+"Singapore",208,"Fish liver oils, nei","fish_oil",2011,4,69,"none",0,33,0
+"Fiji",18,"Coral and the like","corals",1999,830,781,"none",0,22,0
+"North Korea",21,"Coral and the like","corals",2010,493,44,"none",0,22,0
+"Belgium",59,"Fish body oils, nei","fish_oil",2000,31,259,"none",0,36,0
+"Germany",176,"Fish liver oils, nei","fish_oil",1981,244,285,"none",0,36,0
+"Netherlands",177,"Fish body oils, nei","fish_oil",1984,16172,7282,"none",0,36,0
+"China",209,"Ornamental fish nei","ornamentals",2009,0,5065,"none",0,28,1
+"Argentina",172,"Other seaweeds and aquatic plants and products thereof","seaweeds",2001,1,2,"none",0,21,0
+"South Korea",20,"Fish liver oils, nei","fish_oil",2005,1745,1326,"none",0,36,0
+"Canada",218,"Ornamental fish nei","ornamentals",2003,1,4,"none",0,23,1
+"Germany",176,"Agar agar nei","seaweeds",1985,73,1141,"none",0,36,0
+"Netherlands",177,"Fish liver oils, nei","fish_oil",1984,3598,1988,"none",0,35,0
+"Oman",48,"Ornamental fish nei","ornamentals",2010,0,0,"none",0,15,1
+"Guatemala",136,"Ornamental fish nei","ornamentals",1987,2,2,"none",0,33,2
+"Belgium",59,"Fish body oils, nei","fish_oil",1978,328,140,"none",0,36,0
+"Morocco",62,"Fish body oils, nei","fish_oil",1994,705,206,"none",0,36,0
+"Iceland",143,"Capelin oil","fish_oil",2000,68242,16291,"none",0,36,0
+"Spain",182,"Natural sponges other than raw","sponges",2011,18206,8702,"none",0,18,4
+"New Zealand",162,"Fish body oils, nei","fish_oil",1984,1081,708,"none",0,28,0
+"Peru",138,"Other seaweeds and aquatic plants and products thereof","seaweeds",2001,2194,912,"none",0,22,0
+"South Africa",102,"Fish liver oils, nei","fish_oil",1990,0,0,"zero_fill",0,33,1
+"Netherlands",177,"Fish liver oils, nei","fish_oil",1997,2762,4095,"none",0,35,0
+"Thailand",25,"Other seaweeds and aquatic plants and products thereof","seaweeds",2007,0,0,"zero_fill",0,22,0
+"India",203,"Ornamental fish nei","ornamentals",2008,77,1993,"none",0,34,2
+"Ireland",181,"Miscellaneous corals and shells","shells",1999,312,121,"none",0,22,0
+"Faeroe Islands",141,"Fish body oils, nei","fish_oil",1991,2835,783,"none",0,36,0
+"Malaysia",206,"Ornamental fish nei","ornamentals",2011,2126,11444,"none",0,2,34
+"Cyprus",81,"Natural sponges raw","sponges",1998,15,1614,"none",0,27,6
+"Greece",80,"Shells nei","shells",2000,0,0,"none",0,36,0
+"Brazil",171,"Ornamental fish nei","ornamentals",1999,288,3371,"none",0,36,0
+"Sweden",222,"Agar agar nei","seaweeds",2003,1,42,"none",0,14,4
+"Lithuania",189,"Miscellaneous corals and shells","shells",2000,93,227,"none",0,16,0
+"Italy",184,"Natural sponges raw","sponges",2011,2,45,"none",0,30,6
+"South Korea",20,"Kelp meal","seaweeds",2005,14,73,"none",0,29,2
+"Norway",223,"Fish liver oils, nei","fish_oil",1999,1799,2081,"none",0,36,0
+"Saint Helena",86,"Ornamental fish nei","ornamentals",2008,0,0,"none",0,7,4
+"Guatemala",136,"Ornamental fish nei","ornamentals",1993,0,0,"none",0,33,2
+"South Korea",20,"Other brown algae (laminaria, eisenia/ecklonia)","seaweeds",1988,1021,1743,"none",0,24,0
+"France",179,"Ornamental saltwater fish","ornamentals",2000,97,1645,"none",0,23,1
+"France",179,"Coral and the like","corals",1978,76,3046,"none",0,36,0
+"United States",163,"Fish liver oils, nei","fish_oil",1991,968,2537,"none",0,23,0
+"Ireland",181,"Natural sponges raw","sponges",1995,0,0,"zero_fill",0,29,7
+"China",209,"Fish body oils, nei","fish_oil",2004,222,921,"none",0,28,2
+"South Korea",20,"Agar agar nei","seaweeds",1983,783,7252,"none",0,31,0
+"Albania",82,"Coral and the like","corals",1996,315,391,"none",0,16,0
+"Australia",16,"Natural sponges raw","sponges",1999,26,113,"none",0,17,0
+"Colombia",132,"Fish liver oils, nei","fish_oil",2000,1,5,"none",0,26,5
+"Greece",80,"Ornamental saltwater fish","ornamentals",2006,303,1264,"none",0,17,4
+"Kenya",43,"Fish body oils, nei","fish_oil",2006,0,0,"none",0,28,3
+"Italy",184,"Natural sponges raw","sponges",1989,44,457,"none",0,30,6
+"France",179,"Agar agar nei","seaweeds",1995,54,1724,"none",0,36,0
+"Thailand",25,"Fish body oils, nei","fish_oil",1986,0,0,"zero_fill",0,29,3
+"Kenya",43,"Fish body oils, nei","fish_oil",1983,0,0,"zero_fill",0,28,3
+"Malaysia",206,"Fish liver oils, nei","fish_oil",1991,25,23,"none",0,29,1
+"Philippines",15,"Ornamental fish nei","ornamentals",1997,5843,7315,"none",0,21,0
+"Croatia",187,"Coral and the like","corals",2005,0,0,"none",0,17,1
+"Papua New Guinea",17,"Trochus shells","shells",2011,0,0,"none",0,16,0
+"Japan",210,"Agar agar nei","seaweeds",1987,447,7225,"none",0,36,0
+"Cyprus",81,"Natural sponges other than raw","sponges",1999,5,503,"none",0,14,4
+"Taiwan",14,"Shells nei","shells",2003,121,60,"none",0,35,1
+"Turkey",76,"Shells nei","shells",2003,0,0,"none",0,36,0
+"New Caledonia",5,"Ornamental fish nei","ornamentals",1990,0,0,"zero_fill",0,28,0
+"Norway",223,"Other seaweeds and aquatic plants and products thereof","seaweeds",2006,3320,3160,"none",0,22,0
+"Japan",210,"Other seaweeds and aquatic plants and products thereof","seaweeds",2003,1661,11147,"none",0,32,4
+"Vietnam",207,"Agar agar nei","seaweeds",2005,0,0,"none",0,12,2
+"Papua New Guinea",17,"Fish body oils, nei","fish_oil",2011,0,0,"none",0,20,1
+"France",179,"Natural sponges raw","sponges",1982,61,2035,"none",0,36,0
+"Norway",223,"Coral and the like","corals",2011,10,20,"none",0,15,2
+"Finland",174,"Fish body oils, nei","fish_oil",1999,4,12,"none",0,25,4
+"Canada",218,"Fish body oils, nei","fish_oil",1992,9571,3522,"none",0,36,0
+"United States",163,"Menhaden oil","fish_oil",1992,72299,24748,"none",0,36,0
+"New Zealand",162,"Fish body oils, nei","fish_oil",1989,1376,764,"none",0,28,0
+"Sri Lanka",40,"Fish body oils, nei","fish_oil",1997,0,0,"zero_fill",0,27,0
+"Belgium",59,"Halibuts, liver oils","fish_oil",2000,0,0,"none",0,13,2
+"Saba",248,"Coral and the like","corals",2008,0,0,"zero_fill",0,11,1
+"India",203,"Other seaweeds and aquatic plants and products thereof","seaweeds",1999,1,10,"none",0,18,0
+"Ireland",181,"Fish liver oils, nei","fish_oil",1992,3128,579,"none",0,34,1
+"Sweden",222,"Ornamental saltwater fish","ornamentals",2009,1,11,"none",0,9,8
+"Cook Islands",153,"Ornamental fish nei","ornamentals",1993,9,89,"none",0,14,6
+"Israel",79,"Fish liver oils, nei","fish_oil",2008,0,0,"none",0,8,1
+"United Kingdom",180,"Agar agar nei","seaweeds",1990,0,0,"zero_fill",0,36,0
+"Turkey",76,"Cod liver oil","fish_oil",2006,0,0,"none",0,35,0
+"Iran",191,"Ornamental saltwater fish","ornamentals",2009,27,358,"none",0,6,0
+"Norway",223,"Fish liver oils, nei","fish_oil",2009,975,9503,"none",0,36,0
+"United Kingdom",180,"Miscellaneous corals and shells","shells",1990,2471,5646,"none",0,22,0
+"South Korea",20,"Agar agar nei","seaweeds",1994,1,15,"none",0,31,0
+"Faeroe Islands",141,"Fish liver oils, nei","fish_oil",1990,0,0,"zero_fill",0,36,0
+"Norway",223,"Shark oil","fish_oil",2001,47,286,"none",0,22,2
+"Maldives",39,"Coral and the like","corals",2009,1,1,"none",0,16,0
+"Norway",223,"Cod liver oil","fish_oil",2010,1533,8206,"none",0,36,0
+"El Salvador",134,"Ornamental fish nei","ornamentals",1991,0,0,"none",0,31,4
+"Spain",182,"Other seaweeds and aquatic plants and products thereof","seaweeds",1994,71,221,"none",0,24,0
+"Greece",80,"Shells nei","shells",1981,112,687,"none",0,36,0
+"Ecuador",137,"Other seaweeds and aquatic plants and products thereof","seaweeds",2008,24,446,"none",0,15,0
+"Turkey",76,"Shells nei","shells",1984,408,1130,"none",0,36,0
+"Argentina",172,"Fish body oils, nei","fish_oil",1994,209,61,"none",0,24,0
+"Portugal",183,"Miscellaneous corals and shells","shells",1996,3,1,"none",0,12,5
+"South Korea",20,"Fish body oils, nei","fish_oil",2003,1417,909,"none",0,35,0
+"Nicaragua",131,"Ornamental fish nei","ornamentals",1995,2,4,"none",0,18,1
+"Iceland",143,"Herring oil","fish_oil",1989,1527,385,"none",0,36,0
+"Ecuador",137,"Other seaweeds and aquatic plants and products thereof","seaweeds",2009,15,273,"none",0,15,0
+"Norway",223,"Ornamental fish nei","ornamentals",2005,0,0,"none",0,26,6
+"Greece",80,"Miscellaneous corals and shells","shells",2004,104,165,"none",0,22,0
+"Malaysia",206,"Coral and the like","corals",2003,23,25,"none",0,19,3
+"Bulgaria",71,"Other seaweeds and aquatic plants and products thereof","seaweeds",1997,6,86,"none",0,13,2
+"Italy",184,"Shells nei","shells",1988,2142,1478,"none",0,36,0
+"Malaysia",206,"Fish body oils, nei","fish_oil",2011,3,27,"none",0,34,2
+"United Kingdom",180,"Ornamental saltwater fish","ornamentals",2009,112,1769,"none",0,23,1
+"Norway",223,"Fish body oils, nei","fish_oil",1980,79446,36561,"none",0,36,0
+"India",203,"Sardine oil","fish_oil",2003,88,168,"none",0,9,0
+"Tonga",155,"Other seaweeds and aquatic plants and products thereof","seaweeds",1998,0,0,"zero_fill",0,14,1
+"Malaysia",206,"Fish body oils, nei","fish_oil",1984,0,0,"zero_fill",0,34,2
+"Croatia",187,"Fish liver oils, nei","fish_oil",2006,1,4,"none",0,3,4
+"Peru",138,"Fish liver oils, nei","fish_oil",2003,2047,1060,"none",0,17,1
+"Argentina",172,"Fish body oils, nei","fish_oil",2011,1224,1972,"none",0,24,0
+"Turkey",76,"Natural sponges raw","sponges",1985,13,437,"none",0,35,1
+"Senegal",66,"Clupeoid oils, nei","fish_oil",2001,0,0,"none",0,33,0
+"Venezuela",139,"Coral and the like","corals",2003,0,0,"none",0,18,0
+"Peru",138,"Fish liver oils, nei","fish_oil",2000,0,0,"zero_fill",0,17,1
+"Belgium",59,"Miscellaneous corals and shells","shells",1996,269,196,"none",0,22,0
+"Norway",223,"Fish body oils, nei","fish_oil",2006,7660,12022,"none",0,36,0
+"Kiribati",212,"Other seaweeds and aquatic plants and products thereof","seaweeds",1990,798,565,"none",0,25,0
+"Finland",174,"Fish liver oils, nei","fish_oil",2007,10,117,"none",0,21,3
+"South Korea",20,"Mother of pearl shells","shells",1994,3,11,"none",0,23,1
+"Canada",218,"Fish liver oils, nei","fish_oil",2004,2006,1300,"none",0,23,1
+"South Africa",102,"Fish liver oils, nei","fish_oil",1980,0,0,"zero_fill",0,33,1
+"Madagascar",42,"Other edible seaweeds","seaweeds",1987,102,74,"none",0,25,0
+"India",203,"Other seaweeds and aquatic plants and products thereof","seaweeds",1995,7,151,"none",0,18,0
+"Bulgaria",71,"Miscellaneous corals and shells","shells",2001,271,829,"none",0,11,0
+"Netherlands",177,"Other seaweeds and aquatic plants and products thereof","seaweeds",1996,106,1022,"none",0,24,0
+"Russia",73,"Fish body oils, nei","fish_oil",2007,86,113,"none",0,36,0
+"Denmark",175,"Herring oil","fish_oil",1987,0,0,"none",0,36,0
+"United Kingdom",180,"Fish body oils, nei","fish_oil",1993,10625,7832,"none",0,36,0
+"Brazil",171,"Ornamental fish nei","ornamentals",1986,360,859,"none",0,36,0
+"Yemen",47,"Fish body oils, nei","fish_oil",2001,0,0,"zero_fill",0,31,1
+"Argentina",172,"Fish body oils, nei","fish_oil",1998,443,263,"none",0,24,0
+"Spain",182,"Coral and the like","corals",2011,0,0,"none",0,24,7
+"France",179,"Agar agar nei","seaweeds",2000,113,1826,"none",0,36,0
+"Russia",73,"Fish body oils, nei","fish_oil",2005,221,106,"none",0,36,0
+"United Kingdom",180,"Agar agar nei","seaweeds",2010,46,831,"none",0,36,0
+"Denmark",175,"Fish body oils, nei","fish_oil",2011,168256,239904,"none",0,32,0
+"United States",163,"Coral and the like","corals",1998,20221,7176,"none",0,22,0
+"Chile",224,"Coral and the like","corals",2002,260,180,"none",0,18,0
+"Angola",200,"Fish liver oils, nei","fish_oil",2008,40,445,"none",0,15,0
+"United States",163,"Other seaweeds and aquatic plants and products thereof","seaweeds",1997,2121,14706,"none",0,22,0
+"Russia",73,"Other seaweeds and aquatic plants and products thereof","seaweeds",2001,186,293,"none",0,14,0
+"South Korea",20,"Agar agar nei","seaweeds",2004,81,808,"none",0,31,0
+"Argentina",172,"Fish body oils, nei","fish_oil",2009,1015,1326,"none",0,24,0
+"Saint Vincent and the Grenadines",127,"Fish body oils, nei","fish_oil",2005,1,2,"none",0,28,3
+"Malaysia",206,"Fish body oils, nei","fish_oil",2008,24,268,"none",0,34,2
+"Honduras",133,"Fish body oils, nei","fish_oil",1997,0,0,"zero_fill",0,20,0
+"Guatemala",136,"Fish body oils, nei","fish_oil",2001,0,0,"none",0,16,1
+"Finland",174,"Other seaweeds and aquatic plants and products thereof","seaweeds",2003,1,41,"none",0,11,6
+"Marshall Islands",11,"Miscellaneous corals and shells","shells",2009,0,0,"none",0,7,1
+"Sri Lanka",40,"Fish liver oils, nei","fish_oil",1997,17,146,"none",0,27,0
+"China",209,"Coral and the like","corals",1993,0,1023,"none",0,22,0
+"Germany",176,"Shells nei","shells",2010,0,0,"none",0,36,0
+"United States",163,"Agar agar nei","seaweeds",2005,134,1669,"none",0,18,0
+"Jamaica",166,"Natural sponges raw","sponges",1994,0,0,"none",0,17,3
+"South Korea",20,"Shark liver oil","fish_oil",1995,2,68,"none",0,33,3
+"Japan",210,"Shells nei","shells",1995,0,0,"none",0,36,0
+"Ireland",181,"Fish body oils, nei","fish_oil",1993,509,125,"none",0,35,1
+"South Korea",20,"Laver, nei","seaweeds",1990,86,580,"none",0,24,0
+"Sweden",222,"Ornamental fish nei","ornamentals",1976,10,86,"none",0,36,0
+"South Korea",20,"Agar agar nei","seaweeds",2010,26,935,"none",0,31,0
+"Australia",16,"Mother of pearl shells","shells",2000,209,764,"none",0,16,0
+"Sweden",222,"Ornamental fish nei","ornamentals",2006,0,0,"none",0,36,0
+"Norway",223,"Fish body oils, nei","fish_oil",1977,120799,49720,"none",0,36,0
+"South Korea",20,"Other seaweeds and aquatic plants and products thereof","seaweeds",1985,1488,2325,"none",0,31,0
+"Australia",16,"Fish liver oils, nei","fish_oil",2000,143,828,"none",0,23,0
+"Greece",80,"Shells nei","shells",2005,0,0,"none",0,36,0
+"Indonesia",216,"Fish body oils, nei","fish_oil",1994,130,45,"none",0,30,2
+"French Polynesia",147,"Ornamental fish nei","ornamentals",1978,1,6,"none",0,29,7
+"Malaysia",206,"Other seaweeds and aquatic plants and products thereof","seaweeds",2010,886,2119,"none",0,18,4
+"Poland",178,"Agar agar nei","seaweeds",1996,0,0,"none",0,17,0
+"Madagascar",42,"Shark oil","fish_oil",2002,0,0,"none",0,20,0
+"Japan",210,"Coral and the like","corals",2007,3625,16786,"none",0,36,0
+"Chile",224,"Fish body oils, nei","fish_oil",2003,18591,10332,"none",0,36,0
+"South Africa",102,"Coral and the like","corals",2000,65,24,"none",0,18,0
+"Spain",182,"Fish liver oils, nei","fish_oil",1992,1030,7712,"none",0,32,0
+"Netherlands",177,"Miscellaneous corals and shells","shells",1990,16280,963,"none",0,22,0
+"Liberia",97,"Ornamental fish nei","ornamentals",2006,1,2,"none",0,8,4
