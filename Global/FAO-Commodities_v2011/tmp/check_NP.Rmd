@@ -1,0 +1,119 @@
+---
+title: "check_NP"
+author: "Julie Stewart, Ben Best"
+date: "June 28, 2014"
+output: 
+# Debug with html_document output.
+# Right-click on *.html file in Git pane and ignore it to create/append .gitignore.
+# Switch to md_document output and knit before Git push.
+  html_document: 
+    toc: true
+---
+# check_NP
+
+Investigate NP calculated scores; compare raw values as well. June 2014
+
+Next place to check:
+
+- [ohi-global:eez2013/conf/functions.R NP()](https://github.com/bbest/ohi-global/blob/879531c043c684d4bd04f5472e70272c06beb55b/eez2013/conf/functions.R#L373-L553) between loading of layer and creation of [eez2013_np_1-harvest_lm-gapfilled_data.csv](https://github.com/bbest/ohi-global/blob/879531c043c684d4bd04f5472e70272c06beb55b/eez2013/reports/debug/eez2013_np_1-harvest_lm-gapfilled_data.csv), using [ohidev:functions/debug_function.R](/Users/bbest/github/ohidev/functions/debug_function.R) to load up data inside the function.
+
+
+## load
+```{r load, include=TRUE, echo=TRUE}
+# load libraries
+suppressPackageStartupMessages({
+  library(gdata)
+  library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require uninstall and reinstall
+})
+
+# get paths. Rmd files get knitted from current directory.
+# setwd('~/github/ohiprep/Global/FAO-Commodities_v2011/tmp')
+source('../../../src/R/common.R')         # set dir_neptune_data
+source('../../../src/R/ohi_clean_fxns.R') # has functions: cbind_rgn(), sum_na()
+
+# read in original input layers from FAO
+tonnes_fao = read.csv('../data/FAO-Commodities_v2011_tonnes.csv')
+usd_fao    = read.csv('../data/FAO-Commodities_v2011_usd.csv')
+
+# read in input layers from layers_global
+tonnes_lyr  = read.csv('../data/FAO-Commodities_v2011_tonnes_lyr.csv')
+usd_lyr      = read.csv('../data/FAO-Commodities_v2011_usd_lyr.csv')
+tonnes_layer = read.csv('../../../../ohi-global/eez2013/layers/np_harvest_tonnes.csv')
+
+# read in np debug reports
+np_1 = read.csv('../../../../ohi-global/eez2013/reports/debug/eez2013_np_1-harvest_lm-gapfilled_data.csv')
+np_2 = read.csv('../../../../ohi-global/eez2013/reports/debug/eez2013_np_2-rgn-year-product_data.csv')
+
+# scores
+scores_np = read.csv('scores_eez2012-2013_2014-06-27_vs_2013-10-09.csv')
+
+## 1. compare tonnes, usd from layers_global with np1 debug report::: there are differences:: 7834/12011 rows ----
+d_tonnes = 
+  join_all(
+    list(
+      tonnes_fao %>%
+        select(rgn_name, rgn_id, product, year, tonnes_fao=tonnes),
+      tonnes_lyr %>%
+        select(rgn_id, product, year, tonnes_lyr=tonnes),
+      tonnes_layer %>%
+        select(rgn_id, product, year, tonnes_layer=tonnes),
+      np_1 %>%
+        select(rgn_id, product, year, tonnes_orig, tonnes_1=tonnes),
+      np_2 %>%
+        select(rgn_id, product, year, tonnes_2=tonnes)), 
+    by=c('rgn_id','product','year'), type='full') %>%
+  mutate(
+    tonnes_dif_lyr_fao   = tonnes_lyr   - tonnes_fao,
+    tonnes_dif_layer_fao = tonnes_layer - tonnes_fao,
+    tonnes_dif_orig_fao  = tonnes_orig  - tonnes_fao,    
+    tonnes_dif_1_fao     = tonnes_1     - tonnes_fao,
+    tonnes_dif_2_fao     = tonnes_2     - tonnes_fao) %>%
+  filter(tonnes_dif_lyr_fao != 0 | tonnes_dif_1_fao != 0 | tonnes_dif_2_fao != 0) %>%
+  arrange(desc(abs(tonnes_dif_2_fao)), desc(abs(tonnes_dif_1_fao)), desc(abs(tonnes_dif_lyr_fao)))
+
+d_usd = 
+  join_all(
+    list(
+      usd_fao %>%
+        select(rgn_name, rgn_id, product, year, usd_fao=usd),
+      usd_lyr %>%
+        select(rgn_id, product, year, usd_lyr=usd),
+      np_1 %>%
+        select(rgn_id, product, year, usd_1=usd),
+      np_2 %>%
+        select(rgn_id, product, year, usd_2=usd)), 
+    by=c('rgn_id','product','year'), type='full') %>%
+  mutate(
+    usd_dif_lyr_fao = usd_lyr - usd_fao,
+    usd_dif_1_fao   = usd_1   - usd_fao,
+    usd_dif_2_fao   = usd_2   - usd_fao) %>%
+  filter(usd_dif_lyr_fao != 0 | usd_dif_1_fao != 0 | usd_dif_2_fao != 0) %>%
+  arrange(desc(abs(usd_dif_2_fao)), desc(abs(usd_dif_1_fao)), desc(abs(usd_dif_lyr_fao)))
+```
+
+
+## tonnes
+```{r tonnes, results='asis', echo=FALSE}
+cat('\n### tonnes diffs summary\n')
+kable(summary(select(d_tonnes, tonnes_dif_lyr_fao, tonnes_dif_layer_fao, tonnes_dif_orig_fao, tonnes_dif_1_fao, tonnes_dif_2_fao)))
+
+cat('\n### tonnes diffs head\n')
+kable(head(d_tonnes))
+```
+
+## usd
+```{r usd, results='asis', echo=FALSE}
+cat('\n### usd diffs summary\n')
+kable(summary(select(d_usd, usd_dif_lyr_fao, usd_dif_1_fao, usd_dif_2_fao)))
+
+cat('\n### usd diffs head\n')
+kable(head(d_usd))
+```
+
+## Congo problem
+```{r}
+library(git2r) # devtools::install_github('ropensci/git2r')
+
+
+
+```

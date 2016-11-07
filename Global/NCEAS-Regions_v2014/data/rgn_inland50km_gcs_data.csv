@@ -1,0 +1,222 @@
+rgn_type,rgn_id,rgn_name,rgn_key,area_km2
+land,1,Cocos Islands,CCK,17.8375772751
+land,2,Christmas Island,CXR,141.52596777
+land,3,Norfolk Island,NFK,42.6263892283
+land,4,Macquarie Island,AUS,129.726806065
+land,5,New Caledonia,NCL,19046.4256816
+land,6,Vanuatu,VUT,12504.0718774
+land,7,Solomon Islands,SLB,29005.6486166
+land,8,Palau,PLW,497.858645895
+land,9,Micronesia,FSM,811.861031203
+land,10,Nauru,NRU,22.6330226753
+land,11,Marshall Islands,MHL,280.131902989
+land,12,Wake Island,UMI,8.66503266066
+land,13,Northern Mariana Islands and Guam,MNP,1056.26196749
+land,14,Taiwan,TWN,33331.6403227
+land,15,Philippines,PHL,259992.985952
+land,16,Australia,AUS,919170.206127
+land,17,Papua New Guinea,PNG,233754.682344
+land,18,Fiji,FJI,19050.0982131
+land,19,Tuvalu,TUV,41.5261933314
+land,20,South Korea,KOR,65431.6863054
+land,21,North Korea,PRK,62560.0157254
+land,24,Cambodia,KHM,19767.1566806
+land,25,Thailand,THA,100015.385776
+land,26,Andaman and Nicobar,IND,7751.39556974
+land,28,Comoro Islands,COM,1690.69438783
+land,29,Mayotte,MYT,393.98275465
+land,30,Glorioso Islands,ATF,3.93349699306
+land,31,Seychelles,SYC,483.704909045
+land,32,Reunion,REU,2523.71074563
+land,33,Juan de Nova Island,ATF,6.14612858632
+land,34,Bassas da India,ATF,2.10243104729
+land,35,Ile Europa,ATF,24.8208127442
+land,36,Ile Tromelin,ATF,1.04637262059
+land,37,Mauritius,MUS,2051.90558285
+land,38,British Indian Ocean Territory,IOT,68.5039210651
+land,39,Maldives,MDV,302.660396636
+land,40,Sri Lanka,LKA,45615.9171707
+land,41,Mozambique,MOZ,132399.256947
+land,42,Madagascar,MDG,197723.673373
+land,43,Kenya,KEN,27408.247994
+land,44,Somalia,SOM,143775.619784
+land,45,Eritrea,ERI,45240.3803584
+land,46,Djibouti,DJI,14999.5581279
+land,47,Yemen,YEM,85383.6151589
+land,48,Oman,OMN,81175.820497
+land,49,Sudan,SDN,28826.2502997
+land,50,Saudi Arabia,SAU,130923.55966
+land,51,Kuwait,KWT,12217.4121311
+land,52,Bahrain,BHR,684.018699958
+land,53,Pakistan,PAK,47594.8075187
+land,54,United Arab Emirates,ARE,31996.234179
+land,55,Azores,PRT,2395.76078359
+land,56,Cape Verde,CPV,4125.39896257
+land,57,Madeira,PRT,817.496072949
+land,58,Canary Islands,ESP,7506.96857979
+land,59,Belgium,BEL,7873.99841616
+land,60,Gibraltar,GIB,7.62953067414
+land,61,Tunisia,TUN,42881.4472385
+land,62,Morocco,MAR,80775.8380812
+land,63,Western Sahara,ESH,43893.1245133
+land,64,Mauritania,MRT,31177.7294754
+land,65,Gambia,GMB,6426.53703266
+land,66,Senegal,SEN,33936.9942423
+land,67,Libya,LBY,84868.9125315
+land,68,Malta,MLT,324.290298879
+land,69,Latvia,LVA,23365.9653083
+land,70,Estonia,EST,25291.1102752
+land,71,Bulgaria,BGR,15132.2578172
+land,72,Romania,ROU,12474.979186
+land,73,Russia,RUS,1794326.24778
+land,74,Georgia,GEO,14841.4414867
+land,75,Ukraine,UKR,77285.379504
+land,76,Turkey,TUR,177502.897003
+land,77,Syria,SYR,9571.70051202
+land,78,Lebanon,LBN,9035.44050118
+land,79,Israel,ISR,10984.9874457
+land,80,Greece,GRC,106193.198947
+land,81,Cyprus,CYP,9318.01550902
+land,82,Albania,ALB,16186.6546876
+land,84,Algeria,DZA,53124.6765605
+land,85,Ascension,ASC,100.856509918
+land,86,Saint Helena,SHN,128.709049091
+land,88,Tristan da Cunha,TAA,203.065588619
+land,89,South Georgia and the South Sandwich Islands,SGS,3980.4898276
+land,90,Prince Edward Islands,ZAF,341.170055539
+land,91,Crozet Islands,ATF,364.61827565
+land,92,Amsterdam Island and Saint Paul Island,ATF,72.9300710997
+land,93,Kerguelen Islands,ATF,7391.98561084
+land,94,Heard and McDonald Islands,HMD,391.927466291
+land,95,Falkland Islands,FLK,12420.2541579
+land,96,Sierra Leone,SLE,20970.6414848
+land,97,Liberia,LBR,26532.6552346
+land,98,Togo,TGO,4034.28962715
+land,99,Benin,BEN,5870.02178098
+land,100,Republique du Congo,COG,8643.7076067
+land,101,Namibia,NAM,71188.9585249
+land,102,South Africa,ZAF,125999.321747
+land,103,Sao Tome and Principe,STP,982.638805438
+land,104,Equatorial Guinea,GNQ,10152.6414337
+land,105,Bouvet Island,BVT,50.7489590722
+land,106,Ghana,GHA,24007.9238948
+land,107,Clipperton Island,CPT,8.75687339644
+land,108,Bermuda,BMU,72.2697949545
+land,110,Bahamas,BHS,13400.7196055
+land,111,Turks and Caicos Islands,TCA,1013.21961745
+land,112,Cuba,CUB,108955.912616
+land,113,Cayman Islands,CYM,287.755626899
+land,114,Haiti,HTI,25521.5100377
+land,115,Dominican Republic,DOM,38051.953624
+land,116,Puerto Rico and Virgin Islands of the United States,PRI-VIR,9364.49884373
+land,117,British Virgin Islands,VGB,176.13383119
+land,118,Anguilla,AIA,85.063908674
+land,119,Saint Kitts and Nevis,KNA,269.329002732
+land,120,Antigua and Barbuda,ATG,452.725367381
+land,121,Montserrat,MSR,100.100991662
+land,122,Saint Lucia,LCA,618.62309957
+land,123,Dominica,DMA,761.82039795
+land,124,Barbados,BRB,441.402626664
+land,125,Grenada,GRD,371.285945351
+land,126,Trinidad and Tobago,TTO,5180.62943253
+land,127,Saint Vincent and the Grenadines,VCT,407.447426044
+land,129,Panama,PAN,72907.0011478
+land,130,Costa Rica,CRI,38830.2877804
+land,131,Nicaragua,NIC,42350.2631146
+land,132,Colombia,COL,104167.712879
+land,133,Honduras,HND,38744.0121043
+land,134,El Salvador,SLV,14328.7699619
+land,135,Mexico,MEX,450307.285556
+land,136,Guatemala,GTM,19159.3256513
+land,137,Ecuador,ECU,57794.9568607
+land,138,Peru,PER,113703.867019
+land,139,Venezuela,VEN,120779.835164
+land,140,Guadeloupe and Martinique,GLP-MTQ,2812.24925064
+land,141,Faeroe Islands,FRO,1456.10886591
+land,143,Iceland,ISL,74679.2309181
+land,144,Jan Mayen,SJM,371.561961134
+land,145,Greenland,GRL,708535.155582
+land,146,Pitcairn,PCN,45.3889915704
+land,147,French Polynesia,PYF,3758.45251141
+land,148,Line Group,KIR,616.2095774
+land,149,Jarvis Island,UMI,4.38154253526
+land,150,Palmyra Atoll,UMI,335.532673599
+land,151,American Samoa,ASM,209.343504235
+land,152,Samoa,WSM,2876.74582635
+land,153,Cook Islands,COK,256.791250553
+land,154,Niue,NIU,266.346909286
+land,155,Tonga,TON,762.53940494
+land,156,Tokelau,TKL,15.0853085304
+land,157,Phoenix Group,KIR,54.9339767159
+land,158,Howland Island and Baker Island,UMI,4.22709988716
+land,159,Johnston Atoll,UMI,3.40431608215
+land,161,Wallis and Futuna,WLF,179.528611746
+land,162,New Zealand,NZL,201383.150346
+land,163,United States,USA,1052914.18894
+land,164,Belize,BLZ,15762.8516699
+land,166,Jamaica,JAM,10999.2065046
+land,167,Guyana,GUY,31354.3259728
+land,168,Suriname,SUR,21968.2233029
+land,169,French Guiana,GUF,18800.3461618
+land,171,Brazil,BRA,492482.780366
+land,172,Argentina,ARG,215710.574059
+land,173,Uruguay,URY,33260.8563528
+land,174,Finland,FIN,74804.7115194
+land,175,Denmark,DNK,44327.6507211
+land,176,Germany,DEU,49690.7913153
+land,177,Netherlands,NLD,25495.6987395
+land,178,Poland,POL,26126.0863486
+land,179,France,FRA,124901.248389
+land,180,United Kingdom,GBR,205306.918325
+land,181,Ireland,IRL,56920.5667489
+land,182,Spain,ESP,120160.939624
+land,183,Portugal,PRT,37784.8502521
+land,184,Italy,ITA,173980.592727
+land,185,Monaco,MCO,11.2143150276
+land,186,Montenegro,MNE,5747.73665971
+land,187,Croatia,HRV,25442.2045827
+land,188,Slovenia,SVN,5176.06361048
+land,189,Lithuania,LTU,6169.48889225
+land,190,Qatar,QAT,11108.8676907
+land,191,Iran,IRN,94421.3315786
+land,192,Iraq,IRQ,3978.69874783
+land,193,Guinea Bissau,GNB,20985.5728541
+land,194,Guinea,GIN,20645.0651675
+land,195,Ivory Coast,CIV,28304.6979516
+land,196,Nigeria,NGA,53766.4470596
+land,197,Cameroon,CMR,25083.2768864
+land,198,Gabon,GAB,38964.0499471
+land,199,Democratic Republic of the Congo,COD,3715.49668339
+land,200,Angola,AGO,76595.8931491
+land,202,Tanzania,TZA,46129.2803608
+land,203,India,IND,278372.503362
+land,204,Bangladesh,BGD,34827.8064539
+land,205,Myanmar,MMR,125672.158687
+land,206,Malaysia,MYS,162160.608352
+land,207,Vietnam,VNM,125875.40181
+land,208,Singapore,SGP,600.601009832
+land,209,China,CHN,355084.811154
+land,210,Japan,JPN,298646.130826
+land,212,Kiribati,KIR,354.525339236
+land,213,Antarctica,ATA,1491959.79802
+land,214,Egypt,EGY,130013.38346
+land,215,Jordan,JOR,5770.86267096
+land,216,Indonesia,IDN,1048377.93205
+land,218,Canada,CAN,2498155.4647
+land,219,Saint Pierre and Miquelon,SPM,237.097026666
+land,220,Sint Maarten,SXM,39.8890644065
+land,221,Northern Saint-Martin,MAF,80.5984161731
+land,222,Sweden,SWE,26480.9916406
+land,223,Norway,NOR,296215.050763
+land,224,Chile,CHL,385888.116428
+land,227,Jersey,JEY,125.340440547
+land,228,Guernsey,GGY,85.6501585952
+land,231,East Timor,TLS,14216.2962926
+land,232,Bosnia and Herzegovina,BIH,6886.46635286
+land,237,Oecussi Ambeno,TLS,796.825587658
+land,244,Curacao,CW,448.224747255
+land,245,Bonaire,BQ,284.798972242
+land,247,Brunei,BRN,4940.53233507
+land,248,Saba,BES,14.0752202565
+land,249,Sint Eustatius,ANT,22.0319730494
+land,250,Aruba,AW,188.270426823

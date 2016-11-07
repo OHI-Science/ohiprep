@@ -1,0 +1,20 @@
+---
+title: "check_duplicates"
+author: "Ben Best"
+date: "June 19, 2014"
+output: md_document
+---
+
+Checking [data/rgn_wb_uem_2014a.csv](data/rgn_wb_uem_2014a.csv) for duplicates.
+
+```{r, echo=FALSE}
+suppressPackageStartupMessages({
+  library(plyr)
+  library(dplyr)
+  library(knitr) # TODO: see jQuery DataTables
+})
+#dir_prod = 'Global/WorldBank-Statistics_v2012'
+
+d = read.csv('data/rgn_wb_uem_2014a.csv')
+print(table(d[duplicated(d[,c('rgn_id','year')]), c('rgn_id','year')]))
+```

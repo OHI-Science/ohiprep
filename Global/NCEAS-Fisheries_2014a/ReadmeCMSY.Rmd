@@ -1,0 +1,41 @@
+---
+title: "Modifications to the catch-MSY (CMSY) code"
+output: pdf_document
+---
+#used for b_bmsy_lyr in: FIS goal and NP goal (fishoil)
+
+The original CMSY code (by Coilin and Kristin) was modified, eliminating the constraints on the final biomass prior, so that:
+
+finalbio    <- if(ct[nyr]/max(ct) > 0.5) {c(0.3,0.7)} else {c(0.01,0.4)}
+
+was replaced with a uniform prior:
+
+finalbio    <- c(0.01,0.7) 
+
+Or to have an intermediate (relaxed) prior:
+
+finalbio    <- if(ct[nyr]/max(ct) > 0.5) {c(0.4,0.8)} else {c(0.01,0.8)}
+
+This removed the bimodal distribution of results, where many stocks had very low, or very high b_bmsy.
+
+An additional custimization that can be done, at least when not running on mutiple cores (i.e. mpi wrapper removed) is to include resilience parameters - in the PARAMETERS section, replace:
+
+start_r     <- c(0.01,10)  ## disable this line if you use resilience
+
+with 
+
+  if(res == "Very low"){
+    start_r  <- c(0.015, 0.1)
+  } else { 
+    if(res == "Low"){
+      start_r  <- c(0.05,0.5)
+    } else { 
+      if(res == "High"){
+        start_r  <- c(0.6,1.5)   
+      } else {
+        start_r  <- c(0.1,1)
+      }
+    }
+  }
+
+##
