@@ -1,0 +1,226 @@
+---
+title: "Preparing catch data for BBmsy calculations"
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+  toc: true
+number_sections: true
+theme: cerulean
+highlight: haddock
+includes: 
+  in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+pdf_document:
+  toc: true
+---
+
+This script takes the SAUP catch data and aggregates catch to **stock levels**. For the Ocean Health Index, we assume a stock is represented by the FAO region in which the species is caught.
+
+In order to aggregate to FAO regions, we associate catch per SAUP region to the FAO region it is found.
+
+For example, New Zealand is located entirely in FAO region 81. All catch reported by New Zealand will be aggregated by species to the FAO region. If a species was reported as caught in both New Zealand waters and in the High Seas of area 81, these two records will be combined into one by summing the catch.
+
+***
+
+The catch data was joined to a lookup table that links SAUP region names and ids to the FAO region they are located in. The proportional area of each EEZ within the FAO region was also calculated for overlapping EEZs.
+
+```{r rgns_table}
+# Read in the SAUP regions lookup table created in saup_rasters_to_ohi_rgns.R
+
+rgns <- read.csv('int/saup_rgn_to_fao.csv')
+
+DT::datatable(rgns)
+
+```
+
+Get the catch data from SAUP using their R package
+
+```{r get_saup_data}
+
+source('~/github/ohiprep/src/R/common.R')
+
+#install.packages("devtools")
+#devtools::install_github("SeaAroundUs/rseaaroundus")
+
+library(tidyr)
+library(reshape2)
+library(dplyr)
+library(seaaroundus)
+library(parallel)
+
+rgns <-listregions("eez")%>%
+        rename(EEZ = title)%>%
+          mutate(num = rownames(.))
+
+ctrys <- list(rgns$num)
+
+hs <- listregions("highseas")%>%
+        rename(FAOarea = title)%>%
+          mutate(num = rownames(.))%>%
+          filter(num>18) #take out Arctic FAO area since SAUP reports no catch there
+
+
+#Since you can only get catch data from one country at a time, I've written a function to collate them all into the format we want
+
+saup_catchdata <- function(rgn, ctry){
+  
+ tons <- catchdata(rgn,ctry,limit=1000)
+ 
+ #for some reason when i tried to mutate(year = rownames(.)), the duplicate column names were not letting me do this. But creating a new column manually like below
+ #works fine.... you can try this by setting ctry = 16 (American Samoa) and you'll find 2 Snapper columns... which is
+ tons$year = rownames(tons)
+ 
+ if(rgn == 'eez'){
+ 
+ out <- tons%>%
+            melt(variable.name = 'species',
+                 value.name = 'tons')%>%
+            mutate(rgn_num = ctry,
+                   rgn_name = rgns$EEZ[match(ctry,rgns$num)])
+ }else{
+   out<-tons%>%
+          melt(variable.name = 'species',
+               value.name = 'tons')%>%
+            mutate(rgn_num = ctry+1000,
+                   rgn_name = hs$FAOarea[match(ctry,hs$num)])
+ }
+ return(out)  
+ 
+}
+
+all <- mclapply(ctrys[[1]],saup_catchdata,rgn = "eez")
+
+d <- do.call(rbind.data.frame, all)
+
+write.csv(d,file=file.path(dir_M,'git-annex/globalprep/fis/raw/SAUP_catch_taxon_tons_eezs.csv'))
+
+
+#don't include area 18 since there are no catches
+hs_catch <- lapply(c(48,34,27,21,47,41,31,58,57,51,88,77,67,61,87,81,71),saup_catchdata,rgn='highseas')
+
+f <- do.call(rbind.data.frame,hs_catch)
+
+write.csv(f,file=file.path(dir_M,'git-annex/globalprep/fis/raw/SAUP_catch_taxon_tons_highseas.csv'))
+
+```
+
+
+The catch data is linked to these regions and a unique **stock_id** is created by pasting the scientific name of the species and the FAO region together.
+
+```{r catch_data}
+catch[catch$saup_id == 1071 & catch$TaxonKey==400323, ]
+## Master SAUP species list, however....
+## There are some repeats in the common names which are used to link to the saup catch data
+## In these cases, I will select the listing with the lowest taxonomic resolution.  
+## There is one species included in the group, and these have distinct regions, so I will add this info. to the common names
+taxon_lookup <- read.csv(file.path(dir_M, "git-annex/globalprep/_raw_data/SAUP/d2016/TaxonTable.csv"), stringsAsFactors=FALSE) %>%
+  dplyr::select(TaxonKey, common=Common.Name, Scientific.Name) %>%
+  mutate(common = ifelse(common %in% "Silver croaker", paste(common, Scientific.Name, sep=" "), common)) %>%
+  group_by(common) %>%
+  top_n(1, -TaxonKey) %>%
+  ungroup()
+
+  filter(taxon_lookup, common %in% c("Silver croaker", "Slipper lobster", "Smelt-whitings", "Snappers", "Soles", "Spiny lobsters")) %>%
+    arrange(common) 
+  
+  # Silver croaker Bairdiella chrysoura = USA (East Coast), USA (Gulf of Mexico)
+  # Silver croaker Pennahia argentata = China, Taiwan, Japan (Daito Islands), Japan (main islands), Korea (South), Hawaii Northwest Islands (USA)
+
+    
+#read in the catch data created in previous chunk
+dat <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/raw/SAUP_catch_taxon_tons_eezs.csv'), stringsAsFactors = FALSE) %>%
+          rbind(read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/raw/SAUP_catch_taxon_tons_highseas.csv'), stringsAsFactors = FALSE)) %>%
+           filter(species != "Others") %>%
+            rename(common = species,
+                   saup_id = rgn_num,
+                   saup_name = rgn_name) %>%   
+           mutate(common = ifelse(common == "Silver croaker" & saup_name %in% c('USA (East Coast)', 'USA (Gulf of Mexico)'), 
+                                  "Silver croaker Bairdiella chrysoura", common)) %>%
+             mutate(common = ifelse(common == "Silver croaker" & 
+                                      saup_name %in% c('China', 'Taiwan', 'Japan (Daito Islands)', 'Japan (main islands)', 
+                                                      'Korea (South)', 'Hawaii Northwest Islands (USA)'), 
+                                  "Silver croaker Pennahia argentata", common)) %>%
+          group_by(year, common, saup_id, saup_name) %>%
+          summarize(tons = sum(tons)) %>%
+          ungroup() %>%
+           left_join(taxon_lookup, by = 'common')
+
+
+# next add in the region data and correct catch for saups that fall into multiple fao regions
+  # and use the fao region to create the stock id
+dat <-    dat %>%
+        left_join(rgns) %>%
+          mutate(prop_area = ifelse(saup_id > 1000, 1, prop_area)) %>%   ## fill in the high seas which are otherwise blank
+          mutate(tons = tons * prop_area) %>%   ### correction in catch because some saup regions include multiple fao regions
+          mutate(fao_rgn = ifelse(saup_id > 1000, saup_id - 1000, fao_rgn),
+                stock_id = gsub(" ", "_", paste(Scientific.Name, fao_rgn, sep='-'), fixed=TRUE))
+
+# add the taxon_resilence data to catch for b/bmsy calculations
+taxon_res = read.csv('globalprep/fis/v2016/int/taxon_resilience_lookup.csv', stringsAsFactors = FALSE) %>%
+  mutate(common = ifelse(common %in% "Silver croaker", paste(common, sciname, sep=" "), common)) %>%
+  dplyr::select(common, Resilience)
+  
+catch <- dat %>%
+  left_join(taxon_res, by="common") %>%
+  dplyr::select(-saup_name, -prop_area)
+
+#write.csv(catch, file.path(dir_M, 'git-annex/globalprep/fis/v2016/int/catch_saup.csv'), row.names=FALSE)
+
+#Showing only 
+DT::datatable(head(dat,n=100),caption = 'Only showing the first 100 rows due to large size of this data')
+
+```
+
+Filter out all stocks that don't meet our conditions
+
+(1) Keep all stocks that have at least 1000 tons mean annual harvest
+(2) Keep all stocks with time series of 20 years or more
+
+```{r prep_data_bbmsy}
+
+catch <- read.csv(file.path(dir_M,'git-annex/globalprep/fis/v2016/int/catch_saup.csv'))
+
+#set variables to filter by
+min_yrs = 20
+min_tons = 1000
+
+stks <- catch %>%
+        filter(TaxonKey >= 600000,     #select only taxa identified to species
+               tons > 0) %>%           #remove all records of 0 catch
+        group_by_(.dots = c("year", "common", "fao_rgn", "stock_id", "TaxonKey", "Resilience"))%>%
+                summarize(tons = sum(tons))%>%
+            ungroup()%>%
+            group_by(stock_id)%>%
+            mutate(nyrs = n(),
+                   avg_ann_catch = mean(tons))%>%
+            ungroup()%>%
+              filter(avg_ann_catch >= min_tons,
+                     nyrs >= min_yrs)%>%
+            select(year,common,fao_rgn,stock_id,TaxonKey,Resilience,tons)
+
+
+write.csv(stks, file = 'int/catch_pre_bbmsy.csv')
+
+
+# stks[stks$stock_id == 'Acetes_japonicus-61', ]
+# old[old$stock_id == 'Acetes_japonicus-61', ]
+# 
+# old <- read.csv("https://raw.githubusercontent.com/OHI-Science/ohiprep/master/globalprep/fis/v2016/int/catch_pre_bbmsy.csv") %>%
+#   rename(old_tons = tons) 
+# setdiff(old$stock_id, stks$stock_id)
+# setdiff(stks$stock_id, old$stock_id)
+# stks[stks$stock_id == 'Acetes_japonicus-61', ]
+
+DT::datatable(head(stks,n=100))
+
+
+```
+
+#Citation information  
+Pauly D. and Zeller D. (Editors), 2015. Sea Around Us Concepts, Design and Data (seaaroundus.org)
+
+
+
+
+
+
+
