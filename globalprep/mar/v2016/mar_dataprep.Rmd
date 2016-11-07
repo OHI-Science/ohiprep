@@ -1,0 +1,457 @@
+---
+title: 'OHI: Mariculture '
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '../../../src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+[REFERENCE RMD FILE: https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/mar/v2016/mar_dataprep.html]
+
+#Summary
+This analysis converts FAO mariculture data into the OHI 2016 global mariculture status score.  This also calculates the genetic escapee from mariculture pressure data.
+
+#Updates from previous assessment
+New year of FAO mariculture yield data, but no changes to sustainability or genetic escapee data or general methods.  Code has been improved from last year.  
+
+***
+
+#Data Source 
+**Reference**:      
+    http://www.fao.org/fishery/statistics/software/fishstatj/en#downlApp
+     Release date: March 2016 
+FAO Global Aquaculture Production Quantity 1950_2014
+
+**Downloaded**: July 29 2016
+
+**Description**:  Quantity (tonnes) of mariculture for each county, species, year.
+
+**Time range**: 1950-2014 
+
+***
+  
+#Methods
+```{r}
+# load libraries, set directories
+library(ohicore)  #devtools::install_github('ohi-science/ohicore@dev')
+library(dplyr)
+library(stringr)
+library(tidyr)
+
+## comment out when knitting
+#setwd("globalprep/mar/v2016")
+
+
+### Load FAO-specific user-defined functions
+source('mar_fxs.R') # functions specific to mariculture dealing with compound countries
+source('../../../src/R/fao_fxn.R') # function for cleaning FAO files
+source('../../../src/R/common.R') # directory locations
+
+```
+
+# FAO Mariculuture data
+
+Clean mariculture data: Filter freshwater mariculture, make long format, and clean FAO codes.
+```{r}
+
+mar <- read.csv(file.path(dir_M, 'git-annex/globalprep/_raw_data/FAO_mariculture/d2016/GlobalAquacultureProduction_Quantity_1950_2014.csv'), check.names=FALSE, stringsAsFactors=FALSE) ; head(mar) 
+
+mar <- mar %>%
+  rename(country = `Country (Country)`,
+         FAO_name = `Species (ASFIS species)`,
+         fao = `Aquaculture area (FAO major fishing area)`,
+         environment = `Environment (Environment)`)
+table(mar$environment)  
+
+# include only marine environments
+mar <- mar %>%
+filter(environment %in% c("Brackishwater", "Marine"))  
+
+## long format and clean FAO codes:
+mar <- mar %>%
+  select(-Unit) 
+
+mar <- mar %>%
+  gather("year", "value", 5:(ncol(mar))) %>%
+    fao_clean_data() 
+
+```
+
+Update species names and exclude non-food species.
+```{r}
+
+mar_sp <- read.csv('raw/species_list.csv', stringsAsFactors=FALSE) %>%
+  select(FAO_name, species, exclude, alias, Taxon_code)
+new.spp <- setdiff(mar$FAO_name, mar_sp$FAO_name)
+new.spp # check: if dim has 0 rows it means all match
+# if length(new.spp) >0 , hand check whether to keep (exclude seaweeds and species harvested for ornamental/medicinal), check if synonyms match Trujillo names
+
+# Remove species not relevant to mariculuture goal (i.e., non-food species)
+mar <- left_join (mar, mar_sp, by="FAO_name") 
+mar <- filter (mar, exclude==0) 
+# change names using species name and the species alias
+mar$species <- ifelse(!is.na(mar$alias), mar$alias, mar$species) 
+
+# sum duplicates after name change (this also gets rid of the NA values)
+mar <- mar %>%
+  filter(!is.na(value)) %>%
+  group_by(country, fao, environment, species, year, Taxon_code) %>%
+    summarize(value = sum(value)) %>% 
+  ungroup()
+
+# remove extra fields
+mar = mar %>% 
+  select(country, fao, environment, species, year, value, Taxon_code)
+
+# eliminate time-series with all 0s
+mar <- mar %>%
+  group_by(country, species) %>%
+  mutate(total_value = sum(value)) %>%
+  filter(total_value > 0) %>%
+  select(-total_value) %>%
+  ungroup()
+
+```
+
+Convert country names to OHI regions
+
+```{r}
+
+# Divide mariculture from countries that we report as separate regions (assume equal production in all regions)
+# Netherlands Antilles: Conch restoration among Aruba, Bonaire, Curacao
+# Channel Islands: Jersey and Guernsey
+# Bonaire/S.Eustatius/Saba
+# Yugoslavia SFR: no longer a country after 1992
+
+mar <- mar %>%
+  mutate(country = ifelse(country=="R\xe9union", "Reunion", country)) %>%  # this one is hard to get right
+  mar_split()  # function in mar_fxs.R
+
+mar_rgn <- name_2_rgn(df_in = mar, 
+                       fld_name='country', 
+                       flds_unique=c('species', 'fao', 'environment', 'Taxon_code', 'year'))
+
+
+### sum values of regions with multiple subregions
+mar_rgn <- mar_rgn %>%
+  group_by(fao, environment, species, year, Taxon_code, rgn_id) %>%
+  summarize(value = sum(value)) %>%
+  ungroup()
+
+```
+
+### Gapfilling
+Fill in missing years after first harvest with 0 values
+
+```{r}
+
+mar_rgn_spread <- spread(mar_rgn, year, value) 
+mar_rgn_gf <- gather(mar_rgn_spread, "year", "value", 6:ncol(mar_rgn_spread)) %>%
+  arrange(rgn_id, species, year, Taxon_code, fao, environment)
+
+mar_rgn_gf <- mar_rgn_gf %>%
+  mutate(year = as.numeric(as.character(year))) %>%
+  mutate(value_w_0 = ifelse(is.na(value), 0, value)) %>%
+  group_by(fao, environment, species, Taxon_code, rgn_id) %>%
+  mutate(cum_value = cumsum(value_w_0)) %>%
+  ungroup() %>%
+  filter(cum_value > 0) %>%
+  mutate(gap_0_fill = ifelse(is.na(value), "NA_to_zero", "0")) %>%
+  mutate(value = ifelse(is.na(value), 0, value)) %>%
+  select(-cum_value, -value_w_0)
+table(mar_rgn_gf$gap_0_fill)
+## 2943 of these out of 24887+2943 cases
+
+```
+
+Remove time series with less than four non-zero datapoints (assume these are not established mariculture programs).
+```{r}
+
+mar_rgn_gf = mar_rgn_gf %>% 
+  group_by(rgn_id, species, fao, environment) %>%
+  mutate (not_0 = length(value[value>0])) %>% 
+  filter (not_0>3) %>%
+  ungroup() %>% 
+  select(rgn_id, species, fao, environment, year, value, Taxon_code, gap_0_fill)
+
+```
+
+Add a unique identifier per cultivated stock that describes species, fao region, and environment.
+```{r}
+
+# add a unique identifier per cultivated stock
+identifier = mar_rgn_gf %>% 
+  select(rgn_id, species, fao, environment) %>% 
+  unique() %>% 
+  mutate(species_code = 1:n())
+
+mar_rgn_gf = left_join(mar_rgn_gf, identifier)
+maric <- mar_rgn_gf
+
+```
+
+
+Save file to estimate total mariculture yield per country.
+```{r}
+
+write.csv(maric, 'output/MAR_FP_data.csv', row.names=FALSE)
+
+```
+
+# Trujillo sustainability scores
+(NOTE: These data have been simplified from last year, I eliminated all the fao/environment ditinctions that did not differ in regard to sustainability or genetic escapees.  This just eliminates extra complexity that doesn't alter scores.)
+
+These data describe the sustainability and genetic escapes for country/species combinations (and, in a couple cases, environment and fao region combinations). In cases where these data were not available for a specific county/species, we averaged the data across taxonomic groups to gapfill the missing data.
+
+Convert country names to OHI region names.
+```{r}
+
+# Trujillo sustainability data:
+sus = read.csv('raw/Truj_label_sust.csv', stringsAsFactors = FALSE, na.strings = NA)
+
+## these need to be re-added (get cut when associated with region ids)
+sus_no_rgn <- filter(sus, is.na(country))
+
+# convert country names to OHI region names:
+sus_rgn <- name_2_rgn(df_in = sus, 
+                       fld_name='country', 
+                       flds_unique=c('species_fao', 'fao', 'environment', 'species_Truj'))
+
+sus_rgn <- bind_rows(sus_rgn, sus_no_rgn)
+
+# check the fao spp list in the Trujillo sustainability file matches FAO mariculture species
+setdiff(sus_rgn$species_fao, maric$species) # species that are no longer have mariculture industry or are not included due to being freshwater or non-food
+
+sort(setdiff(maric$species, sus_rgn$species_fao)) # species with no Trujillo data
+
+```
+
+# FAO maricultue and sustainability scores
+
+Match the sustainability score to the FAO mariculture data.
+
+The following joins the sustainability scores to regions/species that have Trujillo data.
+```{r}
+
+table(sus_rgn$match_type)
+
+# join taxa specific to country/species/environment
+c_sp_env = sus_rgn %>% 
+  filter(match_type == 'c_sp_env') %>% 
+  select(rgn_id, species=species_fao, environment, Sust_c_sp_env = Maric_sustainability)
+
+mar_sus <- maric %>%
+  left_join(c_sp_env, by= c("species", "environment", "rgn_id"))
+
+data.frame(filter(mar_sus, rgn_id==14 & species == "Barramundi"))
+data.frame(filter(mar_sus, !is.na(Sust_c_sp_env)))
+
+# join taxa specific to country/species/fao region
+c_sp_fao = sus_rgn %>% 
+  filter(match_type == 'c_sp_fao') %>% 
+  select(rgn_id, species=species_fao, fao, Sust_c_sp_fao = Maric_sustainability)
+
+mar_sus <- mar_sus %>%
+  left_join(c_sp_fao, by= c("species", "fao", "rgn_id"))
+
+data.frame(filter(mar_sus, rgn_id==218 & species == "Atlantic salmon"))
+data.frame(filter(mar_sus, !is.na(Sust_c_sp_fao)))
+
+# join taxa specific to country/species
+c_sp = sus_rgn %>% 
+  filter(match_type == 'c_sp') %>% 
+  select(rgn_id, species=species_fao, Sust_c_sp = Maric_sustainability)
+
+mar_sus <- mar_sus %>%
+  left_join(c_sp, by= c("species", "rgn_id"))
+summary(mar_sus)
+
+### merge these into a single sustainability score
+mar_sus = mar_sus %>% 
+  mutate(Sust = ifelse(!is.na(Sust_c_sp_env), Sust_c_sp_env, Sust_c_sp_fao)) %>%
+  mutate(Sust = ifelse(is.na(Sust), Sust_c_sp, Sust)) %>%
+  select(-Sust_c_sp_env, -Sust_c_sp_fao, -Sust_c_sp)
+
+```
+
+
+This joins the sustainability data that is gapfilled either at the species level (average of specific species/genera across regions) or at a higher course taxonomic levels and documents which data are gapfilled and how.
+```{r}
+
+## Gapfilled at the species/genera level:
+gf_sp_sus <- filter(sus_rgn, gapfill != "actuals" & match_type == "species") %>%
+  select(species = species_fao, gapfill, Sust_gf_sp = Maric_sustainability)
+
+## check that there are no duplicated species_fao
+gf_sp_sus[duplicated(gf_sp_sus$species), ]
+
+# Match gapfilling values by species
+mar_sus_gf = mar_sus %>%
+  left_join(gf_sp_sus, by = 'species')
+
+
+# Gapfilled at the coarse taxon level:
+gf_taxon_sus <- filter(sus_rgn, gapfill != "actuals" & match_type == "taxon") %>%
+  select(Taxon_code=taxon, Sust_gf_taxon = Maric_sustainability)
+
+# Match gapfilling values by species
+mar_sus_gf = mar_sus_gf %>%
+  left_join(gf_taxon_sus, by = c('Taxon_code'))
+
+summary(mar_sus_gf)
+table(mar_sus_gf$gapfill)
+
+
+#Obtain a sustainability score for each record, and a book-keeping column of whether it's actual or gap-filled
+mar_sus_final = mar_sus_gf %>% 
+  mutate(gapfill = ifelse(!is.na(Sust), "none", gapfill)) %>% 
+  mutate(Sust = ifelse(is.na(Sust), Sust_gf_sp, Sust)) %>%
+  mutate(gapfill = ifelse(is.na(Sust), "taxon_average", gapfill)) %>%
+  mutate(Sust = ifelse(is.na(Sust), Sust_gf_taxon, Sust)) %>%
+  mutate(taxa_code = paste(species, species_code, sep="_")) %>%
+  select(rgn_id, species, species_code, taxa_code, year, gapfill_sus = gapfill, gapfill_fao = gap_0_fill, tonnes=value, Sust)
+
+
+## save data layers
+mar_harvest_tonnes = mar_sus_final %>%
+  select(rgn_id, taxa_code, year, tonnes)
+anyDuplicated(mar_harvest_tonnes)
+write.csv(mar_harvest_tonnes, 'output/mar_harvest_tonnes.csv', row.names=F)
+
+mar_harvest_tonnes_gf = mar_sus_final %>%
+  select(rgn_id, taxa_code, year, tonnes=gapfill_fao)
+write.csv(mar_harvest_tonnes, 'output/mar_harvest_tonnes_gf.csv', row.names=F)
+
+
+mar_sustainability_score = mar_sus_final %>% 
+  select(rgn_id, taxa_code, sust_coeff = Sust) %>% 
+  unique()
+anyDuplicated(mar_sustainability_score)
+write.csv(mar_sustainability_score, 'output/mar_sustainability.csv', row.names=F)
+
+mar_sustainability_score_gf = mar_sus_final %>% 
+  select(rgn_id, taxa_code, sust_coeff = gapfill_sus) %>% 
+  unique()
+write.csv(mar_sustainability_score, 'output/mar_sustainability_gf.csv', row.names=F)
+
+```
+
+# Genetic escapes data
+
+These data are used as a pressure layer to describe the risk of genetic escapees due to mariculture.
+
+First merge with the species data (no gapfilling) for each country/species/fao region combination.
+
+```{r}
+# can eliminate the environment category because these have the same scores
+esc = sus_rgn %>% 
+  filter(!is.na(Genetic.escapees)) %>%
+  mutate(match_type = ifelse(match_type == "c_sp_env", "c_sp", match_type)) %>%
+  group_by(rgn_id, species=species_fao, fao, match_type, taxon, gapfill) %>%
+  summarize(Genetic.escapees = mean(Genetic.escapees)) %>%
+  ungroup()
+  
+# join taxa specific to country/species/fao
+c_sp_fao = esc %>% 
+  filter(match_type == 'c_sp_fao') %>% 
+  select(rgn_id, species, fao, Esc_c_sp_fao = Genetic.escapees) 
+
+mar_esc <- maric %>%
+  left_join(c_sp_fao, by= c("species", "fao", "rgn_id"))
+
+data.frame(filter(mar_esc, !is.na(Esc_c_sp_fao)))
+
+# join taxa specific to country/species
+c_sp = esc %>% 
+  filter(match_type == 'c_sp') %>% 
+  select(rgn_id, species, Esc_c_sp = Genetic.escapees)
+
+mar_esc <- mar_esc %>%
+  left_join(c_sp, by= c("species", "rgn_id"))
+summary(mar_esc)
+
+### merge these into a single sustainability score
+mar_esc = mar_esc %>% 
+  mutate(Escapees = ifelse(!is.na(Esc_c_sp_fao), Esc_c_sp_fao, Esc_c_sp)) %>%
+  select(-Esc_c_sp_fao, -Esc_c_sp)
+
+```
+
+Join the sustainability data that is gapfilled either at the species level (average of specific species/genera across regions) or at a higher course taxonomic levels and documents which data are gapfilled and how.
+```{r}
+## Gapfilled at the species/genera level:
+gf_species_esc <- filter(esc, gapfill != "actuals" & match_type == "species") %>%
+  select(species, gapfill, Esc_gf_sp = Genetic.escapees)
+
+## check that there are no duplicated species_fao
+gf_species_esc[duplicated(gf_species_esc$species), ]
+
+# Match gapfilling values by species
+mar_esc_gf = mar_esc %>%
+  left_join(gf_species_esc, by = 'species')
+
+
+# Gapfilled at the coarse taxon level:
+gf_taxon_sus <- filter(esc, gapfill != "actuals" & match_type == "taxon") %>%
+  select(Taxon_code=taxon, Esc_gf_taxon = Genetic.escapees)
+
+# Match gapfilling values by species
+mar_esc_gf = mar_esc_gf %>%
+  left_join(gf_taxon_sus, by = c('Taxon_code'))
+
+summary(mar_esc_gf)
+table(mar_esc_gf$gapfill)
+
+
+#Obtain a sustainability score for each record, and a book-keeping column of whether it's actual or gap-filled
+tonnes_esc = mar_esc_gf %>% 
+  mutate(gapfill = ifelse(!is.na(Escapees), "none", gapfill)) %>% 
+  mutate(Escapees = ifelse(is.na(Escapees), Esc_gf_sp, Escapees)) %>%
+  mutate(gapfill = ifelse(is.na(Escapees), "taxon_average", gapfill)) %>%
+  mutate(Escapees = ifelse(is.na(Escapees), Esc_gf_taxon, Escapees)) %>%
+  select(rgn_id, species, species_code, year, gapfill_escapees = gapfill, tonnes=value, Escapees)
+
+summary(tonnes_esc)
+
+```
+
+
+Final formatting of the escapee data. This is used as a pressure layer.
+```{r}
+# for each region/year: average the genetic escape probability for each taxa based on tonnes mariculture
+genEscapes <- tonnes_esc %>%
+  group_by(rgn_id, year) %>%
+  summarize(genEscapes = weighted.mean(Escapees, tonnes, na.rm=TRUE))
+
+# obtain corresponding gapfilling information for each region (average of gapfilled data, weighted by tonnes of mariculture).
+genEscapes_gf <- tonnes_esc %>%
+  mutate(gapfill = ifelse(gapfill_escapees=="none", 1, 0)) %>%
+  group_by(rgn_id, year) %>%
+  summarize(genEscapes = weighted.mean(gapfill, tonnes, na.rm=TRUE)) %>%
+  ungroup() %>%
+  filter(year==2014) %>%
+  select(rgn_id, pressures.score=genEscapes) %>%
+  mutate(pressures.score=ifelse(pressures.score=="NaN", NA, pressures.score)) %>%
+  data.frame()
+write.csv(genEscapes_gf, 'output/GenEsc_v2016_gf.csv', row.names=FALSE)
+
+# create the escapee data layers:
+for(year in 2012:2016){ #year=2016
+data_year <- year-2
+    data <- genEscapes %>%
+    filter(year == data_year) %>%
+    select(rgn_id, pressure_score = genEscapes)
+write.csv(data, sprintf('output/GenEsc_v%s.csv', year), row.names=FALSE)  
+}
+
+
+```
+***
+
