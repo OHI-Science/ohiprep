@@ -1,0 +1,221 @@
+"rgn_id","rgn_nam","r2_label","r2","r1_label","r1","r0_label","r0"
+1,"Cocos Islands","Australia and New Zealand",53,"Oceania",9,"World",1
+2,"Christmas Island","Australia and New Zealand",53,"Oceania",9,"World",1
+3,"Norfolk Island","Australia and New Zealand",53,"Oceania",9,"World",1
+4,"Macquarie Island","Australia and New Zealand",53,"Oceania",9,"World",1
+5,"New Caledonia","Melanesia",54,"Oceania",9,"World",1
+6,"Vanuatu","Melanesia",54,"Oceania",9,"World",1
+7,"Solomon Islands","Melanesia",54,"Oceania",9,"World",1
+8,"Palau","Micronesia",57,"Oceania",9,"World",1
+9,"Micronesia (Federated States of)","Micronesia",57,"Oceania",9,"World",1
+10,"Nauru","Micronesia",57,"Oceania",9,"World",1
+11,"Marshall Islands","Micronesia",57,"Oceania",9,"World",1
+12,"Wake Island","Micronesia",57,"Oceania",9,"World",1
+13,"Northern Mariana Islands and Guam","Micronesia",57,"Oceania",9,"World",1
+14,"Taiwan","Eastern Asia",30,"Asia",142,"World",1
+15,"Philippines","South-Eastern Asia",35,"Asia",142,"World",1
+16,"Australia","Australia and New Zealand",53,"Oceania",9,"World",1
+17,"Papua New Guinea","Melanesia",54,"Oceania",9,"World",1
+18,"Fiji","Melanesia",54,"Oceania",9,"World",1
+19,"Tuvalu","Polynesia",61,"Oceania",9,"World",1
+20,"Republic of Korea","Eastern Asia",30,"Asia",142,"World",1
+21,"Democratic People's Republic of Korea","Eastern Asia",30,"Asia",142,"World",1
+24,"Cambodia","South-Eastern Asia",35,"Asia",142,"World",1
+25,"Thailand","South-Eastern Asia",35,"Asia",142,"World",1
+26,"Andaman and Nicobar","South-Eastern Asia",35,"Asia",142,"World",1
+28,"Comoros","Eastern Africa",14,"Africa",2,"World",1
+29,"Mayotte","Eastern Africa",14,"Africa",2,"World",1
+30,"Glorioso Islands","Eastern Africa",14,"Africa",2,"World",1
+31,"Seychelles","Eastern Africa",14,"Africa",2,"World",1
+32,"Reunion","Eastern Africa",14,"Africa",2,"World",1
+33,"Juan de Nova Island","Eastern Africa",14,"Africa",2,"World",1
+34,"Bassas da India","Eastern Africa",14,"Africa",2,"World",1
+35,"Ile Europa","Eastern Africa",14,"Africa",2,"World",1
+36,"Ile Tromelin","Eastern Africa",14,"Africa",2,"World",1
+37,"Mauritius","Eastern Africa",14,"Africa",2,"World",1
+38,"British Indian Ocean Territory","Southern Asia",34,"Asia",142,"World",1
+39,"Maldives","Southern Asia",34,"Asia",142,"World",1
+40,"Sri Lanka","Southern Asia",34,"Asia",142,"World",1
+41,"Mozambique","Eastern Africa",14,"Africa",2,"World",1
+42,"Madagascar","Eastern Africa",14,"Africa",2,"World",1
+43,"Kenya","Eastern Africa",14,"Africa",2,"World",1
+44,"Somalia","Eastern Africa",14,"Africa",2,"World",1
+45,"Eritrea","Eastern Africa",14,"Africa",2,"World",1
+46,"Djibouti","Eastern Africa",14,"Africa",2,"World",1
+47,"Yemen","Western Asia",145,"Asia",142,"World",1
+48,"Oman","Western Asia",145,"Asia",142,"World",1
+49,"Sudan","Northern Africa",15,"Africa",2,"World",1
+50,"Saudi Arabia","Western Asia",145,"Asia",142,"World",1
+51,"Kuwait","Western Asia",145,"Asia",142,"World",1
+52,"Bahrain","Western Asia",145,"Asia",142,"World",1
+53,"Pakistan","Southern Asia",34,"Asia",142,"World",1
+54,"United Arab Emirates","Western Asia",145,"Asia",142,"World",1
+55,"Azores","Southern Europe",39,"Europe",150,"World",1
+56,"Cape Verde","Western Africa",11,"Africa",2,"World",1
+57,"Madeira","Southern Europe",39,"Europe",150,"World",1
+58,"Canary Islands","Southern Europe",39,"Europe",150,"World",1
+59,"Belgium","Western Europe",155,"Europe",150,"World",1
+60,"Gibraltar","Southern Europe",39,"Europe",150,"World",1
+61,"Tunisia","Northern Africa",15,"Africa",2,"World",1
+62,"Morocco","Northern Africa",15,"Africa",2,"World",1
+63,"Western Sahara","Northern Africa",15,"Africa",2,"World",1
+64,"Mauritania","Western Africa",11,"Africa",2,"World",1
+65,"Gambia","Western Africa",11,"Africa",2,"World",1
+66,"Senegal","Western Africa",11,"Africa",2,"World",1
+67,"Libya","Northern Africa",15,"Africa",2,"World",1
+68,"Malta","Southern Europe",39,"Europe",150,"World",1
+69,"Latvia","Northern Europe",154,"Europe",150,"World",1
+70,"Estonia","Northern Europe",154,"Europe",150,"World",1
+71,"Bulgaria","Eastern Europe",151,"Europe",150,"World",1
+72,"Romania","Eastern Europe",151,"Europe",150,"World",1
+73,"Russian Federation","Eastern Europe",151,"Europe",150,"World",1
+74,"Georgia","Western Asia",145,"Asia",142,"World",1
+75,"Ukraine","Eastern Europe",151,"Europe",150,"World",1
+76,"Turkey","Western Asia",145,"Asia",142,"World",1
+77,"Syrian Arab Republic","Western Asia",145,"Asia",142,"World",1
+78,"Lebanon","Western Asia",145,"Asia",142,"World",1
+79,"Israel","Western Asia",145,"Asia",142,"World",1
+80,"Greece","Southern Europe",39,"Europe",150,"World",1
+81,"Cyprus","Western Asia",145,"Asia",142,"World",1
+82,"Albania","Southern Europe",39,"Europe",150,"World",1
+84,"Algeria","Northern Africa",15,"Africa",2,"World",1
+85,"Ascension","Northern Europe",154,"Europe",150,"World",1
+86,"Saint Helena","Northern Europe",154,"Europe",150,"World",1
+88,"Tristan da Cunha","Northern Europe",154,"Europe",150,"World",1
+89,"South Georgia and the South Sandwich Islands","Southern Islands",999,"Southern Islands",999,"World",1
+90,"Prince Edward Islands","Southern Islands",999,"Southern Islands",999,"World",1
+91,"Crozet Islands","Southern Islands",999,"Southern Islands",999,"World",1
+92,"Amsterdam Island and Saint Paul Island","Southern Islands",999,"Southern Islands",999,"World",1
+93,"Kerguelen Islands","Southern Islands",999,"Southern Islands",999,"World",1
+94,"Heard and McDonald Islands","Southern Islands",999,"Southern Islands",999,"World",1
+95,"Falkland Islands (Malvinas)","Northern Europe",154,"Europe",150,"World",1
+96,"Sierra Leone","Western Africa",11,"Africa",2,"World",1
+97,"Liberia","Western Africa",11,"Africa",2,"World",1
+98,"Togo","Western Africa",11,"Africa",2,"World",1
+99,"Benin","Western Africa",11,"Africa",2,"World",1
+100,"Congo","Middle Africa",17,"Africa",2,"World",1
+101,"Namibia","Southern Africa",18,"Africa",2,"World",1
+102,"South Africa","Southern Africa",18,"Africa",2,"World",1
+103,"Sao Tome and Principe","Middle Africa",17,"Africa",2,"World",1
+104,"Equatorial Guinea","Middle Africa",17,"Africa",2,"World",1
+105,"Bouvet Island","Southern Islands",999,"Southern Islands",999,"World",1
+106,"Ghana","Western Africa",11,"Africa",2,"World",1
+107,"Clipperton Island","Central America",13,"Latin America and the Caribbean",419,"World",1
+108,"Bermuda","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+110,"Bahamas","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+111,"Turks and Caicos Islands","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+112,"Cuba","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+113,"Cayman Islands","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+114,"Haiti","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+115,"Dominican Republic","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+116,"Puerto Rico and Virgin Islands of the United States","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+117,"British Virgin Islands","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+118,"Anguilla","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+119,"Saint Kitts and Nevis","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+120,"Antigua and Barbuda","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+121,"Montserrat","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+122,"Saint Lucia","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+123,"Dominica","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+124,"Barbados","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+125,"Grenada","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+126,"Trinidad and Tobago","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+127,"Saint Vincent and the Grenadines","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+129,"Panama","Central America",13,"Latin America and the Caribbean",419,"World",1
+130,"Costa Rica","Central America",13,"Latin America and the Caribbean",419,"World",1
+131,"Nicaragua","Central America",13,"Latin America and the Caribbean",419,"World",1
+132,"Colombia","South America",5,"Latin America and the Caribbean",419,"World",1
+133,"Honduras","Central America",13,"Latin America and the Caribbean",419,"World",1
+134,"El Salvador","Central America",13,"Latin America and the Caribbean",419,"World",1
+135,"Mexico","Central America",13,"Latin America and the Caribbean",419,"World",1
+136,"Guatemala","Central America",13,"Latin America and the Caribbean",419,"World",1
+137,"Ecuador","South America",5,"Latin America and the Caribbean",419,"World",1
+138,"Peru","South America",5,"Latin America and the Caribbean",419,"World",1
+139,"Venezuela (Bolivarian Republic of)","South America",5,"Latin America and the Caribbean",419,"World",1
+140,"Guadeloupe and Martinique","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+141,"Faeroe Islands","Northern Europe",154,"Europe",150,"World",1
+143,"Iceland","Northern Europe",154,"Europe",150,"World",1
+144,"Svalbard and Jan Mayen Islands","Northern Europe",154,"Europe",150,"World",1
+145,"Greenland","Northern Europe",154,"Europe",150,"World",1
+146,"Pitcairn","Polynesia",61,"Oceania",9,"World",1
+147,"French Polynesia","Polynesia",61,"Oceania",9,"World",1
+148,"Line Group","Micronesia",57,"Oceania",9,"World",1
+149,"Jarvis Island","Micronesia",57,"Oceania",9,"World",1
+150,"Palmyra Atoll","Micronesia",57,"Oceania",9,"World",1
+151,"American Samoa","Polynesia",61,"Oceania",9,"World",1
+152,"Samoa","Polynesia",61,"Oceania",9,"World",1
+153,"Cook Islands","Polynesia",61,"Oceania",9,"World",1
+154,"Niue","Polynesia",61,"Oceania",9,"World",1
+155,"Tonga","Polynesia",61,"Oceania",9,"World",1
+156,"Tokelau","Polynesia",61,"Oceania",9,"World",1
+157,"Phoenix Group","Micronesia",57,"Oceania",9,"World",1
+158,"Howland Island and Baker Island","Micronesia",57,"Oceania",9,"World",1
+159,"Johnston Atoll","Micronesia",57,"Oceania",9,"World",1
+161,"Wallis and Futuna Islands","Polynesia",61,"Oceania",9,"World",1
+162,"New Zealand","Australia and New Zealand",53,"Oceania",9,"World",1
+163,"United States of America","Northern America",21,"Americas",19,"World",1
+164,"Belize","Central America",13,"Latin America and the Caribbean",419,"World",1
+166,"Jamaica","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+167,"Guyana","South America",5,"Latin America and the Caribbean",419,"World",1
+168,"Suriname","South America",5,"Latin America and the Caribbean",419,"World",1
+169,"French Guiana","South America",5,"Latin America and the Caribbean",419,"World",1
+171,"Brazil","South America",5,"Latin America and the Caribbean",419,"World",1
+172,"Argentina","South America",5,"Latin America and the Caribbean",419,"World",1
+173,"Uruguay","South America",5,"Latin America and the Caribbean",419,"World",1
+174,"Finland","Northern Europe",154,"Europe",150,"World",1
+175,"Denmark","Northern Europe",154,"Europe",150,"World",1
+176,"Germany","Western Europe",155,"Europe",150,"World",1
+177,"Netherlands","Western Europe",155,"Europe",150,"World",1
+178,"Poland","Eastern Europe",151,"Europe",150,"World",1
+179,"France","Western Europe",155,"Europe",150,"World",1
+180,"United Kingdom of Great Britain and Northern Ireland","Northern Europe",154,"Europe",150,"World",1
+181,"Ireland","Northern Europe",154,"Europe",150,"World",1
+182,"Spain","Southern Europe",39,"Europe",150,"World",1
+183,"Portugal","Southern Europe",39,"Europe",150,"World",1
+184,"Italy","Southern Europe",39,"Europe",150,"World",1
+185,"Monaco","Western Europe",155,"Europe",150,"World",1
+186,"Montenegro","Southern Europe",39,"Europe",150,"World",1
+187,"Croatia","Southern Europe",39,"Europe",150,"World",1
+188,"Slovenia","Southern Europe",39,"Europe",150,"World",1
+189,"Lithuania","Northern Europe",154,"Europe",150,"World",1
+190,"Qatar","Western Asia",145,"Asia",142,"World",1
+191,"Iran (Islamic Republic of)","Southern Asia",34,"Asia",142,"World",1
+192,"Iraq","Western Asia",145,"Asia",142,"World",1
+193,"Guinea-Bissau","Western Africa",11,"Africa",2,"World",1
+194,"Guinea","Western Africa",11,"Africa",2,"World",1
+195,"Ivory Coast","Western Africa",11,"Africa",2,"World",1
+196,"Nigeria","Western Africa",11,"Africa",2,"World",1
+197,"Cameroon","Middle Africa",17,"Africa",2,"World",1
+198,"Gabon","Middle Africa",17,"Africa",2,"World",1
+199,"Democratic Republic of the Congo","Middle Africa",17,"Africa",2,"World",1
+200,"Angola","Middle Africa",17,"Africa",2,"World",1
+202,"United Republic of Tanzania","Eastern Africa",14,"Africa",2,"World",1
+203,"India","Southern Asia",34,"Asia",142,"World",1
+204,"Bangladesh","Southern Asia",34,"Asia",142,"World",1
+205,"Myanmar","South-Eastern Asia",35,"Asia",142,"World",1
+206,"Malaysia","South-Eastern Asia",35,"Asia",142,"World",1
+207,"Viet Nam","South-Eastern Asia",35,"Asia",142,"World",1
+208,"Singapore","South-Eastern Asia",35,"Asia",142,"World",1
+209,"China","Eastern Asia",30,"Asia",142,"World",1
+210,"Japan","Eastern Asia",30,"Asia",142,"World",1
+212,"Kiribati","Micronesia",57,"Oceania",9,"World",1
+214,"Egypt","Northern Africa",15,"Africa",2,"World",1
+215,"Jordan","Western Asia",145,"Asia",142,"World",1
+216,"Indonesia","South-Eastern Asia",35,"Asia",142,"World",1
+218,"Canada","Northern America",21,"Americas",19,"World",1
+219,"Saint Pierre and Miquelon","Northern America",21,"Americas",19,"World",1
+220,"Sint Maarten (Dutch part)","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+221,"Saint Martin (French part)","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+222,"Sweden","Northern Europe",154,"Europe",150,"World",1
+223,"Norway","Northern Europe",154,"Europe",150,"World",1
+224,"Chile","South America",5,"Latin America and the Caribbean",419,"World",1
+227,"Jersey","Northern Europe",154,"Europe",150,"World",1
+228,"Guernsey","Northern Europe",154,"Europe",150,"World",1
+231,"Timor-Leste","South-Eastern Asia",35,"Asia",142,"World",1
+232,"Bosnia and Herzegovina","Southern Europe",39,"Europe",150,"World",1
+237,"Oecussi Ambeno","South-Eastern Asia",35,"Asia",142,"World",1
+244,"Curacao","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+245,"Bonaire","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+247,"Brunei Darussalam","South-Eastern Asia",35,"Asia",142,"World",1
+248,"Saba","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+249,"Sint Eustatius","Caribbean",29,"Latin America and the Caribbean",419,"World",1
+250,"Aruba","Caribbean",29,"Latin America and the Caribbean",419,"World",1

@@ -1,0 +1,35 @@
+-----
+
+# Provenance
+
+``` {r provenance_info, echo = FALSE, message = FALSE, warning = FALSE}
+
+script_prov_out_df <- script_prov(.prov_parent_script_file) 
+```
+
+- _Run ID: `r script_prov_out_df$run_id` (`r script_prov_out_df$run_hash %>% str_sub(1, 7)`); run tag: "`r script_prov_out_df$run_tag`"_
+- _Run elapsed time: `r script_prov_out_df$elapsed_time` seconds; run memory usage: `r script_prov_out_df$memory_use` MB_
+- _System info: `r script_prov_out_df$msg_sys`_
+- _Session info_
+    - _`r script_prov_out_df$msg_ses`_
+    - _`r script_prov_out_df$msg_base_pkgs`_
+    - _`r script_prov_out_df$msg_att_pkgs`_
+
+``` {r provenance_plot,  echo = FALSE, message = FALSE, warning = FALSE}
+
+prov_plot_out <- plot_prov(.script_track)
+
+DiagrammeR::render_graph(prov_plot_out)
+
+```
+
+``` {r cleanup,  echo = FALSE, message = FALSE, warning = FALSE}
+  ### delete footers from local prov/ directory
+  ftr_list <- list.files(system.file('footer', package = 'provRmd'))
+  invisible(
+    lapply(ftr_list, function(x) {
+      unlink(x)
+    })
+  )
+```
+
