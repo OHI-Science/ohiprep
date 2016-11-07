@@ -1,0 +1,33 @@
+---
+title: "testing file path name"
+author: "me"
+date: "4/29/2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r cars0, eval = TRUE}
+
+inputFile
+
+environmentName(environment())
+
+source('~/github/ohiprep/globalprep/spp_ico/v2016/rmd_testing.R')
+
+```
+
+### this script
+```{r cars1}
+
+parent_frames <- sys.parents()
+message('parent frames: ', paste(parent_frames, sep = ', '))
+
+parent_names = sapply(parent_frames, function(x) sys.frame(x)$ofile)
+
+print(parent_names)
+```

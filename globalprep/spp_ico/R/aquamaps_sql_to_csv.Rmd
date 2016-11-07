@@ -1,0 +1,37 @@
+---
+title: "Aquamaps SQL to .csv"
+author: "Jamie Afflerbach"
+date: "11/20/2015"
+output: html_document
+---
+
+Data was sent to Jamie A. on 11/20/2015 by Cristina Garilao. Three SQL files were sent:
+
+1. `hcaf_ohi.sql` cell specific information
+2. `hcaf_species_native_ohi.sql` are all species probabilities per cell
+3. `speciesoccursum_ohi.sql` table of all species
+
+***
+
+##Setup
+
+```{r setup}
+
+knitr::opts_chunk$set(fig.path='Figs/', echo=FALSE, warning=FALSE, message=FALSE)
+
+source('../../src/R/common.R')
+```
+
+```{r SQL}
+
+library(RMySQL)
+
+setwd(dir_neptune_data)
+
+system('mysql -u afflerbach -p -D aquamaps <"git-annex/globalprep/_raw_data/aquamaps/v2015/aquamaps_2015_full_dataset_ohi/hcaf_ohi.sql"')
+
+con <- dbConnect(dbDriver("PostgreSQL"),  host='neptune.nceas.ucsb.edu', dbname='globalprep', user='afflerbach')
+
+
+
+

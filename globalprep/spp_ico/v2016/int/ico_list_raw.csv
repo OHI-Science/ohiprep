@@ -1,0 +1,200 @@
+comname,sciname,ico_gl,ico_rgn_id
+Blue Shark,Prionace glauca,TRUE,NA
+Whale Shark,Rhincodon typus,TRUE,NA
+Shortfin Mako,Isurus oxyrinchus,TRUE,NA
+Olive Ridley Turtle,Lepidochelys olivacea,TRUE,NA
+Irrawaddy Dolphin,Orcaella brevirostris,TRUE,NA
+"Humphead wrasse, Napoleon Wrasse",Cheilinus undulatus,TRUE,NA
+Great White Shark,Carcharodon carcharias,TRUE,NA
+Basking Shark,Cetorhinus maximus,TRUE,NA
+Blue whale,Balaenoptera musculus,TRUE,NA
+Green Turtle,Chelonia mydas,TRUE,NA
+Tiger Shark,Galeocerdo cuvier,TRUE,NA
+Humpback Whale,Megaptera novaeangliae,TRUE,NA
+Thresher Shark,Alopias vulpinus,TRUE,NA
+Minke whale,Balaenoptera acutorostrata,TRUE,NA
+Sei whale,Balaenoptera borealis,TRUE,NA
+Fin whale,Balaenoptera physalus,TRUE,NA
+Porbeagle,Lamna nasus,TRUE,NA
+Bowhead whale,Balaena mysticetus,TRUE,NA
+North Atlantic Right Whale,Eubalaena glacialis,TRUE,NA
+Polar bear,Ursus maritimus,TRUE,NA
+Gray Whale,Eschrichtius robustus,TRUE,NA
+North Pacific Right Whale,Eubalaena japonica,TRUE,NA
+Gray reef shark,Carcharhinus amblyrhynchos,TRUE,NA
+Loggerhead Turtle,Caretta caretta,TRUE,NA
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA
+Hawksbill Turtle,Eretmochelys imbricata,TRUE,NA
+Megamouth Shark,Megachasma pelagios,TRUE,NA
+Whitetip reef shark,Triaenodon obesus,TRUE,NA
+Blacktip reef shark,Carcharhinus melanopterus,TRUE,NA
+Longfin Mako,Isurus paucus,TRUE,NA
+Ganges Shark,Glyphis gangeticus,FALSE,203
+Smooth-coated Otter,Lutrogale perspicillata,FALSE,203
+Mediterranean monk seal,Monachus monachus,FALSE,183
+Franciscana,Pontoporia blainvillei,TRUE,NA
+Caribbean reef shark,Carcharhinus perezi,TRUE,NA
+Kemp's Ridley Turtle,Lepidochelys kempii,TRUE,NA
+Hector's Dolphin,Cephalorhynchus hectori,TRUE,NA
+Maui's Dolphin,Cephalorhynchus hectori ssp. maui,TRUE,NA
+Peruvian anchoveta,Engraulis ringens,FALSE,138
+Vaquita,Phocoena sinus,TRUE,NA
+Rough Toothed Dolphin,Steno bredanensis,TRUE,NA
+Bottlenose Dolphin,Tursiops truncatus,FALSE,53
+Antarctic minke whale,Balaenoptera bonaerensis,FALSE,16
+Bryde's whale,Balaenoptera edeni,FALSE,16
+Arnoux's Beaked Whale,Berardius arnuxii,FALSE,16
+Pygmy right whale,Caperea marginata,FALSE,16
+Common Dophin,Delphinus delphis,FALSE,16
+Southern right whale,Eubalaena australis,FALSE,16
+Pygmy Killer Whale,Feresa attenuata,FALSE,16
+Short-finned Pilot Whale,Globicephala macrorhynchus,FALSE,16
+Long-finned Pilot Whale,Globicephala melas,FALSE,16
+Risso's Dolphin,Grampus griseus,FALSE,16
+Southern Bottlenose Whale,Hyperoodon planifrons,FALSE,16
+Longman's Beaked Whale,Indopacetus pacificus,FALSE,16
+Pygmy sperm whale,Kogia breviceps,FALSE,16
+Dwarf sperm whale,Kogia sima,FALSE,16
+Fraser's Dolphin,Lagenodelphis hosei,FALSE,16
+Hourglass Dolphin,Lagenorhynchus cruciger,FALSE,16
+Dusky Dolphin,Lagenorhynchus obscurus,FALSE,16
+Southern Right Whale Dolphin,Lissodelphis peronii,FALSE,16
+Andrew's beaked whale,Mesoplodon bowdoini,FALSE,16
+Blainville's Beaked Whale,Mesoplodon densirostris,FALSE,16
+Gingko-toothed Beaked Whale,Mesoplodon ginkgodens,FALSE,16
+Gray's beaked whale,Mesoplodon grayi,FALSE,16
+Hector's Beaked Whale,Mesoplodon hectori,FALSE,16
+Strap-toothed Beaked Whale,Mesoplodon layardii,FALSE,16
+True's beaked whale,Mesoplodon mirus,FALSE,16
+Flatback Turtle,Natator depressus,TRUE,NA
+Snubfin Dolphin,Orcaella heinsohni,TRUE,NA
+Killer Whale,Orcinus orca,FALSE,16
+Melon-headed Whale,Peponocephala electra,FALSE,16
+Spectacled Porpoise,Phocoena dioptrica,FALSE,16
+Sperm whale,Physeter macrocephalus,FALSE,16
+False Killer Whale,Pseudorca crassidens,FALSE,16
+Indo-Pacific humpback dolphin,Sousa chinensis,FALSE,16
+Pantropical Spotted Dolphin,Stenella attenuata,FALSE,16
+Striped Dolphin,Stenella coeruleoalba,FALSE,16
+Spinner Dolphin,Stenella longirostris,FALSE,16
+Shepherd's Beaked Whale,Tasmacetus shepherdi,FALSE,16
+Indo-Pacific Bottlenose Dolphin,Tursiops aduncus,FALSE,16
+Bottlenose Dolphin,Tursiops truncatus,FALSE,16
+Cuvier's Beaked Whale,Ziphius cavirostris,FALSE,16
+Atlantic Cod,Gadus morhua,FALSE,222
+European Flounder,Platichthys flesus,FALSE,222
+Atlantic Herring,Clupea harengus,FALSE,222
+Perch,Perca fluviatilis,FALSE,222
+Northern Pike,Esox lucius,FALSE,222
+Atlantic Salmon,Salmo salar,FALSE,222
+Brown Trout,Salmo trutta,FALSE,222
+Sprat,Sprattus sprattus,FALSE,222
+Grey Seal,Halichoerus grypus,FALSE,222
+Eurasian Otter,Lutra lutra,FALSE,222
+Harbor Seal,Phoca vitulina,FALSE,222
+Harbour Porpoise,Phocoena phocoena,FALSE,222
+Ringed Seal,Pusa hispida,FALSE,222
+Atlantic Cod,Gadus morhua,FALSE,174
+European Flounder,Platichthys flesus,FALSE,174
+Atlantic Herring,Clupea harengus,FALSE,174
+Perch,Perca fluviatilis,FALSE,174
+Northern Pike,Esox lucius,FALSE,174
+Atlantic Salmon,Salmo salar,FALSE,174
+Brown Trout,Salmo trutta,FALSE,174
+Sprat,Sprattus sprattus,FALSE,174
+Grey Seal,Halichoerus grypus,FALSE,174
+Eurasian Otter,Lutra lutra,FALSE,174
+Harbor Seal,Phoca vitulina,FALSE,174
+Harbour Porpoise,Phocoena phocoena,FALSE,174
+Ringed Seal,Pusa hispida,FALSE,174
+Atlantic Cod,Gadus morhua,FALSE,175
+European Flounder,Platichthys flesus,FALSE,175
+Atlantic Herring,Clupea harengus,FALSE,175
+Perch,Perca fluviatilis,FALSE,175
+Northern Pike,Esox lucius,FALSE,175
+Atlantic Salmon,Salmo salar,FALSE,175
+Brown Trout,Salmo trutta,FALSE,175
+Sprat,Sprattus sprattus,FALSE,175
+Grey Seal,Halichoerus grypus,FALSE,175
+Eurasian Otter,Lutra lutra,FALSE,175
+Harbor Seal,Phoca vitulina,FALSE,175
+Harbour Porpoise,Phocoena phocoena,FALSE,175
+Ringed Seal,Pusa hispida,FALSE,175
+Atlantic Cod,Gadus morhua,FALSE,176
+European Flounder,Platichthys flesus,FALSE,176
+Atlantic Herring,Clupea harengus,FALSE,176
+Perch,Perca fluviatilis,FALSE,176
+Northern Pike,Esox lucius,FALSE,176
+Atlantic Salmon,Salmo salar,FALSE,176
+Brown Trout,Salmo trutta,FALSE,176
+Sprat,Sprattus sprattus,FALSE,176
+Grey Seal,Halichoerus grypus,FALSE,176
+Eurasian Otter,Lutra lutra,FALSE,176
+Harbor Seal,Phoca vitulina,FALSE,176
+Harbour Porpoise,Phocoena phocoena,FALSE,176
+Ringed Seal,Pusa hispida,FALSE,176
+Atlantic Cod,Gadus morhua,FALSE,70
+European Flounder,Platichthys flesus,FALSE,70
+Atlantic Herring,Clupea harengus,FALSE,70
+Perch,Perca fluviatilis,FALSE,70
+Northern Pike,Esox lucius,FALSE,70
+Atlantic Salmon,Salmo salar,FALSE,70
+Brown Trout,Salmo trutta,FALSE,70
+Sprat,Sprattus sprattus,FALSE,70
+Grey Seal,Halichoerus grypus,FALSE,70
+Eurasian Otter,Lutra lutra,FALSE,70
+Harbor Seal,Phoca vitulina,FALSE,70
+Harbour Porpoise,Phocoena phocoena,FALSE,70
+Ringed Seal,Pusa hispida,FALSE,70
+Atlantic Cod,Gadus morhua,FALSE,178
+European Flounder,Platichthys flesus,FALSE,178
+Atlantic Herring,Clupea harengus,FALSE,178
+Perch,Perca fluviatilis,FALSE,178
+Northern Pike,Esox lucius,FALSE,178
+Atlantic Salmon,Salmo salar,FALSE,178
+Brown Trout,Salmo trutta,FALSE,178
+Sprat,Sprattus sprattus,FALSE,178
+Grey Seal,Halichoerus grypus,FALSE,178
+Eurasian Otter,Lutra lutra,FALSE,178
+Harbor Seal,Phoca vitulina,FALSE,178
+Harbour Porpoise,Phocoena phocoena,FALSE,178
+Ringed Seal,Pusa hispida,FALSE,178
+Atlantic Cod,Gadus morhua,FALSE,69
+European Flounder,Platichthys flesus,FALSE,69
+Atlantic Herring,Clupea harengus,FALSE,69
+Perch,Perca fluviatilis,FALSE,69
+Northern Pike,Esox lucius,FALSE,69
+Atlantic Salmon,Salmo salar,FALSE,69
+Brown Trout,Salmo trutta,FALSE,69
+Sprat,Sprattus sprattus,FALSE,69
+Grey Seal,Halichoerus grypus,FALSE,69
+Eurasian Otter,Lutra lutra,FALSE,69
+Harbor Seal,Phoca vitulina,FALSE,69
+Harbour Porpoise,Phocoena phocoena,FALSE,69
+Ringed Seal,Pusa hispida,FALSE,69
+Atlantic Cod,Gadus morhua,FALSE,189
+European Flounder,Platichthys flesus,FALSE,189
+Atlantic Herring,Clupea harengus,FALSE,189
+Perch,Perca fluviatilis,FALSE,189
+Northern Pike,Esox lucius,FALSE,189
+Atlantic Salmon,Salmo salar,FALSE,189
+Brown Trout,Salmo trutta,FALSE,189
+Sprat,Sprattus sprattus,FALSE,189
+Grey Seal,Halichoerus grypus,FALSE,189
+Eurasian Otter,Lutra lutra,FALSE,189
+Harbor Seal,Phoca vitulina,FALSE,189
+Harbour Porpoise,Phocoena phocoena,FALSE,189
+Ringed Seal,Pusa hispida,FALSE,189
+Atlantic Cod,Gadus morhua,FALSE,73
+European Flounder,Platichthys flesus,FALSE,73
+Atlantic Herring,Clupea harengus,FALSE,73
+Perch,Perca fluviatilis,FALSE,73
+Northern Pike,Esox lucius,FALSE,73
+Atlantic Salmon,Salmo salar,FALSE,73
+Brown Trout,Salmo trutta,FALSE,73
+Sprat,Sprattus sprattus,FALSE,73
+Grey Seal,Halichoerus grypus,FALSE,73
+Eurasian Otter,Lutra lutra,FALSE,73
+Harbor Seal,Phoca vitulina,FALSE,73
+Harbour Porpoise,Phocoena phocoena,FALSE,73
+Ringed Seal,Pusa hispida,FALSE,73
