@@ -1,0 +1,307 @@
+---
+title: "Exploring Sea Level Data"
+author: "Jamie Afflerbach"
+date: "9/15/2016"
+output: 
+  html_document:
+    code_folding: show
+    toc: true
+    toc_depth: 1
+    toc_float: yes
+    number_sections: false
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+pdf_document:
+  toc: true
+---
+
+```{r setup, echo=F, message = F, warning = F}
+knitr::opts_chunk$set(fig.width = 10, fig.height = 8, message = FALSE, warning = FALSE)
+
+library(raster)
+library(RColorBrewer)
+library(dplyr)
+
+dir_git <- '~/github/ohiprep'
+
+source('~/github/ohiprep/src/R/common.R')
+
+dir_anx <- file.path(dir_M, 'git-annex/globalprep')
+
+### set up proj4string options: WGS84
+p4s_wgs84 <- '+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'
+
+### Define spectral color scheme for plotting maps
+cols      = rev(colorRampPalette(brewer.pal(9, 'Spectral'))(255)) # rainbow color scheme
+
+# define mollweide projection
+
+mollCRS <- CRS('+proj=moll')
+
+# Read in ocean raster with cells at 1km. Use this as a template for resampling
+
+ocean = raster(file.path(dir_M,'git-annex/globalprep/spatial/ocean.tif'))
+
+```
+
+The raw data we downloaded from AVISO is [monthly gridded Mean Sea Level Anomaly data from 1993 - 2015](http://www.aviso.altimetry.fr/en/data/products/sea-surface-height-products/global/msla-mean-climatology.html#c10358). Previously we used a [single data product](http://www.aviso.altimetry.fr/en/data/products/ocean-indicators-products/mean-sea-level/products-images.html) that provided mean sea level trends over time:
+
+```{r}
+
+### Define spectral color scheme for plotting maps
+cols      = rev(colorRampPalette(brewer.pal(9, 'Spectral'))(255)) # rainbow color scheme
+
+agg_sl <- raster(file.path(dir_anx,'_raw_data/AVISO_slr/d2016/MSL_Map_MERGED_Global_IB_RWT_NoGIA_Adjust.nc'))%>%
+          rotate()%>%
+          disaggregate(fact=8)
+
+#define projection of the raster before reprojecting
+projection(agg_sl) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+
+plot(agg_sl,col=cols,box=F,axes=F,main = 'Regional Mean Sea Level Trends (mm/yr)\n 1993-2016')
+    
+```
+
+The problem with this dataset is that it doesn't give us information over time so we can't use temporal trends to get an idea of how the pressure is changing over time.
+
+So we are exploring using monthly Mean Sea Level Anomaly data to see if we can get at temporal trends.
+
+This downloaded data is in units of meters. 
+
+I clipped all data to coastal cells since we are now going to calculate this pressure only along the coast.
+
+
+```{r monthly_data}
+
+months <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_monthly_coast'),full.names=T)
+
+#look at most recent year (2015)
+
+pres_yr <- months[265:276]%>%stack()
+
+#since the plots at this scale are hard to see, only doing hists of data
+hist(pres_yr)
+
+```
+
+Annual means were calculated from the monthly averages.
+
+```{r annual}
+
+yr_2015 <- raster(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_mean/rast_msla_annual_2015.tif'))
+
+#get ocean basemap for plot
+ocean_wgs <- projectRaster(ocean,yr_2015,progress='text')
+
+plot(ocean_wgs,col='beige',axes=F,legend=F,box=F)
+plot(yr_2015,col=cols,box=F,axes=F,add=T, main = 'Mean Sea Level Height (meters)\n 2010')
+
+#get a hist of the values
+
+getValues(yr_2015)%>%hist(breaks=50, main = 'Mean Sea Level Height (meters)\n 2010')
+
+```
+
+
+This data looks wrong at first because of the high numbers. Based on the global aggregate data product, we don't expect such large numbers in sea level. But confirmation from AVISO and more exploration of this data shows that this is correct. 
+
+Here is a static map of **Sea Surface Heights** using the same data, served from a [different site](http://icdc.cen.uni-hamburg.de/1/daten/ocean/ssh-aviso.html) (Integrated Climate Data Center)
+
+![A map of the mean sea level height anomaly for May 31, 2014, taken from the AVISO Ssalto/Duacs two_sat_merged data set - available here at ICDC.](http://icdc.cen.uni-hamburg.de/fileadmin/_processed_/csm_AVISO-SSH_MSLA_May31_2014_for_ICDC_Website_01_70a2cf2422.gif)
+
+So now I'm thinking that we are simply misconstruing these two datasets. These are not leading to the same thing. Sea surface trends, as shown in the first global map are not the same as looking at Sea Level Anomaly over time.
+
+Since I can't find any methods or information on how the trends data product is calculated (I've emailed a couple times), I started to ask if maybe these two distinct products might come up with similar results once we rescale them and look at the country level.
+
+For OHI I compared mean sea level anomalies in the most recent 5 years with mean sea level anomalies in the 5 historical years (1993-1997)
+
+# Method 1
+## Using Mean Sea Level Anomaly to calculate annual means, and then comparing recent to historical reference period
+```{r explore}
+# reference period
+old  <- raster(file.path(dir_git,'globalprep/prs_slr/v2016/int/ref_period.tif'))
+#current
+new  <- raster(file.path(dir_git,'globalprep/prs_slr/v2016/int/current_period.tif'))
+#difference
+diff <- raster(file.path(dir_git,'globalprep/prs_slr/v2016/int/difference.tif'))
+  
+par(mfrow = c(3,2))
+
+old_vals <- getValues(old)
+hist(old_vals, breaks = 50, main = '1993-1997')
+
+# look at values greater than 0
+
+oldvals_2 <- old_vals[old_vals>0]
+hist(oldvals_2,breaks=50, main = '1993-1997')
+
+new_vals <- getValues(new)
+hist(new_vals, breaks = 50, main = '2011-2015')
+
+newvals_2 <- new_vals[new_vals>0]
+hist(newvals_2, breaks = 50, main = '2011-2015')
+
+diff_vals <- getValues(diff)
+hist(diff_vals, breaks = 50, main = 'Difference')
+
+diffvals_2 <- diff_vals[diff_vals>0]
+hist(diffvals_2, breaks = 50, main = 'Difference')
+```
+
+Overall we get higher than expected values for sea level anomaly - but I think this is because our expectations of this data product are inaccurate - although I can't yet figure out how to get from anomaly to trend in a way that makes sense.
+
+Let's say we use the difference between the two time periods as our OHI pressure layer and rescale to the max, and set all values less than 0 to 0.
+
+```{r rescale}
+
+diff_max <- cellStats(diff,stat='max',na.rm=T)
+diff_resc <- diff/diff_max    
+diff_resc[diff_resc<0]=0
+
+hist(diff_resc,breaks=50,main = 'SLR Pressure Layer calculated from Mean Sea Level Anomaly')
+
+```
+
+# Method 2 
+## Using the aggregated dataset for mean sea level trend from 1993-2015
+How does this compare spatially to using the aggregated mean sea level trends data as developed by AVISO.
+
+```{r compare}
+
+#mask the aggregated data so we only have coastal values
+agg_sl_coast <- mask(agg_sl,diff) 
+
+#look at coastal values from this aggregated data
+fc_max <- cellStats(agg_sl_coast,stat='max',na.rm=T)
+
+agg_sl_coast_resc <- agg_sl_coast/fc_max
+agg_sl_coast_resc[agg_sl_coast_resc<0]=0
+
+hist(agg_sl_coast_resc,breaks=50,main = 'SLR pressure using aggregated mean sea level trends')
+
+#compare
+
+c <- agg_sl_coast_resc - diff_resc
+
+plot(ocean_wgs,col='beige',axes=F,legend=F,box=F)
+plot(c,col=cols,box=F,axes=F,add=T, main = 'Difference between method 1 and 2')
+
+hist(c,breaks=50,main = 'Difference between OHI pressure layer from Mean Sea Level Anomaly \n and Pressure layer from aggregated mean sea level trend')
+
+```
+
+
+# look at monthly climatologies
+
+```{r}
+
+clim_12_nc <- nc_open(file.path(dir_anx_aviso,'dt_global_allsat_msla_h_y1993_2015_m12.nc'))
+
+clim_12 <- raster(file.path(dir_anx_aviso,'dt_global_allsat_msla_h_y1993_2015_m12.nc'))
+
+#define projection of the raster before reprojecting
+projection(clim_12) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+
+hist(clim_12,breaks=50)
+
+#lets compare recent 2015 month 
+
+clim_2015 <- raster(file.path(dir_anx_aviso,'msla_monthly_mean/dt_global_allsat_msla_h_y2015_m12.nc'))
+projection(clim_2015) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+
+plot(clim_2015)
+
+#difference (compare recent december to climatology for december)
+
+d <- clim_2015 - clim_12
+hist(d,breaks=50)
+plot(d)
+
+```
+
+
+
+### Explore the data
+
+#### 1. How does mean sea level vary over months?
+
+```{r explore}
+
+#Looking at means and sd over time for each month
+
+files <- list.files(file.path(dir_git,
+                              'globalprep/prs_slr/v2016/int/msla_monthly_coast'),full.names=T)
+
+for (i in years){
+  
+  print(i)
+  
+  #get all files for the year i
+    yr_files <- files[which(substr(files,100,103)==i)]%>%stack()
+
+    names(yr_files) <- months
+    #plot & save
+    
+    png(paste0('figs/monthly_boxplot_',i,'.png'), width = 6, height = 4, units = 'in', res = 300 )
+    
+    print(bwplot(yr_files,xlab = 'Months',ylab = 'Mean Sea Level Anomaly (meters)'))
+
+    dev.off()
+}
+
+img <- png::readPNG('figs/month-boxplots-2011-2014.png')
+
+```
+
+#### 2. What is the distribution of mean and sd mean sea level from January 2010 - December 2015
+
+```{r}
+
+  #get all months for all years 2010-2014
+    yr_m_files <- files[which(substr(files,100,103) %in% years)]
+
+  #get unique names for each layer
+    layer_names <- unique(basename(yr_m_files) %>% 
+                      str_replace('msla_monthly_coast_', '') %>%
+                      substr(1, 8)) %>%
+                      sort()
+  #stack into a raster stack (nlayers = 60) and assign names
+    s <- stack(yr_m_files)
+    
+    names(s) <- layer_names
+    
+    #calculate the mean
+    
+    m <- calc(s,fun=mean,na.rm=T)
+    
+    #calculate the sd
+    
+    std <- calc(s,fun=function(x){sd(x,na.rm=T)})
+    
+    #plot + hist
+    
+    #plot & save
+    
+    png('figs/mean_sd_msla_2010_2014.png', width = 10, height = 4, units = 'in', res = 300 )
+    par(mfrow=c(1,2),
+         mai = c(1, 0.5, 1, 1))
+    
+    plot(m,axes=F,col=cols,box=F,colNA = 'dimgray',main='Mean SLA 2010-2014')
+    plot(std,axes=F,col=cols,box=F,colNA = 'dimgray',main = 'Standard Deviation SLA 2010-2015')
+    
+    dev.off()
+    
+    h <- stack(m,std)
+    names(h)<-c("Mean SL 2010-2015","St. Dev. 2010-2015")
+    
+    png('figs/mean_sd_msla_hist_2010_2015.png',width = 8, height = 4, units = 'in', res = 300)
+    histogram(h)
+
+    dev.off()
+
+```
+
+
+
