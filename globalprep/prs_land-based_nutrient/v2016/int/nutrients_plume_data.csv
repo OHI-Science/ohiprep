@@ -1,0 +1,255 @@
+"sp_id","sp_type","rgn_id","rgn_name","mean"
+0,"eez",16,"Australia",0.00617470393886802
+1,"eez",1,"Cocos Islands",0
+2,"eez",2,"Christmas Island",0
+3,"eez",3,"Norfolk Island",0
+4,"eez",4,"Macquarie Island",0.000108714597247904
+5,"eez",5,"New Caledonia",0.000133649743632025
+6,"eez",6,"Vanuatu",0.000675710559852118
+7,"eez",7,"Solomon Islands",2.63438483035911e-07
+8,"eez",8,"Palau",2.57842540035643e-05
+9,"eez",9,"Micronesia",0
+10,"eez",10,"Nauru",0
+11,"eez",11,"Marshall Islands",0
+12,"eez",12,"Wake Island",0
+13,"eez",13,"Northern Mariana Islands and Guam",0
+14,"eez",14,"Taiwan",0.0155256974097267
+15,"eez",15,"Philippines",0.00813238386719657
+17,"eez",17,"Papua New Guinea",0.000783973640638113
+18,"eez",18,"Fiji",0.000465754426146295
+19,"eez",19,"Tuvalu",0
+20,"eez",20,"South Korea",0.0256000918517285
+21,"eez",21,"North Korea",0.00716654658635401
+24,"eez",24,"Cambodia",0.00449243611126936
+25,"eez",25,"Thailand",0.0325201296953732
+26,"eez",26,"Andaman and Nicobar",0.00218450915431762
+28,"eez",28,"Comoro Islands",0.00206688428776706
+29,"eez",29,"Mayotte",0
+30,"eez",30,"Glorioso Islands",0
+31,"eez",31,"Seychelles",7.31962551378326e-06
+32,"eez",32,"Reunion",0
+33,"eez",33,"Juan de Nova Island",0
+34,"eez",34,"Bassas da India",0
+35,"eez",35,"Ile Europa",0
+36,"eez",36,"Ile Tromelin",0
+37,"eez",37,"Mauritius",0.000654286915225522
+38,"eez",38,"British Indian Ocean Territory",0
+39,"eez",39,"Maldives",0
+40,"eez",40,"Sri Lanka",0.0108411612690376
+41,"eez",41,"Mozambique",0.0080361653070602
+42,"eez",42,"Madagascar",0.000742175806075392
+43,"eez",43,"Kenya",0.0189762394244731
+44,"eez",44,"Somalia",0.00115952879845755
+45,"eez",45,"Eritrea",8.81039920674807e-05
+46,"eez",46,"Djibouti",6.82792854424372e-07
+47,"eez",47,"Yemen",0.0025428772200414
+48,"eez",48,"Oman",0.00336307780776817
+49,"eez",49,"Sudan",0.00175750707596259
+50,"eez",50,"Saudi Arabia",0.0198808159057377
+51,"eez",51,"Kuwait",0.0347766743216569
+52,"eez",52,"Bahrain",0.0292508746056022
+53,"eez",53,"Pakistan",0.0139283313276303
+54,"eez",54,"United Arab Emirates",0.022328826088432
+55,"eez",55,"Azores",0.0007924148602372
+56,"eez",56,"Cape Verde",0.000331205050145458
+57,"eez",57,"Madeira",0.000288875961518105
+58,"eez",58,"Canary Islands",0.00270907706620938
+59,"eez",59,"Belgium",0.0513583950338218
+60,"eez",60,"Gibraltar",0.105112467021031
+61,"eez",61,"Tunisia",0.0261207826442619
+62,"eez",62,"Morocco",0.0260902060956163
+63,"eez",63,"Western Sahara",5.12453831903688e-08
+64,"eez",64,"Mauritania",0.00164102497054531
+65,"eez",65,"Gambia",0.0109968897441688
+66,"eez",66,"Senegal",0.00646640266444352
+67,"eez",67,"Libya",0.00579089579823859
+68,"eez",68,"Malta",0.00340106888172472
+69,"eez",69,"Latvia",0.0702085606498681
+70,"eez",70,"Estonia",0.0480496203672726
+71,"eez",71,"Bulgaria",0.0455768610230488
+72,"eez",72,"Romania",0.0384067859179927
+73,"eez",73,"Russia",0.00152663722254487
+74,"eez",74,"Georgia",0.0321382539944572
+75,"eez",75,"Ukraine",0.0588602882281127
+76,"eez",76,"Turkey",0.0786293024257766
+77,"eez",77,"Syria",0.0854501515901059
+78,"eez",78,"Lebanon",0.0655454191809785
+79,"eez",79,"Israel",0.0569969677403043
+80,"eez",80,"Greece",0.0232000026253246
+81,"eez",81,"Cyprus",0.0107544350063841
+82,"eez",82,"Albania",0.103263982409609
+84,"eez",84,"Algeria",0.0289106854084603
+85,"eez",85,"Ascension",0
+86,"eez",86,"Saint Helena",0
+88,"eez",88,"Tristan da Cunha",0
+89,"eez",89,"South Georgia and the South Sandwich Islands",0
+90,"eez",90,"Prince Edward Islands",0.000705312201882723
+91,"eez",91,"Crozet Islands",0
+92,"eez",92,"Amsterdam Island and Saint Paul Island",0
+93,"eez",93,"Kerguelen Islands",0
+94,"eez",94,"Heard and McDonald Islands",0
+95,"eez",95,"Falkland Islands",0
+96,"eez",96,"Sierra Leone",0.00835405485544516
+97,"eez",97,"Liberia",0.00335670953140531
+98,"eez",98,"Togo",0.00719733987929516
+99,"eez",99,"Benin",0.0174074150333986
+100,"eez",100,"Republique du Congo",0.000943951715248034
+101,"eez",101,"Namibia",0.00114521656710955
+102,"eez",102,"South Africa",0.00823689358381583
+103,"eez",103,"Sao Tome and Principe",0
+104,"eez",104,"Equatorial Guinea",2.94564785607895e-05
+105,"eez",105,"Bouvet Island",0
+106,"eez",106,"Ghana",0.00675448606597054
+107,"eez",107,"Clipperton Island",0
+108,"eez",108,"Bermuda",0
+110,"eez",110,"Bahamas",0.000556503435965301
+111,"eez",111,"Turks and Caicos Islands",0
+112,"eez",112,"Cuba",0.0150082738372252
+113,"eez",113,"Cayman Islands",0
+114,"eez",114,"Haiti",0.00215323385842026
+115,"eez",115,"Dominican Republic",0.00831016327757649
+117,"eez",117,"British Virgin Islands",0
+118,"eez",118,"Anguilla",0
+119,"eez",119,"Saint Kitts and Nevis",0.000552723646617106
+120,"eez",120,"Antigua and Barbuda",3.16007252507352e-05
+121,"eez",121,"Montserrat",0
+122,"eez",122,"Saint Lucia",0.00460757905277782
+123,"eez",123,"Dominica",0.0022932018173458
+124,"eez",124,"Barbados",0.000822409019482877
+125,"eez",125,"Grenada",0.0025658927134233
+126,"eez",126,"Trinidad and Tobago",0.0057625959843722
+127,"eez",127,"Saint Vincent and the Grenadines",0.00190465373727409
+129,"eez",129,"Panama",0.0077700607730747
+130,"eez",130,"Costa Rica",0.00508894183958956
+131,"eez",131,"Nicaragua",0.0088803219705948
+132,"eez",132,"Colombia",0.0109887133710151
+133,"eez",133,"Honduras",0.0107355275627128
+134,"eez",134,"El Salvador",0.0179448770435419
+135,"eez",135,"Mexico",0.00863076128857117
+136,"eez",136,"Guatemala",0.0208390229007929
+137,"eez",137,"Ecuador",0.00407430833709161
+138,"eez",138,"Peru",0.0092183300037965
+139,"eez",139,"Venezuela",0.0154687022839421
+141,"eez",141,"Faeroe Islands",0
+143,"eez",143,"Iceland",0.00207713287435708
+144,"eez",144,"Jan Mayen",0
+145,"eez",145,"Greenland",6.564755722874e-07
+146,"eez",146,"Pitcairn",0
+147,"eez",147,"French Polynesia",1.24524387934013e-05
+148,"eez",148,"Line Group",0
+149,"eez",149,"Jarvis Island",0
+150,"eez",150,"Palmyra Atoll",0
+151,"eez",151,"American Samoa",0
+152,"eez",152,"Samoa",9.11920213488506e-06
+153,"eez",153,"Cook Islands",1.82550803763812e-06
+154,"eez",154,"Niue",0
+155,"eez",155,"Tonga",0.0003344647832774
+156,"eez",156,"Tokelau",0
+157,"eez",157,"Phoenix Group",0
+158,"eez",158,"Howland Island and Baker Island",0
+159,"eez",159,"Johnston Atoll",0
+161,"eez",161,"Wallis and Futuna",0
+162,"eez",162,"New Zealand",0.00515788937539642
+163,"eez",163,"United States",0.00623263659409471
+164,"eez",164,"Belize",0.0229344197221604
+166,"eez",166,"Jamaica",0.00275313935481445
+167,"eez",167,"Guyana",0.0061642987025915
+168,"eez",168,"Suriname",0.00282793905870208
+169,"eez",169,"French Guiana",0.000682922732374463
+171,"eez",171,"Brazil",0.0127441172171644
+172,"eez",172,"Argentina",0.00687529582930544
+173,"eez",173,"Uruguay",0.0251649578699643
+174,"eez",174,"Finland",0.0753496308358432
+175,"eez",175,"Denmark",0.0713827012059862
+176,"eez",176,"Germany",0.112336433751256
+177,"eez",177,"Netherlands",0.0574216255302384
+178,"eez",178,"Poland",0.115565076916109
+179,"eez",179,"France",0.0461698506989377
+180,"eez",180,"United Kingdom",0.0209468183179142
+181,"eez",181,"Ireland",0.0181682352514407
+182,"eez",182,"Spain",0.0249150558068201
+183,"eez",183,"Portugal",0.0112838042671457
+184,"eez",184,"Italy",0.0356488163329125
+185,"eez",185,"Monaco",0.0285262875086313
+186,"eez",186,"Montenegro",0.0321139608611313
+187,"eez",187,"Croatia",0.0504615600101614
+188,"eez",188,"Slovenia",0.361250824775002
+189,"eez",189,"Lithuania",0.0868560855437699
+190,"eez",190,"Qatar",0.0460037265575144
+191,"eez",191,"Iran",0.00793600785972351
+192,"eez",192,"Iraq",0.592252354120511
+193,"eez",193,"Guinea Bissau",0.00488136237769423
+194,"eez",194,"Guinea",0.00215550412079244
+195,"eez",195,"Ivory Coast",0.0117726163095832
+196,"eez",196,"Nigeria",0.0137819245642121
+197,"eez",197,"Cameroon",0.030104269879458
+198,"eez",198,"Gabon",0.000901984073770257
+199,"eez",199,"Democratic Republic of the Congo",0.0305180036258068
+200,"eez",200,"Angola",0.00270550330196023
+202,"eez",202,"Tanzania",0.00550497050550318
+203,"eez",203,"India",0.0307624736724117
+204,"eez",204,"Bangladesh",0.0549989985925314
+205,"eez",205,"Myanmar",0.0078435912778269
+206,"eez",206,"Malaysia",0.0496465170697464
+207,"eez",207,"Vietnam",0.0269521858400488
+208,"eez",208,"Singapore",0.372669113387707
+209,"eez",209,"China",0.0685107607140289
+210,"eez",210,"Japan",0.00784256678869474
+212,"eez",212,"Kiribati",0
+214,"eez",214,"Egypt",0.0203790352729709
+215,"eez",215,"Jordan",0.342690120889873
+216,"eez",216,"Indonesia",0.0137030133874381
+218,"eez",218,"Canada",0.00206212349124595
+219,"eez",219,"Saint Pierre and Miquelon",1.44496498577362e-05
+220,"eez",220,"Sint Maarten",0
+221,"eez",221,"Northern Saint-Martin",0
+222,"eez",222,"Sweden",0.0364213567203361
+223,"eez",223,"Norway",0.00250389081609498
+224,"eez",224,"Chile",0.00466100470471415
+227,"eez",227,"Jersey",0.0174208726897967
+228,"eez",228,"Guernsey",0.000162878081674286
+231,"eez",231,"East Timor",0.0115629917201341
+232,"eez",232,"Bosnia and Herzegovina",0.556020101186423
+237,"eez",237,"Oecussi Ambeno",0.0242231348684787
+244,"eez",244,"Curacao",0
+245,"eez",245,"Bonaire",0
+247,"eez",247,"Brunei",0.00529714425682376
+248,"eez",248,"Saba",0
+249,"eez",249,"Sint Eustatius",0.00010666831988318
+250,"eez",250,"Aruba",3.22789182641743e-06
+251,"eez",140,"Guadeloupe and Martinique",1.03679859056945e-07
+255,"eez",116,"Puerto Rico and Virgin Islands of the United States",1.52761799430647e-08
+1018,"fao",260,"Arctic Sea",0
+1021,"fao",261,"Atlantic, Northwest",0
+1027,"fao",262,"Atlantic, Northeast",0
+1031,"fao",263,"Atlantic, Western-Central",0
+1034,"fao",264,"Atlantic, Eastern Central",0
+1041,"fao",266,"Atlantic, Southwest",0
+1047,"fao",267,"Atlantic, Southeast",0
+1051,"fao",269,"Indian Ocean, Western",0
+1057,"fao",270,"Indian Ocean, Eastern",0
+1061,"fao",272,"Pacific, Northwest",1.023235691575e-10
+1067,"fao",273,"Pacific, Northeast",0
+1071,"fao",274,"Pacific, Western Central",0
+1077,"fao",275,"Pacific, Eastern Central",0
+1081,"fao",276,"Pacific, Southwest",0
+1087,"fao",277,"Pacific, Southeast",5.89077373094855e-06
+248100,"eez-ccamlr",213,"Antarctica",NA
+248200,"eez-ccamlr",213,"Antarctica",0
+248300,"eez-ccamlr",213,"Antarctica",0
+248400,"eez-ccamlr",213,"Antarctica",0
+248500,"eez-ccamlr",213,"Antarctica",NA
+248600,"eez-ccamlr",213,"Antarctica",0
+258410,"eez-ccamlr",213,"Antarctica",0
+258420,"eez-ccamlr",213,"Antarctica",NA
+258431,"eez-ccamlr",213,"Antarctica",0
+258432,"eez-ccamlr",213,"Antarctica",0
+258441,"eez-ccamlr",213,"Antarctica",0
+258442,"eez-ccamlr",213,"Antarctica",0
+258510,"eez-ccamlr",213,"Antarctica",0
+258520,"eez-ccamlr",213,"Antarctica",0
+258600,"eez-ccamlr",213,"Antarctica",0
+258700,"eez-ccamlr",213,"Antarctica",0
+288100,"eez-ccamlr",213,"Antarctica",NA
+288200,"eez-ccamlr",213,"Antarctica",NA
+288300,"eez-ccamlr",213,"Antarctica",NA

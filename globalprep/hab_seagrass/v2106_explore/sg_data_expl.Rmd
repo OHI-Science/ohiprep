@@ -1,0 +1,235 @@
+---
+title: 'OHI: Seagrass data exploration '
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+REFERENCE RMD FILE: https://rawgit.com/OHI-Science/ohiprep/master/globalprep/hab2016/seagrass/sg_data_expl.html
+
+``` {r setup, echo = FALSE, message = FALSE, warning = FALSE}
+library(readr)      # for read_csv()
+library(raster)
+
+source('~/github/ohiprep/src/R/common.R')
+
+goal     <- 'globalprep/hab2016/seagrass'
+dir_git  <- file.path('~/github/ohiprep', goal)
+dir_wcmc <- file.path(dir_neptune_data, 'git-annex/globalprep/~raw_data/wcmc_seagrass') 
+dir_data0 <- file.path(dir_git, 'data0') ### location for original data
+dir_data1 <- file.path(dir_git, 'data1') ### location for prepped data
+```
+
+# Seagrass-related goals overview
+
+**Habitat subgoal:**
+
+Status was assessed as the average of the condition estimates for each *k* habitat present in a region (*C~k~*; measured as the loss of habitat and/or % degradation of remaining habitat), such that:
+
+$$x_{HAB} = \frac{\sum_{i=1}^{k}C_k}{k}$$
+
+where *C~k~* = *C~c~/C~r~* and *C~c~* is the current condition and *C~r~* is the reference condition specific to each *k* habitat present in the region.
+
+**Carbon Storage:**
+
+As with other goals that rely on habitats for Status, we measured the Status of Carbon Storage (*x~CS~*) as a function of its current ‘condition’ (*C~c~*) relative to a reference condition (*C~r~*) and a variable that weights the relative contribution of each habitat type (*k*) to total carbon storage, measured as the amount of area each habitat covers (*A~k~*) relative to the total area covered by all three habitats (*A~T~*) given the available data. See biodiversity goal (section 6J) for details on how habitat data were processed. Although Carbon sequestration rates and storage capacity can vary among the three habitats, value are similar enough across habitats and vary enough geographically within habitats that we assumed equal potential value for each. Thus, Status is:
+
+$$x_{CS} = \sum_{i=1}^{k}\left(\frac{C_c}{C_r} * \frac{A_k}{A_T}\right)$$
+
+**Coastal Protection:**
+
+The Status of this goal (*x~CP~*) was calculated to be a function of the amount and/or condition of marine habitat(s) relative to their reference states and the ranked protective ability of each habitat type, such that:
+
+$$x_{CP} = \sum_{i=1}^{k}\left(\frac{C_c}{C_r} * \frac{w_k}{w_{max}} * \frac{A_k}{A_T}\right)$$
+
+where *C* is the condition at current (*c*) and reference (*r*) time points, and w is the rank weight of the protective ability, and *A* is the area within an EEZ for each *k* habitat type, proportional to either the maximum (*max*) ranks of any habitats present or total (*T*) current amount of all protective habitats. 
+
+***
+
+# Some possible directions?
+
+Seagrass presence:
+
+* Type of seagrass is not important; breakdown of seagrass types by bioregion should be adequate?
+* Aquamaps with a high threshold can provide distribution of seagrass habitat within EEZs - good *habitat* but not necessarily *presence*
+* Can we determine a notion of presence per habitat?  Can Short data give us something here?
+* WCMC data - correlate WCMC polygons to Aquamaps preferred habitat?  Still pretty sample-biased
+
+Seagrass health (trend):
+
+* Regression by bioregion, using all sites within bioregion to estimate
+
+Model: seagrass habitat = presence (from Aquamaps etc) * health (from trend data); for countries with multiple sites, 
+
+## Waycott data
+
+For each site, time series of area (in hectares).  No species info.  Use `biorgn` to correlate changes in patch health to specific bioregions.  Perhaps use `area_cat` or `max(area_ha)` as part of a regression?  
+
+`site_id | site_name | biorgn | rgn | yr_start | yr_end | area_cat | change_rate | year | area_ha | pub`
+
+`change_rate` is specific rate of change, calculated over time interval, *t*, from the initial to final reported areas (*A~o~* and *A~t~*, respectively) as     [*ln(A~t~ / A~o~)/t*] * 100.
+
+
+``` {r waycott_data, echo = FALSE}
+data_waycott_file <- file.path(dir_data1, 'data_waycott.csv')
+
+if(!file.exists(data_waycott_file)) {
+  library(xlsx)
+  
+  waycott_df <- read.xlsx(file.path(dir_data0, 'allseagrass_09022011.xlsx'), sheetName = "WaycottData")
+  waycott_df <- waycott_df %>%
+    select(site_id     = Site.Ref.., 
+           site_name   = Site.Name, 
+           biorgn      = Global.Seagrass.Bioregion, 
+           rgn         = Country, 
+           yr_start    = Yr.study.started,
+           yr_end      = Yr.study.ended,
+           area_cat    = Area.Category,
+           change_rate = Specific.rate.of.change..u....yr.,
+           year        = Year.of.data.record,
+           area_ha     = Area.recorded..ha.,
+           pub         = Data.source.publication..,
+           -NA.) %>%
+    filter(!is.na(year)) %>%
+    fill(site_id:change_rate, pub)
+  
+  write.csv(waycott_df, data_waycott_file, row.names = FALSE)
+}
+
+waycott_df <- read.csv(data_waycott_file, stringsAsFactors = FALSE) %>% unique()
+
+waycott_df_mdl <- waycott_df %>%
+  group_by(site_name) %>%
+  do(mdl = lm(area_ha ~ year, data = .)) %>%
+  mutate(lm_int   = round(mdl[['coefficients']][1], 3),
+         lm_slope = round(mdl[['coefficients']][2], 3))
+
+waycott_df_mdl2 <- waycott_df %>%
+  group_by(site_name) %>%
+  arrange(site_name, year) %>%
+  summarize(exp_mdl_r = round(log(last(area_ha) / first(area_ha)) / (last(year) - first(year)) * 100, 3))
+
+waycott_df1 <- waycott_df %>%
+  left_join(waycott_df_mdl %>% select(-mdl),
+            by = 'site_name') %>%
+  left_join(waycott_df_mdl2 %>% 
+              select(site_name, exp_mdl_r),
+            by = 'site_name')
+
+DT::datatable(waycott_df1 %>% select(-site_id, -yr_start, -yr_end, -pub),
+              caption = 'Waycott seagrass extent data over time')
+```
+
+## Short data
+
+For each site, time series of coverage (mean and sd), but no area relationship.  Could correlate changes in patch coverage to bioregions if a spatial bioregion map were available.
+
+`site_name | date | time | year | sg_pct_mean | sg_pct_sd | lat | long | day | country`
+
+``` {r short_data, echo = FALSE}
+data_short_file   <- file.path(dir_data1, 'data_short.csv')
+
+if(!file.exists(data_short_file)) {
+  library(xlsx)
+  library(lubridate)
+  
+  short_df <- read.xlsx(file.path(dir_data0, 'allseagrass_09022011.xlsx'), sheetName = "ShortData")
+  names(short_df) <- tolower(names(short_df))
+  short_df <- short_df %>%
+    rename(site_name   = location,
+           sg_pct_mean = mean_seagr,
+           sg_pct_sd   = std_seagra,
+           lat         = dd_lat,
+           long        = dd_lon) %>%
+    mutate(day = yday(as.Date(date, '%m/%d/%y')))
+  
+  short_locs <- read.xlsx(file.path(dir_data0, 'allseagrass_09022011.xlsx'), sheetName = "SeagrassData") %>%
+    filter(str_detect(tolower(Source), 'short')) %>%
+    select(country, site_name = Region.Site.Name) %>%
+    unique()
+  
+  short_df <- short_df %>%
+    left_join(short_locs, by = 'site_name')
+  
+  write.csv(short_df, data_short_file, row.names = FALSE)
+}
+
+short_df <- read.csv(data_short_file, stringsAsFactors = FALSE)
+
+DT::datatable(short_df %>% select(site_name, country, year, yr_day = day, sg_pct_mean, sg_pct_sd, lat, long),
+              caption = 'Short seagrass coverage data over time')
+```
+
+## Aquamaps data
+
+``` {r}
+am_sg_cells   <- read_csv(file.path(dir_git, 'am_data/seagrass_am.csv'), progress = TRUE) %>%
+  as.data.frame()
+
+### These are taken from speciesoccursum.csv, phylum Plantae, order Alismatales
+sg_list <- c('Thalassia testudinum'     = 'Kew-308879',
+             'Syringodium	filiforme'    = 'Kew-288211',
+             'Halodule wrightii'        = 'SLB-173431',
+             'Thalassodendron	ciliatum' = 'Kew-293259',
+             'Halophila	spinulosa'      = 'Kew-308090',
+             'Halophila	decipiens'      = 'SLB-159390',
+             'Ruppia maritima'          = 'Kew-308804')
+
+### others to look for in AM: 
+# Phyllospadix spp (nope)
+# Zostera marina (nope)
+# Posidonia oceanica (nope)
+# Cymodocea spp (syringodium, thalassodendron, and haloduleis of family Cymodoceaceae; not found as genus)
+# Enhalus acoroides (nope)
+# Amphibolis antarctica et al. (nope)
+
+
+### LOICZID cell ID numbers - used in plotting rasters
+loiczid_raster_file  <- file.path(dir_git, 'am_data/loiczid_raster.grd')
+loiczid_raster       <- raster(loiczid_raster_file)
+names(loiczid_raster) <- 'loiczid'
+
+sg_rast_list <- list()
+
+for (i in 1:length(sg_list)) { # i = 1
+  sg_rast_list[[i]] <- raster::subs(loiczid_raster, am_sg_cells %>% 
+                                      filter(speciesid == sg_list[i]) %>%
+                                      select(loiczid, probability),
+                                    by = 'loiczid',
+                                    which = 'probability', 
+                                    subsWithNA = TRUE)
+  
+}
+names(sg_rast_list) <- names(sg_list)
+
+sg_rast_brick <- brick(sg_rast_list)
+
+writeRaster(sg_rast_brick, file.path(dir_git, 'am_data/am_rast.tif'), 
+            bylayer = TRUE, suffix = 'names',
+            overwrite = TRUE)
+
+```
+
+#Summary
+[general description: What data are being generated? Why (what project, etc.)? Upstream/downstream processing information that might be helpful?  Other information?]
+
+#Updates from previous assessment
+[Any significant changes in methods from previous analyses?]
+
+***
+
+#Methods
+[R code used to generate the data. Or, alternatively, description of the code/data files used to generate the data.]
+
+***
+
+#Citation information  
+[citation information: include if these data will have their own specific citation.]
