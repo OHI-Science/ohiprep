@@ -1,0 +1,55 @@
+--
+title: "SAUP_2015 data explore"
+output: html_document
+---
+
+Looking at catch within a country to determine how variable the data are.
+```{r, echo=FALSE, message=FALSE}
+library(ggplot2)
+library(dplyr)
+catch <- read.csv("C:/Users/Melanie/Desktop/SAUP_data_2015/raw/ohi_main.csv")
+catch <- catch %>%
+  group_by(EEZID, Year, TaxonKey) %>%
+  summarize(CatchAmount=sum(CatchAmount, na.rm=TRUE))
+
+taxon <- read.csv("C:/Users/Melanie/Desktop/SAUP_data_2015/raw/ohi_taxon.csv")
+eez <- read.csv("C:/Users/Melanie/Desktop/SAUP_data_2015/raw/ohi_eez.csv")
+```
+
+```{r, echo=FALSE}
+uniqueTaxa <- catch %>%
+  group_by(TaxonKey) %>%
+  summarize(n=n()) %>%
+  arrange(n) %>%
+  filter(n>100) %>%
+  select(TaxonKey)
+
+#data.frame(uniqueTaxa[1175:1216, ])
+#for(taxa in uniqueTaxa){ #
+ #taxa=600143 #Yellowfin Tuna
+ #taxa=600226 #swordfish
+ # taxa = 600107 #skipjack tuna
+ taxa = 600146 #bigeye tuna
+ taxaCatch <- catch[catch$TaxonKey == taxa, ]
+ taxonName <- taxon$common.name[taxon$taxonkey==taxa]
+
+```
+
+Plotting data for `r taxonName`
+
+```{r, echo=FALSE, fig.width=4, fig.height=2.5}
+ uniqueRegion <- unique(taxaCatch$EEZID)
+ for(region in uniqueRegion){
+   #region=608
+   regionName <- eez$Name[eez$EEZID == region] 
+   plotData <- taxaCatch[taxaCatch$EEZID==region, ]
+  p <- ggplot(plotData, aes(x=Year, y=CatchAmount)) +
+     geom_point(shape=19, size=1.5) +
+     geom_line(color="blue", size=0.5) +
+  labs(title=paste0('Region:', regionName))
+print(p)
+   }
+#}
+
+```
+
