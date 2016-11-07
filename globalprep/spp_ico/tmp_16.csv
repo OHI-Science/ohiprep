@@ -1,0 +1,57 @@
+rgn_id,rgn_name,sciname,iucn_sid,cat,cat_score,mean_cat,ico_status,n_spp,ico_trend
+1,Cocos Islands,Balaenoptera musculus,2477,EN,0.6,0.33333,0.66667,6,0.03232
+1,Cocos Islands,Cheilinus undulatus,4592,EN,0.6,0.33333,0.66667,6,0.03232
+1,Cocos Islands,Chelonia mydas,4615,EN,0.6,0.33333,0.66667,6,0.03232
+1,Cocos Islands,Megaptera novaeangliae,13006,LC,0,0.33333,0.66667,6,0.03232
+1,Cocos Islands,Steno bredanensis,20738,LC,0,0.33333,0.66667,6,0.03232
+1,Cocos Islands,Triaenodon obesus,39384,NT,0.2,0.33333,0.66667,6,0.03232
+59,Belgium,Balaenoptera acutorostrata,2474,LC,0,0.4,0.6,4,0.02424
+59,Belgium,Balaenoptera physalus,2478,EN,0.6,0.4,0.6,4,0.02424
+59,Belgium,Cetorhinus maximus,4292,VU,0.4,0.4,0.6,4,0.02424
+59,Belgium,Cetorhinus maximus,39340,EN,0.6,0.4,0.6,4,0.02424
+164,Belize,Carcharhinus perezi,60217,NT,0.2,0.30769,0.69231,13,0.01398
+164,Belize,Caretta caretta,3897,VU,0.4,0.30769,0.69231,13,0.01398
+164,Belize,Caretta caretta,84131194,LC,0,0.30769,0.69231,13,0.01398
+164,Belize,Chelonia mydas,4615,EN,0.6,0.30769,0.69231,13,0.01398
+164,Belize,Dermochelys coriacea,6494,VU,0.4,0.30769,0.69231,13,0.01398
+164,Belize,Dermochelys coriacea,46967827,LC,0,0.30769,0.69231,13,0.01398
+164,Belize,Eretmochelys imbricata,8005,CR,0.8,0.30769,0.69231,13,0.01398
+164,Belize,Galeocerdo cuvier,39378,NT,0.2,0.30769,0.69231,13,0.01398
+164,Belize,Isurus oxyrinchus,39341,VU,0.4,0.30769,0.69231,13,0.01398
+164,Belize,Isurus oxyrinchus,161749,VU,0.4,0.30769,0.69231,13,0.01398
+164,Belize,Prionace glauca,39381,NT,0.2,0.30769,0.69231,13,0.01398
+164,Belize,Rhincodon typus,19488,VU,0.4,0.30769,0.69231,13,0.01398
+164,Belize,Steno bredanensis,20738,LC,0,0.30769,0.69231,13,0.01398
+208,Singapore,Cheilinus undulatus,4592,EN,0.6,0.32,0.68,5,-0.02545
+208,Singapore,Isurus oxyrinchus,39341,VU,0.4,0.32,0.68,5,-0.02545
+208,Singapore,Orcaella brevirostris,15419,VU,0.4,0.32,0.68,5,-0.02545
+208,Singapore,Prionace glauca,39381,NT,0.2,0.32,0.68,5,-0.02545
+208,Singapore,Steno bredanensis,20738,LC,0,0.32,0.68,5,-0.02545
+210,Japan,Alopias vulpinus,39339,VU,0.4,0.39286,0.60714,28,0.02554
+210,Japan,Balaenoptera acutorostrata,2474,LC,0,0.39286,0.60714,28,0.02554
+210,Japan,Balaenoptera borealis,2475,EN,0.6,0.39286,0.60714,28,0.02554
+210,Japan,Balaenoptera musculus,2477,EN,0.6,0.39286,0.60714,28,0.02554
+210,Japan,Balaenoptera physalus,2478,EN,0.6,0.39286,0.60714,28,0.02554
+210,Japan,Carcharhinus melanopterus,39375,NT,0.2,0.39286,0.60714,28,0.02554
+210,Japan,Carcharodon carcharias,3855,VU,0.4,0.39286,0.60714,28,0.02554
+210,Japan,Caretta caretta,3897,VU,0.4,0.39286,0.60714,28,0.02554
+210,Japan,Caretta caretta,83652278,LC,0,0.39286,0.60714,28,0.02554
+210,Japan,Cetorhinus maximus,4292,VU,0.4,0.39286,0.60714,28,0.02554
+210,Japan,Cetorhinus maximus,39545,EN,0.6,0.39286,0.60714,28,0.02554
+210,Japan,Cheilinus undulatus,4592,EN,0.6,0.39286,0.60714,28,0.02554
+210,Japan,Chelonia mydas,4615,EN,0.6,0.39286,0.60714,28,0.02554
+210,Japan,Dermochelys coriacea,6494,VU,0.4,0.39286,0.60714,28,0.02554
+210,Japan,Dermochelys coriacea,46967817,CR,0.8,0.39286,0.60714,28,0.02554
+210,Japan,Eretmochelys imbricata,8005,CR,0.8,0.39286,0.60714,28,0.02554
+210,Japan,Eschrichtius robustus,8097,LC,0,0.39286,0.60714,28,0.02554
+210,Japan,Eschrichtius robustus,8099,CR,0.8,0.39286,0.60714,28,0.02554
+210,Japan,Eubalaena japonica,41711,EN,0.6,0.39286,0.60714,28,0.02554
+210,Japan,Isurus oxyrinchus,39341,VU,0.4,0.39286,0.60714,28,0.02554
+210,Japan,Isurus oxyrinchus,161750,VU,0.4,0.39286,0.60714,28,0.02554
+210,Japan,Isurus paucus,60225,VU,0.4,0.39286,0.60714,28,0.02554
+210,Japan,Lepidochelys olivacea,11534,VU,0.4,0.39286,0.60714,28,0.02554
+210,Japan,Megachasma pelagios,39338,LC,0,0.39286,0.60714,28,0.02554
+210,Japan,Megaptera novaeangliae,13006,LC,0,0.39286,0.60714,28,0.02554
+210,Japan,Prionace glauca,39381,NT,0.2,0.39286,0.60714,28,0.02554
+210,Japan,Rhincodon typus,19488,VU,0.4,0.39286,0.60714,28,0.02554
+210,Japan,Steno bredanensis,20738,LC,0,0.39286,0.60714,28,0.02554
