@@ -1,0 +1,374 @@
+---
+title: 'OHI: Social Progress Index'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '../../../src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+
+#Summary
+This script gapfills the social progress index data and formats it for the OHI global assessment.
+
+
+#Updates from previous assessment
+This is the first year of data.
+
+***
+
+#Data Source 
+**Reference**:      
+ http://www.socialprogressimperative.org/
+
+Stern, S., A. Wares and T. Hellman. 2016. Social Progress Index: 2016 Methodological Report.
+
+**Downloaded**: 9/28/2016
+
+**Description**: Social Progress Index scores and components for countries.
+
+**Time range**: 2016 
+
+***
+  
+#Methods
+```{r}
+# load libraries, set directories
+library(ohicore)  #devtools::install_github('ohi-science/ohicore@dev')
+library(dplyr)
+library(stringr)
+library(tidyr)
+
+## comment out when knitting
+#setwd("globalprep/prs_res_spi/v2016")
+
+
+### Load FAO-specific user-defined functions
+source('../../../src/R/common.R') # directory locations
+
+```
+
+# Social Progress Index data
+
+Organize data and gapfill missing countries that have incomplete data.  This is the first gapfilling step.  The second step will involve gapfilling countries that have no data.  This first level of gapfilling probably has very little error.
+
+```{r}
+cats <- read.csv(file.path(dir_M, 'git-annex/globalprep/_raw_data/SocialProgressIndex/d2016/spi_categories.csv')) %>%
+  mutate(category = gsub(" ", "", category))
+  
+spi <- read.csv(file.path(dir_M, 'git-annex/globalprep/_raw_data/SocialProgressIndex/d2016/2016-Results_spi.csv'), check.names=FALSE, stringsAsFactors=FALSE) 
+
+names(spi) <- gsub(" ", "", names(spi))
+
+spi <- spi %>%
+  dplyr::select(-CountryCode) %>%
+  gather('category', 'score', -Country) %>%
+  left_join(cats, by = "category")
+
+```
+
+## Gapfill bhn component
+[NOTE: There seems like there must be a better way to do this.]
+
+```{r}
+
+bhn_tmp <- spi %>%
+  filter(subcategory == "bhn") %>%
+  spread(category, score)
+
+## gapfill Watershed and Sanitation data  
+mod <- lm(WaterandSanitation ~ Shelter, data=bhn_tmp, na.action=na.exclude)
+summary(mod)
+bhn_tmp$WaterandSanitation_pred <-  predict(mod, newdata = select(bhn_tmp, Shelter))
+
+bhn_tmp <- bhn_tmp %>%
+  mutate(gapfill = ifelse(is.na(WaterandSanitation) & !is.na(WaterandSanitation_pred), "WaterandSanitation_gf", NA)) %>%
+  mutate(WaterandSanitation = ifelse(is.na(WaterandSanitation), WaterandSanitation_pred, WaterandSanitation))
+
+## gapfill Shelter data
+mod <- lm(Shelter ~ WaterandSanitation, data=bhn_tmp, na.action=na.exclude)
+summary(mod)
+bhn_tmp$Shelter_pred <-  predict(mod, newdata = select(bhn_tmp, WaterandSanitation))
+
+bhn_tmp <- bhn_tmp %>%
+  mutate(gapfill = ifelse(is.na(Shelter) & !is.na(Shelter_pred), paste(bhn_tmp$gapfill, "Shelter_gf"), gapfill)) %>%
+  mutate(Shelter = ifelse(is.na(Shelter), Shelter_pred, Shelter))
+
+## gapfill Nutrition and Basic Medical Care
+mod <- lm(NutritionandBasicMedicalCare ~ WaterandSanitation + Shelter, data=bhn_tmp, na.action=na.exclude)
+summary(mod)
+bhn_tmp$NutritionandBasicMedicalCare_pred <-  predict(mod, newdata = select(bhn_tmp, WaterandSanitation, Shelter))
+
+bhn_tmp <- bhn_tmp %>%
+  mutate(gapfill = ifelse(is.na(NutritionandBasicMedicalCare) & !is.na(NutritionandBasicMedicalCare_pred), paste(bhn_tmp$gapfill, "NutritionandBasicMedicalCare_gf"), gapfill)) %>%
+  mutate(NutritionandBasicMedicalCare = ifelse(is.na(NutritionandBasicMedicalCare), NutritionandBasicMedicalCare_pred, NutritionandBasicMedicalCare))
+
+## gapfill personal safety
+mod <- lm(PersonalSafety ~ WaterandSanitation + Shelter + NutritionandBasicMedicalCare, data=bhn_tmp, na.action=na.exclude)
+summary(mod)
+bhn_tmp$PersonalSafety_pred <-  predict(mod, newdata = select(bhn_tmp, WaterandSanitation, Shelter, NutritionandBasicMedicalCare))
+
+bhn_tmp <- bhn_tmp %>%
+  mutate(gapfill = ifelse(is.na(PersonalSafety) & !is.na(PersonalSafety_pred), paste(bhn_tmp$gapfill, "PersonalSafety_gf"), gapfill)) %>%
+  mutate(PersonalSafety = ifelse(is.na(PersonalSafety), PersonalSafety_pred, PersonalSafety))
+
+### 
+bhn_gf <- bhn_tmp %>%
+  mutate(gapfill = gsub("NA ", "", gapfill)) %>%
+  select(-ends_with("pred")) %>%
+  gather('category', 'score', -Country, -subcategory, -gapfill)
+
+```
+
+
+## Gapfill fw component
+
+
+```{r}
+
+fw_tmp <- spi %>%
+  filter(subcategory == "fw") %>%
+  spread(category, score)
+
+## gapfill EnvironmentalQuality  
+mod <- lm(EnvironmentalQuality ~ AccesstoInformationandCommunications + HealthandWellness, data=fw_tmp, na.action=na.exclude)
+summary(mod)
+fw_tmp$EnvironmentalQuality_pred <-  predict(mod, newdata = select(fw_tmp, AccesstoInformationandCommunications, HealthandWellness))
+
+fw_tmp <- fw_tmp %>%
+  mutate(gapfill = ifelse(is.na(EnvironmentalQuality) & !is.na(EnvironmentalQuality_pred), "EnvironmentalQuality_gf", NA)) %>%
+  mutate(EnvironmentalQuality = ifelse(is.na(EnvironmentalQuality), EnvironmentalQuality_pred, EnvironmentalQuality))
+
+## gapfill Access to Basic Knowledge  
+mod <- lm(AccesstoBasicKnowledge ~ AccesstoInformationandCommunications + HealthandWellness + EnvironmentalQuality, 
+          data=fw_tmp, na.action=na.exclude)
+summary(mod)
+fw_tmp$AccesstoBasicKnowledge_pred <-  predict(mod, newdata = select(fw_tmp, AccesstoInformationandCommunications, HealthandWellness, EnvironmentalQuality))
+
+fw_tmp <- fw_tmp %>%
+  mutate(gapfill = ifelse(is.na(AccesstoBasicKnowledge) & !is.na(AccesstoBasicKnowledge_pred), paste(gapfill, "AccesstoBasicKnowledge_gf", sep=", "), gapfill)) %>%
+  mutate(AccesstoBasicKnowledge = ifelse(is.na(AccesstoBasicKnowledge), AccesstoBasicKnowledge_pred, AccesstoBasicKnowledge))
+
+### 
+fw_gf <- fw_tmp %>%
+  mutate(gapfill = gsub("NA, ", "", gapfill)) %>%
+  select(-ends_with("pred")) %>%
+  gather('category', 'score', -Country, -subcategory, -gapfill)
+
+
+```
+
+
+## Gapfill op component
+
+```{r}
+
+op_tmp <- spi %>%
+  filter(subcategory == "op") %>%
+  spread(category, score)
+
+## gapfill AccesstoAdvancedEducation  
+mod <- lm(AccesstoAdvancedEducation ~ PersonalRights + PersonalFreedomandChoice, data=op_tmp, na.action=na.exclude)
+summary(mod)
+op_tmp$AccesstoAdvancedEducation_pred <-  predict(mod, newdata = select(op_tmp, PersonalRights, PersonalFreedomandChoice))
+
+op_tmp <- op_tmp %>%
+  mutate(gapfill = ifelse(is.na(AccesstoAdvancedEducation) & !is.na(AccesstoAdvancedEducation_pred), "AccesstoAdvancedEducation_gf", NA)) %>%
+  mutate(AccesstoAdvancedEducation = ifelse(is.na(AccesstoAdvancedEducation), AccesstoAdvancedEducation_pred, AccesstoAdvancedEducation))
+
+## gapfill PersonalFreedomandChoice  
+mod <- lm(PersonalFreedomandChoice ~ AccesstoAdvancedEducation + PersonalRights, data=op_tmp, na.action=na.exclude)
+summary(mod)
+op_tmp$PersonalFreedomandChoice_pred <-  predict(mod, newdata = select(op_tmp, AccesstoAdvancedEducation, PersonalRights))
+
+op_tmp <- op_tmp %>%
+  mutate(gapfill = ifelse(is.na(PersonalFreedomandChoice) & !is.na(PersonalFreedomandChoice_pred), paste(gapfill, "PersonalFreedomandChoice_gf", sep=", "), gapfill)) %>%
+  mutate(PersonalFreedomandChoice = ifelse(is.na(PersonalFreedomandChoice), PersonalFreedomandChoice_pred, PersonalFreedomandChoice))
+
+## gapfill ToleranceandInclusion 
+mod <- lm(ToleranceandInclusion ~ AccesstoAdvancedEducation + PersonalFreedomandChoice + PersonalRights, data=op_tmp, na.action=na.exclude)
+summary(mod)
+op_tmp$ToleranceandInclusion_pred <-  predict(mod, newdata = select(op_tmp, AccesstoAdvancedEducation, PersonalFreedomandChoice, PersonalRights))
+
+op_tmp <- op_tmp %>%
+  mutate(gapfill = ifelse(is.na(ToleranceandInclusion) & !is.na(ToleranceandInclusion_pred), paste(gapfill, "ToleranceandInclusion_gf", sep=", "), gapfill)) %>%
+  mutate(ToleranceandInclusion = ifelse(is.na(ToleranceandInclusion), ToleranceandInclusion_pred, ToleranceandInclusion))
+
+### 
+op_gf <- op_tmp %>%
+  mutate(gapfill = gsub("NA, ", "", gapfill)) %>%
+  select(-ends_with("pred")) %>%
+  gather('category', 'score', -Country, -subcategory, -gapfill)
+
+
+```
+
+
+## Combine data
+
+```{r}
+
+data_subcategory <- rbind(bhn_gf, op_gf, fw_gf) %>%
+  group_by(Country, subcategory) %>%
+  summarize(score = mean(score),
+            gapfill = paste(unique(gapfill), collapse=", ")) %>%
+  mutate(gapfill = gsub("NA, ", "", gapfill)) %>%
+  mutate(gapfill = gsub("NA", NA, gapfill)) %>%
+  mutate(score = ifelse(score > 100, 100, score),
+         score = ifelse(score < 0, 0, score)) %>%
+  rename(score_gf = score) %>%
+  ungroup()
+
+
+data_subcategory$subcategory <- mapvalues(data_subcategory$subcategory, 
+                              from=c("bhn", "fw", "op"), 
+                              to=c("bhn_score", "fw_score", "op_score"))
+
+spi_subcategory <- spi %>%
+  filter(subcategory %in% c("bhn_score", "fw_score", "op_score")) %>%
+left_join(data_subcategory, by=c("Country", "subcategory")) %>%
+  mutate(score = ifelse(is.na(score), score_gf, score)) %>%
+  select(Country, score, subcategory, gapfill)
+
+## Average subcategories to get spi score
+spi_gf <- spi_subcategory %>%
+  group_by(Country) %>%
+  summarize(score_gf = mean(score),
+            gapfill = paste(unique(gapfill), collapse = ", ")) %>%
+  mutate(gapfill = gsub(", NA", "", gapfill)) %>%
+    mutate(gapfill = gsub("NA, ", "", gapfill)) %>%
+  mutate(gapfill = gsub("NA", NA, gapfill)) %>%
+  mutate(subcategory = "spi")
+
+spi_only <- spi %>%
+  filter(subcategory == "spi") %>%
+  left_join(spi_gf, by = c("Country", "subcategory")) %>%
+  mutate(score = ifelse(is.na(score), score_gf, score)) %>%
+  select(Country, score, gapfill)
+
+write.csv(spi_only, "int/Country_spi.csv", row.names=FALSE)
+
+
+```
+
+# Assign countries to OHI regions
+
+```{r}
+
+spi_only <- spi_only %>%
+  mutate(Country = ifelse(Country=="C\xf4te d'Ivoire", "Cote d'Ivoire", Country)) 
+
+spi_rgn <- name_2_rgn(df_in = spi_only, 
+                       fld_name='Country')
+
+#122 ohi regions with data
+
+```
+
+# Compare to WGI
+
+```{r}
+
+wgi <- read.csv('../../../../ohi-global/eez2016/layers/wgi_all.csv') 
+
+wgi_spi <- wgi %>%
+  left_join(spi_rgn)
+
+plot(wgi_spi$resilience_score*100, wgi_spi$score, ylab="Social Progress Index, score", xlab="Worldwide Governance Score")
+abline(0,1, col="red")
+
+mod <- lm(score ~ resilience_score, data=wgi_spi)
+summary(mod)
+
+```
+
+# Second round of gapfilling 
+In this case, UN geopolitical regions and WGI scores are used to estimate regions with no data.
+
+```{r}
+
+rgns_gf_un <- georegions %>%
+  left_join(spi_rgn) %>%
+  left_join(wgi)
+
+## Compare models to select a gapfilling method
+mod1 <- lm(score ~ r2, data = rgns_gf_un)
+mod2 <- lm(score ~ r2 + resilience_score, data = rgns_gf_un)
+
+mod3 <- lm(score ~ r1, data = rgns_gf_un)
+mod4 <- lm(score ~ r1 + resilience_score, data = rgns_gf_un, na.action="na.exclude")
+
+mod5 <- lm(score ~ resilience_score, data = rgns_gf_un)
+
+mod6 <- lm(score ~ r1 + poly(resilience_score, 2), data = rgns_gf_un, na.action = "na.exclude")
+mod7 <- lm(score ~ r1 + poly(resilience_score, 3), data = rgns_gf_un, na.action = "na.exclude")
+
+plot(predict(mod7), rgns_gf_un$score)
+abline(0,1)
+plot(predict(mod4), rgns_gf_un$score)
+abline(0,1)
+plot(0:100, predict(mod7, newdata = data.frame(r1=1, resilience_score=seq(0, 1, by=0.01))), type="l")
+points(rgns_gf_un$resilience_score*100, rgns_gf_un$score)
+plot(0:100, predict(mod6, newdata = data.frame(r1=1, resilience_score=seq(0, 1, by=0.01))), type="l")
+points(rgns_gf_un$resilience_score*100, rgns_gf_un$score)
+
+
+AIC(mod1, mod2, mod3, mod4, mod5, mod6, mod7)
+
+## Estimate missing data and gapfill
+mod_gf <- lm(score ~ r1 + poly(resilience_score, 3), data = rgns_gf_un, na.action = na.exclude)
+rgns_gf_un$score_pred <- predict(mod_gf, newdata = rgns_gf_un[, c("r1", "resilience_score")])
+
+rgns_gf <- rgns_gf_un %>%
+  mutate(gapfill = ifelse(is.na(score) & !is.na(score_pred), "UN georgn & WGI", gapfill)) %>%
+  mutate(score = ifelse(is.na(score), score_pred, score)) %>%
+  select(rgn_id, score, gapfill) %>%
+  mutate(score = ifelse(score > 100, 100, score),
+         score = ifelse(score < 0, 0, score))
+
+
+```
+
+# Uninhabited regions
+
+These regions will receive an NA for their score (when established population is < 100 people). 
+
+```{r}
+uninhab <- read.csv('../../../src/LookupTables/rgn_uninhabited_islands.csv') %>%
+  filter(is.na(est_population) | est_population < 100)
+
+rgns_gf_uninhab <- rgns_gf %>%
+  mutate(score = ifelse(rgn_id %in% uninhab$rgn_id, NA, score)) %>%
+  mutate(gapfill = ifelse(rgn_id %in% uninhab$rgn_id, NA, gapfill))
+
+```
+
+# Save final data
+
+```{r}
+
+gf_data <- rgns_gf_uninhab %>%
+  select(rgn_id, method = gapfill) %>%
+  mutate(gapfill = ifelse(is.na(method), 0, 1))
+write.csv(gf_data, "output/spi_gf.csv", row.names=FALSE)
+
+
+res_data <- rgns_gf_uninhab %>%
+  select(rgn_id, resilience_score=score) %>%
+  mutate(resilience_score = resilience_score/100)
+write.csv(res_data, "output/spi_res.csv", row.names=FALSE)
+
+prs_data <- rgns_gf_uninhab %>%
+  select(rgn_id, pressure_score=score) %>%
+  mutate(pressure_score = 1 - (pressure_score/100))
+write.csv(prs_data, "output/spi_prs.csv", row.names=FALSE)
+```
+
+***
+
