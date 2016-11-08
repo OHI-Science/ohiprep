@@ -467,10 +467,10 @@ rgn_spp_3nm <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_3nm, spp_all)
 rgn_spp_aq  <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_aq,  spp_all)
 rgn_spp_hs  <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_hs,  spp_all)
 
-write_csv(rgn_spp_gl,  file.path(dir_goal, 'output/rgn_spp_gl.csv'))
-write_csv(rgn_spp_3nm, file.path(dir_goal, 'output/rgn_spp_3nm.csv'))
-write_csv(rgn_spp_aq,  file.path(dir_goal, 'output/rgn_spp_aq.csv'))
-write_csv(rgn_spp_hs,  file.path(dir_goal, 'output/rgn_spp_hs.csv'))
+write_csv(rgn_spp_gl,  file.path(dir_goal_anx, 'summary/rgn_spp_gl.csv'))
+write_csv(rgn_spp_3nm, file.path(dir_goal_anx, 'summary/rgn_spp_3nm.csv'))
+write_csv(rgn_spp_aq,  file.path(dir_goal_anx, 'summary/rgn_spp_aq.csv'))
+write_csv(rgn_spp_hs,  file.path(dir_goal_anx, 'summary/rgn_spp_hs.csv'))
 ```
 
 `r knitr::kable(head(rgn_spp_gl), caption = 'Species by region - first few rows')`
