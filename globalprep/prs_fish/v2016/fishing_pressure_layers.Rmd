@@ -145,6 +145,9 @@ Total catch per cell is standardized by the NPP values. This is done because the
 hb_files <- list.files(file.path(dir_git,'int/annual_hb_catch'),full.names=T)
 lb_files <- list.files(file.path(dir_git,'int/annual_lb_catch'),full.names=T)
 
+#calculate the total area in km2 per cell for the SAUP catch rasters that are 0.5x0.5 degree cells
+saup_area <- area(raster(hb_files[1]))
+
 registerDoParallel(6)
 
 foreach (yr = c(2003:2010)) %dopar%{
@@ -156,9 +159,11 @@ foreach (yr = c(2003:2010)) %dopar%{
   #2. Get bycatch rasters for the yr
   cat_hb <- hb_files[substr(hb_files,90,93) == yr]%>%
               raster()%>%
+              overlay(.,saup_area,fun=function(x,y){x/y})%>%
               projectRaster(n,over=T,method = 'ngb')
   cat_lb <- lb_files[substr(lb_files,90,93) == yr]%>%
               raster()%>%
+              overlay(.,saup_area,fun=function(x,y){x/y})%>%
               projectRaster(n,over=T,method = 'ngb')
   
   #3. Divide catch by npp and save to git-annex
@@ -306,7 +311,7 @@ plot(lb, col=cols, main = 'Low Bycatch Fishing Pressure Layer \n OHI 2016', axes
 
 setwd('globalprep/prs_fish/v2016')
 
-source("../../../src/R/common.R")
+source("~/github/ohiprep//src/R/common.R")
 
 #paths
  dir_git <- file.path(dir_M,'git-annex/globalprep/prs_fish/v2016')
