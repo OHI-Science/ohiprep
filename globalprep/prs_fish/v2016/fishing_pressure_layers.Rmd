@@ -67,6 +67,8 @@ library(raster)
 library(rasterVis)
 library(RColorBrewer)
 
+options(scipen=999)
+
 cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
 mytheme=rasterTheme(region=cols)
 source("~/github/ohiprep/src/R/common.R")
@@ -159,18 +161,58 @@ foreach (yr = c(2003:2010)) %dopar%{
   #2. Get bycatch rasters for the yr
   cat_hb <- hb_files[substr(hb_files,90,93) == yr]%>%
               raster()%>%
-              overlay(.,saup_area,fun=function(x,y){x/y})%>%
-              projectRaster(n,over=T,method = 'ngb')
-  cat_lb <- lb_files[substr(lb_files,90,93) == yr]%>%
-              raster()%>%
-              overlay(.,saup_area,fun=function(x,y){x/y})%>%
+              overlay(.,saup_area,fun=function(x,y){(x/y)*0.8732508})%>% #0.87325 km2 is the actual size of our cells, not 1km2
               projectRaster(n,over=T,method = 'ngb')
   
+  cat_lb <- lb_files[substr(lb_files,90,93) == yr]%>%
+              raster()%>%
+              overlay(.,saup_area,fun=function(x,y){(x/y)*0.8732508})%>%
+              projectRaster(n,over=T,method = 'ngb')
+  
+ 
   #3. Divide catch by npp and save to git-annex
   overlay(cat_hb,n,fun=function(x,y){x/y},filename = paste0(dir_git,'/int/annual_catch_npp/hb_catch_npp_',yr,'.tif'), overwrite=T) 
   overlay(cat_lb,n,fun=function(x,y){x/y},filename = paste0(dir_git,'/int/annual_catch_npp/lb_catch_npp_',yr,'.tif'), overwrite=T) 
   
 }
+
+  #testing the area division/reprojection
+#  ext <- extent(-39,8.7,4.2,56)
+#   a   <- crop(saup_area,ext)%>%calc(.,fun=function(x){x/0.87325})
+# 
+#   a_proj <- projectRaster(a,crs=mollCRS,over=T,method='ngb')
+# 
+#   orig <-  hb_files[substr(hb_files,90,93) == yr]%>%
+#               raster()%>%
+#               crop(ext)
+# 
+#  t <- orig%>%projectRaster(crs=mollCRS,over=T,method='ngb')
+# 
+#   test <- orig%>%
+#               overlay(.,a,fun=function(x,y){(x/y)*0.8732508})%>%
+#               projectRaster(crs = mollCRS,over=T,method='ngb')%>%
+#               resample(.,ocean, method= 'ngb')
+# 
+#   test_2 <- orig%>%
+#             projectRaster(crs = mollCRS, over=T, method = 'ngb')%>%
+#             overlay(.,a_proj,fun=function(x,y){(x/y)*0.87})%>%
+#             resample(.,ocean,method='ngb')
+#   
+#   test_3 <- orig%>%
+#             overlay(.,a,fun=function(x,y){x/y})%>%
+#             projectRaster(crs=mollCRS, over=T,method='ngb')%>%
+#             resample(.,ocean,method='ngb')
+# 
+# 
+#   orig_vals <- getValues(orig)%>%sum(.,na.rm=T) #4,886,840
+# 
+# orig_vals_2 <- getValues(t)%>%sum(na.rm=T)
+#  
+#    new_vals <- getValues(test)%>%sum(na.rm=T) #4,968,374
+#  
+#    new_vals_2 <- getValues(test_2)%>%sum(na.rm=T) #same as new_vals - 4,968,374
+#  
+  #diff is 81,534
 ```
 
 ## Five year means
