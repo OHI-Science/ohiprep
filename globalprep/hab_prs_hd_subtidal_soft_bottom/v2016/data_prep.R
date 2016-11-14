@@ -206,7 +206,7 @@ condition_pressure <- data_rescaled_2 %>%
   filter(!is.na(pressure))
 
 save_dir <- "globalprep/hab_prs_hd_subtidal_soft_bottom/v2016/output"
-stop_year <- max(condition$year)
+stop_year <- max(condition_pressure$year)
 
 for (status_year in (stop_year-4):stop_year){ #status_year = 2010
   trend_years <- status_year:(status_year - 4)
@@ -232,7 +232,7 @@ for (status_year in (stop_year-4):stop_year){ #status_year = 2010
   
   pressure <- condition_pressure[condition_pressure$year %in% status_year, ] %>%
     select(rgn_id, pressure_score = pressure)
-  write.csv(health, file.path(save_dir, sprintf("hd_sb_subtidal_v%s.csv", status_year)), row.names=FALSE)
+  write.csv(pressure, file.path(save_dir, sprintf("hd_sb_subtidal_v%s.csv", status_year)), row.names=FALSE)
   
 }
 
