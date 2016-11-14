@@ -107,7 +107,7 @@ The Net Primary Production data was prepared in [npp.Rmd](https://cdn.rawgit.com
 
 npp <- list.files(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/VGPM_primary_productivity/int/annual_npp'),pattern = 'npp_2',full.names=T)
 
-plot(raster(npp[13]),col=cols,axes=F,main = 'Net Primary Production (for)mg C/m2/day) \n 2015')
+plot(raster(npp[13]),col=cols,axes=F,main = 'Net Primary Production (mg C/m2/day) \n 2015')
 ```
 
 ## Annual catch 
@@ -150,24 +150,27 @@ lb_files <- list.files(file.path(dir_git,'int/annual_lb_catch'),full.names=T)
 #calculate the total area in km2 per cell for the SAUP catch rasters that are 0.5x0.5 degree cells
 saup_area <- area(raster(hb_files[1]))
 
-registerDoParallel(6)
+registerDoParallel(4)
 
 foreach (yr = c(2003:2010)) %dopar%{
   
   #1. get net primary production for that year
-  n <- npp[substr(npp,111,114)==yr]%>%
-          raster()
+  n <- npp[substr(npp,111,114)==2010]%>%
+          raster()%>%
+          resample(.,ocean,method = 'ngb')
 
   #2. Get bycatch rasters for the yr
-  cat_hb <- hb_files[substr(hb_files,90,93) == yr]%>%
+  cat_hb <- hb_files[substr(hb_files,90,93) == yr]%>% 
               raster()%>%
               overlay(.,saup_area,fun=function(x,y){(x/y)*0.8732508})%>% #0.87325 km2 is the actual size of our cells, not 1km2
-              projectRaster(n,over=T,method = 'ngb')
+              projectRaster(crs = mollCRS,over=T,method = 'ngb')%>%
+              resample(.,ocean,method = 'ngb', filename = paste0(dir_git,'/int/annual_hb_catch_1km/annual_hb_catch_1km_',yr,'.tif'))                      
   
   cat_lb <- lb_files[substr(lb_files,90,93) == yr]%>%
               raster()%>%
               overlay(.,saup_area,fun=function(x,y){(x/y)*0.8732508})%>%
-              projectRaster(n,over=T,method = 'ngb')
+              projectRaster(crs = mollCRS,over=T,method = 'ngb')%>%
+              resample(.,ocean,method = 'ngb', filename = paste0(dir_git,'/int/annual_lb_catch_1km/annual_lb_catch_1km_',yr,'.tif'))
   
  
   #3. Divide catch by npp and save to git-annex
@@ -176,43 +179,6 @@ foreach (yr = c(2003:2010)) %dopar%{
   
 }
 
-  #testing the area division/reprojection
-#  ext <- extent(-39,8.7,4.2,56)
-#   a   <- crop(saup_area,ext)%>%calc(.,fun=function(x){x/0.87325})
-# 
-#   a_proj <- projectRaster(a,crs=mollCRS,over=T,method='ngb')
-# 
-#   orig <-  hb_files[substr(hb_files,90,93) == yr]%>%
-#               raster()%>%
-#               crop(ext)
-# 
-#  t <- orig%>%projectRaster(crs=mollCRS,over=T,method='ngb')
-# 
-#   test <- orig%>%
-#               overlay(.,a,fun=function(x,y){(x/y)*0.8732508})%>%
-#               projectRaster(crs = mollCRS,over=T,method='ngb')%>%
-#               resample(.,ocean, method= 'ngb')
-# 
-#   test_2 <- orig%>%
-#             projectRaster(crs = mollCRS, over=T, method = 'ngb')%>%
-#             overlay(.,a_proj,fun=function(x,y){(x/y)*0.87})%>%
-#             resample(.,ocean,method='ngb')
-#   
-#   test_3 <- orig%>%
-#             overlay(.,a,fun=function(x,y){x/y})%>%
-#             projectRaster(crs=mollCRS, over=T,method='ngb')%>%
-#             resample(.,ocean,method='ngb')
-# 
-# 
-#   orig_vals <- getValues(orig)%>%sum(.,na.rm=T) #4,886,840
-# 
-# orig_vals_2 <- getValues(t)%>%sum(na.rm=T)
-#  
-#    new_vals <- getValues(test)%>%sum(na.rm=T) #4,968,374
-#  
-#    new_vals_2 <- getValues(test_2)%>%sum(na.rm=T) #same as new_vals - 4,968,374
-#  
-  #diff is 81,534
 ```
 
 ## Five year means
@@ -253,7 +219,7 @@ foreach (i = 2003:2006) %dopar%{
 
 Look at all catch data standardized by NPP from 2003 - 2010 and use the 99.99th quantile as the reference point.
 
-```{r ref_point}
+```{r ref_point, eval=F}
 
 lb_npp <- list.files(file.path(dir_git,'/int/annual_catch_npp'),full.names=T, pattern = 'lb')
 hb_npp <- list.files(file.path(dir_git,'/int/annual_catch_npp'),full.names=T, pattern = 'hb')
@@ -268,20 +234,23 @@ for(i in 2003:2010){
   m <- hb_npp[which(substr(hb_npp,89,92) == i)]%>%
     raster()%>%
     getValues()
+  
+ n <- m[!is.na(m)]
 
-  vals <- c(vals,m)
+  vals <- c(vals,n)
 
 }
-min_v_hb <- log(min(vals,na.rm=T)+1) # 0
-max_v_hb <- log(max(vals,na.rm=T)+1) # 11.32801
 
-ref_hb <- log(quantile(vals,prob = 0.9999,na.rm=T)+1)
+min_v_hb <- min(vals,na.rm=T) # 0
+max_v_hb <- max(vals,na.rm=T) # 31.95568
+
+ref_hb <- log(quantile(vals,prob = 0.9999,na.rm=T)+1) #2.601586
 
 
 #LOW BYCATCH
 
 #get data across all years
-vals <- c()
+lb_vals <- c()
 
 for(i in 2003:2010){
 
@@ -289,18 +258,19 @@ for(i in 2003:2010){
     raster()%>%
     getValues()
 
-  vals <- c(vals,m)
+  n <- m[!is.na(m)]
+  
+  lb_vals <- c(lb_vals,n)
 
 }
-min_v_lb <- log(min(vals,na.rm=T)+1) #0
-max_v_lb <- log(max(vals,na.rm=T)+1) #12.3698
+min_v_lb <- min(lb_vals,na.rm=T) 
+max_v_lb <- max(lb_vals,na.rm=T) 
 
 
-ref_lb <- log(quantile(vals,prob = 0.9999,na.rm=T)+1)
+ref_lb <- log(quantile(lb_vals,prob = 0.9999,na.rm=T)+1) #3.10426
 
 
 ```
-
 
 The reference point is `r ref_hb` (`r min_v_hb` - `r max_v_hb`) for high bycatch and `r ref_lb` (`r min_v_lb` - `r max_v_lb`) for low bycatch.
 
@@ -319,13 +289,11 @@ foreach (i = 2003:2006) %dopar%{
   
   out_hb <- mean_hb[which(substr(mean_hb,90,93) == i)]%>%
             raster()%>%
-            calc(fun=function(x){ifelse(x>ref_hb,1,x/ref_hb)})%>%
-            resample(ocean,method='ngb',filename = paste0(file.path(dir_git),'/out/high_bycatch/hb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
+            calc(fun=function(x){ifelse(x>ref_hb,1,x/ref_hb)},filename = paste0(file.path(dir_git),'/out/high_bycatch/hb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
   
   out_lb <- mean_lb[which(substr(mean_lb,90,93) == i)]%>%
             raster()%>%
-            calc(fun=function(x){ifelse(x>ref_lb,1,x/ref_lb)})%>%
-            resample(ocean,method='ngb',filename = paste0(file.path(dir_git),'/out/low_bycatch/lb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
+            calc(fun=function(x){ifelse(x>ref_lb,1,x/ref_lb)},filename = paste0(file.path(dir_git),'/out/low_bycatch/lb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
   
 }
 
