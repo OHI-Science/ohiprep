@@ -1,0 +1,138 @@
+---
+title: "Looking at fisheries pressures"
+author: "Jamie Afflerbach"
+date: "11/13/2016"
+output: 
+  html_document:
+    code_folding: show
+---
+
+##Setup 
+
+```{r setup, include=FALSE}
+library(parallel)
+library(foreach)
+library(doParallel)
+library(raster)
+library(rasterVis)
+library(RColorBrewer)
+
+options(scipen=999)
+
+cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
+mytheme=rasterTheme(region=cols)
+source("~/github/ohiprep/src/R/common.R")
+
+#set mollweide projection CRS
+  mollCRS=crs('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs')
+  
+#paths
+ dir_git <- file.path(dir_M,'git-annex/globalprep/prs_fish/v2016')
+ 
+```
+
+##Proportion of catch caught by each gear type
+```{r gear_rasters}
+
+gear_hb = raster(file.path(dir_M,'git-annex/globalprep/prs_fish/v2015/gear_prop_hb_gcs.tif'))
+gear_lb = raster(file.path(dir_M,'git-annex/globalprep/prs_fish/v2015/gear_prop_lb_gcs.tif'))
+
+stack(gear_hb,gear_lb)%>%
+  `names<-`(c("High Bycatch Gear","Low Bycatch Gear"))%>%
+  levelplot(par.settings = mytheme, main = "Proportion of total catch caught by gear type")
+```
+
+##Calculate the total area in km2 per cell for the SAUP catch rasters that are 0.5x0.5 degree cells
+```{r}
+saup_area <- area(gear_hb)
+
+plot(saup_area)
+```
+
+##Net Primary Production
+```{r npp}
+
+npp <- list.files(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/VGPM_primary_productivity/int/annual_npp'),pattern = 'npp_2',full.names=T)
+
+#npp
+n <- npp[substr(npp,111,114)==2010]%>%
+  raster()%>%
+  projectRaster(crs = '+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0')
+
+
+plot(n,col=cols,main="Net Primary Production 2010")
+```
+
+##Catch in 2010
+```{r}
+
+catch_files <- list.files('int/annual_industrial_rasters',full.names = T)[54:61]
+catch_2010 = catch_files[8]%>%raster()
+
+plot(catch_2010, axes =F,main="Total Catch 2010")
+
+#catch by gear
+
+hb <- overlay(catch_2010,gear_hb,fun=function(x,y){x*y})
+plot(hb,axes=F,main = "High Bycatch 2010")
+
+lb <- overlay(catch_2010,gear_lb,fun=function(x,y){x*y})
+plot(lb,axes=F,main = "Low Bycatch 2010")
+```
+
+##Area Correction
+
+Correct for area by dividing by the area of the cell to get catch per 1km2 and then multiply by **0.87325** since our cells are slightly smaller than 1km2.
+```{r}
+hb_area <- overlay(hb,saup_area,fun=function(x,y){(x/y)*0.8732508})
+plot(hb_area,main = "High Catch per km2", axes=F)
+
+lb_area <- overlay(lb,saup_area,fun=function(x,y){(x/y)*0.8732508})
+plot(lb_area,main = "Low Catch per km2", axes=F)
+```
+
+##Standardize catch by NPP
+
+Catch is then standardized by Net Primary Production.
+
+```{r}
+
+hb_npp <- hb_area%>%resample(n)%>%overlay(.,n,fun=function(x,y){x/y})
+plot(hb_npp,axes=F,main = "High bycatch (tons/km2) standardized by NPP")
+histogram(hb_npp, main = "High bycatch (tons/km2) standardized by NPP")
+lb_npp <- lb_area%>%resample(n)%>%overlay(.,n,fun=function(x,y){x/y})
+plot(lb_npp,axes=F,main = "Low bycatch (tons/km2) standardized by NPP")
+histogram(lb_npp, main = "Low bycatch (tons/km2) standardized by NPP")
+```
+
+## Log transform the data
+```{r log}
+hb_log <- log(hb_npp+1)
+lb_log <- log(lb_npp+1)
+
+plot(hb_log,axes=F,main="Log transformed")
+```
+
+## Get 99.99th quantile as our reference point
+```{r quantile}
+hb_ref <- quantile(hb_log,prob=0.9999)
+lb_ref <- quantile(lb_log,prob=0.9999)
+```
+
+High bycatch reference point is `r hb_ref`.
+Low bycatch reference point is `r lb_ref`.
+
+##Rescale
+```{r rescale}
+hb_resc <- calc(hb_log,fun=function(x){ifelse(x>hb_ref,1,x/hb_ref)})
+
+lb_resc <- calc(lb_log,fun=function(x){ifelse(x>lb_ref,1,x/lb_ref)})
+
+plot(hb_resc,main = "High Bycatch Fishing Pressure",axes=F)
+histogram(hb_resc,main = "High Bycatch Fishing Pressure")
+
+plot(lb_resc,main = "Low Bycatch Fishing Pressures", axes=F)
+histogram(lb_resc,main = "Low Bycatch Fishing Pressure")
+```
+ 
+ 
