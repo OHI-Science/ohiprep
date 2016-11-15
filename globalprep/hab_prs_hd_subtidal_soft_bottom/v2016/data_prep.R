@@ -202,7 +202,7 @@ plot(health ~old_health, data=test)
 condition_pressure <- data_rescaled_2 %>%
   mutate(habitat = "soft_bottom") %>%
   mutate(pressure = 1 - density_rescaled_median_capped) %>%
-  dplyr::select(rgn_id, year, habitat, health=density_rescaled_median_capped, pressure = pressure) %>%
+  dplyr::select(rgn_id, year, habitat, health=density_rescaled_median_capped, pressure) %>%
   filter(!is.na(pressure))
 
 save_dir <- "globalprep/hab_prs_hd_subtidal_soft_bottom/v2016/output"
@@ -210,15 +210,19 @@ stop_year <- max(condition_pressure$year)
 
 for (status_year in (stop_year-4):stop_year){ #status_year = 2010
   trend_years <- status_year:(status_year - 4)
+  first_trend_year <- min(trend_years)
   
-  trend <- condition_pressure[condition_pressure$year %in% trend_years, ]
+  trend_data <- condition_pressure[condition_pressure$year %in% trend_years, ]
   
-  trend <- trend %>%
+  trend <- trend_data %>%
     group_by(rgn_id) %>%
-    do(mdl = lm(health ~ year, data=.)) %>%
+    do(mdl = lm(health ~ year, data=.),
+       adjust_trend = .$health[.$year == first_trend_year]) %>%
     summarize(rgn_id = rgn_id,
-              trend = coef(mdl)['year'] * 5) %>%
-    ungroup()
+              trend = round(coef(mdl)['year']/adjust_trend * 5, 4)) %>%
+    ungroup() %>%
+    mutate(trend = ifelse(trend > 1, 1, trend)) %>%
+    mutate(trend = ifelse(trend < (-1), (-1), trend))
   
   trend <- trend %>%
     mutate(habitat = "soft_bottom") %>%
