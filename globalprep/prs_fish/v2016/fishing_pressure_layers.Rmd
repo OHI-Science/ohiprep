@@ -114,10 +114,18 @@ plot(raster(npp[13]),col=cols,axes=F,main = 'Net Primary Production (mg C/m2/day
 
 We only use catch data from 2003 - 2010 to calculate these layers since those are the time periods where we also have primary productivity data. And we don't need to go further back than 2003 since all OHI assessments will use this time period.
 
-```{r annual_catch, eval=F}
+```{r annual_catch}
 
 catch_files <- list.files('int/annual_industrial_rasters',full.names = T)[54:61]
 
+plot(raster(catch_files[8]),col=cols,axes=F,box=F,main = "Catch (tons) in 2010")
+```
+
+## Catch by gear
+
+`fish_fun` is a function that takes each annual catch raster and splits it into two rasters according to the proportion of catch in each cell caught by high and low bycatch gear.
+
+```{r, eval=F}
 # function that takes each annual catch raster, reprojects and resamples, splits it according to high and low bycatch and then standardizes by npp for that year.
 
 fish_fun <- function(file){
@@ -138,40 +146,31 @@ mclapply(catch_files,fish_fun, mc.cores = 6)
 
 ## Standardize by NPP
 
-Total catch per cell is standardized by the NPP values. This is done because the same fishing pressure can have different impacts depending on the productivity in the region. Mean atch values are calculated across a rolling window of five years.
+Total catch per cell is standardized by the NPP values. This is done because the same fishing pressure can have different impacts depending on the productivity in the region. 
 
-**NOTE:** This took a couple days to run
+Before standardizing, the NPP data is aggregated to the same spatial resolution as the catch data, 0.5 degree cells, to accurately calculate catch in tons/km2 standardized by mg C/m2/day.
 
 ```{r, eval =F}
 
 hb_files <- list.files(file.path(dir_git,'int/annual_hb_catch'),full.names=T)
 lb_files <- list.files(file.path(dir_git,'int/annual_lb_catch'),full.names=T)
 
-#calculate the total area in km2 per cell for the SAUP catch rasters that are 0.5x0.5 degree cells
-saup_area <- area(raster(hb_files[1]))
-
 registerDoParallel(4)
 
 foreach (yr = c(2003:2010)) %dopar%{
   
   #1. get net primary production for that year
-  n <- npp[substr(npp,111,114)==2010]%>%
+  n <- npp[substr(npp,111,114)==yr]%>%
           raster()%>%
-          resample(.,ocean,method = 'ngb')
+          projectRaster(gear_hb)%>%
+          resample(.,gear_hb)
 
   #2. Get bycatch rasters for the yr
   cat_hb <- hb_files[substr(hb_files,90,93) == yr]%>% 
-              raster()%>%
-              overlay(.,saup_area,fun=function(x,y){(x/y)*0.8732508})%>% #0.87325 km2 is the actual size of our cells, not 1km2
-              projectRaster(crs = mollCRS,over=T,method = 'ngb')%>%
-              resample(.,ocean,method = 'ngb', filename = paste0(dir_git,'/int/annual_hb_catch_1km/annual_hb_catch_1km_',yr,'.tif'))                      
+              raster()                 
   
   cat_lb <- lb_files[substr(lb_files,90,93) == yr]%>%
-              raster()%>%
-              overlay(.,saup_area,fun=function(x,y){(x/y)*0.8732508})%>%
-              projectRaster(crs = mollCRS,over=T,method = 'ngb')%>%
-              resample(.,ocean,method = 'ngb', filename = paste0(dir_git,'/int/annual_lb_catch_1km/annual_lb_catch_1km_',yr,'.tif'))
-  
+              raster()
  
   #3. Divide catch by npp and save to git-annex
   overlay(cat_hb,n,fun=function(x,y){x/y},filename = paste0(dir_git,'/int/annual_catch_npp/hb_catch_npp_',yr,'.tif'), overwrite=T) 
@@ -219,7 +218,7 @@ foreach (i = 2003:2006) %dopar%{
 
 Look at all catch data standardized by NPP from 2003 - 2010 and use the 99.99th quantile as the reference point.
 
-```{r ref_point, eval=F}
+```{r ref_point}
 
 lb_npp <- list.files(file.path(dir_git,'/int/annual_catch_npp'),full.names=T, pattern = 'lb')
 hb_npp <- list.files(file.path(dir_git,'/int/annual_catch_npp'),full.names=T, pattern = 'hb')
@@ -244,7 +243,7 @@ for(i in 2003:2010){
 min_v_hb <- min(vals,na.rm=T) # 0
 max_v_hb <- max(vals,na.rm=T) # 31.95568
 
-ref_hb <- log(quantile(vals,prob = 0.9999,na.rm=T)+1) #2.601586
+ref_hb <- log(quantile(vals,prob = 0.9999,na.rm=T)+1)
 
 
 #LOW BYCATCH
@@ -267,14 +266,14 @@ min_v_lb <- min(lb_vals,na.rm=T)
 max_v_lb <- max(lb_vals,na.rm=T) 
 
 
-ref_lb <- log(quantile(lb_vals,prob = 0.9999,na.rm=T)+1) #3.10426
+ref_lb <- log(quantile(lb_vals,prob = 0.9999,na.rm=T)+1)
 
 
 ```
 
 The reference point is `r ref_hb` (`r min_v_hb` - `r max_v_hb`) for high bycatch and `r ref_lb` (`r min_v_lb` - `r max_v_lb`) for low bycatch.
 
-## Rescale
+## Rescale, Resample and Reproject
 
 ```{r rescale, eval=F}
 
@@ -289,11 +288,15 @@ foreach (i = 2003:2006) %dopar%{
   
   out_hb <- mean_hb[which(substr(mean_hb,90,93) == i)]%>%
             raster()%>%
-            calc(fun=function(x){ifelse(x>ref_hb,1,x/ref_hb)},filename = paste0(file.path(dir_git),'/out/high_bycatch/hb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
+            calc(fun=function(x){ifelse(x>ref_hb,1,x/ref_hb)})%>%
+            projectRaster(crs = mollCRS,over=T)%>%
+            resample(ocean,method = 'ngb',filename = paste0(file.path(dir_git),'/out/high_bycatch/hb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
   
   out_lb <- mean_lb[which(substr(mean_lb,90,93) == i)]%>%
             raster()%>%
-            calc(fun=function(x){ifelse(x>ref_lb,1,x/ref_lb)},filename = paste0(file.path(dir_git),'/out/low_bycatch/lb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
+            calc(fun=function(x){ifelse(x>ref_lb,1,x/ref_lb)})%>%
+            projectRaster(crs = mollCRS, over=T)%>%
+            resample(ocean,method = 'ngb',filename = paste0(file.path(dir_git),'/out/low_bycatch/lb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
   
 }
 
