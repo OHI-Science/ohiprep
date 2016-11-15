@@ -1,15 +1,18 @@
 ---
 title: "Looking at fisheries pressures"
 author: "Jamie Afflerbach"
-date: "11/13/2016"
+date: "11/14/2016"
 output: 
   html_document:
     code_folding: show
 ---
 
-##Setup 
+###Setup 
 
-```{r setup, include=FALSE}
+```{r setup, message=F,warning=F}
+
+knitr::opts_chunk$set(warning=FALSE, message=FALSE, fig.width = 12, fig.height = 8)
+
 library(parallel)
 library(foreach)
 library(doParallel)
@@ -29,110 +32,144 @@ source("~/github/ohiprep/src/R/common.R")
 #paths
  dir_git <- file.path(dir_M,'git-annex/globalprep/prs_fish/v2016')
  
+#set extent
+ ext <- extent(106,120,10,28)
+ 
 ```
 
-##Proportion of catch caught by each gear type
+### Proportion of catch caught by high bycatch gear
 ```{r gear_rasters}
 
-gear_hb = raster(file.path(dir_M,'git-annex/globalprep/prs_fish/v2015/gear_prop_hb_gcs.tif'))
-gear_lb = raster(file.path(dir_M,'git-annex/globalprep/prs_fish/v2015/gear_prop_lb_gcs.tif'))
+gear_hb = raster(file.path(dir_M,'git-annex/globalprep/prs_fish/v2015/gear_prop_hb_gcs.tif'))%>%crop(ext)
 
-stack(gear_hb,gear_lb)%>%
-  `names<-`(c("High Bycatch Gear","Low Bycatch Gear"))%>%
-  levelplot(par.settings = mytheme, main = "Proportion of total catch caught by gear type")
+plot(gear_hb,axes=F)
+
 ```
 
-##Calculate the total area in km2 per cell for the SAUP catch rasters that are 0.5x0.5 degree cells
+### Area per cell
+
+Calculate the total area in km2 per cell for the SAUP catch rasters that are 0.5x0.5 degree cells
 ```{r}
-saup_area <- area(gear_hb)
+saup_area <- area(gear_hb)%>%mask(gear_hb)
 
-plot(saup_area)
+plot(saup_area, main = "Area per cell in km2")
 ```
 
-##Net Primary Production
-```{r npp}
+### Catch in 2010
 
-npp <- list.files(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/VGPM_primary_productivity/int/annual_npp'),pattern = 'npp_2',full.names=T)
+Multiply the total catch per cell in 2010 by the proportion of catch caught by high bycatch gear to get our high bycatch catch raster for 2010.
 
-#npp
-n <- npp[substr(npp,111,114)==2010]%>%
-  raster()%>%
-  projectRaster(crs = '+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0')
-
-
-plot(n,col=cols,main="Net Primary Production 2010")
-```
-
-##Catch in 2010
 ```{r}
 
 catch_files <- list.files('int/annual_industrial_rasters',full.names = T)[54:61]
-catch_2010 = catch_files[8]%>%raster()
+catch_2010 = catch_files[8]%>%raster()%>%crop(ext)
 
 plot(catch_2010, axes =F,main="Total Catch 2010")
 
-#catch by gear
-
 hb <- overlay(catch_2010,gear_hb,fun=function(x,y){x*y})
-plot(hb,axes=F,main = "High Bycatch 2010")
 
-lb <- overlay(catch_2010,gear_lb,fun=function(x,y){x*y})
-plot(lb,axes=F,main = "Low Bycatch 2010")
 ```
 
-##Area Correction
+### Area Correction
 
 Correct for area by dividing by the area of the cell to get catch per 1km2 and then multiply by **0.87325** since our cells are slightly smaller than 1km2.
+
+You'll see very similar distribution of data between the non-area corrected and area corrected
 ```{r}
 hb_area <- overlay(hb,saup_area,fun=function(x,y){(x/y)*0.8732508})
-plot(hb_area,main = "High Catch per km2", axes=F)
 
-lb_area <- overlay(lb,saup_area,fun=function(x,y){(x/y)*0.8732508})
-plot(lb_area,main = "Low Catch per km2", axes=F)
+par(mfrow=c(2,2))
+plot(hb,axes=F,main = "High Bycatch 2010")
+hist(hb,main = "High Bycatch 2010")
+plot(hb_area,main = "High bycatch per km2", axes=F)
+hist(hb_area, main = "High bycatch per km2")
+invisible(dev.off())
 ```
 
-##Standardize catch by NPP
+### How logging affects our outcome
 
-Catch is then standardized by Net Primary Production.
+After much sleuthing, it's clear that the shift in values is a direct result of our logging method. 
+
+```{r log_compare}
+
+par(mfrow = c(2,2))
+
+hb_log <- log(hb+1)
+plot(hb_log,axes=F,main = 'log(catch+1)')
+hist(hb_log)
+
+hb_area_log <- log(hb_area+1)
+plot(hb_area_log,axes=F,main = 'log(catch+1) \n area corrected')
+hist(hb_area_log)
+invisible(dev.off())
+```
+
+When we correct for area, a majority of our cells get new values near 0. When we apply the log, we add one to each value to keep all values positive. This skews our resulting distribution. The addition of **1** to lower values gives it more weight and shifts the distribution.
+
+If we remove the **+1** fix, we see these two datasets realign, but with negative values.
 
 ```{r}
 
-hb_npp <- hb_area%>%resample(n)%>%overlay(.,n,fun=function(x,y){x/y})
-plot(hb_npp,axes=F,main = "High bycatch (tons/km2) standardized by NPP")
-histogram(hb_npp, main = "High bycatch (tons/km2) standardized by NPP")
-lb_npp <- lb_area%>%resample(n)%>%overlay(.,n,fun=function(x,y){x/y})
-plot(lb_npp,axes=F,main = "Low bycatch (tons/km2) standardized by NPP")
-histogram(lb_npp, main = "Low bycatch (tons/km2) standardized by NPP")
+par(mfrow = c(2,2))
+
+hb_log <- log(hb)
+plot(hb_log,axes=F,main = 'log(catch)')
+hist(hb_log)
+
+hb_area_log <- log(hb_area)
+plot(hb_area_log,axes=F,main = 'log(catch) \n area corrected')
+hist(hb_area_log)
+invisible(dev.off())
+
 ```
 
-## Log transform the data
-```{r log}
-hb_log <- log(hb_npp+1)
-lb_log <- log(lb_npp+1)
+Since we don't want negative values, there are a couple things we can do.
 
-plot(hb_log,axes=F,main="Log transformed")
+(1) Shift range of values into positive range by adding the minimum.
+
+This way we maintain the same distribution of scores when rescaling, but have accounted for area. This is feeling kind of hacky to me.
+
+```{r}
+par(mfrow = c(2,2))
+
+#not area corrected
+hb_log_m <- hb_log - cellStats(hb_log,'min')
+plot(hb_log_m,axes=F, main = "log(catch) - min")
+hist(hb_log_m)
+
+#area corrected
+hb_area_log_m <- hb_area_log-cellStats(hb_area_log,'min')
+plot(hb_area_log_m,axes=F, main = "log(catch) - min \n area corrected")
+hist(hb_area_log_m)
 ```
 
-## Get 99.99th quantile as our reference point
-```{r quantile}
-hb_ref <- quantile(hb_log,prob=0.9999)
-lb_ref <- quantile(lb_log,prob=0.9999)
+(2) Correct for area by multiplying by a ratio
+
+Casey suggested correcting for area by multiplying catch per cell by a ratio of the area of that cell compared to the max cell area, rather than getting at catch per km2. If we adjust for cell area, the output should be the same whether we calculate the actual catch/km2 or not.
+
+```{r}
+
+max_cell <- cellStats(saup_area,stat='max')
+
+cell_ratio <- max_cell/saup_area #inverse of ratio to allow for multiplication by catch
+plot(cell_ratio)
+
+hb_area_ratio <- overlay(hb,cell_ratio,fun=function(x,y){x*y})
+par(mfrow=c(2,2))
+plot(hb_area_ratio,axes=F,main = 'Catch corrected by area ratio')
+hist(hb_area_ratio)
+plot(log(hb_area_ratio),axes=F,main='log(catch) corrected by area ratio')
+hist(log(hb_area_ratio))
+
 ```
 
-High bycatch reference point is `r hb_ref`.
-Low bycatch reference point is `r lb_ref`.
+These results look very similar but when compared to the catch before area correction, you can see they are in fact adjusting for area. 
 
-##Rescale
-```{r rescale}
-hb_resc <- calc(hb_log,fun=function(x){ifelse(x>hb_ref,1,x/hb_ref)})
+```{r}
 
-lb_resc <- calc(lb_log,fun=function(x){ifelse(x>lb_ref,1,x/lb_ref)})
+diff <- hb_area_ratio - hb
+plot(diff,axes=F,main = "Difference in catch \n when accounting for area")
 
-plot(hb_resc,main = "High Bycatch Fishing Pressure",axes=F)
-histogram(hb_resc,main = "High Bycatch Fishing Pressure")
-
-plot(lb_resc,main = "Low Bycatch Fishing Pressures", axes=F)
-histogram(lb_resc,main = "Low Bycatch Fishing Pressure")
 ```
- 
- 
+
+If we go this route, we would not disaggregate catch to catch/cell level since that is what got us the weird results to being with. Here we adjust for area, then will be rescaling from 0 to 1.
