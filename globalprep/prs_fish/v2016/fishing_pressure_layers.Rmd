@@ -324,7 +324,7 @@ plot(lb, col=cols, main = 'Low Bycatch Fishing Pressure Layer \n OHI 2016', axes
 
 setwd('globalprep/prs_fish/v2016')
 
-source("~/github/ohiprep//src/R/common.R")
+source("../../../src/R/common.R")
 
 #paths
  dir_git <- file.path(dir_M,'git-annex/globalprep/prs_fish/v2016')
