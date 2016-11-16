@@ -83,6 +83,7 @@ source("~/github/ohiprep/src/R/common.R")
 The annual mean net primary productivity data was processed in [npp.Rmd](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/prs_fish/v2016/prim_productivity/npp.html).
 
 ```{r npp}
+
 npp_files <- list.files(file.path(dir_anx,'VGPM_primary_productivity/int/annual_npp'),pattern = 'annual_mean_npp_2',full.names = T)
 
 plot(raster(npp_files[13]), col=cols, main = 'Net Primary Production 2015', axes=F)
@@ -103,23 +104,25 @@ foreach (yr = c(2003:2010)) %dopar%{
   
   #1. get net primary production for that year
   npp <- npp_files[substr(npp_files,111,114)==yr]%>%
-          raster()
+          raster()%>%
+          projectRaster(raster(catch_files[1]))%>%
+          resample(raster(catch_files[1]))
   
   #2. Get artisanal catch raster
   art <- catch_files[substr(catch_files,30,33) == yr]%>%
-          raster()%>%
-          projectRaster(npp,over=T,method = 'ngb')
+          raster()
   
   #3. Divide catch by npp and save to github
-  overlay(art,npp,fun=function(x,y){x/y},filename = paste0('int/artisanal_npp/artisanal_npp_',yr,'.tif'))  
+  overlay(art,npp,fun=function(x,y){x/y},filename = paste0('int/artisanal_npp/artisanal_npp_',yr,'.tif'),overwrite=T)  
   
 }
 
 ```
 
 ```{r plot_art_npp}
-plot(ocean, col='cornsilk2', axes=F, main='Catch (tons) standardized by NPP \n 2010', legend=F) 
-plot(raster('int/artisanal_npp/artisanal_npp_2010.tif'),col=cols,axes=F,add=T)
+catch_files <- list.files('int/annual_artisanal_rasters',full.names=T)
+plot(projectRaster(ocean,raster(catch_files[1])), col='cornsilk2', axes=F, main='Catch (tons) standardized by NPP \n 2010', legend=F) 
+plot(raster('int/artisanal_npp/artisanal_npp_2010.tif'),main='Catch (tons) standardized by NPP \n 2010',col=cols,axes=F,add=T)
 
 ```
 
@@ -168,14 +171,11 @@ for(i in 2003:2010){
 
 }
 min <- log(min(vals,na.rm=T)+1) #0
-max <- log(max(vals,na.rm=T)+1) #11.73944
-
-
+max <- log(max(vals,na.rm=T)+1) #11.66215
 
 vals <- vals[!is.na(vals)]
 
-ref <- log(quantile(vals,prob = 0.9999,na.rm=T)+1)
-#11.38702
+ref <- log(quantile(vals,prob = 0.9999,na.rm=T)+1) #10.89199
 
 ```
 
@@ -194,6 +194,7 @@ foreach (i = 2003:2006) %dopar%{
   out <- mean_files[which(substr(mean_files,34,37) == i)]%>%
             raster()%>%
             calc(fun=function(x){ifelse(x>ref,1,x/ref)})%>%
+            projectRaster(crs = mollCRS,over=T)%>%
             resample(ocean,method='ngb',filename = paste0(file.path(dir_anx),'/out/artisanal/art_press_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
   
 }
