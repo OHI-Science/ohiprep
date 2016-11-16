@@ -247,6 +247,7 @@ for(raster in rasts){ # raster = "art_press_2003-2007.tif"
   tmp <- raster(file.path(dir_git, raster))
   pressure_stack <- stack(pressure_stack, tmp)
 }
+plot(pressure_stack[[1]])
 
 # extract data for each region:
 regions_stats <- zonal(pressure_stack,  zones, fun="mean", na.rm=TRUE, progress="text")
