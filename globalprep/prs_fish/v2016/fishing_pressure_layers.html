@@ -9,7 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Compiled on Tue Nov 15 15:31:11 2016 by afflerbach" />
+<meta name="author" content="Compiled on Wed Nov 16 14:56:42 2016 by afflerbach" />
 
 
 <title>OHI 2016: Commercial Fishing Pressure Layers</title>
@@ -254,7 +254,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">OHI 2016: Commercial Fishing Pressure Layers</h1>
-<h4 class="author"><em><em>Compiled on Tue Nov 15 15:31:11 2016 by afflerbach</em></em></h4>
+<h4 class="author"><em><em>Compiled on Wed Nov 16 14:56:42 2016 by afflerbach</em></em></h4>
 
 </div>
 
@@ -442,9 +442,9 @@ for(i in <span class="dv">2003</span>:<span class="dv">2010</span>){
 }
 
 min_v_hb &lt;-<span class="st"> </span><span class="kw">min</span>(vals,<span class="dt">na.rm=</span>T) <span class="co"># 0</span>
-max_v_hb &lt;-<span class="st"> </span><span class="kw">max</span>(vals,<span class="dt">na.rm=</span>T) <span class="co"># 31.95568</span>
+max_v_hb &lt;-<span class="st"> </span><span class="kw">max</span>(vals,<span class="dt">na.rm=</span>T) <span class="co"># 11.28059</span>
 
-ref_hb &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">quantile</span>(vals,<span class="dt">prob =</span> <span class="fl">0.9999</span>,<span class="dt">na.rm=</span>T)+<span class="dv">1</span>)
+ref_hb &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">quantile</span>(vals,<span class="dt">prob =</span> <span class="fl">0.9999</span>,<span class="dt">na.rm=</span>T)+<span class="dv">1</span>) <span class="co">#10.29217</span>
 
 
 <span class="co">#LOW BYCATCH</span>
@@ -463,11 +463,11 @@ for(i in <span class="dv">2003</span>:<span class="dv">2010</span>){
   lb_vals &lt;-<span class="st"> </span><span class="kw">c</span>(lb_vals,n)
 
 }
-min_v_lb &lt;-<span class="st"> </span><span class="kw">min</span>(lb_vals,<span class="dt">na.rm=</span>T) 
-max_v_lb &lt;-<span class="st"> </span><span class="kw">max</span>(lb_vals,<span class="dt">na.rm=</span>T) 
+min_v_lb &lt;-<span class="st"> </span><span class="kw">min</span>(lb_vals,<span class="dt">na.rm=</span>T) <span class="co"># 0</span>
+max_v_lb &lt;-<span class="st"> </span><span class="kw">max</span>(lb_vals,<span class="dt">na.rm=</span>T) <span class="co"># 12.25</span>
 
 
-ref_lb &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">quantile</span>(lb_vals,<span class="dt">prob =</span> <span class="fl">0.9999</span>,<span class="dt">na.rm=</span>T)+<span class="dv">1</span>)</code></pre></div>
+ref_lb &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">quantile</span>(lb_vals,<span class="dt">prob =</span> <span class="fl">0.9999</span>,<span class="dt">na.rm=</span>T)+<span class="dv">1</span>) <span class="co">#11.13</span></code></pre></div>
 <p>The reference point is 10.2921663 (0 - 79266.8067432) for high bycatch and 11.1288256 (0 - 208704.3484551) for low bycatch.</p>
 </div>
 <div id="rescale-resample-and-reproject" class="section level2">

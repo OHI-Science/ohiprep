@@ -241,9 +241,9 @@ for(i in 2003:2010){
 }
 
 min_v_hb <- min(vals,na.rm=T) # 0
-max_v_hb <- max(vals,na.rm=T) # 31.95568
+max_v_hb <- max(vals,na.rm=T) # 11.28059
 
-ref_hb <- log(quantile(vals,prob = 0.9999,na.rm=T)+1)
+ref_hb <- log(quantile(vals,prob = 0.9999,na.rm=T)+1) #10.29217
 
 
 #LOW BYCATCH
@@ -262,11 +262,11 @@ for(i in 2003:2010){
   lb_vals <- c(lb_vals,n)
 
 }
-min_v_lb <- min(lb_vals,na.rm=T) 
-max_v_lb <- max(lb_vals,na.rm=T) 
+min_v_lb <- min(lb_vals,na.rm=T) # 0
+max_v_lb <- max(lb_vals,na.rm=T) # 12.25
 
 
-ref_lb <- log(quantile(lb_vals,prob = 0.9999,na.rm=T)+1)
+ref_lb <- log(quantile(lb_vals,prob = 0.9999,na.rm=T)+1) #11.13
 
 
 ```
