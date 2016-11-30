@@ -15,7 +15,7 @@ Data comes from [CoRTAD version 5](http://www.nodc.noaa.gov/sog/cortad/)
 
 ### Methods Overview
 
-For full methods see [create_sst_layer.html](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/prs_sst/create_sst_layer.html):
+For full methods see [create_sst_layer.html](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/prs_sst/v2015/create_sst_layer.html):
 
 
 **Reference**
