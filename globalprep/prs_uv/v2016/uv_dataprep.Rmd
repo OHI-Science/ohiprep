@@ -394,4 +394,4 @@ print(Motion, file='uv.html')
 
 # Citation information  
 
-Jari Hovila, Antii Arola, and Johanna Tamminen (Oct ), OMI/Aura Surface UVB Irradiance and Erythemal Dose Daily L3 Global 1.0x1.0 deg Grid, version 003, NASA Goddard Space Flight Center, , Accessed [Enter User Data Access Date at] 10.5067/Aura/OMI/DATA3009
+Jari Hovila, Antii Arola, and Johanna Tamminen (Oct ), OMI/Aura Surface UVB Irradiance and Erythemal Dose Daily L3 Global 1.0x1.0 deg Grid, version 003, NASA Goddard Space Flight Center

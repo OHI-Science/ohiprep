@@ -9,7 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Compiled on Tue Sep 27 13:52:52 2016 by afflerbach" />
+<meta name="author" content="Compiled on Wed Dec 7 09:20:47 2016 by afflerbach" />
 
 
 <title>OHI 2016 Pressure: Ultraviolet Radiation</title>
@@ -254,7 +254,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">OHI 2016 Pressure: Ultraviolet Radiation</h1>
-<h4 class="author"><em><em>Compiled on Tue Sep 27 13:52:52 2016 by afflerbach</em></em></h4>
+<h4 class="author"><em><em>Compiled on Wed Dec 7 09:20:47 2016 by afflerbach</em></em></h4>
 
 </div>
 
@@ -541,7 +541,6 @@ rgn_data &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span cl
 
 <span class="co"># get raster data:</span>
 rasts &lt;-<span class="st"> </span><span class="kw">list.files</span>(<span class="kw">file.path</span>(dir_M,<span class="st">'git-annex/globalprep/prs_uv/v2016/output'</span>))
-rasts &lt;-<span class="st"> </span>rasts[<span class="kw">grep</span>(<span class="st">&quot;rescaled&quot;</span>, rasts)]
 
 pressure_stack &lt;-<span class="st"> </span><span class="kw">stack</span>()
 for(raster in rasts){ <span class="co"># raster = &quot;uv_2007_2011-2005-2009_rescaled_moll_1km.tif&quot;</span>
@@ -552,8 +551,8 @@ for(raster in rasts){ <span class="co"># raster = &quot;uv_2007_2011-2005-2009_r
 <span class="co"># extract data for each region:</span>
 regions_stats &lt;-<span class="st"> </span><span class="kw">zonal</span>(pressure_stack,  zones, <span class="dt">fun=</span><span class="st">&quot;mean&quot;</span>, <span class="dt">na.rm=</span><span class="ot">TRUE</span>, <span class="dt">progress=</span><span class="st">&quot;text&quot;</span>)
 regions_stats2 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(regions_stats)
-<span class="kw">setdiff</span>(regions_stats2$zone, rgn_data$ant_id) <span class="co"># antarctica regions are in there, makes sense....no land</span>
-<span class="kw">setdiff</span>(rgn_data$ant_id, regions_stats2$zone) <span class="co"># 213 is in there, that makes sense (Antarctica)</span>
+<span class="kw">setdiff</span>(regions_stats2$zone, rgn_data$ant_id) 
+<span class="kw">setdiff</span>(rgn_data$ant_id, regions_stats2$zone) 
 
 data &lt;-<span class="st"> </span><span class="kw">merge</span>(rgn_data, regions_stats, <span class="dt">all.y=</span><span class="ot">TRUE</span>, <span class="dt">by.x=</span><span class="st">&quot;rgn_id&quot;</span>, <span class="dt">by.y=</span><span class="st">&quot;zone&quot;</span>) %&gt;%
 <span class="st">  </span><span class="kw">gather</span>(<span class="st">&quot;year&quot;</span>, <span class="st">&quot;pressure_score&quot;</span>, <span class="kw">starts_with</span>(<span class="st">&quot;uv&quot;</span>)) 
@@ -570,6 +569,8 @@ uv_data &lt;-<span class="st"> </span>data %&gt;%
 ## save toolbox data for different years/regions
 
 <span class="co"># function to extract data more easily</span>
+uv_data &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;int/slr.csv&quot;</span>)
+
 saveData &lt;-<span class="st"> </span>function(newYear){ <span class="co"># newYear= 2012</span>
   
   criteria_year &lt;-<span class="st"> </span><span class="er">~</span>year ==<span class="st"> </span>newYear
@@ -605,7 +606,7 @@ Motion=<span class="kw">gvisMotionChart</span>(plotData,
 </div>
 <div id="citation-information" class="section level1">
 <h1>Citation information</h1>
-<p>Jari Hovila, Antii Arola, and Johanna Tamminen (Oct ), OMI/Aura Surface UVB Irradiance and Erythemal Dose Daily L3 Global 1.0x1.0 deg Grid, version 003, NASA Goddard Space Flight Center, , Accessed [Enter User Data Access Date at] 10.5067/Aura/OMI/DATA3009</p>
+<p>Jari Hovila, Antii Arola, and Johanna Tamminen (Oct ), OMI/Aura Surface UVB Irradiance and Erythemal Dose Daily L3 Global 1.0x1.0 deg Grid, version 003, NASA Goddard Space Flight Center</p>
 </div>
 
 
