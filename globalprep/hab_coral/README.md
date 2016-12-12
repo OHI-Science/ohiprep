@@ -1,6 +1,13 @@
-## Ocean Health Index: Convention on Biological Diversity
+## Ocean Health Index: Coral data for the habitat subgoal, coastal protection goal, and carbon storage goal
 
-This folder has data derived from country responses to the Convention on Biological Diversity (CBD) Third National Report. These data are used for several resilience layers related to habitat protection.
+This folder includes the extent, health, and trend data for coral 
+
+These data are then combined using the scripts from the hab_combined folder.
+
+More information about the goals is available:
+* [habitat subgoal/biodiversity goal](http://ohi-science.org/goals/#biodiversity)
+* [coastal protection](http://ohi-science.org/goals/#coastal-protection)
+* [carbon storage](http://ohi-science.org/goals/#carbon-storage)
 
 The folders in this file include the metadata, R scripts, and data for each assessement year (i.e., the year the assessment was conducted).  The most current year represents the best available data and methods, and previous years are maintained for archival purposes.
 

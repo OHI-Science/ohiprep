@@ -1,8 +1,10 @@
 ## Ocean Health Index: Land-based nutrient pollution pressure data
 
-This folder describes the methods used to prepare data for land-based nutrient pollution pressure for the global OHI assessment.
+This folder describes the methods used to prepare data for land-based nutrient pollution pressure for the global OHI assessment.  These data are used in clean waters goal (trend and 3nm) and as a pressure.
 
-More information about this goal is available from:
+More information about the clean waters goal can be found [here](http://ohi-science.org/goals/#clean-waters).
+
+More information about these data is available from:
 Halpern, Benjamin S., Melanie Frazier, John Potapenko, Kenneth S. Casey, Kellee Koenig, Catherine Longo, Julia Stewart Lowndes, et al. 2015. “Spatial and Temporal Changes in Cumulative Human Impacts on the World’s Ocean.” Nature Communications 6 (July): 7615. doi:10.1038/ncomms8615.
 
 Halpern, Benjamin S., Shaun Walbridge, Kimberly A. Selkoe, Carrie V. Kappel, Fiorenza Micheli, Caterina D’Agrosa, John F. Bruno, et al. 2008. “A Global Map of Human Impact on Marine Ecosystems.” Science 319 (5865): 948–52. doi:10.1126/science.1149345.

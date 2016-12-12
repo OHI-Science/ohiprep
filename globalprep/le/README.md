@@ -1,6 +1,8 @@
-## Ocean Health Index: Convention on Biological Diversity
+## Ocean Health Index: Livelihoods and Economies
 
-This folder has data derived from country responses to the Convention on Biological Diversity (CBD) Third National Report. These data are used for several resilience layers related to habitat protection.
+This folder describes the methods used to prepare data for the livelihoods and economies goal.  
+
+More information about this goal is available [here](http://ohi-science.org/goals/#livelihoods-and-economies).
 
 The folders in this file include the metadata, R scripts, and data for each assessement year (i.e., the year the assessment was conducted).  The most current year represents the best available data and methods, and previous years are maintained for archival purposes.
 

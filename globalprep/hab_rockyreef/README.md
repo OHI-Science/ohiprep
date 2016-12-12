@@ -1,14 +1,8 @@
-## Ocean Health Index: Habitat data for the habitat subgoal, coastal protection, carbon storage, and exposure component of the natural product goal
+## Ocean Health Index: Rocky reef data for the exposure component of the natural products goal
 
-This folder describes the methods used to prepare the final data for the habitat subgoal. These scripts combine the data from all the habitat folders (hab_coral, hab_mangrove, hab_rockyreef, hab_saltmarsh, hab_seagrass, hab_soft_bottom, NSIDC_SeaIce) into single 'health', 'trend', and 'extent' files that include the data for all the habitats.  
+This folder includes data describing habitat extent of rocky reef habitat.  
 
-The toolbox currently requires that all the habitat data is in one file, however, it might be better to provide separate habitat files in future versions.
-
-
-More information about the goals is available:
-* [habitat subgoal/biodiversity goal](http://ohi-science.org/goals/#biodiversity)
-* [coastal protection](http://ohi-science.org/goals/#coastal-protection)
-* [carbon storage](http://ohi-science.org/goals/#carbon-storage)
+These data are used to calculate the exposure component of the natural products goal.  More information about the natural products goal is available [here](http://ohi-science.org/goals/#natural-products).
 
 The folders in this file include the metadata, R scripts, and data for each assessement year (i.e., the year the assessment was conducted).  The most current year represents the best available data and methods, and previous years are maintained for archival purposes.
 
