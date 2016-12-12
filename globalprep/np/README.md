@@ -1,6 +1,8 @@
-## Ocean Health Index: Convention on Biological Diversity
+## Ocean Health Index: Natural products goal
 
-This folder has data derived from country responses to the Convention on Biological Diversity (CBD) Third National Report. These data are used for several resilience layers related to habitat protection.
+This folder describes the methods used to prepare data for the natural products goal.  
+
+More information about the natural products goal is available [here]http://ohi-science.org/goals/#natural-products).
 
 The folders in this file include the metadata, R scripts, and data for each assessement year (i.e., the year the assessment was conducted).  The most current year represents the best available data and methods, and previous years are maintained for archival purposes.
 

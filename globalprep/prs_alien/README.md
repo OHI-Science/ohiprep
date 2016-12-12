@@ -1,8 +1,11 @@
-### Moving these data to Github
+## Ocean Health Index: Nonindigenous species
 
-v2012 data from: Neptune/model/GL-NCEAS-Pressures_AlienInvasives
-v2013 data from: Neptune/model/GL-NCEAS-Pressures_v2013a/data/p_sp_alien_2013a.csv
+This folder describes the methods used to prepare data for the nonindigenous species data for the global OHI assessment.  These data are used as a pressure.
 
-Data were disaggregated from 2012 to 2013, but I can't find the script.  According to supporting materials: "territories assigned value of administrative country weighted by relative proportions of EEZ area".  This seems correct.
+The folders in this file include the metadata, R scripts, and data for each assessement year (i.e., the year the assessment was conducted).  The most current year represents the best available data and methods, and previous years are maintained for archival purposes.
 
-I have added a script to indicate this gapfilling.
+Our [data managment SOP](https://rawgit.com/OHI-Science/ohiprep/master/src/dataOrganization_SOP.html) describes how we manage OHI global data, including a description of the file structure.
+
+Please see our [citation policy](http://ohi-science.org/citation-policy/) if you use OHI data or methods.
+
+Thank you!

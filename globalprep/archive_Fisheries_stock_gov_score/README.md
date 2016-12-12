@@ -1,0 +1,3 @@
+## Ocean Health Index: Fisheries
+
+This folder includes archived material describing how we calculated one component of the Fisheries subgoal for the 2015 assessment.  This approach was used to select the prior for B/Bmsy calculations using the catch-MSY method.  We determined which prior to use based on how well individual stocks were managed based on the regulatory effectiveness (Mora et al. 2009) of the countries that fished them.  We abandoned this technique for subsequent assessments because our analyses suggested that it added complexity without improving predictive ability.
