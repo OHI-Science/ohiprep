@@ -11,7 +11,7 @@ output:
     theme: cerulean
     highlight: haddock
     includes: 
-      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+      in_header: '../../../src/templates/ohi_hdr.html'
 pdf_document:
   toc: true
 ---
@@ -167,15 +167,15 @@ plotData <- d_stand %>%
   mutate(need = 1-score) %>%
   dplyr::select(country, year, need)
 
-library(googleVis)
+# library(googleVis)
+# 
+# Motion = gvisMotionChart(plotData,
+# idvar="country",
+# timevar="year")
 
-Motion = gvisMotionChart(plotData,
-idvar="country",
-timevar="year")
-
-plot(Motion)
-
-print(Motion, file = file.path('slr_95q.html'))
+# plot(Motion)
+# 
+# print(Motion, file = file.path('ao_need_95q.html'))
 
 ```
 
