@@ -1,5 +1,5 @@
 ---
-title: 'OHI: [Clean Waters/Trash trend] '
+title: 'OHI: Clean Waters/Trash trend'
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
@@ -116,7 +116,7 @@ trash_rgn <- trash_rgn %>%
 Gapfilling missing data using a linear model with population data as a predictor:
 
 ```{r}
-population <- read.csv('../../supplementary_data/v2016/output/population_2016.csv') %>%
+population <- read.csv('../../le_world_bank/v2016/output/population_2016.csv') %>%
   select(rgn_id, count)
 
 trash_gf <- spread(trash_rgn, mpw, value)
