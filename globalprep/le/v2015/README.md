@@ -1,6 +1,3 @@
-# Aug 11 2015
-Noticed that oil/gas was still included in some of the LE calculations.  This makes explaining the methods unclear given that we do not purposefully include this commodity in the calculations.  
+The data used for the livelihoods subgoal was discontinued after the 2013 assessment, and we are exploring new models for this goal.
 
-Going to cut this from this file:le_sector_weight.csv
-
-neptune_data:model/GL-NCEAS-Pressures_v2013a/data/le_sector_weight_disaggregateNature2012b.csv
+These data have remained essentially the same since the 2013 assessment.  However, we did make a correction to the sector weight data (cutting the oil and gas sector because it was not included elsewhere).  

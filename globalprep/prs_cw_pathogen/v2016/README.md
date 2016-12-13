@@ -1,5 +1,6 @@
-### Updating trend data
+## Ocean Health Index: Pathogen data for clean water goal and pressure 
 
-No data have been updated/changed.
+There were no updates to the data, so the data in v2015 were typically used.  The v2016 folder has a small update to trend calculations to reflect proportional change rather than absolute change. 
 
-The methods remain the same, with the exception that we are revising the trend to reflect proportion change, rather than absolute change.
+If using these data, please see our [citation policy](http://ohi-science.org/citation-policy/).
+
