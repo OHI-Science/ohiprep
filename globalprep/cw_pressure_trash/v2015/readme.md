@@ -15,4 +15,4 @@ The data used here comes from [Eriksen et al. (2014)](http://journals.plos.org/p
 **Time Range**: N/A
 **Format**: GeoTIFF
 
-## NOTE: Oct 3 2016: MRF moved relevant files to summarize raster data at ohi region scale from "archive_PressuresRegionExtract"
+The ZonalExtract.R file is used to extract the trash raster data for each OHI region.

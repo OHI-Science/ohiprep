@@ -1,4 +1,15 @@
-MRF update: Sep 25 2016
+## Ocean Health Index: Population data for mariculture subgoal and pressure
+
+These data are used in the mariculture model and as the intertidal habitat destruction pressure.
+
+See full data prep details [here](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/mar_prs_population/v2016/data_prep_coastal_pop.R).
+
+If using these data, please see our [citation policy](http://ohi-science.org/citation-policy/).
+
+
+
+### Notes for future analyses
+(Sep 25 2016)
 
 These paths will need to be changed in the R scripts for future analyses with these data:
 

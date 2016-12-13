@@ -1,6 +1,6 @@
 ## Ocean Health Index: Saltmarsh data for the habitat subgoal, coastal protection goal, and carbon storage goal
 
-This folder includes the extent, health, and trend data for saltmarsh. 
+This folder includes the extent, health, and trend data for saltmarsh. These data have not been updated since the 2012 assessment because no suitable updates are available. 
 
 These data are then combined using the scripts from the hab_combined folder.
 

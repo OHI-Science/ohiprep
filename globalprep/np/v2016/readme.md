@@ -1,22 +1,19 @@
-#FAO_commodities
+## Ocean Health Index: Natural products
+
+See full data prep details [here](https://rawgit.com/OHI-Science/ohiprep/master/globalprep/np/v2016/np_dataprep.html) for the following layers used to calculate the natural products goal:
+* Relative harvest value
+* Natural product harvest
+* Relative harvest tonnes
+
+
+If using these data, please see our [citation policy](http://ohi-science.org/citation-policy/).
+
+[alternatively, if you want a specific citation for this resource, you can add that here....]
+
+
+### Additional information
 FAO Commodities data are used to determine the Natural Products goal.
 
-##Files and folders:
-* `./data_prep.R` script prepares the raw FAO commodities data based upon the most current year's report.  
-This preparation includes interpreting various FAO-specific codes and flags, eliminating NAs prior to first 'reporting' year (first non-NA report), filtering commodities by product group, gap-filling, smoothing, and processing status results based on harvest relative to buffered peak value.
-    * `ohiprep/src/R/fao_fxn.R` is sourced from `data_prep.R` to clean up FAO-specific flags and codes.
-* `commodities2products.csv`: a lookup key to match certain commodities with the six NP products.
-* `./R`: contains R scripts related to data processing.
-    * `./R/np_fxn.R`: functions called from within ./data_prep.R for gap-filling etc.
-* `./v2015`: contains raw, tmp, and data files for processing data posted in 2015.
-    * `./v2015/raw`: raw FAO commodities data (see below).
-    * `./v2015/tmp`: temporary files created during data processing
-    * `./v2015/data`: outputs from `./data_prep.R`, including `np_gapfill_report.csv` and status score outputs.
-* `./v2014_test`: similar to `./v2015`; contains raw, tmp, and data files for data posted in March 2014.
-* `./gap_fill_explore`: Melanie's exploration of a number of possible gapfilling techniques.
-    * `./gap_fill_explore.R`
-
-##FAO Commodities data
 The FAO fisheries and aquaculture web page (http://www.fao.org/fishery/topic/166235/en) provides instructions on downloading and installing their FishStatJ software.  Once you've done that, then:
 
 * From the [same web page](http://www.fao.org/fishery/topic/166235/en), under **FishStatJ available workspaces,** download the Global datasets workspace to your computer.
