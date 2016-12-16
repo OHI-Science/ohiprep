@@ -94,7 +94,6 @@ write.csv(bbmsy, "globalprep/fis/v2016/data/fis_bbmsy.csv", row.names=FALSE)
 
 ###START - DATA PREP FOR FISHERIES MODEL EXPLORATION - JA - 12-15-16
 
-
 ## Prepping the final bbmsy data with output from each of the catch-only models for fisheries goal exploration. OHI 2016 only used CMSY.
 
 comsir <- read.csv('globalprep/fis/v2016/int/comsir_b_bmsy_NA_mean5yrs.csv') %>%
@@ -119,18 +118,12 @@ data <- mean_catch %>%
 
 
 ## select best data and indicate gapfilling
-data <- data %>%
+bbmsy <- data %>%
   mutate(bmsy_data_source = ifelse(!is.na(ram_bmsy), "RAM", NA)) %>%
   mutate(bmsy_data_source = ifelse(is.na(bmsy_data_source) & !is.na(comsir_bbmsy), "COMSIR", bmsy_data_source)) %>%
   mutate(bbmsy = ifelse(is.na(ram_bmsy), comsir_bbmsy, ram_bmsy)) %>%
-  select(rgn_id, stock_id, taxon_key, year, bbmsy, bmsy_data_source, RAM_gapfilled=gapfilled, mean_catch) %>%
-  filter(year >= 2001) %>%
-  unique()
-
-write.csv(data, "globalprep/fis/v2016/data/fis_comsir_bbmsy_gf.csv", row.names=FALSE) 
-
-bbmsy <- data %>%
-  select(rgn_id, stock_id, year, bbmsy) %>%
+  select(rgn_id, stock_id, year,bbmsy)%>%
+  filter(year >= 2001)  %>%
   filter(!is.na(bbmsy)) %>%
   unique()
 
@@ -149,18 +142,13 @@ data <- mean_catch %>%
 
 
 ## select best data and indicate gapfilling
-data <- data %>%
+bbmsy <- data %>%
   mutate(bmsy_data_source = ifelse(!is.na(ram_bmsy), "RAM", NA)) %>%
   mutate(bmsy_data_source = ifelse(is.na(bmsy_data_source) & !is.na(sscom_bbmsy), "SSCOM", bmsy_data_source)) %>%
   mutate(bbmsy = ifelse(is.na(ram_bmsy), sscom_bbmsy, ram_bmsy)) %>%
-  select(rgn_id, stock_id, taxon_key, year, bbmsy, bmsy_data_source, RAM_gapfilled=gapfilled, mean_catch) %>%
-  filter(year >= 2001) %>%
-  unique()
-
-write.csv(data, "globalprep/fis/v2016/data/fis_sscom_bbmsy_gf.csv", row.names=FALSE) 
-
-bbmsy <- data %>%
   select(rgn_id, stock_id, year, bbmsy) %>%
+  filter(year >= 2001) %>%
+  unique()%>%
   filter(!is.na(bbmsy)) %>%
   unique()
 
