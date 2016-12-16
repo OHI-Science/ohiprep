@@ -36,6 +36,7 @@ new_b_bmsy(cmsy, method="cmsy")
 new_b_bmsy(comsir, method="comsir")
 new_b_bmsy(sscom, method="sscom")
 
+#---------------------------------------------------------------------------------
 
 # The CMSY is the only one we end up using based on analysis in compare_bmsy_data.R
 
@@ -89,7 +90,135 @@ bbmsy <- data %>%
 
 write.csv(bbmsy, "globalprep/fis/v2016/data/fis_bbmsy.csv", row.names=FALSE) 
 
- ### Exploring the data
+#---------------------------------------------------------------------------------
+
+###START - DATA PREP FOR FISHERIES MODEL EXPLORATION - JA - 12-15-16
+
+
+## Prepping the final bbmsy data with output from each of the catch-only models for fisheries goal exploration. OHI 2016 only used CMSY.
+
+comsir <- read.csv('globalprep/fis/v2016/int/comsir_b_bmsy_NA_mean5yrs.csv') %>%
+  select(stock_id, year, comsir_bbmsy=mean_5year)
+
+sscom <- read.csv('globalprep/fis/v2016/int/sscom_b_bmsy_NA_mean5yrs.csv') %>%
+  select(stock_id, year, sscom_bbmsy=mean_5year)
+
+### The code below is copied from the section above to reproduce fis_bbmsy.csv for SSCOM and COMSIR
+
+### Including RAM
+
+#### COMSIR
+
+data <- mean_catch %>%
+  left_join(ram, by=c('stock_id', "year")) %>%
+  group_by(rgn_id, taxon_key, stock_id, year, mean_catch) %>%    ### some regions have more than one stock...these will be averaged
+  summarize(ram_bmsy = mean(ram_bmsy, na.rm=TRUE),
+            gapfilled = ifelse(all(is.na(gapfilled)), NA, max(gapfilled, na.rm=TRUE))) %>%
+  left_join(comsir, by=c("stock_id", "year")) %>%
+  ungroup()
+
+
+## select best data and indicate gapfilling
+data <- data %>%
+  mutate(bmsy_data_source = ifelse(!is.na(ram_bmsy), "RAM", NA)) %>%
+  mutate(bmsy_data_source = ifelse(is.na(bmsy_data_source) & !is.na(comsir_bbmsy), "COMSIR", bmsy_data_source)) %>%
+  mutate(bbmsy = ifelse(is.na(ram_bmsy), comsir_bbmsy, ram_bmsy)) %>%
+  select(rgn_id, stock_id, taxon_key, year, bbmsy, bmsy_data_source, RAM_gapfilled=gapfilled, mean_catch) %>%
+  filter(year >= 2001) %>%
+  unique()
+
+write.csv(data, "globalprep/fis/v2016/data/fis_comsir_bbmsy_gf.csv", row.names=FALSE) 
+
+bbmsy <- data %>%
+  select(rgn_id, stock_id, year, bbmsy) %>%
+  filter(!is.na(bbmsy)) %>%
+  unique()
+
+write.csv(bbmsy, "globalprep/fis/v2016/data/fis_comsir_bbmsy.csv", row.names=FALSE) 
+
+
+### SSCOM
+
+data <- mean_catch %>%
+  left_join(ram, by=c('stock_id', "year")) %>%
+  group_by(rgn_id, taxon_key, stock_id, year, mean_catch) %>%    ### some regions have more than one stock...these will be averaged
+  summarize(ram_bmsy = mean(ram_bmsy, na.rm=TRUE),
+            gapfilled = ifelse(all(is.na(gapfilled)), NA, max(gapfilled, na.rm=TRUE))) %>%
+  left_join(sscom, by=c("stock_id", "year")) %>%
+  ungroup()
+
+
+## select best data and indicate gapfilling
+data <- data %>%
+  mutate(bmsy_data_source = ifelse(!is.na(ram_bmsy), "RAM", NA)) %>%
+  mutate(bmsy_data_source = ifelse(is.na(bmsy_data_source) & !is.na(sscom_bbmsy), "SSCOM", bmsy_data_source)) %>%
+  mutate(bbmsy = ifelse(is.na(ram_bmsy), sscom_bbmsy, ram_bmsy)) %>%
+  select(rgn_id, stock_id, taxon_key, year, bbmsy, bmsy_data_source, RAM_gapfilled=gapfilled, mean_catch) %>%
+  filter(year >= 2001) %>%
+  unique()
+
+write.csv(data, "globalprep/fis/v2016/data/fis_sscom_bbmsy_gf.csv", row.names=FALSE) 
+
+bbmsy <- data %>%
+  select(rgn_id, stock_id, year, bbmsy) %>%
+  filter(!is.na(bbmsy)) %>%
+  unique()
+
+write.csv(bbmsy, "globalprep/fis/v2016/data/fis_sscom_bbmsy.csv", row.names=FALSE) 
+
+## Without RAM
+
+### COMSIR
+
+data <- mean_catch %>%
+  group_by(rgn_id, taxon_key, stock_id, year, mean_catch) %>%    ### some regions have more than one stock...these will be averaged
+  left_join(comsir, by=c("stock_id", "year")) %>%
+  ungroup()%>%
+  mutate(bbmsy = comsir_bbmsy) %>%
+  select(rgn_id, stock_id, taxon_key, year, bbmsy, mean_catch) %>%
+  filter(year >= 2001) %>%
+  unique()%>%
+  select(rgn_id, stock_id, year, bbmsy) %>%
+  filter(!is.na(bbmsy)) %>%
+  unique()
+
+write.csv(data, "globalprep/fis/v2016/data/fis_comsir_bbmsy_noRAM.csv", row.names=FALSE) 
+
+### CMSY
+
+data <- mean_catch %>%
+  group_by(rgn_id, taxon_key, stock_id, year, mean_catch) %>%    ### some regions have more than one stock...these will be averaged
+  left_join(cmsy, by=c("stock_id", "year")) %>%
+  ungroup()%>%
+  mutate(bbmsy = cmsy_bbmsy) %>%
+  select(rgn_id, stock_id, taxon_key, year, bbmsy, mean_catch) %>%
+  filter(year >= 2001) %>%
+  unique()%>%
+  select(rgn_id, stock_id, year, bbmsy) %>%
+  filter(!is.na(bbmsy)) %>%
+  unique()
+
+write.csv(data, "globalprep/fis/v2016/data/fis_cmsy_bbmsy_noRAM.csv", row.names=FALSE) 
+
+### SSCOM
+
+data <- mean_catch %>%
+  group_by(rgn_id, taxon_key, stock_id, year, mean_catch) %>%    ### some regions have more than one stock...these will be averaged
+  left_join(sscom, by=c("stock_id", "year")) %>%
+  ungroup()%>%
+  mutate(bbmsy = sscom_bbmsy) %>%
+  select(rgn_id, stock_id, taxon_key, year, bbmsy, mean_catch) %>%
+  filter(year >= 2001) %>%
+  unique()%>%
+  select(rgn_id, stock_id, year, bbmsy) %>%
+  filter(!is.na(bbmsy)) %>%
+  unique()
+
+### END DATA PREP FOR FISHERIES MODEL EXPLORATION - JA - 12-15-16
+
+#---------------------------------------------------------------------------------
+
+ ### Exploring the data (CMSY only)
  
  # Finding stocks with high B/Bmsy values and are heavily fished by multiple regions (i.e., influential stocks)
 
