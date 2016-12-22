@@ -1,0 +1,195 @@
+Liveliehoods and Economies 2012 vs 2013 Report
+==============================================
+
+```
+From: Benjamin Halpern <halpern@bren.ucsb.edu>
+Date: Sun, Feb 16, 2014 at 4:37 PM
+Subject: before lab meeting
+To: Ben Best <bbest@nceas.ucsb.edu>
+Cc: Katie Longo <longo@nceas.ucsb.edu>, Julia Stewart Lowndes <lowndes@nceas.ucsb.edu>, Melanie Frazier <frazier@nceas.ucsb.edu>
+```
+
+Hi BB,
+As soon as possible, but at the latest by the start of lab meeting on Wednesday, please send me stats on:
+
+1. which countries had ECO change >10 points between 2012 and 2013
+2. which countries used georegional gap filled data for revenue vs. their own data in 2012 vs. 2013
+3. which countries had LIV change >10 points between 2012 and 2013
+4. which countries LIV scores were based on jobs data only vs. jobs + wages data
+5. which countries used georegional gap filled data for jobs vs. their own data in 2012 vs. 2013
+6. which countries used georegional gap filled data for wages vs. their own data in 2012 vs. 2013
+
+thanks,
+Ben
+
+
+```{r init, echo=FALSE}
+
+# libraries
+library(reshape2)
+library(plyr)
+library(knitr)
+suppressPackageStartupMessages(library(dplyr))
+
+# working directory
+wd = '~/GitHub_Mac/ohidata/Global/NCEAS-LivelihoodsEconomiesReport_v2013'
+dir_local = '/Volumes/local_edit'
+dir_data  = '/Volumes/data_edit'
+dir_out   = 'report_LE_output'
+setwd(wd)
+dir.create(dir_out, showWarnings=F)
+
+# get official Radical(rad) results
+rad  = read.csv(file.path(dir_local, 'src/toolbox/scenarios/global_2013a/results/OHI_results_for_Radical_2013-10-09.csv'), na.strings='') # head(rad); table(rad[,c('goal','dimension')])
+
+# get region names, including GLOBAL
+rgns = read.csv(file.path(dir_data , 'model/GL-NCEAS-OceanRegions_v2013a/data/rgn_details.csv'), na.strings='')  %.%
+  select(rgn_id, rgn_nam) %.%
+  rbind(data.frame(rgn_id=0, rgn_nam='GLOBAL')) %.%
+  rename(c(rgn_id='region_id', rgn_nam='region_name')) # head(rgns); tail(rgns)
+
+# merge Radical results with region name
+rad = rad %.%
+  merge(rgns) # head(rad); tail(rad)
+
+# get status metric actuals
+status_metric_2012 = read.csv(file.path(dir_local, 'src/model/global2013/livelihoods/status/data_2012/global_li_status_model_combined.csv'), na.strings='') # head(status_metric_2012)
+status_metric_2013 = read.csv(file.path(dir_local, 'src/model/global2013/livelihoods/status/data_2013/global_li_status_model_combined.csv'), na.strings='') # head(status_metric_2013)
+
+# get 2013 region names per Nature 2012 country
+rgn_country = read.csv(file.path(dir_data, 'model/GL-NCEAS-OceanRegions_v2013a/manual_output/rgn2013_to_country2012.csv'), na.strings='') # head(rgn_country)
+rgn_country = rgn_country %.%
+  select(rgn_id, country_id) %.%
+  rename(c(rgn_id='region_id', country_id='iso3166')) %.%
+  merge(rgns, by='region_id')
+
+# update status_metrics with 2013 region ids and names
+status_metric_2012 = merge(status_metric_2012, rgn_country, by='iso3166')
+status_metric_2013 = merge(status_metric_2013, rgn_country, by='iso3166')
+
+# info function for comparing
+info = function(x){ print(head(x)); print(dim(x)); print(summary(x)) }
+```
+
+## 1. ECO score change >10 points between 2012 and 2013
+```{r q1, results='asis', echo=FALSE}
+
+# query
+q1 = rad %.%
+  filter(goal=='ECO', dimension=='score') %.%
+  dcast(region_id + region_name ~ scenario, value.var='value') %.%
+  rename(c('2012'='score_2012', '2013'='score_2013')) %.%
+  mutate(dif_abs = abs(score_2013 - score_2012)) %.%
+  filter(dif_abs > 10) %.%
+  arrange(desc(dif_abs))
+
+# write
+write.csv(q1, file.path(dir_out, 'q1.csv'))
+
+# display
+row.names(q1) = 1:nrow(q1)
+kable(q1, format='html', row.names=T)
+```
+
+## 2. Revenue georegional gap filled for 2012, but actuals for 2013
+```{r q2, results='asis', echo=FALSE}
+
+# query
+q2 = anti_join(status_metric_2013, status_metric_2012, by=c('metric','iso3166','region_id','region_name')) %.%
+  filter(metric=='rev') %.%
+  arrange(iso3166, region_name) %.%
+  select(iso3166, region_id, region_name, score, n_sector)
+
+# write
+write.csv(q2, file.path(dir_out, 'q2.csv'))
+
+# display
+row.names(q2) = 1:nrow(q2)
+kable(q2, format='html', row.names=T)
+```
+
+## 3. LIV change >10 points between 2012 and 2013
+```{r q3, results='asis', echo=FALSE}
+# query
+q3 = rad %.%
+  filter(goal=='LIV', dimension=='score') %.%
+  dcast(region_id + region_name ~ scenario, value.var='value') %.%
+  rename(c('2012'='score_2012', '2013'='score_2013')) %.%
+  mutate(dif_abs = abs(score_2013 - score_2012)) %.%
+  filter(dif_abs > 10) %.%
+  arrange(desc(dif_abs))
+
+# write
+write.csv(q3, file.path(dir_out, 'q3.csv'))
+
+# display
+row.names(q3) = 1:nrow(q3)
+kable(q3, format='html', row.names=T)
+```
+
+## 4. LIV scores were based on jobs data only vs. jobs + wages data
+
+### 2012
+```{r q4_2012, results='asis', echo=FALSE}
+
+q4_2012 = status_metric_2012 %.%
+  dcast(iso3166 + region_id + region_name ~ metric, value.var='score') %.%
+  filter(!is.na(jobs) & is.na(wage)) %.%
+  select(iso3166, region_id, region_name, jobs, wage)
+
+# write
+write.csv(q4_2012, file.path(dir_out, 'q4_2012.csv'))
+
+# display
+row.names(q4_2012) = 1:nrow(q4_2012)
+kable(q4_2012, format='html', row.names=T)
+```
+
+### 2013
+```{r q4_2013, results='asis', echo=FALSE}
+
+q4_2013 = status_metric_2013 %.%
+  dcast(iso3166 + region_id + region_name ~ metric, value.var='score') %.%
+  filter(!is.na(jobs) & is.na(wage)) %.%
+  select(iso3166, region_id, region_name, jobs, wage)
+
+# write
+write.csv(q4_2013, file.path(dir_out, 'q4_2013.csv'))
+
+# display
+row.names(q4_2013) = 1:nrow(q4_2013)
+kable(q4_2013, format='html', row.names=T)
+```
+
+## 5. Jobs georegional gap filled for 2012, but actuals for 2013
+```{r q5, results='asis', echo=FALSE}
+
+# query
+q5 = anti_join(status_metric_2013, status_metric_2012, by=c('metric','iso3166','region_id','region_name')) %.%
+  filter(metric=='jobs') %.%
+  select(iso3166, region_id, region_name, score, n_sector)
+
+# write
+write.csv(q5, file.path(dir_out, 'q5.csv'))
+
+# display
+kable(q5, format='html', row.names=T)
+```
+None
+
+## 6. Wages georegional gap filled for 2012, but actuals for 2013
+```{r q6, results='asis', echo=FALSE}
+
+# query
+q6 = anti_join(status_metric_2013, status_metric_2012, by=c('metric','iso3166','region_id','region_name')) %.%
+  filter(metric=='wage') %.%
+  arrange(iso3166, region_name) %.%
+  select(iso3166, region_id, region_name, score, n_sector)
+
+# write
+write.csv(q6, file.path(dir_out, 'q6.csv'))
+
+# display
+row.names(q6) = 1:nrow(q6)
+kable(q6, format='html', row.names=T)
+```

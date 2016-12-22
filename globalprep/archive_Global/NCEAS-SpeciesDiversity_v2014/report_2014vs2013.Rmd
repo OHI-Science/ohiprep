@@ -1,0 +1,150 @@
+SPP: IUCN Species 2014 vs 2013 Report
+========================================================
+
+Versions:
+* **2013**: _**2013.1**_ (as of Jul 1,  2013)
+* **2014**: _**2013.2**_ (as of Apr 20, 2014)
+
+
+```{r setup, echo=FALSE}
+suppressPackageStartupMessages(library(dplyr))
+library(knitr)
+options(knitr.table.format='markdown')
+
+# because [kable chokes on table with NA](https://github.com/yihui/knitr/issues/720)
+# library(devtools)
+# install_github('yihui/knitr')
+
+setwd('~/ohiprep') # specific to host, eg neptune
+
+# directories
+source('src/R/common.R')
+# working dir in local github repo
+nm = 'Global/NCEAS-SpeciesDiversity_v2014'
+wd = file.path(getwd(), nm)
+# data dir
+dd    = file.path(dir_neptune_data, 'git-annex', nm)
+dd.13 = file.path(dir_neptune_data, 'model/GL-NCEAS-SpeciesDiversity_v2013a')
+
+# data
+spp_iucn_all       = read.csv(file.path(dd   , 'cache', 'spp_iucn_all.csv'   ), na.strings='')
+spp_iucn_marine    = read.csv(file.path(dd   , 'cache', 'spp_iucn_marine.csv'), na.strings='')
+spp_iucn_all.13    = read.csv(file.path(dd.13, 'tmp'  , 'spp_iucn_all.csv'   ), na.strings='')
+spp_iucn_marine.13 = read.csv(file.path(dd.13, 'tmp'  , 'spp_iucn_marine.csv'), na.strings='')
+```
+
+
+```{r sid dupes, echo=FALSE, eval=FALSE}
+## Check for Duplicates
+# Duplicates detected for 2014. Checking if existed in outputs from 2013.
+
+names(spp_iucn_all)
+table(duplicated(spp_iucn_all$Red.List.Species.ID))
+
+names(spp_iucn_all.13)
+table(duplicated(spp_iucn_all.13$Red.List.Species.ID))
+
+dim(spp_iucn_marine)
+dim(spp_iucn_marine.13)
+
+# Ok, confirmed that use of `Primary` to identify non-redundant rows (presumably used for species synonyms) is new to IUCN 2014 data.
+```
+
+## extinction categories
+
+Totals compared between years.
+```{r cat_, results='asis', echo=FALSE, dependson='setup'}
+d = spp_iucn_marine.13 %.%
+  group_by(category) %.%
+  summarize(freq_2013=n()) %.%
+  merge(spp_iucn_marine %.%
+          group_by(category) %.%
+          summarise(freq_2014 = n()),
+        by='category') %.%
+  mutate(freq_dif = freq_2014 - freq_2013)
+# add marginal totals row
+d = suppressWarnings(rbind(d, cbind(category='Total', as.data.frame(t(colSums(d[,-1]))))))
+kable(format(d), row.names=F)
+```
+
+
+## species
+
+### species new to 2014 by species id (sid)
+Looking first at a summary of species counts by `order` and `modified.year` new to 2014 without matching field `sid` in 2013.
+```{r cat_sid, results='asis', echo=FALSE, dependson='setup'}
+d = spp_iucn_marine %.%
+  anti_join(spp_iucn_marine.13, by='sid') %.%
+  select(sid, sciname, category, criteria, modified.year, class, order, family) %.%
+  group_by(class, order, modified.year) %.%
+  summarize(count=n())
+# add marginal totals row
+d = suppressWarnings(rbind_list(d, data.frame(class='Total', count=sum(d$count))))
+kable(format(d), row.names=F)
+```
+
+### species new to 2014 by scientific name (sciname)
+But the existence of a new species id (`sid`) seems to most likely be attribution to a newly identified subpopulation, since when looking for unmatched scientific names (`sciname`) present in 2014 and missing in 2013, there are the only a few new species to 2014.
+```{r anti_14not13_sciname, results='asis', echo=FALSE, dependson='setup'}
+d = spp_iucn_marine %.%
+  anti_join(spp_iucn_marine.13, by='sciname') %.%
+  select(sid, sciname, class, order, family, modified.year, category)
+kable(d, row.names=F)
+```
+
+### species missing in 2014 but present in 2013, by scientific name (sciname)
+Conversely, here are the species present in 2013 but missing from 2014 by matching field `sciname`.
+```{r anti_13not14, results='asis', echo=FALSE, dependson='setup'}
+d = spp_iucn_marine.13 %.%
+  anti_join(spp_iucn_marine, by='sciname') %.%
+  select(sid, sciname, class, order, family, modified.year, category)
+kable(d, row.names=F)
+```
+
+Of those 2013 species missing in 2014, here are the same species ids (field `sid`) still found in 2014. So the `sciname` changed.
+```{r anti_13not14_lu, results='asis', echo=FALSE, dependson='anti_13not14'}
+dd = spp_iucn_marine %.%
+  filter(sid %in% d$sid) %.%
+  select(sid, sciname, class, order, family, modified.year, category)
+kable(d, row.names=F)
+```
+
+### species with extinction changed from 2013 to 2014, by species id (sid)
+
+Species with extinction category changed by matching `sid`.
+```{r cat-chg_by-sid, results='asis', echo=FALSE, dependson='setup'}
+d = spp_iucn_marine %.%
+  inner_join(
+    spp_iucn_marine.13 %.%
+      select(sid                = sid,
+             sciname_2013       = sciname,
+             modified.year_2013 = modified.year, 
+             category_2013      = category, 
+             criteria_2013      = criteria),
+    by='sid') %.%
+  select(sid, sciname, sciname_2013, category, category_2013, criteria, criteria_2013, modified.year, modified.year_2013, class, order, family) %.%
+  filter(category!=category_2013)
+kable(d, row.names=F)
+```
+
+### species with extinction changed from 2013 to 2014, by scientific name (sciname)
+
+```{r ex_cat, results='asis', echo=FALSE, dependson='setup'}
+d = spp_iucn_marine %.%
+  inner_join(
+    spp_iucn_marine.13 %.%
+      select(sciname            = sciname,
+             sid_2013           = sid,             
+             modified.year_2013 = modified.year, 
+             category_2013      = category, 
+             criteria_2013      = criteria),
+    by='sciname') %.%
+  select(sid, sid_2013, sciname, category, category_2013, 
+         criteria, criteria_2013, modified.year, modified.year_2013, 
+         class, order, family) %.%
+  filter(category!=category_2013)
+cat(sprintf('Number of rows: %d\n\nFirst 6 rows...\n', nrow(d)))
+kable(format(head(d)), row.names=F)
+```
+
+So scientific name (`sciname`) can repeat for a given `sid`, indicating a subpopulation, in which case matching by `sciname` alone is insufficient.
