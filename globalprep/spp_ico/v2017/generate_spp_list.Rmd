@@ -1,0 +1,489 @@
+---
+title: 'OHI: Species subgoal'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
+                      echo = FALSE, message = FALSE, warning = FALSE)
+
+source('~/github/ohiprep/src/R/common.R')
+
+goal     <- 'spp_ico'
+scenario <- 'v2017'
+dir_anx  <- file.path(dir_M, 'git-annex', 'globalprep')
+dir_goal_anx <- file.path(dir_anx, goal, scenario) 
+dir_goal  <- file.path('~/github/ohiprep/globalprep', goal, scenario)
+
+### set up provenance tracking for this script:
+library(provRmd); prov_setup()
+
+```
+
+# Methods
+
+## Ingest IUCN species list from API
+
+Using the IUCN API, we accessed the full IUCN species list at `http://apiv3.iucnredlist.org/api/v3/speciescount?token=<token>`.  
+
+``` {r setup_API_functions}
+
+library(parallel)
+library(jsonlite)
+
+### api_key stored on git-annex so outside users can use their own key
+api_key <- scan(file.path(dir_goal_anx, '../api_key.csv'), what = 'character')
+
+get_from_api <- function(url, param, api_key, delay) {
+  
+  i <- 1; tries <- 6; success <- FALSE
+  
+  while(i <= tries & success == FALSE) {
+    message('try #', i)
+       Sys.sleep(delay * i) ### be nice to the API server? later attempts wait longer
+       api_info <- fromJSON(sprintf(url, param, api_key)) 
+       if (class(api_info) != 'try-error') {
+         success <- TRUE
+       } else {
+         warning(sprintf('try #%s: class(api_info) = %s\n', i, class(api_info)))
+       }
+    message('... successful? ', success)
+    i <- i + 1
+  }
+    
+  if (class(api_info) == 'try-error') { ### multi tries and still try-error
+    api_return <- data.frame(param_id  = param,
+                             api_error = 'try-error after multiple attempts')
+  } else if (class(api_info$result) != 'data.frame') { ### result isn't data frame for some reason
+    api_return <- data.frame(param_id  = param,
+                             api_error = paste('non data.frame output: ', class(api_info$result), ' length = ', length(api_info$result)))
+  } else if (length(api_info$result) == 0) { ### result is empty
+    api_return <- data.frame(param_id  = param,
+                             api_error = 'zero length data.frame')
+  } else {
+    api_return <- api_info %>%
+      data.frame(stringsAsFactors = FALSE)
+  }
+  
+  return(api_return)
+}
+
+mc_get_from_api <- function(url, param_vec, api_key, cores = NULL, delay = 0.5) {
+  
+  if(is.null(cores)) 
+    numcores <- ifelse(Sys.info()[['nodename']] == 'mazu', 12, 1)
+  else 
+    numcores <- cores
+  
+  out_list <- parallel::mclapply(param_vec, 
+                          function(x) get_from_api(url, x, api_key, delay),
+                          mc.cores   = numcores,
+                          mc.cleanup = TRUE) 
+  
+  if(any(sapply(out_list, class) != 'data.frame')) {
+    error_list <- out_list[sapply(out_list, class) != 'data.frame']
+    message('List items are not data frame: ', paste(sapply(error_list, class), collapse = '; '))
+    message('might be causing the bind_rows() error; returning the raw list instead')
+    return(out_list)
+  }
+  
+  out_df <- out_list %>%
+    bind_rows()
+  out_df <- out_df %>%
+    setNames(names(.) %>%
+               str_replace('result.', ''))
+  return(out_df)
+}
+
+```
+
+
+``` {r get_spp_info_from_api}
+### Get all pages and bind into total species list.  This is pretty fast.
+
+spp_info_from_api_file <- file.path(dir_goal_anx, 'int/spp_info_from_api.csv')
+reload <- FALSE
+
+if(!file.exists(spp_info_from_api_file) | reload == TRUE) {
+  
+  message('Using API to create full species list from scratch')
+  
+  spp_npage_url <- sprintf('http://apiv3.iucnredlist.org/api/v3/speciescount?token=%s', api_key)
+  n_spp <- fromJSON(spp_npage_url) %>%
+    .$count %>% as.integer()
+  n_pages <- ceiling(n_spp/10000)
+  
+  spp_page_url <- 'http://apiv3.iucnredlist.org/api/v3/species/page/%s?token=%s'
+  spp_df_all <- mc_get_from_api(spp_page_url, c(0:(n_pages - 1)), api_key, delay = 1)
+
+  spp_df_all <- spp_df_all %>%
+    dplyr::select(-infra_rank, -infra_name, -count, -page) %>%
+    rename(iucn_sid = taxonid, sciname = scientific_name) %>%
+    setNames(names(.) %>%
+               str_replace('_name', ''))
+  
+  message('Full list length: ', nrow(spp_df_all), '; unique species IDs: ', length(spp_df_all$iucn_sid %>% unique()))
+  write_csv(spp_df_all, spp_info_from_api_file)
+  
+} else {
+  
+  message('File of API species list exists: \n  ', spp_info_from_api_file)
+  git_prov(spp_info_from_api_file, filetype = 'output')
+  
+}
+
+```
+
+### IUCN general information for all species from API
+
+`r spp_info_from_api_file` contains the following variables:
+
+`r read_csv(spp_info_from_api_file, n_max = 6, nogit = TRUE) %>% names() %>% paste(collapse = ' | ')`
+
+head: 
+
+`r knitr::kable(read_csv(spp_info_from_api_file, nogit = TRUE)[1:6, 1:6])`
+
+-----
+
+``` {r determine_spp_habs}
+### For each species ID on the total list, get a dataframe of habitats.
+### This is slow.  Skip if possible.
+
+spp_habs_from_api_file <- file.path(dir_goal_anx, 'int/spp_habs_from_api.csv')
+
+if(!file.exists(spp_habs_from_api_file)) {
+  
+  message('Using API to determine species habitats from full species info list')
+  
+  spp_info_from_api_file <- file.path(dir_goal_anx, 'int/spp_info_from_api.csv')
+  spp_ids_all <- read_csv(spp_info_from_api_file) %>%
+    .$iucn_sid
+  
+  spp_habs_url <- 'http://apiv3.iucnredlist.org/api/v3/habitats/species/id/%s?token=%s'
+  
+  
+  ### Breaking this into chunks...
+  ### 500 spp takes 184 seconds; at that rate, 87851 species should take 
+  ###   about 9 hrs.  Each chunk will save to tmp for later combining.
+  
+  chunk_size <- 2000
+  n_chunks <- ceiling(length(spp_ids_all)/chunk_size)
+  
+  if(!dir.exists(file.path(dir_goal_anx, 'tmp'))) 
+    dir.create(file.path(dir_goal_anx, 'tmp'))
+  
+  for(j in 1:n_chunks) { 
+    ### j <- 2
+    spp_index <- c( ((j - 1) * chunk_size + 1) : min((j * chunk_size), length(spp_ids_all)) )
+    chunk_file <- file.path(dir_goal_anx, 'tmp', 
+                    sprintf('spp_habs_chunk_%s_%s.csv', 
+                            min(spp_index), max(spp_index)))
+    
+    if(!file.exists(chunk_file)) {
+      message('Getting habitat info for species ', min(spp_index), ' to ', max(spp_index))
+      
+      spp_ids_chunk <- spp_ids_all[spp_index]
+      spp_habs_chunk <- mc_get_from_api(spp_habs_url, spp_ids_chunk, api_key, cores = 12, delay = .5)
+
+      message('... found ', nrow(spp_habs_chunk), ' habitat rows for these species')
+      
+      write_csv(spp_habs_chunk, chunk_file)
+      
+    } else {
+      
+      message('Chunk file ', chunk_file, ' already exists; skipping these spp')
+      
+    }
+  }
+  
+  ### fields: 
+  ### id | code | habitat | suitability | season | majorimportance
+
+  spp_hab_chunk_files <- list.files(file.path(dir_goal_anx, 'tmp'), 
+                                    pattern = 'spp_habs_chunk', 
+                                    full.names = TRUE)
+  
+  spp_habs_df <- lapply(spp_hab_chunk_files, FUN = function(x) {
+    read.csv(x) %>%
+      mutate(code = as.character(code))}) %>%
+    bind_rows() %>%
+    rename(iucn_sid = id) %>%
+    mutate(iucn_sid = ifelse(is.na(iucn_sid), param_id, iucn_sid)) %>%
+    arrange(iucn_sid)
+  
+  spp_errors <- spp_habs_df %>%
+    filter(!is.na(api_error) & api_error != 'no data.frame') %>%
+    .$iucn_sid
+  ### all these errors are due to returning a zero-length list instead of a data.frame
+
+  write_csv(spp_habs_df, file.path(dir_goal_anx, 'int', 'spp_habs_from_api.csv'))
+  
+} else {
+  
+  message('File of species habitats from API exists: \n  ', spp_habs_from_api_file)
+  git_prov(spp_habs_from_api_file, filetype = 'output')
+  
+}
+```
+
+### IUCN species habitat info for all species from API
+
+`r spp_habs_from_api_file` contains the following variables:
+
+`r read_csv(spp_habs_from_api_file, n_max = 6, nogit = TRUE) %>% names() %>% paste(collapse = ' | ')`
+
+head: 
+
+`r knitr::kable(read_csv(spp_habs_from_api_file, nogit = TRUE)[1:6, 1:6])`
+
+-----
+
+``` {r identify_marine_spp}
+
+### from previous chunks:
+spp_info_from_api_file <- file.path(dir_goal_anx, 'int/spp_info_from_api.csv')
+spp_habs_from_api_file <- file.path(dir_goal_anx, 'int/spp_habs_from_api.csv')
+
+spp_info_from_api <- read_csv(spp_info_from_api_file)
+spp_habs_from_api <- read_csv(spp_habs_from_api_file,
+                              col_types = 'iccccc__')
+### 'code' is character since it is in the form x.xx.xxx
+
+### generate habitat inclusion list
+# hab_cats <- read_csv(spp_habs_from_api_file) %>%
+#   select(habitat, code) %>%
+#   distinct() %>%
+#   separate(code, c('cat', 'subcat1', 'subcat2'), 
+#            remove = FALSE, convert = TRUE) %>%
+#   arrange(cat, subcat1, subcat2) %>%
+#   mutate(include = ifelse(cat %in% c(9:13), TRUE, FALSE),
+#          include = ifelse(cat == 15 & subcat1 %in% c(11, 12, 13), TRUE, include))
+# 
+# write_csv(hab_cats, file.path(dir_goal, 'int', 'iucn_habitat_categories.csv'))
+
+hab_marine <- read_csv(file.path(dir_goal, 'int', 'iucn_habitat_categories.csv')) %>%
+  filter(include == TRUE) %>%
+  select(habitat, code)
+  
+spp_marine <- spp_habs_from_api %>%
+  inner_join(hab_marine, by = c('habitat', 'code')) %>%
+  left_join(spp_info_from_api, by = 'iucn_sid')
+
+### NOTE: this still includes possibilities of including/excluding based
+### on 'suitability' ("Suitable" "Marginal" "Unknown"  NA),
+###    'season' ("resident" "breeding" "unknown" "non-breeding" "passage" NA),
+###    'majorimportance' ("Yes" "No" NA)
+write_csv(spp_marine, file.path(dir_goal_anx, 'int/spp_marine_from_api.csv'))
+
+```
+
+### IUCN species habitat info for all species from API
+
+`r file.path(dir_goal_anx, 'int/spp_marine_from_api.csv')` contains the following variables:
+
+`r spp_marine %>% names() %>% paste(collapse = ' | ')`
+
+head: 
+
+`r knitr::kable(spp_marine[1:6, 1:6])`
+
+-----
+
+## Develop IUCN map list from downloaded shapefiles
+
+Create list of all species included in pulled IUCN shapefiles (dbfs).  This includes terrestrial critters but also includes all columns of info from the .dbfs - including source/citation/year, taxonomic info, seasonality, etc.
+
+``` {r get_iucn_mapped_spp}
+
+iucn_map_list_file <- file.path(dir_goal_anx, 'int/spp_iucn_maps_all.csv')
+
+if(!file.exists(iucn_map_list_file) | reload) {
+  if(!file.exists(iucn_map_list_file)) message('No file found for list of available IUCN range maps.  ')
+  message('Generating new list of available IUCN range maps.')
+
+  dir_iucn_shp <- file.path(dir_anx, '_raw_data/iucn_spp/d2016')
+  
+  groups_list <- list.files(dir_iucn_shp, pattern = '.shp$', full.names = TRUE)
+
+  spp_iucn_maps <- data.frame()
+
+  for (spp_group in groups_list) {
+    ### spp_group <- groups_list[1]
+    
+    message(sprintf('Processing species shapefile: \n  %s...', spp_group))
+    spp_dbf <- foreign::read.dbf(str_replace(spp_group, '.shp$', '.dbf'))
+
+    message('var names: ', paste(names(spp_dbf), collapse = ' | '))
+
+    # add group name to the database for future reference
+    spp_dbf <- spp_dbf %>%
+      mutate(spp_group = basename(spp_group) %>% str_replace('.shp$', ''))
+
+    spp_iucn_maps <- bind_rows(spp_iucn_maps, spp_dbf)
+  }
+  spp_iucn_maps <- spp_iucn_maps %>%
+    rename(iucn_sid = id_no,
+           sciname  = scientific) %>%
+    mutate(spatial_source = 'iucn') %>%
+    unique()
+  ### NOTE: This includes all terrestrial mammals(?) and reptiles(?),
+  ### not just those in marine species list.
+
+
+
+  message(sprintf('Writing list of available IUCN range maps to: \n  %s', iucn_map_list_file))
+  write_csv(spp_iucn_maps, iucn_map_list_file)
+} else {
+  message(sprintf('List of available IUCN range maps exists: \n  %s', iucn_map_list_file))
+}
+```
+
+### Available IUCN range maps
+
+`r iucn_map_list_file` contains the following variables:
+
+`r read_csv(iucn_map_list_file, n_max = 6, nogit = TRUE) %>% names() %>% paste(collapse = ' | ')`
+
+head: 
+
+`r knitr::kable(read_csv(iucn_map_list_file, nogit = TRUE)[1:6, 1:6])`
+
+-----
+
+``` {r create_subpop_lookup_list}
+
+spp_iucn_maps     <- read_csv(file.path(dir_goal_anx, 'int/spp_iucn_maps_all.csv'))
+spp_marine        <- read_csv(file.path(dir_goal_anx, 'int/spp_marine_from_api.csv'))
+spp_info_from_api <- read_csv(file.path(dir_goal_anx, 'int/spp_info_from_api.csv'))
+
+iucn_maps_marine <- spp_iucn_maps %>%
+  select(iucn_sid, 
+         sciname, 
+         alt_sciname = binomial, 
+         presence, year, subpop,
+         shp_cat = code, spp_group, spatial_source) %>%
+  filter(iucn_sid %in% spp_marine$iucn_sid) %>%
+  distinct()
+
+### identify subpops in both API list and shp list; chances are they
+### will not match well enough for a join yet.  From this, create one
+### master lookup file.
+### annoyingly, the map descriptions are what we need to keep, but they
+### have fluff in 'em such as scientific names which foul up distance
+### matching - thus the "str_replace" line.
+### For both, some species include "subpopulation" which is redundant and also
+### can throw off the distance matching.
+subpops_api <- spp_info_from_api %>%
+  select(iucn_sid_from_api = iucn_sid, sciname, pop_from_api = population, category) %>%
+  filter(!is.na(pop_from_api)) %>%
+  filter(sciname %in% iucn_maps_marine$sciname) %>%
+  mutate(pop_from_api = tolower(pop_from_api) %>%
+           str_replace_all('subpopulation| ocean', '') %>% ### ditch trailing "ocean" too
+           str_trim()) %>%
+  distinct()
+subpops_marine <- iucn_maps_marine %>%
+  select(iucn_sid_from_maps = iucn_sid, sciname, pop_from_map = subpop) %>%
+  mutate(pop_from_map_mod = tolower(pop_from_map) %>%
+           str_replace_all('subpopulation| ocean', '') %>% ### ditch trailing "ocean" too
+           str_replace(tolower(sciname), '') %>% 
+           str_trim()) %>%
+  group_by(iucn_sid_from_maps) %>%
+  filter(sum(!is.na(pop_from_map)) > 0) %>%
+  ungroup() %>%
+  distinct()
+
+library(stringdist)
+
+# subpops_raw <- subpops_api %>%
+#   full_join(subpops_marine, by = 'sciname') %>%
+#   rowwise() %>%
+#   # mutate(adist   = as.numeric(utils::adist(pop_from_api, pop_from_map_mod))) %>%
+#   # mutate(qgram   = as.numeric(stringdist::amatch(pop_from_api, pop_from_map_mod, method = 'qgram', nomatch = 0))) %>%
+#   mutate(jaccard = as.numeric(stringdist::amatch(pop_from_api, pop_from_map_mod, method = 'jaccard', nomatch = 0))) %>%
+#   mutate(jw      = as.numeric(stringdist::amatch(pop_from_api, pop_from_map_mod, method = 'jw', nomatch = 0))) %>%
+#   # mutate(soundex = as.numeric(stringdist::amatch(pop_from_api, pop_from_map_mod, method = 'soundex'))) %>%
+#   # group_by(iucn_sid_from_api) %>%
+#   # mutate(subpop_match = (adist == min(adist, na.rm = TRUE))) %>%
+#   # ungroup() %>%
+#   ungroup() %>%
+#   filter(jaccard | jw) %>%
+#   select(iucn_sid_from_api, iucn_sid_from_maps, pop_from_api, pop_from_map) %>%
+#   distinct()
+# ### Between Jaccard and JW matches, seems to avoid any false negatives
+# 
+# ### Edit these to remove false positives and save as 'subpop_lookup_edited.csv'
+# write_csv(subpops_raw, file.path(dir_goal, 'raw', 'subpop_lookup_raw.csv'))
+
+```
+
+### Lookup table for map subpopulations to API subpopulations
+
+From the maps list and API species list, generate a lookup table to match subpop id numbers (from the API list) to the maps (which only have the parent ID as identifier); this lookup will match map subpop name to API subpop ID.
+
+`r file.path(dir_goal, 'raw', 'subpop_lookup_edited.csv')` contains the following variables:
+
+`r read_csv(file.path(dir_goal, 'raw', 'subpop_lookup_edited.csv'), n_max = 6, nogit = TRUE) %>% names() %>% paste(collapse = ' | ')`
+
+head: 
+
+`r knitr::kable(read_csv(file.path(dir_goal, 'raw', 'subpop_lookup_edited.csv'), nogit = TRUE) %>% head())`
+
+-----
+
+``` {r create_IUCN_marine_spp_list}
+
+spp_iucn_maps     <- read_csv(file.path(dir_goal_anx, 'int/spp_iucn_maps_all.csv'))
+spp_marine        <- read_csv(file.path(dir_goal_anx, 'int/spp_marine_from_api.csv'))
+
+subpops_lookup <- read_csv(file.path(dir_goal, 'raw', 'subpop_lookup_edited.csv')) %>%
+  select(iucn_sid = iucn_sid_from_maps,
+         subpop_sid = iucn_sid_from_api,
+         subpop = pop_from_map)
+  
+iucn_maps_marine <- spp_iucn_maps %>%
+  select(iucn_sid, 
+         sciname, 
+         alt_sciname = binomial, ### just in case, save this for later.  They don't all match the sciname for some reason.
+         presence,
+         year, ### year of compilation
+         subpop, ### text field of subpopulation from .dbf
+         spp_group, 
+         spatial_source) %>%
+  filter(iucn_sid %in% spp_marine$iucn_sid) %>%
+  left_join(subpops_lookup, by = c('iucn_sid', 'subpop')) %>%
+  distinct()
+
+write_csv(iucn_maps_marine, file.path(dir_goal_anx, 'int/spp_iucn_maps_marine.csv'))
+
+```
+
+
+### IUCN maps for marine species
+
+Using the API subpops to map subpops lookup, add to the species list and create a final marine species list.
+
+`r file.path(dir_goal_anx, 'int/spp_iucn_maps_marine.csv')` contains the following variables:
+
+`r read_csv(file.path(dir_goal_anx, 'int/spp_iucn_maps_marine.csv'), n_max = 6, nogit = TRUE) %>% names() %>% paste(collapse = ' | ')`
+
+head: 
+
+`r knitr::kable(read_csv(file.path(dir_goal_anx, 'int/spp_iucn_maps_marine.csv'), nogit = TRUE) %>% head())`
+
+-----
+
+``` {r, results = 'asis'}
+prov_wrapup(commit_outputs = FALSE)
+```
