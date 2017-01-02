@@ -1,0 +1,225 @@
+iucn_sid,map_iucn_sid,subpop_sid,kingdom,phylum,class,order,family,sciname,map_sciname,alt_sciname,population,subpop,habitat,suitability,presence,spp_group,spatial_source
+22679981.0,22679981.0,NA,ANIMALIA,CHORDATA,AVES,ANSERIFORMES,ANATIDAE,Chloephaga poliocephala,Chloephaga poliocephala,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,BOTW_marine,iucn
+22728310.0,22728310.0,NA,ANIMALIA,CHORDATA,AVES,ACCIPITRIFORMES,ACCIPITRIDAE,Circus maillardi,Circus maillardi,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,1,BOTW_marine,iucn
+22728303.0,22728303.0,NA,ANIMALIA,CHORDATA,AVES,ANSERIFORMES,ANATIDAE,Anas chlorotis,Anas chlorotis,NA,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,4,BOTW_marine,iucn
+22728303.0,22728303.0,NA,ANIMALIA,CHORDATA,AVES,ANSERIFORMES,ANATIDAE,Anas chlorotis,Anas chlorotis,NA,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,1,BOTW_marine,iucn
+22680395.0,22680395.0,NA,ANIMALIA,CHORDATA,AVES,ANSERIFORMES,ANATIDAE,Aythya novaeseelandiae,Aythya novaeseelandiae,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,BOTW_marine,iucn
+22724271.0,22724271.0,NA,ANIMALIA,CHORDATA,AVES,PASSERIFORMES,ICTERIDAE,Curaeus curaeus,Curaeus curaeus,NA,NA,NA,Marine Intertidal - Rocky Shoreline,Marginal,1,BOTW_marine,iucn
+22724271.0,22724271.0,NA,ANIMALIA,CHORDATA,AVES,PASSERIFORMES,ICTERIDAE,Curaeus curaeus,Curaeus curaeus,NA,NA,NA,Marine Intertidal - Tidepools,Marginal,1,BOTW_marine,iucn
+22683658.0,22683658.0,NA,ANIMALIA,CHORDATA,AVES,CORACIIFORMES,ALCEDINIDAE,Chloroceryle aenea,Chloroceryle aenea,NA,NA,NA,Marine Intertidal - Rocky Shoreline,Marginal,1,BOTW_marine,iucn
+22683658.0,22683658.0,NA,ANIMALIA,CHORDATA,AVES,CORACIIFORMES,ALCEDINIDAE,Chloroceryle aenea,Chloroceryle aenea,NA,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,1,BOTW_marine,iucn
+22683658.0,22683658.0,NA,ANIMALIA,CHORDATA,AVES,CORACIIFORMES,ALCEDINIDAE,Chloroceryle aenea,Chloroceryle aenea,NA,NA,NA,Marine Intertidal - Shingle and/or Pebble Shoreline and/or Beaches,Marginal,1,BOTW_marine,iucn
+22733821.0,22733821.0,NA,ANIMALIA,CHORDATA,AVES,PASSERIFORMES,HIRUNDINIDAE,Tachycineta albilinea,Tachycineta albilinea,NA,NA,NA,Marine Intertidal - Rocky Shoreline,Marginal,1,BOTW_marine,iucn
+22733821.0,22733821.0,NA,ANIMALIA,CHORDATA,AVES,PASSERIFORMES,HIRUNDINIDAE,Tachycineta albilinea,Tachycineta albilinea,NA,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,1,BOTW_marine,iucn
+22733821.0,22733821.0,NA,ANIMALIA,CHORDATA,AVES,PASSERIFORMES,HIRUNDINIDAE,Tachycineta albilinea,Tachycineta albilinea,NA,NA,NA,Marine Intertidal - Shingle and/or Pebble Shoreline and/or Beaches,Marginal,1,BOTW_marine,iucn
+22733821.0,22733821.0,NA,ANIMALIA,CHORDATA,AVES,PASSERIFORMES,HIRUNDINIDAE,Tachycineta albilinea,Tachycineta albilinea,NA,NA,NA,Marine Intertidal - Tidepools,Marginal,1,BOTW_marine,iucn
+22696734.0,22696734.0,NA,ANIMALIA,CHORDATA,AVES,SULIFORMES,PHALACROCORACIDAE,Microcarbo pygmaeus,Microcarbo pygmaeus,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,BOTW_marine,iucn
+199610.0,199610.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,LACERTIDAE,Acanthodactylus felicis,Acanthodactylus felicis,Acanthodactylus felicis,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,1,REPTILES_marine,iucn
+22702487.0,22702487.0,NA,ANIMALIA,CHORDATA,AVES,PASSERIFORMES,FURNARIIDAE,Asthenes pyrrholeuca,Asthenes pyrrholeuca,NA,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,1,BOTW_marine,iucn
+198158.0,NA,NA,ANIMALIA,ARTHROPODA,MALACOSTRACA,DECAPODA,PALAEMONIDAE,Macrobrachium veliense,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+197851.0,NA,NA,ANIMALIA,ARTHROPODA,MALACOSTRACA,DECAPODA,ATYIDAE,Dugastella valentina,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+22692418.0,22692418.0,NA,ANIMALIA,CHORDATA,AVES,GRUIFORMES,RALLIDAE,Hypotaenidia torquata,Hypotaenidia torquata,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,BOTW_marine,iucn
+22694021.0,22694021.0,NA,ANIMALIA,CHORDATA,AVES,CHARADRIIFORMES,CHARADRIIDAE,Vanellus albiceps,Vanellus albiceps,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,BOTW_marine,iucn
+16084409.0,NA,NA,ANIMALIA,ARTHROPODA,INSECTA,ORTHOPTERA,ACRIDIDAE,Sphingonotus picteti,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,NA,NA,NA
+22697641.0,22697641.0,NA,ANIMALIA,CHORDATA,AVES,CATHARTIFORMES,CATHARTIDAE,Vultur gryphus,Vultur gryphus,NA,NA,NA,Marine Intertidal - Rocky Shoreline,Marginal,1,BOTW_marine,iucn
+22697641.0,22697641.0,NA,ANIMALIA,CHORDATA,AVES,CATHARTIFORMES,CATHARTIDAE,Vultur gryphus,Vultur gryphus,NA,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,1,BOTW_marine,iucn
+22697641.0,22697641.0,NA,ANIMALIA,CHORDATA,AVES,CATHARTIFORMES,CATHARTIDAE,Vultur gryphus,Vultur gryphus,NA,NA,NA,Marine Intertidal - Shingle and/or Pebble Shoreline and/or Beaches,Marginal,1,BOTW_marine,iucn
+196403.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,PERCIFORMES,GOBIIDAE,Stiphodon rutilaureus,NA,NA,NA,NA,Marine Neritic - Estuaries,Marginal,NA,NA,NA
+198134.0,NA,NA,ANIMALIA,ARTHROPODA,MALACOSTRACA,DECAPODA,ATYIDAE,Caridina lanceifrons,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+198067.0,NA,NA,ANIMALIA,ARTHROPODA,MALACOSTRACA,DECAPODA,ATYIDAE,Caridina macrophora,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+197038.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,MUGILIFORMES,MUGILIDAE,Liza abu,NA,NA,NA,NA,Marine Intertidal - Salt Marshes (Emergent Grasses),Marginal,NA,NA,NA
+197038.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,MUGILIFORMES,MUGILIDAE,Liza abu,NA,NA,NA,NA,Marine Intertidal - Mangrove Submerged Roots,Marginal,NA,NA,NA
+197038.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,MUGILIFORMES,MUGILIDAE,Liza abu,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+197038.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,MUGILIFORMES,MUGILIDAE,Liza abu,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+22717428.0,22717428.0,NA,ANIMALIA,CHORDATA,AVES,PASSERIFORMES,ALAUDIDAE,Alauda razae,Alauda razae,NA,NA,NA,Marine Intertidal - Tidepools,Marginal,1,BOTW_marine,iucn
+196322.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,PERCIFORMES,GOBIIDAE,Akihito futuna,NA,NA,NA,NA,Marine Neritic - Estuaries,Marginal,NA,NA,NA
+22679753.0,22679753.0,NA,ANIMALIA,CHORDATA,AVES,ANSERIFORMES,ANATIDAE,Dendrocygna arcuata,Dendrocygna arcuata,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,BOTW_marine,iucn
+61634591.0,61634591.0,NA,ANIMALIA,CHORDATA,AVES,CORACIIFORMES,MOMOTIDAE,Momotus coeruliceps,Momotus coeruliceps,NA,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,1,BOTW_marine,iucn
+61634940.0,61634940.0,NA,ANIMALIA,CHORDATA,AVES,CORACIIFORMES,MOMOTIDAE,Momotus bahamensis,Momotus bahamensis,NA,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,1,BOTW_marine,iucn
+22692560.0,22692560.0,NA,ANIMALIA,CHORDATA,AVES,GRUIFORMES,RALLIDAE,Aramides mangle,Aramides mangle,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,BOTW_marine,iucn
+196323.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,PERCIFORMES,GOBIIDAE,Akihito vanuatu,NA,NA,NA,NA,Marine Neritic - Estuaries,Marginal,NA,NA,NA
+22679758.0,22679758.0,NA,ANIMALIA,CHORDATA,AVES,ANSERIFORMES,ANATIDAE,Dendrocygna javanica,Dendrocygna javanica,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,BOTW_marine,iucn
+62114375.0,62114375.0,NA,ANIMALIA,CHORDATA,AVES,PODICIPEDIFORMES,PODICIPEDIDAE,Podiceps occipitalis,Podiceps occipitalis,NA,NA,NA,Marine Neritic - Pelagic,Marginal,1,BOTW_marine,iucn
+22692640.0,22692640.0,NA,ANIMALIA,CHORDATA,AVES,GRUIFORMES,RALLIDAE,Amaurornis phoenicurus,Amaurornis phoenicurus,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,BOTW_marine,iucn
+22692643.0,22692643.0,NA,ANIMALIA,CHORDATA,AVES,GRUIFORMES,RALLIDAE,Zapornia flavirostra,Zapornia flavirostra,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,BOTW_marine,iucn
+64547977.0,NA,NA,ANIMALIA,ARTHROPODA,INSECTA,ORTHOPTERA,PAMPHAGIDAE,Asiotmethis limbatus,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,NA,NA,NA
+58350.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,DICROGLOSSIDAE,Limnonectes macrocephalus,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+58410.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,DICROGLOSSIDAE,Occidozyga laevis,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+58474.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,CERATOBATRACHIDAE,Cornufer papuensis,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+58590.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,RANIDAE,Papurana elberti,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+58705.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,RANIDAE,Pelophylax ridibundus,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Marginal,NA,NA,NA
+58705.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,RANIDAE,Pelophylax ridibundus,NA,NA,NA,NA,Marine Neritic - Estuaries,Marginal,NA,NA,NA
+58742.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,RANIDAE,Hylarana tytleri,NA,NA,NA,NA,Marine Neritic - Estuaries,Marginal,NA,NA,NA
+58767.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,PYXICEPHALIDAE,Strongylopus grayii,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+58953.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,RHACOPHORIDAE,Polypedates leucomystax,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+22692792.0,22692792.0,NA,ANIMALIA,CHORDATA,AVES,GRUIFORMES,RALLIDAE,Porphyrio porphyrio,Porphyrio porphyrio,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,BOTW_marine,iucn
+22692880.0,22692880.0,NA,ANIMALIA,CHORDATA,AVES,GRUIFORMES,RALLIDAE,Gallinula tenebrosa,Gallinula tenebrosa,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,BOTW_marine,iucn
+22692880.0,22692880.0,NA,ANIMALIA,CHORDATA,AVES,GRUIFORMES,RALLIDAE,Gallinula tenebrosa,Gallinula tenebrosa,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,4,BOTW_marine,iucn
+22692880.0,22692880.0,NA,ANIMALIA,CHORDATA,AVES,GRUIFORMES,RALLIDAE,Gallinula tenebrosa,Gallinula tenebrosa,NA,NA,NA,Marine Neritic - Estuaries,Marginal,1,BOTW_marine,iucn
+22692880.0,22692880.0,NA,ANIMALIA,CHORDATA,AVES,GRUIFORMES,RALLIDAE,Gallinula tenebrosa,Gallinula tenebrosa,NA,NA,NA,Marine Neritic - Estuaries,Marginal,4,BOTW_marine,iucn
+22692883.0,22692883.0,NA,ANIMALIA,CHORDATA,AVES,GRUIFORMES,RALLIDAE,Gallinula angulata,Gallinula angulata,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,BOTW_marine,iucn
+22692883.0,22692883.0,NA,ANIMALIA,CHORDATA,AVES,GRUIFORMES,RALLIDAE,Gallinula angulata,Gallinula angulata,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,3,BOTW_marine,iucn
+103709500.0,103709500.0,NA,ANIMALIA,CHORDATA,AVES,PASSERIFORMES,RHIPIDURIDAE,Rhipidura javanica,Rhipidura javanica,NA,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,1,BOTW_marine,iucn
+103709500.0,103709500.0,NA,ANIMALIA,CHORDATA,AVES,PASSERIFORMES,RHIPIDURIDAE,Rhipidura javanica,Rhipidura javanica,NA,NA,NA,Marine Intertidal - Shingle and/or Pebble Shoreline and/or Beaches,Marginal,1,BOTW_marine,iucn
+103709532.0,103709532.0,NA,ANIMALIA,CHORDATA,AVES,PASSERIFORMES,RHIPIDURIDAE,Rhipidura nigritorquis,Rhipidura nigritorquis,NA,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,1,BOTW_marine,iucn
+103709532.0,103709532.0,NA,ANIMALIA,CHORDATA,AVES,PASSERIFORMES,RHIPIDURIDAE,Rhipidura nigritorquis,Rhipidura nigritorquis,NA,NA,NA,Marine Intertidal - Shingle and/or Pebble Shoreline and/or Beaches,Marginal,1,BOTW_marine,iucn
+61335.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,PERCIFORMES,LABRIDAE,Choerodon azurio,NA,NA,NA,NA,Marine Oceanic - Epipelagic (0-200m),Marginal,NA,NA,NA
+61335.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,PERCIFORMES,LABRIDAE,Choerodon azurio,NA,NA,NA,NA,Marine Neritic - Pelagic,Marginal,NA,NA,NA
+61592.0,61592.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,VIPERIDAE,Vipera latastei,Vipera latastei,Vipera latastei,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,1,REPTILES_marine,iucn
+103799817.0,103799817.0,NA,ANIMALIA,CHORDATA,AVES,PASSERIFORMES,NECTARINIIDAE,Cinnyris pulchellus,Cinnyris pulchellus,NA,NA,NA,Marine Intertidal - Rocky Shoreline,Marginal,1,BOTW_marine,iucn
+103800445.0,103800445.0,NA,ANIMALIA,CHORDATA,AVES,PASSERIFORMES,NECTARINIIDAE,Cinnyris melanogastrus,Cinnyris melanogastrus,NA,NA,NA,Marine Intertidal - Rocky Shoreline,Marginal,1,BOTW_marine,iucn
+62237.0,62237.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,NATRICIDAE,Nerodia fasciata,Nerodia fasciata,Nerodia fasciata,NA,NA,Marine Intertidal - Salt Marshes (Emergent Grasses),Marginal,1,REPTILES_marine,iucn
+62237.0,62237.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,NATRICIDAE,Nerodia fasciata,Nerodia fasciata,Nerodia fasciata,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,REPTILES_marine,iucn
+62239.0,62239.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,NATRICIDAE,Nerodia sipedon,Nerodia sipedon,Nerodia sipedon,NA,NA,Marine Intertidal - Salt Marshes (Emergent Grasses),Marginal,1,REPTILES_marine,iucn
+62239.0,62239.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,NATRICIDAE,Nerodia sipedon,Nerodia sipedon,Nerodia sipedon,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,1,REPTILES_marine,iucn
+62239.0,62239.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,NATRICIDAE,Nerodia sipedon,Nerodia sipedon,Nerodia sipedon,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,REPTILES_marine,iucn
+63779.0,63779.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,DIPSADIDAE,Farancia abacura,Farancia abacura,Farancia abacura,NA,NA,Marine Intertidal - Salt Marshes (Emergent Grasses),Marginal,1,REPTILES_marine,iucn
+63780.0,63780.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,DIPSADIDAE,Farancia erytrogramma,Farancia erytrogramma,Farancia erytrogramma,NA,NA,Marine Intertidal - Salt Marshes (Emergent Grasses),Marginal,1,REPTILES_marine,iucn
+63853.0,63853.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,NATRICIDAE,Nerodia cyclopion,Nerodia cyclopion,Nerodia cyclopion,NA,NA,Marine Intertidal - Salt Marshes (Emergent Grasses),Marginal,1,REPTILES_marine,iucn
+63855.0,63855.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,NATRICIDAE,Nerodia floridana,Nerodia floridana,Nerodia floridana,NA,NA,Marine Intertidal - Salt Marshes (Emergent Grasses),Marginal,1,REPTILES_marine,iucn
+63855.0,63855.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,NATRICIDAE,Nerodia floridana,Nerodia floridana,Nerodia floridana,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,REPTILES_marine,iucn
+63857.0,63857.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,NATRICIDAE,Nerodia taxispilota,Nerodia taxispilota,Nerodia taxispilota,NA,NA,Marine Intertidal - Salt Marshes (Emergent Grasses),Marginal,1,REPTILES_marine,iucn
+63857.0,63857.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,NATRICIDAE,Nerodia taxispilota,Nerodia taxispilota,Nerodia taxispilota,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,1,REPTILES_marine,iucn
+63857.0,63857.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,NATRICIDAE,Nerodia taxispilota,Nerodia taxispilota,Nerodia taxispilota,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,REPTILES_marine,iucn
+64255.0,64255.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,TEIIDAE,Aspidoscelis catalinensis,Aspidoscelis catalinensis,Aspidoscelis catalinensis,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,1,REPTILES_marine,iucn
+4621.0,NA,NA,ANIMALIA,ARTHROPODA,MALACOSTRACA,DECAPODA,PARASTACIDAE,Cherax quadricarinatus,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+8245.0,8245.0,NA,ANIMALIA,CHORDATA,MAMMALIA,CHIROPTERA,MOLOSSIDAE,Eumops hansae,Eumops hansae,Eumops hansae,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,TERRESTRIAL_MAMMALS_marine,iucn
+8812.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,OSMERIFORMES,GALAXIIDAE,Galaxias gracilis,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+9014.0,9014.0,NA,ANIMALIA,CHORDATA,REPTILIA,TESTUDINES,TESTUDINIDAE,Astrochelys radiata,Astrochelys radiata,Astrochelys radiata,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,1,REPTILES_marine,iucn
+10103.0,10103.0,NA,ANIMALIA,CHORDATA,MAMMALIA,CETARTIODACTYLA,HIPPOPOTAMIDAE,Hippopotamus amphibius,Hippopotamus amphibius,Hippopotamus amphibius,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,1,TERRESTRIAL_MAMMALS_marine,iucn
+10103.0,10103.0,NA,ANIMALIA,CHORDATA,MAMMALIA,CETARTIODACTYLA,HIPPOPOTAMIDAE,Hippopotamus amphibius,Hippopotamus amphibius,Hippopotamus amphibius,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,TERRESTRIAL_MAMMALS_marine,iucn
+10103.0,10103.0,NA,ANIMALIA,CHORDATA,MAMMALIA,CETARTIODACTYLA,HIPPOPOTAMIDAE,Hippopotamus amphibius,Hippopotamus amphibius,Hippopotamus amphibius,NA,NA,Marine Neritic - Estuaries,Marginal,1,TERRESTRIAL_MAMMALS_marine,iucn
+135664.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,CYPRINIFORMES,CYPRINIDAE,Barbus kubanicus,NA,NA,NA,NA,Marine Neritic - Estuaries,Marginal,NA,NA,NA
+11369.0,11369.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,ELAPIDAE,Laticauda crockeri,Laticauda crockeri,Laticauda crockeri,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,REPTILES_marine,iucn
+11369.0,11369.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,ELAPIDAE,Laticauda crockeri,Laticauda crockeri,Laticauda crockeri,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,SEASNAKES,iucn
+12146.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,HYLIDAE,Litoria dentata,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+12155.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,HYLIDAE,Litoria verreauxii,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+136472.0,136472.0,NA,ANIMALIA,CHORDATA,MAMMALIA,CETARTIODACTYLA,SUIDAE,Babyrousa togeanensis,Babyrousa togeanensis,Babyrousa togeanensis,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,1,TERRESTRIAL_MAMMALS_marine,iucn
+13427.0,13427.0,NA,ANIMALIA,CHORDATA,MAMMALIA,RODENTIA,CRICETIDAE,Microtus californicus,Microtus californicus,Microtus californicus,NA,NA,Marine Intertidal - Salt Marshes (Emergent Grasses),Marginal,1,TERRESTRIAL_MAMMALS_marine,iucn
+41032.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,HYLIDAE,Litoria cooloolensis,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+41065.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,BUFONIDAE,Rhinella marina,NA,NA,NA,NA,Marine Intertidal - Salt Marshes (Emergent Grasses),Marginal,NA,NA,NA
+41065.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,BUFONIDAE,Rhinella marina,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+41065.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,BUFONIDAE,Rhinella marina,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+41079.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,HYLIDAE,Litoria adelaidensis,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+41105.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,HYLIDAE,Litoria peronii,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+41111.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,HYLIDAE,Litoria splendida,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+41109.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,HYLIDAE,Litoria rothii,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+41110.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,HYLIDAE,Litoria rubella,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+41134.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,MYOBATRACHIDAE,Crinia georgiana,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+41139.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,MYOBATRACHIDAE,Crinia remota,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+41163.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,LIMNODYNASTIDAE,Limnodynastes peronii,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+41202.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,RANIDAE,Papurana daemeli,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+41231.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,DICROGLOSSIDAE,Limnonectes leytensis,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+41234.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,DICROGLOSSIDAE,Limnonectes woodworthi,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+16559.0,16559.0,NA,ANIMALIA,CHORDATA,MAMMALIA,LAGOMORPHA,LEPORIDAE,Pentalagus furnessi,Pentalagus furnessi,Pentalagus furnessi,NA,NA,Marine Intertidal - Rocky Shoreline,Marginal,1,TERRESTRIAL_MAMMALS_marine,iucn
+41637.0,41637.0,NA,ANIMALIA,CHORDATA,MAMMALIA,CARNIVORA,MEPHITIDAE,Spilogale pygmaea,Spilogale pygmaea,Spilogale pygmaea,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,1,TERRESTRIAL_MAMMALS_marine,iucn
+41756.0,NA,NA,ANIMALIA,CHORDATA,MAMMALIA,CETARTIODACTYLA,PLATANISTIDAE,Platanista gangetica ssp. gangetica,NA,NA,NA,NA,Marine Neritic - Estuaries,Marginal,NA,NA,NA
+41772.0,41772.0,NA,ANIMALIA,CHORDATA,MAMMALIA,CETARTIODACTYLA,SUIDAE,Sus barbatus,Sus barbatus,Sus barbatus,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,1,TERRESTRIAL_MAMMALS_marine,iucn
+41772.0,41772.0,NA,ANIMALIA,CHORDATA,MAMMALIA,CETARTIODACTYLA,SUIDAE,Sus barbatus,Sus barbatus,Sus barbatus,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,2,TERRESTRIAL_MAMMALS_marine,iucn
+41772.0,41772.0,NA,ANIMALIA,CHORDATA,MAMMALIA,CETARTIODACTYLA,SUIDAE,Sus barbatus,Sus barbatus,Sus barbatus,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,4,TERRESTRIAL_MAMMALS_marine,iucn
+41772.0,41772.0,NA,ANIMALIA,CHORDATA,MAMMALIA,CETARTIODACTYLA,SUIDAE,Sus barbatus,Sus barbatus,Sus barbatus,NA,NA,Marine Neritic - Pelagic,Marginal,1,TERRESTRIAL_MAMMALS_marine,iucn
+41772.0,41772.0,NA,ANIMALIA,CHORDATA,MAMMALIA,CETARTIODACTYLA,SUIDAE,Sus barbatus,Sus barbatus,Sus barbatus,NA,NA,Marine Neritic - Pelagic,Marginal,2,TERRESTRIAL_MAMMALS_marine,iucn
+41772.0,41772.0,NA,ANIMALIA,CHORDATA,MAMMALIA,CETARTIODACTYLA,SUIDAE,Sus barbatus,Sus barbatus,Sus barbatus,NA,NA,Marine Neritic - Pelagic,Marginal,4,TERRESTRIAL_MAMMALS_marine,iucn
+42393.0,42393.0,NA,ANIMALIA,CHORDATA,MAMMALIA,CETARTIODACTYLA,CERVIDAE,Odocoileus hemionus,Odocoileus hemionus,Odocoileus hemionus,NA,NA,Marine Intertidal - Salt Marshes (Emergent Grasses),Marginal,1,TERRESTRIAL_MAMMALS_marine,iucn
+42394.0,42394.0,NA,ANIMALIA,CHORDATA,MAMMALIA,CETARTIODACTYLA,CERVIDAE,Odocoileus virginianus,Odocoileus virginianus,Odocoileus virginianus,NA,NA,Marine Intertidal - Salt Marshes (Emergent Grasses),Marginal,1,TERRESTRIAL_MAMMALS_marine,iucn
+42394.0,42394.0,NA,ANIMALIA,CHORDATA,MAMMALIA,CETARTIODACTYLA,CERVIDAE,Odocoileus virginianus,Odocoileus virginianus,Odocoileus virginianus,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Marginal,1,TERRESTRIAL_MAMMALS_marine,iucn
+42394.0,42394.0,NA,ANIMALIA,CHORDATA,MAMMALIA,CETARTIODACTYLA,CERVIDAE,Odocoileus virginianus,Odocoileus virginianus,Odocoileus virginianus,NA,NA,Marine Neritic - Estuaries,Marginal,1,TERRESTRIAL_MAMMALS_marine,iucn
+153656.0,NA,NA,ANIMALIA,ARTHROPODA,MALACOSTRACA,DECAPODA,PARASTACIDAE,Geocharax tasmanicus,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+153677.0,NA,NA,ANIMALIA,ARTHROPODA,MALACOSTRACA,DECAPODA,PARASTACIDAE,Engaeus cunicularius,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+18460.0,NA,NA,ANIMALIA,CHORDATA,REPTILIA,TESTUDINES,EMYDIDAE,Pseudemys rubriventris,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Marginal,NA,NA,NA
+18460.0,NA,NA,ANIMALIA,CHORDATA,REPTILIA,TESTUDINES,EMYDIDAE,Pseudemys rubriventris,NA,NA,NA,NA,Marine Neritic - Estuaries,Marginal,NA,NA,NA
+154617.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,SYNGNATHIFORMES,SYNGNATHIDAE,Bryx veleronis,NA,NA,NA,NA,Marine Neritic - Pelagic,Marginal,NA,NA,NA
+155095.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,TETRAODONTIFORMES,MONACANTHIDAE,Cantheschenia longipinnis,NA,NA,NA,NA,Marine Neritic - Subtidal Rock and Rocky Reefs,Marginal,NA,NA,NA
+155208.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,SCORPAENIFORMES,SCORPAENIDAE,Scorpaenodes quadrispinosus,NA,NA,NA,NA,Outer Reef Channel,Marginal,NA,NA,NA
+155208.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,SCORPAENIFORMES,SCORPAENIDAE,Scorpaenodes quadrispinosus,NA,NA,NA,NA,Foreslope (Outer Reef Slope),Marginal,NA,NA,NA
+20223.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,PERCIFORMES,GOBIIDAE,Silhouettea sibayi,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+156302.0,NA,NA,ANIMALIA,MOLLUSCA,GASTROPODA,STYLOMMATOPHORA,HYGROMIIDAE,Candidula intersecta,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,NA,NA,NA
+156653.0,NA,NA,ANIMALIA,MOLLUSCA,GASTROPODA,STYLOMMATOPHORA,HYGROMIIDAE,Monacha cantiana,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,NA,NA,NA
+22829.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,CYPRINODONTIFORMES,VALENCIIDAE,Valencia hispanica,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+22830.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,CYPRINODONTIFORMES,VALENCIIDAE,Valencia letourneuxi,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+23053.0,23053.0,NA,ANIMALIA,CHORDATA,MAMMALIA,CARNIVORA,CANIDAE,Vulpes rueppellii,Vulpes rueppellii,Vulpes rueppellii,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,1,TERRESTRIAL_MAMMALS_marine,iucn
+156873.0,NA,NA,ANIMALIA,MOLLUSCA,GASTROPODA,STYLOMMATOPHORA,HELICIDAE,Helix nucula,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,NA,NA,NA
+29661.0,NA,NA,ANIMALIA,CHORDATA,MAMMALIA,EULIPOTYPHLA,SORICIDAE,Sorex araneus,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,NA,NA,NA
+22695368.0,22695368.0,NA,ANIMALIA,CHORDATA,AVES,ACCIPITRIFORMES,ACCIPITRIDAE,Circus macrosceles,Circus macrosceles,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,BOTW_marine,iucn
+22695368.0,22695368.0,NA,ANIMALIA,CHORDATA,AVES,ACCIPITRIFORMES,ACCIPITRIDAE,Circus macrosceles,Circus macrosceles,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,3,BOTW_marine,iucn
+22695368.0,22695368.0,NA,ANIMALIA,CHORDATA,AVES,ACCIPITRIFORMES,ACCIPITRIDAE,Circus macrosceles,Circus macrosceles,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,4,BOTW_marine,iucn
+44685.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,PERCIFORMES,LABRIDAE,Semicossyphus reticulatus,NA,NA,NA,NA,Marine Neritic - Pelagic,Marginal,NA,NA,NA
+22700321.0,22700321.0,NA,ANIMALIA,CHORDATA,AVES,PASSERIFORMES,TYRANNIDAE,Machetornis rixosa,Machetornis rixosa,NA,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,1,BOTW_marine,iucn
+22695613.0,22695613.0,NA,ANIMALIA,CHORDATA,AVES,ACCIPITRIFORMES,ACCIPITRIDAE,Accipiter madagascariensis,Accipiter madagascariensis,NA,NA,NA,Marine Intertidal - Rocky Shoreline,Marginal,1,BOTW_marine,iucn
+22695613.0,22695613.0,NA,ANIMALIA,CHORDATA,AVES,ACCIPITRIFORMES,ACCIPITRIDAE,Accipiter madagascariensis,Accipiter madagascariensis,NA,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,1,BOTW_marine,iucn
+22692039.0,22692039.0,NA,ANIMALIA,CHORDATA,AVES,GRUIFORMES,GRUIDAE,Balearica pavonina,Balearica pavonina,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,BOTW_marine,iucn
+22693536.0,22693536.0,NA,ANIMALIA,CHORDATA,AVES,CHARADRIIFORMES,JACANIDAE,Microparra capensis,Microparra capensis,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,BOTW_marine,iucn
+22693589.0,22693589.0,NA,ANIMALIA,CHORDATA,AVES,CHARADRIIFORMES,BURHINIDAE,Burhinus capensis,Burhinus capensis,NA,NA,NA,Marine Intertidal - Rocky Shoreline,Marginal,1,BOTW_marine,iucn
+22693589.0,22693589.0,NA,ANIMALIA,CHORDATA,AVES,CHARADRIIFORMES,BURHINIDAE,Burhinus capensis,Burhinus capensis,NA,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,1,BOTW_marine,iucn
+22693589.0,22693589.0,NA,ANIMALIA,CHORDATA,AVES,CHARADRIIFORMES,BURHINIDAE,Burhinus capensis,Burhinus capensis,NA,NA,NA,Marine Intertidal - Shingle and/or Pebble Shoreline and/or Beaches,Marginal,1,BOTW_marine,iucn
+22712305.0,22712305.0,NA,ANIMALIA,CHORDATA,AVES,PASSERIFORMES,HIRUNDINIDAE,Hirundo nigrita,Hirundo nigrita,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,1,BOTW_marine,iucn
+163429.0,NA,NA,ANIMALIA,CHORDATA,REPTILIA,TESTUDINES,KINOSTERNIDAE,Kinosternon baurii,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,NA,NA,NA,NA
+163435.0,NA,NA,ANIMALIA,CHORDATA,REPTILIA,TESTUDINES,KINOSTERNIDAE,Kinosternon subrubrum,NA,NA,NA,NA,Marine Intertidal - Salt Marshes (Emergent Grasses),Marginal,NA,NA,NA
+163444.0,NA,NA,ANIMALIA,CHORDATA,REPTILIA,TESTUDINES,EMYDIDAE,Pseudemys concinna,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+163444.0,NA,NA,ANIMALIA,CHORDATA,REPTILIA,TESTUDINES,EMYDIDAE,Pseudemys concinna,NA,NA,NA,NA,Marine Neritic - Estuaries,Marginal,NA,NA,NA
+54576.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,BUFONIDAE,Rhinella arenarum,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+165475.0,NA,NA,ANIMALIA,ARTHROPODA,INSECTA,ODONATA,LESTIDAE,Lestes sponsa,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+165478.0,NA,NA,ANIMALIA,ARTHROPODA,INSECTA,ODONATA,COENAGRIONIDAE,Erythromma viridulum,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+165478.0,NA,NA,ANIMALIA,ARTHROPODA,INSECTA,ODONATA,COENAGRIONIDAE,Erythromma viridulum,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+165484.0,NA,NA,ANIMALIA,ARTHROPODA,INSECTA,ODONATA,COENAGRIONIDAE,Coenagrion pulchellum,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+165514.0,NA,NA,ANIMALIA,ARTHROPODA,INSECTA,ODONATA,AESHNIDAE,Brachytron pratense,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+165531.0,NA,NA,ANIMALIA,ARTHROPODA,INSECTA,ODONATA,LIBELLULIDAE,Libellula depressa,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+165597.0,NA,NA,ANIMALIA,CHORDATA,REPTILIA,TESTUDINES,TRIONYCHIDAE,Apalone ferox,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+165597.0,NA,NA,ANIMALIA,CHORDATA,REPTILIA,TESTUDINES,TRIONYCHIDAE,Apalone ferox,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+166439.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,BELONIFORMES,HEMIRAMPHIDAE,Dermogenys brachynotopterus,NA,NA,NA,NA,Marine Neritic - Estuaries,Marginal,NA,NA,NA
+166794.0,NA,NA,ANIMALIA,MOLLUSCA,BIVALVIA,VENEROIDA,SOLECURTIDAE,Novaculina gangetica,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+167427.0,NA,NA,ANIMALIA,ARTHROPODA,INSECTA,ODONATA,LIBELLULIDAE,Camacinia gigantea,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Unknown,NA,NA,NA
+54637.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,BUFONIDAE,Rhinella fernandezae,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+54647.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,BUFONIDAE,Bufo gargarizans,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+168500.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,SILURIFORMES,BAGRIDAE,Rita sacerdotum,NA,NA,NA,NA,Marine Neritic - Estuaries,Marginal,NA,NA,NA
+54734.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,BUFONIDAE,Ingerophrynus philippinicus,NA,NA,NA,NA,Marine Intertidal - Salt Marshes (Emergent Grasses),Marginal,NA,NA,NA
+170496.0,NA,NA,ANIMALIA,CHORDATA,REPTILIA,TESTUDINES,EMYDIDAE,Pseudemys peninsularis,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+170496.0,NA,NA,ANIMALIA,CHORDATA,REPTILIA,TESTUDINES,EMYDIDAE,Pseudemys peninsularis,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Unknown,NA,NA,NA
+176764.0,176764.0,NA,ANIMALIA,CHORDATA,REPTILIA,SQUAMATA,ACROCHORDIDAE,Acrochordus arafurae,Acrochordus arafurae,Acrochordus arafurae,NA,NA,Marine Neritic - Estuaries,Marginal,1,REPTILES_marine,iucn
+55811.0,NA,NA,ANIMALIA,CHORDATA,AMPHIBIA,ANURA,HYLIDAE,Osteopilus septentrionalis,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+180690.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,CLUPEIFORMES,ENGRAULIDAE,Lycothrissa crocodilus,NA,NA,NA,NA,Marine Neritic - Estuaries,Marginal,NA,NA,NA
+180765.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,SILURIFORMES,PANGASIIDAE,Pangasius elongatus,NA,NA,NA,NA,Marine Neritic - Estuaries,Marginal,NA,NA,NA
+181194.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,BELONIFORMES,ADRIANICHTHYIDAE,Oryzias curvinotus,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+181337.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,PERCIFORMES,GOBIIDAE,Brachygobius kabiliensis,NA,NA,NA,NA,Marine Intertidal - Mangrove Submerged Roots,Marginal,NA,NA,NA
+181930.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,SILURIFORMES,CLARIIDAE,Clarias ebriensis,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+182389.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,PERCIFORMES,CICHLIDAE,Pelvicachromis subocellatus,NA,NA,NA,NA,Marine Neritic - Estuaries,Marginal,NA,NA,NA
+182511.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,CHARACIFORMES,ALESTIDAE,Lepidarchus adonis,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+182763.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,OSTEOGLOSSIFORMES,MORMYRIDAE,Petrocephalus pellegrini,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+182763.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,OSTEOGLOSSIFORMES,MORMYRIDAE,Petrocephalus pellegrini,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+182807.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,CYPRINODONTIFORMES,POECILIIDAE,Micropanchax scheeli,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Marginal,NA,NA,NA
+183533.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,BATRACHOIDIFORMES,BATRACHOIDIDAE,Batrachoides boulengeri,NA,NA,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,NA,NA,NA
+183533.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,BATRACHOIDIFORMES,BATRACHOIDIDAE,Batrachoides boulengeri,NA,NA,NA,NA,Marine Neritic - Subtidal Rock and Rocky Reefs,Marginal,NA,NA,NA
+183533.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,BATRACHOIDIFORMES,BATRACHOIDIDAE,Batrachoides boulengeri,NA,NA,NA,NA,Marine Neritic - Subtidal Loose Rock/pebble/gravel,Marginal,NA,NA,NA
+183533.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,BATRACHOIDIFORMES,BATRACHOIDIDAE,Batrachoides boulengeri,NA,NA,NA,NA,Marine Neritic - Subtidal Sandy,Marginal,NA,NA,NA
+183533.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,BATRACHOIDIFORMES,BATRACHOIDIDAE,Batrachoides boulengeri,NA,NA,NA,NA,Marine Neritic - Subtidal Sandy-Mud,Marginal,NA,NA,NA
+183533.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,BATRACHOIDIFORMES,BATRACHOIDIDAE,Batrachoides boulengeri,NA,NA,NA,NA,Marine Neritic - Subtidal Muddy,Marginal,NA,NA,NA
+189483.0,NA,NA,ANIMALIA,MOLLUSCA,BIVALVIA,UNIONOIDA,UNIONIDAE,Toxolasma pullus,NA,NA,NA,NA,Artificial/Marine - Marine Anthropogenic Structures,Marginal,NA,NA,NA
+193261.0,NA,NA,ANIMALIA,CHORDATA,ACTINOPTERYGII,PERCIFORMES,SCIAENIDAE,Aplodinotus grunniens,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+151895.0,NA,NA,PLANTAE,TRACHEOPHYTA,MAGNOLIOPSIDA,CARYOPHYLLALES,CACTACEAE,Cylindropuntia caribaea,NA,NA,NA,NA,Marine Coastal/Supratidal - Sea Cliffs and Rocky Offshore Islands,Marginal,NA,NA,NA
+152637.0,NA,NA,PLANTAE,TRACHEOPHYTA,MAGNOLIOPSIDA,CARYOPHYLLALES,CACTACEAE,Hatiora cylindrica,NA,NA,NA,NA,Marine Coastal/Supratidal - Sea Cliffs and Rocky Offshore Islands,Marginal,NA,NA,NA
+152637.0,NA,NA,PLANTAE,TRACHEOPHYTA,MAGNOLIOPSIDA,CARYOPHYLLALES,CACTACEAE,Hatiora cylindrica,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,NA,NA,NA
+164020.0,NA,NA,PLANTAE,TRACHEOPHYTA,LILIOPSIDA,CYPERALES,GRAMINEAE,Agrostis stolonifera,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+164186.0,NA,NA,PLANTAE,TRACHEOPHYTA,LILIOPSIDA,JUNCALES,JUNCACEAE,Juncus sorrentinii,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+164274.0,NA,NA,PLANTAE,TRACHEOPHYTA,LILIOPSIDA,CYPERALES,CYPERACEAE,Fimbristylis sieberiana,NA,NA,NA,NA,"Marine Intertidal - Sandy Shoreline and/or Beaches, Sand Bars, Spits, Etc",Marginal,NA,NA,NA
+164459.0,NA,NA,PLANTAE,TRACHEOPHYTA,MAGNOLIOPSIDA,NYMPHAEALES,CERATOPHYLLACEAE,Ceratophyllum demersum,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+203468.0,NA,NA,PLANTAE,TRACHEOPHYTA,MAGNOLIOPSIDA,SALICALES,SALICACEAE,Salix daphnoides,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,NA,NA,NA
+176906.0,NA,NA,PLANTAE,TRACHEOPHYTA,LILIOPSIDA,CYPERALES,CYPERACEAE,Queenslandiella hyalina,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Marginal,NA,NA,NA
+177174.0,NA,NA,PLANTAE,TRACHEOPHYTA,LILIOPSIDA,CYPERALES,GRAMINEAE,Ischaemum travancorense,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+177278.0,NA,NA,PLANTAE,TRACHEOPHYTA,LILIOPSIDA,CYPERALES,CYPERACEAE,Eleocharis wadoodii,NA,NA,NA,NA,Artificial/Marine - Mari/Brackishculture Ponds,Marginal,NA,NA,NA
+177286.0,NA,NA,PLANTAE,TRACHEOPHYTA,LILIOPSIDA,CYPERALES,CYPERACEAE,Cyperus stoloniferus,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,NA,NA,NA
+177286.0,NA,NA,PLANTAE,TRACHEOPHYTA,LILIOPSIDA,CYPERALES,CYPERACEAE,Cyperus stoloniferus,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+177286.0,NA,NA,PLANTAE,TRACHEOPHYTA,LILIOPSIDA,CYPERALES,CYPERACEAE,Cyperus stoloniferus,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+177304.0,NA,NA,PLANTAE,TRACHEOPHYTA,MAGNOLIOPSIDA,MYRTALES,LYTHRACEAE,Nesaea prostrata,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Suitable,NA,NA,NA
+185206.0,NA,NA,PLANTAE,TRACHEOPHYTA,LILIOPSIDA,ARECALES,PALMAE,Raphia palma-pinus,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Marginal,NA,NA,NA
+185457.0,NA,NA,PLANTAE,TRACHEOPHYTA,LILIOPSIDA,ARECALES,PALMAE,Raphia sudanica,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Freshwater Lakes,Marginal,NA,NA,NA
+19891498.0,NA,NA,PLANTAE,TRACHEOPHYTA,MAGNOLIOPSIDA,FABALES,LEGUMINOSAE,Swartzia simplex,NA,NA,NA,NA,Marine Intertidal - Mangrove Submerged Roots,Marginal,NA,NA,NA
+21564953.0,NA,NA,PLANTAE,TRACHEOPHYTA,MAGNOLIOPSIDA,FABALES,LEGUMINOSAE,Eligmocarpus cynometroides,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,NA,NA,NA
+44393289.0,NA,NA,PLANTAE,TRACHEOPHYTA,LILIOPSIDA,CYPERALES,GRAMINEAE,Eragrostis pubescens,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,NA,NA,NA
+44393289.0,NA,NA,PLANTAE,TRACHEOPHYTA,LILIOPSIDA,CYPERALES,GRAMINEAE,Eragrostis pubescens,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Brackish/Saline Lagoons/Marine Lakes,Marginal,NA,NA,NA
+44393582.0,NA,NA,PLANTAE,TRACHEOPHYTA,LILIOPSIDA,CYPERALES,GRAMINEAE,Puccinellia raroflorens,NA,NA,NA,NA,Marine Intertidal - Mud Flats and Salt Flats,Marginal,NA,NA,NA
+44393582.0,NA,NA,PLANTAE,TRACHEOPHYTA,LILIOPSIDA,CYPERALES,GRAMINEAE,Puccinellia raroflorens,NA,NA,NA,NA,Marine Intertidal - Salt Marshes (Emergent Grasses),Marginal,NA,NA,NA
+42137.0,NA,NA,PLANTAE,TRACHEOPHYTA,CYCADOPSIDA,CYCADALES,ZAMIACEAE,Zamia purpurea,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,NA,NA,NA
+42178.0,NA,NA,PLANTAE,TRACHEOPHYTA,CYCADOPSIDA,CYCADALES,ZAMIACEAE,Zamia roezlii,NA,NA,NA,NA,Marine Intertidal - Mud Flats and Salt Flats,Marginal,NA,NA,NA
+43894.0,NA,NA,PLANTAE,TRACHEOPHYTA,MAGNOLIOPSIDA,FABALES,LEGUMINOSAE,Acacia anegadensis,NA,NA,NA,NA,Marine Coastal/Supratidal - Coastal Sand Dunes,Marginal,NA,NA,NA
+43906.0,NA,NA,PLANTAE,TRACHEOPHYTA,MAGNOLIOPSIDA,ASTERALES,COMPOSITAE,Cotula moseleyi,NA,NA,NA,NA,Marine Coastal/Supratidal - Sea Cliffs and Rocky Offshore Islands,Marginal,NA,NA,NA
+43921.0,NA,NA,PLANTAE,TRACHEOPHYTA,MAGNOLIOPSIDA,EUPHORBIALES,EUPHORBIACEAE,Euphorbia origanoides,NA,NA,NA,NA,Marine Coastal/Supratidal - Sea Cliffs and Rocky Offshore Islands,Marginal,NA,NA,NA

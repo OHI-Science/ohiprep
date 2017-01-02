@@ -18,12 +18,13 @@ output:
 knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
                       echo = FALSE, message = FALSE, warning = FALSE)
 
-library(readr)
+library(rgdal)
+library(raster)
 
 source('~/github/ohiprep/src/R/common.R')
 
 goal     <- 'globalprep/spp_ico'
-scenario <- 'v2016'
+scenario <- 'v2017'
 dir_goal_anx   <- file.path(dir_M, 'git-annex', goal, scenario) 
 dir_data_am    <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'aquamaps', 'd2015') 
 dir_data_iucn  <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'iucn_spp', 'd2015') 
@@ -31,8 +32,7 @@ dir_data_bird  <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'birdlife_i
 dir_goal  <- file.path('~/github/ohiprep', goal, scenario)
 
 ### set up provenance tracking for this script:
-# source(file.path('~/github/ohibc', 'src/R/prov.R'))          
-
+library(provRmd); prov_setup()
 
 source(file.path(dir_goal, 'spp_fxn.R'))
 if(!file.exists(file.path(dir_goal, '../README.md'))) {
@@ -41,10 +41,8 @@ if(!file.exists(file.path(dir_goal, '../README.md'))) {
 if(!file.exists(file.path(dir_goal, 'README.md'))) {
   warning(sprintf('No README detected in %s', file.path(dir_git, scenario)))
 }
-# SPP-specific and ICO-specific functions
-```
 
-<!--[REFERENCE RMD FILE: https://rawgit.com/OHI-Science/ohiprep/master/globalprep/Pressures_OceanAcidification/v2015/oa_create_layer_2015.html]-->
+```
 
 # Summary
 
@@ -80,7 +78,7 @@ where:
 
 # Updates from previous assessment
 
-Changes since 2015 SPP subgoal for global OHI:
+Changes since 2016 SPP subgoal for global OHI:
 
 * The 2016 assessment now includes bird species, based upon BirdLife International data.  "Marine" bird species include any bird species whose habitat, as listed by IUCN, includes "marine".  Prior assessments did not include this data.
 * Previous assessments counted overlapping species as any species with a binomial included in both data sets (AquaMaps and IUCN).  Synonyms were matched and typos were fixed manually where possible.  This assessment takes advantage of the `taxize` package to identify and match synonyms for better confidence in matching species.
@@ -171,13 +169,135 @@ Processed files, saved to `git-annex/globalprep/spp_ico/v201x/int`:
 
 The `spp_ico/R/ingest_iucn.R` script performs these functions.  This can be a time consuming process, so typically this code chunk is run once and then set to `eval = FALSE` once the outputs have been generated.
 
-``` {r Ingest IUCN species list, eval = FALSE, echo = TRUE}
 
-reload <- FALSE
+``` {r setup functions}
 
-source(file.path(dir_git, 'R/ingest_iucn.R'))
+library(parallel)
+
+get_from_api <- function(url, param, api_key, delay) {
+    Sys.sleep(delay)
+    api_info <- fromJSON(sprintf(url, param, api_key)) %>%
+      data.frame(stringsAsFactors = FALSE)
+    return(api_info)
+}
+
+mc_get_from_api <- function(url, param_vec, api_key, delay = 1.0) {
+  numcores <- ifelse(Sys.info()[['nodename']] == 'mazu', 12, 1)
+  out_df <- parallel::mclapply(param_vec, 
+                          function(x) get_from_api(url, x, api_key, delay),
+                          mc.cores = numcores) %>% 
+    bind_rows() 
+  out_df <- out_df %>%
+    setNames(names(.) %>%
+               str_replace('result.', ''))
+  return(out_df)
+}
 
 ```
+
+Using the IUCN API, we accessed the full IUCN species list at http://apiv3.iucnredlist.org/api/v3/speciescount?token=<token>.  With some minor formatting, this list contains the following variables:
+
+iucn_sid | kingdom | phylum | class | order | family | genus | sciname | population | category
+
+
+``` {r get_spp_info_from_api}
+### Get all pages and bind into total species list.  This is pretty fast.
+
+library(jsonlite)
+
+api_key <- 'fb71ae836f415f04f41176f6d30c4a9e4cea620d46b9e5021bf2fb142ea51bf5'
+
+spp_list_from_api_file <- file.path(dir_goal, 'int/spp_list_from_api.csv')
+
+if(!file.exists(spp_list_from_api_file)) {
+  message('Using API to create full species list from scratch')
+  
+  spp_npage_url <- sprintf('http://apiv3.iucnredlist.org/api/v3/speciescount?token=%s', api_key)
+  n_spp <- fromJSON(spp_npage_url) %>%
+    .$count %>% as.integer()
+  n_pages <- ceiling(n_spp/10000)
+  
+  spp_page_url <- 'http://apiv3.iucnredlist.org/api/v3/species/page/%s?token=%s'
+  spp_df_all <- mc_get_from_api(spp_page_url, c(0:(n_pages - 1)), api_key)
+  
+  spp_df_all <- spp_df_all %>%
+    dplyr::select(-infra_rank, -infra_name, -count, -page) %>%
+    rename(iucn_sid = taxonid, sciname = scientific_name) %>%
+    setNames(names(.) %>%
+               str_replace('_name', ''))
+  
+  message('Full list length: ', nrow(spp_df_all), '; unique species IDs: ', length(spp_df_all$iucn_sid %>% unique()))
+  write_csv(spp_df_all, spp_list_from_api_file)
+} else {
+  message('File of API species list exists: \n  ', spp_list_from_api_file)
+  git_prov(spp_list_from_api_file, filetype = 'output')
+}
+
+```
+
+``` {r determine_spp_habs}
+### For each species ID on the total list, get a dataframe of habitats.
+### This is slow.  Skip if possible.
+
+spp_habs_from_api_file <- file.path(dir_goal, 'int/spp_habs_from_api.csv')
+
+if(!file.exists(spp_habs_from_api_file)) {
+  message('Using API to determine species habitats from full species list')
+  
+  spp_ids_all <- read_csv(spp_list_from_api_file) %>%
+    .$iucn_sid
+  
+  spp_habs_url <- 'http://apiv3.iucnredlist.org/api/v3/habitats/species/id/%s?token=%s'
+  
+  
+  ### Breaking this into chunks...
+  ### 500 spp takes 184 seconds; 87851 species should take about 32000 
+  ###   seconds (9 hours).  Each chunk will save to tmp for later combining.
+  
+  chunk_size <- 20
+  n_chunks <- 5 # ceiling(length(spp_ids_all)/chunk_size)
+  
+  for(j in 1:n_chunks) { ### j <- 7
+    spp_index <- c( ((j - 1) * chunk_size + 1) : min((j * chunk_size), length(spp_ids_all)) )
+    spp_chunk <- spp_ids_all[spp_index]
+    
+    chunk_file <- file.path(dir_goal, 'tmp', 
+                    sprintf('spp_habs_chunk_%s_%s.csv', 
+                            min(spp_index), max(spp_index)))
+    
+    if(!file.exists(chunk_file)) {
+      ### species for this chunk:
+      message('Getting habitat info for species ', min(spp_index), ' to ', max(spp_index))
+      
+      spp_habs_chunk <- mc_get_from_api(spp_habs_url, spp_chunk, api_key, delay = 1)
+      
+      spp_habs_chunk <- spp_habs_chunk %>%
+        rename(iucn_sid = id, hab_code = code)
+      
+      write_csv(spp_habs_chunk, 
+                file.path(dir_goal, 'tmp', 
+                          sprintf('spp_habs_chunk_%s_%s.csv', 
+                                  min(spp_index), max(spp_index))
+                          )
+                )
+    } else {
+      message('Chunk file ', chunk_file, ' already exists; skipping these spp')
+    }
+  }
+  
+  ### fields: 
+  ### id | code | habitat | suitability | season | majorimportance
+
+  spp_df_all <- spp_df_all %>%
+    rename(iucn_sid = id, hab_code = code)
+  
+  write_csv(spp_df_all, spp_list_from_api_file)
+} else {
+  message('reading file of API species list: \n  ', spp_list_from_api_file)
+  spp_df_all <- read_csv(spp_list_from_api_file)
+}
+```
+
 
 `r knitr::kable(read_csv(file.path(dir_goal_anx, 'int/spp_iucn_marine.csv'), n_max = 5), caption = 'IUCN marine species list and info from spp_iucn_marine.csv (first few rows)')`
  
