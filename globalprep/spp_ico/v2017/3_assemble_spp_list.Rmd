@@ -105,6 +105,7 @@ mc_get_from_api <- function(url, param_vec, api_key, cores = NULL, delay = 0.5) 
 
 ```
 
+## Create Aquamaps-to-IUCN lookup
 
 The goal here is to create a lookup of IUCN IDs (including map ID to identify mapped species) and AquaMaps IDs.  The IUCN master species list will be the source of risk categories (time series too, where available).  The basic steps:
 
@@ -132,7 +133,7 @@ Resulting dataframe will include:
 * AquaMaps species ID (`am_sid`), for those species that match IUCN IDs/names/synonyms
 * Scientific name from IUCN (`sciname`) and AquaMaps (`am_sciname`) to compare/check
 
-## match AquaMaps ID based on reported IUCN species ID
+### match AquaMaps ID based on reported IUCN species ID
 
 Here we load the full IUCN marine species list (from `ingest_iucn_info.Rmd`) and the AquaMaps species list (`speciesoccursum.csv`).
 
@@ -142,7 +143,7 @@ Then, we match AquaMaps species instances with IUCN species instances by joining
 
 ``` {r get_basic_spp_lists}
 
-iucn_spp_list <- read_csv(file.path(dir_goal, 'int', 'spp_marine_all.csv')) %>%
+iucn_spp_list <- read_csv(file.path(dir_goal, 'int', 'spp_marine_iucn_ids.csv')) %>%
   select(-habitat) %>% ### all habitats count as marine
   select(iucn_sid, map_iucn_sid, sciname, map_sciname, alt_sciname) %>%
   mutate(iucn_sciname = sciname,
@@ -188,15 +189,15 @@ sciname_nonmatches <- spp_iucn_id_match %>% filter(sciname != am_sciname) %>%
 
 ```
 
-### Species matched by IUCN species ID (head):
+#### Species matched by IUCN species ID (head):
 
 `r knitr::kable(spp_iucn_id_match %>% head(10))`
 
-### AquaMaps species with IUCN IDs that don't match:
+#### AquaMaps species with IUCN IDs that don't match:
 
 `r DT::datatable(id_nonmatches)`
 
-### Species matched by ID but differences in scientific names:
+#### Species matched by ID but differences in scientific names:
 
 `r DT::datatable(sciname_nonmatches)`
 
@@ -204,7 +205,7 @@ Most of these seem like reasonable synonyms.
 
 -----
 
-## Match by sciname
+### Match by sciname
 
 Here we match AquaMaps species (those not matched by IUCN species ID) to the IUCN list using the scientific name.  The IUCN list includes a few options for scientific name, taken from the IUCN API list, the IUCN shapefile `binomial` field, and the IUCN shapefile `sciname` field.  Usually these match, but not always.  
 
@@ -229,13 +230,13 @@ spp_sciname_match <- iucn_no_id_match %>%
 
 ```
 
-### Species matched by scientific name (head):
+#### Species matched by scientific name (head):
 
 `r knitr::kable(spp_sciname_match %>% head(10))`
 
 -----
 
-## Match by sciname synonyms
+### Match by sciname synonyms
 
 ``` {r get_am_synonyms_from_api}
 
@@ -301,13 +302,13 @@ spp_synonym_match <- iucn_spp_list %>%
 
 ```
 
-### Species matched by synonym and IUCN species ID:
+#### Species matched by synonym and IUCN species ID:
 
 `r DT::datatable(spp_synonym_match)`
 
 -----
 
-## Assemble all lists and bind with species master list
+### Assemble all lists and bind with species master list
 
 ``` {r any_evaluated_spp_left}
 
@@ -321,24 +322,41 @@ am_not_matched <- am_spp_list %>%
    #  6     6 15296     2 
 
 am_not_matched_valid <- am_not_matched %>%
-  filter(!iucn_code %in% c('N.E.', 'DD', NA)) %>%
-  mutate(iucn_sid = iucn_id) %>%
-  rename(am_iucn_id = iucn_id)
+  filter(!iucn_code %in% c('N.E.', 'DD', NA))
 ### only 8 species unmatched with valid IUCN code
 
 ```
 
 ### Unmatched AquaMaps with valid (non-NE or DD) risk category
 
-Check these; they all have IUCN species IDs but do not seem to be counted as marine?
-
-`r DT::datatable(am_not_matched)`
-
 Note the non-matched species are mostly N.E. or DD:
 
 `r table(am_not_matched$iucn_code)`
 
+Check these; they all have IUCN species IDs and valid codes, but do not seem to be counted as marine?  All but one seem to be errors in the AquaMaps dataset.  By including them in the list, with no IUCN species IDs, they will be included per AquaMaps, and use the AquaMaps code statically, rather than a time series.
 
+`r DT::datatable(am_not_matched_valid)`
+
+* `Coregonus lavaretus`	European whitefish	5369	VU
+    * refers to a freshwater fish: lavaret; formerly might have been used for a broad range of whitefish (incl. marine?)
+*	`Myliobatis australis`	Australian bull ray	60122	LC
+    * is synonym for Myliobatis tenuicaudatus, with ID 70686656
+    * 60122 is not recognized.
+* `Scorpaenodes quadrispinosus`	Fourspine scorpionfish	155208	LC
+    * this seems valid.  Why did it not match?
+    * because by IUCN habitat check, its only habitats are both marginal.
+* `Trisopterus minutus`	Poor cod	154897	LC
+    * this is not recognized by name or ID
+* `Anguilla nebulosa`	Mottled eel	168293	LC
+    * synonym for Anguilla bengalensis, 61668607. 
+    * 168923 is unrecognized.
+* `Rhinobatos formosensis`	Taiwan guitarfish	60165	VU
+    * not recognized by name or ID
+* `Larus scopulinus`	red-billed gull	22694408	LC
+    * synonym for Larus novaehollandiae, 62021891. 
+    * 22694408 is not recognized.
+* `Stercorarius antarcticus`	brown skua	22694183	LC
+    * not recognized by name or ID.
 -----
 
 ## Assemble all matched lists to create AM-to-IUCN lookup
@@ -357,11 +375,66 @@ Note that this will drop non-matched AquaMaps species without a valid IUCN code.
 spp_am_to_iucn <- bind_rows(spp_iucn_id_match,
                             spp_sciname_match,
                             spp_synonym_match,
-                            am_not_matched_valid)
+                            am_not_matched_valid %>% 
+                              select(-iucn_id, am_cat = iucn_code))
 
 write_csv(spp_am_to_iucn, file.path(dir_goal, 'int', 'spp_am_to_iucn.csv'))
 
 ```
+
+-----
+
+## Create full species lookup
+
+This lookup will combine IUCN info list (with IUCN map info) and AquaMaps species list.  Species with neither an AquaMaps map (IUCN-matched) nor an IUCN map will be dropped.
+
+``` {r create_full_spp_lookup}
+
+spp_am_to_iucn <- read_csv(file.path(dir_goal, 'int', 'spp_am_to_iucn.csv'))
+
+iucn_mar_spp   <- read_csv(file.path(dir_goal, 'int', 'spp_marine_iucn_ids.csv')) %>%
+  select(iucn_sid, map_iucn_sid, subpop_sid, sciname, map_subpop, spp_group) %>%
+  distinct()
+
+iucn_spp_info  <- read_csv(file.path(dir_goal_anx, 'int', 'spp_info_from_api.csv')) %>%
+  select(iucn_sid, sciname, population, category) %>%
+  distinct()
+
+### Join IUCN maps info
+spp_list1 <- iucn_spp_info %>%
+  left_join(iucn_mar_spp, by = c('iucn_sid', 'sciname'))
+  
+### some duplicated species due to species appearing in two shapefiles.
+### eliminate dupes that show up in MANGROVES, REPTILES, and MARINE_FISH
+spp_duped <- spp_list1 %>%
+  filter(iucn_sid %in% spp_list1$iucn_sid[duplicated(spp_list1$iucn_sid)])
+
+spp_list2 <- spp_list1 %>%
+  filter(!(iucn_sid %in% spp_duped$iucn_sid & str_detect(spp_group, 'MANG|REPT|MARINEFISH')))
+
+
+### join AM maps info.  Note the full_join to capture the non-matched AquaMaps species.
+spp_list3 <- spp_list2 %>%
+  full_join(spp_am_to_iucn, by = c('iucn_sid', 'sciname'))
+
+spp_list4 <- spp_list3 %>%
+  filter(!(is.na(map_iucn_sid) & is.na(am_sid))) %>%
+  mutate(category = ifelse(is.na(category), am_cat, category)) %>%
+  select(am_sid, iucn_sid, 
+         map_iucn_sid, map_subpop, 
+         sciname,
+         category, 
+         spp_group)
+
+write_csv(spp_list4, file.path(dir_goal, 'int', 'spp_list.csv'))
+
+```
+
+Head of the species list (at `r file.path(dir_goal, 'int', 'spp_list.csv')`:
+
+`r knitr::kable(spp_list4 %>% head(20))`
+
+Total rows: `r nrow(spp_list4)`
 
 -----
 

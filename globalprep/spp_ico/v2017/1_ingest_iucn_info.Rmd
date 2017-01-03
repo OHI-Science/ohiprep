@@ -585,13 +585,13 @@ spp_mar_list_clean <- spp_mar_list %>%
 # length(unique(spp_mar_list_clean$iucn_sid))
 
 ### save this in GitHub even though it's large...
-write_csv(spp_mar_list_clean, file.path(dir_goal, 'int/spp_marine_all.csv'))
+write_csv(spp_mar_list_clean, file.path(dir_goal, 'int/spp_marine_iucn_ids.csv'))
 
-### x <- read_csv(file.path(dir_goal, 'int/spp_marine_all.csv'))
+### x <- read_csv(file.path(dir_goal, 'int/spp_marine_iucn_ids.csv'))
 ```
 
 
-`r file.path(dir_goal, 'int/spp_marine_all.csv')` contains the following variables:
+`r file.path(dir_goal, 'int/spp_marine_iucn_ids.csv')` contains the following variables:
 
 `r spp_mar_list_clean %>% names() %>% paste(collapse = ' | ')`
 
