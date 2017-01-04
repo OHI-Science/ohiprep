@@ -3,7 +3,10 @@ title: 'OHI: Species: ingest IUCN species information'
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
+    code_folding: hide
     toc: true
+    toc_depth: 3
+    toc_float: yes
     number_sections: true
     theme: cerulean
     highlight: haddock
@@ -13,10 +16,10 @@ output:
     toc: true
 ---
 
-``` {r setup, echo = FALSE, message = FALSE, warning = FALSE}
+``` {r setup, echo = TRUE, message = FALSE, warning = FALSE}
 
 knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
-                      echo = FALSE, message = FALSE, warning = FALSE)
+                      echo = TRUE, message = FALSE, warning = FALSE)
 
 source('~/github/ohiprep/src/R/common.R')
 
