@@ -33,6 +33,8 @@ scenario <- 'v2017'
 dir_goal_anx <- file.path(dir_M, 'git-annex', goal, scenario) 
 dir_goal  <- file.path('~/github/ohiprep', goal, scenario)
 
+dir_data_am <- file.path(dir_M, 'git-annex/globalprep', '_raw_data/aquamaps/d2015')
+
 ### set up provenance tracking for this script:
 library(provRmd); prov_setup()
 
@@ -270,7 +272,6 @@ spp_scored <- read_csv(file.path(dir_goal, 'int', 'spp_list_scored.csv')) %>%
 ### read in AquaMaps species-cell file
 am_cells_spp_file <- file.path(dir_goal_anx, 'int', 'am_spp_cells_d2015.csv')
 if(!file.exists(am_cells_spp_file)) {
-  dir_data_am <- file.path(dir_M, 'git-annex/globalprep', '_raw_data/aquamaps/d2015')
   am_cells_spp <- read_csv(file.path(dir_data_am, 'csv/hcaf_sp_native_trunc.csv')) %>%
     # filter(probability > 0) %>%
     select(am_sid = speciesid, loiczid) %>%
@@ -451,8 +452,23 @@ The `calc_rgn_spp()` function takes in lookup tables of species by cell (for bot
 
 ``` {r species_by_region, eval = TRUE}
 
-spp_basic_info <- spp_scored %>%
+spp_basic_info <- read_csv(file.path(dir_goal, 'int', 'spp_list_scored.csv')) %>%
+  rename(cat_score   = cat_ts_score,
+         trend_score = risk_trend) %>%
   filter(year == max(year, na.rm = TRUE))
+
+if(!exists('am_cells_spp')) {
+  am_cells_spp <- read_csv(am_cells_spp_file)
+} else {
+  git_prov(am_cells_spp_file, filetype = 'input')
+}
+
+if(!exists('iucn_cells_spp')) {
+  iucn_cells_spp <- read_csv(file.path(dir_goal_anx, 'int', 'iucn_spp_cells_d2016.csv')) %>%
+    distinct()
+} else {
+  git_prov(file.path(dir_goal_anx, 'int', 'iucn_spp_cells_d2016.csv'), filetype = 'input')
+}
 
 ics_keyed     <- data.table(iucn_cells_spp, key = "loiczid") 
 acs_keyed     <- data.table(am_cells_spp,   key = "loiczid") 
