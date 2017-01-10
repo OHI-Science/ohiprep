@@ -255,3 +255,59 @@ tmp %>%
   data.frame()
 # ~47% of catch with ram b/bmsy estimates
 
+#############################################################################################
+## Comparing RAM and SAUP catch data to help validate whether or not these comparisons are 
+## appropriate to determine our model choice. The theory being that if the catch streams are not similar
+## between the same stock in SAUP and RAM, then we shouldn't expect the model outputs to be similar.
+##
+##
+## JCA - 1.9.2017
+############################################################################################
+
+# Get RAM catch data. The ram_data above only has info on bbmsy from RAM, not catch time series
+
+ram_ts <- read.csv('~/github/ohiprep/globalprep/fis/v2016/ram/ram_timeseries.csv')%>%
+          filter(tsid %in% c('BdivBmgttouse-dimensionless', "TC-MT"))%>%  ## TC-MT is total catch in metric tons
+          spread(tsid, tsvalue)%>%
+          rename(ram_bbmsy = `BdivBmgttouse-dimensionless`,
+                 tons      = `TC-MT`)
+
+# Now we need to aggregate the ram stocks to FAO areas.
+
+ram_ext <- read.csv('~/github/ohiprep/globalprep/fis/v2016/ram/ram_extended.csv')%>%
+           select(stockid,region,FAO,commonname,scientificname)%>%
+           unique()
+
+ram <- ram_ts%>%
+       left_join(ram_ext,by = c('stockid'))%>%
+       group_by(stockid,tsyear,FAO,commonname,scientificname)%>%   #we need to calculate total, and mean (maybe not?) catch per FAO region for all RAM stocks to match up with SAUP  
+       summarize(ram_catch = sum(tons,na.rm=T))%>%
+       rename(year = tsyear,
+              common = commonname,
+              species = scientificname,
+              fao_id = FAO)
+
+# now we need to join this with SAUP data that has total catch per species per FAO region
+
+# need to first aggregate catch to FAO level for SAUP 
+catch_fao <- catch%>%
+             group_by(fao_id, species, year, common)%>%
+             summarize(saup_catch = sum(tons,na.rm=T))
+
+both_ts <- ram%>%
+            inner_join(catch_fao,by = c('fao_id','species','common','year'))%>%
+            group_by(stockid,year,common,species)%>%
+            summarize(ram_catch = mean(ram_catch,na.rm=T), #RAM catch is doubled after the join, so take mean
+                      saup_catch = sum(saup_catch,na.rm=T))%>%
+            mutate(species_code = paste(stockid,common,sep = ':'))%>%
+            mutate(species_code = str_replace_all(species_code," ","_"))
+
+
+
+write.csv(both_ts,file = '~/github/ohiprep/globalprep/fis/v2016/saup_ram_catch_compare/saup_ram_catch_ts.csv')
+
+
+### SOme of hte catch series definitely do line up after looking at the app.
+## next get a measurement of correlation between the two datasets, and maybe we should rerun our model
+## comparisons only on those with a high correlation? still don't expect perfect match due to
+## the models not being great to begin with but it's a better comparison
