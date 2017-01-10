@@ -328,17 +328,22 @@ nrow(catch_corrs) #we have 71 stocks to compare.
 ## Filtering out stocks that have a Pearson's rank correlation >0.5 and cross-corr distance <0.5 (arbitrarily picked)
 
 df <- catch_corrs%>%
-      filter(corr>0.5,ccorr<0.5)
+      filter(corr>0.8)#,ccorr<0.5)
 
-nrow(df) #now we have 41 stocks to compare.
+nrow(df) #now we have 32 stocks to compare.
 
 ## Use the unique stock ids in the df to filter out the bbmsy comparisons above and repeat the plots mel made
 
 #****BELOW IS THE PLOT COMPARISON CODE COPIED FROM ABOVE******
 
 data = data%>%
-       filter(stockid_ram %in% df$stockid) #this leads to 23 stocks to compare
-
+       filter(stockid_ram %in% df$stockid)%>% #this leads to 23 stocks to compare
+       group_by(stockid_ram)%>%
+       summarize(b_bmsy_cmsy = mean(b_bmsy_cmsy,na.rm=T),
+                 b_bmsy_comsir = mean(b_bmsy_comsir, na.rm=T),
+                 b_bmsy_sscom = mean(b_bmsy_sscom,na.rm=T),
+                 mean_all = mean(mean_all,na.rm=T),
+                 ram_bmsy = mean(ram_bmsy,na.rm=T))
 ###
 ggplot(data, aes(x=ram_bmsy, y=b_bmsy_cmsy)) +
   annotate("rect", xmin=0, xmax=0.5, ymin=0, ymax=0.5, fill = "green", alpha=0.5) + 
@@ -467,32 +472,4 @@ lm_predict <- predict(lm_mod, newdata = testing)
 plot(testing$ram_bmsy, lm_predict)
 
 
-# -------------------------------------------------------------------
-### summary of data
-# -----------------------------------------------------------------
-
-tmp <- bmsy_dl_ram %>%
-  mutate(ram_data = ifelse(is.na(ram_bmsy), "no", "yes")) %>%
-  mutate(bbmsy = ifelse(is.na(ram_bmsy), b_bmsy_cmsy, ram_bmsy)) %>%
-  mutate(bbmsy_data = ifelse(!is.na(bbmsy), "yes", "no"))
-
-
-## Proportion of catch with a B/Bmsy values that is based on ram data
-tmp %>%
-  filter(!is.na(bbmsy)) %>%
-  group_by(ram_data, year) %>%
-  summarize(sum_tons = sum(tons)) %>%
-  group_by(year) %>%
-  summarize(prop_catch_ram = sum_tons[ram_data=="yes"]/(sum(sum_tons))) %>%
-  data.frame()
-# ~30% of catch with ram b/bmsy estimates
-
-## Proportion of catch with b/bmsy estimates
-tmp %>%
-  group_by(bbmsy_data, year) %>%
-  summarize(sum_tons = sum(tons)) %>%
-  group_by(year) %>%
-  summarize(prop_catch_bmsy = sum_tons[bbmsy_data=="yes"]/(sum(sum_tons))) %>%
-  data.frame()
-# ~47% of catch with ram b/bmsy estimates
 
