@@ -255,3 +255,221 @@ tmp %>%
   data.frame()
 # ~47% of catch with ram b/bmsy estimates
 
+#############################################################################################
+## Comparing RAM and SAUP catch data to help validate whether or not these comparisons are 
+## appropriate to determine our model choice. The theory being that if the catch streams are not similar
+## between the same stock in SAUP and RAM, then we shouldn't expect the model outputs to be similar.
+##
+##
+## JCA - 1.9.2017
+############################################################################################
+
+# Get RAM catch data. The ram_data above only has info on bbmsy from RAM, not catch time series
+
+ram_ts <- read.csv('~/github/ohiprep/globalprep/fis/v2016/ram/ram_timeseries.csv')%>%
+          filter(tsid %in% c('BdivBmgttouse-dimensionless', "TC-MT"))%>%  ## TC-MT is total catch in metric tons
+          spread(tsid, tsvalue)%>%
+          rename(ram_bbmsy = `BdivBmgttouse-dimensionless`,
+                 tons      = `TC-MT`)
+
+# Now we need to aggregate the ram stocks to FAO areas.
+
+ram_ext <- read.csv('~/github/ohiprep/globalprep/fis/v2016/ram/ram_extended.csv')%>%
+           select(stockid,region,FAO,commonname,scientificname)%>%
+           unique()
+
+ram <- ram_ts%>%
+       left_join(ram_ext,by = c('stockid'))%>%
+       group_by(stockid,tsyear,FAO,commonname,scientificname)%>%   #we need to calculate total, and mean (maybe not?) catch per FAO region for all RAM stocks to match up with SAUP  
+       summarize(ram_catch = sum(tons,na.rm=T))%>%
+       rename(year = tsyear,
+              common = commonname,
+              species = scientificname,
+              fao_id = FAO)
+
+# now we need to join this with SAUP data that has total catch per species per FAO region
+
+# need to first aggregate catch to FAO level for SAUP 
+catch_fao <- catch%>%
+             group_by(fao_id, species, year, common)%>%
+             summarize(saup_catch = sum(tons,na.rm=T))
+
+both_ts <- ram%>%
+            inner_join(catch_fao,by = c('fao_id','species','common','year'))%>%
+            group_by(stockid,year,common,species)%>%
+            summarize(ram_catch = mean(ram_catch,na.rm=T), #RAM catch is doubled after the join, so take mean
+                      saup_catch = sum(saup_catch,na.rm=T))%>%
+            mutate(species_code = paste(stockid,common,sep = ':'))%>%
+            mutate(species_code = str_replace_all(species_code," ","_"))
+
+
+write.csv(both_ts,file = '~/github/ohiprep/globalprep/fis/v2016/saup_ram_catch_compare/saup_ram_catch_ts.csv')
+
+
+### SOme of hte catch series definitely do line up after looking at the app.
+## next get a measurement of correlation between the two datasets, and maybe we should rerun our model
+## comparisons only on those with a high correlation? still don't expect perfect match due to
+## the models not being great to begin with but it's a better comparison
+
+## Group by each stock and get a correlation coefficent (using Pearsons for now, I'm sure there might be better ways to do this)
+
+#it seems like the Pearsons correlation gives an estiamte of trend more than similarity of magnitude of catches
+
+library(TSdist) #TSDistances() comes from this package
+
+catch_corrs <- both_ts%>%
+               group_by(stockid)%>%
+               summarize(corr = cor(ram_catch,saup_catch),
+                         ccorr = TSDistances(ram_catch,saup_catch,distance='ccor'))%>% #using the cross-correlation based distance between two numeric time series
+               filter(!is.na(corr)) #remove NAs
+
+nrow(catch_corrs) #we have 71 stocks to compare.
+
+## Filtering out stocks that have a Pearson's rank correlation >0.5 and cross-corr distance <0.5 (arbitrarily picked)
+
+df <- catch_corrs%>%
+      filter(corr>0.8)#,ccorr<0.5)
+
+nrow(df) #now we have 32 stocks to compare.
+
+## Use the unique stock ids in the df to filter out the bbmsy comparisons above and repeat the plots mel made
+
+#****BELOW IS THE PLOT COMPARISON CODE COPIED FROM ABOVE******
+
+data = data%>%
+       filter(stockid_ram %in% df$stockid)%>% #this leads to 23 stocks to compare
+       group_by(stockid_ram)%>%
+       summarize(b_bmsy_cmsy = mean(b_bmsy_cmsy,na.rm=T),
+                 b_bmsy_comsir = mean(b_bmsy_comsir, na.rm=T),
+                 b_bmsy_sscom = mean(b_bmsy_sscom,na.rm=T),
+                 mean_all = mean(mean_all,na.rm=T),
+                 ram_bmsy = mean(ram_bmsy,na.rm=T))
+###
+ggplot(data, aes(x=ram_bmsy, y=b_bmsy_cmsy)) +
+  annotate("rect", xmin=0, xmax=0.5, ymin=0, ymax=0.5, fill = "green", alpha=0.5) + 
+  annotate("rect", xmin=0, xmax=1, ymin=0, ymax=1, fill = "yellow", alpha=0.5) + 
+  annotate("rect", xmin=1, xmax=2.5, ymin=1, ymax=2.5, fill = "green", alpha=0.5) + 
+  geom_point() +
+  labs(x='RAM B/Bmsy', y='CMSY B/Bmsy, constrained') +
+  theme_bw()
+
+hist(bmsy_dl_ram$b_bmsy_cmsy)
+
+mod <- lm(ram_bmsy ~ b_bmsy_cmsy, data=data)
+summary(mod)
+var(data$b_bmsy_cmsy, data$ram_bmsy, na.rm=TRUE)
+
+###
+
+ggplot(data, aes(x=ram_bmsy, y=b_bmsy_comsir)) +
+  annotate("rect", xmin=0, xmax=0.5, ymin=0, ymax=0.5, fill = "green", alpha=0.5) + 
+  annotate("rect", xmin=0, xmax=1, ymin=0, ymax=1, fill = "yellow", alpha=0.5) + 
+  annotate("rect", xmin=1, xmax=2.5, ymin=1, ymax=2.5, fill = "green", alpha=0.5) + 
+  geom_point() +
+  labs(x='RAM B/Bmsy', y='COMSIR B/Bmsy') +
+  theme_bw()
+
+mod1 <- lm(ram_bmsy ~ b_bmsy_comsir, data=data)
+summary(mod1)
+var(data$b_bmsy_comsir, data$ram_bmsy, na.rm=TRUE)
+
+###
+
+ggplot(data, aes(x=ram_bmsy, y=b_bmsy_sscom)) +
+  annotate("rect", xmin=0, xmax=0.5, ymin=0, ymax=0.5, fill = "green", alpha=0.5) + 
+  annotate("rect", xmin=0, xmax=1, ymin=0, ymax=1, fill = "yellow", alpha=0.5) + 
+  annotate("rect", xmin=1, xmax=2.5, ymin=1, ymax=2.5, fill = "green", alpha=0.5) + 
+  geom_point() +
+  labs(x='RAM B/Bmsy', y='SSCOM B/Bmsy') +
+  theme_bw()
+
+mod1 <- lm(ram_bmsy ~ b_bmsy_sscom, data=data)
+summary(mod1)
+var(data$b_bmsy_sscom, data$ram_bmsy, na.rm=TRUE)
+
+### 
+
+ggplot(data, aes(x=ram_bmsy, y=mean_all)) +
+  annotate("rect", xmin=0, xmax=0.5, ymin=0, ymax=0.5, fill = "green", alpha=0.5) + 
+  annotate("rect", xmin=0, xmax=1, ymin=0, ymax=1, fill = "yellow", alpha=0.5) + 
+  annotate("rect", xmin=1, xmax=2.5, ymin=1, ymax=2.5, fill = "green", alpha=0.5) + 
+  geom_point() +
+  labs(x='RAM B/Bmsy', y='mean cmsy, comsir, sscom B/Bmsy') +
+  theme_bw()
+
+mod1 <- lm(ram_bmsy ~ mean_all, data=data)
+summary(mod1)
+var(data$mean_all, data$ram_bmsy, na.rm=TRUE)
+
+
+### 
+## Exporing ensemble approaches:
+
+## 1. additive and interaction linear models that include all three variables
+## (this is an approximation because values are not based on cross-validation):
+mod5 <- lm(ram_bmsy ~ b_bmsy_cmsy + b_bmsy_comsir + b_bmsy_sscom , data=data)
+summary(mod5)
+
+mod6 <- lm(ram_bmsy ~ b_bmsy_cmsy*b_bmsy_comsir*b_bmsy_sscom , data=data)
+summary(mod6)
+
+## 2. Generalized Boosted Regression Models
+library(caret)
+library(gbm)
+
+set.seed(227)
+samples <- sample(1:length(data$stockid_ram), length(data$stockid_ram)*0.75, replace = FALSE)
+training <- data[samples, ]
+testing <- data[-samples, ]  # 25% of the data
+
+### GBM: weight the low values higher
+m_gbm <- gbm::gbm(ram_bmsy ~ b_bmsy_cmsy + b_bmsy_comsir + b_bmsy_sscom,
+                  data = training, n.trees = 2000L, interaction.depth = 3, shrinkage = 0.1,
+                  distribution = "gaussian", weights = 1/training$ram_bmsy)
+m_gbm
+
+gbm_predict <- gbm::predict.gbm(m_gbm,
+                                n.trees = m_gbm$n.trees, newdata = training[,1:3], type = "response")
+
+plot(training$ram_bmsy, gbm_predict)
+
+gbm_predict <- gbm::predict.gbm(m_gbm,
+                                n.trees = m_gbm$n.trees, newdata = testing[,1:3], type = "response")
+
+plot(testing$ram_bmsy, gbm_predict, xlab="RAM B/Bmsy", ylab="Predicted B/Bmsy, boosted regression")
+
+### GBM: no weights
+m_gbm <- gbm::gbm(ram_bmsy ~ b_bmsy_cmsy + b_bmsy_comsir + b_bmsy_sscom,
+                  data = training, n.trees = 2000L, interaction.depth = 3, shrinkage = 0.1,
+                  distribution = "gaussian")
+m_gbm
+
+gbm_predict <- gbm::predict.gbm(m_gbm,
+                                n.trees = m_gbm$n.trees, newdata = training[,1:3], type = "response")
+plot(training$ram_bmsy, gbm_predict)
+
+gbm_predict <- gbm::predict.gbm(m_gbm,
+                                n.trees = m_gbm$n.trees, newdata = testing[,1:3], type = "response")
+plot(testing$ram_bmsy, gbm_predict)
+
+
+### Random forest
+library(randomForest)
+training_rf <- na.omit(training)
+testing_rf <- na.omit(testing)
+m_rf <- randomForest::randomForest(ram_bmsy ~ b_bmsy_cmsy + b_bmsy_comsir + b_bmsy_sscom, data = training_rf,
+                                   ntree = 1000L)
+rf_predict <- predict(m_rf, newdata = training_rf)
+plot(training_rf$ram_bmsy, rf_predict)
+rf_predict <- predict(m_rf, newdata = testing_rf)
+plot(testing_rf$ram_bmsy, rf_predict, xlab="RAM B/Bmsy", ylab="Predicted B/Bmsy, random forest")
+
+## linear model
+lm_mod <- lm(ram_bmsy ~ b_bmsy_cmsy + b_bmsy_comsir + b_bmsy_sscom, data = training, na.action=na.exclude)
+lm_predict <- predict(lm_mod, newdata = training)
+plot(training$ram_bmsy, lm_predict, xlab="RAM B/Bmsy", ylab="Predicted B/Bmsy, lm")
+lm_predict <- predict(lm_mod, newdata = testing)
+plot(testing$ram_bmsy, lm_predict)
+
+
+
