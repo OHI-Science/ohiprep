@@ -23,12 +23,13 @@ knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
 
 
 source('~/github/ohiprep/src/R/common.R')
+library(here)
 
 goal     <- 'spp_ico'
 scenario <- 'v2017'
 dir_anx  <- file.path(dir_M, 'git-annex', 'globalprep')
 dir_goal_anx <- file.path(dir_anx, goal, scenario) 
-dir_goal  <- file.path('~/github/ohiprep/globalprep', goal, scenario)
+dir_goal  <- here('globalprep', goal, scenario)
 
 ### set up provenance tracking for this script:
 library(provRmd); prov_setup()
@@ -379,8 +380,16 @@ Note that this will drop non-matched AquaMaps species without a valid IUCN code.
 spp_am_to_iucn <- bind_rows(spp_iucn_id_match,
                             spp_sciname_match,
                             spp_synonym_match,
-                            am_not_matched_valid %>% 
+                            am_not_matched %>% 
                               select(-iucn_id, am_cat = iucn_code))
+
+### Squalus acanthias (piked dogfish? spiny dogfish?) shows up
+### multiple times; IUCN subpops.
+### chondri_maps <- foreign::read.dbf(file.path(dir_anx, '_raw_data/iucn_spp/d2016/CHONDRICHTHYES.dbf'))
+### Subpops not mapped.  Will this drop out in the analysis, when map_iucn_id is not matched?
+### ... no it won't; AquaMaps will pick it up and count it once for each subpop.
+spp_am_to_iucn <- spp_am_to_iucn %>%
+  filter(!(am_sid == 'Fis-29532' & iucn_sid != 91209505))
 
 write_csv(spp_am_to_iucn, file.path(dir_goal, 'int', 'spp_am_to_iucn.csv'))
 
@@ -406,7 +415,7 @@ iucn_spp_info  <- read_csv(file.path(dir_goal_anx, 'int', 'spp_info_from_api.csv
 
 ### Join IUCN maps info
 spp_list1 <- iucn_spp_info %>%
-  left_join(iucn_mar_spp, by = c('iucn_sid', 'sciname'))
+  inner_join(iucn_mar_spp, by = c('iucn_sid', 'sciname'))
   
 ### some duplicated species due to species appearing in two shapefiles.
 ### eliminate dupes that show up in MANGROVES, REPTILES, and MARINE_FISH
@@ -422,7 +431,6 @@ spp_list3 <- spp_list2 %>%
   full_join(spp_am_to_iucn, by = c('iucn_sid', 'sciname'))
 
 spp_list4 <- spp_list3 %>%
-  filter(!(is.na(map_iucn_sid) & is.na(am_sid))) %>%
   mutate(category = ifelse(is.na(category), am_cat, category),
          sciname  = ifelse(is.na(sciname), am_sciname, sciname)) %>%
   select(am_sid, iucn_sid, 

@@ -108,8 +108,8 @@ IUCN:
         * Shapefiles available from: http://www.iucnredlist.org/technical-documents/spatial-data
         * __Downloaded__: 16 December 2016.
     * BirdLife International and NatureServe (2016) Bird species distribution maps of the world. BirdLife International, Cambridge, UK and NatureServe, Arlington, USA.
-        * Zipped shapefile available from: http://www.biodiversityinfo.org/spcdownload/r5h8a1/ - username and password via BirdLife International.  
-        * __Downloaded__: 23 December 2015.
+        * Zipped shapefile available from BirdLife International.  
+        * __Downloaded__: 23 December 2016.
 * __Description__:  Shapefiles containing polygons of assessed species ranges; each shapefile represents all assessed species within a comprehensively-assessed (i.e. >90% assessed) taxonomic group.
 * __Native data resolution__: NA
 * __Time range__: NA
@@ -201,9 +201,9 @@ Intermediate processed files, saved to `~/github/ohiprep/globalprep/spp_ico/v201
 
 ## Generate time series of past assessments for all marine species
 
-This process is done in `4_ingest_past_assessments.Rmd`, and results are saved to saved to `~/github/ohiprep/globalprep/spp_ico/v2017/int/spp_cat_trend_timeseries.csv`.
+This process is done in `4_ingest_past_assessments.Rmd`, and results are saved to saved to `~/github/ohiprep/globalprep/spp_ico/v2017/int/spp_cat_timeseries_raw.csv`.  The resulting dataframe is not complete, i.e. it does not contain every year - only assessment years - and therefore must be completed to determine year-by-year scores for each species.
 
-* `iucn_sid`, `risk_trend`, `year`, `category`, `cat_score`, `assess_year`
+* `iucn_sid`, `year`, `category`, `cat_score`, `assess_year`
 
 ## Spatialize species information using AquaMaps and IUCN spatial data
 
@@ -211,17 +211,27 @@ Each dataset is now set up to denote species presence in half-degree cells; for 
 
 ### Assemble species list with scored time series
 
-Attach the general species list to the time series of category/trend scores.  Manually fill in those few AquaMaps species without an IUCN ID match.
+Attach the general species list to the time series of category scores.  Manually fill in those few AquaMaps species without an IUCN ID match.  For file size reduction, much of the species info is stripped out of the scored dataframe, though it can easily be reattached from the overall species list.
 
 ``` {r score_spp_list, echo = TRUE}
 
 ### get time series of categories and trends.
 ### NOTE: risk_trend is positive for increasing risk, not increasing health.
 ###   It is the *annual* change in category score, not five-year-adjusted.
-spp_cat_ts <- read_csv(file.path(dir_goal, 'int', 'spp_cat_trend_timeseries.csv'))
+spp_cat_ts_complete <- read_csv(file.path(dir_goal, 'int', 'spp_cat_timeseries_raw.csv')) %>%
+  select(iucn_sid, year, cat_ts, cat_ts_score) %>%
+  complete(year = full_seq(year, 1), nesting(iucn_sid)) %>%
+  arrange(iucn_sid, year) %>%
+  group_by(iucn_sid) %>%
+  fill(cat_ts, cat_ts_score) %>%                    
+    ### fills forward to most recent assessment year; older category valid til new assessment
+  fill(cat_ts, cat_ts_score, .direction = 'up') %>% 
+    ### fills back from first non-NE or DD assessment; assume early status is same as first assessment
+  ungroup() %>%
+  filter(year >= 2000)
 
 ### set up a quick lookup to score the unmatched species
-cat_scores <- spp_cat_ts %>%
+cat_scores <- spp_cat_ts_complete %>%
   select(cat = cat_ts, score = cat_ts_score) %>%
   distinct() %>%
   arrange(score)
@@ -229,9 +239,10 @@ cat_scores <- cat_scores$score %>%
   setNames(cat_scores$cat)
 
 spp_scored <- read_csv(file.path(dir_goal, 'int/spp_list.csv')) %>%
+  filter(!(is.na(map_iucn_sid) & is.na(am_sid))) %>%
   mutate(spatial_source = ifelse(!is.na(map_iucn_sid), 'iucn', NA),
          spatial_source = ifelse(is.na(spatial_source) & !is.na(am_sid), 'am', spatial_source)) %>%
-  left_join(spp_cat_ts, by = 'iucn_sid') 
+  left_join(spp_cat_ts_complete, by = 'iucn_sid') 
 
 ### need to tidy up species from AM with no IUCN match.
 ### * set up the years
@@ -244,7 +255,8 @@ spp_scored <- spp_scored %>%
          cat_ts_score = ifelse(is.na(cat_ts_score), cat_scores[cat_ts], cat_ts_score)) %>% ### using the lookup from above
 ### * set up the category scores
   filter(!is.na(cat_ts_score)) %>% ### ditch any DD and NE species
-  select(-category)
+  select(-category, -sciname, -spp_group, -cat_ts, -assess_year) %>%
+  distinct()
 
 write_csv(spp_scored, file.path(dir_goal, 'int', 'spp_list_scored.csv'))
 
@@ -266,8 +278,7 @@ The following code chunk executes the functions that perform these tasks.  Note 
 ``` {r generate_cell_summaries_am_and_iucn}
 
 spp_scored <- read_csv(file.path(dir_goal, 'int', 'spp_list_scored.csv')) %>%
-    rename(cat_score   = cat_ts_score,
-           trend_score = risk_trend)
+    rename(cat_score   = cat_ts_score)
 
 ### read in AquaMaps species-cell file
 am_cells_spp_file <- file.path(dir_goal_anx, 'int', 'am_spp_cells_d2015.csv')
@@ -293,7 +304,7 @@ years <- spp_scored$year %>%
 
 library(parallel)
 
-am_cells_spp_sum_list <- mclapply(years, mc.cores = length(years), FUN = function(yr) {
+am_cells_spp_sum_list <- mclapply(years, mc.cores = 16, FUN = function(yr) {
   
   spp_scored_year <- spp_scored %>%
     filter(year == yr)
@@ -301,39 +312,39 @@ am_cells_spp_sum_list <- mclapply(years, mc.cores = length(years), FUN = functio
   am_cells_spp_sum_yr <- process_am_summary_per_cell(spp_scored_year, am_cells_spp) %>%
     mutate(year = yr)
   # ### NOTE: keyed data.table works way faster than the old inner_join or merge.
-  # ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species | year
+  # ### loiczid | mean_cat_score | n_cat_species | year
   # ### AM does not include subspecies or subpops: every am_sid corresponds to exactly one sciname.
 })
 
 am_cells_spp_sum <- bind_rows(am_cells_spp_sum_list)
 
-write_csv(am_cells_spp_sum, file.path(dir_goal_anx, 'summary/am_cells_spp_summary.csv'))
+write_csv(am_cells_spp_sum, file.path(dir_goal_anx, 'summary/am_spp_summary.csv'))
 
-iucn_cells_spp_sum_list <- mclapply(years, mc.cores = length(years), FUN = function(yr) {
+iucn_cells_spp_sum_list <- mclapply(years, mc.cores = 16, FUN = function(yr) {
   
   spp_scored_year <- spp_scored %>%
     filter(year == yr)  
   
   iucn_cells_spp_sum_yr <- process_iucn_summary_per_cell(spp_scored_year, iucn_cells_spp) %>%
     mutate(year = yr)
-  ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species | year
+  ### loiczid | mean_cat_score | n_cat_species | year
   ### IUCN includes subpops - one sciname corresponds to multiple iucn_sid values.
   
 })
 
 iucn_cells_spp_sum <- bind_rows(iucn_cells_spp_sum_list)
-write_csv(iucn_cells_spp_sum, file.path(dir_goal_anx, 'summary/iucn_cells_spp_summary.csv'))
+write_csv(iucn_cells_spp_sum, file.path(dir_goal_anx, 'summary/iucn_spp_summary.csv'))
 
 ```
 
 ``` {r generate_means_per_cell}
 
-iucn_cells_spp_sum <- read_csv(file.path(dir_goal_anx, 'summary/iucn_cells_spp_summary.csv'))
-am_cells_spp_sum   <- read_csv(file.path(dir_goal_anx, 'summary/am_cells_spp_summary.csv'))
+iucn_cells_spp_sum <- read_csv(file.path(dir_goal_anx, 'summary/iucn_spp_summary.csv'))
+am_cells_spp_sum   <- read_csv(file.path(dir_goal_anx, 'summary/am_spp_summary.csv'))
 
-sum_by_loiczid  <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum)
+sum_by_loiczid  <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum, reload = TRUE)
 ### This returns location of dataframe with variables:
-### loiczid | weighted_mean_cat | weighted_mean_trend | n_cat_spp | n_tr_spp
+### loiczid | year | weighted_mean_cat | n_cat_spp
 
 ```
 
@@ -349,9 +360,7 @@ These are then saved to status and trend layer outputs for global (shown in tabl
 
 ``` {r  SPP Global Summarize mean category and trend per cell and per region}
 
-sum_by_loiczid <- read_csv(list.files(file.path(dir_goal_anx, 'summary'), 
-                                   pattern = 'cell_spp_sum', 
-                                   full.names = TRUE))
+sum_by_loiczid <- read_csv(file.path(dir_goal_anx, 'summary', 'cell_spp_summary_by_loiczid.csv'))
 
 rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
 ### | rgn_id | rgn_name | loiczid | proportionArea | csq | cell_area
@@ -367,19 +376,23 @@ sum_by_rgn <- get_means_per_rgn(sum_by_loiczid, rgn_cell_lookup,
                                 rgn_note = '_gl', 
                                 reload = TRUE)
 ### This returns dataframe with variables:
-### rgn_id | rgn_mean_cat | rgn_mean_trend | status
+### rgn_id | year | rgn_mean_cat | status
 
-spp_status <- sum_by_rgn %>%
+### Calculate trend based on 10-year window (instead of usual 5) since RedList
+### assessments are pretty sporadic
+spp_status_trend_df <- calc_trends_per_rgn(sum_by_rgn, include_years = c(2011:2016), span = 10)
+
+spp_status <- spp_status_trend_df %>%
   dplyr::select(rgn_id, score = status, year)
-spp_trend <- sum_by_rgn %>%
-  dplyr::select(rgn_id, score = rgn_mean_trend, year)
+spp_trend <- spp_status_trend_df %>%
+  dplyr::select(rgn_id, score = trend, year)
 
 write_csv(spp_status, file.path(dir_goal, 'output/spp_status_global.csv'))
 write_csv(spp_trend,  file.path(dir_goal, 'output/spp_trend_global.csv'))
 
 ```
 
-`r DT::datatable(sum_by_rgn, caption = 'Region summary: mean category, trend, and status')`
+`r DT::datatable(spp_status_trend_df, caption = 'Region summary: mean category, trend, and status')`
 
 These analyses are repeated for additional scenarios: 3 nautical mile coastal buffer (for resilience calculations), High Seas, and Antarctic.
 
@@ -397,15 +410,14 @@ sum_by_rgn_3nm <- get_means_per_rgn(sum_by_loiczid,
                                     rgn_cell_lookup_3nm, 
                                     rgn_note = '_3nm',
                                     reload = TRUE)
+spp_status_trend_3nm <- calc_trends_per_rgn(sum_by_rgn_3nm, include_years = c(2011:2016), span = 10)
 
-spp_status_3nm <- sum_by_rgn_3nm %>%
+spp_status_3nm <- spp_status_trend_3nm %>%
   dplyr::select(rgn_id, score = status, year)
-spp_trend_3nm <- sum_by_rgn_3nm %>%
-  dplyr::select(rgn_id, score = rgn_mean_trend, year)
-
 write_csv(spp_status_3nm, file.path(dir_goal, 'output/spp_status_3nm_%s.csv'))
-write_csv(spp_trend_3nm,  file.path(dir_goal, 'output/spp_trend_3nm_%s.csv'))
-
+spp_trend_3nm <- spp_status_trend_3nm %>%
+  dplyr::select(rgn_id, score = trend, year)
+write_csv(spp_trend_3nm, file.path(dir_goal, 'output/spp_trend_3nm_%s.csv'))
 
 ```
 
@@ -422,25 +434,27 @@ sum_by_rgn_hs <- get_means_per_rgn(sum_by_loiczid,
                                    rgn_cell_lookup_hs, 
                                    rgn_note = '_hs',
                                    reload = TRUE)
+spp_status_trend_hs <- calc_trends_per_rgn(sum_by_rgn_hs, include_years = c(2011:2016), span = 10)
 
 sum_by_rgn_aq <- get_means_per_rgn(sum_by_loiczid, 
                                    rgn_cell_lookup_aq, 
                                    rgn_note = '_aq',
                                    reload = TRUE)
+spp_status_trend_aq <- calc_trends_per_rgn(sum_by_rgn_aq, include_years = c(2011:2016), span = 10)
 
-spp_status_hs <- sum_by_rgn_hs %>%
+spp_status_hs <- spp_status_trend_hs %>%
   dplyr::select(rgn_id, score = status, year)
-spp_trend_hs <- sum_by_rgn_hs %>%
-  dplyr::select(rgn_id, score = rgn_mean_trend, year)
 write_csv(spp_status_hs, file.path(dir_goal, 'output/spp_status_hs_%s.csv'))
-write_csv(spp_trend_hs,  file.path(dir_goal, 'output/spp_trend_hs_%s.csv'))
+spp_trend_hs <- spp_status_trend_hs %>%
+  dplyr::select(rgn_id, score = trend, year)
+write_csv(spp_trend_hs, file.path(dir_goal, 'output/spp_trend_hs_%s.csv'))
 
-spp_status_aq <- sum_by_rgn_aq %>%
+spp_status_aq <- spp_status_trend_aq %>%
   dplyr::select(rgn_id, score = status, year)
-spp_trend_aq <- sum_by_rgn_aq %>%
-  dplyr::select(rgn_id, score = rgn_mean_trend, year)
 write_csv(spp_status_aq, file.path(dir_goal, 'output/spp_status_aq_%s.csv'))
-write_csv(spp_trend_aq,  file.path(dir_goal, 'output/spp_trend_aq_%s.csv'))
+spp_trend_aq <- spp_status_trend_aq %>%
+  dplyr::select(rgn_id, score = trend, year)
+write_csv(spp_trend_aq, file.path(dir_goal, 'output/spp_trend_aq_%s.csv'))
 
 ```
 
@@ -453,9 +467,11 @@ The `calc_rgn_spp()` function takes in lookup tables of species by cell (for bot
 ``` {r species_by_region, eval = TRUE}
 
 spp_basic_info <- read_csv(file.path(dir_goal, 'int', 'spp_list_scored.csv')) %>%
-  rename(cat_score   = cat_ts_score,
-         trend_score = risk_trend) %>%
-  filter(year == max(year, na.rm = TRUE))
+  rename(cat_score   = cat_ts_score) %>%
+  filter(year == max(year, na.rm = TRUE)) %>%
+  left_join(read_csv(file.path(dir_goal, 'int', 'spp_list.csv')) %>%
+              select(iucn_sid, am_sid, sciname),
+            by = c('iucn_sid', 'am_sid'))
 
 if(!exists('am_cells_spp')) {
   am_cells_spp <- read_csv(am_cells_spp_file)

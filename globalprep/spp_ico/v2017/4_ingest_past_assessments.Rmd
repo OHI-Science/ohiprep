@@ -169,13 +169,13 @@ Total rows: `r nrow(spp_past_df1)`
 
 -----
 
-## Process current risk category and trend for each species
+## Complete the risk category time series for each species
 
-For each species, clean up the time series by filling in missing years, then for each year (back to 2012) calculate the current risk status and trend for the species.
+For each species, clean up the time series by filling in missing years, then trim to a reasonable starting year (e.g. 2000).  This creates a large dataframe with no new information, so it will not be saved... this chunk can be copied into the SPP (or ICO) analysis to complete the time series there.
 
 ``` {r process_time_series}
 
-spp_cat_ts <- read_csv(file.path(dir_goal, 'int', 'spp_cat_timeseries_raw.csv')) %>%
+spp_cat_ts_complete <- read_csv(file.path(dir_goal, 'int', 'spp_cat_timeseries_raw.csv')) %>%
   select(iucn_sid, year, cat_ts, cat_ts_score) %>%
   complete(year = full_seq(year, 1), nesting(iucn_sid)) %>%
   arrange(iucn_sid, year) %>%
@@ -184,40 +184,18 @@ spp_cat_ts <- read_csv(file.path(dir_goal, 'int', 'spp_cat_timeseries_raw.csv'))
     ### fills forward to most recent assessment year; older category valid til new assessment
   fill(cat_ts, cat_ts_score, .direction = 'up') %>% 
     ### fills back from first non-NE or DD assessment; assume early status is same as first assessment
-  ungroup()
+  ungroup() %>%
+  filter(year >= 2000)
 
-assess_years <- c(2012:2017)
-trend_span   <- 10
-
-spp_cat_trend_list <- vector('list', length = length(assess_years))
-
-for(i in 1:length(assess_years)) { # i <- 1
-  
-  yr <- assess_years[i]
-  spp_cat_current <- spp_cat_ts %>%
-    filter(year < yr & year >= yr - trend_span)
-
-  spp_cat_trend_list[[i]] <- spp_cat_current %>%
-    group_by(iucn_sid) %>%
-    do(risk_trend = lm(cat_ts_score ~ year, data = .)$coefficients['year']) %>%
-    left_join(spp_cat_current %>% 
-                filter(year == yr - 1), ### e.g. 2017 assessment looks at 2016 category
-              by = 'iucn_sid') %>%
-    mutate(risk_trend = round(risk_trend, 4),
-           assess_year = yr)
-}
-
-spp_cat_trend_df <- bind_rows(spp_cat_trend_list)
-
-write_csv(spp_cat_trend_df, file.path(dir_goal, 'int/spp_cat_trend_timeseries.csv'))
+# write_csv(spp_cat_ts_complete, file.path(dir_goal, 'int/spp_cat_timeseries.csv'))
 
 ```
 
-Head of the category/trend species list (at `r file.path(dir_goal, 'int/spp_cat_trend_timeseries.csv')`):
+Head of the completed time series, as an example:
 
-`r knitr::kable(spp_cat_trend_df %>% arrange(iucn_sid, year) %>% head(20))`
+`r knitr::kable(spp_cat_ts_complete %>% arrange(iucn_sid, year) %>% head(20))`
 
-Total rows: `r nrow(spp_cat_trend_df)`
+Total rows: `r nrow(spp_cat_ts_complete)`
 
 -----
 
