@@ -25,10 +25,10 @@ sscom <- read.csv('globalprep/fis/v2016/int/sscom_bbmsy.csv') %>%
 
 new_b_bmsy <- function(b_bmsy=constrained, method = "comsir"){
   b_bmsy <- b_bmsy %>%
-    dplyr::select(stock_id, year, bbmsy_mean, prior, model) %>%
+    dplyr::select(stock_id, year, bbmsy_q2.5,bbmsy_q97.5,bbmsy_sd, bbmsy_mean, prior, model) %>%
     arrange(stock_id, year) %>%
     group_by(stock_id) %>%
-    mutate(mean_5year = rollmean(bbmsy_mean, 5, align="right", fill=NA))
+    mutate(mean_5year        = rollmean(bbmsy_mean, 5, align="right", fill=NA))
   write.csv(b_bmsy, sprintf('globalprep/fis/v2016/int/%s_b_bmsy_%s_mean5yrs.csv', method, unique(b_bmsy$prior)), row.names=FALSE)
 } 
 
