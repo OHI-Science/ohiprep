@@ -41,7 +41,7 @@ This process is completed entirely within this script.
 
 # Data
 
-The raw data are monthly mean sea level anomalies, in m. The anomalies are calculated using a reference period of 1993 - 2012. The anomalies represent a cumulative anomaly rather than an instantaneous anomaly. For example, in the following plot shows the Mean Sea Level Anomaly for May, 2015. This data is equal to the total increase in sea level as of May, 2015 after subtracting out the mean climatology from 1993-2012.
+The raw data are monthly mean sea level anomalies, in meters. The anomalies are calculated using a reference period of 1993 - 2012. The anomalies represent a cumulative anomaly rather than an instantaneous anomaly.
 
 Since these data have already been calculated using a reference point, we only need to create annual mean rasters for each year and then rescale from 0 to 1. In order to rescale each layer, the 99.99th quantile of the entire data distribution from 2011-2015 is used, rather than calculating the 99.99th quantile for each year. This way we have a consistent reference point across time that will be forecasted backwards and used in future OHI assessments when creating this layer.
 
