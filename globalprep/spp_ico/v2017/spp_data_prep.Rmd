@@ -33,7 +33,7 @@ scenario <- 'v2017'
 dir_goal_anx <- file.path(dir_M, 'git-annex', goal, scenario) 
 dir_goal  <- file.path('~/github/ohiprep', goal, scenario)
 
-dir_data_am <- file.path(dir_M, 'git-annex/globalprep', '_raw_data/aquamaps/d2015')
+dir_data_am <- file.path(dir_M, 'git-annex/globalprep', '_raw_data/aquamaps/d2017')
 
 ### set up provenance tracking for this script:
 library(provRmd); prov_setup()

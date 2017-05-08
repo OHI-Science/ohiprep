@@ -29,7 +29,7 @@ goal     <- 'spp_ico'
 scenario <- 'v2017'
 dir_anx  <- file.path(dir_M, 'git-annex', 'globalprep')
 dir_goal_anx <- file.path(dir_anx, goal, scenario) 
-dir_goal  <- here('globalprep', goal, scenario)
+dir_goal  <- file.path('~/github/ohiprep/globalprep', goal, scenario)
 
 ### set up provenance tracking for this script:
 library(provRmd); prov_setup()
@@ -158,11 +158,12 @@ iucn_spp_list <- read_csv(file.path(dir_goal, 'int', 'spp_marine_iucn_ids.csv'))
   filter(!is.na(sci_to_match)) %>%
   distinct()
 
-am_spp_list <- read_csv(file.path(dir_anx, '_raw_data', 'aquamaps/d2015/csv', 
+am_spp_list <- read_csv(file.path(dir_anx, '_raw_data', 'aquamaps/d2017/csv', 
                                   'speciesoccursum.csv')) %>%
+  setNames(tolower(names(.))) %>%
   select(am_sid = speciesid, 
          genus, species, fbname, 
-         iucn_id, iucn_code) %>%
+         iucn_id = speccode, iucn_code) %>%
   unite(am_sciname, genus, species, sep = ' ', remove = TRUE) %>%
   mutate(iucn_id  = as.integer(iucn_id))
 
