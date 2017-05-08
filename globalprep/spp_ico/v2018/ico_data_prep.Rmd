@@ -124,8 +124,7 @@ iucn_sid | kingdom | phylum | class | order | family | genus | sciname | populat
 ### Get all pages and bind into total species list
 
 library(jsonlite)
-### api_key stored on git-annex so outside users can use their own key
-api_key <- scan(file.path(dir_anx, 'api_key.csv'), what = 'character')
+api_key <- 'fb71ae836f415f04f41176f6d30c4a9e4cea620d46b9e5021bf2fb142ea51bf5'
 
 spp_list_from_api_file <- file.path(dir_goal, 'int/spp_list_from_api.csv')
 ### NOTE:  As of 6/30/16, API returns a messed up set of data with 17500 duplicated rows.

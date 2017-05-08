@@ -1,0 +1,518 @@
+---
+title: 'OHI: Species subgoal'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 3
+    toc_float: yes
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+``` {r setup, echo = TRUE, message = FALSE, warning = FALSE}
+
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
+                      echo = TRUE, message = FALSE, warning = FALSE)
+
+library(rgdal)
+library(raster)
+library(data.table)
+
+source('~/github/ohiprep/src/R/common.R')
+
+
+goal     <- 'globalprep/spp_ico'
+scenario <- 'v2017'
+dir_goal_anx <- file.path(dir_M, 'git-annex', goal, scenario) 
+dir_goal  <- file.path('~/github/ohiprep', goal, scenario)
+
+dir_data_am <- file.path(dir_M, 'git-annex/globalprep', '_raw_data/aquamaps/d2017')
+
+### set up provenance tracking for this script:
+library(provRmd); prov_setup()
+
+source(file.path(dir_goal, 'spp_fxn.R'))
+if(!file.exists(file.path(dir_goal, '../README.md'))) {
+  warning(sprintf('No README detected in %s', normalizePath(file.path(dir_goal, '../'))))
+}
+if(!file.exists(file.path(dir_goal, 'README.md'))) {
+  warning(sprintf('No README detected in %s', file.path(dir_goal)))
+}
+
+```
+
+# Summary
+
+Spatial data from IUCN and Aquamaps is combined with extinction risk information from IUCN to generate regional scores for the Species subgoal.  A region's status is based upon an area-weighted average of species health across each global reporting region.
+
+From Halpern et al (2012):
+
+> The target for the Species sub-goal is to have all species at a risk status of Least Concern. We scaled the lower end of the biodiversity goal to be 0 when 75% species are extinct, a level comparable to the five documented mass extinctions and would constitute a catastrophic loss of biodiversity. The Status of assessed species was calculated as the area- and threat status-weighted average of the number of threatened species within each 0.5 degree grid cell.
+
+**Mean risk status per cell:**
+
+$$\bar{R}_{cell} = \frac{\displaystyle\sum_{species}(Risk)}{n_{spp}}$$
+
+**Mean risk status per region:**
+
+$$\bar{R}_{SPP} = \frac{\displaystyle\sum_{cells}(\bar{R}_{cell} * A_{cell} * pA_{cell-rgn})}{A_{rgn}}$$
+
+**Species goal model**
+
+$$X_{SPP} = \frac{((1 - \bar{R}_{SPP}) - 0.25)}{(1 - 0.25)} * 100%$$
+
+where:
+
+* $X_{SPP}$ is Species goal status
+* $\bar{R}_{cell}$ is mean extinction risk for one cell
+* $\bar{R}_{SPP}$ is area-weighted mean extinction risk for a region
+* $A_{cell}$ is cell area
+* $pA_{cell-rgn}$ is percent of cell area included in region
+* *Risk* is scaled value for species extinction risk category, based on: 
+    * 'LC' = 0.0, 'NT' = 0.2, 'VU' = 0.4, 'EN' = 0.6, 'CR' = 0.8, 'EX' = 1.0
+* SPP trend will be calculated using time series of categories based on current and past assessments.
+
+# Updates from previous assessment
+
+Changes since 2016 SPP subgoal for global OHI:
+
+* In late 2016, new IUCN shapefiles became available: chondryichthes.  Other datasets have been updated to include additional species, and the marinefish datasets have been cleaned up compared to last year.
+* The 2016 assessment relied on the `taxize` package to facilitate name matching.  While this helped, it was complicated and added uncertainty to some matches.  This year, IUCN IDs are the "master" ID, to allow for time series analysis of past assessments.  AquaMaps IDs are matched in three steps:
+    * AquaMaps conveniently provides IUCN species IDs for many of its species.  For these species, matching is done directly with IDs.
+    * AquaMaps species without an IUCN ID are then matched by scientific name.  This captures quite a few more species.
+    * Of the remaining species, unmatched by ID or scientific name, the scientific name is used in the IUCN API to look for synonyms.  When synonyms are present, the accepted name and IUCN ID is returned.
+    * After these steps, almost all remaining unmatched species are either "N.E." (not evaluated) or "D.D." (data deficient) according to AquaMaps' species information list.  
+        * These are not used in the assessment, so they are unceremoniously dropped.
+        * The tiny number of remaining species with valid risk categories are used as-is, with no IUCN species ID, and simply using the AquaMaps risk category.
+* Prior to 2016, assessments used an AquaMaps threshold of 40% to determine whether a species counted as "present" within a cell.  As in 2016, a threshold of 0% is now used.
+* In 2016, mapped subpopulations were included, by modifying the shapefile to change the ID field to reflect the subpopulation ID (as opposed to the parent ID).  In 2017, the shapefile is not changed; instead, a lookup of species subpops matches the subpop ID to the map based on the text field in the shapefile.
+    * From http://www.iucnredlist.org/details/3897/0 (Loggerhead sea turtle):
+        * Rationale: The global population of the Loggerhead Turtle (Caretta caretta) comprises 10 subpopulations (see Figure 2 in the Supplementary Material) that vary widely in population size, geographic range, and population trends, and are the appropriate units for assessment of global conservation status for this species (Wallace et al. 2010, 2011). As such, assessments have been completed for each of the 10 subpopulations, in addition to the combined global population assessment required by the IUCN (see Table 1 in the Supplementary Material). At the global level, both geographic distribution and population size are much larger than required to qualify for a threatened category. The available long-term series of nest counts (used as an index of population abundance) show an important decrease in the past (47%). Therefore, the Loggerhead Turtle is considered as Vulnerable under current IUCN Red List Criteria (criterion A2b). The previous listing, published in 1996, was Endangered under criterion A1bd (Marine Turtle Specialist Group 1996).
+        * __Results indicate that the Loggerhead Turtle, as a single taxonomic entity, will not go extinct globally in the next generation according to any Red List criteria. However, the global listing is not an appropriate representation of the conservation status__ of the biologically relevant subpopulations that make up the global Loggerhead Turtle population. Subpopulation assessments demonstrated wide variation not only in status of individual subpopulations (as indicated by IUCN Red List Categories), but also in the criteria under which the individual subpopulations qualified for a threatened category (see Table 1 in the Supplementary Material). For these reasons, the __subpopulation-level assessments for the Loggerhead Turtle should be given priority in evaluating the true global conservation status__ of this species. __This conclusion follows the precedent for other long-lived, widely distributed species,__ including the Leatherback Turtle (Wallace et al. 2013).
+
+***
+
+# Data Sources
+
+IUCN:
+
+* __Reference__: 
+    * IUCN 2016. The IUCN Red List of Threatened Species. Version 2016-3. <http://www.iucnredlist.org>.
+        * Shapefiles available from: http://www.iucnredlist.org/technical-documents/spatial-data
+        * __Downloaded__: 16 December 2016.
+    * BirdLife International and NatureServe (2016) Bird species distribution maps of the world. BirdLife International, Cambridge, UK and NatureServe, Arlington, USA.
+        * Zipped shapefile available from BirdLife International.  
+        * __Downloaded__: 23 December 2016.
+* __Description__:  Shapefiles containing polygons of assessed species ranges; each shapefile represents all assessed species within a comprehensively-assessed (i.e. >90% assessed) taxonomic group.
+* __Native data resolution__: NA
+* __Time range__: NA
+* __Format__:  Shapefile
+
+AquaMaps:
+
+* __Reference__: 
+    * Kaschner, K., J. Rius-Barile, K. Kesner-Reyes, C.Garilao, S.O. Kullander, T. Rees and R. Froese (2015). AquaMaps: Predicted range maps for aquatic species. World wide web electronic publication, www.aquamaps.org, Version 08/2015.
+        * __Downloaded__: August 2015.
+* __Description__:  .sql files containing information to recreate rasters of cell attributes and cell-by-cell probability of occurrence for 22889 marine species.
+* __Native data resolution__: 0.5° latitude and longitude  
+* __Time range__: NA
+* __Format__:  SQL database files converted into .csv
+
+***
+  
+# Methods
+
+## Extract AquaMaps data from .sql files
+
+AquaMaps data for the 2016 assessment was provided as .sql files, as in previous years, that can be used to generate an SQL database.  Each line in the .sql is a command to populate the SQL database.
+
+* Original files extracted from `aquamaps_2015_full_dataset_ohi.zip`:
+    * `hcaf_ohi.sql`
+    * `speciesoccursum_ohi.sql`
+    * `hcaf_species_native_ohi.sql`
+* Processed files saved to git-annex:
+    * `hcaf_truncated.csv`
+    * `speciesoccursum.csv`
+    * `hcaf_sp_native_trunc.csv`
+
+To extract data, we instead scan each line for `CREATE TABLE` and `INSERT INTO` commands to create and save dataframes.  Note that the `am_extract_2015.R` script discards much of the data from these .sqls that is not used within the OHI Species Goal processing (thus "truncated").  This speeds up read time and processing time and avoids parsing issues with some of the rows/columns.
+Note also that the hcaf_species_native_ohi.sql file does not originally contain LOICZID information; this is added in the extract script, since LOICZID as a cell identifier is faster and less memory intensive than CsquareCode (integer vs character string).
+
+The `spp_ico/R/am_extract_2015.R` script performs these operations.  This can be a time consuming process, so typically this code chunk is run once and then set to `eval = FALSE` once the outputs have been generated.
+
+`r knitr::kable(read_csv(file.path(dir_data_am, 'csv/hcaf_truncated.csv'), n_max = 5), caption = 'Half-degree cell info from hcaf_truncated.csv (first few rows)')`
+
+`r knitr::kable(read_csv(file.path(dir_data_am, 'csv/speciesoccursum.csv'), n_max = 5), caption = 'Species info from speciesoccursum.csv (first few rows)')`
+
+`r knitr::kable(read_csv(file.path(dir_data_am, 'csv/hcaf_sp_native_trunc.csv'), n_max = 5), caption = 'Species-to-cell lookup from hcaf_sp_native_trunc.csv (first few rows)')`
+
+## Ingest IUCN species list
+
+This process is done in a separate .Rmd: `1_ingest_iucn_info.Rmd`.  
+
+Intermediate processed files, saved to `git-annex/globalprep/spp_ico/v2017/int`: 
+
+* `spp_info_from_api.csv` - full list of IUCN Red List species pulled from web (87851 species)
+* `spp_habs_from_api.csv` - species ID to corresponding habitat(s) - all species
+* `spp_iucn_maps.csv` - List of IUCN maps, pulled from shapefile .dbfs
+* `spp_marine_from_api.csv` - lookup table of species IDs to habitats, filtered to just marine-associated habitats.
+ 
+Intermediate processed files, saved to `~/github/ohiprep/globalprep/spp_ico/v2017/int` (these are smaller, and/or helpful to have access outside of git-annex).
+
+* `iucn_habitat_categories.csv` - lookup table of all IUCN habitats, by code, text, and whether to include in analysis.
+* `excluded_marginal_and_freshwater.csv` - list of marine species that are excluded when we exclude coastal freshwater lakes or marginal suitability from consideration.
+* `spp_marine_iucn_ids.csv` - map and habitat info for all species considered marine (by habitat and/or by inclusion in a marine map collection)
+
+## Ingest IUCN spatial data
+
+This process is done in a separate .Rmd: `2_ingest_iucn_shps.Rmd`.
+
+In this script, all shapefiles are extracted against the AquaMaps half-degree cell raster.  For birds, terrestrial mammals, and reptiles, only marine-associated species are processed; for all other shapefiles (which are marine species specifically), all species are processed.
+
+The extracted .csvs are stored in `git-annex/globalprep/spp_ico/v2017/iucn_intersections`; these are then combined into `git-annex/globalprep/spp_ico/v2017/int/iucn_spp_cells_d2016.csv`.
+
+Fields:
+
+* sciname | iucn_sid | presence | subpop | loiczid | prop_area
+* iucn_sid is the parent species ID code; subpop is a text field that will be used to match the map to the subpopulation.
+* presence codes: 1 extant; 2 prob extant (discontinued); 3 Possibly Extant; 4 Possibly Extinct; 5 Extinct (post 1500); 6 Presence Uncertain
+
+## Generate full species lookup table
+
+This process is done in a separate .Rmd: `3_assemble_spp_list.Rmd`.
+
+In this script, the AquaMaps species list is matched to IUCN species IDs in several steps by certainty of match:  matching by IUCN ID number, matching by scientific name, and matching by synonym (see `git-annex/globalprep/spp_ico/v2017/int/am_synonyms.csv` for the synonym lookup table).
+
+Intermediate processed files, saved to `~/github/ohiprep/globalprep/spp_ico/v2017/int`:
+
+* `spp_am_to_iucn.csv` - the list of AquaMaps species matched to IUCN ID numbers, including IUCN and AM scientific names, and for those species without IUCN ID matches, the risk category.
+* `spp_list.csv` - the list of all species for analysis; fields include:
+    * `am_sid`: AquaMaps species ID where available.
+    * `iucn_sid`, `map_iucn_sid`: IUCN species ID, for both parent and subpopulations where applicable; `map_iucn_sid` is the parent ID, which is the identifier within the shapefiles and the extracted .csvs.
+    * `map_subpop`: this is the text subpopulation from the map shapefile; this plus `map_iucn_sid` will be used to match species info to the spatial data.
+    * `sciname`, `category`, `spp_group` - additional info for reference; for all but a small handful (AquaMaps with no IUCN match), the category will be replaced by a time series
+
+## Generate time series of past assessments for all marine species
+
+This process is done in `4_ingest_past_assessments.Rmd`, and results are saved to saved to `~/github/ohiprep/globalprep/spp_ico/v2017/int/spp_cat_timeseries_raw.csv`.  The resulting dataframe is not complete, i.e. it does not contain every year - only assessment years - and therefore must be completed to determine year-by-year scores for each species.
+
+* `iucn_sid`, `year`, `category`, `cat_score`, `assess_year`
+
+## Spatialize species information using AquaMaps and IUCN spatial data
+
+Each dataset is now set up to denote species presence in half-degree cells; for each cell we identify the species present, and can calculate a mean risk category for the cell.
+
+### Assemble species list with scored time series
+
+Attach the general species list to the time series of category scores.  Manually fill in those few AquaMaps species without an IUCN ID match.  For file size reduction, much of the species info is stripped out of the scored dataframe, though it can easily be reattached from the overall species list.
+
+``` {r score_spp_list, echo = TRUE}
+
+### get time series of categories and trends.
+### NOTE: risk_trend is positive for increasing risk, not increasing health.
+###   It is the *annual* change in category score, not five-year-adjusted.
+spp_cat_ts_complete <- read_csv(file.path(dir_goal, 'int', 'spp_cat_timeseries_raw.csv')) %>%
+  select(iucn_sid, year, cat_ts, cat_ts_score) %>%
+  complete(year = full_seq(year, 1), nesting(iucn_sid)) %>%
+  arrange(iucn_sid, year) %>%
+  group_by(iucn_sid) %>%
+  fill(cat_ts, cat_ts_score) %>%                    
+    ### fills forward to most recent assessment year; older category valid til new assessment
+  fill(cat_ts, cat_ts_score, .direction = 'up') %>% 
+    ### fills back from first non-NE or DD assessment; assume early status is same as first assessment
+  ungroup() %>%
+  filter(year >= 2000)
+
+### set up a quick lookup to score the unmatched species
+cat_scores <- spp_cat_ts_complete %>%
+  select(cat = cat_ts, score = cat_ts_score) %>%
+  distinct() %>%
+  arrange(score)
+cat_scores <- cat_scores$score %>%
+  setNames(cat_scores$cat)
+
+spp_scored <- read_csv(file.path(dir_goal, 'int/spp_list.csv')) %>%
+  filter(!(is.na(map_iucn_sid) & is.na(am_sid))) %>%
+  mutate(spatial_source = ifelse(!is.na(map_iucn_sid), 'iucn', NA),
+         spatial_source = ifelse(is.na(spatial_source) & !is.na(am_sid), 'am', spatial_source)) %>%
+  left_join(spp_cat_ts_complete, by = 'iucn_sid') 
+
+### need to tidy up species from AM with no IUCN match.
+### * set up the years
+spp_scored <- spp_scored %>%
+  mutate(year = ifelse(is.na(year), list(unique(year)), year)) %>% 
+  unnest(year) %>%
+  filter(!is.na(year)) %>%
+  mutate(assess_year  = year + 1,
+         cat_ts       = ifelse(is.na(cat_ts), category, cat_ts),
+         cat_ts_score = ifelse(is.na(cat_ts_score), cat_scores[cat_ts], cat_ts_score)) %>% ### using the lookup from above
+### * set up the category scores
+  filter(!is.na(cat_ts_score)) %>% ### ditch any DD and NE species
+  select(-category, -sciname, -spp_group, -cat_ts, -assess_year) %>%
+  distinct()
+
+write_csv(spp_scored, file.path(dir_goal, 'int', 'spp_list_scored.csv'))
+
+```
+
+### Generate cell-by-cell summary of species
+
+For each half-degree cell, tally up the number of species present and determine a mean species risk value for the cell, for each year of interest.
+
+* Since this averaging is done for each data set separately, we also track the species count per cell used to determine both the risk and the trend (separately, since many species with a risk value have no trend information, i.e. NA).  These counts are used to weight the values when the two are combined.
+* Data-set specific idiosyncracies:
+    * For AquaMaps, we select a threshold (currently 0%) to set the minimum probability of occurrence that determines species "presence."
+    * For IUCN, no threshold is needed; but the shapefiles include a "presence" attribute in which a value of 5 indicates a region in which a subpopulation has become extinct.  We use this to manually reset local extinction risk to EX.
+    * Note that for IUCN, we determine the proportional area when extracting polygons; currently we just consider any presence to fill the cell (similar to assuming even a low AquaMaps probability to indicate presence within the entire cell) - so proportional area is ignored in the calculations.
+    
+The following code chunk executes the functions that perform these tasks.  Note the optional arguments `fn_tag` and `prob_filter` that can be changed to facilitate custom runs (including different `spp_all` species info lists, different AquaMaps thresholds, and different filename tags to uniquely identify the custom run)
+
+
+``` {r generate_cell_summaries_am_and_iucn}
+
+spp_scored <- read_csv(file.path(dir_goal, 'int', 'spp_list_scored.csv')) %>%
+    rename(cat_score   = cat_ts_score)
+
+### read in AquaMaps species-cell file
+am_cells_spp_file <- file.path(dir_goal_anx, 'int', 'am_spp_cells_d2015.csv')
+if(!file.exists(am_cells_spp_file)) {
+  am_cells_spp <- read_csv(file.path(dir_data_am, 'csv/hcaf_sp_native_trunc.csv')) %>%
+    # filter(probability > 0) %>%
+    select(am_sid = speciesid, loiczid) %>%
+    distinct()
+  write_csv(am_cells_spp, am_cells_spp_file)
+} else {
+  if(!exists('am_cells_spp')) am_cells_spp <- read_csv(am_cells_spp_file)
+}
+
+### read in IUCN species-cell file
+if(!exists('iucn_cells_spp')) {
+  iucn_cells_spp <- read_csv(file.path(dir_goal_anx, 'int', 'iucn_spp_cells_d2016.csv')) %>%
+    distinct()
+}
+
+years <- spp_scored$year %>%
+  unique() %>%
+  sort()
+
+library(parallel)
+
+am_cells_spp_sum_list <- mclapply(years, mc.cores = 16, FUN = function(yr) {
+  
+  spp_scored_year <- spp_scored %>%
+    filter(year == yr)
+  
+  am_cells_spp_sum_yr <- process_am_summary_per_cell(spp_scored_year, am_cells_spp) %>%
+    mutate(year = yr)
+  # ### NOTE: keyed data.table works way faster than the old inner_join or merge.
+  # ### loiczid | mean_cat_score | n_cat_species | year
+  # ### AM does not include subspecies or subpops: every am_sid corresponds to exactly one sciname.
+})
+
+am_cells_spp_sum <- bind_rows(am_cells_spp_sum_list)
+
+write_csv(am_cells_spp_sum, file.path(dir_goal_anx, 'summary/am_spp_summary.csv'))
+
+iucn_cells_spp_sum_list <- mclapply(years, mc.cores = 16, FUN = function(yr) {
+  
+  spp_scored_year <- spp_scored %>%
+    filter(year == yr)  
+  
+  iucn_cells_spp_sum_yr <- process_iucn_summary_per_cell(spp_scored_year, iucn_cells_spp) %>%
+    mutate(year = yr)
+  ### loiczid | mean_cat_score | n_cat_species | year
+  ### IUCN includes subpops - one sciname corresponds to multiple iucn_sid values.
+  
+})
+
+iucn_cells_spp_sum <- bind_rows(iucn_cells_spp_sum_list)
+write_csv(iucn_cells_spp_sum, file.path(dir_goal_anx, 'summary/iucn_spp_summary.csv'))
+
+```
+
+``` {r generate_means_per_cell}
+
+iucn_cells_spp_sum <- read_csv(file.path(dir_goal_anx, 'summary/iucn_spp_summary.csv'))
+am_cells_spp_sum   <- read_csv(file.path(dir_goal_anx, 'summary/am_spp_summary.csv'))
+
+sum_by_loiczid  <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum, reload = TRUE)
+### This returns location of dataframe with variables:
+### loiczid | year | weighted_mean_cat | n_cat_spp
+
+```
+
+`r knitr::kable(head(am_cells_spp_sum), caption = 'AquaMaps cell summary (first few rows)')`
+
+`r knitr::kable(head(iucn_cells_spp_sum), caption = 'IUCN cell summary (first few rows)')`
+
+## Summarize status and trend by region
+
+Finally we take the two cell-by-cell summaries and combine, using a species-count weighting to determine the mean category and trend per cell.  Cells are aggregated to regions, to calculate an area-weighted regional mean category, trend, and status.
+
+These are then saved to status and trend layer outputs for global (shown in table) as well as 3 nautical mile, Antarctic, and High Seas regions.
+
+``` {r  SPP Global Summarize mean category and trend per cell and per region}
+
+sum_by_loiczid <- read_csv(file.path(dir_goal_anx, 'summary', 'cell_spp_summary_by_loiczid.csv'))
+
+rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
+### | rgn_id | rgn_name | loiczid | proportionArea | csq | cell_area
+### saves lookup table to git-annex/globalprep/spp_ico/rgns/cellID_region_gcs_global.csv
+### To use a different region shapefile, add an argument of: rgn_layer = '<rgn file here, without extension>'
+### To use a shape file from a different directory (other than git-annex/globalprep/spatial/v2015/data), add an ogr_location argument.
+### To run a different type of analysis, add an ohi_type argument with global (default), HS, or AQ
+
+### This returns dataframe with variables:
+### loiczid | weighted_mean_cat | weighted_mean_trend | n_cat_spp | n_tr_spp
+
+sum_by_rgn <- get_means_per_rgn(sum_by_loiczid, rgn_cell_lookup, 
+                                rgn_note = '_gl', 
+                                reload = TRUE)
+### This returns dataframe with variables:
+### rgn_id | year | rgn_mean_cat | status
+
+### Calculate trend based on 10-year window (instead of usual 5) since RedList
+### assessments are pretty sporadic
+spp_status_trend_df <- calc_trends_per_rgn(sum_by_rgn, include_years = c(2011:2016), span = 10)
+
+spp_status <- spp_status_trend_df %>%
+  dplyr::select(rgn_id, score = status, year)
+spp_trend <- spp_status_trend_df %>%
+  dplyr::select(rgn_id, score = trend, year)
+
+write_csv(spp_status, file.path(dir_goal, 'output/spp_status_global.csv'))
+write_csv(spp_trend,  file.path(dir_goal, 'output/spp_trend_global.csv'))
+
+```
+
+`r DT::datatable(spp_status_trend_df, caption = 'Region summary: mean category, trend, and status')`
+
+These analyses are repeated for additional scenarios: 3 nautical mile coastal buffer (for resilience calculations), High Seas, and Antarctic.
+
+``` {r SPP_3nm}
+
+### create final outputs for 3nm zone:
+### This version is for the 3 nm coastal zone cells...
+rgn_cell_lookup_3nm <- extract_cell_id_per_region(reload = FALSE, 
+                                                  ogr_location = file.path(dir_M, 'git-annex/Global/NCEAS-Regions_v2014/data'),
+                                                  rgn_layer = 'rgn_offshore3nm_gcs')
+### | sp_id | loiczid | proportionArea | csq | cell_area
+### saves lookup table to git-annex/globalprep/spp_ico/rgns/cellID_rgn_offshore3nm_gcs_global.csv
+
+sum_by_rgn_3nm <- get_means_per_rgn(sum_by_loiczid, 
+                                    rgn_cell_lookup_3nm, 
+                                    rgn_note = '_3nm',
+                                    reload = TRUE)
+spp_status_trend_3nm <- calc_trends_per_rgn(sum_by_rgn_3nm, include_years = c(2011:2016), span = 10)
+
+spp_status_3nm <- spp_status_trend_3nm %>%
+  dplyr::select(rgn_id, score = status, year)
+write_csv(spp_status_3nm, file.path(dir_goal, 'output/spp_status_3nm_%s.csv'))
+spp_trend_3nm <- spp_status_trend_3nm %>%
+  dplyr::select(rgn_id, score = trend, year)
+write_csv(spp_trend_3nm, file.path(dir_goal, 'output/spp_trend_3nm_%s.csv'))
+
+```
+
+``` {R SPP HS and Antarctic, echo = TRUE}
+
+### create final outputs for HS zone:
+### This version is for the high seas cells...
+rgn_cell_lookup_hs <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 'regions_gcs', ohi_type = 'hs')
+rgn_cell_lookup_aq <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 'regions_gcs', ohi_type = 'aq')
+### | sp_id | loiczid | proportionArea | csq | cell_area
+### saves lookup table to git-annex/globalprep/spp_ico/rgns/cellID_region_gcs_HS.csv
+
+sum_by_rgn_hs <- get_means_per_rgn(sum_by_loiczid, 
+                                   rgn_cell_lookup_hs, 
+                                   rgn_note = '_hs',
+                                   reload = TRUE)
+spp_status_trend_hs <- calc_trends_per_rgn(sum_by_rgn_hs, include_years = c(2011:2016), span = 10)
+
+sum_by_rgn_aq <- get_means_per_rgn(sum_by_loiczid, 
+                                   rgn_cell_lookup_aq, 
+                                   rgn_note = '_aq',
+                                   reload = TRUE)
+spp_status_trend_aq <- calc_trends_per_rgn(sum_by_rgn_aq, include_years = c(2011:2016), span = 10)
+
+spp_status_hs <- spp_status_trend_hs %>%
+  dplyr::select(rgn_id, score = status, year)
+write_csv(spp_status_hs, file.path(dir_goal, 'output/spp_status_hs_%s.csv'))
+spp_trend_hs <- spp_status_trend_hs %>%
+  dplyr::select(rgn_id, score = trend, year)
+write_csv(spp_trend_hs, file.path(dir_goal, 'output/spp_trend_hs_%s.csv'))
+
+spp_status_aq <- spp_status_trend_aq %>%
+  dplyr::select(rgn_id, score = status, year)
+write_csv(spp_status_aq, file.path(dir_goal, 'output/spp_status_aq_%s.csv'))
+spp_trend_aq <- spp_status_trend_aq %>%
+  dplyr::select(rgn_id, score = trend, year)
+write_csv(spp_trend_aq, file.path(dir_goal, 'output/spp_trend_aq_%s.csv'))
+
+```
+
+-----
+
+## Determine species by region
+
+The `calc_rgn_spp()` function takes in lookup tables of species by cell (for both IUCN and AM), a cell-to-region lookup, and a species info lookup.  From this it generates a list of which species occur in which regions, including basic species information.
+
+``` {r species_by_region, eval = TRUE}
+
+spp_basic_info <- read_csv(file.path(dir_goal, 'int', 'spp_list_scored.csv')) %>%
+  rename(cat_score   = cat_ts_score) %>%
+  filter(year == max(year, na.rm = TRUE)) %>%
+  left_join(read_csv(file.path(dir_goal, 'int', 'spp_list.csv')) %>%
+              select(iucn_sid, am_sid, sciname),
+            by = c('iucn_sid', 'am_sid'))
+
+if(!exists('am_cells_spp')) {
+  am_cells_spp <- read_csv(am_cells_spp_file)
+} else {
+  git_prov(am_cells_spp_file, filetype = 'input')
+}
+
+if(!exists('iucn_cells_spp')) {
+  iucn_cells_spp <- read_csv(file.path(dir_goal_anx, 'int', 'iucn_spp_cells_d2016.csv')) %>%
+    distinct()
+} else {
+  git_prov(file.path(dir_goal_anx, 'int', 'iucn_spp_cells_d2016.csv'), filetype = 'input')
+}
+
+ics_keyed     <- data.table(iucn_cells_spp, key = "loiczid") 
+acs_keyed     <- data.table(am_cells_spp,   key = "loiczid") 
+
+rgn_keyed     <- data.table(rgn_cell_lookup,     key = "loiczid")
+rgn_keyed_3nm <- data.table(rgn_cell_lookup_3nm, key = "loiczid")
+rgn_keyed_aq  <- data.table(rgn_cell_lookup_aq,  key = "loiczid")
+rgn_keyed_hs  <- data.table(rgn_cell_lookup_hs,  key = "loiczid")
+
+rgn_spp_gl  <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed,     spp_basic_info)
+rgn_spp_3nm <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_3nm, spp_basic_info)
+rgn_spp_aq  <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_aq,  spp_basic_info)
+rgn_spp_hs  <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_hs,  spp_basic_info)
+
+write_csv(rgn_spp_gl,  file.path(dir_goal_anx, 'summary/rgn_spp_gl.csv'))
+write_csv(rgn_spp_3nm, file.path(dir_goal_anx, 'summary/rgn_spp_3nm.csv'))
+write_csv(rgn_spp_aq,  file.path(dir_goal_anx, 'summary/rgn_spp_aq.csv'))
+write_csv(rgn_spp_hs,  file.path(dir_goal_anx, 'summary/rgn_spp_hs.csv'))
+
+```
+
+`r knitr::kable(head(rgn_spp_gl), caption = 'Species by region - first few rows')`
+
+
+-----
+
+``` {r results = 'asis'}
+
+prov_wrapup(commit_outputs = FALSE)
+
+```
