@@ -14,13 +14,13 @@ sum_by_loiczid  <- read_csv(sum_by_loiczid_file,
 sum_by_rgn_hs <- get_means_per_rgn(sum_by_loiczid, rgn_cell_lookup_hs, rgn_note = 'hs')
 
 if(!exists('sum_by_rgn_hs')) 
-  sum_by_rgn_hs <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_hs.csv'))
+  sum_by_rgn_hs <- read.csv(file.path(dir_goal, 'summary/rgn_summary_hs.csv'))
 spp_status_hs <- sum_by_rgn_hs %>%
   dplyr::select(rgn_id, score = status)
 spp_trend_hs <- sum_by_rgn_hs %>%
   dplyr::select(rgn_id, score = rgn_mean_trend)
-write_csv(spp_status_hs, file.path(dir_git, scenario, 'output/spp_status_hs.csv'))
-write_csv(spp_trend_hs,  file.path(dir_git, scenario, 'output/spp_trend_hs.csv'))
+write_csv(spp_status_hs, file.path(dir_goal, 'output/spp_status_hs.csv'))
+write_csv(spp_trend_hs,  file.path(dir_goal, 'output/spp_trend_hs.csv'))
 
 
 ### create final outputs for AQ zone:
@@ -32,10 +32,10 @@ rgn_cell_lookup_aq <- extract_cell_id_per_region(reload = FALSE, rgn_layer = 're
 sum_by_rgn_aq <- get_means_per_rgn(sum_by_loiczid, rgn_cell_lookup_aq, rgn_note = 'aq')
 
 if(!exists('sum_by_rgn_aq')) 
-  sum_by_rgn_aq <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_aq.csv'))
+  sum_by_rgn_aq <- read.csv(file.path(dir_goal, 'summary/rgn_summary_aq.csv'))
 spp_status_aq <- sum_by_rgn_aq %>%
   dplyr::select(rgn_id, score = status)
 spp_trend_aq <- sum_by_rgn_aq %>%
   dplyr::select(rgn_id, score = rgn_mean_trend)
-write_csv(spp_status_aq, file.path(dir_git, scenario, 'output/spp_status_aq.csv'))
-write_csv(spp_trend_aq,  file.path(dir_git, scenario, 'output/spp_trend_aq.csv'))
+write_csv(spp_status_aq, file.path(dir_goal, 'output/spp_status_aq.csv'))
+write_csv(spp_trend_aq,  file.path(dir_goal, 'output/spp_trend_aq.csv'))

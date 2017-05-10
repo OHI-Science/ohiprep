@@ -15,10 +15,10 @@ sum_by_loiczid  <- read_csv(sum_by_loiczid_file,
 sum_by_rgn_3nm <- get_means_per_rgn(sum_by_loiczid, rgn_cell_lookup_3nm, rgn_note = '3nm')
 
 if(!exists('sum_by_rgn_3nm')) 
-  sum_by_rgn_3nm <- read.csv(file.path(dir_git, scenario, 'summary/rgn_summary_3nm.csv'))
+  sum_by_rgn_3nm <- read.csv(file.path(dir_goal, 'summary/rgn_summary_3nm.csv'))
 spp_status_3nm <- sum_by_rgn_3nm %>%
   dplyr::select(rgn_id, score = status)
 spp_trend_3nm <- sum_by_rgn_3nm %>%
   dplyr::select(rgn_id, score = rgn_mean_trend)
-write_csv(spp_status_3nm, file.path(dir_git, scenario, 'output/spp_status_3nm.csv'))
-write_csv(spp_trend_3nm,  file.path(dir_git, scenario, 'output/spp_trend_3nm.csv'))
+write_csv(spp_status_3nm, file.path(dir_goal, 'output/spp_status_3nm.csv'))
+write_csv(spp_trend_3nm,  file.path(dir_goal, 'output/spp_trend_3nm.csv'))

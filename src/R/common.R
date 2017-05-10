@@ -30,12 +30,19 @@ if (Sys.info()[['sysname']] == 'Linux' & (!file.exists(dir_M) & !file.exists(dir
 
 
 # install (if necessary) and load commonly used libraries
-packages <- c("dplyr", "tidyr", "stringr")
+packages <- c('tidyverse')
 if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
   cat(sprintf("Installing %s\n", setdiff(packages, rownames(installed.packages()))))
   install.packages(setdiff(packages, rownames(installed.packages())))  
 }
-library(dplyr)
-library(tidyr)
+library(tidyverse)
 library(stringr)
 rm(packages)
+
+### Casey's function...
+get_rgn_names <- function() {
+  x <- read_csv('~/github/ohiprep/globalprep/spatial/v2013/rgn_labels.csv',
+                col_types = 'icc') %>%
+    select(rgn_id, rgn_name = label)
+  return(x)
+}

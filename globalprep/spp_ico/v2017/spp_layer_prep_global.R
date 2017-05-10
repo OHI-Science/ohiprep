@@ -24,5 +24,5 @@ spp_status <- sum_by_rgn %>%
   dplyr::select(rgn_id, score = status)
 spp_trend <- sum_by_rgn %>%
   dplyr::select(rgn_id, score = rgn_mean_trend)
-write_csv(spp_status, file.path(dir_git, scenario, 'output/spp_status_global.csv'))
-write_csv(spp_trend,  file.path(dir_git, scenario, 'output/spp_trend_global.csv'))
+write_csv(spp_status, file.path(dir_goal, 'output/spp_status_global.csv'))
+write_csv(spp_trend,  file.path(dir_goal, 'output/spp_trend_global.csv'))

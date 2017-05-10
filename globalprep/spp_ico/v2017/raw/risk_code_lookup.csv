@@ -1,0 +1,27 @@
+code,category,code_current,cat_score
+VU,Vulnerable,VU,.4
+V,Vulnerable,VU,.4
+CR,Critically Endangered,CR,.8
+EN,Endangered,EN,.6
+E,Endangered,EN,.6
+NT,Near Threatened,NT,.2
+LC,Least Concern,LC,0
+LR/nt,Lower Risk/near threatened,NT,.2
+LR/lc,Lower Risk/least concern,LC,0
+DD,Data Deficient,DD,NA
+R,Rare,EN,.6
+O,Out of Danger,LC,0
+NA,"""Very rare but believed to be stable or increasing""",CR,.8
+NA,"""Status inadequately known-survey required or data sought""",DD,NA
+LR/cd,Lower Risk/conservation dependent,VU,.4
+K,Insufficiently Known,DD,NA
+NA,"""Very rare and believed to be decreasing in numbers""",CR,.8
+NA,"""Less rare but believed to be threatened-requires watching""",EN,.6
+I,Indeterminate,DD,NA
+EW,Extinct in the Wild,EX,1.0
+EX,Extinct,EX,1.0
+Ex,Extinct,EX,1.0
+NE,Not Evaluated,NE,NA
+N.E.,Not Evaluated,NE,NA
+T,Threatened,EN,.6
+NR,Not Recognized,DD,NA

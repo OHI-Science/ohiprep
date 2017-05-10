@@ -17,24 +17,22 @@ output:
 
 knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
                       echo = FALSE, message = FALSE, warning = FALSE)
-
-library(readr)
-
+library(data.table)
 source('~/github/ohiprep/src/R/common.R')
 
 goal     <- 'globalprep/spp_ico'
-scenario <- 'v2016'
+scenario <- 'v2017'
 dir_goal_anx   <- file.path(dir_M, 'git-annex', goal, scenario) 
-dir_data_am    <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'aquamaps', 'd2015') 
-dir_data_iucn  <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'iucn_spp', 'd2015') 
-dir_data_bird  <- file.path(dir_M, 'git-annex/globalprep/_raw_data', 'birdlife_intl', 'd2015') 
 dir_goal  <- file.path('~/github/ohiprep', goal, scenario)
+dir_data_am <- file.path(dir_M, 'git-annex/globalprep', '_raw_data',
+                         'aquamaps/d2017/csv')
 
 ### set up provenance tracking for this script:
-# source(file.path('~/github/ohibc', 'src/R/prov.R'))          
+# library(provRmd); prov_setup()
 
+source(file.path(dir_goal, 'fxns_spp.R'))
+source(file.path(dir_goal, 'fxns_api.R'))
 
-source(file.path(dir_goal, 'spp_fxn.R'))
 if(!file.exists(file.path(dir_goal, '../README.md'))) {
   warning(sprintf('No README detected in %s', normalizePath(file.path(dir_goal, '../'))))
 }
@@ -98,12 +96,12 @@ Changes since 2015 SPP subgoal for global OHI:
 IUCN:
 
 * __Reference__: 
-    * IUCN 2015. The IUCN Red List of Threatened Species. Version 2015-4. <http://www.iucnredlist.org>.
+    * IUCN 2016. The IUCN Red List of Threatened Species. Version 2016-3. <http://www.iucnredlist.org>.
         * Shapefiles available from: http://www.iucnredlist.org/technical-documents/spatial-data
-        * __Downloaded__: 21 December 2015.
-    * BirdLife International and NatureServe (2015) Bird species distribution maps of the world. BirdLife International, Cambridge, UK and NatureServe, Arlington, USA.
+        * __Downloaded__: 24 December 2016.
+    * BirdLife International and NatureServe (2016) Bird species distribution maps of the world. BirdLife International, Cambridge, UK and NatureServe, Arlington, USA.
         * Zipped shapefile available from: http://www.biodiversityinfo.org/spcdownload/r5h8a1/ - username and password via BirdLife International.  
-        * __Downloaded__: 14 December 2015.
+        * __Downloaded__: 14 December 2016.
 * __Description__:  Shapefiles containing polygons of assessed species ranges; each shapefile represents all assessed species within a comprehensively-assessed (i.e. >90% assessed) taxonomic group.
 * __Native data resolution__: NA
 * __Time range__: NA
@@ -112,48 +110,21 @@ IUCN:
 AquaMaps:
 
 * __Reference__: 
-    * Kaschner, K., J. Rius-Barile, K. Kesner-Reyes, C.Garilao, S.O. Kullander, T. Rees and R. Froese (2013). AquaMaps: Predicted range maps for aquatic species. World wide web electronic publication, www.aquamaps.org, Version 08/2015.
-        * __Downloaded__: August 2015.
+    * Kaschner, K., J. Rius-Barile, K. Kesner-Reyes, C.Garilao, S.O. Kullander, T. Rees and R. Froese (2016). AquaMaps: Predicted range maps for aquatic species. World wide web electronic publication, www.aquamaps.org, Version 08/2016.
+        * __Downloaded__: March 2017.
 * __Description__:  .sql files containing information to recreate rasters of cell attributes and cell-by-cell probability of occurrence for 22889 marine species.
 * __Native data resolution__: 0.5° latitude and longitude  
 * __Time range__: NA
-* __Format__:  SQL database files converted into .csv
+* __Format__:  .csv files
 
 ***
   
 # Methods
 
-## Extract AquaMaps data from .sql files
+## Ingest AquaMaps species data.
 
-AquaMaps data for the 2016 assessment was provided as .sql files, as in previous years, that can be used to generate an SQL database.  Each line in the .sql is a command to populate the SQL database.
+AquaMaps data for the 2017 assessment was provided as .csv files requiring no special processing.
 
-* Original files extracted from `aquamaps_2015_full_dataset_ohi.zip`:
-    * `hcaf_ohi.sql`
-    * `speciesoccursum_ohi.sql`
-    * `hcaf_species_native_ohi.sql`
-* Processed files saved to git-annex:
-    * `hcaf_truncated.csv`
-    * `speciesoccursum.csv`
-    * `hcaf_sp_native_trunc.csv`
-
-To extract data, we instead scan each line for `CREATE TABLE` and `INSERT INTO` commands to create and save dataframes.  Note that the `am_extract_2015.R` script discards much of the data from these .sqls that is not used within the OHI Species Goal processing (thus "truncated").  This speeds up read time and processing time and avoids parsing issues with some of the rows/columns.
-Note also that the hcaf_species_native_ohi.sql file does not originally contain LOICZID information; this is added in the extract script, since LOICZID as a cell identifier is faster and less memory intensive than CsquareCode (integer vs character string).
-
-The `spp_ico/R/am_extract_2015.R` script performs these operations.  This can be a time consuming process, so typically this code chunk is run once and then set to `eval = FALSE` once the outputs have been generated.
-
-``` {r Ingest Aquamaps data to csv from sql, eval = FALSE, echo = TRUE}
-
-reload <- FALSE
-
-source(file.path(dir_git, 'R/am_extract_2015.R'))
-
-```
-
-`r knitr::kable(read_csv(file.path(dir_data_am, 'csv/hcaf_truncated.csv'), n_max = 5), caption = 'Half-degree cell info from hcaf_truncated.csv (first few rows)')`
-
-`r knitr::kable(read_csv(file.path(dir_data_am, 'csv/speciesoccursum.csv'), n_max = 5), caption = 'Species info from speciesoccursum.csv (first few rows)')`
-
-`r knitr::kable(read_csv(file.path(dir_data_am, 'csv/hcaf_sp_native_trunc.csv'), n_max = 5), caption = 'Species-to-cell lookup from hcaf_sp_native_trunc.csv (first few rows)')`
 
 ## Ingest IUCN species list
 
@@ -169,60 +140,9 @@ Processed files, saved to `git-annex/globalprep/spp_ico/v201x/int`:
 * `spp_iucn_habitats.csv` - list of IUCN species (by iucn_sid) and corresponding habitat.
 * `spp_iucn_marine.csv` - prepped list: cleaned marine list with subpops and trends.
 
-The `spp_ico/R/ingest_iucn.R` script performs these functions.  This can be a time consuming process, so typically this code chunk is run once and then set to `eval = FALSE` once the outputs have been generated.
+The `spp_ico/v2017/1_ingest_iucn_info.Rmd` script performs these operations.  This can be a time consuming process, so typically this code chunk is run once and then set to `eval = FALSE` once the outputs have been generated.
 
-``` {r Ingest IUCN species list, eval = FALSE, echo = TRUE}
-
-reload <- FALSE
-
-source(file.path(dir_git, 'R/ingest_iucn.R'))
-
-```
-
-`r knitr::kable(read_csv(file.path(dir_goal_anx, 'int/spp_iucn_marine.csv'), n_max = 5), caption = 'IUCN marine species list and info from spp_iucn_marine.csv (first few rows)')`
- 
-## Generate full species lookup table
-
-Having processed AquaMaps and IUCN species raw data, we can now prepare a full combined list of all species to be included in the OHI SPP goal.  The function `create_spp_master_lookup()` creates the full lookup table:
-
-* Load AquaMaps species info from `speciesoccursum.csv`
-    * Verify `sciname` field; the `verify_scinames()` function uses `taxize::gnr_resolve()` to compare AM scinames to accepted names from Encyclopedia of Life and NCBI databases - this helps resolve differences in naming conventions and species aliases.
-* Load IUCN species info from `spp_iucn_marine.csv`
-    * Verify `sciname` field as above.
-* Join the two species lists by verified scientific names as the best common identifier.
-* Create an extinction risk category field for each row, using IUCN category, or failing that the category listed in AquaMaps; failing that, assign NA.
-
-At this point, the list is all AquaMaps species and all marine-identified IUCN species.  Next, identify the source of spatial distribution data for each species, if available.
-
-* From the downloaded IUCN shapefiles, determine which species have spatial data.
-* Depending on preference and availability of spatial source (AquaMaps or IUCN), tag each row with a specific `spatial_source` ("am" or "iucn").
-* Follow a similar process for IUCN species included in the BirdLife International geodatabase (tag as "iucn-bli").
-
-Now having identified spatial source availability and preference for all species on the list:
-
-* Clean out duplicated species
-* Assign numeric values to population Red List category and population trend.
-* Save result to `git-annex/globalprep/spp_ico/v2016/int/spp_all_raw.csv`
-* Filter out subpop species rows (species with a non-NA `parent_sid`) that do not have a named subpopulation location (i.e. `iucn_subpop` field is NA, instead of the name of a subpopulation)
-* Save final list to `git-annex/globalprep/spp_ico/v2016/int/spp_all_cleaned.csv`
-
-The `spp_ico/v2016/prep_spp_list.R` script performs these functions.  This does not take all that long, but the saved output can be used instead instead of reloading the entire process.  Note the optional arguments `source_pref` and `fn_tag` that can be used to customize the run (passed to `create_spp_master_lookup()` from `spp_fxn.R`); `'iucn'` and `''` are standard defaults.
-
-``` {r Generate spp lookup, echo = TRUE}
-
-reload      <- FALSE
-source_pref <- 'iucn'
-fn_tag      <- ''
-
-source(file.path(dir_goal, 'prep_spp_list.R'))
-
-```
-
-`r knitr::kable(read_csv(file.path(dir_goal_anx, 'int/spp_all_cleaned.csv'), n_max = 5), caption = 'Combined species list from spp_all_cleaned.csv (first few rows)')`
-
-## Spatialize species information using AquaMaps and IUCN spatial data
-
-### Extract IUCN polygons to half-degree cells
+## Extract IUCN polygons to half-degree cells
 
 We extract IUCN polygon presence to the same half-degree cells as AquaMaps to simplify the analysis.
 * The `spp_all` species list includes a field `spp_group` that identifies which shapefile contains the spatial information for a given species.
@@ -234,36 +154,15 @@ We extract IUCN polygon presence to the same half-degree cells as AquaMaps to si
     * by passing a filtered data frame to the function, you can focus the process only on new or updated shapefiles
     * reload = FALSE allows the function to skip extraction on groups with files already present.  Set to TRUE if you need to extract an updated shapefile (or change the shapefile name, or delete the previous extraction...).
 
-The function `extract_loiczid_per_spp()` performs these functions, and is contained in the `spp_ico/v2016/spp_fxn.R` script.  This can be a time consuming process, so typically this code chunk is run once and then set to `eval = FALSE` once the outputs have been generated.
+The `spp_ico/v2017/2_ingest_iucn_shps.Rmd` script performs these operations.  
+ 
+## Generate full species lookup table
 
-``` {r Generate lookup IUCN species to LOICZID, eval = FALSE, echo = TRUE}
+Having processed AquaMaps and IUCN species raw data, we can now prepare a full combined list of all species to be included in the OHI SPP goal.  The script `spp_ico/v2017/3_assemble_spp_list.Rmd` creates the full lookup table.
 
-spp_all <- read_csv(file.path(dir_goal_anx, 'int/spp_all_cleaned.csv'))
+`r knitr::kable(read_csv(file.path(dir_goal, 'int/spp_list_cleaned.csv'), n_max = 5), caption = 'Combined species list from spp_all_cleaned.csv (first few rows)')`
 
-### set up maps_list for all standard (non-bird) IUCN species...
-maps_list_iucn <- spp_all %>%
-  filter(str_detect(spatial_source, 'iucn') & !str_detect(spatial_source, 'bli')) %>%
-  dplyr::select(sciname, iucn_sid, spp_group) %>%
-  unique()
-
-extract_loiczid_per_spp(maps_list_iucn,
-                        shp_dir = file.path(dir_data_iucn, 'iucn_shp'), 
-                        fn_tag = scenario, 
-                        reload = FALSE)
-
-### set up maps_list for all bird IUCN species...
-maps_list_bli <- spp_all %>%
-  filter(str_detect(spatial_source, 'bli')) %>%
-  dplyr::select(sciname, iucn_sid, spp_group) %>%
-  mutate(spp_group = 'BOTW') %>%
-  unique()
-
-extract_loiczid_per_spp(maps_list_bli,
-                        shp_dir = dir_data_bird, 
-                        fn_tag = scenario, 
-                        reload = FALSE)
-
-```
+## Spatialize species information using AquaMaps and IUCN spatial data
 
 ### Generate cell-by-cell summary of species
 
@@ -276,22 +175,35 @@ For each half-degree cell, tally up the number of species present and determine 
     * For IUCN, no threshold is needed; but the shapefiles include a "presence" attribute in which a value of 5 indicates a region in which a subpopulation has become extinct.  We use this to manually reset local extinction risk and trend to EX and NA respectively.
     * Note that for IUCN, we determine the proportional area when extracting polygons; currently we just consider any presence to fill the cell (similar to assuming even a low AquaMaps probability to indicate presence within the entire cell).
     
-The following code chunk executes the functions that perform these tasks.  Note the optional arguments `fn_tag` and `prob_filter` that can be changed to facilitate custom runs (including different `spp_all` species info lists, different AquaMaps thresholds, and different filename tags to uniquely identify the custom run)
+The following code chunk executes the functions that perform these tasks.  Note the optional arguments `fn_tag` and `prob_filter` that can be changed to facilitate custom runs (including different `spp_all` species info lists, different AquaMaps thresholds, and different filename tags to uniquely identify the custom run).
+
+Finally we take the two cell-by-cell summaries and combine, using a species-count weighting to determine the mean category and trend per cell.  
 
 ``` {r SPP Generate species per cell tables for Aquamaps and IUCN, echo = TRUE}
 
-spp_all <- read_csv(file.path(dir_goal_anx, 'int/spp_all_cleaned.csv'))
+spp_all <- read_csv(file.path(dir_goal, 'int/spp_list_cleaned.csv'),
+                    col_types = 'cddcccccdcd')
 
-am_cells_spp_sum <- process_am_summary_per_cell(spp_all, fn_tag = '', prob_filter = 0, reload = FALSE) %>%
-  read_csv(col_types = 'dddddc')
+am_cells_spp <- get_am_cells_spp(prob_filter = 0, reload = FALSE)
+
+am_cells_spp_sum_file <- process_am_summary_per_cell(spp_all, am_cells_spp, fn_tag = '', reload = FALSE)
+### returns file location for the saved file, not the actual data frame.
 ### NOTE: keyed data.table works way faster than the old inner_join or merge.
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### AM does not include subspecies or subpops: every am_sid corresponds to exactly one sciname.
+rm('am_cells_spp') ### free up some memory
 
-iucn_cells_spp_sum <- process_iucn_summary_per_cell(spp_all, fn_tag = '', reload = FALSE) %>%
-  read_csv(col_types = 'dddddc')
+iucn_cells_spp <- get_iucn_cells_spp(reload = FALSE)
+
+iucn_cells_spp_sum_file <- process_iucn_summary_per_cell(spp_all, iucn_cells_spp, fn_tag = '', reload = FALSE)
 ### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
 ### IUCN includes subpops - one sciname corresponds to multiple iucn_sid values.
+rm('iucn_cells_spp') ### free up some memory
+
+am_cells_spp_sum   <- read_csv(am_cells_spp_sum_file, 
+                               col_types = 'dddiic')
+iucn_cells_spp_sum <- read_csv(iucn_cells_spp_sum_file,
+                               col_types = 'dddiic')
 
 sum_by_loiczid_file  <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum, fn_tag = '')
 ### This returns location of dataframe with variables:
@@ -305,15 +217,15 @@ sum_by_loiczid_file  <- process_means_per_cell(am_cells_spp_sum, iucn_cells_spp_
 
 ## Summarize status and trend by region
 
-Finally we take the two cell-by-cell summaries and combine, using a species-count weighting to determine the mean category and trend per cell.  Cells are aggregated to regions, to calculate an area-weighted regional mean category, trend, and status.
+Cells are aggregated to regions, to calculate an area-weighted regional mean category, trend, and status.
 
 These are then saved to status and trend layer outputs for global (shown in table) as well as 3 nautical mile, Antarctic, and High Seas regions.
 
-The script `spp_ico/v2016/layer_prep_spp_global.R` performs these tasks.
+The script `spp_ico/v2016/spp_layer_prep_global.R` performs these tasks.
 
 ``` {r  SPP Global Summarize mean category and trend per cell and per region, echo = TRUE}
 
-source(file.path(dir_goal, 'layer_prep_spp_global.R'))
+source(file.path(dir_goal, 'spp_layer_prep_global.R'))
 
 ```
 
@@ -323,126 +235,17 @@ These analyses are repeated for additional scenarios: 3 nautical mile coastal bu
 
 ``` {r SPP 3nm, echo = TRUE}
 
-source(file.path(dir_goal, 'layer_prep_spp_3nm.R'))
+source(file.path(dir_goal, 'spp_layer_prep_3nm.R'))
 
 ```
 
 ``` {R SPP HS and Antarctic, echo = TRUE}
 
-source(file.path(dir_goal, 'layer_prep_spp_hs_aq.R'))
+source(file.path(dir_goal, 'spp_layer_prep_hs_aq.R'))
 
 ```
-
-## Summarize status and trend by region, excluding BirdLife International data
-
-``` {r SPP Generate species per cell tables for Aquamaps and IUCN without birds, echo = TRUE}
-
-spp_all_nobirds <- read_csv(file.path(dir_goal_anx, 'int/spp_all_cleaned.csv')) %>%
-  filter(!(spp_group == 'BOTW' & is.na(am_sid))) %>% ### remove any BOTW with no AquaMaps map
-  mutate(spatial_source = ifelse(spp_group == 'BOTW', 'am', spatial_source))
-
-am_cells_spp_sum_nobirds <- process_am_summary_per_cell(spp_all_nobirds, fn_tag = 'nobirds', prob_filter = 0, reload = FALSE) %>%
-  read_csv(col_types = 'dddddc')
-### NOTE: keyed data.table works way faster than the old inner_join or merge.
-### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
-### AM does not include subspecies or subpops: every am_sid corresponds to exactly one sciname.
-
-iucn_cells_spp_sum_nobirds <- process_iucn_summary_per_cell(spp_all_nobirds, fn_tag = 'nobirds', reload = FALSE) %>%
-  read_csv(col_types = 'dddddc')
-### loiczid | mean_cat_score | mean_trend_score | n_cat_species | n_trend_species
-### IUCN includes subpops - one sciname corresponds to multiple iucn_sid values.
-
-sum_by_loiczid_file_nobirds  <- process_means_per_cell(am_cells_spp_sum_nobirds, iucn_cells_spp_sum_nobirds, fn_tag = 'nobirds')
-### This returns location of dataframe with variables:
-### loiczid | weighted_mean_cat | weighted_mean_trend | n_cat_spp | n_tr_spp
-
-```
-
-``` {r  SPP Global Summarize mean category and trend per cell and per region without birds, echo = TRUE}
-
-source(file.path(dir_goal, 'layer_prep_spp_global_nobirds.R'))
-
-library(ggplot2)
-nobirds_df <- read_csv(file.path(dir_goal, 'output/spp_status_global.csv')) %>% 
-  rename(status = score) %>%
-  left_join(read_csv(file.path(dir_goal, 'output/spp_status_global_nobirds.csv'))  %>%
-              rename(status_nobirds = score),
-            by = 'rgn_id') %>%
-  left_join(read_csv(file.path(dir_git, 'v2015', 'data/spp_status_global.csv'))  %>%
-              rename(status_2015 = score),
-            by = 'rgn_id')
-  
-scatter_nobirds <- ggplot(nobirds_df, aes(x = status_nobirds, y = status)) +
-  geom_point(alpha = .5) +
-  geom_point(aes(x = status_nobirds, y = status_2015), color = 'blue', alpha = .5) +
-  geom_abline(color = 'red') +
-  scale_x_continuous(limits = c(.5, 1)) +
-  scale_y_continuous(limits = c(.5, 1)) +
-  labs(x = 'Status: v2016 excluding Bird Life data',
-       y = 'Status: v2015(blue), v2016 all (black)',
-       title = 'SPP Status: excluding birds')
-ggsave(file.path(dir_goal, 'Figs/scatterplot_spp_status_global_excl_bli.png'),
-       plot = scatter_nobirds)
-  
-```
-
-`r DT::datatable(sum_by_rgn_nobirds, caption = 'Region summary sans BLI: mean category, trend, and status')`
 
 -----
-
-``` {r SPP swapping priority on AM and IUCN spatial source, eval = FALSE}
-
-### for AquaMaps/IUCN paper, using OHI case study
-scenario <- 'vAM_IUCN'
-
-pref_flag_vec <- c('_IUCNpref', '_AMpref')
-prob_filt_vec <-   c(0.40, 0)
-
-for (pref_flag in pref_flag_vec) {   ### pref_flag  <- pref_flag_vec[1]
-  for (prob_filt in prob_filt_vec) { ### prob_filt <- prob_filt_vec[1]
-    message('Processing parameters: ', pref_flag, ', prob = ', prob_filt)
-    spp_all <- create_spp_master_lookup(source_pref = ifelse(pref_flag == '_AMpref', 'am', 'iucn'), 
-                                        fn_tag = pref_flag, 
-                                        reload = TRUE)
-    # only affected by am/iucn preference
-    spp_all <- spp_all %>%
-      dplyr::select(-iucn_subpop) %>% ### need to figure out how to use this info
-      dplyr::select(-sciname) %>%     ### get rid of this to eliminate duped names
-      filter(!is.na(spatial_source)) %>% 
-      unique()
-        
-    am_cells_spp_sum <- process_am_summary_per_cell(fn_tag = sprintf('%s_prob%s', pref_flag, prob_filt), 
-                                                    prob_filter = prob_filt, reload = TRUE)
-    # affected by prob filter and preference flag
-    
-    iucn_cells_spp_sum <- process_iucn_summary_per_cell(fn_tag = sprintf('_pref%s', pref_flag), reload = TRUE)
-    # affected by preference flag
-    
-    sum_by_loiczid <- get_means_per_cell(am_cells_spp_sum, iucn_cells_spp_sum, 
-                                             fn_tag = sprintf('%s_%s', pref_flag, prob_filt))
-    
-    rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
-    
-    sum_by_rgn     <- get_means_per_rgn(sum_by_loiczid, rgn_cell_lookup, 
-                                            rgn_note = sprintf('%s_%s', pref_flag, prob_filt))
-    ### This returns dataframe with variables:
-    ### sp_id | rgn_mean_cat | rgn_mean_trend | status
-    
-    ### Create final outputs:
-    spp_status <- sum_by_rgn %>%
-      dplyr::select(rgn_id, score = status)
-    spp_trend <- sum_by_rgn %>%
-      dplyr::select(rgn_id, score = rgn_mean_trend)
-    write_csv(spp_status, 
-              file.path(dir_goal, 
-                        sprintf('output/spp_status_global%s_prob%s.csv', pref_flag, prob_filt)))
-    write_csv(spp_trend,  
-              file.path(dir_goal, 
-                        sprintf('output/spp_trend_global%s_prob%s.csv', pref_flag, prob_filt)))
-  }
-}
-
-```
 
 ## Determine species by region
 
@@ -450,62 +253,92 @@ The `calc_rgn_spp()` function takes in lookup tables of species by cell (for bot
 
 ``` {r species_by_region, echo = FALSE, eval = TRUE}
 
-iucn_cells_spp <- read_csv(file.path(dir_goal_anx, 'int/iucn_cells_spp.csv'),
-                           col_types = 'cddddc')
-am_cells_spp   <- read_csv(file.path(dir_goal_anx, 'int/am_cells_spp_prob0.csv'))
+rgn_spp_files <- c(file.path(dir_goal_anx, 'summary/rgn_spp_gl.csv'), 
+                   file.path(dir_goal_anx, 'summary/rgn_spp_3nm.csv'),  
+                   file.path(dir_goal_anx, 'summary/rgn_spp_aq.csv'),  
+                   file.path(dir_goal_anx, 'summary/rgn_spp_hs.csv'))
 
-ics_keyed     <- data.table(iucn_cells_spp, key = "loiczid") 
-acs_keyed     <- data.table(am_cells_spp,   key = "loiczid") 
+if(any(!file.exists(rgn_spp_files))) {
+  iucn_cells_spp <- read_csv(file.path(dir_goal_anx, 'int/iucn_cells_spp.csv'),
+                             col_types = 'cddddc')
+  am_cells_spp   <- read_csv(file.path(dir_goal_anx, 'int/am_cells_spp_prob0.csv'),
+                             col_types = 'cd')
+  
+  ics_keyed     <- data.table(iucn_cells_spp, key = "loiczid") 
+  acs_keyed     <- data.table(am_cells_spp,   key = "loiczid") 
+  
+  rgn_keyed     <- data.table(rgn_cell_lookup,     key = "loiczid")
+  rgn_keyed_3nm <- data.table(rgn_cell_lookup_3nm, key = "loiczid")
+  rgn_keyed_aq  <- data.table(rgn_cell_lookup_aq,  key = "loiczid")
+  rgn_keyed_hs  <- data.table(rgn_cell_lookup_hs,  key = "loiczid")
+  
+  rgn_spp_gl  <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed,     spp_all)
+  rgn_spp_3nm <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_3nm, spp_all)
+  rgn_spp_aq  <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_aq,  spp_all)
+  rgn_spp_hs  <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_hs,  spp_all)
+  
+  write_csv(rgn_spp_gl,  file.path(dir_goal_anx, 'summary/rgn_spp_gl.csv'))
+  write_csv(rgn_spp_3nm, file.path(dir_goal_anx, 'summary/rgn_spp_3nm.csv'))
+  write_csv(rgn_spp_aq,  file.path(dir_goal_anx, 'summary/rgn_spp_aq.csv'))
+  write_csv(rgn_spp_hs,  file.path(dir_goal_anx, 'summary/rgn_spp_hs.csv'))
+  
+} else {
+  
+  message('All rgn-spp lookups are present: \n  ', paste(rgn_spp_files, collapse = '\n  '))
 
-rgn_keyed     <- data.table(rgn_cell_lookup,     key = "loiczid")
-rgn_keyed_3nm <- data.table(rgn_cell_lookup_3nm, key = "loiczid")
-rgn_keyed_aq  <- data.table(rgn_cell_lookup_aq,  key = "loiczid")
-rgn_keyed_hs  <- data.table(rgn_cell_lookup_hs,  key = "loiczid")
+}
 
-rgn_spp_gl  <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed,     spp_all)
-rgn_spp_3nm <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_3nm, spp_all)
-rgn_spp_aq  <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_aq,  spp_all)
-rgn_spp_hs  <- calc_rgn_spp(ics_keyed, acs_keyed, rgn_keyed_hs,  spp_all)
-
-write_csv(rgn_spp_gl,  file.path(dir_goal_anx, 'summary/rgn_spp_gl.csv'))
-write_csv(rgn_spp_3nm, file.path(dir_goal_anx, 'summary/rgn_spp_3nm.csv'))
-write_csv(rgn_spp_aq,  file.path(dir_goal_anx, 'summary/rgn_spp_aq.csv'))
-write_csv(rgn_spp_hs,  file.path(dir_goal_anx, 'summary/rgn_spp_hs.csv'))
 ```
 
-`r knitr::kable(head(rgn_spp_gl), caption = 'Species by region - first few rows')`
+`r knitr::kable(read_csv(file.path(dir_goal_anx, 'summary/rgn_spp_gl.csv'), n_max = 10), caption = 'Species by region - first few rows')`
 
-# Comparing scenarios and changes in data
+-----
 
-``` {r plot_scores_vs_2015}
-### commented out - uncomment to regenerate plots...
-# source(file.path(dir_goal, 'score_plot_spp.R'))
+## Verify against v2016 scores
+
+``` {r plot_vs_2016}
+spp_2017    <- read_csv(file.path(dir_goal, 'output', 'spp_status_global.csv'),
+                        col_types = 'id') %>%
+  rename(st17 = score)
+spp_2017_tr <- read_csv(file.path(dir_goal, 'output', 'spp_trend_global.csv'),
+                        col_types = 'id') %>%
+  rename(tr17 = score)
+spp_2016    <- read_csv('~/github/ohi-global/eez2016/layers/spp_status.csv',
+                        col_types = 'id') %>%
+  rename(st16 = score)
+spp_2016_tr <- read_csv('~/github/ohi-global/eez2016/layers/spp_trend.csv',
+                        col_types = 'id') %>%
+  rename(tr16 = score)
+
+st_df <- full_join(spp_2017, spp_2016, by = 'rgn_id') %>%
+  left_join(get_rgn_names(), by = 'rgn_id')
+tr_df <- full_join(spp_2017_tr, spp_2016_tr, by = 'rgn_id') %>%
+  left_join(get_rgn_names(), by = 'rgn_id')
+
+st_plot <- ggplot(st_df, aes(x = st16, y = st17)) +
+  geom_point(alpha = .6) +
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  coord_cartesian(xlim = c(.5, 1), ylim = c(.5, 1)) +
+  labs(title = 'SPP Status 2017 vs 2016',
+       x = 'SPP status 2016',
+       y = 'SPP status')
+
+tr_plot <- ggplot(tr_df, aes(x = tr16, y = tr17)) +
+  geom_point(alpha = .6) +
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  coord_cartesian(xlim = c(-.5, .5), ylim = c(-.5, .5)) +
+  labs(title = 'SPP Trend 2017 vs 2016',
+       x = 'SPP trend 2016',
+       y = 'SPP trend 2017')
+
+print(st_plot)
+
+print(tr_plot)
 
 ```
 
-The following plots compare the status scores generated for the 2015 assessment to those generated for 2016.  
+-----
 
-* The first compares the released region status for 2015 to the proposed status for 2016.  This changes both the datasets and the methodology between the two axes.
-    * 2015 scores used data from 2014 (d2014) for both AquaMaps and IUCN, and scripts from the v2015 scenario and from the v2016 scenario to see the impact of the updated methods.  See the second plot to better understand the differences between these two.
-    * 2016 scores use data from 2015 (d2015) for both AquaMaps and IUCN, and scripts from the v2016 scenario.
-    
-![](Figs/scatterplot_spp_status_global_d15v16_d14v15.png)
-    
-* The second compares original status for 2015 (using d2014 data) to the updated status applied to d2014 data.  This keeps the data largely the same, and compares the changes due to the updated methodology.
-    * For this plot, both methods (v2015 and v2016) use a 40% threshold on AquaMaps data.
-    * IUCN species-cell lookup for d2014 was generated using v2015 scripts, which relied on the `sciname` field for joining.  I've added a step to add `iucn_sid` values according to `sciname`, to allow the species-cell lookup to work with the v2016 scripts.  Much of the variation in the plot may be due to differences in name-matching.
-
-![](Figs/scatterplot_spp_status_global_d14v15_d14v16.png)
-
-The third examines one possible reason for the large shift in scores between the 2015 scores (d2014 data) and 2016 scores (d2015 data): the addition of birds to the IUCN spatial information.  Bird species have a fairly low area-weighted mean risk category, but include a very large number of total cells of coverage.  This means these lower-risk species have a very large impact on the final score compared to other species groups.
-
-![](debug/birds_health.png)
-
-Finally, this plot compares the 2016 scores as calculated with and without BirdLife International data.  AquaMaps bird species were left in.  Blue points compare 2015 scores (which did not include BirdLife International data) to the 2016 scores excluding BirdLife International data.
-
-![](Figs/scatterplot_spp_status_global_excl_bli.png)
-
-
-
-``` {r child = file.path('~/github/ohibc', 'src/templates/ohibc_prov_ftr.Rmd'), eval = FALSE}
+``` {r results = 'asis'}
+# prov_wrapup()
 ```
