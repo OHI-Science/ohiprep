@@ -42,8 +42,6 @@ if(!file.exists(file.path(dir_goal, 'README.md'))) {
 # SPP-specific and ICO-specific functions
 ```
 
-<!--[REFERENCE RMD FILE: https://rawgit.com/OHI-Science/ohiprep/master/globalprep/Pressures_OceanAcidification/v2015/oa_create_layer_2015.html]-->
-
 # Summary
 
 Spatial data from IUCN and Aquamaps is combined with extinction risk information from IUCN to generate regional scores for the Species subgoal.  A region's status is based upon an area-weighted average of species health across each global reporting region.
