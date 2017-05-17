@@ -1,0 +1,182 @@
+---
+title: 'OHI: Species trend explore'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
+                      echo = FALSE, message = FALSE, warning = FALSE)
+library(data.table)
+source('~/github/ohiprep/src/R/common.R')
+
+goal     <- 'globalprep/spp_ico'
+scenario <- 'v2017'
+dir_goal_anx   <- file.path(dir_M, 'git-annex', goal, scenario) 
+dir_goal  <- file.path('~/github/ohiprep', goal, scenario)
+dir_data_am <- file.path(dir_M, 'git-annex/globalprep', '_raw_data',
+                         'aquamaps/d2017/csv')
+
+### set up provenance tracking for this script:
+# library(provRmd); prov_setup()
+
+source(file.path(dir_goal, 'fxns_spp.R'))
+source(file.path(dir_goal, 'fxns_api.R'))
+
+if(!file.exists(file.path(dir_goal, '../README.md'))) {
+  warning(sprintf('No README detected in %s', normalizePath(file.path(dir_goal, '../'))))
+}
+if(!file.exists(file.path(dir_goal, 'README.md'))) {
+  warning(sprintf('No README detected in %s', file.path(dir_git, scenario)))
+}
+# SPP-specific and ICO-specific functions
+```
+
+# Summary
+
+Up through 2017, the SPP trend has been based on the IUCN-reported "population trend", using scores of +0.5 ("increasing"), +0.0 ("stable") and -0.5 ("decreasing").  Starting in 2016, however, the Iconic Species trend took advantage of reported past assessments to determine changes in actual species status over time.  In future assessments, the IUCN past assessment method will likely be used for SPP and ICO in the global assessment, and are currently used for OHIBC and NE.
+
+However, most of the species assessed for IUCN have only been assessed once, so these do not provide value in determining actual trend information.  For these species, it may be better to use the "population trend" reporting to define a trend; however, the +.5/-.5 values may not be the appropriate scaling factors.
+
+Here we explore the relationship between the two measures of changing species health to improve our trend calculations.
+
+# Methods
+
+## Gather IUCN assessment information
+
+From data gathered in the execution of SPP v2017, collect species data on past assessments (category) and population trend.  Combine and save.  Note that trend has to be assumed to be related to the most recent assessment only - not included in historical assessment API call.
+
+For this analysis we will focus only on assessments performed since 1991, the year of v1.0 Red List.
+
+``` {r gather_data}
+
+cat_ts <- read_csv(file.path(dir_goal, 'int/spp_cat_timeseries_raw.csv')) %>%
+  select(iucn_sid, year, cat = cat_ts, cat_score = cat_ts_score)
+
+trd_ts <- read_csv(file.path(dir_goal, 'int/spp_pop_trends.csv')) %>%
+  select(iucn_sid, sciname, pop_trend, trend_score)
+
+df <- cat_ts %>%
+  full_join(trd_ts, by = 'iucn_sid') %>%
+  filter(year >= 1991 & !is.na(cat_score)) %>%
+  group_by(iucn_sid) %>%
+  mutate(n_assess = n(),
+         status = round((.75 - cat_score) / .75, 4)) %>%
+  ungroup()
+
+# df %>% select(iucn_sid, n_assess) %>% distinct() %>% .$n_assess %>% table()
+
+lm_df <- df %>%
+  filter(n_assess >= 3) %>%
+  group_by(iucn_sid) %>%
+  do(calc_trend = lm( status ~ year, data = .)[['coefficients']][['year']]) %>%
+  mutate(calc_trend = round(calc_trend, 5))
+
+pop_trend_vec <- c('increasing' = 1, 'decreasing' = -1, 'stable' = 0)
+trend_df <- df %>%
+  filter(n_assess > 1) %>%
+  group_by(iucn_sid) %>%
+  summarize(years = paste(year, collapse = ', '),
+            cats  = paste(cat, collapse = ', '),
+            stati = paste(status, collapse = ', '),
+            pop_trend_desc = first(pop_trend)) %>%
+  ungroup() %>%
+  left_join(lm_df, by = 'iucn_sid') %>%
+  mutate(pop_trend = pop_trend_vec[pop_trend_desc])
+
+write_csv(trend_df, file.path(dir_goal, 'trend_explore/trend_df.csv'))
+
+DT::datatable(trend_df)
+```
+
+With the time-series trend calculated across only assessment years, we should get the greatest slopes possible (since we exclude years before and after that would tend to flatten the trend).  Examine the data to look for patterns (hopefully)
+
+``` {r explore_rels}
+
+trend_df <- read_csv(file.path(dir_goal, 'trend_explore/trend_df.csv')) %>%
+  filter(!is.na(pop_trend)) %>%
+  mutate(pop_trend_desc = factor(pop_trend_desc, levels = c('decreasing', 'stable', 'increasing')))
+
+trend_regr <- lm(calc_trend ~ pop_trend, data = trend_df)
+
+x <- summary(trend_regr)
+print(x)
+
+### BASED ON FILTERING SINCE 1991 (IUCN Red List v1.0)
+# lm(formula = calc_trend ~ pop_trend, data = trend_df)
+# 
+# Residuals:
+#       Min        1Q    Median        3Q       Max 
+# -0.261398 -0.004348  0.000014  0.005302  0.172496 
+# 
+# Coefficients:
+#               Estimate Std. Error t value Pr(>|t|)    
+# (Intercept) -1.374e-05  6.472e-04  -0.021    0.983    
+# pop_trend    5.288e-03  7.698e-04   6.869 1.05e-11 ***
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Residual standard error: 0.01861 on 1161 degrees of freedom
+# Multiple R-squared:  0.03905,	Adjusted R-squared:  0.03822 
+# F-statistic: 47.18 on 1 and 1161 DF,  p-value: 1.053e-11
+  
+### BASED ON FILTERING SINCE 2001 (v3.1)
+# lm(formula = calc_trend ~ pop_trend, data = trend_df)
+# 
+# Residuals:
+#       Min        1Q    Median        3Q       Max 
+# -0.262247 -0.000175  0.004453  0.004453  0.086996 
+# 
+# Coefficients:
+#              Estimate Std. Error t value Pr(>|t|)    
+# (Intercept) 0.0001755  0.0006660   0.264    0.792    
+# pop_trend   0.0046290  0.0007963   5.813 8.08e-09 ***
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Residual standard error: 0.01864 on 1079 degrees of freedom
+# Multiple R-squared:  0.03036,	Adjusted R-squared:  0.02947 
+# F-statistic: 33.79 on 1 and 1079 DF,  p-value: 8.082e-09
+
+trend_plot <- ggplot(trend_df, aes(x = pop_trend, y = calc_trend, group = pop_trend)) +
+  geom_violin(color = 'grey60', fill = 'grey80') +
+  geom_jitter(color = 'blue', alpha = .4) +
+  geom_abline(intercept = trend_regr$coefficients[['(Intercept)']],
+              slope = trend_regr$coefficients[['pop_trend']],
+              color = 'darkred') +
+  scale_x_continuous(breaks = c(-1, 0, 1), labels = c('decreasing', 'stable', 'increasing')) +
+  coord_cartesian(ylim = c(-.1, .1)) +
+  labs(x = 'text population trend',
+       y = 'calculated trend from category time series') +
+  annotate('text', x = 0.1, y = -.06, 
+           label = paste0('R^2: ', round(x$r.squared, 5), 
+                          '\nslope = ', round(x$coefficients[2, 1], 5),
+                          '\np (slope) = ', signif(x$coefficients[2, 4], 5)),
+           hjust = 0)
+
+print(trend_plot)
+
+```
+
+Based on this, the conversion factor for text description of "population trend" field would be approximately -0.005 ("decreasing"), 0 ("stable"), +0.005 ("increasing") instead of -0.5, 0.0, +0.5.
+
+
+***
+
+```
+
+```
+
+``` {r results = 'asis'}
+# prov_wrapup()
+```

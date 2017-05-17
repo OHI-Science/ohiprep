@@ -409,6 +409,10 @@ ggplotly(lsp_status_plot)
 ggsave(file.path(dir_goal, 'int/plot_v2016_v2017.png'), 
        plot = lsp_status_plot, height = 4.5, width = 6)
 
+x <- lsp_v17_v16 %>%
+  mutate(diff = score17 - score16) %>%
+  filter(rgn == 'status' & abs(diff) > .1)
+
 ```
 
 ``` {r outlier_checks, eval = FALSE}
