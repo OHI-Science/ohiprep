@@ -1,0 +1,486 @@
+---
+title: 'OHI: Lasting Special Places v2017'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output:
+  html_document:
+    highlight: haddock
+    includes:
+      in_header: ~/github/ohiprep/src/templates/ohi_hdr.html
+    number_sections: yes
+    theme: cerulean
+    toc: yes
+  pdf_document:
+    toc: yes
+  word_document:
+    toc: yes
+---
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
+                      echo = FALSE, message = FALSE, warning = FALSE)
+
+library(raster)
+library(readr)
+# library(tmap)
+
+
+source('~/github/ohiprep/src/R/common.R')
+
+goal     <- 'lsp'
+scenario <- 'v2017'
+dir_anx       <- file.path(dir_M, 'git-annex/globalprep') 
+dir_goal      <- file.path('~/github/ohiprep/globalprep', goal, scenario)
+dir_goal_anx  <- file.path(dir_anx, goal, scenario)
+
+### set up provenance tracking for this script:
+# library(provRmd)
+# prov_setup()
+
+```
+
+
+# Summary
+
+From Halpern et al. 2012 supplemental info: 
+
+> The ‘Lasting Special Places’ sub-goal focuses instead on those geographic locations that hold particular value for aesthetic, spiritual, cultural, recreational or existence reasons57. This sub-goal is particularly hard to quantify. Ideally one would survey every community around the world to determine the top list of special places, and then assess how those locations are faring relative to a desired state (e.g., protected or well managed). The reality is that such lists do not exist. Instead, we assume areas that are protected represent these special places (i.e. the effort to protect them suggests they are important places).
+
+> Clearly this is an imperfect assumption but in many cases it will be true. Using lists of protected areas as the catalogue of special places then creates the problem of determining a reference condition. We do not know how many special places have yet to be protected, and so we end up having all identified special places also being protected. To solve this problem we make two important assumptions. First, we assume that all countries have roughly the same percentage of their coastal waters and coastline that qualify as lasting special places. In other words, they all have the same reference target (as a percentage of the total area). Second, we assume that the target reference level is 30% of area protected.
+
+The model for this goal considers the inland coastal zone (up to 1 km inland) independently from, and equally weighted with, the offshore coastal zone (up to 3 nm offshore).  The status for this goal is calculated as:
+
+$$X_{LSP} = \frac{\left(\frac{Area_{P}}{Area_{P_{ref}}} + \frac{Area_{MPA}}{Area_{MPA_{ref}}}\right)}{2}$$
+
+where: 
+
+* $Area_{P}$ = Protected area for inland 1 km buffer
+* ${Area_{P_{ref}}}$ = Reference value for inland protected area
+* $Area_{MPA}$ = Marine protected area for offshore 3 nm buffer
+* ${Area_{MPA_{ref}}}$ = Reference value for marine protected area within offshore 3 nm buffer
+* $Ref$ = 30% of total area within buffer zone is protected
+
+***
+
+# Updates from previous assessment
+
+New World Database on Protected Areas spatial data from UNEP-WCMC became available in May 2016.  In addition, an error in the previous assessments (specifically the .csv used to determine total areas for the 3 nm offshore and 1 km inland regions) caused total region areas to be underestimated, artificially inflating scores in past assessments, in some cases quite significantly.  This error has been fixed in the v2016 assessment, but in so doing, many of the reported scores are noticeably lower than before.
+
+## Goals for future improvements
+
+* Move away from using ArcPy for rasterization of WDPA-MPA database.  ArcPy works great for our purposes, but is neither open-source nor cross-platform.
+
+***
+
+# Data Source
+**Reference**: IUCN and UNEP-WCMC (2016), The World Database on Protected Areas (WDPA) [On-line], May 2016. Cambridge, UK: UNEP-WCMC. Available at: www.protectedplanet.net.
+
+**Downloaded**: June 7, 2016
+
+**Description**:  Shapefile of World Database on Protected Areas
+
+**Time range**: 1819 - 2015; some protected areas do not have an associated "status year" and are reported as year 0.
+
+**Format**:  Shapefile
+
+**File location**: `Mazu:git-annex/globalprep/_raw_data/wdpa_mpa/d2016/WDPA_May2016-shapefile/`
+
+***
+  
+# Methods
+
+## Filter and re-project WDPA polygons
+
+The WDPA-MPA dataset comes as a shapefile or geodatabase in WGS84 coordinate reference system.  
+
+* For OHI we have chosen to count only protected areas with defined legal protection, so we apply a filter on the STATUS attribute that selects only STATUS == "Designated". 
+  * According to the WDPA Manual:  STATUS as "Designated" means:  "Is recognized or dedicated through legal means. Implies specific binding commitment to conservation in the long term. Applicable to government and non-government sources."
+  * Other values for STATUS include "Proposed", "Adopted", "Inscribed", or "Not Reported".
+    * "Adopted" and "Inscribed" are World Heritage or Barcelona Convention sites; while these may seem important, they are generally protected by other means (as overlapping "Designated" polygons) in addition to these values.
+* In 2015, the USA started including polygons that represent marine management plans, in addition to more strictly defined protected areas.  This info is contained in the "MANG_PLAN" field.
+  * These programmatic management plans variously protect species, habitats, and (??) and can be MPA or non-MPA.
+  * For OHI we have chosen to count only MPA programmatic management plans, omitting Non-MPA programmatic management plans.
+* For ease of tallying areas, we convert the polygons to a Mollweide equal-area projection before rasterizing.
+
+Once the polygons have been prepped, we rasterize the results to 500 m resolution.
+
+This process is all done in the script: `1_prep_wdpa_rast.Rmd`.
+
+***
+
+## Compute zonal statistics
+
+Comparing the global WDPA raster to the 3 nm offshore and 1 km inland rasters, we can tally the protected area within each region and compare to the total area within each region.  Note each cell is 500 m^2^, so area is .25 km^2^, but since we are simply calculating a ratio, this cancels out.
+
+``` {r lsp_zonal_stats, eval = TRUE}
+
+zonal_files <- c('zonal_3nm' =  file.path(dir_goal, 'int', 'zonal_stats_3nm.csv'),
+                 'zonal_1km' =  file.path(dir_goal, 'int', 'zonal_stats_1km.csv'),
+                 'zonal_eez' =  file.path(dir_goal, 'int', 'zonal_stats_eez.csv'))
+
+rast_wdpa <- raster::raster(file.path(dir_goal_anx, 'rast', 'wdpa_2017_moll_500m.tif'))
+
+### point to 500 m rasters for 3 nautical mile coastal regions, and 1 km inland coastal regions.
+dir_zones <- file.path(dir_anx, 'spatial/d2014/data/rgn_mol_raster_500m')
+
+rgn_rast_list <- c(
+  'zonal_3nm' = file.path(dir_zones, 'rgn_offshore3nm_mol_500mcell.tif'),
+  'zonal_1km' = file.path(dir_zones, 'rgn_inland1km_mol_500mcell.tif'),
+  'zonal_eez' = file.path(dir_zones, 'rgn_eez_mol_500mcell.tif'))
+
+### filter out finished zonal files... comment out to recalculate
+zonal_files_to_run <- zonal_files[!file.exists(zonal_files)]
+rgn_rast_list <- rgn_rast_list[!file.exists(zonal_files)]
+
+if(length(zonal_files_to_run) > 0) {
+  ### NOTE: The crosstab function returns this warning - does it affect the
+  ### outcomes, or does the function coerce the correct outcome?
+      # Warning message:
+      # In FUN(X[[i]], ...) : integer overflow - use sum(as.numeric(.))
+  ### zonal() wouldn't work since we want to track the frequency of each
+  ### year value within each rgn_id value.
+  
+  lsp_crosstab <- function(rgn_rast_file, rast_values) {
+    rgn_rast <- raster::raster(rgn_rast_file)
+    message('Cross tabulating ', rgn_rast_file)
+    rast_df <- raster::crosstab(rast_values, rgn_rast, useNA = TRUE, progress = 'text') %>%
+      as.data.frame() %>%
+      setNames(c('year', 'rgn_id', 'n_cells')) %>%
+      mutate(year   = as.integer(as.character(year)),
+             rgn_id = as.integer(as.character(rgn_id))) %>%
+      arrange(rgn_id, year)
+  
+    return(rast_df)
+  }
+  
+  # x <- lsp_crosstab(rgn_rast_list[3])
+  # write_csv(x, zonal_files[3])
+  ptm <- proc.time()
+  
+  # zonal_dfs <- vector('list', length = length(zonal_files))
+  # for(i in seq_along(zonal_files)) {
+  #   tmp_df <- lsp_crosstab(rgn_rast_list[i],
+  #                          rast_wdpa)
+  #   zonal_dfs[[i]] <- tmp_df
+  # }
+  # zonal_dfs %>%
+  #   setNames(names(rgn_rast_list))
+  
+  zonal_dfs <- parallel::mclapply(rgn_rast_list,
+                                  lsp_crosstab, rast_values = rast_wdpa,
+                                  mc.cores = 3) %>%
+    setNames(names(rgn_rast_list))
+  
+  message('Elapsed: ', (proc.time() - ptm)[3], ' sec')
+  
+  for(zone in names(zonal_files_to_run)) {
+    message('Writing zonal dataframe to ', zonal_files_to_run[zone])
+    write_csv(zonal_dfs[[zone]], zonal_files_to_run[zone])
+  }
+}
+  
+```
+
+Once the WDPA raster is cross-tabulated against the OHI region rasters (both 3 nm offshore and 1 km inland) we have the number of protected cells, identified by year of protection, within each region.  NA values are unprotected cells.
+
+### Summary of zonal stats dataframes (3 nm offshore):
+
+``` {r}
+stats_3nm <- read_csv(zonal_files['zonal_3nm'])
+print(summary(stats_3nm))
+```
+
+### Summary of zonal stats dataframes (1 km inland):
+
+``` {r}
+stats_1km <- read_csv(zonal_files['zonal_1km'])
+print(summary(stats_1km))
+```
+
+### Summary of zonal stats dataframes (entire EEZ):
+
+``` {r}
+stats_eez <- read_csv(zonal_files['zonal_eez'])
+print(summary(stats_eez))
+```
+
+***
+
+## Calculate protected area and total area by region
+
+Grouping by rgn_id, the total number of cells per region is determined by summing cell counts across ALL years, including cells with year == NA (unprotected cells).  We can then determine the protected area for each year by looking at the cumulative sum of cells up to any given year.
+
+Since the cells are 500 m on a side, we can easily calculate area by multiplying cell count * 0.25 km^2^ per cell.
+
+Finally we can calculate the status of a region for any given year by finding the ratio of protected:total and normalizing by the goal's target of 30% protected area.
+
+
+``` {r summarize_zonal_stats, eval = TRUE}
+
+stats_3nm <- read_csv(zonal_files['zonal_3nm'])
+stats_1km <- read_csv(zonal_files['zonal_1km'])
+stats_eez <- read_csv(zonal_files['zonal_eez'])
+
+max_year <- max(c(stats_1km$year, stats_3nm$year, stats_eez$year), na.rm = TRUE)
+
+### Determine total cells per region (n_cells_tot) and then a cumulative
+### total of cells per region
+  
+calc_areas <- function(stats_df) {
+  area_df <- stats_df %>%
+    group_by(rgn_id) %>%
+    mutate(n_cells_tot = sum(n_cells),
+           a_tot_km2   = n_cells_tot / 4) %>%
+    filter(!is.na(year) & !is.na(rgn_id)) %>%
+    mutate(n_cells_cum = cumsum(n_cells),
+           a_prot_km2  = n_cells_cum / 4) %>%
+    complete(year = 2000:max_year) %>%
+    fill(-year, .direction = 'down') %>%
+    ungroup() %>%
+    select(-contains('cell')) %>%
+    distinct() %>%
+    left_join(get_rgn_names(), by = 'rgn_id')
+  
+  return(area_df)
+}
+
+prot_1km <- stats_1km %>%
+  calc_areas()
+
+prot_3nm <- stats_3nm %>%
+  calc_areas()
+
+prot_eez <- stats_eez %>%
+  calc_areas()
+
+write_csv(prot_3nm, file.path(dir_goal, 'int', 'area_protected_3nm.csv'))
+write_csv(prot_1km, file.path(dir_goal, 'int', 'area_protected_1km.csv'))
+write_csv(prot_eez, file.path(dir_goal, 'int', 'area_protected_eez.csv'))
+
+```
+
+
+### Protected areas (3 nm offshore, 2016 only):
+
+`r DT::datatable(prot_3nm %>% filter(year == 2016) %>% select(-year, -contains('cell')), caption = '3 nautical mile offshore zone - area in km^2^')`
+
+### Protected areas (1 km inland, 2016 only):
+
+`r DT::datatable(prot_1km %>% filter(year == 2016) %>% select(-year, -contains('cell')), caption = '1 kilometer inland zone - area in km^2^')`
+
+### Protected areas (full EEZ, 2016 only):
+
+`r DT::datatable(prot_eez %>% filter(year == 2016) %>% select(-year, -contains('cell')), caption = 'Full EEZ - area in km^2^')`
+
+***
+
+## Write out layers
+
+From the protected area files, write out the individual layers ready for the Toolbox[TM]. 
+
+``` {r write_layers, eval = TRUE}
+
+prot_3nm <- read_csv(file.path(dir_goal, 'int', 'area_protected_3nm.csv')) %>%
+  rename(area = a_tot_km2,
+         a_prot_3nm = a_prot_km2)
+prot_1km <- read_csv(file.path(dir_goal, 'int', 'area_protected_1km.csv')) %>%
+  rename(area = a_tot_km2,
+         a_prot_1km = a_prot_km2)
+
+write_lsp_layer <- function(df, layers, layername) {
+  df1 <- df[ , c('rgn_id', layers)] %>%
+    filter(rgn_id <= 250) %>%
+    distinct()
+  write_csv(df1, file.path(dir_goal, 'output', paste0(layername, '.csv')))
+}
+
+a_tot_3nm <- write_lsp_layer(prot_3nm, 'area', 'rgn_area_offshore3nm')
+a_tot_1km <- write_lsp_layer(prot_1km, 'area', 'rgn_area_inland1km')
+
+a_prot_3nm <- write_lsp_layer(prot_3nm, c('year', 'a_prot_3nm'), 'lsp_prot_area_offshore3nm')
+a_prot_1km <- write_lsp_layer(prot_1km, c('year', 'a_prot_1km'), 'lsp_prot_area_inland1km')
+
+```
+
+
+``` {r estimate status by year, eval = TRUE}
+
+area_ref = .30 ### 30% of area protected = reference point
+
+resil_3nm <- read_csv(file.path(dir_goal, 'int', 'area_protected_3nm.csv')) %>%
+  mutate(resilience.score = (a_prot_km2 / a_tot_km2) / area_ref,
+         resilience.score = ifelse(resilience.score > 1, 1, resilience.score))
+
+resil_eez <- read_csv(file.path(dir_goal, 'int', 'area_protected_eez.csv')) %>%
+  mutate(resilience.score = (a_prot_km2 / a_tot_km2) / area_ref,
+         resilience.score = ifelse(resilience.score > 1, 1, resilience.score))
+
+for(resil_year in 2011:2017){ #year=2011
+  tmp_3nm <- resil_3nm %>%
+    filter(year == resil_year) %>%
+    select(rgn_id, resilience.score)
+  
+  write_csv(tmp_3nm, file.path(dir_goal, 'output', sprintf("mpa_3nm_%s.csv", resil_year)))
+
+  tmp_eez <- resil_eez %>%
+    filter(year == resil_year) %>%
+    select(rgn_id, resilience.score)
+  
+  write_csv(tmp_eez, file.path(dir_goal, 'output', sprintf("mpa_eez_%s_resilience.csv", resil_year)))
+}
+
+```
+
+
+***
+
+## Plot scores for 2017 vs 2016
+
+``` {r plot_scores_vs_v2016, plotly = TRUE, eval = TRUE}
+
+library(ggplot2)
+library(plotly)
+
+status_3nm_17 <- read_csv(file.path(dir_goal, 'output', 'lsp_prot_area_offshore3nm.csv')) %>%
+  full_join(read_csv(file.path(dir_goal, 'output', 'rgn_area_offshore3nm.csv')),
+            by = 'rgn_id') %>%
+  mutate(pct_prot_3nm_17 = a_prot_3nm / area,
+         status_3nm_17   = pct_prot_3nm_17 / 0.3,
+         status_3nm_17   = ifelse(status_3nm_17 > 1, 1, status_3nm_17)) %>%
+  filter(year == max(year)) %>%
+  select(rgn_id, pct_prot_3nm_17, status_3nm_17)
+
+status_3nm_16 <- read_csv(file.path(dir_goal, '../v2016/output', 'lsp_protected_offshore3nm.csv')) %>%
+  full_join(read_csv(file.path(dir_goal, 'output', 'rgn_area_offshore3nm.csv')),
+            by = 'rgn_id') %>%
+  mutate(pct_prot_3nm_16 = a_prot_3nm / area,
+         status_3nm_16   = pct_prot_3nm_16 / 0.3,
+         status_3nm_16   = ifelse(status_3nm_16 > 1, 1, status_3nm_16)) %>%
+  filter(year == max(year)) %>%
+  select(rgn_id, pct_prot_3nm_16, status_3nm_16)
+
+status_1km_17 <- read_csv(file.path(dir_goal, 'output', 'lsp_prot_area_inland1km.csv')) %>%
+  full_join(read_csv(file.path(dir_goal, 'output', 'rgn_area_inland1km.csv')),
+            by = 'rgn_id') %>%
+  mutate(pct_prot_1km_17 = a_prot_1km / area,
+         status_1km_17   = pct_prot_1km_17 / 0.3,
+         status_1km_17   = ifelse(status_1km_17 > 1, 1, status_1km_17)) %>%
+  filter(year == max(year)) %>%
+  select(rgn_id, pct_prot_1km_17, status_1km_17)
+
+status_1km_16 <- read_csv(file.path(dir_goal, '../v2016/output', 'lsp_protected_inland1km.csv')) %>%
+  full_join(read_csv(file.path(dir_goal, 'output', 'rgn_area_inland1km.csv')),
+            by = 'rgn_id') %>%
+  mutate(pct_prot_1km_16 = a_prot_1km / area,
+         status_1km_16   = pct_prot_1km_16 / 0.3,
+         status_1km_16   = ifelse(status_1km_16 > 1, 1, status_1km_16)) %>%
+  filter(year == max(year)) %>%
+  select(rgn_id, pct_prot_1km_16, status_1km_16)
+
+lsp_v17_v16 <- status_3nm_17 %>%
+  full_join(status_3nm_16, by = c('rgn_id')) %>%
+  full_join(status_1km_17, by = c('rgn_id')) %>%
+  full_join(status_1km_16, by = c('rgn_id')) %>%
+  mutate(status_16 = (status_3nm_16 + status_1km_16) / 2,
+         status_17 = (status_3nm_17 + status_1km_17) / 2) %>%
+  gather(rgn, score17, contains('17')) %>%
+  gather(rgn16, score16, contains('16')) %>%
+  mutate(rgn = str_replace(rgn, '_17', ''),
+         rgn16 = str_replace(rgn16, '_16', ''),
+         score17 = round(score17, 3),
+         score16 = round(score16, 3)) %>%
+  filter(rgn_id <= 250) %>%
+  filter(rgn == rgn16) %>%
+  select(-rgn16) %>%
+  left_join(get_rgn_names(), by = 'rgn_id')
+  
+lsp_status_plot <- ggplot(lsp_v17_v16, 
+                        aes(x = score16, y = score17, key = rgn_name)) +
+  geom_point(alpha = .6) +
+  theme(legend.position = 'none') +
+  geom_abline(slope = 1, intercept = 0, color = 'red') +
+  labs(x = 'LSP status v2016 (data through 2015 )',
+       y = 'LSP status v2017 (data through may 2017)',
+       title = 'Comparing LSP status: 2017 vs 2016') +
+  facet_wrap( ~ rgn)
+
+ggplotly(lsp_status_plot)
+
+ggsave(file.path(dir_goal, 'int/plot_v2016_v2017.png'), 
+       plot = lsp_status_plot, height = 4.5, width = 6)
+
+x <- lsp_v17_v16 %>%
+  mutate(diff = score17 - score16) %>%
+  filter(rgn == 'status' & abs(diff) > .1)
+
+```
+
+``` {r outlier_checks, eval = FALSE}
+
+### LSP outlier check based on estimates
+#  88 Tristan da Cunha 100 -> 0   OK: STATUS changed from Designated to Inscribed (World Heritage Site in both years)
+# 146 Pitcairn          50 -> 0   OK?: looks like land-based protected area; not in 2016 raster
+#  47 Yemen             40 -> 0   OK?: land-based protected area on island; not in 2016 raster
+# 
+# 110 Bahamas            3 -> 51  OK: new PAs showing up in 2016 raster (2015: SE island; 2016: add more on main island)
+#  82 Albania           17 -> 62  OK: much more protection showing up in 2016 raster
+# 210 Japan             84 -> 100 OK: many MPAs showing up on N island and all over
+#  35 Ile Europa         0 -> 100 OK: no PA in 2015 raster; now lots in 2016.
+# 103 Sao Tome/Principe  0 -> 30  OK: no PA in 2015 raster; some in 2016.
+#  90 Prince Edward     50 -> 100 OK: old data had 50 -> 100 from 2012->2013; new data has 0 -> 100; 
+#         new WDPA (2016) has big MPA in 2013 and nothing before, but WDPA 2015 had a
+#         small protected area from 2007.  Change is valid based on the new data.
+
+### THESE STILL NEED INVESTIGATION
+#   8 Palau            100 -> 37  
+#     !!! old raster shows big area in 2012 and scattered area from year 0;
+#         but new raster shows only the year 0 area.  Check the polygons!
+#     - according to csvs, looks like terr pa 186.75 -> 40.5, mpa 831.75 -> 103.25, which would drive scores
+
+# Mel's outlier checks:
+# rgn 88 (-100 drop in score!): The old data had 505 nm2 offshore and 49 km2 inland polygons in 1995, but these were gone in this year's analysis.
+# rgn 8 (-59 drop in score): The old data had 645 nm2 offshore and 63 km2 inland polygons in 2012, but these were gone in this year's analysis.
+# rgns 91, 92, 93 (+ increase in score): The new data included large polygons added in 2008 for all three regions that were no in the previous year's data.
+
+mpa2016 <- read_csv(file.path(dir_goal, 'output/lsp_protected_offshore3nm.csv'))
+tpa2016 <- read_csv(file.path(dir_goal, 'output/lsp_protected_inland1km.csv'))
+
+marea2016 <- read_csv(file.path(dir_goal, 'output/rgn_area_offshore3nm.csv'))
+tarea2016 <- read_csv(file.path(dir_goal, 'output/rgn_area_inland1km.csv'))
+
+mpa2015 <- read_csv(file.path(dir_goal, '../v2015/data/lsp_protarea_offshore3nm.csv')) %>%
+  group_by(rgn_id) %>%
+  mutate(a_prot_3nm = cumsum(area_km2)) %>%
+  select(-area_km2)
+tpa2015 <- read_csv(file.path(dir_goal, '../v2015/data/lsp_protarea_inland1km.csv')) %>%
+  group_by(rgn_id) %>%
+  mutate(a_prot_1km = cumsum(area_km2)) %>%
+  select(-area_km2)
+
+lsp_v2015 <- read_csv('~/github/ohi-global/eez2013/scores.csv') %>%
+
+marea2015 <- read_csv('~/github/ohi-global/eez2013/layers/rgn_area_offshore3nm.csv')
+tarea2015 <- read_csv('~/github/ohi-global/eez2013/layers/rgn_area_inland1km.csv')
+
+checks <- mpa2016 %>% filter(rgn_id %in% c(8, 90)) %>% filter(year > 2000) %>% rename(prot_3nm_2016 = a_prot_3nm) %>%
+  left_join(tpa2016 %>% filter(rgn_id %in% c(8, 90)) %>% filter(year > 2000) %>% rename(prot_1km_2016 = a_prot_1km),
+            by = c('rgn_id', 'year')) %>%
+  left_join(mpa2015 %>% filter(rgn_id %in% c(8, 90)) %>% filter(year > 2000) %>% rename(prot_3nm_2015 = a_prot_3nm),
+            by = c('rgn_id', 'year')) %>%
+  left_join(tpa2015 %>% filter(rgn_id %in% c(8, 90)) %>% filter(year > 2000) %>% rename(prot_1km_2015 = a_prot_1km),
+            by = c('rgn_id', 'year')) %>%
+  left_join(marea2016 %>% filter(rgn_id %in% c(8, 90)) %>% rename(marea16 = area),
+            by = c('rgn_id')) %>%
+  left_join(tarea2016 %>% filter(rgn_id %in% c(8, 90)) %>% rename(tarea16 = area),
+            by = c('rgn_id')) %>%
+  left_join(marea2015 %>% filter(rgn_id %in% c(8, 90)) %>% rename(marea15 = area_km2),
+            by = c('rgn_id')) %>%
+  left_join(tarea2015 %>% filter(rgn_id %in% c(8, 90)) %>% rename(tarea15 = area_km2),
+            by = c('rgn_id'))
+```
+
+***
+
+``` {r results = 'asis'}
+# prov_wrapup()
+```

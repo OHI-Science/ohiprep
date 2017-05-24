@@ -1,0 +1,261 @@
+comname,sciname,ico_gl,ico_rgn_id,iucn_sid,subpop,cat_code
+Blue Shark,Prionace glauca,TRUE,NA,39381,NA,NT
+Whale Shark,Rhincodon typus,TRUE,NA,19488,NA,EN
+Shortfin Mako,Isurus oxyrinchus,TRUE,NA,39341,NA,VU
+Shortfin Mako,Isurus oxyrinchus,TRUE,NA,161749,NA,VU
+Shortfin Mako,Isurus oxyrinchus,TRUE,NA,161750,NA,VU
+Shortfin Mako,Isurus oxyrinchus,TRUE,NA,161751,NA,NT
+Olive Ridley Turtle,Lepidochelys olivacea,TRUE,NA,11534,NA,VU
+Irrawaddy Dolphin,Orcaella brevirostris,TRUE,NA,15419,NA,VU
+Irrawaddy Dolphin,Orcaella brevirostris,TRUE,NA,39428,Mahakam River,CR
+Irrawaddy Dolphin,Orcaella brevirostris,TRUE,NA,44187,Malampaya Sound,CR
+Irrawaddy Dolphin,Orcaella brevirostris,TRUE,NA,44555,Mekong River,CR
+Irrawaddy Dolphin,Orcaella brevirostris,TRUE,NA,44556,Ayeyarwady River,CR
+Irrawaddy Dolphin,Orcaella brevirostris,TRUE,NA,44557,Songkhla Lake,CR
+"Humphead wrasse, Napoleon Wrasse",Cheilinus undulatus,TRUE,NA,4592,NA,EN
+Great White Shark,Carcharodon carcharias,TRUE,NA,3855,NA,VU
+Basking Shark,Cetorhinus maximus,TRUE,NA,4292,NA,VU
+Basking Shark,Cetorhinus maximus,TRUE,NA,39340,NA,EN
+Basking Shark,Cetorhinus maximus,TRUE,NA,39545,NA,EN
+Blue whale,Balaenoptera musculus,TRUE,NA,2477,NA,EN
+Green Turtle,Chelonia mydas,TRUE,NA,4615,NA,EN
+Green Turtle,Chelonia mydas,TRUE,NA,16285718,Chelonia mydas Hawaiian,LC
+Tiger Shark,Galeocerdo cuvier,TRUE,NA,39378,NA,NT
+Humpback Whale,Megaptera novaeangliae,TRUE,NA,13006,NA,LC
+Humpback Whale,Megaptera novaeangliae,TRUE,NA,132832,NA,EN
+Humpback Whale,Megaptera novaeangliae,TRUE,NA,132835,NA,EN
+Thresher Shark,Alopias vulpinus,TRUE,NA,39339,NA,VU
+Minke whale,Balaenoptera acutorostrata,TRUE,NA,2474,NA,LC
+Sei whale,Balaenoptera borealis,TRUE,NA,2475,NA,EN
+Fin whale,Balaenoptera physalus,TRUE,NA,2478,NA,EN
+Fin whale,Balaenoptera physalus,TRUE,NA,16208224,NA,VU
+Porbeagle,Lamna nasus,TRUE,NA,11200,NA,VU
+Porbeagle,Lamna nasus,TRUE,NA,39343,NA,CR
+Porbeagle,Lamna nasus,TRUE,NA,39344,NA,EN
+Porbeagle,Lamna nasus,TRUE,NA,61420,NA,CR
+Bowhead whale,Balaena mysticetus,TRUE,NA,2467,NA,LC
+Bowhead whale,Balaena mysticetus,TRUE,NA,2468,Bering-Chukchi-Beaufort Sea,VU
+Bowhead whale,Balaena mysticetus,TRUE,NA,2469,Okhotsk Sea,EN
+Bowhead whale,Balaena mysticetus,TRUE,NA,2472,Svalbard-Barents Sea (Spitsbergen),CR
+North Atlantic Right Whale,Eubalaena glacialis,TRUE,NA,41712,NA,EN
+Polar bear,Ursus maritimus,TRUE,NA,22823,NA,VU
+Gray Whale,Eschrichtius robustus,TRUE,NA,8097,NA,LC
+Gray Whale,Eschrichtius robustus,TRUE,NA,8099,Western,CR
+North Pacific Right Whale,Eubalaena japonica,TRUE,NA,41711,NA,EN
+North Pacific Right Whale,Eubalaena japonica,TRUE,NA,133706,NA,CR
+Gray reef shark,Carcharhinus amblyrhynchos,TRUE,NA,39365,NA,NT
+Loggerhead Turtle,Caretta caretta,TRUE,NA,3897,NA,VU
+Loggerhead Turtle,Caretta caretta,TRUE,NA,83644804,Mediterranean,LC
+Loggerhead Turtle,Caretta caretta,TRUE,NA,83652278,Pacific North,LC
+Loggerhead Turtle,Caretta caretta,TRUE,NA,83776383,Atlantic Notheast,EN
+Loggerhead Turtle,Caretta caretta,TRUE,NA,84126444,Indian Northeast,CR
+Loggerhead Turtle,Caretta caretta,TRUE,NA,84127873,Indian Northwest,CR
+Loggerhead Turtle,Caretta caretta,TRUE,NA,84131194,Atlantic Northwest,LC
+Loggerhead Turtle,Caretta caretta,TRUE,NA,84156809,Pacific South,CR
+Loggerhead Turtle,Caretta caretta,TRUE,NA,84189617,Indian Southeast,NT
+Loggerhead Turtle,Caretta caretta,TRUE,NA,84191235,Atlantic Southwest,LC
+Loggerhead Turtle,Caretta caretta,TRUE,NA,84199475,Indian Southwest,NT
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA,6494,NA,VU
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA,46967807,East Pacific,CR
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA,46967817,West Pacific,CR
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA,46967827,Northwest Atlantic,LC
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA,46967838,Southwest Atlantic,CR
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA,46967848,Southeast Atlantic,DD
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA,46967863,Southwest Indian,CR
+Leatherback Turtle,Dermochelys coriacea,TRUE,NA,46967873,Northeast Indian,DD
+Hawksbill Turtle,Eretmochelys imbricata,TRUE,NA,8005,NA,CR
+Megamouth Shark,Megachasma pelagios,TRUE,NA,39338,NA,LC
+Whitetip reef shark,Triaenodon obesus,TRUE,NA,39384,NA,NT
+Blacktip reef shark,Carcharhinus melanopterus,TRUE,NA,39375,NA,NT
+Longfin Mako,Isurus paucus,TRUE,NA,60225,NA,VU
+Ganges Shark,Glyphis gangeticus,FALSE,203,9281,NA,CR
+Smooth-coated Otter,Lutrogale perspicillata,FALSE,203,12427,NA,VU
+Mediterranean monk seal,Monachus monachus,FALSE,183,13653,NA,EN
+Franciscana,Pontoporia blainvillei,TRUE,NA,17978,NA,VU
+Franciscana,Pontoporia blainvillei,TRUE,NA,41761,Rio Grande do Sul/Uruguay,VU
+Caribbean reef shark,Carcharhinus perezi,TRUE,NA,60217,NA,NT
+Kemp's Ridley Turtle,Lepidochelys kempii,TRUE,NA,11533,NA,CR
+Hector's Dolphin,Cephalorhynchus hectori,TRUE,NA,4162,NA,EN
+Maui's Dolphin,Cephalorhynchus hectori ssp. maui,TRUE,NA,39427,NA,CR
+Peruvian anchoveta,Engraulis ringens,FALSE,138,183775,NA,LC
+Vaquita,Phocoena sinus,TRUE,NA,17028,NA,CR
+Rough Toothed Dolphin,Steno bredanensis,TRUE,NA,20738,NA,LC
+Bottlenose Dolphin,Tursiops truncatus,FALSE,53,22563,NA,LC
+Bottlenose Dolphin,Tursiops truncatus,FALSE,53,194300,Fiordland,CR
+Bottlenose Dolphin,Tursiops truncatus,FALSE,53,16369383,NA,VU
+Antarctic minke whale,Balaenoptera bonaerensis,FALSE,16,2480,NA,DD
+Bryde's whale,Balaenoptera edeni,FALSE,16,2476,NA,DD
+Arnoux's Beaked Whale,Berardius arnuxii,FALSE,16,2762,NA,DD
+Pygmy right whale,Caperea marginata,FALSE,16,3778,NA,DD
+Common Dophin,Delphinus delphis,FALSE,16,6336,NA,LC
+Common Dophin,Delphinus delphis,FALSE,16,41762,Mediterranean,EN
+Southern right whale,Eubalaena australis,FALSE,16,8153,NA,LC
+Southern right whale,Eubalaena australis,FALSE,16,133704,NA,CR
+Pygmy Killer Whale,Feresa attenuata,FALSE,16,8551,NA,DD
+Short-finned Pilot Whale,Globicephala macrorhynchus,FALSE,16,9249,NA,DD
+Long-finned Pilot Whale,Globicephala melas,FALSE,16,9250,NA,DD
+Long-finned Pilot Whale,Globicephala melas,FALSE,16,16376479,NA,DD
+Risso's Dolphin,Grampus griseus,FALSE,16,9461,NA,LC
+Risso's Dolphin,Grampus griseus,FALSE,16,16378423,NA,DD
+Southern Bottlenose Whale,Hyperoodon planifrons,FALSE,16,10708,NA,LC
+Longman's Beaked Whale,Indopacetus pacificus,FALSE,16,40635,NA,DD
+Pygmy sperm whale,Kogia breviceps,FALSE,16,11047,NA,DD
+Dwarf sperm whale,Kogia sima,FALSE,16,11048,NA,DD
+Fraser's Dolphin,Lagenodelphis hosei,FALSE,16,11140,NA,LC
+Hourglass Dolphin,Lagenorhynchus cruciger,FALSE,16,11144,NA,LC
+Dusky Dolphin,Lagenorhynchus obscurus,FALSE,16,11146,NA,DD
+Southern Right Whale Dolphin,Lissodelphis peronii,FALSE,16,12126,NA,DD
+Andrew's beaked whale,Mesoplodon bowdoini,FALSE,16,13242,NA,DD
+Blainville's Beaked Whale,Mesoplodon densirostris,FALSE,16,13244,NA,DD
+Gingko-toothed Beaked Whale,Mesoplodon ginkgodens,FALSE,16,13246,NA,DD
+Gray's beaked whale,Mesoplodon grayi,FALSE,16,13247,NA,DD
+Hector's Beaked Whale,Mesoplodon hectori,FALSE,16,13248,NA,DD
+Strap-toothed Beaked Whale,Mesoplodon layardii,FALSE,16,13249,NA,DD
+True's beaked whale,Mesoplodon mirus,FALSE,16,13250,NA,DD
+Flatback Turtle,Natator depressus,TRUE,NA,14363,NA,DD
+Snubfin Dolphin,Orcaella heinsohni,TRUE,NA,136315,NA,NT
+Killer Whale,Orcinus orca,FALSE,16,15421,NA,DD
+Melon-headed Whale,Peponocephala electra,FALSE,16,16564,NA,LC
+Spectacled Porpoise,Phocoena dioptrica,FALSE,16,41715,NA,DD
+Sperm whale,Physeter macrocephalus,FALSE,16,41755,NA,VU
+Sperm whale,Physeter macrocephalus,FALSE,16,16370739,NA,EN
+False Killer Whale,Pseudorca crassidens,FALSE,16,18596,NA,DD
+Indo-Pacific humpback dolphin,Sousa chinensis,FALSE,16,20424,NA,NT
+Indo-Pacific humpback dolphin,Sousa chinensis,FALSE,16,133710,Eastern Taiwan Strait,CR
+Pantropical Spotted Dolphin,Stenella attenuata,FALSE,16,20729,NA,LC
+Striped Dolphin,Stenella coeruleoalba,FALSE,16,20731,NA,LC
+Striped Dolphin,Stenella coeruleoalba,FALSE,16,16674437,NA,VU
+Spinner Dolphin,Stenella longirostris,FALSE,16,20733,NA,DD
+Shepherd's Beaked Whale,Tasmacetus shepherdi,FALSE,16,21500,NA,DD
+Indo-Pacific Bottlenose Dolphin,Tursiops aduncus,FALSE,16,41714,NA,DD
+Bottlenose Dolphin,Tursiops truncatus,FALSE,16,22563,NA,LC
+Bottlenose Dolphin,Tursiops truncatus,FALSE,16,194300,Fiordland,CR
+Bottlenose Dolphin,Tursiops truncatus,FALSE,16,16369383,NA,VU
+Cuvier's Beaked Whale,Ziphius cavirostris,FALSE,16,23211,NA,LC
+Cuvier's Beaked Whale,Ziphius cavirostris,FALSE,16,16381144,NA,DD
+Atlantic Cod,Gadus morhua,FALSE,222,8784,NA,VU
+European Flounder,Platichthys flesus,FALSE,222,135717,NA,LC
+Atlantic Herring,Clupea harengus,FALSE,222,155123,NA,LC
+Perch,Perca fluviatilis,FALSE,222,16580,NA,LC
+Northern Pike,Esox lucius,FALSE,222,135631,NA,LC
+Atlantic Salmon,Salmo salar,FALSE,222,19855,NA,LC
+Brown Trout,Salmo trutta,FALSE,222,19861,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,222,9660,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,222,74491261,Baltic sea subpopulation,LC
+Eurasian Otter,Lutra lutra,FALSE,222,12419,NA,NT
+Harbor Seal,Phoca vitulina,FALSE,222,17013,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,222,17027,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,222,17031,Baltic Sea,CR
+Ringed Seal,Pusa hispida,FALSE,222,41672,NA,LC
+Atlantic Cod,Gadus morhua,FALSE,174,8784,NA,VU
+European Flounder,Platichthys flesus,FALSE,174,135717,NA,LC
+Atlantic Herring,Clupea harengus,FALSE,174,155123,NA,LC
+Perch,Perca fluviatilis,FALSE,174,16580,NA,LC
+Northern Pike,Esox lucius,FALSE,174,135631,NA,LC
+Atlantic Salmon,Salmo salar,FALSE,174,19855,NA,LC
+Brown Trout,Salmo trutta,FALSE,174,19861,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,174,9660,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,174,74491261,Baltic sea subpopulation,LC
+Eurasian Otter,Lutra lutra,FALSE,174,12419,NA,NT
+Harbor Seal,Phoca vitulina,FALSE,174,17013,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,174,17027,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,174,17031,Baltic Sea,CR
+Ringed Seal,Pusa hispida,FALSE,174,41672,NA,LC
+Atlantic Cod,Gadus morhua,FALSE,175,8784,NA,VU
+European Flounder,Platichthys flesus,FALSE,175,135717,NA,LC
+Atlantic Herring,Clupea harengus,FALSE,175,155123,NA,LC
+Perch,Perca fluviatilis,FALSE,175,16580,NA,LC
+Northern Pike,Esox lucius,FALSE,175,135631,NA,LC
+Atlantic Salmon,Salmo salar,FALSE,175,19855,NA,LC
+Brown Trout,Salmo trutta,FALSE,175,19861,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,175,9660,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,175,74491261,Baltic sea subpopulation,LC
+Eurasian Otter,Lutra lutra,FALSE,175,12419,NA,NT
+Harbor Seal,Phoca vitulina,FALSE,175,17013,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,175,17027,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,175,17031,Baltic Sea,CR
+Ringed Seal,Pusa hispida,FALSE,175,41672,NA,LC
+Atlantic Cod,Gadus morhua,FALSE,176,8784,NA,VU
+European Flounder,Platichthys flesus,FALSE,176,135717,NA,LC
+Atlantic Herring,Clupea harengus,FALSE,176,155123,NA,LC
+Perch,Perca fluviatilis,FALSE,176,16580,NA,LC
+Northern Pike,Esox lucius,FALSE,176,135631,NA,LC
+Atlantic Salmon,Salmo salar,FALSE,176,19855,NA,LC
+Brown Trout,Salmo trutta,FALSE,176,19861,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,176,9660,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,176,74491261,Baltic sea subpopulation,LC
+Eurasian Otter,Lutra lutra,FALSE,176,12419,NA,NT
+Harbor Seal,Phoca vitulina,FALSE,176,17013,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,176,17027,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,176,17031,Baltic Sea,CR
+Ringed Seal,Pusa hispida,FALSE,176,41672,NA,LC
+Atlantic Cod,Gadus morhua,FALSE,70,8784,NA,VU
+European Flounder,Platichthys flesus,FALSE,70,135717,NA,LC
+Atlantic Herring,Clupea harengus,FALSE,70,155123,NA,LC
+Perch,Perca fluviatilis,FALSE,70,16580,NA,LC
+Northern Pike,Esox lucius,FALSE,70,135631,NA,LC
+Atlantic Salmon,Salmo salar,FALSE,70,19855,NA,LC
+Brown Trout,Salmo trutta,FALSE,70,19861,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,70,9660,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,70,74491261,Baltic sea subpopulation,LC
+Eurasian Otter,Lutra lutra,FALSE,70,12419,NA,NT
+Harbor Seal,Phoca vitulina,FALSE,70,17013,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,70,17027,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,70,17031,Baltic Sea,CR
+Ringed Seal,Pusa hispida,FALSE,70,41672,NA,LC
+Atlantic Cod,Gadus morhua,FALSE,178,8784,NA,VU
+European Flounder,Platichthys flesus,FALSE,178,135717,NA,LC
+Atlantic Herring,Clupea harengus,FALSE,178,155123,NA,LC
+Perch,Perca fluviatilis,FALSE,178,16580,NA,LC
+Northern Pike,Esox lucius,FALSE,178,135631,NA,LC
+Atlantic Salmon,Salmo salar,FALSE,178,19855,NA,LC
+Brown Trout,Salmo trutta,FALSE,178,19861,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,178,9660,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,178,74491261,Baltic sea subpopulation,LC
+Eurasian Otter,Lutra lutra,FALSE,178,12419,NA,NT
+Harbor Seal,Phoca vitulina,FALSE,178,17013,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,178,17027,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,178,17031,Baltic Sea,CR
+Ringed Seal,Pusa hispida,FALSE,178,41672,NA,LC
+Atlantic Cod,Gadus morhua,FALSE,69,8784,NA,VU
+European Flounder,Platichthys flesus,FALSE,69,135717,NA,LC
+Atlantic Herring,Clupea harengus,FALSE,69,155123,NA,LC
+Perch,Perca fluviatilis,FALSE,69,16580,NA,LC
+Northern Pike,Esox lucius,FALSE,69,135631,NA,LC
+Atlantic Salmon,Salmo salar,FALSE,69,19855,NA,LC
+Brown Trout,Salmo trutta,FALSE,69,19861,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,69,9660,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,69,74491261,Baltic sea subpopulation,LC
+Eurasian Otter,Lutra lutra,FALSE,69,12419,NA,NT
+Harbor Seal,Phoca vitulina,FALSE,69,17013,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,69,17027,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,69,17031,Baltic Sea,CR
+Ringed Seal,Pusa hispida,FALSE,69,41672,NA,LC
+Atlantic Cod,Gadus morhua,FALSE,189,8784,NA,VU
+European Flounder,Platichthys flesus,FALSE,189,135717,NA,LC
+Atlantic Herring,Clupea harengus,FALSE,189,155123,NA,LC
+Perch,Perca fluviatilis,FALSE,189,16580,NA,LC
+Northern Pike,Esox lucius,FALSE,189,135631,NA,LC
+Atlantic Salmon,Salmo salar,FALSE,189,19855,NA,LC
+Brown Trout,Salmo trutta,FALSE,189,19861,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,189,9660,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,189,74491261,Baltic sea subpopulation,LC
+Eurasian Otter,Lutra lutra,FALSE,189,12419,NA,NT
+Harbor Seal,Phoca vitulina,FALSE,189,17013,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,189,17027,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,189,17031,Baltic Sea,CR
+Ringed Seal,Pusa hispida,FALSE,189,41672,NA,LC
+Atlantic Cod,Gadus morhua,FALSE,73,8784,NA,VU
+European Flounder,Platichthys flesus,FALSE,73,135717,NA,LC
+Atlantic Herring,Clupea harengus,FALSE,73,155123,NA,LC
+Perch,Perca fluviatilis,FALSE,73,16580,NA,LC
+Northern Pike,Esox lucius,FALSE,73,135631,NA,LC
+Atlantic Salmon,Salmo salar,FALSE,73,19855,NA,LC
+Brown Trout,Salmo trutta,FALSE,73,19861,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,73,9660,NA,LC
+Grey Seal,Halichoerus grypus,FALSE,73,74491261,Baltic sea subpopulation,LC
+Eurasian Otter,Lutra lutra,FALSE,73,12419,NA,NT
+Harbor Seal,Phoca vitulina,FALSE,73,17013,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,73,17027,NA,LC
+Harbour Porpoise,Phocoena phocoena,FALSE,73,17031,Baltic Sea,CR
+Ringed Seal,Pusa hispida,FALSE,73,41672,NA,LC

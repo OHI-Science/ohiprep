@@ -2,6 +2,16 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 
+################ 
+#### Correction: didn't end up gapfilling missing RAM data
+#### Correct on line  153
+#### this should be: select(year, ram_bmsy, gapfilled, stock_id)
+####  select(year, ram_bmsy_predict, gapfilled, stock_id)
+#### should also select OHI regions and merge with catch at FAO and region 
+#### see compare_bbmsy_data.R for an approach that will take advantage
+#### of the higher resolution information we have for RAM
+
+
 # -------------------------------------------------------------------
 ### Read in RAM data and format
 # -----------------------------------------------------------------

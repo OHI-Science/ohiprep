@@ -1,4 +1,5 @@
 #plots
+library(ggplot2)
 
 simple <- theme_bw() +
   theme(panel.grid.major = element_blank(),

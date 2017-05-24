@@ -3,7 +3,10 @@ title: 'OHI: Species: Assemble marine species list'
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
+    code_folding: hide
     toc: true
+    toc_depth: 3
+    toc_float: yes
     number_sections: true
     theme: cerulean
     highlight: haddock
@@ -13,10 +16,11 @@ output:
     toc: true
 ---
 
-```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+``` {r setup, echo = TRUE, message = FALSE, warning = FALSE}
 
 knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
-                      echo = FALSE, message = FALSE, warning = FALSE)
+                      echo = TRUE, message = FALSE, warning = FALSE)
+
 
 source('~/github/ohiprep/src/R/common.R')
 
@@ -29,81 +33,12 @@ dir_goal  <- file.path('~/github/ohiprep/globalprep', goal, scenario)
 ### set up provenance tracking for this script:
 library(provRmd); prov_setup()
 
+source(file.path(dir_goal, 'spp_fxn.R'))
+
 ```
 
 
 # Methods
-
-``` {r setup_API_functions}
-
-library(parallel)
-library(jsonlite)
-
-### api_key stored on git-annex so outside users can use their own key
-api_key <- scan(file.path(dir_goal_anx, '../api_key.csv'), what = 'character')
-
-get_from_api <- function(url, param, api_key, delay) {
-  
-  i <- 1; tries <- 5; success <- FALSE
-  
-  while(i <= tries & success == FALSE) {
-    message('try #', i)
-       Sys.sleep(delay * i) ### be nice to the API server? later attempts wait longer
-       api_info <- fromJSON(sprintf(url, param, api_key)) 
-       if (class(api_info) != 'try-error') {
-         success <- TRUE
-       } else {
-         warning(sprintf('try #%s: class(api_info) = %s\n', i, class(api_info)))
-       }
-    message('... successful? ', success)
-    i <- i + 1
-  }
-    
-  if (class(api_info) == 'try-error') { ### multi tries and still try-error
-    api_return <- data.frame(param_id  = param,
-                             api_error = 'try-error after multiple attempts')
-  } else if (class(api_info$result) != 'data.frame') { ### result isn't data frame for some reason
-    api_return <- data.frame(param_id  = param,
-                             api_error = paste('non data.frame output: ', class(api_info$result), ' length = ', length(api_info$result)))
-  } else if (length(api_info$result) == 0) { ### result is empty
-    api_return <- data.frame(param_id  = param,
-                             api_error = 'zero length data.frame')
-  } else {
-    api_return <- api_info %>%
-      data.frame(stringsAsFactors = FALSE)
-  }
-  
-  return(api_return)
-}
-
-mc_get_from_api <- function(url, param_vec, api_key, cores = NULL, delay = 0.5) {
-  
-  if(is.null(cores)) 
-    numcores <- ifelse(Sys.info()[['nodename']] == 'mazu', 12, 1)
-  else 
-    numcores <- cores
-  
-  out_list <- parallel::mclapply(param_vec, 
-                          function(x) get_from_api(url, x, api_key, delay),
-                          mc.cores   = numcores,
-                          mc.cleanup = TRUE) 
-  
-  if(any(sapply(out_list, class) != 'data.frame')) {
-    error_list <- out_list[sapply(out_list, class) != 'data.frame']
-    message('List items are not data frame: ', paste(sapply(error_list, class), collapse = '; '))
-    message('might be causing the bind_rows() error; returning the raw list instead')
-    return(out_list)
-  }
-  
-  out_df <- out_list %>%
-    bind_rows()
-  out_df <- out_df %>%
-    setNames(names(.) %>%
-               str_replace('result.', ''))
-  return(out_df)
-}
-
-```
 
 ## Create Aquamaps-to-IUCN lookup
 
@@ -153,8 +88,9 @@ iucn_spp_list <- read_csv(file.path(dir_goal, 'int', 'spp_marine_iucn_ids.csv'))
   filter(!is.na(sci_to_match)) %>%
   distinct()
 
-am_spp_list <- read_csv(file.path(dir_anx, '_raw_data', 'aquamaps/d2015/csv', 
+am_spp_list <- read_csv(file.path(dir_anx, '_raw_data', 'aquamaps/d2017/csv', 
                                   'speciesoccursum.csv')) %>%
+  setNames(tolower(names(.))) %>%
   select(am_sid = speciesid, 
          genus, species, fbname, 
          iucn_id, iucn_code) %>%
@@ -167,7 +103,7 @@ am_spp_list <- read_csv(file.path(dir_anx, '_raw_data', 'aquamaps/d2015/csv',
 
 am_spp_iucn_id <- am_spp_list %>%
   filter(!is.na(iucn_id))
-### 4585 observations; all unique iucn_id
+### in 8/2016 dataset, 4590 matches
 
 spp_iucn_id_match <- iucn_spp_list %>%
   filter(iucn_sid %in% am_spp_iucn_id$iucn_id) %>%
@@ -175,7 +111,7 @@ spp_iucn_id_match <- iucn_spp_list %>%
   select(iucn_sid, am_sid, sciname, am_sciname, fbname) %>%
   distinct()
 # length(unique(spp_iucn_id_match$iucn_sid)); length(unique(spp_iucn_id_match$am_sid))
-### only 4560 IDs included here out of 4585 on AM list... 
+### only 4552 IDs included here out of 4590 on AM list... 
 ### some of the aquamaps iucn_id values are not matching up.
 
 id_nonmatches <- am_spp_iucn_id %>%
@@ -214,19 +150,25 @@ Here we match AquaMaps species (those not matched by IUCN species ID) to the IUC
 ### get AquaMaps species not already matched by ID
 am_no_id_match <- am_spp_list %>%
   filter(!am_sid %in% spp_iucn_id_match$am_sid)
-### 18329 spp (plus 4560 matched by ID = 22889)
+### 20526 spp (plus 4552 matched by ID = 25078)
 
 ### get IUCN species not already matched by ID
 iucn_no_id_match <- iucn_spp_list %>%
   filter(!iucn_sid %in% spp_iucn_id_match$iucn_sid)
-### 8807 unique species IDs (plus 4560 already matched by ID = 13367)
+### iucn_no_id_match$iucn_sid %>% unique() %>% length()
+### spp_iucn_id_match$iucn_sid %>% unique() %>% length()
+### iucn_spp_list$iucn_sid %>% unique() %>% length()
+### 8801 unique species IDs (plus 4552 already matched by ID = 13353)
 
 spp_sciname_match <- iucn_no_id_match %>%
   inner_join(am_no_id_match, by = c('sci_to_match' = 'am_sciname')) %>%
   rename(am_sciname = sci_to_match) %>%
   select(iucn_sid, am_sid, sciname, am_sciname, fbname) %>%
   distinct()
-### 2998 matches right away: all unique iucn_sid; 2981 unique am_sid; 2981 unique scinames
+### spp_sciname_match$iucn_sid %>% unique() %>% length()
+### spp_sciname_match$am_sid %>% unique() %>% length()
+### spp_sciname_match$sciname %>% unique() %>% length()
+### 3232 matches right away: 3224 unique iucn_sid; 3225 unique am_sid; 3225 unique scinames
 
 ```
 
@@ -245,25 +187,58 @@ am_no_sciname_match <- am_spp_list %>%
   filter(!am_sid %in% spp_sciname_match$am_sid)
 ### 15348 spp + 2981 spp (sciname match) + 4560 spp (id match) = 22889: all of 'em
 
-### /api/v3/species/synonym/:name?token='YOUR TOKEN'
-spp_synonym_url <- 'http://apiv3.iucnredlist.org/api/v3/species/synonym/%s?token=%s'
 
 am_syn_file <- file.path(dir_goal_anx, 'int', 'am_synonyms.csv')
-if(!file.exists(am_syn_file)) {
-  ptm <- proc.time()
-  spp_synonym_df_am <- mc_get_from_api(spp_synonym_url, 
-                                         am_no_sciname_match$am_sciname, 
-                                         api_key, delay = 1)
-  print(proc.time() - ptm)
+reload <- TRUE
 
-  spp_synonym_df_am <- spp_synonym_df_am %>%
-    mutate(sciname = ifelse(is.na(name), param_id, name)) %>%
-    select(sciname, count, accepted_id, accepted_name, synonym) %>%
-    distinct()
+if(!file.exists(am_syn_file) | reload) {
   
-  ### found 1555 synonyms, with 607 distinct IDs, from 15545 names
+  if(file.exists(am_syn_file)) {
+    syns_matched <- read_csv(am_syn_file) # %>%
+      # filter(!is.na(synonym))
+    spp_nomatch <- am_no_sciname_match %>%
+      filter(!am_sciname %in% syns_matched$sciname) %>%
+      .$am_sciname %>%
+      unique()
+  } else {
+    spp_nomatch <- am_no_sciname_match$am_sciname %>% 
+      unique()
+  }
+
+  ### /api/v3/species/synonym/:name?token='YOUR TOKEN'
+  spp_synonym_url <- 'http://apiv3.iucnredlist.org/api/v3/species/synonym/%s?token=%s'
+
+  syn_df <- data.frame()
+  for(i in seq_along(spp_nomatch)) {
+    # cat(i, spp_nomatch[i], '...\n')
+    tmp_df <- get_from_api(spp_synonym_url, 
+                           spp_nomatch[i],
+                           api_key, delay = .5)
+    syn_df <- syn_df %>%
+      bind_rows(tmp_df)
+  }
   
-  write_csv(spp_synonym_df_am, am_syn_file)
+  # ptm <- proc.time()
+  # spp_synonym_df_am <- mc_get_from_api(spp_synonym_url,
+  #                                        spp_nomatch,
+  #                                        api_key, cores = 4, delay = .5)
+  # print(proc.time() - ptm)
+
+  if(nrow(syn_df) > 0) {
+    syn_df <- syn_df %>%
+      setNames(str_replace(names(.), 'result.', '')) %>%
+      mutate(sciname = ifelse(is.na(name), param_id, name)) %>%
+      select(sciname, count, accepted_id, accepted_name, synonym) %>%
+      distinct()
+  }
+  ### found 1555 synonyms, with 607 distinct IDs, from 17301 names
+  
+  if(file.exists(am_syn_file)) {
+    syn_df <- syn_df %>%
+    bind_rows(read_csv(am_syn_file))
+  }
+  
+  write_csv(syn_df, am_syn_file)
 } else {
   git_prov(am_syn_file, filetype = 'output')
 }
@@ -308,7 +283,7 @@ spp_synonym_match <- iucn_spp_list %>%
 
 -----
 
-### Assemble all lists and bind with species master list
+### Check unmatched species
 
 ``` {r any_evaluated_spp_left}
 
@@ -316,14 +291,14 @@ am_not_matched <- am_spp_list %>%
   filter(!am_sid %in% spp_iucn_id_match$am_sid) %>%
   filter(!am_sid %in% spp_sciname_match$am_sid) %>%
   filter(!am_sid %in% spp_synonym_match$am_sid)
-### 15310 species unmatched; most have NE or DD
+### 17263 species unmatched; most have NE or DD
 # table(am_not_matched$iucn_code)
    # DD    LC  N.E.    VU 
-   #  6     6 15296     2 
+   # 11    10 16906     3 
 
 am_not_matched_valid <- am_not_matched %>%
   filter(!iucn_code %in% c('N.E.', 'DD', NA))
-### only 8 species unmatched with valid IUCN code
+### only 13 species unmatched with valid IUCN code
 
 ```
 
@@ -333,7 +308,7 @@ Note the non-matched species are mostly N.E. or DD:
 
 `r table(am_not_matched$iucn_code)`
 
-Check these; they all have IUCN species IDs and valid codes, but do not seem to be counted as marine?  All but one seem to be errors in the AquaMaps dataset.  By including them in the list, with no IUCN species IDs, they will be included per AquaMaps, and use the AquaMaps code statically, rather than a time series.
+Check these; they all have IUCN species IDs and valid codes, but do not seem to be counted as marine?  All but one seem to be errors in the AquaMaps dataset.  By including them in the list, with no valid IUCN species IDs, they will be included per AquaMaps, and use the AquaMaps code statically, rather than a time series.
 
 `r DT::datatable(am_not_matched_valid)`
 
@@ -375,8 +350,16 @@ Note that this will drop non-matched AquaMaps species without a valid IUCN code.
 spp_am_to_iucn <- bind_rows(spp_iucn_id_match,
                             spp_sciname_match,
                             spp_synonym_match,
-                            am_not_matched_valid %>% 
+                            am_not_matched %>% 
                               select(-iucn_id, am_cat = iucn_code))
+
+### Squalus acanthias (piked dogfish? spiny dogfish?) shows up
+### multiple times; IUCN subpops.
+### chondri_maps <- foreign::read.dbf(file.path(dir_anx, '_raw_data/iucn_spp/d2016/CHONDRICHTHYES.dbf'))
+### Subpops not mapped.  Will this drop out in the analysis, when map_iucn_id is not matched?
+### ... no it won't; AquaMaps will pick it up and count it once for each subpop.
+spp_am_to_iucn <- spp_am_to_iucn %>%
+  filter(!(am_sid == 'Fis-29532' & iucn_sid != 91209505))
 
 write_csv(spp_am_to_iucn, file.path(dir_goal, 'int', 'spp_am_to_iucn.csv'))
 
@@ -392,7 +375,8 @@ This lookup will combine IUCN info list (with IUCN map info) and AquaMaps specie
 
 spp_am_to_iucn <- read_csv(file.path(dir_goal, 'int', 'spp_am_to_iucn.csv'))
 
-iucn_mar_spp   <- read_csv(file.path(dir_goal, 'int', 'spp_marine_iucn_ids.csv')) %>%
+iucn_mar_spp   <- read_csv(file.path(dir_goal, 'int', 'spp_marine_iucn_ids.csv'),
+                           col_types = 'dddc__c__c') %>%
   select(iucn_sid, map_iucn_sid, subpop_sid, sciname, map_subpop, spp_group) %>%
   distinct()
 
@@ -402,7 +386,7 @@ iucn_spp_info  <- read_csv(file.path(dir_goal_anx, 'int', 'spp_info_from_api.csv
 
 ### Join IUCN maps info
 spp_list1 <- iucn_spp_info %>%
-  left_join(iucn_mar_spp, by = c('iucn_sid', 'sciname'))
+  inner_join(iucn_mar_spp, by = c('iucn_sid', 'sciname'))
   
 ### some duplicated species due to species appearing in two shapefiles.
 ### eliminate dupes that show up in MANGROVES, REPTILES, and MARINE_FISH
@@ -418,19 +402,82 @@ spp_list3 <- spp_list2 %>%
   full_join(spp_am_to_iucn, by = c('iucn_sid', 'sciname'))
 
 spp_list4 <- spp_list3 %>%
-  filter(!(is.na(map_iucn_sid) & is.na(am_sid))) %>%
-  mutate(category = ifelse(is.na(category), am_cat, category)) %>%
+  mutate(cat_code = ifelse(is.na(category), am_cat, category),
+         sciname  = ifelse(is.na(sciname), am_sciname, sciname)) %>%
   select(am_sid, iucn_sid, 
          map_iucn_sid, map_subpop, 
          sciname,
-         category, 
+         cat_code, 
          spp_group)
 
-write_csv(spp_list4, file.path(dir_goal, 'int', 'spp_list.csv'))
+write_csv(spp_list4, file.path(dir_goal, 'int', 'spp_list_raw.csv'))
 
 ```
 
-Head of the species list (at `r file.path(dir_goal, 'int', 'spp_list.csv')`:
+Decide which spatial source to use for each species; convert IUCN extinction risk codes to numeric values.  We also determine population trend (old school style) from the Red List API for narrative, but only for species with a valid IUCN extinction risk code.
+
+``` {r get_trends}
+
+### Filter to just the valid species and get narratives.
+spp_list_valid <- read_csv(file.path(dir_goal, 'int', 'spp_list_raw.csv'),
+                           col_types = 'cddcccc') %>%
+  filter(!is.na(map_iucn_sid) | !is.na(am_sid)) %>%
+  filter(!cat_code %in% c('DD', 'NE', 'N.E.') & !is.na(cat_code)) %>%
+  select(iucn_sid, am_sid, sciname) %>%
+  distinct()
+
+spp_ids_valid <- spp_list_valid$iucn_sid %>%
+  unique() %>%
+  .[!is.na(.)]
+
+### /api/v3/species/narrative/id/:id?token='YOUR TOKEN'
+spp_narr_url <- 'http://apiv3.iucnredlist.org/api/v3/species/narrative/id/%s?token=%s'
+
+spp_narr <- vector('list', length = length(spp_iucn_ids_valid))
+for(i in seq_along(spp_ids_valid)) { # i <- 1
+  spp_id <- spp_ids_valid[i]
+  cat(i, 'Trying ', spp_id)
+  spp_narr_tmp <- get_from_api(spp_narr_url, spp_id, api_key, delay = .02)
+  spp_narr[[i]] <- spp_narr_tmp
+}
+
+spp_narr1 <- spp_narr %>%
+  bind_rows() %>%
+  select(iucn_sid = name, pop_trend = result.populationtrend) %>%
+  mutate(iucn_sid = as.integer(iucn_sid)) %>%
+  left_join(spp_list_valid, by = 'iucn_sid')
+
+trend_scores <- c('decreasing' = -.5, 'stable' = 0, 'increasing' = +.5)
+
+spp_narr1 <- spp_narr1 %>%
+  mutate(trend_score = trend_scores[pop_trend])
+
+write_csv(spp_narr1, file.path(dir_goal, 'int', 'spp_pop_trends.csv'))
+### the mclapply version seems to hang for some reason.
+# spp_narr_iucn <- mc_get_from_api(spp_narr_url,
+#                             spp_iucn_ids_valid,
+#                             api_key, cores = 12, delay = .5)
+
+```
+
+``` {r clean_spp_list}
+
+spp_list <- read_csv(file.path(dir_goal, 'int', 'spp_list_raw.csv'),
+                     col_types = 'cddcccc') %>%
+  mutate(spatial_source = ifelse(!is.na(map_iucn_sid), 'iucn', NA),
+         spatial_source = ifelse(is.na(map_iucn_sid) & !is.na(am_sid), 'am', spatial_source)) %>%
+  left_join(read_csv(file.path(dir_goal, 'raw/risk_code_lookup.csv')), 
+            by = c('cat_code' = 'code')) %>%
+  select(-cat_code, -category) %>%
+  rename(cat_code = code_current) %>%
+  left_join(read_csv(file.path(dir_goal, 'int/spp_pop_trends.csv'))) %>%
+  distinct()
+
+write_csv(spp_list, file.path(dir_goal, 'int', 'spp_list_cleaned.csv'))
+  
+```
+
+Head of the species list (at `r file.path(dir_goal, 'int', 'spp_list_cleaned.csv')`:
 
 `r knitr::kable(spp_list4 %>% head(20))`
 

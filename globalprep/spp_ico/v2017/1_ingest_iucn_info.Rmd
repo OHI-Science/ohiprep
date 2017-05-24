@@ -3,7 +3,10 @@ title: 'OHI: Species: ingest IUCN species information'
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
+    code_folding: hide
     toc: true
+    toc_depth: 3
+    toc_float: yes
     number_sections: true
     theme: cerulean
     highlight: haddock
@@ -13,10 +16,10 @@ output:
     toc: true
 ---
 
-``` {r setup, echo = FALSE, message = FALSE, warning = FALSE}
+``` {r setup, echo = TRUE, message = FALSE, warning = FALSE}
 
 knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
-                      echo = FALSE, message = FALSE, warning = FALSE)
+                      echo = TRUE, message = FALSE, warning = FALSE)
 
 source('~/github/ohiprep/src/R/common.R')
 
@@ -29,6 +32,9 @@ dir_goal  <- file.path('~/github/ohiprep/globalprep', goal, scenario)
 ### set up provenance tracking for this script:
 library(provRmd); prov_setup()
 
+source(file.path(dir_goal, 'spp_fxn.R'))
+
+
 ```
 
 # Methods
@@ -36,77 +42,6 @@ library(provRmd); prov_setup()
 ## Ingest IUCN species list from API
 
 Using the IUCN API, we accessed the full IUCN species list at `http://apiv3.iucnredlist.org/api/v3/speciescount?token=<token>`.  
-
-``` {r setup_API_functions}
-
-library(parallel)
-library(jsonlite)
-
-### api_key stored on git-annex so outside users can use their own key
-api_key <- scan(file.path(dir_goal_anx, '../api_key.csv'), what = 'character')
-
-get_from_api <- function(url, param, api_key, delay) {
-  
-  i <- 1; tries <- 6; success <- FALSE
-  
-  while(i <= tries & success == FALSE) {
-    message('try #', i)
-       Sys.sleep(delay * i) ### be nice to the API server? later attempts wait longer
-       api_info <- fromJSON(sprintf(url, param, api_key)) 
-       if (class(api_info) != 'try-error') {
-         success <- TRUE
-       } else {
-         warning(sprintf('try #%s: class(api_info) = %s\n', i, class(api_info)))
-       }
-    message('... successful? ', success)
-    i <- i + 1
-  }
-    
-  if (class(api_info) == 'try-error') { ### multi tries and still try-error
-    api_return <- data.frame(param_id  = param,
-                             api_error = 'try-error after multiple attempts')
-  } else if (class(api_info$result) != 'data.frame') { ### result isn't data frame for some reason
-    api_return <- data.frame(param_id  = param,
-                             api_error = paste('non data.frame output: ', class(api_info$result), ' length = ', length(api_info$result)))
-  } else if (length(api_info$result) == 0) { ### result is empty
-    api_return <- data.frame(param_id  = param,
-                             api_error = 'zero length data.frame')
-  } else {
-    api_return <- api_info %>%
-      data.frame(stringsAsFactors = FALSE)
-  }
-  
-  return(api_return)
-}
-
-mc_get_from_api <- function(url, param_vec, api_key, cores = NULL, delay = 0.5) {
-  
-  if(is.null(cores)) 
-    numcores <- ifelse(Sys.info()[['nodename']] == 'mazu', 12, 1)
-  else 
-    numcores <- cores
-  
-  out_list <- parallel::mclapply(param_vec, 
-                          function(x) get_from_api(url, x, api_key, delay),
-                          mc.cores   = numcores,
-                          mc.cleanup = TRUE) 
-  
-  if(any(sapply(out_list, class) != 'data.frame')) {
-    error_list <- out_list[sapply(out_list, class) != 'data.frame']
-    message('List items are not data frame: ', paste(sapply(error_list, class), collapse = '; '))
-    message('might be causing the bind_rows() error; returning the raw list instead')
-    return(out_list)
-  }
-  
-  out_df <- out_list %>%
-    bind_rows()
-  out_df <- out_df %>%
-    setNames(names(.) %>%
-               str_replace('result.', ''))
-  return(out_df)
-}
-
-```
 
 ### Access API for full species list
 
@@ -116,8 +51,9 @@ Get the number of IUCN species pages (each 10000 species) and pull each page.  T
 ### Get all pages and bind into total species list.  This is pretty fast.
 
 spp_info_from_api_file <- file.path(dir_goal_anx, 'int/spp_info_from_api.csv')
+reload <- TRUE
 
-if(!file.exists(spp_info_from_api_file)) {
+if(!file.exists(spp_info_from_api_file) | reload) {
   
   message('Using API to create full species list from scratch')
   
@@ -168,8 +104,9 @@ From the full IUCN species list, send each IUCN species ID into the API to get t
 ### This is slow.  Skip if possible.
 
 spp_habs_from_api_file <- file.path(dir_goal_anx, 'int/spp_habs_from_api.csv')
+reload <- FALSE
 
-if(!file.exists(spp_habs_from_api_file)) {
+if(!file.exists(spp_habs_from_api_file) | reload) {
   
   message('Using API to determine species habitats from full species info list')
   
@@ -261,7 +198,7 @@ This chunk was evaluated (file was last modified) on `r file.info(spp_habs_from_
 
 ### Habitat inclusion list
 
-From the habitats gleaned in the previous chunk, generate an inclusion list based on those that are considered marine.
+From the habitats gleaned in the previous chunk, generate an inclusion list based on those that are considered marine.  "Included" habitats are determined from inspection of the habitat list; we are including habitats 9-13, plus 15.11, 15.12, 15.13.
 
 ``` {r generate_hab_inclusion_list, eval = TRUE}
 
@@ -275,6 +212,7 @@ hab_cats <- read_csv(spp_habs_from_api_file, col_types = 'icccccci') %>%
   arrange(cat, subcat1, subcat2) %>%
   mutate(include = ifelse(cat %in% c(9:13), TRUE, FALSE),
          include = ifelse(cat == 15 & subcat1 %in% c(11, 12, 13), TRUE, include))
+### Note these "include" values were determined by inspecting the 
 
 write_csv(hab_cats, hab_inclusion_file)
 
@@ -336,7 +274,7 @@ if(!file.exists(iucn_map_list_file) | reload == TRUE) {
   if(!file.exists(iucn_map_list_file)) message('No file found for list of available IUCN range maps.  ')
   message('Generating new list of available IUCN range maps.')
 
-  dir_iucn_shp <- file.path(dir_anx, '_raw_data/iucn_spp/d2016')
+  dir_iucn_shp <- file.path(dir_anx, '_raw_data/iucn_spp/d2016-3')
   dir_botw_shp <- file.path(dir_anx, '_raw_data/birdlife_intl/d2016')
   
   groups_list <- c(list.files(dir_iucn_shp, pattern = '.shp$', full.names = TRUE),

@@ -1,0 +1,133 @@
+---
+title: 'OHI: Species: Ingest past assessments'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 3
+    toc_float: yes
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+``` {r setup, echo = TRUE, message = FALSE, warning = FALSE}
+
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
+                      echo = TRUE, message = FALSE, warning = FALSE)
+
+
+source('~/github/ohiprep/src/R/common.R')
+
+goal     <- 'spp_ico'
+scenario <- 'v2017'
+dir_anx  <- file.path(dir_M, 'git-annex', 'globalprep')
+dir_goal_anx <- file.path(dir_anx, goal, scenario) 
+dir_goal  <- file.path('~/github/ohiprep/globalprep', goal, scenario)
+
+### set up provenance tracking for this script:
+library(provRmd); prov_setup()
+
+```
+
+
+# Methods
+
+## Get past assessments for all IUCN marine species
+
+For each unique IUCN species ID, collect the past assessment information for the species.  Old codes are updated to current IUCN codes, and codes are translated to values between 0 and 1.
+
+``` {r get_species_past_assessments}
+
+spp_list <- read_csv(file.path(dir_goal, 'int', 'spp_list_cleaned.csv'))
+
+spp_cat_ts_file <- file.path(dir_goal, 'int', 'spp_cat_timeseries_raw.csv')
+
+if(!file.exists(spp_cat_ts_file)) {
+
+  spp_hist_url <- 'http://apiv3.iucnredlist.org/api/v3/species/history/id/%s?token=%s'
+  
+  sid_list <- spp_list %>%
+    filter(!is.na(iucn_sid)) %>% 
+    .$iucn_sid %>%
+    unique() %>%
+    sort()
+    
+  ptm <- proc.time()
+  spp_past_df <- mc_get_from_api(spp_hist_url, sid_list, api_key, delay = 1, cores = 16)
+  proc.time() - ptm
+  
+  
+  ### Clean up the time series: reclassify old codes to current
+  cat_lookup <- read_csv(file.path(dir_goal, 'raw', 'risk_code_lookup.csv'))
+  
+  spp_past_df1 <- spp_past_df %>%
+    left_join(cat_lookup, by = c('code', 'category')) %>%
+    rename(iucn_sid = name,
+           old_cat  = code,
+           cat_txt  = category,
+           cat_ts   = code_current)
+  
+  pop_cat <- data.frame(cat_ts       = c("LC", "NT", "VU", "EN", "CR", "EX", "NE", "DD"), 
+                        cat_ts_score = c(   0,  0.2,  0.4,  0.6,  0.8,  1.0,  NA,   NA))
+    
+  spp_past_df1 <- spp_past_df1 %>% 
+    left_join(pop_cat, by = 'cat_ts') %>%
+    filter(!is.na(cat_ts_score) & !is.na(year)) %>%
+    arrange(iucn_sid, year)
+  
+  write_csv(spp_past_df1, spp_cat_ts_file)
+} else {
+  git_prov(file.path(dir_goal, 'raw', 'risk_code_lookup.csv'), filetype = 'input')
+  git_prov(spp_cat_ts_file, filetype = 'output')
+  spp_past_df1 <- read_csv(spp_cat_ts_file, nogit = TRUE)
+}
+
+```
+
+Head of the species list (at `r spp_cat_ts_file`):
+
+`r knitr::kable(spp_past_df1 %>% arrange(iucn_sid, year) %>% head(20))`
+
+Total rows: `r nrow(spp_past_df1)`
+
+-----
+
+## Complete the risk category time series for each species
+
+For each species, clean up the time series by filling in missing years, then trim to a reasonable starting year (e.g. 2000).  This creates a large dataframe with no new information, so it will not be saved... this chunk can be copied into the SPP (or ICO) analysis to complete the time series there.
+
+``` {r process_time_series}
+
+spp_cat_ts_complete <- read_csv(file.path(dir_goal, 'int', 'spp_cat_timeseries_raw.csv')) %>%
+  select(iucn_sid, year, cat_ts, cat_ts_score) %>%
+  complete(year = full_seq(year, 1), nesting(iucn_sid)) %>%
+  arrange(iucn_sid, year) %>%
+  group_by(iucn_sid) %>%
+  fill(cat_ts, cat_ts_score) %>%                    
+    ### fills forward to most recent assessment year; older category valid til new assessment
+  fill(cat_ts, cat_ts_score, .direction = 'up') %>% 
+    ### fills back from first non-NE or DD assessment; assume early status is same as first assessment
+  ungroup() %>%
+  filter(year >= 2000)
+
+# write_csv(spp_cat_ts_complete, file.path(dir_goal, 'int/spp_cat_timeseries.csv'))
+
+```
+
+Head of the completed time series, as an example:
+
+`r knitr::kable(spp_cat_ts_complete %>% arrange(iucn_sid, year) %>% head(20))`
+
+Total rows: `r nrow(spp_cat_ts_complete)`
+
+-----
+
+``` {r, results = 'asis'}
+prov_wrapup(commit_outputs = FALSE)
+```

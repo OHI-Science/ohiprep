@@ -125,7 +125,7 @@ iucn_sid | kingdom | phylum | class | order | family | genus | sciname | populat
 
 library(jsonlite)
 ### api_key stored on git-annex so outside users can use their own key
-api_key <- scan(file.path(dir_goal_anx, '../api_key.csv'), what = 'character')
+api_key <- scan(file.path(dir_anx, 'api_key.csv'), what = 'character')
 
 spp_list_from_api_file <- file.path(dir_goal, 'int/spp_list_from_api.csv')
 ### NOTE:  As of 6/30/16, API returns a messed up set of data with 17500 duplicated rows.

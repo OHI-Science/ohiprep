@@ -1,0 +1,610 @@
+---
+title: 'OHI: Species: ingest IUCN species information'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 3
+    toc_float: yes
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+``` {r setup, echo = TRUE, message = FALSE, warning = FALSE}
+
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
+                      echo = TRUE, message = FALSE, warning = FALSE)
+
+source('~/github/ohiprep/src/R/common.R')
+
+goal     <- 'spp_ico'
+scenario <- 'v2017'
+dir_anx  <- file.path(dir_M, 'git-annex', 'globalprep')
+dir_goal_anx <- file.path(dir_anx, goal, scenario) 
+dir_goal  <- file.path('~/github/ohiprep/globalprep', goal, scenario)
+
+### set up provenance tracking for this script:
+library(provRmd); prov_setup()
+
+```
+
+# Methods
+
+## Ingest IUCN species list from API
+
+Using the IUCN API, we accessed the full IUCN species list at `http://apiv3.iucnredlist.org/api/v3/speciescount?token=<token>`.  
+
+``` {r setup_API_functions}
+
+library(parallel)
+library(jsonlite)
+
+### api_key stored on git-annex so outside users can use their own key
+api_key <- scan(file.path(dir_goal_anx, '../api_key.csv'), what = 'character')
+
+get_from_api <- function(url, param, api_key, delay) {
+  
+  i <- 1; tries <- 6; success <- FALSE
+  
+  while(i <= tries & success == FALSE) {
+    message('try #', i)
+       Sys.sleep(delay * i) ### be nice to the API server? later attempts wait longer
+       api_info <- fromJSON(sprintf(url, param, api_key)) 
+       if (class(api_info) != 'try-error') {
+         success <- TRUE
+       } else {
+         warning(sprintf('try #%s: class(api_info) = %s\n', i, class(api_info)))
+       }
+    message('... successful? ', success)
+    i <- i + 1
+  }
+    
+  if (class(api_info) == 'try-error') { ### multi tries and still try-error
+    api_return <- data.frame(param_id  = param,
+                             api_error = 'try-error after multiple attempts')
+  } else if (class(api_info$result) != 'data.frame') { ### result isn't data frame for some reason
+    api_return <- data.frame(param_id  = param,
+                             api_error = paste('non data.frame output: ', class(api_info$result), ' length = ', length(api_info$result)))
+  } else if (length(api_info$result) == 0) { ### result is empty
+    api_return <- data.frame(param_id  = param,
+                             api_error = 'zero length data.frame')
+  } else {
+    api_return <- api_info %>%
+      data.frame(stringsAsFactors = FALSE)
+  }
+  
+  return(api_return)
+}
+
+mc_get_from_api <- function(url, param_vec, api_key, cores = NULL, delay = 0.5) {
+  
+  if(is.null(cores)) 
+    numcores <- ifelse(Sys.info()[['nodename']] == 'mazu', 12, 1)
+  else 
+    numcores <- cores
+  
+  out_list <- parallel::mclapply(param_vec, 
+                          function(x) get_from_api(url, x, api_key, delay),
+                          mc.cores   = numcores,
+                          mc.cleanup = TRUE) 
+  
+  if(any(sapply(out_list, class) != 'data.frame')) {
+    error_list <- out_list[sapply(out_list, class) != 'data.frame']
+    message('List items are not data frame: ', paste(sapply(error_list, class), collapse = '; '))
+    message('might be causing the bind_rows() error; returning the raw list instead')
+    return(out_list)
+  }
+  
+  out_df <- out_list %>%
+    bind_rows()
+  out_df <- out_df %>%
+    setNames(names(.) %>%
+               str_replace('result.', ''))
+  return(out_df)
+}
+
+```
+
+### Access API for full species list
+
+Get the number of IUCN species pages (each 10000 species) and pull each page.  Then bind rows of all pages to create a single list of all species in the IUCN's Red List.
+
+``` {r get_spp_info_from_api}
+### Get all pages and bind into total species list.  This is pretty fast.
+
+spp_info_from_api_file <- file.path(dir_goal_anx, 'int/spp_info_from_api.csv')
+
+if(!file.exists(spp_info_from_api_file)) {
+  
+  message('Using API to create full species list from scratch')
+  
+  spp_npage_url <- sprintf('http://apiv3.iucnredlist.org/api/v3/speciescount?token=%s', api_key)
+  n_spp <- fromJSON(spp_npage_url) %>%
+    .$count %>% as.integer()
+  n_pages <- ceiling(n_spp/10000)
+  
+  spp_page_url <- 'http://apiv3.iucnredlist.org/api/v3/species/page/%s?token=%s'
+  spp_df_all <- mc_get_from_api(spp_page_url, c(0:(n_pages - 1)), api_key, delay = 1)
+
+  spp_df_all <- spp_df_all %>%
+    dplyr::select(-infra_rank, -infra_name, -count, -page) %>%
+    rename(iucn_sid = taxonid, sciname = scientific_name) %>%
+    setNames(names(.) %>%
+               str_replace('_name', ''))
+  
+  message('Full list length: ', nrow(spp_df_all), '; unique species IDs: ', length(spp_df_all$iucn_sid %>% unique()))
+  write_csv(spp_df_all, spp_info_from_api_file)
+  
+} else {
+  
+  message('File of API species list exists: \n  ', spp_info_from_api_file)
+  git_prov(spp_info_from_api_file, filetype = 'output')
+  
+}
+
+```
+
+`r spp_info_from_api_file` contains the following variables:
+
+`r read_csv(spp_info_from_api_file, n_max = 6, nogit = TRUE) %>% names() %>% paste(collapse = ' | ')`
+
+head: 
+
+`r knitr::kable(read_csv(spp_info_from_api_file, nogit = TRUE)[1:6, 1:6])`
+
+This chunk was evaluated (file was last modified) on `r file.info(spp_info_from_api_file)$mtime`
+
+-----
+
+### IUCN species habitat info for all species from API
+
+From the full IUCN species list, send each IUCN species ID into the API to get the habitats listed for that species.  Combine all habitat dataframes into a master dataframe of all habitats for all species.  Note that many species do not have habitat information and will be listed as NA for habitat variables.
+
+``` {r determine_spp_habs}
+### For each species ID on the total list, get a dataframe of habitats.
+### This is slow.  Skip if possible.
+
+spp_habs_from_api_file <- file.path(dir_goal_anx, 'int/spp_habs_from_api.csv')
+
+if(!file.exists(spp_habs_from_api_file)) {
+  
+  message('Using API to determine species habitats from full species info list')
+  
+  spp_info_from_api_file <- file.path(dir_goal_anx, 'int/spp_info_from_api.csv')
+  spp_ids_all <- read_csv(spp_info_from_api_file) %>%
+    .$iucn_sid
+  
+  spp_habs_url <- 'http://apiv3.iucnredlist.org/api/v3/habitats/species/id/%s?token=%s'
+  
+  
+  ### Breaking this into chunks...
+  ### 500 spp takes 184 seconds; at that rate, 87851 species should take 
+  ###   about 9 hrs.  Each chunk will save to tmp for later combining.
+  
+  chunk_size <- 2000
+  n_chunks <- ceiling(length(spp_ids_all)/chunk_size)
+  
+  if(!dir.exists(file.path(dir_goal_anx, 'tmp'))) 
+    dir.create(file.path(dir_goal_anx, 'tmp'))
+  
+  for(j in 1:n_chunks) { 
+    ### j <- 2
+    spp_index <- c( ((j - 1) * chunk_size + 1) : min((j * chunk_size), length(spp_ids_all)) )
+    chunk_file <- file.path(dir_goal_anx, 'tmp', 
+                    sprintf('spp_habs_chunk_%s_%s.csv', 
+                            min(spp_index), max(spp_index)))
+    
+    if(!file.exists(chunk_file)) {
+      message('Getting habitat info for species ', min(spp_index), ' to ', max(spp_index))
+      
+      spp_ids_chunk <- spp_ids_all[spp_index]
+      spp_habs_chunk <- mc_get_from_api(spp_habs_url, spp_ids_chunk, api_key, cores = 12, delay = .5)
+
+      message('... found ', nrow(spp_habs_chunk), ' habitat rows for these species')
+      
+      write_csv(spp_habs_chunk, chunk_file)
+      
+    } else {
+      
+      message('Chunk file ', chunk_file, ' already exists; skipping these spp')
+      
+    }
+  }
+  
+  ### fields: 
+  ### id | code | habitat | suitability | season | majorimportance
+
+  spp_hab_chunk_files <- list.files(file.path(dir_goal_anx, 'tmp'), 
+                                    pattern = 'spp_habs_chunk', 
+                                    full.names = TRUE)
+  
+  spp_habs_df <- lapply(spp_hab_chunk_files, FUN = function(x) {
+    read.csv(x) %>%
+      mutate(code = as.character(code))}) %>%
+    bind_rows() %>%
+    rename(iucn_sid = id) %>%
+    mutate(iucn_sid = ifelse(is.na(iucn_sid), param_id, iucn_sid)) %>%
+    arrange(iucn_sid)
+  
+  spp_errors <- spp_habs_df %>%
+    filter(!is.na(api_error) & api_error != 'no data.frame') %>%
+    .$iucn_sid
+  ### all these errors are due to returning a zero-length list instead of a data.frame
+
+  write_csv(spp_habs_df, file.path(dir_goal_anx, 'int', 'spp_habs_from_api.csv'))
+  
+} else {
+  
+  message('File of species habitats from API exists: \n  ', spp_habs_from_api_file)
+  git_prov(spp_habs_from_api_file, filetype = 'output')
+  
+}
+
+
+```
+
+
+`r spp_habs_from_api_file` contains the following variables:
+
+`r read_csv(spp_habs_from_api_file, n_max = 6, nogit = TRUE) %>% names() %>% paste(collapse = ' | ')`
+
+head: 
+
+`r knitr::kable(read_csv(spp_habs_from_api_file, nogit = TRUE)[1:6, 1:6])`
+
+This chunk was evaluated (file was last modified) on `r file.info(spp_habs_from_api_file)$mtime`
+
+-----
+
+### Habitat inclusion list
+
+From the habitats gleaned in the previous chunk, generate an inclusion list based on those that are considered marine.
+
+``` {r generate_hab_inclusion_list, eval = TRUE}
+
+hab_inclusion_file <- file.path(dir_goal, 'int', 'iucn_habitat_categories.csv')
+
+hab_cats <- read_csv(spp_habs_from_api_file, col_types = 'icccccci') %>%
+  select(habitat, code) %>%
+  distinct() %>%
+  separate(code, c('cat', 'subcat1', 'subcat2'),
+           remove = FALSE, convert = TRUE) %>%
+  arrange(cat, subcat1, subcat2) %>%
+  mutate(include = ifelse(cat %in% c(9:13), TRUE, FALSE),
+         include = ifelse(cat == 15 & subcat1 %in% c(11, 12, 13), TRUE, include))
+
+write_csv(hab_cats, hab_inclusion_file)
+
+```
+
+`r hab_inclusion_file` contains the following variables:
+
+`r read_csv(hab_inclusion_file, nogit = TRUE) %>% names() %>% paste(collapse = ' | ')`
+
+head: 
+
+`r DT::datatable(read_csv(hab_inclusion_file, nogit = TRUE))`
+
+This chunk was evaluated (file was last modified) on `r file.info(hab_inclusion_file)$mtime`
+
+-----
+
+``` {r determine_marine_spp_from_api}
+
+spp_habs_from_api <- read_csv(file.path(dir_goal_anx, 'int/spp_habs_from_api.csv'),
+                              col_types = 'iccccc__')
+### 'code' is character since it is in the form x.xx.xxx
+
+hab_marine <- read_csv(file.path(dir_goal, 'int', 'iucn_habitat_categories.csv'))
+
+### also pull all IUCN IDs from AquaMaps; some of these may have NA habitat
+### results from above, but should still be considered marine.
+am_iucn_ids <- read_csv(file.path(dir_anx, '_raw_data', 'aquamaps/d2015/csv', 
+                                  'speciesoccursum.csv')) %>%
+  mutate(iucn_id = as.integer(iucn_id)) %>%
+  filter(!is.na(iucn_id)) %>%
+  .$iucn_id
+
+### using inner_join, use marine hab lookup to attach to the full spp habitat
+### list, adding more info and filtering to just marine habitats
+spp_marine_habs <- spp_habs_from_api %>%
+  left_join(hab_marine, by = c('habitat', 'code')) %>%
+  filter(include == TRUE | iucn_sid %in% am_iucn_ids) %>%
+  mutate(habitat = ifelse(is.na(habitat), 'marine from AquaMaps', habitat))
+
+write_csv(spp_marine_habs, file.path(dir_goal_anx, 'int/spp_marine_from_api.csv'))
+
+```
+  
+-----
+
+## Develop IUCN map list from downloaded shapefiles
+
+Create list of all species included in pulled IUCN shapefiles (dbfs).  This includes terrestrial critters but also includes all columns of info from the .dbfs - including source/citation/year, taxonomic info, seasonality, etc.
+
+**NOTE:** download all relevant shapefiles before running this script, including the BOTW shapefile from BirdLife International.
+
+``` {r get_iucn_mapped_spp}
+
+iucn_map_list_file <- file.path(dir_goal_anx, 'int/spp_iucn_maps.csv')
+reload <- FALSE
+
+if(!file.exists(iucn_map_list_file) | reload == TRUE) {
+  if(!file.exists(iucn_map_list_file)) message('No file found for list of available IUCN range maps.  ')
+  message('Generating new list of available IUCN range maps.')
+
+  dir_iucn_shp <- file.path(dir_anx, '_raw_data/iucn_spp/d2016')
+  dir_botw_shp <- file.path(dir_anx, '_raw_data/birdlife_intl/d2016')
+  
+  groups_list <- c(list.files(dir_iucn_shp, pattern = '.shp$', full.names = TRUE),
+                   list.files(dir_botw_shp, pattern = '.shp$', full.names = TRUE))
+
+  spp_iucn_maps <- data.frame()
+
+  for (spp_group in groups_list) {
+    ### spp_group <- groups_list[28]
+    
+    message(sprintf('Processing species shapefile: \n  %s...', spp_group))
+    spp_dbf <- foreign::read.dbf(str_replace(spp_group, '.shp$', '.dbf'))
+
+    message('var names: ', paste(names(spp_dbf), collapse = ' | '))
+    
+    names(spp_dbf) <- tolower(names(spp_dbf))
+    
+    ### the BOTW file has some truncated variable names.  Fix 'em.
+    name_matches <-  c("presence", "seasonal", "compiler", 
+                       "citation", "dist_comm", "subspecies", 
+                       "tax_comm", "reviewed")
+    names(spp_dbf) <- sapply(names(spp_dbf), FUN = function(x) {
+                          y <- ifelse(any(str_detect(name_matches, x)), 
+                                      name_matches[which(str_detect(name_matches, x))],
+                                      x)})
+    
+    ### rename IUCN species ID and scientific name columns
+    names(spp_dbf)[names(spp_dbf) %in% c('id_no', 'sisid')] <- 'iucn_sid'
+    names(spp_dbf)[names(spp_dbf) %in% c('binomial')]       <- 'sciname'
+
+    # add group name to the database for future reference
+    spp_dbf <- spp_dbf %>%
+      mutate(spp_group = basename(spp_group) %>% str_replace('.shp$', ''))
+
+    spp_iucn_maps <- bind_rows(spp_iucn_maps, spp_dbf)
+    
+  }
+
+  spp_iucn_maps <- spp_iucn_maps %>%
+    dplyr::select(iucn_sid, sciname, 
+                  presence, origin, seasonal, subpop, 
+                  compiler, year, citation, source, 
+                  alt_sciname = scientific,
+                  spp_group) %>% 
+    distinct()
+  ### NOTE: This may include all terrestrial mammals and reptiles,
+  ### not just those in marine species list.  Unless these are filtered
+  ### out from the shapefiles ahead of time (which is coded into the 
+  ### ingest_iucn_shps.Rmd)
+
+  message(sprintf('Writing list of available IUCN range maps to: \n  %s', iucn_map_list_file))
+  write_csv(spp_iucn_maps, iucn_map_list_file)
+  
+} else {
+  
+  message(sprintf('List of available IUCN range maps exists: \n  %s', iucn_map_list_file))
+  git_prov(iucn_map_list_file, 'output')
+
+}
+```
+
+### Available IUCN range maps
+
+`r iucn_map_list_file` contains the following variables:
+
+`r read_csv(iucn_map_list_file, n_max = 6, nogit = TRUE) %>% names() %>% paste(collapse = ' | ')`
+
+head: 
+
+`r knitr::kable(read_csv(iucn_map_list_file, nogit = TRUE)[1:6, 1:6])`
+
+This chunk was evaluated (file was last modified) on `r file.info(iucn_map_list_file)$mtime`
+
+-----
+
+### Lookup table for map subpopulations to API subpopulations
+
+From the maps list and API species list, generate a lookup table to match subpop id numbers (from the API list) to the maps (which only have the parent ID as identifier); this lookup will match map subpop name to API subpop ID.
+
+``` {r create_subpop_lookup_list, eval = FALSE}
+
+spp_iucn_maps     <- read_csv(file.path(dir_goal_anx, 'int/spp_iucn_maps.csv'))
+spp_info_from_api <- read_csv(file.path(dir_goal_anx, 'int/spp_info_from_api.csv'))
+
+spp_marine <- read_csv(file.path(dir_goal_anx, 'int/spp_marine_from_api.csv'))
+
+iucn_maps_marine <- spp_iucn_maps %>%
+  select(iucn_sid, 
+         sciname, 
+         alt_sciname, 
+         presence, year, subpop,
+         spp_group) %>%
+  filter(iucn_sid %in% spp_marine$iucn_sid) %>%
+  distinct()
+
+### identify subpops in both API list and shp list; chances are they
+### will not match well enough for a join yet.  From this, create one
+### master lookup file.
+### annoyingly, the map descriptions are what we need to keep, but they
+### have fluff in 'em such as scientific names which foul up distance
+### matching - thus the "str_replace" line.
+### For both, some species include "subpopulation" which is redundant and also
+### can throw off the distance matching.
+subpops_api <- spp_info_from_api %>%
+  select(iucn_sid_from_api = iucn_sid, sciname, pop_from_api = population, category) %>%
+  filter(!is.na(pop_from_api)) %>%
+  filter(sciname %in% iucn_maps_marine$sciname) %>%
+  mutate(pop_from_api = tolower(pop_from_api) %>%
+           str_replace_all('subpopulation| ocean', '') %>% ### ditch trailing "ocean" too
+           str_trim()) %>%
+  distinct()
+subpops_marine <- iucn_maps_marine %>%
+  select(iucn_sid_from_maps = iucn_sid, sciname, pop_from_map = subpop) %>%
+  mutate(pop_from_map_mod = tolower(pop_from_map) %>%
+           str_replace_all('subpopulation| ocean', '') %>% ### ditch trailing "ocean" too
+           str_replace(tolower(sciname), '') %>% 
+           str_trim()) %>%
+  group_by(iucn_sid_from_maps) %>%
+  filter(sum(!is.na(pop_from_map)) > 0) %>%
+  ungroup() %>%
+  distinct()
+
+library(stringdist)
+
+subpops_raw <- subpops_api %>%
+  full_join(subpops_marine, by = 'sciname') %>%
+  rowwise() %>%
+  # mutate(adist   = as.numeric(utils::adist(pop_from_api, pop_from_map_mod))) %>%
+  # mutate(qgram   = as.numeric(stringdist::amatch(pop_from_api, pop_from_map_mod, method = 'qgram', nomatch = 0))) %>%
+  mutate(jaccard = as.numeric(stringdist::amatch(pop_from_api, pop_from_map_mod, method = 'jaccard', nomatch = 0))) %>%
+  mutate(jw      = as.numeric(stringdist::amatch(pop_from_api, pop_from_map_mod, method = 'jw', nomatch = 0))) %>%
+  # mutate(soundex = as.numeric(stringdist::amatch(pop_from_api, pop_from_map_mod, method = 'soundex'))) %>%
+  # group_by(iucn_sid_from_api) %>%
+  # mutate(subpop_match = (adist == min(adist, na.rm = TRUE))) %>%
+  # ungroup() %>%
+  ungroup() %>%
+  filter(jaccard | jw) %>%
+  select(iucn_sid_from_api, iucn_sid_from_maps, pop_from_api, pop_from_map) %>%
+  distinct()
+### Between Jaccard and JW matches, seems to avoid any false negatives
+
+### Edit these to remove false positives and save as 'subpop_lookup_edited.csv'
+write_csv(subpops_raw, file.path(dir_goal, 'raw', 'subpop_lookup_raw.csv'))
+
+```
+
+
+`r file.path(dir_goal, 'raw', 'subpop_lookup_edited.csv')` contains the following variables:
+
+`r read_csv(file.path(dir_goal, 'raw', 'subpop_lookup_edited.csv'), n_max = 6, nogit = TRUE) %>% names() %>% paste(collapse = ' | ')`
+
+head: 
+
+`r knitr::kable(read_csv(file.path(dir_goal, 'raw', 'subpop_lookup_edited.csv'), nogit = TRUE) %>% head())`
+
+-----
+
+## Create final IUCN marine species list
+
+Creating the final IUCN marine species list involves combining the IUCN species information (from the IUCN species info list) and the IUCN map information (pulled from the shapefile dbfs), as well as the habitats list.
+
+For our purposes, the complete list of marine species will include:
+
+* Any species with a marine-associated habitat from the spp-to-habitat lookup file.
+* Any species with a map found in the marine-associated shapefiles.
+    * this may include species with NA in habitat variables from the spp-to-habitat lookup file
+    * marine-associated shapefiles do not include TERRESTRIAL_MAMMALS, REPTILES, and BOTW.
+* For terrestrial mammals, reptiles, and birds, only species with positively-identified marine habitats will be kept.
+
+### IUCN marine species info from API
+
+For all species pulled from the IUCN API, join with habitat results.  This is done in a couple of steps:
+
+* join the habitat results to a marine habitats lookup table using `left_join`, which will keep all rows including NA habitats; then filter to marine and NA habs.
+    * since each habitat for a species is its own observation, any species with both marine and terrestrial presence will remain, keeping only its marine habitat info
+    * since many species span multiple marine habitats, each of these distinct habitats will be retained.  
+        * this will allow for finer-scale inspection of species habitats and subhabitats if desired.
+        * in the final analysis, these habitat distinctions would have to be removed so each species can be collapsed into a single instance.
+* join the resulting list with the species maps list.
+* filter to meet the requirements listed above (habitat is marine | species in marine shapefile)
+* additional filters: habitat is not coastal freshwater lakes & habitat suitability is not marginal
+
+``` {r identify_marine_spp}
+
+### join the spp-to-marine-habs lookup to the full species list from API.
+spp_info_from_api <- read_csv(file.path(dir_goal_anx, 'int/spp_info_from_api.csv'))
+
+spp_marine_habs <- read_csv(file.path(dir_goal_anx, 'int/spp_marine_from_api.csv'))
+
+spp_list <- spp_info_from_api %>%
+  left_join(spp_marine_habs, by = 'iucn_sid')
+
+### now get the full IUCN map list and join to the spp list.
+spp_iucn_maps  <- read_csv(file.path(dir_goal_anx, 'int/spp_iucn_maps.csv'))
+
+subpops_lookup <- read_csv(file.path(dir_goal, 'raw', 'subpop_lookup_edited.csv')) %>%
+  select(iucn_sid = iucn_sid_from_maps,
+         subpop_sid = iucn_sid_from_api,
+         subpop = pop_from_map)
+  
+iucn_maps_marine <- spp_iucn_maps %>%
+  select(map_iucn_sid = iucn_sid, 
+         map_sciname = sciname, 
+         alt_sciname, ### just in case, save this for later.  They don't all match the sciname for some reason.
+         presence,
+         year, ### year of compilation
+         subpop, ### text field of subpopulation from .dbf
+         spp_group) %>%
+  left_join(subpops_lookup, by = c('map_iucn_sid' = 'iucn_sid', 'subpop')) %>%
+  mutate(iucn_sid = ifelse(!is.na(subpop_sid), subpop_sid, map_iucn_sid)) %>%
+  distinct()
+
+### Finally, attach the maps info to the species info.  Then filter to exclude
+### species with NA habitats that are in either REPTILES, BOTW, or 
+### TERRESTRIAL_MAMMALS.  Other species groups are assumed to be entirely marine.
+
+spp_mar_list <- spp_list %>%
+  left_join(iucn_maps_marine, by = 'iucn_sid') %>%
+  filter(!is.na(habitat) | !is.na(spp_group)) %>% 
+    ### keep any with marine habitat OR a shapefile
+  filter(!(is.na(habitat) & str_detect(spp_group, 'REPT|TERR|BOTW'))) 
+    ### exclude non-marine in specific shapefiles
+
+### here we can clean up the list.
+### * filter further? perhaps ditch "Marginal" habitats? perhaps ditch freshwater coastal lakes?
+### * ditch the taxonomies? we can add in later from the master species list.
+### * habitat info: code, suitability, season, major importance
+
+spp_mar_list <- spp_mar_list %>%
+  filter(!(!is.na(suitability) & suitability == 'Marginal' & str_detect(spp_group, 'REPT|TERR|BOTW'))) %>%
+    ### exclude instances of land-based animals whose marine habitats are "marginal"
+  filter(is.na(habitat) | !str_detect(habitat, 'Freshwater'))
+    ### exclude instances where a species habitat is freshwater coastal lakes
+
+spp_mar_list_clean <- spp_mar_list %>%
+  select(iucn_sid, map_iucn_sid, subpop_sid,
+         # kingdom, phylum, class, order, family,
+         sciname, map_sciname, alt_sciname,
+         # population, 
+         map_subpop = subpop,
+         habitat, 
+         # suitability,
+         presence, spp_group) %>%
+  distinct()
+
+# length(unique(spp_mar_list_clean$iucn_sid))
+
+### save this in GitHub even though it's large...
+write_csv(spp_mar_list_clean, file.path(dir_goal, 'int/spp_marine_iucn_ids.csv'))
+
+### x <- read_csv(file.path(dir_goal, 'int/spp_marine_iucn_ids.csv'))
+```
+
+
+`r file.path(dir_goal, 'int/spp_marine_iucn_ids.csv')` contains the following variables:
+
+`r spp_mar_list_clean %>% names() %>% paste(collapse = ' | ')`
+
+head: 
+
+`r knitr::kable(spp_mar_list_clean[1:6, 1:8])`
+
+
+-----
+
+``` {r, results = 'asis'}
+prov_wrapup(commit_outputs = FALSE)
+```

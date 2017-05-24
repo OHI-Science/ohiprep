@@ -1,0 +1,292 @@
+iucn_sid,year,cat_code,cat_txt,sciname,cat_score
+2467,1965,CR,"""Very rare but believed to be stable or increasing""",Balaena mysticetus,0.8
+2467,1986,EN,Endangered,Balaena mysticetus,0.6
+2467,1988,EN,Endangered,Balaena mysticetus,0.6
+2467,1990,VU,Vulnerable,Balaena mysticetus,0.4
+2467,1994,VU,Vulnerable,Balaena mysticetus,0.4
+2467,1996,CD,Lower Risk/conservation dependent,Balaena mysticetus,0.3
+2467,2008,LC,Least Concern,Balaena mysticetus,0
+2467,2012,LC,Least Concern,Balaena mysticetus,0
+2468,1996,CD,Lower Risk/conservation dependent,Balaena mysticetus,0.3
+2469,1996,EN,Endangered,Balaena mysticetus,0.6
+2469,2012,EN,Endangered,Balaena mysticetus,0.6
+2472,1996,EN,Endangered,Balaena mysticetus,0.6
+2472,2000,CR,Critically Endangered,Balaena mysticetus,0.8
+2472,2008,CR,Critically Endangered,Balaena mysticetus,0.8
+2472,2012,CR,Critically Endangered,Balaena mysticetus,0.8
+2474,1996,NT,Lower Risk/near threatened,Balaenoptera acutorostrata,0.2
+2474,2008,LC,Least Concern,Balaenoptera acutorostrata,0
+2475,1994,VU,Vulnerable,Balaenoptera borealis,0.4
+2475,1996,EN,Endangered,Balaenoptera borealis,0.6
+2475,2008,EN,Endangered,Balaenoptera borealis,0.6
+2477,1965,CR,"""Very rare and believed to be decreasing in numbers""",Balaenoptera musculus,0.8
+2477,1986,EN,Endangered,Balaenoptera musculus,0.6
+2477,1988,EN,Endangered,Balaenoptera musculus,0.6
+2477,1990,EN,Endangered,Balaenoptera musculus,0.6
+2477,1994,EN,Endangered,Balaenoptera musculus,0.6
+2477,1996,EN,Endangered,Balaenoptera musculus,0.6
+2477,2008,EN,Endangered,Balaenoptera musculus,0.6
+2478,1965,T,"""Less rare but believed to be threatened-requires watching""",Balaenoptera physalus,0.6
+2478,1986,VU,Vulnerable,Balaenoptera physalus,0.4
+2478,1988,VU,Vulnerable,Balaenoptera physalus,0.4
+2478,1990,VU,Vulnerable,Balaenoptera physalus,0.4
+2478,1994,VU,Vulnerable,Balaenoptera physalus,0.4
+2478,1996,EN,Endangered,Balaenoptera physalus,0.6
+2478,2008,EN,Endangered,Balaenoptera physalus,0.6
+2478,2013,EN,Endangered,Balaenoptera physalus,0.6
+2480,1996,CD,Lower Risk/conservation dependent,Balaenoptera bonaerensis,0.3
+2762,1996,CD,Lower Risk/conservation dependent,Berardius arnuxii,0.3
+3778,1996,LC,Lower Risk/least concern,Caperea marginata,0
+3855,1996,VU,Vulnerable,Carcharodon carcharias,0.4
+3855,2000,VU,Vulnerable,Carcharodon carcharias,0.4
+3855,2009,VU,Vulnerable,Carcharodon carcharias,0.4
+3897,1982,VU,Vulnerable,Caretta caretta,0.4
+3897,1986,VU,Vulnerable,Caretta caretta,0.4
+3897,1988,VU,Vulnerable,Caretta caretta,0.4
+3897,1990,VU,Vulnerable,Caretta caretta,0.4
+3897,1994,VU,Vulnerable,Caretta caretta,0.4
+3897,1996,EN,Endangered,Caretta caretta,0.6
+3897,2015,VU,Vulnerable,Caretta caretta,0.4
+4162,1990,VU,Vulnerable,Cephalorhynchus hectori,0.4
+4162,1996,VU,Vulnerable,Cephalorhynchus hectori,0.4
+4162,2000,EN,Endangered,Cephalorhynchus hectori,0.6
+4162,2008,EN,Endangered,Cephalorhynchus hectori,0.6
+4162,2013,EN,Endangered,Cephalorhynchus hectori,0.6
+4292,1996,VU,Vulnerable,Cetorhinus maximus,0.4
+4292,2000,VU,Vulnerable,Cetorhinus maximus,0.4
+4292,2005,VU,Vulnerable,Cetorhinus maximus,0.4
+4592,1996,VU,Vulnerable,Cheilinus undulatus,0.4
+4592,2004,EN,Endangered,Cheilinus undulatus,0.6
+4615,1982,EN,Endangered,Chelonia mydas,0.6
+4615,1986,EN,Endangered,Chelonia mydas,0.6
+4615,1988,EN,Endangered,Chelonia mydas,0.6
+4615,1990,EN,Endangered,Chelonia mydas,0.6
+4615,1994,EN,Endangered,Chelonia mydas,0.6
+4615,1996,EN,Endangered,Chelonia mydas,0.6
+4615,2004,EN,Endangered,Chelonia mydas,0.6
+6336,1996,LC,Lower Risk/least concern,Delphinus delphis,0
+6336,2008,LC,Least Concern,Delphinus delphis,0
+6494,1982,EN,Endangered,Dermochelys coriacea,0.6
+6494,1986,EN,Endangered,Dermochelys coriacea,0.6
+6494,1988,EN,Endangered,Dermochelys coriacea,0.6
+6494,1990,EN,Endangered,Dermochelys coriacea,0.6
+6494,1994,EN,Endangered,Dermochelys coriacea,0.6
+6494,1996,EN,Endangered,Dermochelys coriacea,0.6
+6494,2000,CR,Critically Endangered,Dermochelys coriacea,0.8
+6494,2013,VU,Vulnerable,Dermochelys coriacea,0.4
+8005,1982,EN,Endangered,Eretmochelys imbricata,0.6
+8005,1986,EN,Endangered,Eretmochelys imbricata,0.6
+8005,1988,EN,Endangered,Eretmochelys imbricata,0.6
+8005,1990,EN,Endangered,Eretmochelys imbricata,0.6
+8005,1994,EN,Endangered,Eretmochelys imbricata,0.6
+8005,1996,CR,Critically Endangered,Eretmochelys imbricata,0.8
+8005,2008,CR,Critically Endangered,Eretmochelys imbricata,0.8
+8097,1996,CD,Lower Risk/conservation dependent,Eschrichtius robustus,0.3
+8097,2008,LC,Least Concern,Eschrichtius robustus,0
+8099,1996,EN,Endangered,Eschrichtius robustus,0.6
+8099,2000,CR,Critically Endangered,Eschrichtius robustus,0.8
+8099,2008,CR,Critically Endangered,Eschrichtius robustus,0.8
+8153,1965,CR,"""Very rare but believed to be stable or increasing""",Eubalaena australis,0.8
+8153,1988,VU,Vulnerable,Eubalaena australis,0.4
+8153,1990,VU,Vulnerable,Eubalaena australis,0.4
+8153,1994,VU,Vulnerable,Eubalaena australis,0.4
+8153,1996,CD,Lower Risk/conservation dependent,Eubalaena australis,0.3
+8153,2008,LC,Least Concern,Eubalaena australis,0
+8153,2013,LC,Least Concern,Eubalaena australis,0
+8784,1996,VU,Vulnerable,Gadus morhua,0.4
+9249,1996,CD,Lower Risk/conservation dependent,Globicephala macrorhynchus,0.3
+9250,1996,LC,Lower Risk/least concern,Globicephala melas,0
+9281,1996,CR,Critically Endangered,Glyphis gangeticus,0.8
+9281,2007,CR,Critically Endangered,Glyphis gangeticus,0.8
+9461,2008,LC,Least Concern,Grampus griseus,0
+9461,2012,LC,Least Concern,Grampus griseus,0
+9660,1996,LC,Lower Risk/least concern,Halichoerus grypus,0
+9660,2008,LC,Least Concern,Halichoerus grypus,0
+9660,2016,LC,Least Concern,Halichoerus grypus,0
+10708,1996,CD,Lower Risk/conservation dependent,Hyperoodon planifrons,0.3
+10708,2008,LC,Least Concern,Hyperoodon planifrons,0
+11047,1996,LC,Lower Risk/least concern,Kogia breviceps,0
+11048,1996,LC,Lower Risk/least concern,Kogia sima,0
+11140,2008,LC,Least Concern,Lagenodelphis hosei,0
+11140,2012,LC,Least Concern,Lagenodelphis hosei,0
+11144,1996,LC,Lower Risk/least concern,Lagenorhynchus cruciger,0
+11144,2008,LC,Least Concern,Lagenorhynchus cruciger,0
+11200,1996,VU,Vulnerable,Lamna nasus,0.4
+11200,2000,NT,Lower Risk/near threatened,Lamna nasus,0.2
+11200,2006,VU,Vulnerable,Lamna nasus,0.4
+11533,1982,EN,Endangered,Lepidochelys kempii,0.6
+11533,1986,EN,Endangered,Lepidochelys kempii,0.6
+11533,1988,EN,Endangered,Lepidochelys kempii,0.6
+11533,1990,EN,Endangered,Lepidochelys kempii,0.6
+11533,1994,EN,Endangered,Lepidochelys kempii,0.6
+11533,1996,CR,Critically Endangered,Lepidochelys kempii,0.8
+11534,1982,EN,Endangered,Lepidochelys olivacea,0.6
+11534,1986,EN,Endangered,Lepidochelys olivacea,0.6
+11534,1988,EN,Endangered,Lepidochelys olivacea,0.6
+11534,1990,EN,Endangered,Lepidochelys olivacea,0.6
+11534,1994,EN,Endangered,Lepidochelys olivacea,0.6
+11534,1996,EN,Endangered,Lepidochelys olivacea,0.6
+11534,2008,VU,Vulnerable,Lepidochelys olivacea,0.4
+12419,1996,LC,Lower Risk/least concern,Lutra lutra,0
+12419,2000,VU,Vulnerable,Lutra lutra,0.4
+12419,2004,NT,Near Threatened,Lutra lutra,0.2
+12419,2008,NT,Near Threatened,Lutra lutra,0.2
+12419,2015,NT,Near Threatened,Lutra lutra,0.2
+12427,1996,VU,Vulnerable,Lutrogale perspicillata,0.4
+12427,2000,VU,Vulnerable,Lutrogale perspicillata,0.4
+12427,2004,VU,Vulnerable,Lutrogale perspicillata,0.4
+12427,2008,VU,Vulnerable,Lutrogale perspicillata,0.4
+12427,2015,VU,Vulnerable,Lutrogale perspicillata,0.4
+13006,1965,T,"""Less rare but believed to be threatened-requires watching""",Megaptera novaeangliae,0.6
+13006,1986,EN,Endangered,Megaptera novaeangliae,0.6
+13006,1988,EN,Endangered,Megaptera novaeangliae,0.6
+13006,1990,VU,Vulnerable,Megaptera novaeangliae,0.4
+13006,1994,VU,Vulnerable,Megaptera novaeangliae,0.4
+13006,1996,VU,Vulnerable,Megaptera novaeangliae,0.4
+13006,2008,LC,Least Concern,Megaptera novaeangliae,0
+13653,1965,CR,"""Very rare and believed to be decreasing in numbers""",Monachus monachus,0.8
+13653,1986,EN,Endangered,Monachus monachus,0.6
+13653,1988,EN,Endangered,Monachus monachus,0.6
+13653,1990,EN,Endangered,Monachus monachus,0.6
+13653,1994,EN,Endangered,Monachus monachus,0.6
+13653,1996,CR,Critically Endangered,Monachus monachus,0.8
+13653,2008,CR,Critically Endangered,Monachus monachus,0.8
+13653,2013,CR,Critically Endangered,Monachus monachus,0.8
+13653,2015,EN,Endangered,Monachus monachus,0.6
+14363,1994,VU,Vulnerable,Natator depressus,0.4
+14363,1996,VU,Vulnerable,Natator depressus,0.4
+15419,2008,VU,Vulnerable,Orcaella brevirostris,0.4
+15421,1996,CD,Lower Risk/conservation dependent,Orcinus orca,0.3
+16564,1996,LC,Lower Risk/least concern,Peponocephala electra,0
+16564,2008,LC,Least Concern,Peponocephala electra,0
+16580,1996,LC,Lower Risk/least concern,Perca fluviatilis,0
+16580,2008,LC,Least Concern,Perca fluviatilis,0
+17013,1996,LC,Lower Risk/least concern,Phoca vitulina,0
+17013,2008,LC,Least Concern,Phoca vitulina,0
+17013,2016,LC,Least Concern,Phoca vitulina,0
+17027,1996,VU,Vulnerable,Phocoena phocoena,0.4
+17027,2008,LC,Least Concern,Phocoena phocoena,0
+17028,1986,VU,Vulnerable,Phocoena sinus,0.4
+17028,1988,VU,Vulnerable,Phocoena sinus,0.4
+17028,1990,EN,Endangered,Phocoena sinus,0.6
+17028,1994,EN,Endangered,Phocoena sinus,0.6
+17028,1996,CR,Critically Endangered,Phocoena sinus,0.8
+17028,2007,CR,Critically Endangered,Phocoena sinus,0.8
+17028,2008,CR,Critically Endangered,Phocoena sinus,0.8
+17031,1996,VU,Vulnerable,Phocoena phocoena,0.4
+17031,2008,CR,Critically Endangered,Phocoena phocoena,0.8
+17978,2008,VU,Vulnerable,Pontoporia blainvillei,0.4
+17978,2012,VU,Vulnerable,Pontoporia blainvillei,0.4
+18596,1996,LC,Lower Risk/least concern,Pseudorca crassidens,0
+19488,2000,VU,Vulnerable,Rhincodon typus,0.4
+19488,2005,VU,Vulnerable,Rhincodon typus,0.4
+19488,2016,EN,Endangered,Rhincodon typus,0.6
+19855,1996,LC,Lower Risk/least concern,Salmo salar,0
+19861,1996,LC,Lower Risk/least concern,Salmo trutta,0
+19861,2008,LC,Least Concern,Salmo trutta,0
+19861,2011,LC,Least Concern,Salmo trutta,0
+20424,2008,NT,Near Threatened,Sousa chinensis,0.2
+20729,1996,CD,Lower Risk/conservation dependent,Stenella attenuata,0.3
+20729,2008,LC,Least Concern,Stenella attenuata,0
+20729,2012,LC,Least Concern,Stenella attenuata,0
+20731,1996,CD,Lower Risk/conservation dependent,Stenella coeruleoalba,0.3
+20731,2008,LC,Least Concern,Stenella coeruleoalba,0
+20733,1996,CD,Lower Risk/conservation dependent,Stenella longirostris,0.3
+20738,2008,LC,Least Concern,Steno bredanensis,0
+20738,2012,LC,Least Concern,Steno bredanensis,0
+22563,2008,LC,Least Concern,Tursiops truncatus,0
+22563,2012,LC,Least Concern,Tursiops truncatus,0
+22823,1965,T,"""Less rare but believed to be threatened-requires watching""",Ursus maritimus,0.6
+22823,1982,VU,Vulnerable,Ursus maritimus,0.4
+22823,1986,VU,Vulnerable,Ursus maritimus,0.4
+22823,1988,VU,Vulnerable,Ursus maritimus,0.4
+22823,1990,VU,Vulnerable,Ursus maritimus,0.4
+22823,1994,VU,Vulnerable,Ursus maritimus,0.4
+22823,1996,CD,Lower Risk/conservation dependent,Ursus maritimus,0.3
+22823,2006,VU,Vulnerable,Ursus maritimus,0.4
+22823,2008,VU,Vulnerable,Ursus maritimus,0.4
+22823,2015,VU,Vulnerable,Ursus maritimus,0.4
+23211,2008,LC,Least Concern,Ziphius cavirostris,0
+39338,2015,LC,Least Concern,Megachasma pelagios,0
+39339,2009,VU,Vulnerable,Alopias vulpinus,0.4
+39340,2000,EN,Endangered,Cetorhinus maximus,0.6
+39340,2009,EN,Endangered,Cetorhinus maximus,0.6
+39341,2000,NT,Lower Risk/near threatened,Isurus oxyrinchus,0.2
+39341,2009,VU,Vulnerable,Isurus oxyrinchus,0.4
+39343,2000,VU,Vulnerable,Lamna nasus,0.4
+39343,2006,CR,Critically Endangered,Lamna nasus,0.8
+39344,2000,CD,Lower Risk/conservation dependent,Lamna nasus,0.3
+39344,2006,EN,Endangered,Lamna nasus,0.6
+39365,2000,NT,Lower Risk/near threatened,Carcharhinus amblyrhynchos,0.2
+39365,2009,NT,Near Threatened,Carcharhinus amblyrhynchos,0.2
+39375,2000,NT,Lower Risk/near threatened,Carcharhinus melanopterus,0.2
+39375,2009,NT,Near Threatened,Carcharhinus melanopterus,0.2
+39378,2000,NT,Lower Risk/near threatened,Galeocerdo cuvier,0.2
+39378,2009,NT,Near Threatened,Galeocerdo cuvier,0.2
+39381,2000,NT,Lower Risk/near threatened,Prionace glauca,0.2
+39381,2009,NT,Near Threatened,Prionace glauca,0.2
+39384,2000,NT,Lower Risk/near threatened,Triaenodon obesus,0.2
+39384,2005,NT,Near Threatened,Triaenodon obesus,0.2
+39427,2000,CR,Critically Endangered,Cephalorhynchus hectori ssp. maui,0.8
+39427,2013,CR,Critically Endangered,Cephalorhynchus hectori ssp. maui,0.8
+39428,2000,CR,Critically Endangered,Orcaella brevirostris,0.8
+39428,2008,CR,Critically Endangered,Orcaella brevirostris,0.8
+39545,2000,EN,Endangered,Cetorhinus maximus,0.6
+39545,2009,EN,Endangered,Cetorhinus maximus,0.6
+41672,1996,LC,Lower Risk/least concern,Pusa hispida,0
+41672,2008,LC,Least Concern,Pusa hispida,0
+41672,2016,LC,Least Concern,Pusa hispida,0
+41711,1996,EN,Endangered,Eubalaena japonica,0.6
+41711,2008,EN,Endangered,Eubalaena japonica,0.6
+41712,2008,EN,Endangered,Eubalaena glacialis,0.6
+41712,2012,EN,Endangered,Eubalaena glacialis,0.6
+41755,1996,VU,Vulnerable,Physeter macrocephalus,0.4
+41755,2008,VU,Vulnerable,Physeter macrocephalus,0.4
+41761,2003,VU,Vulnerable,Pontoporia blainvillei,0.4
+41761,2012,VU,Vulnerable,Pontoporia blainvillei,0.4
+41762,2003,EN,Endangered,Delphinus delphis,0.6
+44187,2004,CR,Critically Endangered,Orcaella brevirostris,0.8
+44555,2004,CR,Critically Endangered,Orcaella brevirostris,0.8
+44556,2004,CR,Critically Endangered,Orcaella brevirostris,0.8
+44557,2004,CR,Critically Endangered,Orcaella brevirostris,0.8
+60217,2006,NT,Near Threatened,Carcharhinus perezi,0.2
+60225,2006,VU,Vulnerable,Isurus paucus,0.4
+61420,2006,CR,Critically Endangered,Lamna nasus,0.8
+132832,2008,EN,Endangered,Megaptera novaeangliae,0.6
+132835,2008,EN,Endangered,Megaptera novaeangliae,0.6
+133704,2008,CR,Critically Endangered,Eubalaena australis,0.8
+133704,2013,CR,Critically Endangered,Eubalaena australis,0.8
+133706,2008,CR,Critically Endangered,Eubalaena japonica,0.8
+133710,2008,CR,Critically Endangered,Sousa chinensis,0.8
+135631,2008,LC,Least Concern,Esox lucius,0
+135631,2013,LC,Least Concern,Esox lucius,0
+135717,2008,LC,Least Concern,Platichthys flesus,0
+135717,2010,LC,Least Concern,Platichthys flesus,0
+136315,2008,NT,Near Threatened,Orcaella heinsohni,0.2
+155123,2010,LC,Least Concern,Clupea harengus,0
+161749,2009,VU,Vulnerable,Isurus oxyrinchus,0.4
+161750,2009,VU,Vulnerable,Isurus oxyrinchus,0.4
+161751,2009,NT,Near Threatened,Isurus oxyrinchus,0.2
+183775,2010,LC,Least Concern,Engraulis ringens,0
+194300,2011,CR,Critically Endangered,Tursiops truncatus,0.8
+16208224,2012,VU,Vulnerable,Balaenoptera physalus,0.4
+16285718,2012,LC,Least Concern,Chelonia mydas,0
+16369383,2012,VU,Vulnerable,Tursiops truncatus,0.4
+16370739,2012,EN,Endangered,Physeter macrocephalus,0.6
+16674437,2012,VU,Vulnerable,Stenella coeruleoalba,0.4
+46967807,2013,CR,Critically Endangered,Dermochelys coriacea,0.8
+46967817,2013,CR,Critically Endangered,Dermochelys coriacea,0.8
+46967827,2013,LC,Least Concern,Dermochelys coriacea,0
+46967838,2013,CR,Critically Endangered,Dermochelys coriacea,0.8
+46967863,2013,CR,Critically Endangered,Dermochelys coriacea,0.8
+74491261,2016,LC,Least Concern,Halichoerus grypus,0
+83644804,2015,LC,Least Concern,Caretta caretta,0
+83652278,2015,LC,Least Concern,Caretta caretta,0
+83776383,2015,EN,Endangered,Caretta caretta,0.6
+84126444,2015,CR,Critically Endangered,Caretta caretta,0.8
+84127873,2015,CR,Critically Endangered,Caretta caretta,0.8
+84131194,2015,LC,Least Concern,Caretta caretta,0
+84156809,2015,CR,Critically Endangered,Caretta caretta,0.8
+84189617,2015,NT,Near Threatened,Caretta caretta,0.2
+84191235,2015,LC,Least Concern,Caretta caretta,0
+84199475,2015,NT,Near Threatened,Caretta caretta,0.2

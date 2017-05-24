@@ -32,7 +32,7 @@ Xtr = tr/90th quantile across regions
 * Tourism sustainability: TCCI
 * Proportion of workforce directly employed in tourism: (WEF)
 * Travel warnings: (U.S. State Department)
-* Per capital GDP: (World Bank with gaps filled using CIA data), used to gapfill missing values in Tourism sustainability
+* Per capita GDP: (World Bank with gaps filled using CIA data), used to gapfill missing values in Tourism sustainability
 
 #Updates from previous assessment
 Prior to the 2015 global assessment, we used World Bank data to estimate the total labor force and unemployment to calculate the proportion of jobs directly from  tourism.  In the 2015 assessment, we used the percentages directly from WEF.  Consequently, we no longer need to collect these World Bank data.  We attempted to see if missing WEF data could be estimated using these values, but this did not improve sample sizes. 

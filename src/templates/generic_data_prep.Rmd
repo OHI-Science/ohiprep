@@ -1,5 +1,5 @@
 ---
-title: 'OHI 2016 - Commerical Fishing Pressure Layers '
+title: "OHI 2016 - Artisanal Opportunities: Preparing need data"
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
@@ -11,7 +11,7 @@ output:
     theme: cerulean
     highlight: haddock
     includes: 
-      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+      in_header: '../../../src/templates/ohi_hdr.html'
 pdf_document:
   toc: true
 ---

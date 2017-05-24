@@ -472,7 +472,7 @@ add_georegion_id <- function(k) {
   
   
   
-  georegion <- read.csv("../../../../ohi-global/eez2014/layers/cntry_georegions.csv")
+  georegion <- read.csv("raw/cntry_georegions.csv")
   #   unique(georegion$georgn_id[georegion$level=="r0"])  # 1 level
   #   unique(georegion$georgn_id[georegion$level=="r1"])  # 7 levels
   #   unique(georegion$georgn_id[georegion$level=="r2"])  # 22 levels

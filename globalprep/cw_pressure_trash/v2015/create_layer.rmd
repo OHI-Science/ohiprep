@@ -64,7 +64,7 @@ cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color sc
 mytheme <- rasterTheme(region = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)))
 
 #set working directory on neptune
-data_wd = file.path(dir_M,'git-annex/globalprep/CW_pressure_trash')
+data_wd = file.path(dir_M,'git-annex/globalprep/cw_pressure_trash')
 ```
 
 ## Read in data
