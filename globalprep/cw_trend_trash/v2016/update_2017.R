@@ -9,4 +9,5 @@ data <- data %>%
   mutate(year=2016) %>%
   select(rgn_id, year, trend)
 
-write.csv(data, "globalprep/cw_trend_trash/v2016/output/cw_trash_trend_updated.csv")
+write.csv(data, "globalprep/cw_trend_trash/v2016/output/cw_trash_trend_updated.csv",
+          row.names=FALSE)

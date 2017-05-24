@@ -16,4 +16,5 @@ for (year in 2012:2016){ # year = 2012
 }
 
 
-write.csv(data, "globalprep/prs_land-based_nutrient/v2016/output/cw_fertilizers_trend_updated.csv")
+write.csv(data, "globalprep/prs_land-based_nutrient/v2016/output/cw_fertilizers_trend_updated.csv",
+          row.names=FALSE)

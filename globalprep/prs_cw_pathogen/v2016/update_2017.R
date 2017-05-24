@@ -15,4 +15,5 @@ for (year in 2012:2015){ # year = 2012
   
 }
 
-write.csv(data, "globalprep/prs_cw_pathogen/v2016/output/pathogens_popdensity25mi_trend_updated.csv")
+write.csv(data, "globalprep/prs_cw_pathogen/v2016/output/pathogens_popdensity25mi_trend_updated.csv",
+          row.names=FALSE)
