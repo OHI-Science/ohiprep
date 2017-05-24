@@ -6,6 +6,14 @@
 ## package
 ##############################################
 
+
+# For the model testing, I compared the stockid_ram value to the 
+# CMSY values we calculated at the FAO scale.  So, if a RAM stock 
+# covers 2 FAO regions there is one RAM value, but 2 CMSY values.  
+# And, if there is RAM data for multiple stocks of the same species 
+# that are located in the same FAO region, the RAM B/Bmsy values 
+# were averaged
+
 library(tidyr)
 library(dplyr)
 library(ggplot2)
@@ -79,6 +87,9 @@ summary(bmsy_fao_rgn)
 # -----------------------------------------------------------------
 
 # formatted RAM data:
+
+## These data were gapfilled using 5 years of RAM data
+## ultimately, we might want to use 10 years of data to fit model (see format_RAM_data.R)
 ram_data <- read.csv('globalprep/fis/v2016/int/ram_data.csv')
 
 bmsy_dl_ram <- bmsy_fao_rgn %>%
@@ -253,5 +264,19 @@ tmp %>%
   group_by(year) %>%
   summarize(prop_catch_bmsy = sum_tons[bbmsy_data=="yes"]/(sum(sum_tons))) %>%
   data.frame()
-# ~47% of catch with ram b/bmsy estimates
+# ~47% of catch with b/bmsy estimates
 
+tmp %>%
+  filter(!is.na(bbmsy)) %>%
+  filter(year >= 2005) %>%
+  group_by(ram_data) %>%
+  summarize(sum_tons = sum(tons)) %>%
+  summarize(prop_catch_ram = sum_tons[ram_data=="yes"]/(sum(sum_tons))) %>%
+  data.frame()
+
+tmp %>%
+  group_by(ram_data, year) %>%
+  summarize(sum_tons = sum(tons)) %>%
+  group_by(year) %>%
+  summarize(prop_catch_ram = sum_tons[ram_data=="yes"]/(sum(sum_tons))) %>%
+  data.frame()
