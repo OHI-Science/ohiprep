@@ -16,4 +16,4 @@ for (year in 2012:2015){ # year = 2012
 }
 
 summary(data)
-write.csv(data, "globalprep/res_gci/v2015/data/rgn_wef_gci_updated.csv")
+write.csv(data, "globalprep/res_gci/v2015/data/rgn_wef_gci_updated.csv", row.names=FALSE)

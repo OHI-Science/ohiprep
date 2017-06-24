@@ -16,7 +16,7 @@ for (year in 2011:2015){ # year = 2012
   
 }
 
-write.csv(data, "globalprep/lsp/v2016/output/mpa_3nm_updated.csv")
+write.csv(data, "globalprep/lsp/v2016/output/mpa_3nm_updated.csv", row.names=FALSE)
 
 
 # eez
@@ -33,5 +33,5 @@ for (year in 2011:2015){ # year = 2012
   
 }
 
-write.csv(data, "globalprep/lsp/v2016/output/mpa_eez_updated_resilience.csv")
+write.csv(data, "globalprep/lsp/v2016/output/mpa_eez_updated_resilience.csv", row.names=FALSE)
 
