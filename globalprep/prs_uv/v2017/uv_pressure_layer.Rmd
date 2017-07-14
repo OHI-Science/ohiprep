@@ -65,13 +65,14 @@ For **OHI 2017** we are using a higher resolution dataset from the same satellit
 
 knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 
-source('~/github/ohiprep/src/R/common.R')
 library(raster)
 library(ncdf4)
 library(rgdal)
 library(rhdf5) #from bioconductor: http://bioconductor.org/packages/release/bioc/html/rhdf5.html
 library(ggplot2)
 library(RColorBrewer)
+
+source('~/github/ohiprep/src/R/common.R')
 
 raw_data_dir = file.path(dir_M,'git-annex/globalprep/_raw_data/NASA_OMI_AURA_UV/d2017')
 
