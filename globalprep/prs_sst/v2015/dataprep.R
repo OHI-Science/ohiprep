@@ -5,13 +5,10 @@ library(RColorBrewer)
 library(dplyr)
 
 #paths
-
-dir_N = c('Windows' = '//neptune.nceas.ucsb.edu/data_edit',
-          'Darwin'  = '/Volumes/data_edit',
-          'Linux'   = '/var/data/ohi')[[ Sys.info()[['sysname']] ]]
+source('src/R/common.R')
 
 #set working directory
-setwd(file.path(dir_N,'git-annex/globalprep/prs_sst'))
+setwd(file.path(dir_M,'git-annex/globalprep/prs_sst'))
 
 cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme for plotting
 
