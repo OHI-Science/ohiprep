@@ -159,6 +159,7 @@ diffs <- list.files('int',pattern = 'diff',full.names=T)
 resc_num <- read.csv("../../supplementary_information/v2016/reference_points_pressures.csv") %>%
   filter(pressure == "Sea Surface Temperature") %>%
   .$ref_point
+resc_num <- as.numeric(as.character(resc_num))
 
 foreach(i = 1:length(diffs)) %dopar%{
 

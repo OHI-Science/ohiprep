@@ -25,10 +25,10 @@ As of 2-15-2017, only the first few chunks have been run to get annual rasters c
 The Ultraviolet Radiation pressure layer is generated from daily data on Local Noon Erythemal UV Irradiance (mW/m2) derived from satellite observations. 
 
 1. Average the data for each week/year/cell  
-2. For each week/year/cell, calculate the mean and sd, so each cell would have ~624 (12*52) values (2004-2016)  
+2. For each week/year/cell, calculate the mean and sd, so each cell would have ~624 (12*52) values (2005-2016)  
 3. Determine which of these were anomalous, defined as greater than the mean plus 1 standard deviation  
 4. Sum weekly anomalies for each year/cell (for a total of 52 possible anomalies per year/cell)  
-5. Calculate the total number of anomalies in the reference period (in our case, 2004-2009, for a total of 52*5 anomalies per cell)  
+5. Calculate the total number of anomalies in the reference period (in our case, 2005-2009, for a total of 52*5 anomalies per cell)  
 6. Calculate the total number of anomalies in the most recent 5 year period (2011-2015)    
 7. then for each cell, get the difference between current anomalies and reference anomolies    
 8. Rescale the data to be between 0-1 by using the 99.99th quantile as a reference point
@@ -87,6 +87,9 @@ days <- seq(1,358,7)
   land      <- ocean_shp%>%
                   subset(rgn_typ %in% c('land','land-disputed','land-noeez'))
 
+#set mollweide projection CRS
+  mollCRS = crs('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs')
+   
 ```
 
 ## Create rasters from HDF files
@@ -236,15 +239,16 @@ Calculate the difference in total number of anomalies in recent 5 years (2011 - 
 ```{r calc_differences, eval=F}
 
 l   <- list.files(file.path(dir_M,'git-annex/globalprep/prs_uv/v2017/int/annual_anoms/'),full.names=T)
+ref_files <- c(grep("2005", l), grep("2006", l), grep("2007", l), grep("2008", l), grep("2009", l))
 
-ref <- l[1:5]%>%stack()%>%
+ref <- l[ref_files]%>%stack()%>%
         calc(.,fun=function(x){sum(x,na.rm=T)})
 
 library(parallel)
 
 registerDoParallel(5)
 
-foreach(i = c(2006:2012)) %dopar% { #i=2007
+foreach(i = c(2006:2011)) %dopar% { #i=2005
 
   yrs <- c(i:(i+4))
   
@@ -270,7 +274,7 @@ out_files <- list.files('int',full.names=T, pattern = 'ocean')
 #get data across all years
 vals <- c()
 
-for(i in 1:5){
+for(i in 1:length(out_files)){
   
   print(i)
   m <- out_files[i]%>%
