@@ -69,6 +69,7 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE,fig.width=6, fig.height=6)
 library(raster)
 library(ncdf4)
 library(maps)
+library(parallel)
 library(RColorBrewer)
 
 source("~/github/ohiprep/src/R/common.R")
@@ -88,15 +89,15 @@ We are only adding one year, 2016, so we just need to grab that NetCDF file. The
 
 ```{r,message=FALSE,warning=FALSE,eval=FALSE}
 
-file <- list.files(file.path(raw_dir,'WHOI/annual'),pattern="2016.nc",recursive=T,full.names = T) #grab only 2016
+files <- list.files(file.path(raw_dir,'WHOI/annual'),pattern = "20",recursive=T,full.names = T) #grab only 2016
         
 ```
 
-## Calculate annual mean aragonite saturation state for 2016
+## Calculate annual mean aragonite saturation state for 2005 - 2016
 
 The function `annual_arag`, originally defined in the OHI 2015 dataprep files, takes the .nc file for each year, gets the lat, long and arag values for each month and stores them in a data frame. Then using this dataframe, rasterizes the data into a global 1x1 degree grid, reprojects to molleweide and saves the raster to file.
 
-This has already been done for years 2005 - 2015 for the OHI 2016 assessment. Here we do the same for 2016 to include in the OHI 2017 global assessment.
+This has already been done for years 2005 - 2015 for the OHI 2016 assessment, but since we are implementing a new interpolation method we are going to rerun all years 2005 - 2016 for OHI 2017 global assessment.
 
 ```{r,message=FALSE,warning=FALSE,eval=FALSE}
       
@@ -166,20 +167,20 @@ This has already been done for years 2005 - 2015 for the OHI 2016 assessment. He
       
      print(cellStats(out_moll,stat='mean',na.rm=T))
      
-  writeRaster(out_moll,filename = paste0(file.path(oagit_dir,"v2017/int/global_arag_avg_moll_"),year), format='GTiff', overwrite=T)
+  writeRaster(out_moll,filename = paste0(file.path(oagit_dir,"v2017/int/annual_avg_moll/global_arag_avg_moll_"),year), format='GTiff', overwrite=T)
     
 }
 
 #run the function for each file in the file list using lapply
 
-lapply(file,annual_arag)
+  mclapply(files,annual_arag,mc.cores = 16) #run parallel
 ```
 
 ```{r plot mean 2015 raster}
 
 #Here is the output for 2015
 
-r_2016 <- raster(file.path(oagit_dir,'v2017/int/global_arag_avg_moll_2016.tif'))
+r_2016 <- raster(file.path(oagit_dir,'v2017/int/annual_avg_moll/global_arag_avg_moll_2016.tif'))
 
 plot(r_2016,box=F,axes=F,main="Mean Ωaragonite saturation state 2016", col=cols)
  
@@ -225,12 +226,12 @@ oaRescale <- function(file){
   mean[mean>1] <- diff[mean>1]                     #all cells with values greater than 1 are swapped out with their amount of change scaled to how close to 1 
   mean[mean<0]<-0                                  #all values less than 0 (indicating a decrease in acidity) are capped at 0
 
-    writeRaster(mean,filename=paste0(oagit_dir,'/v2017/int/oa_rescaled_',yr,sep=""),format='GTiff',overwrite=T)
+    writeRaster(mean,filename=paste0(oagit_dir,'/v2017/int/annual_avg_moll_rescaled/oa_rescaled_',yr,sep=""),format='GTiff',overwrite=T)
 }
 
-file = file.path(oagit_dir,'v2017/int/global_arag_avg_moll_2016.tif')
+files = list.files(file.path(oagit_dir,'v2017/int/annual_avg_moll'),full.names=T)
 
-oaRescale(file)
+mclapply(files,oaRescale,mc.cores = 16)
 ```
 
 ```{r plot rescale}
@@ -247,47 +248,56 @@ Since there are oceanic cells with no information in the raw data, we need to fi
 ```{r interpolate}
 
 library(gstat)
-r  <- raster(file.path(oagit_dir,'v2017/int/oa_rescaled_2016.tif')) #oa raster
+
+files <- list.files(file.path(oagit_dir,'v2017/int/annual_avg_moll_rescaled'),full.names=T)
+
+int_function <- function(file){
+r  <- raster(file) #oa raster
+yr <- substr(file,nchar(file)-7,nchar(file)-4)
 xy <- data.frame(xyFromCell(r, 1:ncell(r)))                         #get xy coords into dataframe
 v  <- getValues(r)                                                  #get cell values 
 tmpdf <- cbind(xy, v)%>%filter(!is.na(v))                           #create dataframe of x,y, and values. remove NAs (throws error since these are cells we are interpolating over)
 mg <- gstat(id = "v", formula = v~1, locations = ~x+y, data=tmpdf,
             nmax=7, set=list(idp = 2)) #define model. power function = 2, this is default for idw models
 z <- interpolate(r, mg, progress='text')                            #interpolate across NA cells
+writeRaster(z,filename  = paste0(file.path(oagit_dir),"/v2017/int/annual_avg_moll_rescaled_int/oa_resc_int_",yr,".tif"))
+}
 
-plot(z,col=cols,box=F,axes=F,main='Rescaled and Interpolated Ωaragonite layer for 2016')
+mclapply(files, int_function,mc.cores=16)
+
+plot(raster(file.path(oagit_dir,'v2017/int/annual_avg_moll_rescaled_int/oa_resc_int_2016.tif')),col=cols,box=F,axes=F,main='Rescaled and Interpolated Ωaragonite layer for 2016')
 
 ```
 
 
-## Resample
+## Resample & Land Mask
 
-All pressure layers need to be resampled to 1km^2 cell resolution. We have a template ocean raster with cells at this resolution that we use to resample all pressure layers. You won't see any difference between the plot above and this one since we are using the nearest neighbor method when resampling which maintains the original cell value for each of resampled cell.
+All pressure layers need to be resampled to 1km^2^ cell resolution. We have a template ocean raster with cells at this resolution that we use to resample all pressure layers. You won't see any difference between the plot above and this one since we are using the nearest neighbor method when resampling which maintains the original cell value for each of resampled cell.
 
 ```{r resample,eval=F}
 
-resample(z,ocean,filename = paste0(oagit_dir,'/v2017/int/annual_oa_rescaled_int_1km_2016.tif'),progress='text',overwrite=T)
+files <- list.files(file.path(oagit_dir,'v2017/int/annual_avg_moll_rescaled_int'),full.names=T)
 
+oaResample <- function(file){
+  
+  yr <- substr(file,nchar(file)-7,nchar(file)-4)
+  
+  raster(file)%>%
+  resample(ocean,method = 'ngb')%>%
+  mask(ocean,filename = paste0(oagit_dir,'/v2017/output/oa_prs_layer_',yr,'.tif',overwrite=T)
+  
+}
+
+mclapply(files,oaResample,mc.cores = 16)
 ```
 
 
 # Final Pressure Layer
 
-## Landmask
-
-Now that all cells are at a ~1km^2 resolution, and rescaled between 0 and 1 we want to remove the land and extra cell values. We can use the `mask` function from the `raster` package to do this using our ocean raster.
-
-```{r mask,eval=F}
-#bring in resampled raster
-oa <- raster(file.path(oagit_dir,'v2017/int/annual_oa_rescaled_int_1km_2016.tif'))%>%
-      mask(ocean,filename = file.path(oagit_dir,'v2017/output/oa_prs_layer_2016.tif'),overwrite=T)
-```
-
 ```{r plot_final}
 plot(raster(file.path(oagit_dir,'v2017/output/oa_prs_layer_2016.tif')),box=F,axes=F,col=cols,main='Final Ocean Acidification \nPressure Layer 2016')
 
 ```
-
 
 # Gap-filled cells
 
