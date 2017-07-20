@@ -19,17 +19,9 @@ pdf_document:
 #Summary
 The commercial fishing pressure layers are created from spatialized catch by gear data provided by Watson (2017), and net primary production data from the Vertically Generalized Production Model [(VGPM)](http://www.science.oregonstate.edu/ocean.productivity/) as described in [Behrenfeld and Falkowski (1997)](http://www.science.oregonstate.edu/ocean.productivity/references/L&O%201997a.pdf)
 
-Three layers are created in this analysis, commercial fishing pressure from **high bycatch** gear and **low bycatch** gear as well as artisanal fishing pressure. Quantifying the amount of catch caught by these different categories of fishing gear is done by combining two different pieces of information. 
+Three layers are created in this analysis, commercial fishing pressure from **high bycatch** gear and **low bycatch** gear as well as artisanal fishing pressure. Gear type classifications were developed for the first global Cumulative Human Impact analysis [(Halpern 2008)](http://science.sciencemag.org/content/319/5865/948).
 
-1. The amount of fish catch caught per gear type was calculated for the first global Cumulative Human Impact analysis [(Halpern 2008)](http://science.sciencemag.org/content/319/5865/948).
-
-2. Total fish catch (tons) per half degree cell globally 
-
-The amount of catch caught per gear type has not been recalculated since 2008. The total proportion of catch caught per gear type is calculated from this original data, and then applied to the more recent catch data to get an updated estimate of catch per gear type. This assumes that the proportion of total catch caught by high and low bycatch has remained consistent since 2008.
-
-#Updates from previous assessment
-
-Previously, catch data from the Sea Around Us Project was used in conjunction with spatial data from Halpern 2008 to assign proportional catch to each gear type. Watson (2017) published updated sptial catch data by gear type from 1950-2014 and that is used in this assessment as it more accurately represents the type of information needed for these layers.
+Previously, catch data from the Sea Around Us Project was used in conjunction with spatial data from Halpern 2008 to assign proportional catch to each gear type, which assumes the proportion of high and low bycatch remains constant across time. However, Watson (2017) published updated sptial catch data by gear type from 1950-2014 and that is used in this assessment as it more accurately represents the type of information needed for these layers.
 
 ***
 

@@ -76,8 +76,8 @@ source("~/github/ohiprep/src/R/common.R")
 
 #define paths for the raw data and OA folder held on git-annex on our NCEAS server, Mazu
 
-raw_dir    = file.path(dir_M,'git-annex/globalprep/_raw_data')
-oagit_dir  = file.path(dir_M,'git-annex/globalprep/prs_oa')
+raw_dir    = file.path(dir_M, 'git-annex/globalprep/_raw_data')
+oagit_dir  = file.path(dir_M, 'git-annex/globalprep/prs_oa')
 
 cols      = rev(colorRampPalette(brewer.pal(9, 'Spectral'))(255)) # rainbow color scheme
 
@@ -89,7 +89,7 @@ We are only adding one year, 2016, so we just need to grab that NetCDF file. The
 
 ```{r,message=FALSE,warning=FALSE,eval=FALSE}
 
-files <- list.files(file.path(raw_dir,'WHOI/annual'),pattern = "20",recursive=T,full.names = T) #grab only 2016
+files <- list.files(file.path(raw_dir,'WHOI/annual'), pattern = "20", recursive=TRUE, full.names = TRUE) #grab only 2016
         
 ```
 
@@ -105,30 +105,30 @@ This has already been done for years 2005 - 2015 for the OHI 2016 assessment, bu
 
   annual_arag<-function(file){
      
-    year = substr(file,nchar(file)-6,nchar(file)-3) #get the year from the file name
+    year = substr(file, nchar(file)-6, nchar(file)-3) #get the year from the file name
     
     #nc_open comes from the ncdf4 package
     # there are 12 files in each .nc file (one for each month of the year)
     nc = nc_open(file)
             
 # longitude values are stored in the variable 'TLONG'
-      long <- ncvar_get(nc,varid='TLONG')
+      long <- ncvar_get(nc, varid='TLONG')
 
 # latitude values are stored in the variable 'TLAT'
-      lat <- ncvar_get(nc,varid='TLAT')
+      lat <- ncvar_get(nc, varid='TLAT')
     
   # select the surface aragonite variable (OARG)
-      arag<- ncvar_get(nc,varid="OARG")
+      arag<- ncvar_get(nc, varid="OARG")
 
 
 # land cells are given large, strange value, so set these to NA
 
       arag[arag==9969209968386869046778552952102584320]<-NA 
 
-      yr_mean = apply(arag,1:2,mean) # get the annual mean
+      yr_mean = apply(arag, 1:2, mean) # get the annual mean
   
       #create an array with long, lat, aragonite mean data
-      A <- array(c(long,lat,yr_mean),dim=c(320,384,3))
+      A <- array(c(long,lat, yr_mean), dim=c(320,384,3))
       B <- apply(A, 3, cbind)
   
       #lon=x, lat=y
@@ -136,15 +136,15 @@ This has already been done for years 2005 - 2015 for the OHI 2016 assessment, bu
       y = B[,2]
   
       C = as.data.frame(B)
-      names(C)<-c('x','y','value')
+      names(C)<-c('x', 'y', 'value')
   
       #set extent to lon/lat
       e <- extent(C[,1:2])
-      r <- raster(e,ncol=320,nrow=384) #create empty raster with e extent
+      r <- raster(e, ncol=320, nrow=384) #create empty raster with e extent
   
       #rasterize the dataframe
-      out <- rasterize(C[,1:2],r,C[,3],fun=function(x,...)mean(x),progress='text') # i had to create a mean function here for "multiple points in a cell"
-      extent(out)<-c(0,360,-80,90) #data extent is 0,360,-80, 90 (the -80 is not a typo)
+      out <- rasterize(C[,1:2], r, C[,3], fun=function(x,...)mean(x), progress='text') # i had to create a mean function here for "multiple points in a cell"
+      extent(out)<-c(0, 360, -80, 90) #data extent is 0,360,-80, 90 (the -80 is not a typo)
       out <- rotate(out) #shifts data from 0-360 to -180-180
   
   
@@ -160,14 +160,14 @@ This has already been done for years 2005 - 2015 for the OHI 2016 assessment, bu
       mollCRS <- CRS('+proj=moll')
 
       # then convert to mollweide and other projections
-      out_moll <- projectRaster(out, crs=mollCRS, over=T)
+      out_moll <- projectRaster(out, crs=mollCRS, over=TRUE)
   
       # plot results
      plot(out_moll)
       
-     print(cellStats(out_moll,stat='mean',na.rm=T))
+     print(cellStats(out_moll, stat='mean', na.rm=TRUE))
      
-  writeRaster(out_moll,filename = paste0(file.path(oagit_dir,"v2017/int/annual_avg_moll/global_arag_avg_moll_"),year), format='GTiff', overwrite=T)
+  writeRaster(out_moll,filename = paste0(file.path(oagit_dir, "v2017/int/annual_avg_moll/global_arag_avg_moll_"), year), format='GTiff', overwrite=T)
     
 }
 
@@ -176,9 +176,9 @@ This has already been done for years 2005 - 2015 for the OHI 2016 assessment, bu
   mclapply(files,annual_arag,mc.cores = 16) #run parallel
 ```
 
-```{r plot mean 2015 raster}
+```{r plot mean 2016 raster}
 
-#Here is the output for 2015
+#Here is the output for 2016
 
 r_2016 <- raster(file.path(oagit_dir,'v2017/int/annual_avg_moll/global_arag_avg_moll_2016.tif'))
 
@@ -219,24 +219,24 @@ The `oaRescale` function rescales each of the annual rasters. If the current val
 
 oaRescale <- function(file){
   
-  yr   = substr(file,nchar(file)-7,nchar(file)-4)  #get year of file
+  yr   = substr(file, nchar(file)-7, nchar(file)-4)  #get year of file
   mean = raster(file)                              #get seasonal mean aragonite raster for given year
   diff = (hist-mean)/(hist-1)
-  mean[mean<=1]<-1                                 #all values at or less than 1 are given a value of 1
+  mean[mean<=1] <- 1                                 #all values at or less than 1 are given a value of 1
   mean[mean>1] <- diff[mean>1]                     #all cells with values greater than 1 are swapped out with their amount of change scaled to how close to 1 
-  mean[mean<0]<-0                                  #all values less than 0 (indicating a decrease in acidity) are capped at 0
+  mean[mean<0] <- 0                                  #all values less than 0 (indicating a decrease in acidity) are capped at 0
 
-    writeRaster(mean,filename=paste0(oagit_dir,'/v2017/int/annual_avg_moll_rescaled/oa_rescaled_',yr,sep=""),format='GTiff',overwrite=T)
+    writeRaster(mean, filename=paste0(oagit_dir, '/v2017/int/annual_avg_moll_rescaled/oa_rescaled_', yr, sep=""), format='GTiff', overwrite=TRUE)
 }
 
-files = list.files(file.path(oagit_dir,'v2017/int/annual_avg_moll'),full.names=T)
+files = list.files(file.path(oagit_dir, 'v2017/int/annual_avg_moll'), full.names=TRUE)
 
-mclapply(files,oaRescale,mc.cores = 16)
+mclapply(files, oaRescale, mc.cores = 16)
 ```
 
 ```{r plot rescale}
-r <- raster(file.path(oagit_dir,'v2017/int/oa_rescaled_2016.tif'))
-plot(r,col=cols,box=F,axes=F, main = 'Rescaled Ωaragonite layer for 2016')
+r <- raster(file.path(oagit_dir, 'v2017/int/oa_rescaled_2016.tif'))
+plot(r, col=cols, box=FALSE, axes=FALSE, main = 'Rescaled Ωaragonite layer for 2016')
 ```
 
 
@@ -249,23 +249,23 @@ Since there are oceanic cells with no information in the raw data, we need to fi
 
 library(gstat)
 
-files <- list.files(file.path(oagit_dir,'v2017/int/annual_avg_moll_rescaled'),full.names=T)
+files <- list.files(file.path(oagit_dir,'v2017/int/annual_avg_moll_rescaled'), full.names=TRUE)
 
 int_function <- function(file){
 r  <- raster(file) #oa raster
-yr <- substr(file,nchar(file)-7,nchar(file)-4)
+yr <- substr(file, nchar(file)-7, nchar(file)-4)
 xy <- data.frame(xyFromCell(r, 1:ncell(r)))                         #get xy coords into dataframe
 v  <- getValues(r)                                                  #get cell values 
 tmpdf <- cbind(xy, v)%>%filter(!is.na(v))                           #create dataframe of x,y, and values. remove NAs (throws error since these are cells we are interpolating over)
 mg <- gstat(id = "v", formula = v~1, locations = ~x+y, data=tmpdf,
             nmax=7, set=list(idp = 2)) #define model. power function = 2, this is default for idw models
 z <- interpolate(r, mg, progress='text')                            #interpolate across NA cells
-writeRaster(z,filename  = paste0(file.path(oagit_dir),"/v2017/int/annual_avg_moll_rescaled_int/oa_resc_int_",yr,".tif"))
+writeRaster(z,filename  = paste0(file.path(oagit_dir), "/v2017/int/annual_avg_moll_rescaled_int/oa_resc_int_", yr, ".tif"))
 }
 
 mclapply(files, int_function,mc.cores=16)
 
-plot(raster(file.path(oagit_dir,'v2017/int/annual_avg_moll_rescaled_int/oa_resc_int_2016.tif')),col=cols,box=F,axes=F,main='Rescaled and Interpolated Ωaragonite layer for 2016')
+plot(raster(file.path(oagit_dir,'v2017/int/annual_avg_moll_rescaled_int/oa_resc_int_2016.tif')), col=cols, box=FALSE, axes=FALSE, main='Rescaled and Interpolated Ωaragonite layer for 2016')
 
 ```
 
