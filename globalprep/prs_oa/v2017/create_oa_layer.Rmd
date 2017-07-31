@@ -20,7 +20,7 @@ output:
 
 This script takes the raw netCDF data and does the following:
 
-   a. Calculates the annual mean for 2016  
+   a. Calculates the annual mean for all years from 1958 - 2016 
    b. Rescales each annual raster layer from 0 to 1 based on a biological threshold (&#937; <= 1) and the proportional change compared to a historical mean
    c. Interpolates the data to gap-fill for cells where there is no data
    d. Resamples the rescaled raster layer to 1km^2 cell resolution
@@ -29,27 +29,27 @@ This script takes the raw netCDF data and does the following:
 
 #Updates from 2016 assessment
 
-Added one more year of data (2016). Previously interpolation was done using Arcpy. Now Inverse Distance Weigthing interpolation is done in R.
+A significant update to the process but not the results is the fact that we reran the OA pressure layers for all years 1958 - 2020 after receiving additional years of data from Ivan Lima on a regular grid. Previously the data was provided on an irregular grid requiring reprojection and additional interpolation. We don't expect data changes to previous years but all years were rerun for consistency. Previously interpolation was done using Arcpy, but all necessary interpolation is done in R using Inverse Distance Weigthing.
 
 ***
 
 #Data Source
 **Reference**: [Feely et al.(2009)](https://darchive.mblwhoilibrary.org/bitstream/handle/1912/3180/22-4_feely.pdf?sequence=1&isAllowed=y)
 
-**Downloaded**: March 15, 2016
+**Downloaded**: July 19, 2017
 
 **Description**:  Aragonite Saturation State  $\Omega_{arg}$
 
 **Native data resolution**: 1 degree cells
 
-**Time range**: 1880-1889 and 2005-2100, monthly data provided for each year. Future years are based on model projections for RCP 8.5. Previous years are hindcast/historical data.
+**Time range**: 1880-1889 and 1958-2100, monthly data provided for each year. Future years are based on model projections for RCP 8.5. Previous years are hindcast/historical data.
 
 **Format**:  NetCDF
 
   
 **Notes about the data**:  
 
-This data was shared with us by Ivan Lima from Woods Hole Institue for Oceanography in December 2014 and again February 2016. The data came as NetCDFs in an irregular grid format with a resolution of about 1 degree. The data values are monthly average surface &#937; aragonite saturation state.
+This data was shared with us by Ivan Lima from Woods Hole Institue for Oceanography in July 2017. The data came as NetCDFs with a resolution of about 1 degree. The data values are monthly average surface &#937; aragonite saturation state.
 
 
 ***
@@ -59,7 +59,6 @@ This data was shared with us by Ivan Lima from Woods Hole Institue for Oceanogra
 
 ##Setup  
 
-The main R libraries needed for this analysis are the `raster`, and `ncdf4` packages.
 ```{r setup,message=FALSE,warning=FALSE,verbose=FALSE}
 
 #set options for all chunks in code
@@ -78,8 +77,8 @@ source("~/github/ohiprep/src/R/common.R")
 
 #define paths for the raw data and OA folder held on git-annex on our NCEAS server, Mazu
 
-raw_dir    = file.path(dir_M,'git-annex/globalprep/_raw_data')
-oagit_dir  = file.path(dir_M,'git-annex/globalprep/prs_oa')
+raw_dir    = file.path(dir_M, 'git-annex/globalprep/_raw_data')
+oagit_dir  = file.path(dir_M, 'git-annex/globalprep/prs_oa')
 
 cols      = rev(colorRampPalette(brewer.pal(9, 'Spectral'))(255)) # rainbow color scheme
 
@@ -89,26 +88,22 @@ cols      = rev(colorRampPalette(brewer.pal(9, 'Spectral'))(255)) # rainbow colo
 
 We received new data from Ivan Lima at WHOI from 1958 - 2016. This is provided in a single NetCDF file and on a regular 1x1 degree grid.
 
-```{r,message=FALSE,warning=FALSE,eval=FALSE}
+```{r load_data}
 
 # read in 1958-2016 data
 
-      raw = nc_open(file.path(raw_dir,'WHOI/cesm_co2sys_1958-2016.1x1d.nc'))
-        print(raw)
-        
-      raw <- stack(file.path(raw_dir,'WHOI/cesm_co2sys_1958-2016.1x1d.nc'), varname="OARG") #grab aragonite variable
+raw <- stack(file.path(raw_dir, 'WHOI/cesm_co2sys_1958-2016.1x1d.nc'), varname="OARG") #grab aragonite variable using varname
                     
-      
-      plot(raw[[1]]) #we'll have to rotate the rasters
-      plot(rotate(raw[[1]]))
-      maps::map('world',col='gray95',fill=T,border='gray80',add=T)
+plot(raw[[1]]) #we'll have to rotate the rasters
+plot(rotate(raw[[1]]))
+maps::map('world', col='gray95', fill=T, border='gray80', add=T)
 ```
 
 # Historical Mean
 
-The historical mean &#937 aragonite saturation state from 1880 - 1889 was calculated for OHI 2015. The same raster was used for OHI 2016 and is again used here for comparison.
+The historical mean &#937; aragonite saturation state from 1880 - 1889 was calculated for OHI 2015. The same raster was used for OHI 2016 and is again used here for comparison.
 
-```{r histMean}
+```{r hist_mean}
 hist <- raster(file.path(dir_M,'git-annex/globalprep/prs_oa/v2015/working/global_oa_1880_1889_arag_mean_moll.tif'))
 
 plot(hist,main='Mean Ωaragonite 1880-1889', col=rev(cols), box=F,axes=F)
@@ -117,20 +112,21 @@ plot(hist,main='Mean Ωaragonite 1880-1889', col=rev(cols), box=F,axes=F)
 #Create annual means
 
 Since this data is now on a regular grid, but the historical data from 1880-1889 was transformed previously from an irregular grid, there will be issues matching up the resolution and extent so we will need to use this historical mean raster that we created for OHI 2015 and on, to use as a template for resampling.
-```{r}
+
+```{r annual_means,eval=F}
 
 # define mollweide projection
-    mollCRS <- CRS('+proj=moll')
+mollCRS <- CRS('+proj=moll')
 
 #register parallel cores
 
 registerDoParallel(10)
 
 foreach (i = seq(1,708,by=12)) %dopar% {
-  
+
   j = i+11
   
-  yr = substr(names(raw_brick[[i]]),2,5)
+  yr = substr(names(raw[[i]]),2,5)
   
   yr_mean = raw[[i:j]]%>%
             calc(fun=function(x){mean(x,na.rm=T)})%>%
@@ -138,15 +134,15 @@ foreach (i = seq(1,708,by=12)) %dopar% {
             projectRaster(crs = mollCRS,over=T)%>%
             resample(hist,method = 'ngb')%>%
           writeRaster(.,filename = paste0(file.path(oagit_dir),'/v2017/int/annual_avg_moll/global_arag_avg_moll_',yr,'.tif'),overwrite=T)
-  
+ 
 }
 
 
 ```
 
-```{r plot mean 2015 raster}
+```{r plot_mean_2016}
 
-#Here is the output for 2015
+#Here is the output for 2016
 
 r_2016 <- raster(file.path(oagit_dir,'v2017/int/annual_avg_moll/global_arag_avg_moll_2016.tif'))
 
@@ -176,23 +172,24 @@ The `oaRescale` function rescales each of the annual rasters. If the current val
 
 oaRescale <- function(file){
   
-  yr   = substr(file,nchar(file)-7,nchar(file)-4)  #get year of file
+  yr   = substr(file, nchar(file)-7, nchar(file)-4)  #get year of file
   mean = raster(file)                              #get seasonal mean aragonite raster for given year
   diff = (hist-mean)/(hist-1)
-  mean[mean<=1]<-1                                 #all values at or less than 1 are given a value of 1
+  mean[mean<=1] <- 1                                 #all values at or less than 1 are given a value of 1
   mean[mean>1] <- diff[mean>1]                     #all cells with values greater than 1 are swapped out with their amount of change scaled to how close to 1 
-  mean[mean<0]<-0                                  #all values less than 0 (indicating a decrease in acidity) are capped at 0
+  mean[mean<0] <- 0                                  #all values less than 0 (indicating a decrease in acidity) are capped at 0
 
-    writeRaster(mean,filename=paste0(oagit_dir,'/v2017/int/annual_avg_moll_rescaled/oa_rescaled_',yr,sep=""),format='GTiff',overwrite=T)
+    writeRaster(mean, filename=paste0(oagit_dir, '/v2017/int/annual_avg_moll_rescaled/oa_rescaled_', yr, sep=""), format='GTiff', overwrite=TRUE)
 }
 
-files = list.files(file.path(oagit_dir,'v2017/int/annual_avg_moll'),full.names=T)
+files = list.files(file.path(oagit_dir, 'v2017/int/annual_avg_moll'), full.names=TRUE)
 
-mclapply(files,oaRescale,mc.cores = 16)
+mclapply(files, oaRescale, mc.cores = 16)
 ```
 
 
 ```{r plot rescale}
+
 r <- raster(file.path(oagit_dir,'v2017/int/annual_avg_moll_rescaled/oa_rescaled_2016.tif'))
 plot(r,col=cols,box=F,axes=F, main = 'Rescaled Ωaragonite layer for 2016')
 
@@ -204,30 +201,32 @@ plot(r,col=cols,box=F,axes=F, main = 'Rescaled Ωaragonite layer for 2016')
 Since there are oceanic cells with no information in the raw data, we need to fill in these gaps. We do this by interpolating across the globe using the data we have with an Inverse Distance Weighting (IDW) function. Previously this was done using `arcpy` from ArcGIS.
 
 
-```{r interpolate}
+```{r interpolate,eval=F}
 
 library(gstat)
 #register parallel cores
 
 registerDoParallel(24)
 
-files <- list.files(file.path(oagit_dir,'v2017/int/annual_avg_moll_rescaled'),full.names=T)
+files <- list.files(file.path(oagit_dir,'v2017/int/annual_avg_moll_rescaled'), full.names=TRUE)
 
 foreach(file = files) %dopar%{
 
 r  <- raster(file) #oa raster
-yr <- substr(file,nchar(file)-7,nchar(file)-4)
+yr <- substr(file, nchar(file)-7, nchar(file)-4)
 xy <- data.frame(xyFromCell(r, 1:ncell(r)))                         #get xy coords into dataframe
 v  <- getValues(r)                                                  #get cell values 
 tmpdf <- cbind(xy, v)%>%filter(!is.na(v))                           #create dataframe of x,y, and values. remove NAs (throws error since these are cells we are interpolating over)
 mg <- gstat(id = "v", formula = v~1, locations = ~x+y, data=tmpdf,
             nmax=7, set=list(idp = 2)) #define model. power function = 2, this is default for idw models
 z <- interpolate(r, mg, progress='text')                            #interpolate across NA cells
+
 writeRaster(z,filename  = paste0(file.path(oagit_dir),"/v2017/int/annual_avg_moll_rescaled_int/oa_resc_int_",yr,".tif"),overwrite=T)
 }
+```
 
-
-plot(raster(file.path(oagit_dir,'v2017/int/annual_avg_moll_rescaled_int/oa_resc_int_2016.tif')),col=cols,box=F,axes=F,main='Rescaled and Interpolated Ωaragonite layer for 2016')
+```{r}
+plot(raster(file.path(oagit_dir,'v2017/int/annual_avg_moll_rescaled_int/oa_resc_int_2016.tif')), col=cols, box=FALSE, axes=FALSE, main='Rescaled and Interpolated Ωaragonite layer for 2016')
 
 ```
 
@@ -256,7 +255,7 @@ foreach(file = files)%dopar% {
 # Final Pressure Layer
 
 ```{r plot_final}
-plot(raster(file.path(oagit_dir,'v2017/output/oa_prs_layer_2016.tif')),box=F,axes=F,col=cols,main='Final Ocean Acidification \nPressure Layer 2016')
+plot(raster(file.path(oagit_dir, 'v2017/output/oa_prs_layer_2016.tif')), box=F, axes=F, col=cols, main='Final Ocean Acidification \nPressure Layer 2016')
 
 ```
 
@@ -267,22 +266,19 @@ We want to create a raster layer that shows all cells that were gap-filled. Sinc
 
 ```{r,eval=F}
 
-    #Rescaled data before interpolation 
-      pre_int = raster(file.path(oagit_dir,'v2017/int/annual_avg_moll_rescaled/oa_rescaled_2016.tif'))%>%
-                resample(ocean,progress='text',method = 'ngb')
+#Rescaled data before interpolation 
+pre_int = raster(file.path(oagit_dir, 'v2017/int/annual_avg_moll_rescaled/oa_rescaled_2016.tif'))%>%
+                resample(ocean, progress='text', method = 'ngb')
 
-    #after interpolation,
-      r_int = raster(file.path(oagit_dir,'v2017/output/oa_prs_layer_2016.tif'))
+#after interpolation,
+r_int = raster(file.path(oagit_dir, 'v2017/output/oa_prs_layer_2016.tif'))
     
-    #interpolated (or gap-filled) cells    
-    interp_cells = mask(r_int,pre_int,inverse=TRUE,filename = file.path(oagit_dir,'v2017/output/oa_interpolated_cells.tif'))
+#interpolated (or gap-filled) cells    
+interp_cells = mask(r_int, pre_int, inverse=TRUE, filename = file.path(oagit_dir, 'v2017/output/oa_interpolated_cells.tif'))
 ```
 
 ```{r plot_interp_cells}
-
-    plot(raster(file.path(oagit_dir,'v2017/output/oa_interpolated_cells.tif')),
-         col=cols,box=F,axes=F,main='Interpolated cells')
-
+plot(raster(file.path(oagit_dir, 'v2017/output/oa_interpolated_cells.tif')), col=cols, box=F, axes=F, main='Interpolated cells')
 ```
 
 
