@@ -18,24 +18,19 @@ pdf_document:
 
 # Summary
 
-There are two parts to creating this layer:
+This layer preparation script does the following for newly available SLR data.
   
-  1. Data prep to get raw data into the correct format:
-  
-    * If necessary, read .nc.gz files from aviso: ftp://ftp.aviso.altimetry.fr/global/delayed-time/grids/climatology/monthly_mean/
-    * unzip .gz files and then delete .gz 
-    * Read monthly mean sea level data as rasters
+- Clips all monthly rasters to the coast using a 3 nautical mile offshore buffer
+- Calculates annual mean sea level anomaly rasters from monthly data
+- Rescales values from 0 to 1 using the reference point
+- Sets to zero all negative values, indicating decreases in mean sea level
+- Resamples raster to ~ 1km^2^ and reproject to Molleweide
 
-  2. Creating the pressure layers for OHI Global:  
-  
-    * Clip all monthly rasters to the coast using a 3 nautical mile offshore buffer
-    * Calculate annual mean sea level anomaly rasters from monthly data
-    * Determine a reference point as the 99.99th quantile of the data across all years (1993 - 2015)
-    * Rescale values from 0 to 1 using the reference point
-    * Set to zero all negative values, indicating decreases in mean sea level
-    * Resample raster to ~ 1km2 and reproject to Molleweide
+This process is completed entirely within this script. The raw data is downloaded externally and held on a server at NCEAS. Although the raw data is not provided, this script can be used on the data downloaded from Aviso [here](http://www.aviso.altimetry.fr/en/data/products/sea-surface-height-products/global/msla-mean-climatology.html). You will need to register with Aviso in order to get a username and password for data access.
 
-This process is completed entirely within this script.
+# Updates from previous assessment
+
+One additional year of data, 2016, was added.
 
 ***
 
@@ -43,15 +38,12 @@ This process is completed entirely within this script.
 
 The raw data are monthly mean sea level anomalies, in meters. The anomalies are calculated using a reference period of 1993 - 2012. The anomalies represent a cumulative anomaly rather than an instantaneous anomaly.
 
-Since these data have already been calculated using a reference point, we only need to create annual mean rasters for each year and then rescale from 0 to 1. In order to rescale each layer, the 99.99th quantile of the entire data distribution from 2011-2015 is used, rather than calculating the 99.99th quantile for each year. This way we have a consistent reference point across time that will be forecasted backwards and used in future OHI assessments when creating this layer.
-
-**Reference**: The altimeter products were produced and distributed by Aviso (http://www.aviso.altimetry.fr/), as part of the Ssalto ground processing segment. [AVISO MSLA heights, monthly means](http://www.aviso.altimetry.fr/en/data/products/sea-surface-height-products/global/msla-mean-climatology.html)
-
-**Downloaded**: March 18, 2016   
-**Description**: Monthly mean sea level anomaly (meters above mean sea level)  
-**Native data resolution**: 0.25 degree grid cells  
-**Time range**: January 1993 - December 2015  
-**Format**: NetCDF  
+**Reference**: The altimeter products were produced and distributed by Aviso (http://www.aviso.altimetry.fr/), as part of the Ssalto ground processing segment. [AVISO MSLA heights, monthly means](http://www.aviso.altimetry.fr/en/data/products/sea-surface-height-products/global/msla-mean-climatology.html)  
+**Downloaded**: August 1, 2017 (for 2016 data)   
+**Description**: Monthly mean sea level anomaly (meters above mean sea level)   
+**Native data resolution**: 0.25 degree grid cells   
+**Time range**: January 1993 - December 2016  
+**Format**: NetCDF   
 
 ***
 
@@ -68,29 +60,20 @@ knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'figs/',message 
 # library(provRmd)
 # prov_setup()
 
-library(sp)        # the classes and methods that make up spatial ops in R
-library(rgdal)
 library(raster)
-library(tmap)
-library(rasterVis)
-library(lattice)
-library(ggplot2)
-library(ncdf4)
 library(RColorBrewer)
-library(doParallel)
-library(foreach)
-library(parallel)
-library(maptools)
-data(wrld_simpl)
+library(maps)
 
-
+#define github file path
 dir_git <- '~/github/ohiprep'
 
 source('~/github/ohiprep/src/R/common.R')
 
+#define server file path
 dir_anx <- file.path(dir_M, 'git-annex/globalprep')
 
-dir_anx_aviso <- file.path(dir_M, 'git-annex/globalprep/_raw_data/AVISO_slr/d2016')
+#define raw data file path (non-NCEAS folks will not have access to this data)
+dir_anx_aviso <- file.path(dir_M, 'git-annex/globalprep/_raw_data/AVISO_slr/d2017')
 
 ### set up proj4string options: WGS84
 p4s_wgs84 <- '+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'
@@ -99,100 +82,53 @@ p4s_wgs84 <- '+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'
 cols      = rev(colorRampPalette(brewer.pal(9, 'Spectral'))(255)) # rainbow color scheme
 
 # define mollweide projection
-
 mollCRS <- CRS('+proj=moll')
 
-# Read in ocean raster with cells at 1km. Use this as a template for resampling
-
-ocean = raster(file.path(dir_M,'git-annex/globalprep/spatial/ocean.tif'))
+# Read in ocean raster with cells at 1km. Use this as a template for resampling. This is held on an NCEAS server and folks without access will not be able to use this mask.
+ocean = raster(file.path(dir_M, 'git-annex/globalprep/spatial/ocean.tif'))
 ```
 
 
 ## Data Prep
 
-### Download files
-
-``` {r download_files_and_unzip, eval=F}
-
-reload <- FALSE
-
-if(reload) {
-  ### Get filenames from AVISO FTP URL:
-  library(RCurl)
-  url <- "ftp://ftp.aviso.altimetry.fr/global/delayed-time/grids/climatology/monthly_mean/"
-  userpwd <- "ucsb_afflerbach:sioped54j"
-  filenames <- getURL(url,
-                      userpwd = userpwd,
-                      ftp.use.epsv = FALSE,
-                      dirlistonly = TRUE) %>%
-    str_split('\n') %>%
-    unlist()
-  
-  filenames <- filenames[!str_detect(filenames, '.png')] %>%
-    sort()
-  
-  
-  ### Set up loop to download each file and save to git-annex:
-  
-  ftp_dir <- 'ftp://ucsb_afflerbach:sioped54j@ftp.aviso.altimetry.fr/global/delayed-time/grids/climatology/monthly_mean'
-  for (i in 1:length(filenames)) { # nc_file <- filenames[2]
-    print(i)
-    nc_file <- filenames[i]
-    
-    download.file(url      = file.path(ftp_dir, nc_file),
-                  destfile = file.path(dir_anx_aviso, 'msla_monthly_mean', nc_file),
-                  mode     = 'wb')
-  }
-  
-  zipfiles <- list.files(file.path(dir_anx_aviso, 'msla_monthly_mean'),
-                         full.names = TRUE)
-  zipfiles <- zipfiles[str_detect(zipfiles, '.gz')]
-  for (zipfile in zipfiles) { # zipfile <- zipfiles[1]
-    message('Unzipping file: ', zipfile)
-    R.utils::gunzip(zipfile, remove = TRUE, skip = TRUE)
-  }
-}
-```
-
-
 ### Clip data to coastal cells
 
-All NetCDF files for each month over the 22 years are rasterized and all non-coastal bordering cells are removed. To do this we use a 3 nautical mile offshore buffer polygon to select all coastal cells. For this to work, the raw data cells need to be disaggregated by a factor of 8 in order for the mask to accurately select cells that fall within the polygons. 
+All NetCDF files for each month are rasterized and all non-coastal bordering cells are removed. To do this we use a 3 nautical mile offshore buffer polygon to select all coastal cells. For this to work, the raw data cells need to be disaggregated by a factor of 8 in order for the mask to accurately select cells that fall within the polygons. 
 
 
-```{r clip, eval=F}
+```{r clip}
 
 #list all netCDF files
-nc_files <- list.files(file.path(dir_anx_aviso, 'msla_monthly_mean'),
+nc_files <- list.files(file.path(dir_anx_aviso),
                        full.names = TRUE,pattern='.nc')
-
-## resampling raw data to smaller cell size, then create a raster of all coastal cells. The resampling needs to be done
-## first to ensure we get the small islands that would otherwise be ignored at larger cell seizes
-
-#offshore 3 nm polygon for all regions
-three_nm <- readOGR(dsn= file.path(dir_anx,'spatial/d2014/data'),layer = 'regions_offshore3nm_gcs')
-
-    r <- raster(nc_files[1])%>%
-            rotate()%>%
-            disaggregate(fact = 8)
-    
-    #define projection of the raster before reprojecting
-    projection(r) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
-    
-    r_3nm_mask <- mask(r,three_nm, progress='text')
-    writeRaster(r_3nm_mask,filename = file.path(dir_git,'globalprep/prs_slr/v2016/int/rast_3nm_mask.tif'))
-    
 ```
+
+The raw mondhtly data looks like this:
+
+```{r plot_raw}
+
+plot(raster(nc_files[1]),col=cols,axes=F, main = "Sea Level Rise (m) January 2016")
+
+```
+
+Since we are only interested in the increase in sea level near the coasts, we apply a mask to the raster layers that removes all cells farther than 3nm offshore. This mask was created previously for the OHI global 2016 assessment.
 
 ```{r plot_mask}
 
 s <- raster(file.path(dir_git,'globalprep/prs_slr/v2016/int/rast_3nm_mask.tif'))
-plot(ocean, col='cornsilk2', axes=F, box=F, main = 'Coastal cells mask', legend=F)		
-plot(s,col='black',axes=F, box=F,legend=F,add=T)
+maps::map("world",fill=TRUE,col = "gray",border = NA)
+plot(s,col='red',add=T,legend=F)
 
 ```
 
-`months_coast` is a function that applies the coastal cell mask to the raw data and saves the output.
+A function `months_coast` was written to:
+
+1. Rasterize each monthly NetCDF file
+2. Rotate each raster so that the Atlantic Ocean is centered in the raster
+3. Disaggregate the cell resolution by a factor of 8 in order to have a fine enough resolution for the mask to keep cells nearshore
+4. And then apply the 3nm mask
+
+The output is saved in the folder `int/msla_monthly_coast`
 
 ```{r, eval=F}
 
@@ -200,7 +136,7 @@ plot(s,col='black',axes=F, box=F,legend=F,add=T)
     
 months_coast <- function(x){
   
-  m_yr <- substr(x,108,115)
+  m_yr <- substr(x,90,97)
     
   #read in month raster
    r <- raster(x)%>%
@@ -210,86 +146,46 @@ months_coast <- function(x){
   #define projection of the raster before reprojecting
   projection(r) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
   
-  r_mask <- mask(r,r_3nm_mask,progress='text')
+  r_mask <- mask(r,s,progress='text')
 
-  
-  writeRaster(r_mask,filename=paste0(dir_git,'/globalprep/prs_slr/v2016/int/msla_monthly_coast/msla_monthly_coast_',m_yr,'.tif'),overwrite=T)
+  writeRaster(r_mask,filename=paste0(dir_git,'/globalprep/prs_slr/v2017/int/msla_monthly_coast/msla_monthly_coast_',m_yr,'.tif'),overwrite=T)
 
 }
 
 #apply the clipping function to all files
-mclapply(nc_files,months_coast,mc.cores=6)
+lapply(nc_files,months_coast)
 
 ```
 
 
 ## Annual mean sea level anomalies
 
-Annual mean sea level anomaly rasters are derived from the monthly data. 
+Annual mean sea level anomaly rasters are calculated from the monthly data. 
 
 ``` {r msla_monthly_to_annual, eval=F}
 
-month_files <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_monthly_coast'),full.names=T)
+msla_files <- list.files(file.path(dir_git,'globalprep/prs_slr/v2017/int/msla_monthly_coast'),full.names=T)
 
-all_yrs <- c(1993:2015)
-
-registerDoParallel(6) 
-
-foreach (j = all_yrs) %dopar% {
-  
-  msla_yr <- month_files[str_detect(month_files, as.character(j))]
-  
-  message('Generating annual MSLA raster for ', j)
-  
-  ### stack all rasters for this year, and calc annual mean, then write as raster
-  rast_annual_mean <- stack(msla_yr)%>%
-                      calc(mean,na.rm=T)%>%
-                      writeRaster(filename = paste0(file.path(dir_git),'/globalprep/prs_slr/v2016/int/msla_annual_mean/rast_msla_annual_',j,'.tif'),overwrite=T)
-
-}
+### stack all rasters for this year, and calc annual mean, then write as raster
+rast_annual_mean <- stack(msla_files)%>%
+                    calc(mean,na.rm=T)%>%
+                    writeRaster(filename = paste0(file.path(dir_git),'/globalprep/prs_slr/v2017/int/msla_annual_mean/rast_msla_annual_2016.tif'), overwrite=T)
 
 ```
 
 ## Reference Point
 
-The reference point is the 99.99th quantile of the entire data distribution from 1993 - 2015.
+The reference point is the 99.99th quantile of the entire data distribution from 1993 - 2015. We will use the [same reference point](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/supplementary_information/v2016/reference_points_pressures.csv) that was used in previous global assessments: 0.246225 m.
 
 ```{r ref, eval=F}
 
-annual_means <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_mean'),pattern = '*.tif',full.names=T)
+annual_means <- list.files(file.path(dir_git,'globalprep/prs_slr/v2017/int/msla_annual_mean'),pattern = '*.tif',full.names=T)
 
-#get data across all years
-vals <- c()
-
-for(i in 1993:2015){
-  print(i)
-  m <- annual_means[which(substr(annual_means,96,99) == i)]%>%
-    raster()%>%
-    getValues()
-  
-  vals <- c(vals,m)
-  
-}
-
-
-```
-
-I want to compare the reference point if we only use positive values or all data values.
-
-```{r ref_compare,eval=F}
-vals <- vals[!is.na(vals)]
-
-ref <- quantile(vals,prob = 0.9999,na.rm=T)
-#0.246225
-
-#set negative values to 0 before taking ref point
-vals_pos = vals[vals >=0]
-
-ref_pos <- quantile(vals_pos,prob=0.9999,na.rm=T)
-#0.2523
-```
-
-Since the reference point is very similar between these two options, I'm going to use the reference point across all values, not only positive.
+ref <- read_csv(file.path(dir_git, 'globalprep/supplementary_information/v2016/reference_points_pressures.csv'))%>% #grab reference value from the supp_info csv
+       filter(pressure == "Sea Level Rise")%>%
+       .$ref_point%>%
+        as.numeric()
+```     
 
 ## Rescale 
 
@@ -304,11 +200,11 @@ resc_slr <- function(file){
       calc(fun=function(x){ifelse(x<0,0,x)})%>% #set all negative values to 0
       calc(fun=function(x){ifelse(x>ref,1,x/ref)})%>%
       projectRaster(crs = mollCRS,over=T)%>%
-      resample(ocean,method = 'ngb', filename = paste0(file.path(dir_anx),'/prs_slr/v2016/output/slr_',yr,'.tif'),overwrite=T)
+      resample(ocean,method = 'ngb', filename = paste0(file.path(dir_anx),'/prs_slr/v2017/output/slr_',yr,'.tif'),overwrite=T)
 
 }
 
-mclapply(annual_means,resc_slr,mc.cores = 3)
+resc_slr(annual_means)
 
 ```
 
@@ -316,12 +212,12 @@ mclapply(annual_means,resc_slr,mc.cores = 3)
 
 ```{r plot_results}
 
-r <- raster(file.path(dir_anx,'prs_slr/v2016/output/slr_2015.tif'))
+r <- raster(file.path(dir_anx,'prs_slr/v2017/output/slr_2016.tif'))
 
-plot(ocean, col='cornsilk2', axes=F, box=F, main='Sea Level Rise Pressure 2015', legend=F)		
+plot(ocean, col='cornsilk2', axes=F, box=F, main='Sea Level Rise Pressure 2016', legend=F)		
 plot(r,col=cols,axes=F,box=F,add=T)
 
-histogram(r, main ='Sea Level Pressure 2015')
+rasterVis::histogram(r, main ='Sea Level Pressure 2016')
 
 ```
 

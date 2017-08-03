@@ -256,15 +256,14 @@ The reference point is the 99.99th quantile of the entire data distribution from
 
 ```{r ref, eval=F}
 
-annual_means <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_mean'),pattern = '*.tif',full.names=T)
+annual_means <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_mean'), pattern = '*.tif', full.names=TRUE)
 
 #get data across all years
 vals <- c()
-
-for(i in 1993:2015){
+for(i in 1993:2015){ # i=1993
   print(i)
-  m <- annual_means[which(substr(annual_means,96,99) == i)]%>%
-    raster()%>%
+  m <- annual_means[which(str_sub(annual_means, -8, -5) == i)] %>%
+    raster() %>%
     getValues()
   
   vals <- c(vals,m)
@@ -287,6 +286,11 @@ vals_pos = vals[vals >=0]
 
 ref_pos <- quantile(vals_pos,prob=0.9999,na.rm=T)
 #0.2523
+
+refs <- read.csv("../../supplementary_information/v2016/reference_points_pressures.csv", stringsAsFactors = FALSE)
+refs$ref_point[refs$pressure=="Sea Level Rise"] <- as.character(ref)
+write.csv(refs, "../../supplementary_information/v2016/reference_points_pressures.csv", row.names=FALSE)
+
 ```
 
 Since the reference point is very similar between these two options, I'm going to use the reference point across all values, not only positive.
@@ -301,14 +305,14 @@ resc_slr <- function(file){
 
   yr <- substr(file, 96,99)
     raster(file)%>%
-      calc(fun=function(x){ifelse(x<0,0,x)})%>% #set all negative values to 0
-      calc(fun=function(x){ifelse(x>ref,1,x/ref)})%>%
-      projectRaster(crs = mollCRS,over=T)%>%
-      resample(ocean,method = 'ngb', filename = paste0(file.path(dir_anx),'/prs_slr/v2016/output/slr_',yr,'.tif'),overwrite=T)
+      calc(fun=function(x){ifelse(x<0, 0, x)}) %>% #set all negative values to 0
+      calc(fun=function(x){ifelse(x>ref, 1, x/ref)}) %>%
+      projectRaster(crs = mollCRS, over=TRUE)%>%
+      resample(ocean,method = 'ngb', filename = paste0(file.path(dir_anx), '/prs_slr/v2016/output/slr_', yr, '.tif'), overwrite=TRUE)
 
 }
 
-mclapply(annual_means,resc_slr,mc.cores = 3)
+mclapply(annual_means,resc_slr, mc.cores = 3)
 
 ```
 
@@ -318,8 +322,8 @@ mclapply(annual_means,resc_slr,mc.cores = 3)
 
 r <- raster(file.path(dir_anx,'prs_slr/v2016/output/slr_2015.tif'))
 
-plot(ocean, col='cornsilk2', axes=F, box=F, main='Sea Level Rise Pressure 2015', legend=F)		
-plot(r,col=cols,axes=F,box=F,add=T)
+plot(ocean, col='cornsilk2', axes=FALSE, box=FALSE, main='Sea Level Rise Pressure 2015', legend=F)		
+plot(r, col=cols, axes=FALSE, box=FALSE, add=TRUE)
 
 histogram(r, main ='Sea Level Pressure 2015')
 
