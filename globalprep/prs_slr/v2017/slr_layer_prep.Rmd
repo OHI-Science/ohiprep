@@ -36,7 +36,7 @@ One additional year of data, 2016, was added.
 
 # Data
 
-The raw data are monthly mean sea level anomalies, in meters. The anomalies are calculated using a reference period of 1993 - 2012. The anomalies represent a cumulative anomaly rather than an instantaneous anomaly.
+The source data are monthly mean sea level anomalies, in meters. These anomalies are calculated by subtracting the current absolute sea level for each month from the average sea level for that month calculated from 1993 - 2012.
 
 **Reference**: The altimeter products were produced and distributed by Aviso (http://www.aviso.altimetry.fr/), as part of the Ssalto ground processing segment. [AVISO MSLA heights, monthly means](http://www.aviso.altimetry.fr/en/data/products/sea-surface-height-products/global/msla-mean-climatology.html)  
 **Downloaded**: August 1, 2017 (for 2016 data)   
@@ -103,7 +103,7 @@ nc_files <- list.files(file.path(dir_anx_aviso),
                        full.names = TRUE,pattern='.nc')
 ```
 
-The raw mondhtly data looks like this:
+The raw monthly data looks like this:
 
 ```{r plot_raw}
 
