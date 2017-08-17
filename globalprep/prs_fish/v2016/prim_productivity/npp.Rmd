@@ -1,5 +1,5 @@
 ---
-title: 'OHI 2016: Prepping Primary Productivity data for Commerical Fishing Pressure Layers '
+title: 'Prepping Primary Productivity data for Commerical Fishing Pressure Layers '
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
@@ -18,12 +18,8 @@ pdf_document:
 
 #Summary
 
-This script calculates mean annual net primary production values globally from 2003 to 2015. This data is used to standardize commercial fishing catch to produce [fishing pressure layers for OHI](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/prs_fish/v2016/fishing_pressure_layers.html).
+This script calculates mean annual net primary production values globally from 2003 to 2015. This data is used to standardize commercial fishing catch to produce [fishing pressure layers for OHI](https://cdn.rawgit.com/OHI-Science/ohiprep/master/globalprep/prs_fish/v2016/fishing_pressure_layers.html) and Cumulative Human Impacts.
 
-
-#Updates from previous assessment
-
-Two additional years of data are incorporated; 2014 and 2015.
 
 ***
 
