@@ -1,5 +1,5 @@
 ---
-title: "OHI 2016 Pressure: Ultraviolet Radiation"
+title: "OHI 2017 Pressure: Ultraviolet Radiation"
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
@@ -31,22 +31,7 @@ The Ultraviolet Radiation pressure layer is generated from daily data on Local N
 
 #Updates from previous assessment
 
-Previous assessments used two different sets of data; 
-
-1. EarthProbe/TOMS data from 1997 - 2001
-2. OMI/Aura data from 2008 - 2013
-
-From [Halpern et al. (2015)](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0117863#sec012):
-
-> Because the satellite values cannot easily be compared to each other, we chose to create two
-mean baseline UV values against which to look for anomalies. We calculated two separate
-baseline means and standard deviations for the two 5-year time periods shown above. Daily
-irradiance values were averaged into 60 monthly mean UV values for each five year period.
-Mean monthly UV values exceeding the baseline mean plus one standard deviation were labeled
-as anomalous pixels.
-
-For **OHI 2016** we changed our methods and decided to use just one dataset that can be used long term and comparable across time rather than two separate datasets. The methods therefore changed as well to account for the change in data. This layer is now calculated in a very similar manner to the Sea Surface Temperature layer. The OMI/Aura data for 2014 and 2015 were also included in this assessment.
-
+One additional year of data.
 
 ***
 
