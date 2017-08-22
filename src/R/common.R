@@ -30,14 +30,14 @@ if (Sys.info()[['sysname']] == 'Linux' & (!file.exists(dir_M) & !file.exists(dir
 
 
 # install (if necessary) and load commonly used libraries
-packages <- c('tidyverse')
-if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
-  cat(sprintf("Installing %s\n", setdiff(packages, rownames(installed.packages()))))
-  install.packages(setdiff(packages, rownames(installed.packages())))  
-}
-library(tidyverse)
-library(stringr)
-rm(packages)
+# packages <- c('tidyverse')
+# if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
+#   cat(sprintf("Installing %s\n", setdiff(packages, rownames(installed.packages()))))
+#   install.packages(setdiff(packages, rownames(installed.packages())))  
+# }
+# library(tidyverse)
+# library(stringr)
+# rm(packages)
 
 ### Casey's function...
 get_rgn_names <- function() {
