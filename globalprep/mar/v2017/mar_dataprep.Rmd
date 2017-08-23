@@ -21,6 +21,8 @@ This analysis converts FAO mariculture data into data used to calculate the OHI 
 #Updates from previous assessment
 New year of FAO mariculture yield data, but no changes to sustainability or genetic escapee data or general methods.
 
+A few small corrections to make sure the FAO_species fields matched in the species_list and Trujillo data.
+
 ***
 
 #Data Source 
@@ -46,7 +48,7 @@ library(stringr)
 library(tidyr)
 
 ## comment out when knitting
-#setwd("globalprep/mar/v2016")
+#setwd("globalprep/mar/v2017")
 
 
 ### Load FAO-specific user-defined functions
@@ -89,8 +91,7 @@ mar <- mar %>%
 
 ```
 
-Update species names and exclude non-food species. I simplified the species_list.  I cut one of the name columns because it wasn't always clear what this was trying to accomplish.  I also made the "alias" list more complete. This is used
-when there is a more general match in the Trujillo data.
+Update species names and exclude non-food species. I simplified the species_list.  I cut the "species"" name columns because it wasn't clear what this was trying to accomplish and created potential error.  
 ```{r}
 
 mar_sp <- read.csv('raw/species_list.csv', stringsAsFactors=FALSE) %>%
@@ -102,6 +103,7 @@ new.spp # check: if dim has 0 rows it means all match
 # Remove species not relevant to mariculuture goal (i.e., non-food species)
 mar <- left_join (mar, mar_sp, by="FAO_name") 
 mar <- filter (mar, exclude==0) 
+
 
 # change names using species name and the species alias (global changes)
 mar$species <- ifelse(!is.na(mar$alias), mar$alias, mar$FAO_name) 
@@ -148,59 +150,65 @@ mar_rgn <- mar_rgn %>%
   group_by(fao, environment, species, year, Taxon_code, rgn_id) %>%
   summarize(value = sum(value)) %>%
   ungroup()
+
+data.frame(filter(mar_rgn, rgn_id==130) %>%
+  filter(year==2013) %>%
+  arrange(species))
+
 ```
 
 For some regions, a specific species can be altered so that it matches more general Trujillo sustainability data.  In this case, I don't want the name changes to be global because some regions may have more specific species data.
 
+(Will explore this in the future, but will not implement this year).
 ```{r, }
-## based on looking at the list, make a few name changes to match the regions Trujillo data
-# Chile name modification
-mar_rgn$species[mar_rgn$rgn_id==224 & mar_rgn$species == "Red abalone"] <- "Abalones nei"
-mar_rgn$species[mar_rgn$rgn_id==224 & mar_rgn$species == "Japanese abalone"] <- "Abalones nei"
-
-# China
-mar_rgn$species[mar_rgn$rgn_id==209 & mar_rgn$species == "Areolate grouper"] <- "Groupers nei"
-mar_rgn$species[mar_rgn$rgn_id==209 & mar_rgn$species == "Greasy grouper"] <- "Groupers nei"
-mar_rgn$species[mar_rgn$rgn_id==209 & mar_rgn$species == "Hong Kong grouper"] <- "Groupers nei"
-mar_rgn$species[mar_rgn$rgn_id==209 & mar_rgn$species == "Orange-spotted grouper"] <- "Groupers nei"
-
-# Honduras
-mar_rgn$species[mar_rgn$rgn_id==133 & mar_rgn$species == "Whiteleg shrimp"] <- "Penaeus shrimps nei"
-
-# Italy
-mar_rgn$species[mar_rgn$rgn_id==84 & mar_rgn$species == "Pacific cupped oyster"] <- "Cupped oysters nei"
-
-# New Zealand
-mar_rgn$species[mar_rgn$rgn_id==162 & mar_rgn$species == "Rainbow abalone"] <- "Abalones nei"
-
-# Pakistan
-mar_rgn$species[mar_rgn$rgn_id==53 & mar_rgn$species == "Penaeus shrimps nei"] <- "Marine crustaceans nei"
-
-# Philippines
-mar_rgn$species[mar_rgn$rgn_id==15 & mar_rgn$species == "Whiteleg shrimp"] <- "Penaeus shrimps nei"
-
-# Portugal
-mar_rgn$species[mar_rgn$rgn_id==183 & mar_rgn$species == "Golden carpet shell"] <- "Marine molluscs nei"
-mar_rgn$species[mar_rgn$rgn_id==183 & mar_rgn$species == "Peppery furrow"] <- "Marine molluscs nei"
-mar_rgn$species[mar_rgn$rgn_id==183 & mar_rgn$species == "Solen razor clams nei"] <- "Razor clams nei"
-mar_rgn$species[mar_rgn$rgn_id==183 & mar_rgn$species == "Atlantic bluefin tuna"] <- "Marine fishes nei"
-mar_rgn$species[mar_rgn$rgn_id==183 & mar_rgn$species == "Meagre"] <- "Marine fishes nei"
-mar_rgn$species[mar_rgn$rgn_id==183 & mar_rgn$species == "Seabasses nei"] <- "Marine fishes nei"
-mar_rgn$species[mar_rgn$rgn_id==183 & mar_rgn$species == "Soles nei"] <- "Marine fishes nei"
-mar_rgn$species[mar_rgn$rgn_id==183 & mar_rgn$species == "White seabream"] <- "Marine fishes nei"
-
-# Spain
-mar_rgn$species[mar_rgn$rgn_id==182 & mar_rgn$species == "Atlantic bluefin tuna"] <- "Tuna-like fishes nei"
-
-# Turkey
-mar_rgn$species[mar_rgn$rgn_id==76 & mar_rgn$species == "Atlantic bluefin tuna"] <- "Tuna-like fishes nei"
-mar_rgn$species[mar_rgn$rgn_id==76 & mar_rgn$species == "European seabass"] <- "Seabasses nei"
-
-### sum values of regions with multiple subregions
-mar_rgn <- mar_rgn %>%
-  group_by(fao, environment, species, year, Taxon_code, rgn_id) %>%
-  summarize(value = sum(value)) %>%
-  ungroup()
+# ## based on looking at the list, make a few name changes to match the regions Trujillo data
+# # Chile name modification
+# mar_rgn$species[mar_rgn$rgn_id==224 & mar_rgn$species == "Red abalone"] <- "Abalones nei"
+# mar_rgn$species[mar_rgn$rgn_id==224 & mar_rgn$species == "Japanese abalone"] <- "Abalones nei"
+# 
+# # China
+# mar_rgn$species[mar_rgn$rgn_id==209 & mar_rgn$species == "Areolate grouper"] <- "Groupers nei"
+# mar_rgn$species[mar_rgn$rgn_id==209 & mar_rgn$species == "Greasy grouper"] <- "Groupers nei"
+# mar_rgn$species[mar_rgn$rgn_id==209 & mar_rgn$species == "Hong Kong grouper"] <- "Groupers nei"
+# mar_rgn$species[mar_rgn$rgn_id==209 & mar_rgn$species == "Orange-spotted grouper"] <- "Groupers nei"
+# 
+# # Honduras
+# mar_rgn$species[mar_rgn$rgn_id==133 & mar_rgn$species == "Whiteleg shrimp"] <- "Penaeus shrimps nei"
+# 
+# # Italy
+# mar_rgn$species[mar_rgn$rgn_id==84 & mar_rgn$species == "Pacific cupped oyster"] <- "Cupped oysters nei"
+# 
+# # New Zealand
+# mar_rgn$species[mar_rgn$rgn_id==162 & mar_rgn$species == "Rainbow abalone"] <- "Abalones nei"
+# 
+# # Pakistan
+# mar_rgn$species[mar_rgn$rgn_id==53 & mar_rgn$species == "Penaeus shrimps nei"] <- "Marine crustaceans nei"
+# 
+# # Philippines
+# mar_rgn$species[mar_rgn$rgn_id==15 & mar_rgn$species == "Whiteleg shrimp"] <- "Penaeus shrimps nei"
+# 
+# # Portugal
+# mar_rgn$species[mar_rgn$rgn_id==183 & mar_rgn$species == "Golden carpet shell"] <- "Marine molluscs nei"
+# mar_rgn$species[mar_rgn$rgn_id==183 & mar_rgn$species == "Peppery furrow"] <- "Marine molluscs nei"
+# mar_rgn$species[mar_rgn$rgn_id==183 & mar_rgn$species == "Solen razor clams nei"] <- "Razor clams nei"
+# mar_rgn$species[mar_rgn$rgn_id==183 & mar_rgn$species == "Atlantic bluefin tuna"] <- "Marine fishes nei"
+# mar_rgn$species[mar_rgn$rgn_id==183 & mar_rgn$species == "Meagre"] <- "Marine fishes nei"
+# mar_rgn$species[mar_rgn$rgn_id==183 & mar_rgn$species == "Seabasses nei"] <- "Marine fishes nei"
+# mar_rgn$species[mar_rgn$rgn_id==183 & mar_rgn$species == "Soles nei"] <- "Marine fishes nei"
+# mar_rgn$species[mar_rgn$rgn_id==183 & mar_rgn$species == "White seabream"] <- "Marine fishes nei"
+# 
+# # Spain
+# mar_rgn$species[mar_rgn$rgn_id==182 & mar_rgn$species == "Atlantic bluefin tuna"] <- "Tuna-like fishes nei"
+# 
+# # Turkey
+# mar_rgn$species[mar_rgn$rgn_id==76 & mar_rgn$species == "Atlantic bluefin tuna"] <- "Tuna-like fishes nei"
+# mar_rgn$species[mar_rgn$rgn_id==76 & mar_rgn$species == "European seabass"] <- "Seabasses nei"
+# 
+# ### sum values of regions with multiple subregions
+# mar_rgn <- mar_rgn %>%
+#   group_by(fao, environment, species, year, Taxon_code, rgn_id) %>%
+#   summarize(value = sum(value)) %>%
+#   ungroup()
 
 
 ```
@@ -229,7 +237,7 @@ mar_rgn_gf <- mar_rgn_gf %>%
   mutate(value = ifelse(is.na(value), 0, value)) %>%
   select(-cum_value, -value_w_0)
 table(mar_rgn_gf$gap_0_fill)
-## 3280 of these out of 25598+3280 cases
+## 3344 of these out of 25842+3344 cases
 
 ```
 
@@ -268,8 +276,6 @@ write.csv(maric, 'output/MAR_FP_data.csv', row.names=FALSE)
 ```
 
 # Trujillo sustainability scores
-(NOTE: These data have been simplified from last year. I eliminated some of the genus gapfilling.  Given that it 
-didn't always make sense.  
 
 These data describe the sustainability and genetic escapes for country/species combinations (and, in a couple cases, environment and fao region combinations). In cases where these data were not available for a specific county/species, we averaged the data across taxonomic groups to gapfill the missing data.
 
@@ -501,18 +507,29 @@ genEscapes_gf <- tonnes_esc %>%
   group_by(rgn_id, year) %>%
   summarize(genEscapes = weighted.mean(gapfill, tonnes, na.rm=TRUE)) %>%
   ungroup() %>%
-  filter(year==2014) %>%
+  filter(year==2015) %>%
   select(rgn_id, pressures.score=genEscapes) %>%
   mutate(pressures.score=ifelse(pressures.score=="NaN", NA, pressures.score)) %>%
   data.frame()
-write.csv(genEscapes_gf, 'output/GenEsc_v2016_gf.csv', row.names=FALSE)
+write.csv(genEscapes_gf, 'output/GenEsc_gf.csv', row.names=FALSE)
 
 # create the escapee data layers:
     data <- genEscapes %>%
     select(rgn_id, year, pressure_score = genEscapes)
 write.csv(data, 'output/GenEsc.csv', row.names=FALSE)  
 
+old <- read.csv("../v2016/output/GenEsc_v2016.csv") %>%
+  select(rgn_id, prs_score_old=pressure_score)
 
+new <- read.csv("../v2017/output/GenEsc.csv") %>%
+  filter(year == 2014)
+
+full_join(old, new, by="rgn_id")
+
+tmp_old <- read.csv("../v2016/raw/Truj_label_sust.csv")
+tmp_new <- read.csv("../v2017/raw/Truj_label_sust.csv")
+
+test <- full_join(tmp_new, tmp_old, by=c("country", "species_fao", "fao", "environment" ))
 ```
 ***
 

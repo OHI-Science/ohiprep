@@ -8,12 +8,12 @@ Abalones nei,0,NA,,,BI
 Akiami paste shrimp,0,NA,,,SH
 Amberjacks nei,0,NA,,,F
 American bull frog,0,NA,,,OTHER
-American cupped oyster,0,Cupped oysters nei,,,BI
-Anadara clams nei,0,"Clams, etc. nei",,,BI
+American cupped oyster,0,NA,,,BI
+Anadara clams nei,0,NA,,,BI
 Aquatic invertebrates nei,0,NA,,,INV
 Aquatic plants nei,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
 Arctic char,0,NA,,,F
-Areolate grouper,0,Groupers nei,,,F
+Areolate grouper,0,NA,,,F
 Atipa,1,NA,freshwater,,F
 Atlantic bluefin tuna,0,NA,,,F
 Atlantic cod,0,NA,,,F
@@ -40,7 +40,7 @@ Black ark,0,blood cockle,,,BI
 Black bullhead,1,NA,freshwater,,F
 Black catfishes nei,1,NA,freshwater,,F
 Black grouper,0,Groupers nei,,,F
-Black seabass,0,Seabasses nei,,,F
+Black seabass,0,NA,,,F
 Blackchin tilapia,1,NA,freshwater,,F
 Blackhead seabream,0,NA,,,F
 Blacklip abalone,0,NA,,,BI
@@ -61,14 +61,14 @@ Brine shrimp,0,NA,,,SH
 Brown meagre,0,NA,,,F
 Brown seaweeds,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
 Brown tiger prawn,0,NA,,,SH
-Brown-marbled grouper,0,Groupers nei,,,F
+Brown-marbled grouper,0,NA,,,F
 Butter clam,0,NA,,,BI
 Callinectes swimcrabs nei,0,NA,,,CRUST
 Caramote prawn,0,NA,,,SH
 Carpet shells nei,0,NA,,,BI
 Caulerpa seaweeds,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
 Chars nei,0,NA,,,F
-Chilean flat oyster,0,Flat oysters nei,,,BI
+Chilean flat oyster,0,NA,,,BI
 Chilean mussel,0,NA,,,BI
 Chinook(=Spring=King) salmon,0,NA,,,F
 Cholga mussel,0,NA,,,BI
@@ -97,7 +97,7 @@ Cupped oysters nei,0,NA,,,BI
 Cyprinids nei,1,NA,freshwater,,F
 Daggertooth pike conger,0,NA,,,F
 Diphos sanguin,0,"Clams, etc. nei",,,BI
-Donax clams,0,"Clams, etc. nei",,,BI
+Donax clams,0,NA,,,BI
 Dotted gizzard shad,0,NA,,,F
 Drums nei,0,NA,,,F
 Dulse,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
@@ -133,7 +133,7 @@ Gastropods nei,0,NA,,,BI
 Gazami crab,0,NA,,,CRUST
 Gelidium seaweeds,1,NA,seaweed: agar,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
 Giant clam,0,NA,,,BI
-Giant clams nei,0,"Clams, etc. nei",,,BI
+Giant clams nei,0,NA,,,BI
 Giant grouper,0,Groupers nei,,,F
 Giant kelp,1,NA,"seaweed, algin",food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
 Giant river prawn,1,NA,freshwater,,SH
@@ -146,9 +146,9 @@ Golden trevally,0,NA,,,F
 Goldlined seabream,0,NA,,,F
 Goldsilk seabream,0,NA,,,F
 Gracilaria seaweeds,1,NA,seaweed mixed: agar/food,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
-Grand ark,0,"Clams, etc. nei",,,BI
+Grand ark,0,Anadara clams nei,,,BI
 Grass carp(=White amur),1,NA,freshwater,,F
-Greasy grouper,0,Groupers nei,,,F
+Greasy grouper,0,NA,,,F
 Greasyback shrimp,0,NA,,,SH
 Great Atlantic scallop,0,NA,,,BI
 Great blue spotted mudskipper,1,NA,was excluded,Chinese medicine,F
@@ -166,11 +166,11 @@ Groupers nei,0,NA,,,F
 "Gudgeons, sleepers nei",0,NA,,,F
 Haddock,0,NA,,,F
 Harpoon seaweeds,1,NA,seaweed: cosmetic/antiparasitic/agar,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
-Hong Kong grouper,0,Groupers nei,,,F
+Hong Kong grouper,0,NA,,,F
 Hooded oyster,0,NA,,,BI
 Horned turban,0,NA,,,BI
-Horse mussels nei,0,Sea mussels nei,,,BI
-Humpback grouper,0,Groupers nei,,,F
+Horse mussels nei,0,NA,,,BI
+Humpback grouper,0,NA,,,F
 Indian backwater oyster,0,NA,,,BI
 Indian white prawn,0,NA,,,SH
 Indo-Pacific swamp crab,0,NA,,,CRUST
@@ -187,7 +187,7 @@ Japanese jack mackerel,0,NA,,,F
 Japanese kelp,1,NA,seaweed: was excluded,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
 Japanese meagre,0,NA,,,F
 Japanese sea cucumber,0,NA,,,NS-INV
-Japanese seabass,0,Seabasses nei,,,F
+Japanese seabass,0,NA,,,F
 Japanese seabream,0,NA,,,F
 Japanese spiny lobster,0,NA,,,CRUST
 Jellyfishes nei,0,NA,,,NS-INV
@@ -197,17 +197,17 @@ Korean mussel,0,NA,,,BI
 Korean rockfish,0,NA,,,F
 Kuruma prawn,0,NA,,,SH
 Large yellow croaker,0,NA,,,F
-Largemouth black bass,0,Seabasses nei,,,F
+Largemouth black bass,0,NA,,,F
 Laver (Nori),1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
 Lebranche mullet,0,NA,,,F
 Lefteye flounders nei,0,NA,,,F
-Longfin yellowtail,0,NA,,,F
+Longfin yellowtail,0,Amberjacks nei,,,F
 Mackerels nei,0,NA,,,F
-Malabar grouper,0,Groupers nei,,,F
+Malabar grouper,0,NA,,,F
 Malabar trevally,0,NA,,,F
-Mangrove cupped oyster,0,Cupped oysters nei,,,BI
-Mangrove red snapper,0,Snappers nei,,,F
-Marble goby,0,Gobies nei,,,F
+Mangrove cupped oyster,0,NA,,,BI
+Mangrove red snapper,0,NA,,,F
+Marble goby,0,NA,,,F
 Marbled spinefoot,0,NA,,,F
 Marine crabs nei,0,NA,,,CRUST
 Marine crustaceans nei,0,NA,,,CRUST
@@ -217,7 +217,7 @@ Masu(=Cherry) salmon,0,NA,,,F
 Meagre,0,NA,,,F
 Mediterranean mussel,0,NA,,,BI
 Metapenaeus shrimps nei,0,NA,,,F
-Mi-iuy (brown) croaker,0,NA,,,F
+Mi-iuy (brown) croaker,0,"Croakers, drums nei",,,F
 Milkfish,0,NA,,,F
 Mojarras(=Silver-biddies) nei,0,NA,,,F
 Mozambique tilapia,1,NA,freshwater,,F
@@ -226,7 +226,7 @@ Mud spiny lobster,0,NA,,,CRUST
 Mullets nei,0,NA,,,F
 Natantian decapods nei,0,NA,,,CRUST
 New Zealand mussel,0,NA,,,BI
-Nile perch,1,NA,freshwater,,F
+Nile perch,1,Snooks(=Robalos) nei,freshwater,,F
 Nile tilapia,1,NA,freshwater,,F
 Nori nei,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
 Northern quahog(=Hard clam),0,NA,,,BI
@@ -236,7 +236,7 @@ Octopuses nei,0,NA,,,CEPH
 Okhotsk atka mackerel,0,NA,,,F
 Olympia oyster,0,NA,,,BI
 Orange mud crab,0,NA,,,CRUST
-Orange-spotted grouper,0,Groupers nei,,,F
+Orange-spotted grouper,0,NA,,,F
 Orbicular batfish,1,NA,aquarium,,F
 Oriental cyclina,1,NA,was excluded,,BI
 Pacific bluefin tuna,0,NA,,,F
@@ -249,7 +249,7 @@ Pacific littleneck clam,0,NA,,,BI
 Palaemonid shrimps nei,0,NA,,,SH
 Palinurid spiny lobsters nei,0,NA,,,CRUST
 Pangas catfishes nei,1,NA,freshwater,,F
-Papuan black snapper,0,Snappers nei,,,F
+Papuan black snapper,0,NA,,,F
 Pargo breams nei,0,NA,,,F
 Pearl oyster shells nei,0,NA,,,BI
 Pen shells nei,0,NA,,,BI
@@ -259,7 +259,7 @@ Peppery furrow,0,NA,,,BI
 Percoids nei,0,NA,,,F
 Periwinkles nei,0,NA,,,BI
 Perlemoen abalone,0,NA,,,BI
-Peruvian calico scallop,0,Scallops nei,,,BI
+Peruvian calico scallop,0,NA,,,BI
 Pod razor shell,0,NA,,,BI
 Pollack,0,NA,,,F
 Pompano,0,NA,,,F
@@ -281,13 +281,13 @@ Righteye flounders nei,0,NA,,,F
 River eels nei,1,NA,freshwater,,F
 River Plata mussel,1,NA,freshwater,,BI
 Rooster venus,0,NA,,,BI
-Russell's snapper,0,Snappers nei,,,F
+Russell's snapper,0,NA,,,F
 Sabaki tilapia,1,NA,freshwater,,F
 Salmonids nei,0,NA,,,F
 Salmonoids nei,0,NA,,,F
-Sand fish,0,NA,,,NS-INV
+Sand fish,0,Sea cucumbers nei,,,NS-INV
 Sand gaper,0,NA,,,BI
-Sandfish,0,NA,,,NS-INV
+Sandfish,0,Sea cucumbers nei,,,NS-INV
 Sargo breams nei,0,NA,,,F
 Scallops nei,0,NA,,,BI
 Scats,0,NA,,,F
@@ -311,7 +311,7 @@ Silver carp,1,NA,freshwater,,F
 Silver seabream,1,NA,freshwater,,F
 Silversides(=Sand smelts) nei,1,NA,freshwater,,F
 Sixfinger threadfin,0,NA,,,F
-Slipper cupped oyster,0,Cupped oysters nei,,,BI
+Slipper cupped oyster,0,NA,,,BI
 Smooth giant clam,0,NA,,,BI
 Smooth mactra,0,NA,,,BI
 Snappers nei,0,NA,,,F
@@ -321,7 +321,7 @@ Snubnose pompano,0,NA,,,F
 So-iuy mullet,0,NA,,,F
 Sobaity seabream,0,NA,,,F
 Sockeye(=Red) salmon,0,NA,,,F
-Solen razor clams nei,0,"Clams, etc. nei",,,BI
+Solen razor clams nei,0,NA,,,BI
 Soles nei,0,NA,,,F
 South American rock mussel,0,NA,,,BI
 Southern Australia scallop,0,NA,,,BI
@@ -332,32 +332,32 @@ Spinefeet(=Rabbitfishes) nei,0,Metapenaeus shrimps nei,,,F
 Spinous spider crab,0,NA,,,CRUST
 Spiny eucheuma,1,NA,seaweed:carrageenan,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
 Spiny lobsters nei,0,NA,,,CRUST
-Spotted coralgrouper,0,Groupers nei,,,F
-Spotted rose snapper,0,Snappers nei,,,F
-Spotted seabass,0,Seabasses nei,,,F
+Spotted coralgrouper,0,NA,,,F
+Spotted rose snapper,0,NA,,,F
+Spotted seabass,0,NA,,,F
 Spotted wolffish,0,NA,,,F
 Squaretail mullet,0,NA,,,F
-Stony sea urchin,0,Sea urchins nei,,,URCH
+Stony sea urchin,0,NA,,,URCH
 Streaked spinefoot,0,NA,,,F
-"Striped bass, hybrid",0,Seabasses nei,,,F
+"Striped bass, hybrid",0,NA,,,F
 Striped venus,0,NA,,,BI
 Stromboid conchs nei,0,NA,,,BI
 Sturgeons nei,0,NA,,,F
 "Swimming crabs, etc. nei",0,NA,,,CRUST
-Sydney cupped oyster,0,Cupped oysters nei,,,BI
+Sydney cupped oyster,0,NA,,,BI
 Tangle,1,NA,industrial uses,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
 Tarpon,0,NA,,,F
 Thinlip grey mullet,0,NA,,,F
-Tiger pufferfish,0,NA,,,F
+Tiger pufferfish,0,Puffers nei,,,F
 Tilapias nei,1,NA,freshwater,,F
 Torpedo-shaped catfishes nei,1,NA,freshwater,,F
 Tropical spiny lobsters nei,0,NA,,,CRUST
 Trumpet emperor,0,NA,,,F
 Tuberculate abalone,0,NA,,,BI
 Turbot,0,NA,,,F
-Two-spot red snapper,0,Snappers nei,,,F
+Two-spot red snapper,0,NA,,,F
 Variegated scallop,0,NA,,,BI
-Venus clams nei,0,"Clams, etc. nei",,,BI
+Venus clams nei,0,NA,,,BI
 Waigieu seaperch,0,NA,,,F
 Wakame,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
 Wakame nei,1,NA,seaweed,food use determined using Seaweed Industry Association: https://seaweedindustry.com and FAO: http://www.fao.org/docrep/006/y4765e/y4765e0b.htm,AL
@@ -373,13 +373,13 @@ Yellowfin seabream,0,NA,,,F
 Yellowfin tuna,0,NA,,,F
 Yesso scallop,0,NA,,,BI
 Longrayed whiptail,0,NA,,,F
-Yellowtail amberjack,0,NA,,,F
+Yellowtail amberjack,0,Amberjacks nei,,,F
 Great Mediterranean scallop,0,NA,,,BI
 Mediterranean shore crab,0,NA,,,CRUST
 Giant kelps nei,1,NA,seaweed,,AL
 Green seaweeds,1,NA,seaweed,,AL
 Beluga,0,NA,,,F
-Striped bass,0,Seabasses nei,,,F
+Striped bass,0,NA,,,F
 Pink dentex,0,NA,,,F
 Trouts nei,0,NA,,,F
 Caribbean spiny lobster,0,NA,,,CRUST

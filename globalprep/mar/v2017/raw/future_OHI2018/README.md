@@ -1,0 +1,1 @@
+I improved matching between FAO taxa and Trujillo taxa.  However, this level of change should be saved for OHI 2018.  Specifically, I made the "alias" list more complete, this field is used to identify a more general taxa that matches the Trujillo data.

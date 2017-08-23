@@ -47,5 +47,5 @@ get_rgn_names <- function() {
   return(x)
 }
 
-#load ocean raster for pressures
-ocean = raster(file.path(dir_M,'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
+# #load ocean raster for pressures
+# ocean = raster(file.path(dir_M,'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))

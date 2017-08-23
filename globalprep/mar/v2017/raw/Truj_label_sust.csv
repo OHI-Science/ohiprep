@@ -21,11 +21,11 @@ Canada,Atlantic cod,,,Atlantic cod,,c_sp,actuals,0.23,1
 Canada,Atlantic salmon,"Atlantic, Northwest",,Atlantic salmon (Atl),,c_sp_fao,actuals,0.17,1
 Canada,Atlantic salmon,"Pacific, Northeast",,Atlantic salmon (Pac),,c_sp_fao,actuals,0.27,0.1
 Canada,Blue mussel,,,Blue mussel,,c_sp,actuals,0.93,1
-Canada,Coho(=Silver)salmon,,,Coho(=Silver)salmon,,c_sp,actuals,0.33,1
+Canada,Coho(=Silver) salmon,,,Coho(=Silver)salmon,,c_sp,actuals,0.33,1
 Canada,Pacific cupped oyster,,,Pacific cupped oyster,,c_sp,actuals,0.83,0.1
 Chile,Abalones nei,,,Abalones nei,,c_sp,actuals,0.67,0.1
 Chile,Atlantic salmon,,,Atlantic salmon,,c_sp,actuals,0.13,0.1
-Chile,Coho(=Silver)salmon,,,Coho(=Silver)salmon,,c_sp,actuals,0.27,0.1
+Chile,Coho(=Silver) salmon,,,Coho(=Silver)salmon,,c_sp,actuals,0.27,0.1
 Chile,Gracilaria seaweeds,,,Gracilaria seaweeds,,c_sp,actuals,0.9,1
 Chile,Pacific cupped oyster,,,Pacific cupped oyster,,c_sp,actuals,0.53,0.1
 China,Blood cockle,,,Blood cockle,,c_sp,actuals,0.67,1
@@ -50,7 +50,7 @@ Faroe Islands,Atlantic salmon,,,Atlantic salmon,,c_sp,actuals,0.43,1
 Finland,Atlantic salmon,,,Atlantic salmon,,c_sp,actuals,0.5,1
 France,Atlantic salmon,,,Atlantic salmon,,c_sp,actuals,0.37,1
 France,Blue mussel,,,Blue mussel,,c_sp,actuals,0.93,1
-France,Coho(=Silver)salmon,,,Coho(=Silver)salmon,,c_sp,actuals,0.37,0.1
+France,Coho(=Silver) salmon,,,Coho(=Silver)salmon,,c_sp,actuals,0.37,0.1
 France,European eel,,,European eel,,c_sp,actuals,0.43,1
 France,European flat oyster,,,European flat oyster,,c_sp,actuals,0.83,1
 France,European seabass,,,European seabass,,c_sp,actuals,0.5,1
@@ -100,7 +100,7 @@ Italy,Giant tiger prawn,,,Giant tiger prawn,,c_sp,actuals,0.3,0.1
 Italy,Gilthead seabream,,,Gilthead seabream,,c_sp,actuals,0.23,1
 Italy,Gracilaria seaweeds,,,Gracilaria seaweeds,,c_sp,actuals,0.9,1
 Italy,Kuruma prawn,,,Kuruma prawn,,c_sp,actuals,0.5,0.1
-Japan,Coho(=Silver)salmon,,,Coho(=Silver)salmon,,c_sp,actuals,0.37,1
+Japan,Coho(=Silver) salmon,,,Coho(=Silver)salmon,,c_sp,actuals,0.37,1
 Japan,Flathead grey mullet,,,Flathead grey mullet,,c_sp,actuals,0.43,1
 Japan,Kuruma prawn,,,Kuruma prawn,,c_sp,actuals,0.5,1
 Japan,Laver (Nori),,,Laver (Nori),,c_sp,actuals,0.73,1
@@ -295,7 +295,7 @@ United Kingdom,Pacific cupped oyster,,,Pacific cupped oyster,,c_sp,actuals,0.83,
 United States of America,Abalones nei,,,Abalones nei,,c_sp,actuals,0.5,1
 United States of America,Atlantic salmon,,,Atlantic salmon,,c_sp,actuals,0.37,1
 United States of America,Blue mussel,,,Blue mussel,,c_sp,actuals,0.93,1
-United States of America,Coho(=Silver)salmon,,,Coho(=Silver)salmon,,c_sp,actuals,0.37,1
+United States of America,Coho(=Silver) salmon,,,Coho(=Silver)salmon,,c_sp,actuals,0.37,1
 United States of America,Cupped oysters nei,,,Cupped oysters nei,,c_sp,actuals,1,0.5
 United States of America,European flat oyster,,,European flat oyster,,c_sp,actuals,0.83,0.1
 United States of America,Flat oysters nei,,,Flat oysters nei,,c_sp,actuals,0.87,0.5
@@ -307,7 +307,10 @@ Viet Nam,Giant tiger prawn,,,Giant tiger prawn,,c_sp,actuals,0.1,1
 Viet Nam,Gracilaria seaweeds,,,Gracilaria seaweeds,,c_sp,actuals,0.83,1
 Viet Nam,Whiteleg shrimp,,,Whiteleg shrimp,,c_sp,actuals,0.23,0.1
 NA,Abalones nei,,,Abalones nei,,species,sp_average,0.55,
+NA,Algae & marine plants,,,Algae & marine plants,AL,taxon,taxon_average,0.873333333,
 NA,All others,,,All others,OTHER,taxon,taxon_average,0.568049088,0.548672889
+NA,American cupped oyster,,,American cupped oyster,,species,genus_average,0.887878788,0.518181818
+NA,Aquatic plants nei,,,Aquatic plants nei,,species,sp_average,0.866666667,
 NA,Arctic char,,,Arctic char,,species,sp_average,0.533333333,
 NA,Atlantic bluefin tuna,,,Atlantic bluefin tuna,,species,sp_average,0.316666667,
 NA,Atlantic cod,,,Atlantic cod,,species,sp_average,0.283333333,
@@ -323,18 +326,22 @@ NA,Blackchin tilapia,,,Blackchin tilapia,,species,sp_average,0.566666667,
 NA,Blood cockle,,,Blood cockle,,species,sp_average,0.666666667,
 NA,Blue mussel,,,Blue mussel,,species,sp_average,0.902380952,
 NA,Blue shrimp,,,Blue shrimp,,species,genus_average,0.372222222,0.797142857
+NA,Blue tilapia,,,Blue tilapia,,species,genus_average,0.366666667,
 NA,Brill,,,Brill,,species,sp_average,0.566666667,
+NA,Brown seaweeds,,,Brown seaweeds,,species,sp_average,0.933333333,
+NA,Brown-marbled grouper,,,Brown-marbled grouper,,species,genus_average,0.333333333,0.9
 NA,Carpet shells nei,,,Carpet shells nei,,species,sp_average,0.8,
 NA,Cephalopod,,,Cephalopod,CEPH,taxon,taxon_average,0.566666667,0.75
 NA,Chinook(=Spring=King) salmon,,,Chinook(=Spring=King)salmon,,species,genus_average,0.370833333,0.625
 NA,"Clams, etc. nei",,,"Clams, etc nei",,species,sp_average,0.766666667,
-NA,Coho(=Silver)salmon,,,Coho(=Silver)salmon,,species,sp_average,0.34,
+NA,Coho(=Silver) salmon,,,Coho(=Silver)salmon,,species,sp_average,0.34,
 NA,Common cuttlefish,,,Common cuttlefish,,species,sp_average,0.6,
 NA,Common edible cockle,,,Common edible cockle,,species,sp_average,0.733333333,
 NA,Common sole,,,Common sole,,species,sp_average,0.533333333,
 NA,Common two-banded seabream,,,Com.2-banded seabream,,species,sp_average,0.533333333,
 NA,Crabs and lobsters,,,Crabs and lobsters,CRUST,taxon,taxon_average,0.416666667,0.45
-NA,Cupped oysters nei,,,Cupped oysters nei,,species,sp_average,0.888095238,0.518181818
+NA,Cupped oysters nei,,,Cupped oysters nei,,species,sp_average,0.888095238,
+NA,Eucheuma seaweeds nei,,,Eucheuma seaweeds nei,,species,genus_average,0.933333333,
 NA,European eel,,,European eel,,species,sp_average,0.444444444,
 NA,European flat oyster,,,European flat oyster,,species,sp_average,0.823076923,
 NA,European seabass,,,European seabass,,species,sp_average,0.452222222,
@@ -353,17 +360,19 @@ NA,Gracilaria seaweeds,,,Gracilaria seaweeds,,species,sp_average,0.85,
 NA,Greasyback shrimp,,,Greasyback shrimp,,species,genus_average,0.372222222,0.797142857
 NA,Green mussel,,,Green mussel,,species,genus_average,0.8,0.5
 NA,Grooved carpet shell,,,Grooved carpet shell,,species,sp_average,0.866666667,
-NA,Groupers nei,,,Groupers nei,,species,sp_average,0.333333333,0.9
-NA,"Groupers, seabasses nei",,,"Groupers, seabasses nei",,species,sp_average,0.333333333,0.9
+NA,Groupers nei,,,Groupers nei,,species,sp_average,0.333333333,
+NA,"Groupers, seabasses nei",,,"Groupers, seabasses nei",,species,sp_average,0.333333333,
 NA,Haddock,,,Haddock,,species,sp_average,0.533333333,
 NA,Importo totale,,,Importo totale,,species,sp_average,0.52084494,
 NA,Indian white prawn,,,Indian white prawn,,species,sp_average,0.4,
 NA,Inverts,,,Inverts,INV,taxon,taxon_average,0.542156863,0.517573745
 NA,Japanese carpet shell,,,Japanese carpet shell,,species,genus_average,0.841666667,0.925
+NA,Japanese kelp,,,Japanese kelp,,species,genus_average,0.933333333,
 NA,John's snapper,,,John's snapper,,species,genus_average,0.433333333,0.5
 NA,Korean mussel,,,Korean mussel,,species,genus_average,0.8,0.5
 NA,Kuruma prawn,,,Kuruma prawn,,species,sp_average,0.444444444,
 NA,Laver (Nori),,,Laver (Nori),,species,sp_average,0.693333333,
+NA,Mangrove red snapper,,,Mangrove red snapper,,species,genus_average,0.433333333,0.5
 NA,Marine crustaceans nei,,,Marine crustaceans nei,,species,sp_average,0.3,
 NA,Marine fishes nei,,,Marine fishes nei,,species,sp_average,0.477777778,
 NA,Marine molluscs nei,,,Marine molluscs nei,,species,sp_average,0.533333333,
@@ -377,10 +386,13 @@ NA,Natantian decapods nei,,,Natantian decapods nei,,species,sp_average,0.5333333
 NA,New Zealand mussel,,,New Zealand mussel,,species,genus_average,0.8,0.5
 NA,Nile tilapia,,,Nile tilapia,,species,sp_average,0.5,
 NA,Non-crustacean invert,,,Non-crustacean invert,NS-INV,taxon,taxon_average,0.571405229,0.517573745
+NA,Nori nei,,,Nori nei,,species,genus_average,0.733333333,
 NA,Octopuses nei,,,Octopuses nei,,species,sp_average,0.533333333,
+NA,Orange-spotted grouper,,,Orange-spotted grouper,,species,genus_average,0.333333333,0.9
 NA,Pacific cupped oyster,,,Pacific cupped oyster,,species,sp_average,0.757142857,
 NA,Penaeus shrimps nei,,,Penaeus shrimps nei,,species,sp_average,0.266666667,
 NA,Perlemoen abalone,,,Perlemoen abalone,,species,sp_average,0.633333333,
+NA,Peruvian calico scallop,,,Peruvian calico scallop,,species,genus_average,0.833333333,0.55
 NA,Pullet carpet shell,,,Pullet carpet shell,,species,sp_average,0.833333333,
 NA,Rainbow trout,,,Rainbow trout,,species,sp_average,0.566666667,
 NA,Razor clams nei,,,Razor clams nei,,species,sp_average,0.833333333,
@@ -397,9 +409,11 @@ NA,Shrimp & prawn,,,Shrimp & prawn,SH,taxon,taxon_average,0.366666667,0.58069852
 NA,Silver carp,,,Silver carp,,species,sp_average,0.533333333,
 NA,Silversides(=Sand smelts) nei,,,Silversides nei,,species,sp_average,0.566666667,
 NA,Smooth mactra,,,Smooth mactra,,species,sp_average,0.766666667,
-NA,Snappers nei,,,Snappers nei,,species,sp_average,0.433333333,0.5
+NA,Snappers nei,,,Snappers nei,,species,genus_average,0.433333333,0.5
 NA,So-iuy mullet,,,So-iuy mullet,,species,sp_average,0.633333333,
 NA,Southern bluefin tuna,,,Southern bluefin tuna,,species,sp_average,0.1,
+NA,Spiny eucheuma,,,Spiny eucheuma,,species,genus_average,0.933333333,
+NA,Spotted coralgrouper,,,Spotted coralgrouper,,species,genus_average,0.333333333,0.9
 NA,Spotted wolffish,,,Spotted wolffish,,species,sp_average,0.533333333,
 NA,Sturgeons nei,,,Sturgeons nei,,species,sp_average,0.566666667,
 NA,Tilapias nei,,,Tilapias nei,,species,sp_average,0.366666667,
@@ -409,6 +423,8 @@ NA,Tuna-like fishes nei,,,Tuna-like fishes nei,,species,sp_average,0.1,
 NA,Tunicate,,,Tunicate,TUN,taxon,taxon_average,0.6,0.1
 NA,Turbot,,,Turbot,,species,sp_average,0.5,
 NA,Urchin,,,Urchin,URCH,taxon,taxon_average,0.5,0.5
+NA,Wakame,,,Wakame,,species,genus_average,0.933333333,
+NA,Warty gracilaria,,,Warty gracilaria,,species,genus_average,0.933333333,
 NA,Whiteleg shrimp,,,Whiteleg shrimp,,species,sp_average,0.374509804,
 NA,Yellowfin tuna,,,Yellowfin tuna,,species,sp_average,0.1,
 NA,Yesso scallop,,,Yesso scallop,,species,sp_average,0.833333333,
