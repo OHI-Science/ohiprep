@@ -170,12 +170,21 @@ Annual mean sea level anomaly rasters are calculated from the monthly data.
 
 ``` {r msla_monthly_to_annual, eval=F}
 
-msla_files <- list.files(file.path(dir_git,'globalprep/prs_slr/v2017/int/msla_monthly_coast'),full.names=T)
+msla_files <- list.files(file.path(dir_git, 'globalprep/prs_slr/v2017/int/msla_monthly_coast'), full.names=T)
 
-### stack all rasters for this year, and calc annual mean, then write as raster
-rast_annual_mean <- stack(msla_files)%>%
-                    calc(mean,na.rm=T)%>%
-                    writeRaster(filename = paste0(file.path(dir_git),'/globalprep/prs_slr/v2017/int/msla_annual_mean/rast_msla_annual_2016.tif'), overwrite=T)
+## stack all rasters for this year, and calc annual mean, then write as raster
+
+registerDoParallel(6)
+
+foreach(yr = c(1993:2016)) %dopar%{
+  
+  files = msla_files[str_detect(msla_files, as.character(yr))]
+  
+  rast_annual_mean <- stack(files)%>%
+                      calc(mean, na.rm=T)%>%
+                      writeRaster(filename = paste0(file.path(dir_git), 
+                                                    '/globalprep/prs_slr/v2017/int/msla_annual_mean/rast_msla_annual_',yr,'.tif'), overwrite=T)
+}
 
 ```
 
@@ -185,7 +194,7 @@ The reference point is the 99.99th quantile of the entire data distribution from
 
 ```{r ref, eval=F}
 
-annual_means <- list.files(file.path(dir_git,'globalprep/prs_slr/v2017/int/msla_annual_mean'),pattern = '*.tif',full.names=T)
+annual_means <- list.files(file.path(dir_git, 'globalprep/prs_slr/v2017/int/msla_annual_mean'), pattern = '*.tif', full.names=T)
 
 ref <- read_csv(file.path(dir_git, 'globalprep/supplementary_information/v2016/reference_points_pressures.csv'))%>% #grab reference value from the supp_info csv
        filter(pressure == "Sea Level Rise")%>%
@@ -199,7 +208,7 @@ Each annual raster is recaled from 0 to 1 using the reference point. If a value 
 
 ```{r rescale, eval=F}
 
-resc_slr <- function(file){
+foreach(file = annual_means) %dopar%{
 
   yr <- substr(file, 96,99)
     raster(file)%>%
@@ -209,8 +218,6 @@ resc_slr <- function(file){
       resample(ocean,method = 'ngb', filename = paste0(file.path(dir_anx),'/prs_slr/v2017/output/slr_',yr,'.tif'),overwrite=T)
 
 }
-
-resc_slr(annual_means)
 
 ```
 
