@@ -30,7 +30,7 @@ This process is completed entirely within this script. The raw data is downloade
 
 # Updates from previous assessment
 
-One additional year of data, 2016, was added.
+One additional year of data, 2016, was added. In addition we are using a better mask to eliminate cells farther than 3nm offshore. This change requires a rerun of all year within the dataset.
 
 ***
 
@@ -60,9 +60,13 @@ knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'figs/',message 
 # library(provRmd)
 # prov_setup()
 
+library(tidyverse)
 library(raster)
 library(RColorBrewer)
 library(maps)
+library(parallel)
+library(foreach)
+library(doParallel)
 
 #define github file path
 dir_git <- '~/github/ohiprep'
@@ -73,7 +77,7 @@ source('~/github/ohiprep/src/R/common.R')
 dir_anx <- file.path(dir_M, 'git-annex/globalprep')
 
 #define raw data file path (non-NCEAS folks will not have access to this data)
-dir_anx_aviso <- file.path(dir_M, 'git-annex/globalprep/_raw_data/AVISO_slr/d2017')
+dir_anx_aviso <- file.path(dir_M, 'git-annex/globalprep/_raw_data/AVISO_slr')
 
 ### set up proj4string options: WGS84
 p4s_wgs84 <- '+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'
@@ -99,8 +103,10 @@ All NetCDF files for each month are rasterized and all non-coastal bordering cel
 ```{r clip}
 
 #list all netCDF files
-nc_files <- list.files(file.path(dir_anx_aviso),
-                       full.names = TRUE,pattern='.nc')
+nc_files <- c(list.files(file.path(dir_anx_aviso, 'd2017'),
+                       full.names = TRUE, pattern = '.nc'),
+              list.files(file.path(dir_anx_aviso, 'd2016/msla_monthly_mean'),
+                      full.names = TRUE, pattern = '.nc'))
 ```
 
 The raw monthly data looks like this:
@@ -115,7 +121,8 @@ Since we are only interested in the increase in sea level near the coasts, we ap
 
 ```{r plot_mask}
 
-s <- raster(file.path(dir_git,'globalprep/prs_slr/v2016/int/rast_3nm_mask.tif'))
+## 3nm offshore raster to select only nearshore cells.
+s <- raster(file.path(dir_git,'globalprep/prs_slr/v2016/int/rast_3nm_mask_fasterize.tif'))
 maps::map("world",fill=TRUE,col = "gray",border = NA)
 plot(s,col='red',add=T,legend=F)
 
@@ -132,14 +139,16 @@ The output is saved in the folder `int/msla_monthly_coast`
 
 ```{r, eval=F}
 
-## Function that rotates each monthly file, sets the long/lat projection, and keeps only coastal cells - saved to GitHub
-    
-months_coast <- function(x){
+registerDoParallel(10)
+
+## parallel forloop function that rotates each monthly file, sets the long/lat projection, and keeps only coastal cells - saved to GitHub
+
+foreach(file = nc_files) %dopar% {
   
-  m_yr <- substr(x,90,97)
+  m_yr <- substr(file,nchar(file)-10,nchar(file)-3)
     
   #read in month raster
-   r <- raster(x)%>%
+   r <- raster(file)%>%
           rotate()%>%
         disaggregate(fact = 8)
   
@@ -151,9 +160,6 @@ months_coast <- function(x){
   writeRaster(r_mask,filename=paste0(dir_git,'/globalprep/prs_slr/v2017/int/msla_monthly_coast/msla_monthly_coast_',m_yr,'.tif'),overwrite=T)
 
 }
-
-#apply the clipping function to all files
-lapply(nc_files,months_coast)
 
 ```
 
