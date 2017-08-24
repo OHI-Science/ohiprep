@@ -9,11 +9,12 @@ library(maptools)
 library(sp)
 library(rgdal)
 library(dplyr)
-
+library(gpclib)
+gpclibPermit()
 
 ### mollweide CRS
 ## reading in the data
-regions_mol <- readOGR(dsn="/var/data/ohi/git-annex/Global/NCEAS-Regions_v2014/data", layer="sp_mol")
+regions_mol <- readOGR(dsn="/home/shares/ohi/git-annex/Global/NCEAS-Regions_v2014/data", layer="sp_mol")
 
 old <- regions_mol@data$rgn_id
 regions_mol@data$rgn_id_ccamlr <- ifelse(regions_mol@data$sp_type %in% c("eez-ccamlr", "land-ccamlr"), 
@@ -41,11 +42,11 @@ data <- regions_mol@data  #saving data to merge with unionized polygons
 #writeOGR(regions_mol, dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/tmp", "spatial_file_pre_union", driver="ESRI Shapefile", overwrite_layer=TRUE)
 
 # # tried this approach but there was an error - resorting to Arc
-# rgn_mol_union <- unionSpatialPolygons(regions_mol, regions_mol@data$rgn_id_ccamlr_rgn_type)
+ rgn_mol_union <- unionSpatialPolygons(regions_mol, regions_mol@data$rgn_id_ccamlr_rgn_type)
 
 ### Now merging all these data with the output file from Arc
-merge_shape <- readOGR(dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/tmp", layer="spatial_file_post_union")
-setdiff(merge_shape@data$union, data$union)
+#rgn_mol_union <- readOGR(dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/tmp", layer="spatial_file_post_union")
+setdiff(rgn_mol_union@data$union, data$union)
 setdiff(data$union, merge_shape$union)
 
 data_tmp <- data %>%
@@ -53,16 +54,16 @@ data_tmp <- data %>%
   group_by(sp_type, rgn_type, rgn_id, rgn_name, rgn_key, rgn_id_ccamlr, union) %>%
   summarize(area_km2_v2 = sum(area_km2))  %>% # checked the areas and they looked good (highly correlated but slightly different), will just go with arcgis areas
   select(sp_type, rgn_type, rgn_id, rgn_name, rgn_key, rgn_id_ccamlr, union)
-#merge_shape@data$area3 <- gArea(merge_shape, byid=TRUE) # this nearly perfectly matched the output from arcgis
+#rgn_mol_union@data$area3 <- gArea(rgn_mol_union, byid=TRUE) # this nearly perfectly matched the output from arcgis
   
-merge_shape@data <- left_join(merge_shape@data, data_tmp, by="union")
-merge_shape@data <- dplyr::select(merge_shape@data, sp_type, rgn_type, rgn_id, rgn_name, rgn_key, rgn_id_ccamlr, area_km2=Shape_Area)
-merge_shape@data$area_km2 = merge_shape@data$area_km2/1000000
+rgn_mol_union@data <- left_join(rgn_mol_union@data, data_tmp, by="union")
+rgn_mol_union@data <- dplyr::select(rgn_mol_union@data, sp_type, rgn_type, rgn_id, rgn_name, rgn_key, rgn_id_ccamlr, area_km2=Shape_Area)
+rgn_mol_union@data$area_km2 = rgn_mol_union@data$area_km2/1000000
 
 plot(data_tmp$Shape_Area, data_tmp$area_km2_v2)
 data_tmp$area3 <- gArea(merge_shape, byid=TRUE)
 
-#writeOGR(merge_shape, dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/data", "regions_mol", driver="ESRI Shapefile")
+#writeOGR(rgn_mol_union, dsn="/var/data/ohi/git-annex/globalprep/spatial/v2015/data", "regions_mol", driver="ESRI Shapefile")
 
 #### checking on data, and changing variable names to more sensible names:
 
