@@ -32,6 +32,7 @@
 "eez-inland",241,"Azerbaijan","AZE","eez-inland",255,"DISPUTED","XD","AZE",173,"Azerbaijan",16.3160080417,8.38233977816,78944.3073329,255,"255_eez-inland"
 "eez-inland",242,"Kazakhstan","KAZ","eez-inland",255,"DISPUTED","XD","nan",173,"nan",28.0822815749,13.469884605,119066.344175,255,"255_eez-inland"
 "eez-inland",243,"Turkmenistan","TKM","eez-inland",255,"DISPUTED","XD","nan",173,"nan",24.4790673268,8.18124907579,77786.9690718,255,"255_eez-inland"
+"fao",1018,"Arctic Sea","XARC","fao",260,"Arctic Sea","XARC","nan",-21474836,"nan",587.625796586,2142.47845571,2532621.52266,260,"260_fao"
 "land",87,"Trindade","BRA","land",171,"Brazil","BRA","Trindade",122,"Brazil",0.224027984308,0.000993508371631,11.4731546475,171,"171_land"
 "land",109,"Galapagos Islands","ECU","land",137,"Ecuador","ECU","Galapagos Islands",103,"Ecuador",13.2112939571,0.654879149446,8060.44443545,137,"137_land"
 "land",137,"Ecuador","ECU","land",137,"Ecuador","ECU","ECU",103,"Ecuador",45.043941824,20.1069093412,247349.76706,137,"137_land"
@@ -58,3 +59,4 @@
 "land-noeez",241,"Azerbaijan","AZE","land-noeez",255,"DISPUTED","XD","AZE",173,"Azerbaijan",26.5610102921,9.11488991134,86052.5390871,255,"255_land-noeez"
 "land-noeez",242,"Kazakhstan","KAZ","land-noeez",255,"DISPUTED","XD","nan",173,"nan",151.951578559,329.697668239,2723263.25269,255,"255_land-noeez"
 "land-noeez",243,"Turkmenistan","TKM","land-noeez",255,"DISPUTED","XD","nan",173,"nan",55.338445711,49.1480028155,471658.335491,255,"255_land-noeez"
+"fao",1018,"Arctic Sea","XARC","fao",260,"Arctic Sea","XARC","nan",-21474836,"nan",587.625796586,2142.47845571,2532621.52266,260,"260_fao"

@@ -2,10 +2,11 @@
 
 library(git2r)
 library(devtools)
-devtools::install_github('hadley/ggplot2')
+library(ggplot2)
+#devtools::install_github('hadley/ggplot2')
 
 
-change_plot = function(repo = "ohi-global", scenario="eez2014", commit="previous", 
+change_plot = function(repo = "ohi-global", scenario="eez", scenario_year = "2016", commit="previous", 
                        fileSave, save_csv=FALSE, save_png=FALSE){
   
   repo2 <- sprintf("../%s", repo)
@@ -24,13 +25,13 @@ change_plot = function(repo = "ohi-global", scenario="eez2014", commit="previous
   path = paste0(scenario, '/scores.csv')
   
   data_old <- read_git_csv(paste(org, repo, sep="/"), commit2, path) %>%
-    dplyr::select(goal, dimension, region_id, old_score=score)
+    dplyr::select(year, goal, dimension, region_id, old_score=score)
   
   data_new <- read.csv(file.path(path)) %>%
-    dplyr::left_join(data_old, by=c('goal', 'dimension', 'region_id')) %>%
+    dplyr::left_join(data_old, by=c('year', 'goal', 'dimension', 'region_id')) %>%
     dplyr::mutate(change = score-old_score)
   
-  p <- ggplot2::ggplot(data_new, aes(x=goal, y=change, color=dimension)) +
+  p <- ggplot2::ggplot(filter(data_new, year==scenario_year), aes(x=goal, y=change, color=dimension)) +
     #geom_point(shape=19, size=1) +
     theme_bw() + 
     labs(title=paste(scenario, commit, sep=" "), y="Change in score", x="") +
