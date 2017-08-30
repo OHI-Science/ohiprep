@@ -2,7 +2,7 @@
 
 These data are used in the mariculture model and as the intertidal habitat destruction pressure.
 
-See full data prep details [here](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/mar_prs_population/v2016/data_prep_coastal_pop.R).
+See full data prep details [here](https://github.com/OHI-Science/ohiprep/blob/master/globalprep/mar_prs_population/v2017/data_prep_coastal_pop.R).
 
 If using these data, please see our [citation policy](http://ohi-science.org/citation-policy/).
 
