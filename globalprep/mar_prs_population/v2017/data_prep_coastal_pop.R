@@ -6,6 +6,7 @@ library(ohicore) # devtools::install_github('ohi-science/ohicore') # may require
 library(raster)
 library(sp)
 library(stringr)
+library(dplyr)
 
 source('src/R/common.R')
 
@@ -59,23 +60,40 @@ abline(0,1, col="red")
 library(sf)
 library(fasterize)
 
+
 # eez raster
-eez <- raster(file.path(dir_M, "git-annex/globalprep/spatial/v2017/regions_eez_with_fao_ant.tif"))
+eez_raster <- raster(file.path(dir_M, "git-annex/globalprep/spatial/v2017/regions_eez_with_fao_ant.tif"))
 
-# create the 25 mile inland raster
+# need to add in Fiji...which appears to get cut
+# include all of Fiji land which all falls within the 50 mile boundary
+fiji <- sf::read_sf(dsn = file.path(dir_M, "git-annex/globalprep/spatial/v2017"),
+                              layer ="regions_2017_update") %>%
+  filter(rgn_type == "land" & rgn_id==18) %>%
+  select(rgn_id, geometry)
+
+# create the 25 mile inland raster and add Fiji
 inland <- sf::read_sf(dsn = file.path(dir_M, "git-annex/Global/NCEAS-Regions_v2014/data"),
-                                 layer = "sp_inland25mi_gcs")
+                                 layer = "sp_inland25mi_gcs") %>%
+  select(rgn_id, geometry)
 
-inland <- st_transform(inland, sp::proj4string(eez))
+inland <- st_transform(inland, st_crs(fiji))
 
-inland_raster <- fasterize::fasterize(inland, eez, field = 'rgn_id')
+inland <- rbind(inland, fiji)
+
+# # save shapefile for future reference
+# st_write(inland, dsn = file.path(dir_M, "git-annex/globalprep/spatial/v2017",
+#                                      layer = "EEZ_inland_50mi"), 
+#          driver="ESRI Shapefile")
+
+
+inland_raster <- fasterize::fasterize(inland, eez_raster, field = 'rgn_id')
 
 tmp <- raster::freq(inland_raster) 
 
 tmp2 <- data.frame(tmp) %>%
   dplyr::arrange(value)
 
-raster::merge(eez, inland_raster, filename=file.path(dir_M, 
+raster::merge(eez_raster, inland_raster, filename=file.path(dir_M, 
                       "git-annex/globalprep/mar_prs_population/v2017/int/eez_25mi_inland.tif"))
 
 
@@ -112,43 +130,4 @@ tmp <- coastal_pop2 %>%
 
 plot(log(tmp$popsum), log(tmp$popsum_old))
 abline(0,1, col="red")
-
-##############################################################################=
-### Pressure: hd_intertidal (coastal population density, proxy for habitat destruction)
-### rescale population from zero to one for pressures purposes -----
-##############################################################################=
-### Rescaling population 
-# for each year, find max density; take log+1 of it; mutate that into a new column
-# for each region for each year, take log+1 of density, divide by (max * 110%); mutate that into rescaled pop
-
-pop_rescaled <- read.csv(file.path(goal, scenario, 'int/rgn_pop_dens_adjusted_2005-2015_rgn18added.csv'), stringsAsFactors = FALSE) %>%
-  select(rgn_id, rgn_name, year, pop, adjusted, area_km2, pop_per_km2) %>%
-  mutate(log_dens = log(pop_per_km2 + 1)) %>%
-#  mutate(scalar = quantile(log_dens, c(0.99))) %>%
-  mutate(scalar = max(log_dens)) %>%
-  mutate(dens_rescaled = log_dens/scalar) %>%
-  mutate(dens_rescaled = ifelse(dens_rescaled>1, 1, dens_rescaled))
-
-for(data_year in 2011:2015){
-  
-  scenario_year <- data_year + 1
-  
-  tmp <- pop_rescaled[pop_rescaled$year == data_year, ]
-  
-  tmp <- tmp %>%
-    select(rgn_id, pressure_score = dens_rescaled)
-  
-  write.csv(tmp, file.path(goal, scenario, sprintf("output/prs_pop_density_%s.csv", scenario_year)), row.names=FALSE)
-}
-
-
-##############################################################################=
-### Mariculture population data
-##############################################################################=
-
-pop_mar <- read.csv(file.path(goal, scenario, 'int/rgn_pop_dens_adjusted_2005-2015_rgn18added.csv'), stringsAsFactors = FALSE) %>%
-  select(rgn_id, year, popsum=pop) 
-
-
-write.csv(pop_mar, file.path(goal, scenario, "output/mar_pop_25mi.csv"), row.names=FALSE)
 

@@ -244,8 +244,8 @@ foreach(file = files)%dopar% {
   yr <- substr(file,nchar(file)-7,nchar(file)-4)
   
   raster(file)%>%
-  resample(ocean,method = 'ngb')%>%
-  mask(ocean,filename = paste0(oagit_dir,'/v2017/output/oa_prs_layer_',yr,'.tif'),overwrite=T)
+  resample(ocean, method = 'ngb')%>%
+  mask(ocean, filename = paste0(oagit_dir, '/v2017/output/oa_prs_layer_',yr,'.tif'), overwrite=TRUE)
   
 }
 

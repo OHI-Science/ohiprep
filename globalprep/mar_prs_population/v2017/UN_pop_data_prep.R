@@ -1,3 +1,8 @@
+#################################################
+## UN population was to check that the 
+## population data processing was done correctly
+#################################################
+
 library(ohicore)
 library(dplyr)
 library(tidyr)
