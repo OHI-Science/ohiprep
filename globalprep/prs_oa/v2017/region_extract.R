@@ -9,27 +9,31 @@ source('../ohiprep/src/R/common.R')
 library(raster)
 library(rgdal)
 library(dplyr)
+library(sf)
 
 # raster/zonal data
 oa_loc <- file.path(dir_M, "git-annex/globalprep/prs_oa/v2017/output")
 
-zones <- raster(file.path(dir_M, "git-annex/Global/NCEAS-Regions_v2014/data/sp_mol_raster_1km/sp_mol_raster_1km.tif"))  # raster data
-rgn_data <- read.csv(file.path(dir_M, "git-annex/Global/NCEAS-Regions_v2014/data/sp_mol_raster_1km", 'regionData.csv'))    # data for sp_id's used in raster
+zones <- raster(file.path(dir_M, "git-annex/globalprep/spatial/v2017/regions_eez_with_fao_ant.tif"))  # raster data
+
+rgn_data <- read_sf(file.path(dir_M, "git-annex/globalprep/spatial/v2017"), "regions_2017_update")    # data for sp_id's used in raster
+rgn_data <- rgn_data %>%
+  dplyr::filter(rgn_type %in% c("eez", "fao")) %>%
+  dplyr::select(rgn_name, rgn_type, rgn_ant_id) %>%
+  st_set_geometry(NULL) %>%
+  data.frame()
+
 
 # save location
 save_loc <- "globalprep/prs_oa/v2017/output"
 
 #### Acid ----
-# read in acidification data for 2011 - 2016
+# read in acidification data
 
-rasts <- c(list.files(file.path(dir_M, "git-annex/globalprep/prs_oa/v2016/output"),full.names=T),
-          file.path(dir_M,"git-annex/globalprep/prs_oa/v2017/output/oa_prs_layer_2016.tif")) [2:7]
+rasts <- c(list.files(file.path(dir_M, "git-annex/globalprep/prs_oa/v2017/output"),full.names=T))
 
-pressure_stack <- stack()
-for(raster in rasts){ #raster="oa_interpolated_cells.tif"
-  tmp <- raster(raster)
-  pressure_stack <- stack(pressure_stack, tmp)
-}
+plot(raster(rasts[60]), col=cols,box=F,axes=F, main = 'Rescaled Ωaragonite layer for 2016')
+pressure_stack <- stack(rasts)
 
 ## some exploring:
 plot(pressure_stack[[6]], col=rev(heat.colors(255)))
@@ -37,23 +41,32 @@ click(pressure_stack[[6]])
 
 # extract data for each region:
 regions_stats <- zonal(pressure_stack,  zones, fun="mean", na.rm=TRUE, progress="text")
-regions_stats2 <- data.frame(regions_stats)
-setdiff(regions_stats2$zone, rgn_data$sp_id) #should be none
-setdiff(rgn_data$sp_id, regions_stats2$zone) #should be none
+write.csv(regions_stats, "globalprep/prs_oa/v2017/int/region_stats.csv", row.names=FALSE)
 
-data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="sp_id", by.y="zone") %>%
-  gather("year", "pressure_score", starts_with("oa")) 
+regions_stats2 <- data.frame(regions_stats)
+setdiff(regions_stats2$zone, rgn_data$rgn_ant_id) #should be none
+setdiff(rgn_data$rgn_ant_id, regions_stats2$zone) #should be none
+
+data <- merge(rgn_data, regions_stats2, all.y=TRUE, by.x="rgn_ant_id", by.y="zone") %>%
+  tidyr::gather("year", "pressure_score", starts_with("oa")) %>%
+  filter(year != "oa_interpolated_cells")
 
 oa_data <- data %>%
     mutate(year=as.numeric(gsub('oa_prs_layer_', '', year)))
 
-write.csv(oa_data, file.path(save_loc, "acid.csv"), row.names=FALSE)
-s
+write.csv(oa_data, "globalprep/prs_oa/v2017/int/acid.csv", row.names=FALSE)
+
+final <- oa_data %>%
+  dplyr::filter(rgn_ant_id <= 250) %>%
+  dplyr::select(rgn_id = rgn_ant_id, year, pressure_score)
+
+write.csv(oa_data, "globalprep/prs_oa/v2017/output/acid.csv", row.names=FALSE)
 
 ### try visualizing the data using googleVis plot
 library(googleVis)
 plotData <- oa_data %>%
-  filter(sp_type == "eez") %>%
+  filter(rgn_type == "eez",
+         rgn_ant_id <= 250) %>%
   dplyr::select(rgn_name, year, pressure_score)
 
 Motion=gvisMotionChart(plotData, 
@@ -61,7 +74,7 @@ Motion=gvisMotionChart(plotData,
                        timevar="year")
 plot(Motion)
 
-print(Motion, file=file.path(save_loc, 'acid.html'))
+print(Motion, file= 'globalprep/prs_oa/v2017/int/acid.html')
 
 
 ##### May come back to this, but, gapfilling should be the same as last year!

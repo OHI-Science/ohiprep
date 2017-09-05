@@ -237,16 +237,18 @@ All pressure layers need to be resampled to 1km^2^ cell resolution. We have a te
 
 ```{r resample,eval=F}
 
-files <- list.files(file.path(oagit_dir,'v2017/int/annual_avg_moll_rescaled_int'),full.names=T)
+ocean <- raster(file.path(dir_M, "git-annex/globalprep/spatial/v2017/ocean.tif"))
+
+files <- list.files(file.path(oagit_dir,'v2017/int/annual_avg_moll_rescaled_int'),
+                    full.names = TRUE)
 
 foreach(file = files)%dopar% {
-
+#for(file in files){ # file=files[1] # for some reason cores weren't all working for me.  Did it the long way!
   yr <- substr(file,nchar(file)-7,nchar(file)-4)
-  
+  cat(yr)
   raster(file)%>%
   resample(ocean, method = 'ngb')%>%
   mask(ocean, filename = paste0(oagit_dir, '/v2017/output/oa_prs_layer_',yr,'.tif'), overwrite=TRUE)
-  
 }
 
 ```
