@@ -2,7 +2,7 @@
 
 There are two types of fishing pressure layers used in the Ocean Health Index - Commercial and Artisanal
 
-The dataset `taxa_gear_types.csv` was created in the Impact Acceleration repo. This dataset links each taxa and gear type in the SAUP dataset to our classifications:
+The dataset `taxa_gear_types.csv` was created in the [Impact Acceleration repo](https://github.com/OHI-Science/impact_acceleration/tree/master/stressors/comm_fish). This dataset links each taxa and gear type in the SAUP dataset to our classifications:
 - demersal destructive
 - demersal nondestructive high bycatch
 - demersal nondestructive low bycatch
