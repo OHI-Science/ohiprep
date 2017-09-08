@@ -49,7 +49,7 @@ regions_stats2 <- regions_stats2 %>%
   gather("year", "pressure_score", -1) %>%
   mutate(year = as.numeric(as.character(substring(year, 5, 8))))
 
-write.csv(new, "globalprep/prs_slr/v2017/output/slr.csv", row.names = FALSE)
+write.csv(regions_stats2, "globalprep/prs_slr/v2017/output/slr.csv", row.names = FALSE)
 
 ## visualize data
 library(googleVis)
