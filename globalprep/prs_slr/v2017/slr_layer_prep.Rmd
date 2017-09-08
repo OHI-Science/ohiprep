@@ -67,6 +67,7 @@ library(maps)
 library(parallel)
 library(foreach)
 library(doParallel)
+library(stringr)
 
 #define github file path
 dir_git <- '~/github/ohiprep'
@@ -89,7 +90,7 @@ cols      = rev(colorRampPalette(brewer.pal(9, 'Spectral'))(255)) # rainbow colo
 mollCRS <- CRS('+proj=moll')
 
 # Read in ocean raster with cells at 1km. Use this as a template for resampling. This is held on an NCEAS server and folks without access will not be able to use this mask.
-ocean = raster(file.path(dir_M, 'git-annex/globalprep/spatial/ocean.tif'))
+ocean = raster(file.path(dir_M, 'git-annex/globalprep/spatial/v2017/ocean.tif'))
 ```
 
 
@@ -113,7 +114,7 @@ The raw monthly data looks like this:
 
 ```{r plot_raw}
 
-plot(raster(nc_files[1]),col=cols,axes=F, main = "Sea Level Rise (m) January 2016")
+plot(raster(nc_files[1]), col=cols, axes=F, main = "Sea Level Rise (m) January 2016")
 
 ```
 
@@ -155,9 +156,9 @@ foreach(file = nc_files) %dopar% {
   #define projection of the raster before reprojecting
   projection(r) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
   
-  r_mask <- mask(r,s,progress='text')
+  r_mask <- mask(r, s, progress='text')
 
-  writeRaster(r_mask,filename=paste0(dir_git,'/globalprep/prs_slr/v2017/int/msla_monthly_coast/msla_monthly_coast_',m_yr,'.tif'),overwrite=T)
+  writeRaster(r_mask, filename=paste0(dir_git, '/globalprep/prs_slr/v2017/int/msla_monthly_coast/msla_monthly_coast_', m_yr, '.tif'), overwrite=TRUE)
 
 }
 
@@ -170,7 +171,7 @@ Annual mean sea level anomaly rasters are calculated from the monthly data.
 
 ``` {r msla_monthly_to_annual, eval=F}
 
-msla_files <- list.files(file.path(dir_git, 'globalprep/prs_slr/v2017/int/msla_monthly_coast'), full.names=T)
+msla_files <- list.files(file.path(dir_git, 'globalprep/prs_slr/v2017/int/msla_monthly_coast'), full.names=TRUE)
 
 ## stack all rasters for this year, and calc annual mean, then write as raster
 
@@ -181,9 +182,9 @@ foreach(yr = c(1993:2016)) %dopar%{
   files = msla_files[str_detect(msla_files, as.character(yr))]
   
   rast_annual_mean <- stack(files)%>%
-                      calc(mean, na.rm=T)%>%
+                      calc(mean, na.rm = TRUE)%>%
                       writeRaster(filename = paste0(file.path(dir_git), 
-                                                    '/globalprep/prs_slr/v2017/int/msla_annual_mean/rast_msla_annual_',yr,'.tif'), overwrite=T)
+                                                    '/globalprep/prs_slr/v2017/int/msla_annual_mean/rast_msla_annual_',yr,'.tif'), overwrite = TRUE)
 }
 
 ```
@@ -194,12 +195,14 @@ The reference point is the 99.99th quantile of the entire data distribution from
 
 ```{r ref, eval=F}
 
-annual_means <- list.files(file.path(dir_git, 'globalprep/prs_slr/v2017/int/msla_annual_mean'), pattern = '*.tif', full.names=T)
+annual_means <- list.files(file.path(dir_git, 'globalprep/prs_slr/v2017/int/msla_annual_mean'), pattern = '*.tif', full.names=TRUE)
 
-ref <- read_csv(file.path(dir_git, 'globalprep/supplementary_information/v2016/reference_points_pressures.csv'))%>% #grab reference value from the supp_info csv
-       filter(pressure == "Sea Level Rise")%>%
-       .$ref_point%>%
+ref <- read_csv(file.path(dir_git, 'globalprep/supplementary_information/v2016/reference_points_pressures.csv')) %>% #grab reference value from the supp_info csv
+       filter(pressure == "Sea Level Rise") %>%
+       .$ref_point %>%
         as.numeric()
+
+
 ```     
 
 ## Rescale 
@@ -209,13 +212,12 @@ Each annual raster is recaled from 0 to 1 using the reference point. If a value 
 ```{r rescale, eval=F}
 
 foreach(file = annual_means) %dopar%{
-
-  yr <- substr(file, 96,99)
+  yr <- str_sub(file, -8,-5)
     raster(file)%>%
-      calc(fun=function(x){ifelse(x<0,0,x)})%>% #set all negative values to 0
-      calc(fun=function(x){ifelse(x>ref,1,x/ref)})%>%
-      projectRaster(crs = mollCRS,over=T)%>%
-      resample(ocean,method = 'ngb', filename = paste0(file.path(dir_anx),'/prs_slr/v2017/output/slr_',yr,'.tif'),overwrite=T)
+      calc(fun=function(x){ifelse(x<0, 0, x)}) %>% #set all negative values to 0
+      calc(fun=function(x){ifelse(x>ref, 1, x/ref)}) %>%
+      projectRaster(crs = mollCRS, over=TRUE) %>%
+      resample(ocean, method = 'ngb', filename = file.path(dir_anx, sprintf('/prs_slr/v2017/output/slr_%s.tif', yr)), overwrite=TRUE)
 
 }
 
@@ -227,8 +229,8 @@ foreach(file = annual_means) %dopar%{
 
 r <- raster(file.path(dir_anx,'prs_slr/v2017/output/slr_2016.tif'))
 
-plot(ocean, col='cornsilk2', axes=F, box=F, main='Sea Level Rise Pressure 2016', legend=F)		
-plot(r,col=cols,axes=F,box=F,add=T)
+plot(ocean, col='cornsilk2', axes=FALSE, box=FALSE, main='Sea Level Rise Pressure 2016', legend=FALSE)		
+plot(r, col=cols, axes=FALSE, box=FALSE, add=TRUE)
 
 rasterVis::histogram(r, main ='Sea Level Pressure 2016')
 

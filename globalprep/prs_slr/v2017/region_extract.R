@@ -13,57 +13,55 @@ library(raster)
 library(rgdal)
 library(sp)
 library(dplyr)
+library(sf)
 
 # raster/zonal data
 slr_loc <- file.path(dir_M, "git-annex/globalprep/prs_slr/v2017/output")
 
-zones <- raster(file.path(dir_M, "git-annex/globalprep/spatial/d2014/data/rgn_mol_raster_1km/sp_mol_raster_1km.tif"))  # raster data
+zones <- raster(file.path(dir_M, "git-annex/globalprep/spatial/v2017/regions_eez_with_fao_ant.tif"))  # raster data
 
-rgn_data <- read.csv(file.path(dir_M, "git-annex/globalprep/spatial/d2014/data/rgn_mol_raster_1km/regionData.csv"))    # data for sp_id's used in raster
+rgn_data <- read_sf(file.path(dir_M, 'git-annex/globalprep/spatial/v2017'), 'regions_2017_update') %>%
+  st_set_geometry(NULL) %>%
+  dplyr::filter(rgn_type == "eez") %>%
+  dplyr::select(rgn_id = rgn_ant_id, rgn_name)
+
 
 # save location
 save_loc <- "globalprep/prs_slr/v2017"
 
 # read in raster files
 rasts <- list.files(slr_loc, full.names = TRUE)
+rasts <- rasts[!grepl(".aux", rasts)]
 
-rast_slr <- raster(rasts)
+stack_slr <- stack(rasts)
 
 # extract data for each region:
-regions_stats <- zonal(rast_slr,  zones, fun="mean", na.rm=TRUE, progress="text")
+regions_stats <- zonal(stack_slr,  zones, fun="mean", na.rm=TRUE, progress="text")
+
+
 regions_stats2 <- data.frame(regions_stats)
-setdiff(regions_stats2$zone, rgn_data$ant_id) # antarctica regions are in there, makes sense....no land
-setdiff(rgn_data$ant_id, regions_stats2$zone) # 213 is in there, that makes sense (Antarctica)
+setdiff(regions_stats2$zone, rgn_data$rgn_id) # High Seas regions are in there, makes sense....no land
+setdiff(rgn_data$rgn_id, regions_stats2$zone)
 
-
-# join with older data
-detach("package:rgdal", unload=TRUE)
-detach("package:raster", unload=TRUE)
-detach("package:sp", unload=TRUE)
-old <- read.csv('globalprep/prs_slr/v2016/output/slr_updated.csv')
-new <- regions_stats2 %>%
-  dplyr::mutate(year = 2017) %>%
-  dplyr::select(rgn_id = zone, year, pressure_score = mean) %>%
-  filter(!is.na(pressure_score)) %>% #high seas and antarctica data
-  filter(rgn_id <= 255)
-new <- rbind(new, old)
-summary(new)
+regions_stats2 <- regions_stats2 %>%
+  rename(rgn_id = zone) %>%
+  filter(rgn_id <=250) %>%
+  gather("year", "pressure_score", -1) %>%
+  mutate(year = as.numeric(as.character(substring(year, 5, 8))))
 
 write.csv(new, "globalprep/prs_slr/v2017/output/slr.csv", row.names = FALSE)
 
 ## visualize data
 library(googleVis)
 
-data <- merge(rgn_data, new, all.y = TRUE, by="rgn_id")
-
-
-plotData <- data %>%
-  dplyr::select(rgn_nam, year, pressure_score) %>%
-  dplyr::arrange(rgn_nam, year) %>%
+plotData <- regions_stats2%>%
+  left_join(rgn_data)%>%
+  dplyr::select(rgn_name, year, pressure_score) %>%
+  dplyr::arrange(rgn_name, year) %>%
   data.frame()
 
 Motion=gvisMotionChart(plotData, 
-                       idvar="rgn_nam", 
+                       idvar="rgn_name", 
                        timevar="year")
 plot(Motion)
 
