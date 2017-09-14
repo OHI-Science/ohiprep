@@ -1,0 +1,105 @@
+rgn_id,rgn_name,score
+14,Taiwan,4.47
+15,Philippines,3.6
+16,Australia,5.1
+20,South Korea,4.57
+24,Cambodia,3.32
+25,Thailand,4.38
+37,Mauritius,3.92
+40,Sri Lanka,3.81
+41,Mozambique,2.91
+42,Madagascar,2.99
+43,Kenya,3.59
+47,Yemen,2.44
+48,Oman,3.78
+50,Saudi Arabia,3.82
+51,Kuwait,3.33
+52,Bahrain,3.89
+53,Pakistan,2.89
+54,United Arab Emirates,4.49
+56,Cape Verde,3.55
+59,Belgium,4.54
+61,Tunisia,3.5
+62,Morocco,3.81
+64,Mauritania,2.64
+65,Gambia,3.12
+66,Senegal,3.14
+68,Malta,4.25
+69,Latvia,3.97
+70,Estonia,4.23
+71,Bulgaria,4.14
+72,Romania,3.78
+73,Russia,4.15
+74,Georgia,3.7
+75,Ukraine,3.5
+76,Turkey,4.14
+78,Lebanon,3.37
+79,Israel,3.84
+80,Greece,4.51
+81,Cyprus,4.02
+82,Albania,3.35
+84,Algeria,3.07
+96,Sierra Leone,2.69
+99,Benin,2.84
+101,Namibia,3.59
+102,South Africa,4.01
+106,Ghana,3.04
+115,Dominican Republic,3.62
+124,Barbados,3.91
+126,Trinidad and Tobago,3.67
+129,Panama,4.37
+130,Costa Rica,4.22
+131,Nicaragua,3.44
+132,Colombia,3.83
+133,Honduras,3.49
+134,El Salvador,3.28
+135,Mexico,4.54
+136,Guatemala,3.51
+137,Ecuador,3.91
+138,Peru,4.04
+139,Venezuela,3.28
+143,Iceland,4.5
+162,New Zealand,4.68
+163,United States,5.12
+166,Jamaica,3.71
+171,Brazil,4.49
+172,Argentina,4.05
+173,Uruguay,3.61
+174,Finland,4.4
+175,Denmark,4.43
+176,Germany,5.28
+177,Netherlands,4.64
+178,Poland,4.11
+179,France,5.32
+180,United Kingdom,5.2
+181,Ireland,4.53
+182,Spain,5.43
+183,Portugal,4.74
+184,Italy,4.99
+186,Montenegro,3.68
+187,Croatia,4.42
+188,Slovenia,4.18
+189,Lithuania,3.91
+190,Qatar,4.08
+191,Iran,3.43
+196,Nigeria,2.82
+197,Cameroon,2.88
+198,Gabon,3.06
+199,Democratic Republic of the Congo,2.64
+202,Tanzania,3.45
+203,India,4.18
+204,Bangladesh,2.89
+206,Malaysia,4.5
+207,Vietnam,3.78
+208,Singapore,4.85
+209,China,4.720741935460603
+210,Japan,5.26
+214,Egypt,3.64
+215,Jordan,3.63
+216,Indonesia,4.16
+218,Canada,4.97
+222,Sweden,4.55
+223,Norway,4.64
+224,Chile,4.06
+232,Bosnia and Herzegovina,3.12
+255,Azerbaijan,3.7
