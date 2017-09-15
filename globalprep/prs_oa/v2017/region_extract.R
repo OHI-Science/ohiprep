@@ -56,11 +56,11 @@ oa_data <- data %>%
 
 write.csv(oa_data, "globalprep/prs_oa/v2017/int/acid.csv", row.names=FALSE)
 
-final <- oa_data %>%
+final <- read.csv("globalprep/prs_oa/v2017/int/acid.csv") %>%
   dplyr::filter(rgn_ant_id <= 250) %>%
   dplyr::select(rgn_id = rgn_ant_id, year, pressure_score)
 
-write.csv(oa_data, "globalprep/prs_oa/v2017/output/acid.csv", row.names=FALSE)
+write.csv(final, "globalprep/prs_oa/v2017/output/acid.csv", row.names=FALSE)
 
 ### try visualizing the data using googleVis plot
 library(googleVis)
