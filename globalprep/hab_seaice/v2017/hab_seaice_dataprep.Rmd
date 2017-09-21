@@ -248,7 +248,7 @@ extent <- data %>%
    dplyr::mutate(year = 2016) %>%
   dplyr::select(rgn_id, habitat, year, km2)
 
-write.csv(trend, sprintf("output/hab_ice_extent_eez.csv"), row.names=FALSE)
+write.csv(extent, sprintf("output/hab_ice_extent_eez.csv"), row.names=FALSE)
 
 
 ```
