@@ -402,7 +402,8 @@ write.csv(mar_harvest_tonnes, 'output/mar_harvest_tonnes_gf.csv', row.names=F)
 
 
 mar_sustainability_score = mar_sus_final %>% 
-  select(rgn_id, taxa_code, sust_coeff = Sust) %>% 
+  mutate(year = 2012) %>%
+  select(rgn_id, year, taxa_code, sust_coeff = Sust) %>% 
   unique()
 anyDuplicated(mar_sustainability_score)
 write.csv(mar_sustainability_score, 'output/mar_sustainability.csv', row.names=F)
