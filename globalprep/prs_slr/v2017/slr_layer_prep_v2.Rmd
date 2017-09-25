@@ -1,0 +1,372 @@
+---
+title: 'OHI 2017: Sea Level Rise Pressure Layer'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    code_folding: show
+    toc: true
+    toc_depth: 3
+    toc_float: yes
+    number_sections: false
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+pdf_document:
+  toc: true
+---
+
+# Summary
+
+This layer preparation script does the following for newly available SLR data.
+  
+- Clips all monthly rasters to the coast using a 3 nautical mile offshore buffer
+- Calculates annual mean sea level anomaly rasters from monthly data
+- Rescales values from 0 to 1 using the reference point
+- Sets to zero all negative values, indicating decreases in mean sea level
+- Resamples raster to ~ 1km^2^ and reproject to Molleweide
+
+This process is completed entirely within this script. The raw data is downloaded externally and held on a server at NCEAS. Although the raw data is not provided, this script can be used on the data downloaded from Aviso [here](http://www.aviso.altimetry.fr/en/data/products/sea-surface-height-products/global/msla-mean-climatology.html). You will need to register with Aviso in order to get a username and password for data access.
+
+# Updates from previous assessment
+
+One additional year of data, 2016, was added. In addition we are using a better mask to eliminate cells farther than 3nm offshore. This change requires a rerun of all year within the dataset.
+
+***
+
+# Data
+
+The source data are monthly mean sea level anomalies, in meters. These anomalies are calculated by subtracting the current absolute sea level for each month from the average sea level for that month calculated from 1993 - 2012.
+
+**Reference**: The altimeter products were produced and distributed by Aviso (http://www.aviso.altimetry.fr/), as part of the Ssalto ground processing segment. [AVISO MSLA heights, monthly means](http://www.aviso.altimetry.fr/en/data/products/sea-surface-height-products/global/msla-mean-climatology.html)  
+**Downloaded**: August 1, 2017 (for 2016 data)   
+**Description**: Monthly mean sea level anomaly (meters above mean sea level)   
+**Native data resolution**: 0.25 degree grid cells   
+**Time range**: January 1993 - December 2016  
+**Format**: NetCDF   
+
+***
+
+# Methods
+
+## Setup
+
+``` {r setup, message = FALSE, warning = FALSE}
+
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'figs/',message = FALSE, warning = FALSE)
+
+#setting up provenance
+# devtools::install_github('oharac/provRmd')
+# library(provRmd)
+# prov_setup()
+
+library(tidyverse)
+library(raster)
+library(RColorBrewer)
+library(maps)
+library(parallel)
+library(foreach)
+library(doParallel)
+library(stringr)
+library(sf)
+
+
+
+#define github file path
+ dir_git <- '~/github/ohiprep'
+
+ #setwd("globalprep/prs_slr/v2017")
+source('../../../src/R/common.R')
+
+#define server file path
+dir_anx <- file.path(dir_M, 'git-annex/globalprep')
+
+#define raw data file path (non-NCEAS folks will not have access to this data)
+dir_anx_aviso <- file.path(dir_M, 'git-annex/globalprep/_raw_data/AVISO_slr')
+
+### set up proj4string options: WGS84
+p4s_wgs84 <- '+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'
+
+### Define spectral color scheme for plotting maps
+cols      = rev(colorRampPalette(brewer.pal(9, 'Spectral'))(255)) # rainbow color scheme
+
+# define mollweide projection
+mollCRS <- CRS('+proj=moll')
+
+# Read in ocean raster with cells at 1km. Use this as a template for resampling. This is held on an NCEAS server and folks without access will not be able to use this mask.
+ocean = raster(file.path(dir_M, 'git-annex/globalprep/spatial/v2017/ocean.tif'))
+```
+
+
+## Data Prep
+
+### Clip data to coastal cells
+
+All NetCDF files for each month are rasterized.
+
+```{r clip}
+
+#list all netCDF files
+nc_files <- c(list.files(file.path(dir_anx_aviso, 'd2017'),
+                       full.names = TRUE, pattern = '.nc'),
+              list.files(file.path(dir_anx_aviso, 'd2016/msla_monthly_mean'),
+                      full.names = TRUE, pattern = '.nc'))
+```
+
+The raw monthly data looks like this:
+
+```{r plot_raw}
+
+plot(raster(nc_files[1]), col=cols, axes=F, main = "Sea Level Rise (m) January 2016")
+
+```
+
+The following code is used to:
+1. Rasterize each monthly NetCDF file
+2. Rotate each raster so that the Atlantic Ocean is centered in the raster
+
+The output is saved in the folder `int/msla_monthly`
+
+```{r, eval=F}
+
+registerDoParallel(10)
+
+## parallel forloop function that rotates each monthly file, sets the long/lat projection, and keeps only coastal cells - saved to GitHub
+
+foreach(file = nc_files) %dopar% {
+  
+  m_yr <- substr(file,nchar(file)-10,nchar(file)-3)
+    
+  #read in month raster
+   r <- raster(file)%>%
+          rotate()
+
+    #define projection of the raster before reprojecting
+  projection(r) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+  
+writeRaster(r, filename = file.path(dir_M, sprintf('git-annex/globalprep/prs_slr/v2017/int/msla_monthly/msla_monthly_%s.tif', m_yr)), overwrite=TRUE)
+
+}
+
+```
+
+
+## Annual mean sea level anomalies
+
+Annual mean sea level anomaly rasters are calculated from the monthly data. 
+
+``` {r msla_monthly_to_annual, eval=F}
+
+msla_files <- list.files(file.path(dir_M, 'git-annex/globalprep/prs_slr/v2017/int/msla_monthly'), full.names=TRUE)
+
+## stack all rasters for this year, and calc annual mean, then write as raster
+
+registerDoParallel(6)
+
+foreach(yr = c(1993:2016)) %dopar%{ #yr=2003
+  
+  files = msla_files[str_detect(msla_files, as.character(yr))]
+  
+  rast_annual_mean <- stack(files)%>%
+                      calc(mean, na.rm = TRUE)%>%
+                      writeRaster(filename = file.path(dir_M, 
+  sprintf('git-annex/globalprep/prs_slr/v2017/int/msla_annual_mean/msla_annual_%s.tif', yr)), overwrite = TRUE)
+}
+
+
+
+```
+
+## Changing the projection and masking
+Since we are only interested in the increase in sea level near the coasts, we apply a mask to the raster layers that removes all cells farther than 3nm offshore. This mask was created previously for the OHI global 2016 assessment.
+
+```{r plot_mask}
+
+# ## 3nm offshore raster to select only nearshore cells.
+# poly_3nm <- read_sf(file.path(dir_M, "git-annex/Global/NCEAS-Regions_v2014/data"), "rgn_offshore3nm_mol")
+# poly_3nm[duplicated(poly_3nm$rgn_id), ]
+# s <- fasterize(poly_3nm, ocean, field="rgn_id")
+# s <- calc(s, fun=function(x){ifelse(x>0, 1, NA)}) 
+# writeRaster(s, file.path(dir_M, "git-annex/globalprep/prs_slr/v2017/int/ocean_mask.tif"))
+s <- raster(file.path(dir_M, "git-annex/globalprep/prs_slr/v2017/int/ocean_mask.tif"))
+
+#s <- raster(file.path('../v2016/int/rast_3nm_mask_fasterize.tif'))
+plot(s, col='red')
+
+
+annual_means <- list.files(file.path(dir_M, 'git-annex/globalprep/prs_slr/v2017/int/msla_annual_mean'), full=TRUE)
+
+foreach(file = annual_means) %dopar%{ # file = annual_means[1]
+  
+  yr <- str_sub(file,-8,-5)
+
+      rast_data <- raster(file) %>%
+      projectRaster(crs = mollCRS, over=TRUE) %>%
+      resample(ocean, method = 'ngb', filename = file.path(dir_M, sprintf('git-annex/globalprep/prs_slr/v2017/int/msla_annual_mol/mlsa_annual_mol_%s.tif', yr)), overwrite=TRUE)
+      
+}
+
+
+annual_mol <- list.files(file.path(dir_M, 'git-annex/globalprep/prs_slr/v2017/int/msla_annual_mol'), full=TRUE)
+
+foreach(file = annual_mol) %dopar%{ # file=annual_mol[2]
+
+  yr <- str_sub(file,-8,-5)
+  
+    rast <- raster(file)
+
+    mask(raster(file), s, filename = file.path(dir_M, sprintf('git-annex/globalprep/prs_slr/v2017/int/msla_annual_mol_coastal/msla_annual_mol_coastal_%s.tif', yr)), overwrite=TRUE)
+
+}
+
+plot(raster(file.path(dir_M, 'git-annex/globalprep/prs_slr/v2017/int/msla_annual_mol_coastal/msla_annual_mol_coastal_2010.tif')))
+```
+
+
+
+## Reference Point
+
+The reference point is the 99.99th quantile of the entire data distribution from 1993 - 2015. (This value has been updated due to changes in the source data, previously was 0.246225 m, currently is 0.3359385 m).
+
+```{r ref, eval=F}
+
+coastal_rasts <- list.files(file.path(dir_M, 'git-annex/globalprep/prs_slr/v2017/int/msla_annual_mol_coastal'), pattern="tif", full.names = TRUE)
+
+#get data across all years to 2015
+
+vals <- c()
+
+for(i in 1993:2015){ # i=1993
+  print(i)
+  m <- coastal_rasts[which(str_sub(coastal_rasts, -8, -5) == i)] %>%
+    raster() %>%
+    getValues() %>%
+    na.omit()
+  
+  vals <- c(vals,m)
+  
+}
+
+ref_point_slr <- quantile(vals, 0.9999)
+
+
+ref <- read_csv(file.path('../../supplementary_information/v2016/reference_points_pressures.csv')) #grab reference value 
+ref$ref_point[ref$pressure == "Sea Level Rise"] <- ref_point_slr
+write.csv(ref, "../../supplementary_information/v2016/reference_points_pressures.csv", row.names = FALSE)
+  
+ref <- read_csv(file.path('../../supplementary_information/v2016/reference_points_pressures.csv')) %>% #grab reference value  from the supp_info csv
+       filter(pressure == "Sea Level Rise") %>%
+       .$ref_point %>%
+        as.numeric()
+
+```     
+
+## Rescale 
+
+Each annual raster is recaled from 0 to 1 using the reference point. If a value is greater than the reference point, it is automatically given a value of 1.
+
+```{r rescale, eval=F}
+
+foreach(file = coastal_rasts) %dopar%{ # file = coastal_rasts[10]
+  yr <- str_sub(file, -8,-5)
+    raster(file)%>%
+      calc(fun=function(x){ifelse(x<0, 0, x)}) %>% #set all negative values to 0
+      calc(fun=function(x){ifelse(x>ref, 1, x/ref)}, 
+           filename = file.path(dir_M, sprintf('git-annex/globalprep/prs_slr/v2017/output/slr_%s.tif', yr)), overwrite=TRUE) }
+
+```
+
+# Results
+
+```{r plot_results}
+
+r <- raster(file.path(dir_M,'git-annex/globalprep/prs_slr/v2017/output/slr_2016.tif'))
+plot(ocean, col='cornsilk2', axes=FALSE, box=FALSE, main='Sea Level Rise Pressure 2016', legend=FALSE)		
+plot(r, col=cols, axes=FALSE, box=FALSE, add=TRUE)
+
+
+r_new <- raster(file.path(dir_anx,'prs_slr/v2017/output/slr_2015.tif'))
+r_old <- raster(file.path(dir_anx,'prs_slr/v2016/output/slr_2015.tif'))
+
+rasterVis::histogram(r_old, main ='Sea Level Pressure 2015 old data')
+rasterVis::histogram(r_new, main ='Sea Level Pressure 2015 new data')
+
+
+```
+
+
+```{r extract regions}
+
+# raster/zonal data
+slr_loc <- file.path(dir_M, "git-annex/globalprep/prs_slr/v2017/output")
+
+zones <- raster(file.path(dir_M, "git-annex/globalprep/spatial/v2017/regions_eez_with_fao_ant.tif"))  # raster data
+
+rgn_data <- read_sf(file.path(dir_M, 'git-annex/globalprep/spatial/v2017'), 'regions_2017_update') %>%
+  st_set_geometry(NULL) %>%
+  dplyr::filter(rgn_type == "eez") %>%
+  dplyr::select(rgn_id = rgn_ant_id, rgn_name)
+
+# read in raster files
+rasts <- list.files(slr_loc, full.names = TRUE)
+rasts <- rasts[!grepl(".aux", rasts)]
+
+stack_slr <- stack(rasts)
+
+# extract data for each region:
+regions_stats <- zonal(stack_slr,  zones, fun="mean", na.rm=TRUE, progress="text")
+
+
+regions_stats2 <- data.frame(regions_stats)
+setdiff(regions_stats2$zone, rgn_data$rgn_id) # High Seas regions are in there, makes sense....no land
+setdiff(rgn_data$rgn_id, regions_stats2$zone)
+
+regions_stats2 <- regions_stats2 %>%
+  rename(rgn_id = zone) %>%
+  filter(rgn_id <=250) %>%
+  gather("year", "pressure_score", -1) %>%
+  mutate(year = as.numeric(as.character(substring(year, 5, 8))))
+
+write.csv(regions_stats2, "output/slr.csv", row.names = FALSE)
+
+## visualize data
+library(googleVis)
+
+plotData <- regions_stats2%>%
+  left_join(rgn_data)%>%
+  dplyr::select(rgn_name, year, pressure_score) %>%
+  dplyr::arrange(rgn_name, year) %>%
+  data.frame()
+
+Motion=gvisMotionChart(plotData, 
+                       idvar="rgn_name", 
+                       timevar="year")
+plot(Motion)
+
+print(Motion, file='slr.html')
+
+
+
+
+```
+
+
+
+```{r compare}
+
+new_data <- read.csv("output/slr.csv") %>%
+  dplyr::select(rgn_id, year, new_pressure_score = pressure_score)
+old <- read.csv("../v2016/output/slr_updated.csv") %>%
+  mutate(year = year -1) %>%
+  left_join(new_data, by=c("year", "rgn_id"))
+
+plot(old$pressure_score, old$new_pressure_score, ylab="new score", xlab = "old score")
+abline(0,1, col="red")
+
+
+```
+
+
+### Citation information  
+
+The altimeter products were produced and distributed by Aviso (http://www.aviso.altimetry.fr/), as part of the Ssalto ground processing segment. [AVISO MSLA heights, monthly means](http://www.aviso.altimetry.fr/en/data/products/sea-surface-height-products/global/msla-mean-climatology.html)

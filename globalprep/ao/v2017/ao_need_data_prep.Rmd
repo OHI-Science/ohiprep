@@ -99,6 +99,7 @@ When a country has some values, a within country regression model is used to pre
 
 ```{r}
 
+
 d <- read.csv('raw/raw_gdppcppp.csv') %>%
   select(country, value=NY.GDP.PCAP.PP.KD, year) %>%
   filter(year >= 2005) %>%
@@ -149,7 +150,7 @@ d_stand <- d_gf %>%
   mutate(value_stand = ifelse(value_stand > 1, 1, value_stand))
 
 d_stand <- d_stand %>%
-  select(country, year, score=value_stand, gapfilled, method)
+  select(country, year, value, score=value_stand, gapfilled, method)
 
 plotData <- d_stand %>%
   mutate(need = 1-score) %>%
@@ -186,6 +187,7 @@ d_stand_rgn <- d_stand_rgn %>%
   mutate(population = ifelse(is.na(population), 1, population)) %>%
   group_by(rgn_id, year) %>%
   summarize(score = weighted.mean(score, population),
+            value = weighted.mean(value, population),
             gapfilled = weighted.mean(gapfilled, population),
             method = method[1]) %>%
   ungroup() 
@@ -194,6 +196,12 @@ d_stand_rgn <- d_stand_rgn %>%
   filter(rgn_id <= 250)
 
 summary(d_stand_rgn)
+
+## save the cleaned gdppcppp for other goals
+gdppcppp_data <- d_stand_rgn %>%
+  select(rgn_id, year, value)
+
+write_csv(gdppcppp_data, "intermediate/gdppcppp_ohi.csv")
 
 ```
 

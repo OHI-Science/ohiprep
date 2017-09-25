@@ -331,7 +331,8 @@ j_weights <- j %>%
       usd_peak_allproducts    = sum(usd_peak, na.rm=T),
       prod_weight = usd_peak / usd_peak_allproducts) %>%
     ungroup() %>%
-  select(rgn_id, product, weight = prod_weight)
+  mutate(year = 2013) %>%
+  select(rgn_id, year, product, weight = prod_weight)
 
 ## Determine relative status:
   j <- j %>% 
