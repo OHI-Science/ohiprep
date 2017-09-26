@@ -36,9 +36,9 @@ taxon <- read.csv(file.path(dir_M,'git-annex/globalprep/_raw_data/SAUP/d2016/Tax
 
 sp <- taxon$sci
 
-fb <- mclapply(sp,validate_names,mc.cores = 8)
+fb <- mclapply(sp, validate_names, mc.cores = 8)
 
-resil <- mclapply(fb,stocks,fields = "Resilience",mc.cores=10)
+resil <- mclapply(fb, stocks, fields = "Resilience", mc.cores=10)
 
 res <- do.call(rbind.data.frame,resil)%>%
         distinct()

@@ -1,0 +1,110 @@
+---
+title: "OHI 2017 - Food Provision: SAUP Species Resilience Lookup Table"
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+  toc: true
+number_sections: true
+theme: cerulean
+highlight: haddock
+includes: 
+  in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+pdf_document:
+  toc: true
+---
+
+This script uses FishBase to find the Resilience for each of the species in the SAUP database. The Resilience information is needed for running catch-MSY to estimate B/Bmsy.
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(rfishbase)
+library(parallel)
+source('~/github/ohiprep/src/R/common.R')
+
+```
+
+
+# Read in SAUP catch data and match common names to scientific names
+
+```{r catch_dat}
+
+taxon <- read_csv('data/stock_catch.csv')%>%
+          dplyr::select(sciname = taxon_scientific_name,
+                 species = taxon_common_name,
+                 taxon_key)%>%
+            filter(taxon_key > 599999) %>%
+            distinct()
+
+#validate scientific names with fishbase
+
+sp <- taxon$sciname
+
+fb <- validate_names(sp)
+
+resil <- mclapply(fb, stocks, fields = "Resilience", mc.cores=10)
+
+res <- do.call(rbind.data.frame, resil)%>%
+        distinct()
+
+taxon_res <- taxon%>%
+            left_join(res,by='sciname')%>%
+            select(sciname,
+                   common = species,
+                   Resilience,
+                   SpecCode)
+```
+
+There are some duplicated species since fishbase provides resilience per stock...we'll want to remove the duplicates 
+
+```{r duplicates}
+dup <- taxon_res$sciname[duplicated(taxon_res$sciname)]
+
+d <- taxon_res%>%
+      filter(sciname %in% dup)%>% #select those species that are duplicated
+      filter(!is.na(Resilience)) #remove rows where one of those species has an NA for Resilience (this is most species)
+
+dup_sp <- d$sciname[duplicated(d$sciname)]
+```
+
+Now we have 4 species that have stocks with 2 different resiliences:
+`[1] "Clupea harengus"    "Platichthys flesus" "Salmo trutta"       "Salmo trutta"`     
+
+For these three species, we will remove all resilience's except for Medium since Medium is the default resilience when there isn't one for catch-MSY. 
+```{r}
+
+four_sp <- d %>%
+            filter(sciname %in% dup_sp,
+                   Resilience == "Medium")
+
+#all other duplicated species with the NA resilience's removed
+other_sp <- d %>%
+            filter(!sciname %in% dup_sp)
+
+taxon_res2 <- taxon_res%>%
+              filter(!sciname %in% dup) %>%
+              rbind(other_sp) %>%
+              rbind(four_sp)
+```
+
+We still have species with NA for Resilience. This is likely for non-fish species. We can try to get resilience for these species by setting the URL to SeaLifeBase in the stocks call.
+
+```{r}
+
+sp_w_nas <- taxon_res2 %>%
+            filter(is.na(Resilience)) %>%
+            .$sciname
+
+resil <- mclapply(sp_w_nas, stocks, fields = "Resilience", mc.cores=10, server = "https://fishbase.ropensci.org/sealifebase")
+
+res <- do.call(rbind.data.frame, resil)%>%
+        distinct()
+
+DT::datatable(res)
+```
+
+It looks like none of these species have Resilience information in SeaLifeBase. We will have to leave these as NA. This will cause the CMSY model to default to Medium resilience but will not remove them from assessment.
+
+```{r}
+write.csv(taxon_res2,file = 'data/taxon_resilience_lookup.csv')
+```       
+
