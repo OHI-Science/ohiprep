@@ -19,13 +19,7 @@ pdf_document:
 #Summary
 The commercial fishing pressure layers are created from spatialized catch by gear data provided by Watson (2017), and net primary production data from the Vertically Generalized Production Model [(VGPM)](http://www.science.oregonstate.edu/ocean.productivity/) as described in [Behrenfeld and Falkowski (1997)](http://www.science.oregonstate.edu/ocean.productivity/references/L&O%201997a.pdf)
 
-Three layers are created in this analysis, commercial fishing pressure from **high bycatch** gear and **low bycatch** gear as well as artisanal fishing pressure. Quantifying the amount of catch caught by these different categories of fishing gear is done by combining two different pieces of information. 
-
-1. The amount of fish catch caught per gear type was calculated for the first global Cumulative Human Impact analysis [(Halpern 2008)](http://science.sciencemag.org/content/319/5865/948).
-
-2. Total fish catch (tons) per half degree cell globally 
-
-The amount of catch caught per gear type has not been recalculated since 2008. The total proportion of catch caught per gear type is calculated from this original data, and then applied to the more recent catch data to get an updated estimate of catch per gear type. This assumes that the proportion of total catch caught by high and low bycatch has remained consistent since 2008.
+Three layers are created in this analysis, commercial fishing pressure from **high bycatch** gear and **low bycatch** gear as well as artisanal fishing pressure. 
 
 #Updates from previous assessment
 
@@ -60,6 +54,7 @@ Load all relevant libraries including parallel processing packages.
 #set options for all chunks in code
 knitr::opts_chunk$set(warning=FALSE, message=FALSE,fig.width = 6, fig.height = 4, fig.path = 'figs/')
 
+library(tidyverse)
 library(parallel)
 library(foreach)
 library(doParallel)
@@ -215,7 +210,7 @@ foreach (i = 2003:2010) %dopar%{
             calc(fun=function(x){mean(x,na.rm=T)})%>%
             calc(fun=function(x){log(x+1)}, filename = paste0('int/low_bycatch/five_year_means/mean_catch_',yrs[1],'_',yrs[5],'.tif'),overwrite=T)
   
-  out_hb <- lb_npp[which(substr(hb_npp,52,55) %in% yrs)]%>%
+  out_hb <- hb_npp[which(substr(hb_npp,52,55) %in% yrs)]%>%
             stack()%>%
             calc(fun=function(x){mean(x,na.rm=T)})%>%
             calc(fun=function(x){log(x+1)}, filename = paste0('int/high_bycatch/five_year_means/mean_catch_',yrs[1],'_',yrs[5],'.tif'),overwrite=T)
@@ -325,21 +320,21 @@ foreach (i = 2003:2010) %dopar%{
             projectRaster(crs = mollCRS,over=T)%>%
             resample(ocean,method = 'ngb',filename = paste0(file.path(dir_git),'/output/high_bycatch/hb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
   
-  out_lb <- mean_lb[which(substr(mean_lb,44,47) == i)]%>%
-            raster()%>%
-            calc(fun=function(x){ifelse(x>ref_lb,1,x/ref_lb)})%>%
-            calc(fun=function(x){ifelse(x<0,0,x)})%>%
-            projectRaster(crs = mollCRS, over=T)%>%
-            resample(ocean,method = 'ngb',filename = paste0(file.path(dir_git),'/output/low_bycatch/lb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
-  
-    
-  out_art <- mean_art[which(substr(mean_art,42,45) == i)]%>%
-            raster()%>%
-            calc(fun=function(x){ifelse(x>ref_art,1,x/ref_art)})%>%
-            calc(fun=function(x){ifelse(x<0,0,x)})%>%
-            projectRaster(crs = mollCRS, over=T)%>%
-            resample(ocean,method = 'ngb',filename = paste0(file.path(dir_git),'/output/artisanal/art_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
-  
+  # out_lb <- mean_lb[which(substr(mean_lb,44,47) == i)]%>%
+  #           raster()%>%
+  #           calc(fun=function(x){ifelse(x>ref_lb,1,x/ref_lb)})%>%
+  #           calc(fun=function(x){ifelse(x<0,0,x)})%>%
+  #           projectRaster(crs = mollCRS, over=T)%>%
+  #           resample(ocean,method = 'ngb',filename = paste0(file.path(dir_git),'/output/low_bycatch/lb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
+  # 
+  #   
+  # out_art <- mean_art[which(substr(mean_art,42,45) == i)]%>%
+  #           raster()%>%
+  #           calc(fun=function(x){ifelse(x>ref_art,1,x/ref_art)})%>%
+  #           calc(fun=function(x){ifelse(x<0,0,x)})%>%
+  #           projectRaster(crs = mollCRS, over=T)%>%
+  #           resample(ocean,method = 'ngb',filename = paste0(file.path(dir_git),'/output/artisanal/art_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
+  # 
 }
 
 ```
@@ -369,7 +364,7 @@ setwd('globalprep/prs_fish/v2017')
 
 # raster/zonal data
 
-zones <- raster(file.path(dir_M, "git-annex/globalprep/spatial/d2014/data/rgn_mol_raster_1km/sp_mol_raster_1km.tif"))  # raster data
+zones <- raster(file.path(dir_M, "git-annex/globalprep/spatial/v2017/regions_eez_with_fao_ant.tif"))  # raster data
 rgn_data <- read.csv(file.path(dir_M, "git-annex/globalprep/spatial/d2014/data/rgn_mol_raster_1km/regionData.csv"))    # data for sp_id's used in raster
 
 
