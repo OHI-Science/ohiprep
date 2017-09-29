@@ -52,6 +52,7 @@ knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'figs/',message 
 ## Libraries
 library(readr)
 library(dplyr)
+library(raster)
 library(parallel)
 library(purrr)
 
