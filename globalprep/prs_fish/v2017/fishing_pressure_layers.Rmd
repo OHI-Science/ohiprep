@@ -140,6 +140,37 @@ raster::subs(saup_rast, artisanal, by = 1, which = 2, subsWithNA=TRUE, filename 
 
 ```
 
+### Meta-analyis
+
+I wanted to look at how well our high and low bycatch gear designations align with the reported discard rater per cell. While not perfect, the majority of cells show that catch caught with high bycatch gear leads to a higher proportion of discards than when caught with low bycatch gear.
+
+```{r}
+#read in raw data for the year
+  raw <- readRDS(paste0(file.path(dir_M,'marine_threats/impact_acceleration/stressors/comm_fish/int/catch_data_2014.rds')))
+
+  df <- raw %>% 
+        dplyr::select(Seq, OceanArea, LSF_CR, SSF_CR, IUU_CR, Discards_CR, bycatch) %>%
+        rowwise() %>%
+        mutate(catch = sum(SSF_CR, LSF_CR, IUU_CR, Discards_CR)*OceanArea,
+               discards = Discards_CR * OceanArea) %>%
+        group_by(Seq, bycatch) %>%
+        mutate(gear_cell_catch = sum(catch)) %>%
+        ungroup() %>%
+        dplyr::select(-LSF_CR, -OceanArea, -SSF_CR, -IUU_CR, -Discards_CR) %>%
+        group_by(Seq, bycatch) %>%
+        mutate(disc_cell_catch = sum(discards)) %>%
+        dplyr::select(-catch, -discards) %>%
+        distinct() %>%
+        ungroup() %>%
+        mutate(disc_prop = disc_cell_catch/gear_cell_catch) %>%
+        dplyr::select(Seq, bycatch, disc_prop) %>%
+        spread(bycatch, disc_prop) %>%
+        mutate(ratio = high/low)
+        
+plot(df$high ~ df$low, ylab = "Prop. of catch discarded using high bycatch gears", xlab = "Prop. of catch discarded using low bycatch gears")
+abline(0,1,col="red")
+  
+```
 
 ## Net Primary Production (NPP)
 
@@ -320,21 +351,21 @@ foreach (i = 2003:2010) %dopar%{
             projectRaster(crs = mollCRS,over=T)%>%
             resample(ocean,method = 'ngb',filename = paste0(file.path(dir_git),'/output/high_bycatch/hb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
   
-  # out_lb <- mean_lb[which(substr(mean_lb,44,47) == i)]%>%
-  #           raster()%>%
-  #           calc(fun=function(x){ifelse(x>ref_lb,1,x/ref_lb)})%>%
-  #           calc(fun=function(x){ifelse(x<0,0,x)})%>%
-  #           projectRaster(crs = mollCRS, over=T)%>%
-  #           resample(ocean,method = 'ngb',filename = paste0(file.path(dir_git),'/output/low_bycatch/lb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
-  # 
-  #   
-  # out_art <- mean_art[which(substr(mean_art,42,45) == i)]%>%
-  #           raster()%>%
-  #           calc(fun=function(x){ifelse(x>ref_art,1,x/ref_art)})%>%
-  #           calc(fun=function(x){ifelse(x<0,0,x)})%>%
-  #           projectRaster(crs = mollCRS, over=T)%>%
-  #           resample(ocean,method = 'ngb',filename = paste0(file.path(dir_git),'/output/artisanal/art_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
-  # 
+  out_lb <- mean_lb[which(substr(mean_lb,44,47) == i)]%>%
+            raster()%>%
+            calc(fun=function(x){ifelse(x>ref_lb,1,x/ref_lb)})%>%
+            calc(fun=function(x){ifelse(x<0,0,x)})%>%
+            projectRaster(crs = mollCRS, over=T)%>%
+            resample(ocean,method = 'ngb',filename = paste0(file.path(dir_git),'/output/low_bycatch/lb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
+
+
+  out_art <- mean_art[which(substr(mean_art,42,45) == i)]%>%
+            raster()%>%
+            calc(fun=function(x){ifelse(x>ref_art,1,x/ref_art)})%>%
+            calc(fun=function(x){ifelse(x<0,0,x)})%>%
+            projectRaster(crs = mollCRS, over=T)%>%
+            resample(ocean,method = 'ngb',filename = paste0(file.path(dir_git),'/output/artisanal/art_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
+
 }
 
 ```
