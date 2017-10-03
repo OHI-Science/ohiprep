@@ -1,5 +1,5 @@
 ---
-title: "OHI 2017 - Food Provision: Preparing catch data for BBmsy calculations"
+title: "OHI 2017 - Food Provision: Preparing catch data for BBmsy calculations and mean catch (weights in FIS model) and FP weights"
 author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
 output: 
   html_document:
@@ -55,6 +55,7 @@ library(dplyr)
 library(raster)
 library(parallel)
 library(purrr)
+library(tidyr)
 
 source('~/github/ohiprep/src/R/common.R')
 
@@ -184,6 +185,103 @@ write.csv(stks, file = 'data/stock_catch.csv')
 stks = read.csv('data/stock_catch.csv')
 
 DT::datatable(head(stks,n=100))
+
+```
+
+
+# Prep data for mean catch 
+
+Mean catch data is used to weight the B/Bmsy values in the fishery subgoal.  
+
+```{r mean catch, eval=F}
+
+catch <- read_csv(file.path(dir_M,'git-annex/globalprep/fis/v2017/int/stock_catch_by_rgn.csv')) %>%
+  rename(common = taxon_common_name, fao_id = fao_rgn, species=taxon_scientific_name)
+summary(catch)
+
+## filter out non ohi eez regions
+catch <- catch %>%
+  filter(!is.na(rgn_id)) %>%
+  filter(!is.na(fao_id)) %>%
+  filter(rgn_id <= 250) %>%
+  filter(rgn_id != 213)
+
+catch <- catch %>%
+  dplyr::select(year, rgn_id, fao_id, stock_id, taxon_key, tons) %>%
+  group_by(rgn_id, fao_id, taxon_key, stock_id, year) %>%
+  summarize(catch = sum(tons)) %>%
+  ungroup()
+
+data.frame(filter(catch, stock_id == "Elasmobranchii-57" & rgn_id==1))
+data.frame(filter(catch, stock_id == "Carcharhinidae-57" & rgn_id==1))
+
+#---------------------------------------------
+# for years with no reported catch, add zero values
+# (after first reported catch)
+# --------------------------------------------
+
+## these data have no zero catch values, so this is added here:
+catch_zeros <- catch %>%
+  spread(year, catch) %>%
+  data.frame() %>%
+  gather("year", "catch", num_range("X", min(catch$year):max(catch$year))) %>%
+  mutate(year = as.numeric(gsub("X", "", year))) %>%
+  mutate(catch = ifelse(is.na(catch), 0, catch))
+
+## this part eliminates the zero catch values prior to the first reported non-zero catch   
+catch_zeros <- catch_zeros %>%
+  group_by(fao_id, taxon_key, stock_id, rgn_id) %>%
+  arrange(year) %>%
+  mutate(cum_catch = cumsum(catch)) %>%
+  filter(cum_catch > 0) %>%
+  dplyr::select(-cum_catch) %>%
+  ungroup()
+
+
+#---------------------------------------------
+### Calculate mean catch for ohi regions (using data from 1980 onward)
+### These data are used to weight the RAM b/bmys values 
+# --------------------------------------------
+
+mean_catch <- catch_zeros %>%
+  filter(year >= 1980) %>%
+  group_by(rgn_id, fao_id, taxon_key, stock_id) %>%
+  mutate(mean_catch=mean(catch, na.rm=TRUE))%>%
+  filter(mean_catch != 0)  %>%      ## some stocks have no reported catch for time period
+  ungroup()
+filter(mean_catch, stock_id == "Elasmobranchii-57" & rgn_id==1)
+
+data.frame(filter(mean_catch, stock_id == "Carcharhinidae-57" & rgn_id==1))
+
+#---------------------------------------------
+# Toolbox formatting and save
+# --------------------------------------------
+mean_catch_toolbox <- mean_catch %>%
+  mutate(stock_id_taxonkey = paste(stock_id, taxon_key, sep="_")) %>%
+  dplyr::select(rgn_id, stock_id_taxonkey, year, mean_catch) %>%
+  filter(year>=2001) %>%  # filter to include only analysis years
+  data.frame()
+
+
+write.csv(mean_catch_toolbox, "data/mean_catch.csv", row.names=FALSE)
+
+
+
+```
+
+# Prep data for food provision weights 
+
+These data determine the tonnes of food provided by fisheries.  Ultimately, the proportion of food from fisheries relative to mariculture will be calculated to weight the contributions of fishery and mariculture scores to final food provision scores.  
+
+```{r tonnes fp, eval=F}
+
+total_catch_FP <- mean_catch %>%
+  group_by(rgn_id, year) %>%
+  summarize(fis_catch = sum(catch)) %>%
+  dplyr::select(rgn_id, year, fis_catch) %>%
+  filter(year >= 2005) # filter to include only the relevant analysis years
+
+write.csv(total_catch_FP, "data/FP_fis_catch.csv", row.names=FALSE)
 
 ```
 
