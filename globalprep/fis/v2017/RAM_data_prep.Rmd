@@ -1,0 +1,488 @@
+---
+title: "OHI 2017 - Food Provision: Preparing RAM B/Bmsy data"
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    code_folding: show
+    toc: true
+    toc_depth: 1
+    toc_float: yes
+    number_sections: false
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+pdf_document:
+  toc: true
+---
+
+# Summary
+
+This script prepares the RAM B/Bmsy data:
+1. Relevant data are collected from the RAM database
+2. Missing years are gapfilled when appropriate
+3. RAM and SAUP species names are harmonized in a few cases
+4. RAM stocks are associated with the corresponding OHI and FAO regions
+
+
+## Updates from previous assessment
+Data describing the spatial boundaries of the RAM stocks were not previously available. We meant to gapfill RAM B/Bmsy values last year, but due to an oversight we did not use gapfilled data.
+
+***
+
+# Data
+## B/Bmsy values from stock assessments 
+
+Reference: RAM Legacy Stock Assessment Database v3.8. 2017. http://ramlegacy.org.
+
+* Description: B/Bmsy value by stock and year (other data, which we do not use, are also available in the database)
+* Native data resolution: stock (fish stock, species and region specific)
+* Time range: 1950 - 2014
+* Format: R data files (.rds)
+
+
+## Stock range data 
+Reference: Christopher M. Free. 2017. Mapping fish stock boundaries for the original Ram Myers stock-recruit database. https://marine.rutgers.edu/~cfree/mapping-fish-stock-boundaries-for-the-original-ram-myers-stock-recruit-database/. downloaded 9/25/2017.
+
+* Downloaded: 9/25/2017
+* Description: Shapefiles for each stock describing their distribution
+* Native data resolution: Spatial shapefiles
+* Format: Shapefiles
+
+***
+
+## Setup
+
+``` {r setup, message = FALSE, warning = FALSE}
+
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'figs/',message = FALSE, warning = FALSE)
+
+## highlight out when knitting
+# setwd("globalprep/fis/v2017")
+
+## Libraries
+library(dplyr)
+library(tidyr)
+library(readr)
+library(sf)
+
+source('../../../src/R/common.R')
+
+## Paths for data
+path_raw_data = file.path(dir_M, "git-annex/globalprep/_raw_data/SAUP/d2017")
+
+```
+
+## Obtain RAM B/Bmsy data
+
+The data is stored as a relational database in an R object.  The following tables are included:
+1. timeseries
+The time series data is a matrix object with the following headers/columns:
+(1) assessid (2) stockid (3) stocklong (4) tsid (5) tsyear (6) tsvalue
+
+2. bioparams
+The time series data is a matrix object with the following headers/columns:
+(1) assessid (2) stockid (3) stocklong (4) bioid (5) biovalue (6) bioyear (7) bionotes
+
+3.  timeseries.views.data
+This stores the timeseries values with timeseries type along the columns (TB, SSB, TN, R,
+TC, TL, F, ER, TB/TBmsy, SSB/SSBmsy, F/Fmsy, ER/ERmsy, Btouse, Ctouse, Utouse, B/Bmsytouse, U/Umsytouse,
+TB/TBmgt, SSB/SSBmgt, F/Fmgt, ER/ERmgt, B/Bmgttouse, U/Umgttouse) and stocks along the rows
+
+4. timeseries.views.units
+This stores the timeseries units (or time series source for touse time series), with timeseries type
+along the columns (TB, SSB, TN, R, TC, TL, F, ER) and stocks along the rows
+
+5. timeseries.views.ids
+This stores the timeseries ids with timeseries id along the columns (TB, SSB, TN, R,
+TC, TL, F, ER, TB/TBmsy, SSB/SSBmsy, F/Fmsy, ER/ERmsy, Btouse, Ctouse, Utouse, B/Bmsytouse, U/Umsytouse,
+TB/TBmgt, SSB/SSBmgt, F/Fmgt, ER/ERmgt, B/Bmgttouse, U/Umgttouse) and stocks along the rows
+
+6. bioparams.views.data
+This stores the bioparams values, with bioparam type along the columns
+(TBmsy, SSBmsy, Nmsy, MSY, Fmsy, ERmsy, TB0, SSB0, M, Bmsytouse, Umsytouse, TBmgt, SSBmgt, Fmgt, ERmgt,
+Bmgttouse, Umgttouse) and stocks along the rows
+
+7. bioparams.views.units
+This stores the bioparams units (or parameter source for touse parameters), with bioparam type
+along the columns (TBmsy, SSBmsy, Nmsy, MSY, Fmsy, ERmsy, TB0, SSB0, M, TBmgt, SSBmgt, Fmgt, ERmgt) and
+stocks along the rows
+
+8. bioparams.views.ids
+This stores the bioparams ids, with bioparam id along the columns
+(TBmsy, SSBmsy, Nmsy, MSY, Fmsy, ERmsy, TB0, SSB0, M, Bmsytouse, Umsytouse, TBmgt, SSBmgt, Fmgt, ERmgt,
+Bmgttouse, Umgttouse) and stocks along the rows
+
+9. meta.data
+This stores assorted metadata associated with the stock, with datatypes along the columns
+(assessid, stockid, stocklong, scientificname, FisheryType, region, areaid, areaname,
+assessorid, mgmt, management authority) and stock by row
+
+```{r load_data}
+
+load(file.path(dir_M, "git-annex/globalprep/_raw_data/RAM/d2017/RAM v3.80/DB Files With Assessment Data/DBdata.RData"))
+
+ram_bmsy <- data.frame(timeseries) %>%
+  dplyr::filter(tsid == "BdivBmsytouse-dimensionless") %>%
+  dplyr::filter(!is.na(tsvalue)) %>%
+  dplyr::mutate(tsyear = as.numeric(as.character(tsyear))) %>%
+  dplyr::filter(tsyear > 1979) %>%
+  dplyr::select(assessid, year=tsyear, ram_bmsy = tsvalue)
+
+```
+
+## Gapfill RAM data when there are missing years
+
+For each stock, missing years are gapfilled using a linear regression model that includes years 2001 to 2014 (2014 is the final year of SAUP data).  To be included, there have to be 5 or more years of B/Bmsy data occuring from 2005 to 2014.
+
+There are 225 RAM stocks with at least 5 years of B/Bmsy data from 2005 to 2014.  191 of these stocks have at least 1 year of gapfilled data.  
+
+A few of the predicted B/Bmsy values go below zero.  We convert anything with a RAM BBmsy value < 0.015 to 0.015, which is the minimum observed B/Bmsy value in the data.
+
+```{r gapfill}
+
+## gapfill ram_bmsy
+ram_gf_check <- ram_bmsy %>%
+  filter(year >= 2001) %>%
+  spread(year, ram_bmsy) 
+## based on this it seams reasonable to gap-fill missing values
+
+ram_bmsy_gf <- ram_bmsy %>%
+  filter(year >= 2001 & year <= 2014) %>%   # 2014 corresponds to the final year of SAUP catch data
+  group_by(assessid) %>%
+  mutate(years_data = length(ram_bmsy[year >= 2004])) %>%
+  ungroup() %>%
+  filter(years_data >= 4) %>%
+  spread(year, ram_bmsy) %>%
+  gather("year", "ram_bmsy", -assessid, -years_data) %>%
+  mutate(year = as.numeric(year)) %>%  
+  mutate(ram_bmsy = as.numeric(ram_bmsy)) %>%  
+  mutate(gapfilled = NA) %>%
+  mutate(gapfilled = ifelse(years_data == 11, gapfilled, paste(11 - years_data, "years gf", sep = " ")))
+
+tmp <- ram_bmsy_gf %>%
+  dplyr::select(assessid, gapfilled) %>%
+  unique()
+length(tmp$gapfilled)   # 225 stocks with at least 5 years of data in past 11 years
+table(tmp$gapfilled)    
+sum(table(tmp$gapfilled))  # 191 stocks have at least one year of B/Bmsy values gapfilled
+
+# regression model for prediction for each stock
+ram_bmsy_gf <- ram_bmsy_gf %>%
+  group_by(assessid) %>%
+  do({
+    mod <- lm(ram_bmsy ~ year, data=.)  
+    ram_bmsy_predict <- predict(mod, newdata=.[c('year')])
+    data.frame(., ram_bmsy_predict)
+  }) %>%
+  ungroup()
+
+# a few of the predicted B/Bmsy values go below zero.  We convert anything with a RAM BBmsy value < 0.015 to 0.015
+# which is the minimum observed B/Bmsy value in the data
+
+ram_bmsy_gf <- ram_bmsy_gf %>%
+  mutate(ram_bmsy_predict = ifelse(ram_bmsy_predict < 0.015, 0.015, ram_bmsy_predict)) %>%
+  mutate(method = ifelse(is.na(ram_bmsy), paste0("lm, ", gapfilled), NA)) %>%
+  mutate(gapfilled = ifelse(is.na(ram_bmsy), "1", "0")) %>%
+  mutate(ram_bmsy = ifelse(is.na(ram_bmsy), ram_bmsy_predict, ram_bmsy)) %>%
+  dplyr::select(assessid, year, ram_bmsy, gapfilled, method) 
+
+write.csv(ram_bmsy_gf, "int/ram_stock_bmsy_gf.csv", row.names=FALSE)
+
+```
+
+
+
+The following code can be used to estimate the amount of error for each year due to gapfilling.  In the first example, the gapfilling model is estimated using all the data prior to 2014.  The model is then used to estimate the 2014 data and examine how accurate the estimates are.  In this case, we assume all years of data prior to 2014 is available (i.e., only one missing year of data), which often isn't the case becasue stocks are often missing multiple years of data.  The second example examines the error in the 2014 data if the B/Bmsy data only go to 2009 (i.e., 5 missing years of data).
+
+```{r gf error est}
+
+# Example 1
+ram_bmsy_gf_check1 <- ram_bmsy_gf %>%
+  group_by(assessid) %>%
+  do({
+    mod <- lm(ram_bmsy ~ year, data= filter(., year < 2014))  ### change year to test different accuracy levels based on # years of data used in lm
+    ram_bmsy_predict_error <- predict(mod, newdata=.[c('year')])
+    data.frame(., ram_bmsy_predict_error)
+  })
+
+ggplot(data = filter(ram_bmsy_gf_check1, year==2014), aes(y=ram_bmsy_predict_error, x=ram_bmsy)) +
+  geom_point() +
+  theme_bw() +
+  geom_abline(slope=1, intercept=0, color="red")
+summary(lm(ram_bmsy_predict_error ~ ram_bmsy, data=filter(ram_bmsy_gf_check1, year==2014)))
+
+# Example 2
+ram_bmsy_gf_check2 <- ram_bmsy_gf %>%
+  group_by(assessid) %>%
+  do({
+    mod <- lm(ram_bmsy ~ year, data= filter(., year < 2010))  ### change year to test different accuracy levels based on # years of data used in lm
+    ram_bmsy_predict_error <- predict(mod, newdata=.[c('year')])
+    data.frame(., ram_bmsy_predict_error)
+  })
+
+ggplot(data = filter(ram_bmsy_gf_check2, year==2014), aes(y=ram_bmsy_predict_error, x=ram_bmsy)) +
+  geom_point() +
+  theme_bw() +
+  geom_abline(slope=1, intercept=0, color="red")
+summary(lm(ram_bmsy_predict_error ~ ram_bmsy, data=filter(ram_bmsy_gf_check2, year==2014)))
+
+
+
+```
+
+## Standardize species names
+
+In most cases, the RAM and SAUP data use the same species names, but there are a few exceptions.  The following code identifies species in the RAM data that are not in the SAUP data.  In these cases, different species names may be used (although not necessarily because some of the species may be present in RAM, but not SAUP, for other reasons).  For these species, I used fishbase to explore synonyms and create a table to harmonize the RAM species names with the SAUP species names (saved as: int/RAM_species_to_SAUP.csv).
+
+```{r name harmonize}
+
+# get list of RAM species
+ram_sp <- ram_bmsy_gf %>%
+  left_join(data.frame(meta.data), by = "assessid") %>%
+  dplyr::select(scientificname) %>%
+  unique() %>%
+  arrange(scientificname)
+
+# SAUP species
+saup_sp <- read_csv(file.path(dir_M,'git-annex/globalprep/fis/v2017/int/stock_catch_by_rgn.csv')) %>%
+  dplyr::rename(saup_scientificname = taxon_scientific_name) %>%
+  dplyr::select(saup_scientificname) %>%
+  unique() %>%
+  arrange(saup_scientificname)
+
+
+# compare names
+ tmp <- sort(setdiff(ram_sp$scientificname, saup_sp$saup_scientificname))
+ write.csv(tmp, "int/unmatched_RAM_species.csv", row.names=FALSE)
+
+# Then I hand-looked up each of the missing ones to generate this list
+ ram_name_corr <- read.csv("int/RAM_species_to_SAUP.csv", stringsAsFactors = FALSE) %>%
+   filter(!is.na(SAUP_species))  # SAUP to RAM name conversion
+
+  ram_name_corr
+
+```
+
+
+## Identify FAO and OHI regions for RAM stocks
+
+Here we identify the FAO/OHI regions where each RAM stock is located.  This involved the following steps:
+
+1. Create a intersection map that identifies each FAO/OHI region.
+2. Overlay each of the RAM stocks on the region map to determine where they fall.  There were 2 general challenges to doing this.  A few of the stocks did not have a complete dataframe in the shapefile and could not be joined to the other data.  A few stocks had intersecting polygons and consequently would not run.  In the first case, I added these data by hand later in the process.  For the second case, I fixed the intersections and added later.  
+3. 
+```{RAM to OHI_FAO rgn, eval = FALSE}
+
+RAM_spatial_dir <- file.path(dir_M, "git-annex/globalprep/_raw_data/RAM/d2017/ramldb_boundaries/ramldb_boundaries") 
+
+ram_sf <- list.files(RAM_spatial_dir, pattern = "shp")
+
+ram_sf <- gsub(".shp", "", ram_sf)
+
+setdiff(ram_sf, ram_bmsy_gf$assessid) ## stocks with variables other than b/bmsy
+setdiff(ram_bmsy_gf$assessid, ram_sf) ## oh goody!  all the b/bmsy stocks have corresponding maps!  Awesome!
+ram_sf <- intersect(ram_bmsy_gf$assessid, ram_sf) # get these spatial data
+
+# get rid of some weird ones with issues (will add by hand at end)
+# missing dataframe
+ram_sf <- ram_sf[-which(ram_sf == "SEFSC-BLACKGROUPERGMSATL-1986-2008-THORSON")] 
+ram_sf <- ram_sf[-which(ram_sf == "SEFSC-BSBASSSATL-1950-2010-HIVELY")] 
+ram_sf <- ram_sf[-which(ram_sf == "SEFSC-RGROUPSATL-1976-2009-HIVELY")] 
+ram_sf <- ram_sf[-which(ram_sf == "SEFSC-RPORGYSATLC-1972-2012-HIVELY")]
+ram_sf <- ram_sf[-which(ram_sf == "SEFSC-RSNAPSATLC-1954-2010-HIVELY")]
+ram_sf <- ram_sf[-which(ram_sf == "SEFSC-SNOWGROUPSATLC-1974-2013-HIVELY")]
+ram_sf <- ram_sf[-which(ram_sf == "SEFSC-TILESATLC-1961-2011-HIVELY")]
+ram_sf <- ram_sf[-which(ram_sf == "SEFSC-VSNAPSATLC-1945-2012-HIVELY")]
+
+
+#self_intersection
+ram_sf <- ram_sf[-which(ram_sf == "AFSC-GHALBSAI-1960-2015-HIVELY")]
+ram_sf <- ram_sf[-which(ram_sf == "NEFSC-HAD5Y-1964-2011-CHING")]
+ram_sf <- ram_sf[-which(ram_sf == "AFSC-SABLEFEBSAIGA-1958-2010-STACHURA")]
+ram_sf <- ram_sf[-which(ram_sf == "NEFSC-SCALL5ZMAB-1964-2013-HIVELY")]
+ram_sf <- ram_sf[-which(ram_sf == "NEFSC-WITFLOUN5Y-1982-2008-WIGLEY")]
+
+
+## get a sample file to convert other spatial data
+tmp <- read_sf(dsn = RAM_spatial_dir, layer = ram_sf[1])
+
+
+##################################
+## Combine OHI and FAO regions
+## get OHI regions and transform
+
+ohi <- read_sf(dsn = file.path(dir_M, "git-annex/globalprep/spatial/v2017"), layer = "regions_2017_update")
+ohi <- st_transform(ohi, st_crs(tmp)$epsg)
+
+# ohi <- as(ohi, "Spatial") # convert to spatial polygons file
+
+
+## FAO region
+
+fao_regions <- read_sf(dsn = file.path(dir_M, "git-annex/Global/NCEAS-Regions_v2014/orig/FAO_AREAS"), layer="FAO_AREAS") %>%
+  filter(F_LEVEL == "MAJOR")
+
+fao_ohi <- st_intersection(ohi, fao_regions)
+
+st_write(fao_ohi, dsn = file.path(dir_M, "git-annex/globalprep/fis/v2017/int"), 
+                             layer = "ohi_fao_rgns", driver = "ESRI Shapefile")
+
+
+############################################
+## Overlay stock data on fao-ohi region data
+
+fao_ohi <- st_read(file.path(dir_M, "git-annex/globalprep/fis/v2017/int"), 
+        layer = "ohi_fao_rgns")
+
+stock_fao_ohi <- NA
+for(stock in ram_sf) {   # stock = ram_sf[85]
+    cat(paste0(stock, "\n"))
+    tmp_poly <- read_sf(dsn = RAM_spatial_dir, layer = stock)
+    tmp_fao_ohi <- st_intersection(fao_ohi, tmp_poly)
+    if(sum(is.na(stock_fao_ohi))==1){
+      stock_fao_ohi <- tmp_fao_ohi
+    }else
+    {stock_fao_ohi <- rbind(stock_fao_ohi, tmp_fao_ohi)}
+}
+
+## Add in stocks that didn't work
+
+## Fix self intersections and add
+intersects <- c("AFSC-GHALBSAI-1960-2015-HIVELY",
+                "NEFSC-HAD5Y-1964-2011-CHING",
+                "AFSC-SABLEFEBSAIGA-1958-2010-STACHURA",
+                "NEFSC-SCALL5ZMAB-1964-2013-HIVELY",
+                "NEFSC-WITFLOUN5Y-1982-2008-WIGLEY")
+
+stock_fao_ohi_intersects <- NA
+for(stock in intersects) {   # stock = intersects[3]
+  cat(paste0(stock, "\n"))
+  tmp_poly <- read_sf(dsn = RAM_spatial_dir, layer = stock)
+  tmp_poly <- st_buffer(tmp_poly, 0.0)
+  tmp_fao_ohi_intersects <- st_intersection(fao_ohi, tmp_poly)
+  if(sum(is.na(stock_fao_ohi_intersects))==1){
+    stock_fao_ohi_intersects <- tmp_fao_ohi_intersects
+  }else
+  {stock_fao_ohi_intersects <- rbind(stock_fao_ohi_intersects, tmp_fao_ohi_intersects)}
+}
+
+stock_fao_ohi_v2 <- rbind(stock_fao_ohi, stock_fao_ohi_intersects) #5940
+
+
+## clean data
+# include only features with area:
+stock_fao_ohi_shps <- stock_fao_ohi_v2[st_dimension(stock_fao_ohi_v2) == 2,] #5904
+
+stock_fao_ohi_shps <- stock_fao_ohi_shps[!is.na(st_dimension(stock_fao_ohi_shps)), ] #5904
+
+## Fix GEOMETRYCOLLECTION features, http://r-spatial.org/r/2017/03/19/invalid.html
+
+type <- st_is(stock_fao_ohi_shps, "GEOMETRYCOLLECTION")
+
+stock_fao_ohi_shps[type, ] <- st_buffer(stock_fao_ohi_shps[type, ], 0.0) 
+
+#check:
+type <- st_is(stock_fao_ohi_shps, "GEOMETRYCOLLECTION")
+
+
+## Get areas in case we want to later weight the data 
+stock_fao_ohi_shps$RAM_area_m2 <- st_area(stock_fao_ohi_shps)
+
+## save spatial file (if concerned about next step, which converts to a csv and loses spatial information):
+# st_write(stock_fao_ohi_shps, dsn = file.path(dir_M, "git-annex/globalprep/fis/v2017/int/RAM"), 
+#         layer = "RAM_fao_ohi_no_incompletes", driver = "ESRI Shapefile")
+
+
+
+## rbindfill these data (missing a lot of the columns for some reason)
+
+incompletes <- c("SEFSC-BLACKGROUPERGMSATL-1986-2008-THORSON", 
+                "SEFSC-BSBASSSATL-1950-2010-HIVELY",
+                "SEFSC-RGROUPSATL-1976-2009-HIVELY",
+                "SEFSC-RPORGYSATLC-1972-2012-HIVELY", 
+                "SEFSC-RSNAPSATLC-1954-2010-HIVELY", 
+                "SEFSC-SNOWGROUPSATLC-1974-2013-HIVELY",
+                "SEFSC-TILESATLC-1961-2011-HIVELY", 
+                "SEFSC-VSNAPSATLC-1945-2012-HIVELY")
+
+stock_fao_ohi_incompletes <- NA
+for(stock in incompletes) {   # stock = incompletes[3]
+  cat(paste0(stock, "\n"))
+  tmp_poly <- read_sf(dsn = RAM_spatial_dir, layer = stock)
+  tmp_fao_ohi_incompletes <- st_intersection(fao_ohi, tmp_poly)
+  tmp_fao_ohi_incompletes$assessid <- stock
+  if(sum(is.na(stock_fao_ohi_incompletes))==1){
+    stock_fao_ohi_incompletes <- tmp_fao_ohi_incompletes
+  }else
+  {stock_fao_ohi_incompletes <- rbind(stock_fao_ohi_incompletes, tmp_fao_ohi_incompletes)}
+}
+
+stock_fao_ohi_incompletes$RAM_area_m2 <- st_area(stock_fao_ohi_incompletes)
+
+stock_fao_ohi_all <- plyr::rbind.fill(stock_fao_ohi_shps, stock_fao_ohi_incompletes) %>%
+  dplyr::select(type_w_ant, rgn_ant_id, F_CODE, assessid, RAM_area_m2) %>%
+  group_by(rgn_ant_id, F_CODE, assessid) %>%
+  summarize(RAM_area_m2 = sum(RAM_area_m2)) %>%
+  rename(rgn_id = rgn_ant_id, fao_id = F_CODE)
+
+write.csv(stock_fao_ohi_all, "int/RAM_fao_ohi_rgns.csv", row.names=FALSE)
+
+
+```
+
+
+## Combine all the data
+
+Final formatting of the data is performed.
+
+```{r final}
+
+ram_spatial <- read.csv("int/RAM_fao_ohi_rgns.csv", stringsAsFactors = FALSE)
+
+ram_meta <- data.frame(meta.data) %>%
+  dplyr::select(assessid, stockid, scientificname)
+
+setdiff(ram_spatial$assessid, ram_meta$assessid) # make sure all the spatial data has corresponding metadata (should be 0)
+
+# join with metadata
+ram_spatial <- ram_spatial %>%
+  left_join(ram_meta, by = "assessid") %>%
+  rename(RAM_species = scientificname)
+
+# correct names in a few cases to match with SAUP names
+ram_name_corr <- read.csv("int/RAM_species_to_SAUP.csv", stringsAsFactors = FALSE) %>%
+  filter(!is.na(SAUP_species))  # SAUP to RAM name conversion
+
+
+ram_spatial <- ram_spatial %>%
+  left_join(ram_name_corr, by="RAM_species") %>%
+  dplyr::mutate(species = ifelse(!is.na(SAUP_species), SAUP_species, RAM_species)) %>%
+  dplyr::select(assessid, stockid_ram = stockid, rgn_id, fao_id, species, RAM_area_m2)
+
+length(unique(ram_spatial$stockid_ram)) # 257 RAM stocks with B/Bmsy data
+
+## filter out the regions that are not in an eez
+ram_spatial <- filter(ram_spatial, rgn_id<250)
+length(unique(ram_spatial$stockid_ram))    # 256 RAM stocks with B/Bmsy data and are found in EEZ regions
+
+
+## Combine RAM spatial data with B/Bmsy data
+
+ram_bmsy <- read.csv("int/ram_stock_bmsy_gf.csv")
+
+ram_data <- ram_spatial %>% 
+  left_join(ram_bmsy_gf, by="assessid") %>%
+  dplyr::mutate(stock_id = paste(species, fao_id, sep="-")) %>%
+  dplyr::mutate(stock_id = gsub(" ", "_", stock_id)) %>%
+  dplyr::filter(!is.na(year)) %>%   ## these are the ones that didn't have enough ram data to make an accurate guess
+  ungroup() %>%
+  dplyr::select(rgn_id, stock_id, assessid, year, RAM_area_m2, ram_bmsy, gapfilled, method) %>%
+  unique()
+
+write.csv(ram_data, "int/ram_bmsy.csv", row.names=FALSE)
+
+
+```
+
+***
