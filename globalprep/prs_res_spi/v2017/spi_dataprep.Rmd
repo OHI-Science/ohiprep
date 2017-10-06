@@ -366,6 +366,7 @@ write.csv(spi_calc, "int/Country_spi.csv", row.names=FALSE)
 
 ```{r}
 
+spi_calc <- read.csv("int/Country_spi.csv", stringsAsFactors = FALSE)
 spi_calc <- spi_calc %>%
   mutate(Country = ifelse(Country=="C\xf4te d'Ivoire", "Cote d'Ivoire", Country),
          Country = ifelse(Country=="Réunion", "Reunion", Country),
@@ -447,12 +448,14 @@ years <- data.frame(year = min(spi_rgn$year):max(spi_rgn$year))
 rgns_gf_un <-  georegions %>%
   merge(years) %>%
   left_join(spi_rgn) %>%
-  left_join(wgi)
+  left_join(wgi) %>%
+  mutate(r2 = as.factor(r2)) %>%
+  mutate(r1 = as.factor(r1))
 
 
 ## Compare models to select a gapfilling method
-mod1 <- lm(score ~ r2, data = rgns_gf_un)
-mod2 <- lm(score ~ r2 + wgi_score, data = rgns_gf_un)
+mod1 <- lm(score ~ r2, data = rgns_gf_un, na.action="na.exclude")
+mod2 <- lm(score ~ r2 + wgi_score, data = rgns_gf_un, na.action="na.exclude")
 
 mod3 <- lm(score ~ r1, data = rgns_gf_un)
 mod4 <- lm(score ~ r1 + wgi_score, data = rgns_gf_un, na.action="na.exclude")
@@ -462,26 +465,39 @@ mod5 <- lm(score ~ wgi_score, data = rgns_gf_un)
 mod6 <- lm(score ~ r1 + poly(wgi_score, 2), data = rgns_gf_un, na.action = "na.exclude")
 mod7 <- lm(score ~ r1 + poly(wgi_score, 3), data = rgns_gf_un, na.action = "na.exclude")
 
-plot(predict(mod7), rgns_gf_un$score)
+plot(predict(mod2), rgns_gf_un$score)
 abline(0,1)
 plot(predict(mod4), rgns_gf_un$score)
 abline(0,1)
-plot(0:100, predict(mod7, newdata = data.frame(r1=1, wgi_score=seq(0, 1, by=0.01))), type="l")
-points(rgns_gf_un$wgi_score*100, rgns_gf_un$score)
-plot(0:100, predict(mod6, newdata = data.frame(r1=1, wgi_score=seq(0, 1, by=0.01))), type="l")
-points(rgns_gf_un$wgi_score*100, rgns_gf_un$score)
 
 
 AIC(mod1, mod2, mod3, mod4, mod5, mod6, mod7)
 
 ## Estimate missing data and gapfill
-mod_gf <- lm(score ~ r1 + poly(wgi_score, 3), data = rgns_gf_un, na.action = na.exclude)
-rgns_gf_un$score_pred <- predict(mod_gf, newdata = rgns_gf_un[, c("r1", "wgi_score")])
+## need to add this because some R2 regions have no data
+r2_regions <- unique(rgns_gf_un$r2[!is.na(rgns_gf_un$score)])
+rgns_gf_un$r2 <- ifelse(rgns_gf_un$r2 %in% r2_regions, rgns_gf_un$r2, NA)
+
+r1_regions <- unique(rgns_gf_un$r1[!is.na(rgns_gf_un$score)])
+rgns_gf_un$r1 <- ifelse(rgns_gf_un$r1 %in% r1_regions, rgns_gf_un$r1, NA)
+
+
+mod_gf_r2 <- lm(score ~ r2 + wgi_score, data = rgns_gf_un, na.action = na.exclude)
+rgns_gf_un$score_pred_r2 <- predict(mod_gf_r2, newdata = rgns_gf_un[, c("r2", "wgi_score")])
+
+mod_gf_r1 <- lm(score ~ r1 + wgi_score, data = rgns_gf_un, na.action = na.exclude)
+rgns_gf_un$score_pred_r1 <- predict(mod_gf_r1, newdata = rgns_gf_un[, c("r1", "wgi_score")])
+
+mod_gf_wgi <- lm(score ~ wgi_score, data = rgns_gf_un, na.action = na.exclude)
+rgns_gf_un$score_pred_wgi <- predict(mod_gf_wgi, newdata = data.frame(wgi_score = rgns_gf_un$wgi_score))
+
 
 rgns_gf <- rgns_gf_un %>%
-  mutate(method = ifelse(is.na(score) & !is.na(score_pred), "UN georgn & WGI", method)) %>%
-  mutate(gapfill = ifelse(is.na(score) & !is.na(score_pred), "1", gapfill)) %>%
-  mutate(score = ifelse(is.na(score), score_pred, score)) %>%
+  mutate(method = ifelse(is.na(score), "UN georgn & WGI", method)) %>%
+  mutate(gapfill = ifelse(is.na(score), "1", gapfill)) %>%
+  mutate(score = ifelse(is.na(score), score_pred_r2, score)) %>%
+  mutate(score = ifelse(is.na(score), score_pred_r1, score)) %>%
+  mutate(score = ifelse(is.na(score), score_pred_wgi, score)) %>%
   select(rgn_id, year, score, method, gapfill) %>%
   mutate(score = ifelse(score > 100, 100, score),
          score = ifelse(score < 0, 0, score))
