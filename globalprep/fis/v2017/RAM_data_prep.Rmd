@@ -33,7 +33,7 @@ Data describing the spatial boundaries of the RAM stocks were not previously ava
 # Data
 ## B/Bmsy values from stock assessments 
 
-Reference: RAM Legacy Stock Assessment Database v3.8. 2017. http://ramlegacy.org.
+Reference: RAM Legacy Stock Assessment Database v3.8. 2017. Shared with us by folks at UW.  http://ramlegacy.org.
 
 * Description: B/Bmsy value by stock and year (other data, which we do not use, are also available in the database)
 * Native data resolution: stock (fish stock, species and region specific)
@@ -75,45 +75,46 @@ path_raw_data = file.path(dir_M, "git-annex/globalprep/_raw_data/SAUP/d2017")
 
 ## Obtain RAM B/Bmsy data
 
-The data is stored as a relational database in an R object.  The following tables are included:
-1. timeseries
-The time series data is a matrix object with the following headers/columns:
+The data is stored as a relational database in an R object.  The following tables are included:  
+
+1. timeseries  
+The time series data is a matrix object with the following headers/columns:  
 (1) assessid (2) stockid (3) stocklong (4) tsid (5) tsyear (6) tsvalue
 
-2. bioparams
-The time series data is a matrix object with the following headers/columns:
-(1) assessid (2) stockid (3) stocklong (4) bioid (5) biovalue (6) bioyear (7) bionotes
+2. bioparams  
+The time series data is a matrix object with the following headers/columns:  
+(1) assessid (2) stockid (3) stocklong (4) bioid (5) biovalue (6) bioyear (7) bionotes  
 
-3.  timeseries.views.data
+3.  timeseries.views.data  
 This stores the timeseries values with timeseries type along the columns (TB, SSB, TN, R,
 TC, TL, F, ER, TB/TBmsy, SSB/SSBmsy, F/Fmsy, ER/ERmsy, Btouse, Ctouse, Utouse, B/Bmsytouse, U/Umsytouse,
 TB/TBmgt, SSB/SSBmgt, F/Fmgt, ER/ERmgt, B/Bmgttouse, U/Umgttouse) and stocks along the rows
 
-4. timeseries.views.units
+4. timeseries.views.units  
 This stores the timeseries units (or time series source for touse time series), with timeseries type
 along the columns (TB, SSB, TN, R, TC, TL, F, ER) and stocks along the rows
 
-5. timeseries.views.ids
+5. timeseries.views.ids  
 This stores the timeseries ids with timeseries id along the columns (TB, SSB, TN, R,
 TC, TL, F, ER, TB/TBmsy, SSB/SSBmsy, F/Fmsy, ER/ERmsy, Btouse, Ctouse, Utouse, B/Bmsytouse, U/Umsytouse,
 TB/TBmgt, SSB/SSBmgt, F/Fmgt, ER/ERmgt, B/Bmgttouse, U/Umgttouse) and stocks along the rows
 
-6. bioparams.views.data
+6. bioparams.views.data  
 This stores the bioparams values, with bioparam type along the columns
 (TBmsy, SSBmsy, Nmsy, MSY, Fmsy, ERmsy, TB0, SSB0, M, Bmsytouse, Umsytouse, TBmgt, SSBmgt, Fmgt, ERmgt,
 Bmgttouse, Umgttouse) and stocks along the rows
 
-7. bioparams.views.units
+7. bioparams.views.units  
 This stores the bioparams units (or parameter source for touse parameters), with bioparam type
 along the columns (TBmsy, SSBmsy, Nmsy, MSY, Fmsy, ERmsy, TB0, SSB0, M, TBmgt, SSBmgt, Fmgt, ERmgt) and
 stocks along the rows
 
-8. bioparams.views.ids
+8. bioparams.views.ids  
 This stores the bioparams ids, with bioparam id along the columns
 (TBmsy, SSBmsy, Nmsy, MSY, Fmsy, ERmsy, TB0, SSB0, M, Bmsytouse, Umsytouse, TBmgt, SSBmgt, Fmgt, ERmgt,
 Bmgttouse, Umgttouse) and stocks along the rows
 
-9. meta.data
+9. meta.data  
 This stores assorted metadata associated with the stock, with datatypes along the columns
 (assessid, stockid, stocklong, scientificname, FisheryType, region, areaid, areaname,
 assessorid, mgmt, management authority) and stock by row
@@ -137,7 +138,7 @@ For each stock, missing years are gapfilled using a linear regression model that
 
 There are 225 RAM stocks with at least 5 years of B/Bmsy data from 2005 to 2014.  191 of these stocks have at least 1 year of gapfilled data.  
 
-A few of the predicted B/Bmsy values go below zero.  We convert anything with a RAM BBmsy value < 0.015 to 0.015, which is the minimum observed B/Bmsy value in the data.
+A few of the predicted B/Bmsy values go below zero.  We convert anything with a RAM B/Bmsy value < 0.015 to 0.015, which is the minimum observed B/Bmsy value in the data.
 
 ```{r gapfill}
 
@@ -271,8 +272,8 @@ Here we identify the FAO/OHI regions where each RAM stock is located.  This invo
 
 1. Create a intersection map that identifies each FAO/OHI region.
 2. Overlay each of the RAM stocks on the region map to determine where they fall.  There were 2 general challenges to doing this.  A few of the stocks did not have a complete dataframe in the shapefile and could not be joined to the other data.  A few stocks had intersecting polygons and consequently would not run.  In the first case, I added these data by hand later in the process.  For the second case, I fixed the intersections and added later.  
-3. 
-```{RAM to OHI_FAO rgn, eval = FALSE}
+
+```{r RAM to OHI_FAO rgn, eval = FALSE}
 
 RAM_spatial_dir <- file.path(dir_M, "git-annex/globalprep/_raw_data/RAM/d2017/ramldb_boundaries/ramldb_boundaries") 
 
