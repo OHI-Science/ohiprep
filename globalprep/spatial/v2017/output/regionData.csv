@@ -1,0 +1,255 @@
+rgn_type,type_w_ant,rgn_id,rgn_ant_id,rgn_name
+eez,eez,1,1,Cocos Islands
+eez,eez,10,10,Nauru
+eez,eez,100,100,Republique du Congo
+eez,eez,101,101,Namibia
+eez,eez,102,102,South Africa
+eez,eez,103,103,Sao Tome and Principe
+eez,eez,104,104,Equatorial Guinea
+eez,eez,105,105,Bouvet Island
+eez,eez,106,106,Ghana
+eez,eez,107,107,Clipperton Island
+eez,eez,108,108,Bermuda
+eez,eez,11,11,Marshall Islands
+eez,eez,110,110,Bahamas
+eez,eez,111,111,Turks and Caicos Islands
+eez,eez,112,112,Cuba
+eez,eez,113,113,Cayman Islands
+eez,eez,114,114,Haiti
+eez,eez,115,115,Dominican Republic
+eez,eez,116,116,Puerto Rico and Virgin Islands of the United States
+eez,eez,117,117,British Virgin Islands
+eez,eez,118,118,Anguilla
+eez,eez,119,119,Saint Kitts and Nevis
+eez,eez,12,12,Wake Island
+eez,eez,120,120,Antigua and Barbuda
+eez,eez,121,121,Montserrat
+eez,eez,122,122,Saint Lucia
+eez,eez,123,123,Dominica
+eez,eez,124,124,Barbados
+eez,eez,125,125,Grenada
+eez,eez,126,126,Trinidad and Tobago
+eez,eez,127,127,Saint Vincent and the Grenadines
+eez,eez,129,129,Panama
+eez,eez,13,13,Northern Mariana Islands and Guam
+eez,eez,130,130,Costa Rica
+eez,eez,131,131,Nicaragua
+eez,eez,132,132,Colombia
+eez,eez,133,133,Honduras
+eez,eez,134,134,El Salvador
+eez,eez,135,135,Mexico
+eez,eez,136,136,Guatemala
+eez,eez,137,137,Ecuador
+eez,eez,138,138,Peru
+eez,eez,139,139,Venezuela
+eez,eez,14,14,Taiwan
+eez,eez,140,140,Guadeloupe and Martinique
+eez,eez,141,141,Faeroe Islands
+eez,eez,143,143,Iceland
+eez,eez,144,144,Jan Mayen
+eez,eez,145,145,Greenland
+eez,eez,146,146,Pitcairn
+eez,eez,147,147,French Polynesia
+eez,eez,148,148,Line Group
+eez,eez,149,149,Jarvis Island
+eez,eez,15,15,Philippines
+eez,eez,150,150,Palmyra Atoll
+eez,eez,151,151,American Samoa
+eez,eez,152,152,Samoa
+eez,eez,153,153,Cook Islands
+eez,eez,154,154,Niue
+eez,eez,155,155,Tonga
+eez,eez,156,156,Tokelau
+eez,eez,157,157,Phoenix Group
+eez,eez,158,158,Howland Island and Baker Island
+eez,eez,159,159,Johnston Atoll
+eez,eez,16,16,Australia
+eez,eez,161,161,Wallis and Futuna
+eez,eez,162,162,New Zealand
+eez,eez,163,163,United States
+eez,eez,164,164,Belize
+eez,eez,166,166,Jamaica
+eez,eez,167,167,Guyana
+eez,eez,168,168,Suriname
+eez,eez,169,169,French Guiana
+eez,eez,17,17,Papua New Guinea
+eez,eez,171,171,Brazil
+eez,eez,172,172,Argentina
+eez,eez,173,173,Uruguay
+eez,eez,174,174,Finland
+eez,eez,175,175,Denmark
+eez,eez,176,176,Germany
+eez,eez,177,177,Netherlands
+eez,eez,178,178,Poland
+eez,eez,179,179,France
+eez,eez,18,18,Fiji
+eez,eez,180,180,United Kingdom
+eez,eez,181,181,Ireland
+eez,eez,182,182,Spain
+eez,eez,183,183,Portugal
+eez,eez,184,184,Italy
+eez,eez,185,185,Monaco
+eez,eez,186,186,Montenegro
+eez,eez,187,187,Croatia
+eez,eez,188,188,Slovenia
+eez,eez,189,189,Lithuania
+eez,eez,19,19,Tuvalu
+eez,eez,190,190,Qatar
+eez,eez,191,191,Iran
+eez,eez,192,192,Iraq
+eez,eez,193,193,Guinea Bissau
+eez,eez,194,194,Guinea
+eez,eez,195,195,Ivory Coast
+eez,eez,196,196,Nigeria
+eez,eez,197,197,Cameroon
+eez,eez,198,198,Gabon
+eez,eez,199,199,Democratic Republic of the Congo
+eez,eez,2,2,Christmas Island
+eez,eez,20,20,South Korea
+eez,eez,200,200,Angola
+eez,eez,202,202,Tanzania
+eez,eez,203,203,India
+eez,eez,204,204,Bangladesh
+eez,eez,205,205,Myanmar
+eez,eez,206,206,Malaysia
+eez,eez,207,207,Vietnam
+eez,eez,208,208,Singapore
+eez,eez,209,209,China
+eez,eez,21,21,North Korea
+eez,eez,210,210,Japan
+eez,eez,212,212,Kiribati
+eez,eez,214,214,Egypt
+eez,eez,215,215,Jordan
+eez,eez,216,216,Indonesia
+eez,eez,218,218,Canada
+eez,eez,219,219,Saint Pierre and Miquelon
+eez,eez,220,220,Sint Maarten
+eez,eez,221,221,Northern Saint-Martin
+eez,eez,222,222,Sweden
+eez,eez,223,223,Norway
+eez,eez,224,224,Chile
+eez,eez,227,227,Jersey
+eez,eez,228,228,Guernsey
+eez,eez,231,231,East Timor
+eez,eez,232,232,Bosnia and Herzegovina
+eez,eez,237,237,Oecussi Ambeno
+eez,eez,24,24,Cambodia
+eez,eez,244,244,Curacao
+eez,eez,245,245,Bonaire
+eez,eez,247,247,Brunei
+eez,eez,248,248,Saba
+eez,eez-ccamlr,213,248100,Antarctica
+eez,eez-ccamlr,213,248200,Antarctica
+eez,eez-ccamlr,213,248300,Antarctica
+eez,eez-ccamlr,213,248400,Antarctica
+eez,eez-ccamlr,213,248500,Antarctica
+eez,eez-ccamlr,213,248600,Antarctica
+eez,eez,249,249,Sint Eustatius
+eez,eez,25,25,Thailand
+eez,eez,250,250,Aruba
+eez,eez-ccamlr,213,258410,Antarctica
+eez,eez-ccamlr,213,258420,Antarctica
+eez,eez-ccamlr,213,258431,Antarctica
+eez,eez-ccamlr,213,258432,Antarctica
+eez,eez-ccamlr,213,258441,Antarctica
+eez,eez-ccamlr,213,258442,Antarctica
+eez,eez-ccamlr,213,258510,Antarctica
+eez,eez-ccamlr,213,258520,Antarctica
+eez,eez-ccamlr,213,258600,Antarctica
+eez,eez-ccamlr,213,258700,Antarctica
+eez,eez,26,26,Andaman and Nicobar
+fao,fao,260,260,Arctic Sea
+fao,fao,261,261,"Atlantic, Northwest"
+fao,fao,262,262,"Atlantic, Northeast"
+fao,fao,263,263,"Atlantic, Western-Central"
+fao,fao,264,264,"Atlantic, Eastern Central"
+fao,fao,266,266,"Atlantic, Southwest"
+fao,fao,267,267,"Atlantic, Southeast"
+fao,fao,269,269,"Indian Ocean, Western"
+fao,fao,270,270,"Indian Ocean, Eastern"
+fao,fao,272,272,"Pacific, Northwest"
+fao,fao,273,273,"Pacific, Northeast"
+fao,fao,274,274,"Pacific, Western Central"
+fao,fao,275,275,"Pacific, Eastern Central"
+fao,fao,276,276,"Pacific, Southwest"
+fao,fao,277,277,"Pacific, Southeast"
+eez,eez,28,28,Comoro Islands
+eez,eez-ccamlr,213,288100,Antarctica
+eez,eez-ccamlr,213,288200,Antarctica
+eez,eez-ccamlr,213,288300,Antarctica
+eez,eez,29,29,Mayotte
+eez,eez,3,3,Norfolk Island
+eez,eez,30,30,Glorioso Islands
+eez,eez,31,31,Seychelles
+eez,eez,32,32,Reunion
+eez,eez,33,33,Juan de Nova Island
+eez,eez,34,34,Bassas da India
+eez,eez,35,35,Ile Europa
+eez,eez,36,36,Ile Tromelin
+eez,eez,37,37,Mauritius
+eez,eez,38,38,British Indian Ocean Territory
+eez,eez,39,39,Maldives
+eez,eez,4,4,Macquarie Island
+eez,eez,40,40,Sri Lanka
+eez,eez,41,41,Mozambique
+eez,eez,42,42,Madagascar
+eez,eez,43,43,Kenya
+eez,eez,44,44,Somalia
+eez,eez,45,45,Eritrea
+eez,eez,46,46,Djibouti
+eez,eez,47,47,Yemen
+eez,eez,48,48,Oman
+eez,eez,49,49,Sudan
+eez,eez,5,5,New Caledonia
+eez,eez,50,50,Saudi Arabia
+eez,eez,51,51,Kuwait
+eez,eez,52,52,Bahrain
+eez,eez,53,53,Pakistan
+eez,eez,54,54,United Arab Emirates
+eez,eez,55,55,Azores
+eez,eez,56,56,Cape Verde
+eez,eez,57,57,Madeira
+eez,eez,58,58,Canary Islands
+eez,eez,59,59,Belgium
+eez,eez,6,6,Vanuatu
+eez,eez,60,60,Gibraltar
+eez,eez,61,61,Tunisia
+eez,eez,62,62,Morocco
+eez,eez,63,63,Western Sahara
+eez,eez,64,64,Mauritania
+eez,eez,65,65,Gambia
+eez,eez,66,66,Senegal
+eez,eez,67,67,Libya
+eez,eez,68,68,Malta
+eez,eez,69,69,Latvia
+eez,eez,7,7,Solomon Islands
+eez,eez,70,70,Estonia
+eez,eez,71,71,Bulgaria
+eez,eez,72,72,Romania
+eez,eez,73,73,Russia
+eez,eez,74,74,Georgia
+eez,eez,75,75,Ukraine
+eez,eez,76,76,Turkey
+eez,eez,77,77,Syria
+eez,eez,78,78,Lebanon
+eez,eez,79,79,Israel
+eez,eez,8,8,Palau
+eez,eez,80,80,Greece
+eez,eez,81,81,Cyprus
+eez,eez,82,82,Albania
+eez,eez,84,84,Algeria
+eez,eez,85,85,Ascension
+eez,eez,86,86,Saint Helena
+eez,eez,88,88,Tristan da Cunha
+eez,eez,89,89,South Georgia and the South Sandwich Islands
+eez,eez,9,9,Micronesia
+eez,eez,90,90,Prince Edward Islands
+eez,eez,91,91,Crozet Islands
+eez,eez,92,92,Amsterdam Island and Saint Paul Island
+eez,eez,93,93,Kerguelen Islands
+eez,eez,94,94,Heard and McDonald Islands
+eez,eez,95,95,Falkland Islands
+eez,eez,96,96,Sierra Leone
+eez,eez,97,97,Liberia
+eez,eez,98,98,Togo
+eez,eez,99,99,Benin
