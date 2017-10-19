@@ -54,6 +54,9 @@ Load all relevant libraries including parallel processing packages.
 #set options for all chunks in code
 knitr::opts_chunk$set(warning=FALSE, message=FALSE,fig.width = 6, fig.height = 4, fig.path = 'figs/')
 
+# comment out when knitting
+# setwd("globalprep/prs_fish/v2017")
+
 library(tidyverse)
 library(parallel)
 library(foreach)
@@ -70,7 +73,7 @@ options(scipen=999)
 
 cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
 mytheme=rasterTheme(region=cols)
-source("~/github/ohiprep/src/R/common.R")
+source("../../../src/R/common.R")
   
 #set mollweide projection CRS
   mollCRS=crs('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs')
@@ -103,27 +106,27 @@ For each year read in the raw data, filter for appropriate type (high, low and a
 
 years = c(2003:2014)
 
-foreach(yr = years) %dopar%{
+foreach(yr = years) %dopar%{ #yr = 2014
   
   #read in raw data for the year
   raw <- readRDS(paste0(file.path(dir_M,'marine_threats/impact_acceleration/stressors/comm_fish/int/catch_data_'),yr,'.rds'))
   
   #high bycatch
-  high <- raw%>%
-          filter(bycatch == "high")%>%
-          rowwise()%>%
-          mutate(catch = sum(LSF_CR, IUU_CR, Discards_CR,na.rm=T))%>% #there shouldnt be NAs but just in case
-          group_by(Seq)%>%
-          summarise(cell_catch = sum(catch))
+  high <- raw %>%
+          dplyr::filter(bycatch == "high") %>%
+          rowwise() %>%
+          dplyr::mutate(catch = sum(LSF_CR, IUU_CR, Discards_CR, na.rm=TRUE) * OceanArea) %>% #there shouldnt be NAs but just in case
+          dplyr::group_by(Seq) %>%
+          dplyr::summarise(cell_catch = sum(catch))
           
     #rasterize catch by swapping cell ids with 
-raster::subs(saup_rast, high, by = 1, which = 2, subsWithNA=TRUE, filename = paste0('int/high_bycatch/annual_catch/high_bc_',yr,'.tif'),overwrite=T) 
+raster::subs(saup_rast, high, by = 1, which = 2, subsWithNA=TRUE, filename = paste0('int/high_bycatch/annual_catch/high_bc_',yr,'.tif'), overwrite=TRUE) 
   
   #low bycatch
   low <- raw%>%
           filter(bycatch == "low")%>%
           rowwise()%>%
-          mutate(catch = sum(LSF_CR, IUU_CR, Discards_CR,na.rm=T))%>% #there shouldnt be NAs but just in case
+          mutate(catch = sum(LSF_CR, IUU_CR, Discards_CR, na.rm=TRUE) * OceanArea)%>% #there shouldnt be NAs but just in case
           group_by(Seq)%>%
           summarise(cell_catch = sum(catch))
 
@@ -133,7 +136,7 @@ raster::subs(saup_rast, low, by = 1, which = 2, subsWithNA=TRUE, filename = past
   #artisanal bycatch
   artisanal <- raw%>%
                group_by(Seq)%>%
-              summarise(cell_catch = sum(SSF_CR)) #small scale fisheries catch rate
+              summarise(cell_catch = sum(SSF_CR * OceanArea)) #small scale fisheries catch rate
   
 raster::subs(saup_rast, artisanal, by = 1, which = 2, subsWithNA=TRUE, filename = paste0('int/artisanal/annual_catch/art_',yr,'.tif'),overwrite=T)
 }
@@ -142,7 +145,7 @@ raster::subs(saup_rast, artisanal, by = 1, which = 2, subsWithNA=TRUE, filename 
 
 ### Meta-analyis
 
-I wanted to look at how well our high and low bycatch gear designations align with the reported discard rater per cell. While not perfect, the majority of cells show that catch caught with high bycatch gear leads to a higher proportion of discards than when caught with low bycatch gear.
+I wanted to look at how well our high and low bycatch gear designations align with the reported discard rates per cell. While not perfect, the majority of cells show that catch caught with high bycatch gear leads to a higher proportion of discards than when caught with low bycatch gear.
 
 ```{r}
 #read in raw data for the year
@@ -178,9 +181,9 @@ The Net Primary Production data was prepared in [npp.Rmd](https://cdn.rawgit.com
 
 ```{r npp}
 
-npp <- list.files(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/VGPM_primary_productivity/int/annual_npp'),pattern = 'npp_2',full.names=T)
+npp <- list.files(file.path(dir_M,'git-annex/globalprep/prs_fish/v2016/VGPM_primary_productivity/int/annual_npp'), pattern = 'npp_2', full.names=TRUE)
 
-plot(raster(npp[12]),col=cols,axes=F,main = 'Net Primary Production (mg C/m2/day) \n 2014')
+plot(raster(npp[12]), col=cols, axes=FALSE, main = 'Net Primary Production (mg C/m2/day) \n 2014')
 ```
 
 ## Standardize by NPP
@@ -198,20 +201,20 @@ npp_stand <- function(file,fname){
   catch <- raster(file)
   
   #get net primary production for that year
-  n <- npp[substr(npp,111,114)==yr]%>%
-          raster()%>%
-          projectRaster(saup_rast)%>%
+  n <- npp[substr(npp,111,114)==yr] %>%
+          raster() %>%
+          projectRaster(saup_rast) %>%
           resample(.,saup_rast)
 
   #3. Divide catch by npp and save to git-annex
-  overlay(catch,n,fun=function(x,y){x/y},filename = paste0('int/',fname,'/annual_catch_npp/annual_catch_npp_',yr,'.tif'), overwrite=T,progress="text") 
+  overlay(catch,n,fun=function(x,y){x/y},filename = paste0('int/', fname,'/annual_catch_npp/annual_catch_npp_', yr, '.tif'), overwrite=TRUE, progress="text") 
 
 }
 
 #apply the function
-hb_files <- list.files('int/high_bycatch/annual_catch',full.names=T)
-lb_files <- list.files('int/low_bycatch/annual_catch',full.names=T)
-art_files <- list.files('int/artisanal/annual_catch',full.names=T)
+hb_files <- list.files('int/high_bycatch/annual_catch', full.names=TRUE)
+lb_files <- list.files('int/low_bycatch/annual_catch', full.names=TRUE)
+art_files <- list.files('int/artisanal/annual_catch', full.names=TRUE)
 
 lapply(hb_files,npp_stand,fname = "high_bycatch")
 lapply(lb_files,npp_stand,fname = "low_bycatch")
@@ -226,25 +229,25 @@ Mean catch per cell is calculated over a rolling window of 5 years to account fo
 
 ```{r mean_catch, eval=F}
 
-lb_npp <- list.files('int/low_bycatch/annual_catch_npp',full.names=T)
-hb_npp <- list.files('int/high_bycatch/annual_catch_npp',full.names=T)
-art_npp <- list.files('int/artisanal/annual_catch_npp',full.names=T)
+lb_npp <- list.files('int/low_bycatch/annual_catch_npp', full.names=TRUE)
+hb_npp <- list.files('int/high_bycatch/annual_catch_npp', full.names=TRUE)
+art_npp <- list.files('int/artisanal/annual_catch_npp', full.names=TRUE)
 
 registerDoParallel(6)
 
-foreach (i = 2003:2010) %dopar%{
+foreach (i = 2003:2010) %dopar%{ # i = 2010
   
   yrs <- c(i:(i+4))
   
-  out_lb <- lb_npp[which(substr(lb_npp,51,54) %in% yrs)]%>%
-            stack()%>%
-            calc(fun=function(x){mean(x,na.rm=T)})%>%
-            calc(fun=function(x){log(x+1)}, filename = paste0('int/low_bycatch/five_year_means/mean_catch_',yrs[1],'_',yrs[5],'.tif'),overwrite=T)
+  out_lb <- lb_npp[which(substr(lb_npp, 51, 54) %in% yrs)] %>%
+            stack() %>%
+            calc(fun=function(x){mean(x, na.rm=TRUE)}) %>%
+            calc(fun=function(x){log(x+1)}, filename = paste0('int/low_bycatch/five_year_means/mean_catch_',yrs[1],'_',yrs[5],'.tif'),overwrite=TRUE)
   
-  out_hb <- hb_npp[which(substr(hb_npp,52,55) %in% yrs)]%>%
-            stack()%>%
-            calc(fun=function(x){mean(x,na.rm=T)})%>%
-            calc(fun=function(x){log(x+1)}, filename = paste0('int/high_bycatch/five_year_means/mean_catch_',yrs[1],'_',yrs[5],'.tif'),overwrite=T)
+  out_hb <- hb_npp[which(substr(hb_npp, 52, 55) %in% yrs)] %>%
+            stack() %>%
+            calc(fun=function(x){mean(x,na.rm=TRUE)}) %>%
+            calc(fun=function(x){log(x+1)}, filename = paste0('int/high_bycatch/five_year_means/mean_catch_',yrs[1],'_',yrs[5],'.tif'), overwrite=TRUE)
   
   out_art <- art_npp[which(substr(art_npp,49,52) %in% yrs)]%>%
             stack()%>%
@@ -258,32 +261,32 @@ foreach (i = 2003:2010) %dopar%{
 
 ## Reference Point
 
-Look at all catch data standardized by NPP from 2003 - 2014 and use the 99.99th quantile as the reference point.
+Look at all mean catch data standardized by NPP and use the 99.99th quantile as the reference point.
 
 ```{r ref_point}
 
-lb_npp <- list.files('int/low_bycatch/annual_catch_npp',full.names=T)
-hb_npp <- list.files('int/high_bycatch/annual_catch_npp',full.names=T)
-art_npp <- list.files('int/artisanal/annual_catch_npp',full.names=T)
+mean_hb <- list.files('int/high_bycatch/five_year_means', full.names=TRUE)
+mean_lb <- list.files('int/low_bycatch/five_year_means', full.names=TRUE)
+mean_art <- list.files('int/artisanal/five_year_means', full.names = TRUE)
 
 # HIGH BYCATCH
 
 #get data across all years
 vals <- c()
 
-for(i in 2003:2014){
+for(file in 2007:2014){ # i = 2007
 #print(i)
-  m <- hb_npp[which(substr(hb_npp,52,55) == i)]%>%
+  m <- mean_hb[which(str_sub(mean_hb, -8, -5) == i)] %>%
     raster()%>%
     getValues()
   
  n <- m[!is.na(m)]
 
-  vals <- c(vals,n)
+  vals <- c(vals, n)
 
 }
 
-ref_hb <- log(quantile(vals,prob = 0.9999,na.rm=T)+1) #2.127272
+ref_hb <- quantile(vals, prob = 0.9999, na.rm=T)  #9.48
 
 
 #LOW BYCATCH
@@ -291,20 +294,19 @@ ref_hb <- log(quantile(vals,prob = 0.9999,na.rm=T)+1) #2.127272
 #get data across all years
 lb_vals <- c()
 
-for(i in 2003:2014){
+for(i in 2007:2014){
 
-  m <- lb_npp[which(substr(lb_npp,51,54) == i)]%>%
-    raster()%>%
+  m <- mean_lb[which(str_sub(mean_lb, -8, -5) == i)] %>%
+    raster() %>%
     getValues()
 
   n <- m[!is.na(m)]
   
-  lb_vals <- c(lb_vals,n)
+  lb_vals <- c(lb_vals, n)
 
 }
 
-ref_lb <- log(quantile(lb_vals,prob = 0.9999,na.rm=T)+1) #2.824125
-
+ref_lb <- quantile(lb_vals, prob = 0.9999, na.rm=TRUE) #10.24
 
 #Artisanal
 #LOW BYCATCH
@@ -312,9 +314,9 @@ ref_lb <- log(quantile(lb_vals,prob = 0.9999,na.rm=T)+1) #2.824125
 #get data across all years
 art_vals <- c()
 
-for(i in 2003:2014){
+for(i in 2007:2014){
 
-  m <- art_npp[which(substr(art_npp,49,52) == i)]%>%
+  m <- mean_art[which(str_sub(mean_art, -8, -5) == i)]%>%
     raster()%>%
     getValues()
 
@@ -324,7 +326,7 @@ for(i in 2003:2014){
 
 }
 
-ref_art <- log(quantile(art_vals,prob = 0.9999,na.rm=T)+1) #0.3874131
+ref_art <- quantile(art_vals, prob = 0.9999, na.rm=TRUE) #6.89
 
 ```
 
@@ -340,31 +342,31 @@ mean_art <- list.files('int/artisanal/five_year_means',full.names = T)
 
 registerDoParallel(8)
 
-foreach (i = 2003:2010) %dopar%{
+foreach (i = 2003:2010) %dopar%{ # i = 2003
   
   yrs <- c(i:(i+4))
   
-  out_hb <- mean_hb[which(substr(mean_hb,45,48) == i)]%>%
+  out_hb <- mean_hb[which(substr(mean_hb, 45, 48) == i)] %>%
             raster()%>%
-            calc(fun=function(x){ifelse(x>ref_hb,1,x/ref_hb)})%>%
-            calc(fun=function(x){ifelse(x<0,0,x)})%>%
-            projectRaster(crs = mollCRS,over=T)%>%
-            resample(ocean,method = 'ngb',filename = paste0(file.path(dir_git),'/output/high_bycatch/hb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
+            calc(fun=function(x){ifelse(x>ref_hb, 1, x/ref_hb)}) %>%
+            calc(fun=function(x){ifelse(x<0, 0, x)}) %>%
+            projectRaster(crs = mollCRS, over=TRUE, method = 'ngb') %>%
+            resample(ocean, method = 'ngb', filename = paste0(file.path(dir_git), '/output/high_bycatch/hb_fish_pressure_', yrs[1], '-', yrs[5], '.tif'), overwrite = TRUE)
   
-  out_lb <- mean_lb[which(substr(mean_lb,44,47) == i)]%>%
-            raster()%>%
-            calc(fun=function(x){ifelse(x>ref_lb,1,x/ref_lb)})%>%
-            calc(fun=function(x){ifelse(x<0,0,x)})%>%
-            projectRaster(crs = mollCRS, over=T)%>%
-            resample(ocean,method = 'ngb',filename = paste0(file.path(dir_git),'/output/low_bycatch/lb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
+  out_lb <- mean_lb[which(substr(mean_lb, 44, 47) == i)] %>%
+            raster() %>%
+            calc(fun=function(x){ifelse(x>ref_lb, 1, x/ref_lb)}) %>%
+            calc(fun=function(x){ifelse(x<0, 0, x)}) %>%
+            projectRaster(crs = mollCRS, over=TRUE, method = "ngb") %>%
+            resample(ocean, method = 'ngb', filename = paste0(file.path(dir_git),'/output/low_bycatch/lb_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
 
 
-  out_art <- mean_art[which(substr(mean_art,42,45) == i)]%>%
-            raster()%>%
-            calc(fun=function(x){ifelse(x>ref_art,1,x/ref_art)})%>%
-            calc(fun=function(x){ifelse(x<0,0,x)})%>%
-            projectRaster(crs = mollCRS, over=T)%>%
-            resample(ocean,method = 'ngb',filename = paste0(file.path(dir_git),'/output/artisanal/art_fish_pressure_',yrs[1],'-',yrs[5],'.tif'),overwrite=T)
+  out_art <- mean_art[which(substr(mean_art, 42, 45) == i)] %>%
+            raster() %>%
+            calc(fun = function(x){ifelse(x>ref_art, 1, x/ref_art)}) %>%
+            calc(fun = function(x){ifelse(x<0, 0, x)}) %>%
+            projectRaster(crs = mollCRS, over=TRUE, method = "ngb") %>%
+            resample(ocean, method = 'ngb', filename = paste0(file.path(dir_git), '/output/artisanal/art_fish_pressure_', yrs[1], '-', yrs[5], '.tif'), overwrite=TRUE)
 
 }
 
@@ -381,7 +383,7 @@ lb <- raster(file.path(dir_git, 'output/low_bycatch/lb_fish_pressure_2010-2014.t
 art <- raster(file.path(dir_git, 'output/artisanal/art_fish_pressure_2010-2014.tif'))
 
 s = stack(hb, lb, art)
-plot(s, col=cols, axes=F, box=F)
+plot(s, col=cols, axes=FALSE, box=FALSE)
 
 ```
 
@@ -398,115 +400,111 @@ setwd('globalprep/prs_fish/v2017')
 zones <- raster(file.path(dir_M, "git-annex/globalprep/spatial/v2017/regions_eez_with_fao_ant.tif"))  # raster data
 rgn_data <- read.csv(file.path(dir_M, "git-annex/globalprep/spatial/d2014/data/rgn_mol_raster_1km/regionData.csv"))    # data for sp_id's used in raster
 
-
 ### Low bycatch data first
 # get raster data:
-rasts <- list.files(file.path(dir_git,'output/low_bycatch'))
+rasts <- list.files(file.path(dir_git,'output/low_bycatch'), full =TRUE)
 
-pressure_stack <- stack()
-for(raster in rasts){ # raster = "lb_fish_pressure_2003-2007.tif"
-  tmp <- raster(file.path(dir_git,'output/low_bycatch', raster))
-  pressure_stack <- stack(pressure_stack, tmp)
-}
+pressure_stack <- stack(rasts)
 
 # extract data for each region:
 regions_stats <- zonal(pressure_stack,  zones, fun="mean", na.rm=TRUE, progress="text")
-regions_stats2 <- data.frame(regions_stats)
-setdiff(regions_stats2$zone, rgn_data$ant_id) # antarctica regions are in there, makes sense....no land
-setdiff(rgn_data$ant_id, regions_stats2$zone) # 213 is in there, that makes sense (Antarctica)
+regions_stats2 <- data.frame(regions_stats) 
+write.csv(regions_stats2, "int/low_bycatch.csv", row.names=FALSE)
+setdiff(regions_stats2$zone, rgn_data$ant_id) 
+setdiff(rgn_data$ant_id, regions_stats2$zone)
 
-data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="rgn_id", by.y="zone") %>%
-  gather("year", "pressure_score", starts_with("lb")) 
+data <- merge(rgn_data, regions_stats2, all.y=TRUE, by.x="rgn_id", by.y="zone") %>%
+  tidyr::gather("year", "pressure_score", starts_with("lb")) 
 
 lb_data <- data %>%
-  mutate(year = substring(year, 23, 26)) %>%
-  mutate(year = as.numeric(year)) %>%
-  mutate(year = year + 6) %>%
-  filter(ant_typ == "eez") %>%
-  dplyr::select(rgn_id, rgn_nam, year, pressure_score)
+  dplyr::mutate(year = stringr::str_sub(year, -4, -1)) %>%
+  dplyr::mutate(year = as.numeric(year)) %>%
+  dplyr::filter(rgn_id <= 250) %>%
+  dplyr::select(rgn_id, year, pressure_score)
 
 write.csv(lb_data, "output/lb.csv", row.names=FALSE)
+summary(lb_data)
+filter(lb_data, is.na(pressure_score))
 
-### try visualizing the data using googleVis plot
-# library(googleVis)
-# plotData <- lb_data %>%
-#   dplyr::select(rgn_nam, year, pressure_score)
-# 
-# Motion=gvisMotionChart(plotData, 
-#                        idvar="rgn_nam", 
-#                        timevar="year")
-# plot(Motion)
-# 
-# print(Motion, file='lb.html')
-#  
-### Get the high bycatch data 
+rasts <- list.files(file.path(dir_git,'output/high_bycatch'), full = TRUE)
 
-rasts <- list.files(file.path(dir_git,'output/high_bycatch'))
-
-pressure_stack <- stack()
-for(raster in rasts){ # raster = "lb_fish_pressure_rescaled_2003-2007.tif"
-  tmp <- raster(file.path(dir_git,'output/high_bycatch', raster))
-  pressure_stack <- stack(pressure_stack, tmp)
-}
+pressure_stack <- stack(rasts)
 
 # extract data for each region:
 regions_stats <- zonal(pressure_stack,  zones, fun="mean", na.rm=TRUE, progress="text")
 regions_stats2 <- data.frame(regions_stats)
-setdiff(regions_stats2$zone, rgn_data$ant_id) # antarctica regions are in there, makes sense....no land
-setdiff(rgn_data$ant_id, regions_stats2$zone) # 213 is in there, that makes sense (Antarctica)
+write.csv(regions_stats2, "int/high_bycatch.csv", row.names = FALSE)
+setdiff(regions_stats2$zone, rgn_data$ant_id) 
+setdiff(rgn_data$ant_id, regions_stats2$zone) 
 
 data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="rgn_id", by.y="zone") %>%
-  gather("year", "pressure_score", starts_with("hb")) 
+  tidyr::gather("year", "pressure_score", starts_with("hb")) 
 
 hb_data <- data %>%
-  mutate(year = substring(year, 23, 26)) %>%
-  mutate(year = as.numeric(year)) %>%
-  mutate(year = year + 6) %>%
-  filter(ant_typ == "eez") %>%
-  dplyr::select(rgn_id, rgn_nam, year, pressure_score)
+  dplyr::mutate(year = stringr::str_sub(year, -4, -1)) %>%
+  dplyr::mutate(year = as.numeric(year)) %>%
+  dplyr::filter(rgn_id <= 250) %>%
+  dplyr::select(rgn_id, year, pressure_score) # na values 71, 72, 74, 75, 188, 215
 
 write.csv(hb_data, "output/hb.csv", row.names=FALSE)
 
 
-### try visualizing the data using googleVis plot
-# library(googleVis)
-# plotData <- hb_data %>%
-#   dplyr::select(rgn_nam, year, pressure_score)
-# 
-# Motion=gvisMotionChart(plotData, 
-#                        idvar="rgn_nam", 
-#                        timevar="year")
-# plot(Motion)
-# 
-# print(Motion, file='hb.html')
+rasts <- list.files(file.path(dir_git,'output/artisanal'), full = TRUE)
 
-### Get the artisanal data 
+pressure_stack <- stack(rasts)
 
-rasts <- list.files(file.path(dir_git,'output/artisanal'))
-
-pressure_stack <- stack()
-for(raster in rasts){ # raster = "lb_fish_pressure_rescaled_2003-2007.tif"
-  tmp <- raster(file.path(dir_git,'output/artisanal', raster))
-  pressure_stack <- stack(pressure_stack, tmp)
-}
 
 # extract data for each region:
 regions_stats <- zonal(pressure_stack,  zones, fun="mean", na.rm=TRUE, progress="text")
 regions_stats2 <- data.frame(regions_stats)
+write.csv(regions_stats2, "int/artisanal.csv", row.names = FALSE)
 setdiff(regions_stats2$zone, rgn_data$ant_id) # antarctica regions are in there, makes sense....no land
 setdiff(rgn_data$ant_id, regions_stats2$zone) # 213 is in there, that makes sense (Antarctica)
 
 data <- merge(rgn_data, regions_stats, all.y=TRUE, by.x="rgn_id", by.y="zone") %>%
-  gather("year", "pressure_score", starts_with("art")) 
+  tidyr::gather("year", "pressure_score", starts_with("art")) 
 
 art_data <- data %>%
-  mutate(year = substring(year, 23, 26)) %>%
-  mutate(year = as.numeric(year)) %>%
-  mutate(year = year + 6) %>%
-  filter(ant_typ == "eez") %>%
-  dplyr::select(rgn_id, rgn_nam, year, pressure_score)
+  dplyr::mutate(year = stringr::str_sub(year, -4, -1)) %>%
+  dplyr::mutate(year = as.numeric(year)) %>%
+  dplyr::filter(rgn_id <= 250) %>%
+  dplyr::select(rgn_id, year, pressure_score)
 
 write.csv(art_data, "output/art.csv", row.names=FALSE)
+
+## compare with previous year's data
+
+new <- read.csv("output/lb.csv") %>%
+  filter(year == 2010) %>%
+  dplyr::select(rgn_id, new_pressure_score = pressure_score) 
+
+old <- read.csv("../v2016/output/comm_fish_lb_2016.csv") %>%
+  left_join(new, by = 'rgn_id')
+
+plot(old$new_pressure_score, old$pressure_score)
+abline(0, 1, col="red")
+
+
+new <- read.csv("output/hb.csv") %>%
+  filter(year == 2010) %>%
+  dplyr::select(rgn_id, new_pressure_score = pressure_score) 
+
+old <- read.csv("../v2016/output/comm_fish_hb_2016.csv") %>%
+  left_join(new, by = 'rgn_id')
+
+plot(old$new_pressure_score, old$pressure_score)
+abline(0, 1, col="red")
+
+
+new <- read.csv("output/art.csv") %>%
+  filter(year == 2010) %>%
+  dplyr::select(rgn_id, new_pressure_score = pressure_score) 
+
+old <- read.csv("../v2016/output/artisanal_fish_lb_2016.csv") %>%
+  left_join(new, by = 'rgn_id')
+
+plot(old$new_pressure_score, old$pressure_score)
+abline(0, 1, col="red")
 
 ```
 
