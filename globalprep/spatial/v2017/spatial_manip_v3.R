@@ -116,6 +116,19 @@ st_write(rgns_final, dsn=file.path(dir_M, "git-annex/globalprep/spatial/v2017"),
 
 #### Save as raster
 
+# save eez area csv:
+regions <- st_read(dsn=file.path(dir_M, "git-annex/globalprep/spatial/v2017"),
+                   layer = "regions_2017_update")
+
+regions_area <- regions %>%
+  filter(rgn_type == "eez") %>%
+  st_set_geometry(NULL) %>%
+  select(rgn_id, area_km2) %>%
+  group_by(rgn_id) %>%
+  summarize(area_km2 = sum(area_km2))
+  
+write.csv(regions_area, "globalprep/spatial/v2017/output/rgn_area.csv", row.names=FALSE)  
+
 # get most recent shapefile and select eez regions only:
 regions <- st_read(dsn=file.path(dir_M, "git-annex/globalprep/spatial/v2017"),
                    layer = "regions_2017_update")
