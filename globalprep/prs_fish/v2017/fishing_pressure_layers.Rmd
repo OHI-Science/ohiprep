@@ -67,6 +67,8 @@ library(seaaroundus)
 library(RColorBrewer)
 library(cowplot)
 
+ocean <- raster::raster(file.path(dir_M, 'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
+
 registerDoParallel(14) #registering cores for parallel processing
 
 options(scipen=999)
@@ -80,6 +82,7 @@ source("../../../src/R/common.R")
   
 #paths
  dir_git <- file.path(dir_M,'git-annex/globalprep/prs_fish/v2017')
+ 
   
 ```
 
@@ -115,7 +118,7 @@ foreach(yr = years) %dopar%{ #yr = 2014
   high <- raw %>%
           dplyr::filter(bycatch == "high") %>%
           rowwise() %>%
-          dplyr::mutate(catch = sum(LSF_CR, IUU_CR, Discards_CR, na.rm=TRUE) * OceanArea) %>% #there shouldnt be NAs but just in case
+          dplyr::mutate(catch = sum(LSF_CR, IUU_CR, Discards_CR, na.rm=TRUE) * 1000) %>% #there shouldnt be NAs but just in case, converting from tonnes to kg to get rid of low values
           dplyr::group_by(Seq) %>%
           dplyr::summarise(cell_catch = sum(catch))
           
@@ -126,7 +129,7 @@ raster::subs(saup_rast, high, by = 1, which = 2, subsWithNA=TRUE, filename = pas
   low <- raw%>%
           filter(bycatch == "low")%>%
           rowwise()%>%
-          mutate(catch = sum(LSF_CR, IUU_CR, Discards_CR, na.rm=TRUE) * OceanArea)%>% #there shouldnt be NAs but just in case
+          mutate(catch = sum(LSF_CR, IUU_CR, Discards_CR, na.rm=TRUE) * 1000)%>% #there shouldnt be NAs but just in case
           group_by(Seq)%>%
           summarise(cell_catch = sum(catch))
 
@@ -136,7 +139,7 @@ raster::subs(saup_rast, low, by = 1, which = 2, subsWithNA=TRUE, filename = past
   #artisanal bycatch
   artisanal <- raw%>%
                group_by(Seq)%>%
-              summarise(cell_catch = sum(SSF_CR * OceanArea)) #small scale fisheries catch rate
+              summarise(cell_catch = sum(SSF_CR * 1000)) #small scale fisheries catch rate
   
 raster::subs(saup_rast, artisanal, by = 1, which = 2, subsWithNA=TRUE, filename = paste0('int/artisanal/annual_catch/art_',yr,'.tif'),overwrite=T)
 }
