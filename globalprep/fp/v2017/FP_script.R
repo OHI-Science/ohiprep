@@ -16,8 +16,26 @@ mar <- mar %>%
   select(rgn_id, year, mar_t) %>%
   ungroup()
 
+# this one is turnign to NA in FP
+filter(mar, rgn_id ==95) # ok, this makes sense
+
 fis <- read.csv("globalprep/fis/v2017/data/FP_fis_catch.csv") %>%
   select(rgn_id, year, fis_t = fis_catch)
+
+## weirdness with a few regions
+## appears that some regions have 0 catch in 2014 catch data,
+## despite having catch in previous years. 
+## Going to gapfill these cases with previous years data
+data.frame(filter(fis, rgn_id %in% c(3, 89, 4, 95, 105)))  ## look to see what is happening
+
+fis <- fis %>%
+  mutate(fis_t = ifelse(fis_t==0, NA, fis_t)) %>%  # 8 NA values is correct
+  group_by(rgn_id) %>%
+  arrange(year) %>%
+  fill(fis_t)
+
+#Check
+data.frame(filter(fis, rgn_id %in% c(3, 89, 4, 95, 105)))  ## this looks correct
 
 ### adjust years so they are equivalent 
 adjust <- max(mar$year) - max(fis$year)
