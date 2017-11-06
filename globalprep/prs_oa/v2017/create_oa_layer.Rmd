@@ -11,7 +11,7 @@ output:
     theme: cerulean
     highlight: haddock
     includes: 
-      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+      in_header: '../../../src/templates/ohi_hdr.html'
   pdf_document:
     toc: true
 ---
@@ -73,7 +73,7 @@ library(foreach)
 library(doParallel)
 library(RColorBrewer)
 
-source("~/github/ohiprep/src/R/common.R")
+source("../../../src/R/common.R")
 
 #define paths for the raw data and OA folder held on git-annex on our NCEAS server, Mazu
 

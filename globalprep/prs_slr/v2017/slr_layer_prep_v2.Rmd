@@ -11,7 +11,7 @@ output:
     theme: cerulean
     highlight: haddock
     includes: 
-      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+      in_header: '../../../src/templates/ohi_hdr.html'
 pdf_document:
   toc: true
 ---
@@ -180,7 +180,7 @@ foreach(yr = c(1993:2016)) %dopar%{ #yr=2003
 ## Changing the projection and masking
 Since we are only interested in the increase in sea level near the coasts, we apply a mask to the raster layers that removes all cells farther than 3nm offshore. This mask was created previously for the OHI global 2016 assessment.
 
-```{r plot_mask}
+```{r plot_mask, eval = FALSE}
 
 # ## 3nm offshore raster to select only nearshore cells.
 # poly_3nm <- read_sf(file.path(dir_M, "git-annex/Global/NCEAS-Regions_v2014/data"), "rgn_offshore3nm_mol")
@@ -295,7 +295,7 @@ rasterVis::histogram(r_new, main ='Sea Level Pressure 2015 new data')
 ```
 
 
-```{r extract regions}
+```{r extract regions, eval=FALSE}
 
 # raster/zonal data
 slr_loc <- file.path(dir_M, "git-annex/globalprep/prs_slr/v2017/output")
@@ -344,9 +344,6 @@ Motion=gvisMotionChart(plotData,
 plot(Motion)
 
 print(Motion, file='slr.html')
-
-
-
 
 ```
 

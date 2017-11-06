@@ -462,6 +462,8 @@ uv_data <- uv_data %>%
   dplyr::select(rgn_id, year, pressure_score)
 write.csv(uv_data, "output/uv.csv", row.names = FALSE)
 ## quick compare
+
+uv_data <- read.csv("output/uv.csv")
 old <- read.csv("../v2016/output/uv_2016.csv") %>%
   mutate(year = 2015) %>%
   select(rgn_id, year, old_pressure = pressure_score) %>%

@@ -19,7 +19,7 @@ pdf_document:
 
 # Summary
 
-This script generates the "need" layer for the artisanal opportunities goal.  The "access" layer is located here: globalprep/res_mora_ao/v2013/data/r_mora_s4_2013a.csv.
+This script generates the "need" layer for the artisanal opportunities goal.  The "access" layer, which is not updated due to a lack of a data source, is located here: globalprep/res_mora_ao/v2013/data/r_mora_s4_2013a.csv.
 
 
 ## Updates from previous assessment
@@ -27,9 +27,8 @@ None
 
 ***
 #Data Source 
-**Reference**: 
 
-**Downloaded**: 8/17 2017
+**Downloaded**: 8/17/2017
 
 **Description**:  
 GDP adjusted per capita by PPP (ppppcgdp)
@@ -60,6 +59,7 @@ library(dplyr)
 library(tidyr)
 library(WDI) # install.packages('WDI')
 library(stringr)
+library(readr)
 
 # comment out when knitting:
 # setwd("globalprep/ao/v2017")
