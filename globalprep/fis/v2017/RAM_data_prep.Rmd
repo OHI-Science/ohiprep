@@ -11,7 +11,7 @@ output:
     theme: cerulean
     highlight: haddock
     includes: 
-      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+      in_header: '../../../src/templates/ohi_hdr.html'
 pdf_document:
   toc: true
 ---
@@ -65,6 +65,7 @@ library(dplyr)
 library(tidyr)
 library(readr)
 library(sf)
+library(ggplot2)
 
 source('../../../src/R/common.R')
 
@@ -485,5 +486,3 @@ write.csv(ram_data, "int/ram_bmsy.csv", row.names=FALSE)
 
 
 ```
-
-***

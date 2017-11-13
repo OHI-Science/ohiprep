@@ -47,5 +47,3 @@ get_rgn_names <- function() {
   return(x)
 }
 
-# #load ocean raster for pressures
-ocean = raster(file.path(dir_M,'git-annex/globalprep/spatial/v2017/ocean.tif'))

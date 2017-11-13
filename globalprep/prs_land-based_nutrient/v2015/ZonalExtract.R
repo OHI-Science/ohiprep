@@ -625,11 +625,12 @@ print(Motion, file=file.path(save_loc, 'low_bycatch.html'))
 #### Land-based fertilizer and pesticide plume data prep ----
 #########################################
 
-rast_locs <- file.path(dir_halpern2008, "mnt/storage/marine_threats/impact_layers_2013_redo/impact_layers/work/land_based/before_2007/raw_global_results")
+rast_locs <- file.path(dir_M, "marine_threats/impact_layers_2013_redo/impact_layers/work/land_based/before_2007/raw_global_results")
 
 ## peak at raster to see what is up:
 check <- raster(file.path(rast_locs, 'global_plumes_fert_2012_raw.tif'))
 ## darn: different extents and such...need to make these the same
+plot(check)
 
 quantiles <- data.frame(plumeData <- list.files(rast_locs), quantile_9999_ln=NA)
 files <- grep(".tif", list.files(rast_locs), value=TRUE)

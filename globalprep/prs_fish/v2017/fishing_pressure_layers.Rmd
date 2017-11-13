@@ -11,7 +11,7 @@ output:
     theme: cerulean
     highlight: haddock
     includes: 
-      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+      in_header: '../../../src/templates/ohi_hdr.html'
 pdf_document:
   toc: true
 ---
@@ -66,6 +66,9 @@ library(rasterVis)
 library(seaaroundus)
 library(RColorBrewer)
 library(cowplot)
+library(stringr)
+
+source('../../../src/R/common.R')
 
 ocean <- raster::raster(file.path(dir_M, 'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
 
@@ -75,8 +78,7 @@ options(scipen=999)
 
 cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
 mytheme=rasterTheme(region=cols)
-source("../../../src/R/common.R")
-  
+
 #set mollweide projection CRS
   mollCRS=crs('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs')
   
@@ -277,7 +279,7 @@ mean_art <- list.files('int/artisanal/five_year_means', full.names = TRUE)
 #get data across all years
 vals <- c()
 
-for(file in 2007:2014){ # i = 2007
+for(i in 2007:2014){ # i = 2007
 #print(i)
   m <- mean_hb[which(str_sub(mean_hb, -8, -5) == i)] %>%
     raster()%>%

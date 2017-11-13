@@ -85,7 +85,7 @@ tr_jobs_pct_tour <- read.csv('intermediate/wttc_empd_rgn.csv', stringsAsFactors 
                 select(rgn_id, year, jobs_pct)
 
 ## format data to have complete years/regions and convert percentage of jobs to proportion of jobs
-    rgn_names <- read.csv('https://raw.githubusercontent.com/OHI-Science/ohi-global/draft/eez/spatial/rgns_list.csv', stringsAsFactors = FALSE) %>%
+    rgn_names <- read.csv('https://raw.githubusercontent.com/OHI-Science/ohi-global/draft/eez/spatial/regions_list.csv', stringsAsFactors = FALSE) %>%
     dplyr::select(rgn_id)
 
     rgn_names <- expand.grid(rgn_id = rgn_names$rgn_id, 
@@ -259,9 +259,9 @@ These data are used to gapfill missing values in tourism sustainability.  Most o
 The Artisanal Opportunities goal uses gdppcppp data, so we will get the data that was processed for that goal. (NOTE: Update the Artisanal Opportunities goal prior to preparing these data)
 
 
-```{r worldbank, eval=FALSE}
+```{r worldbank}
 wb <- read.csv("../../ao/v2017/intermediate/gdppcppp_ohi.csv") %>%
-  select(rgn_id, year, value)
+  dplyr::select(rgn_id, year, value)
 
 ```
 

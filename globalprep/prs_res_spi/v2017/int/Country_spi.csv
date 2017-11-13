@@ -155,6 +155,10 @@
 "Central African Republic","2015",29.985,NA,0
 "Central African Republic","2016",29.0283333333333,NA,0
 "Central African Republic","2017",28.3766666666667,NA,0
+"C<f4>te d'Ivoire","2014",47.255,NA,0
+"C<f4>te d'Ivoire","2015",49.155,NA,0
+"C<f4>te d'Ivoire","2016",50.8633333333333,NA,0
+"C<f4>te d'Ivoire","2017",50.6558333333333,NA,0
 "Chad","2014",33.6541666666667,NA,0
 "Chad","2015",34.9458333333333,NA,0
 "Chad","2016",35.84,NA,0
@@ -195,10 +199,6 @@
 "Costa Rica","2015",80.7291666666667,NA,0
 "Costa Rica","2016",80.5575,NA,0
 "Costa Rica","2017",81.0325,NA,0
-"Côte d'Ivoire","2014",47.255,NA,0
-"Côte d'Ivoire","2015",49.155,NA,0
-"Côte d'Ivoire","2016",50.8633333333333,NA,0
-"Côte d'Ivoire","2017",50.6558333333333,NA,0
 "Croatia","2014",75.8866666666667,NA,0
 "Croatia","2015",75.7883333333333,NA,0
 "Croatia","2016",78.2991666666667,NA,0
@@ -207,10 +207,10 @@
 "Cuba","2015",63.321279071146,"bhn_1, op_1, fw_0",1
 "Cuba","2016",64.1978945189416,"bhn_1, op_1, fw_0",1
 "Cuba","2017",64.2268723552608,"bhn_1, op_1, fw_0",1
-"Curaçao","2014",NA,"bhn_4, op_4, fw_4",1
-"Curaçao","2015",NA,"bhn_4, op_4, fw_4",1
-"Curaçao","2016",NA,"bhn_4, op_4, fw_4",1
-"Curaçao","2017",NA,"bhn_4, op_4, fw_4",1
+"Cura<e7>ao","2014",NA,"bhn_4, op_4, fw_4",1
+"Cura<e7>ao","2015",NA,"bhn_4, op_4, fw_4",1
+"Cura<e7>ao","2016",NA,"bhn_4, op_4, fw_4",1
+"Cura<e7>ao","2017",NA,"bhn_4, op_4, fw_4",1
 "Cyprus","2014",78.9616666666667,NA,0
 "Cyprus","2015",79.1516666666667,NA,0
 "Cyprus","2016",80.6791666666667,NA,0
@@ -679,10 +679,10 @@
 "Qatar","2015",76.9040026306526,"bhn_2, op_0, fw_0",1
 "Qatar","2016",76.6402435276504,"bhn_2, op_0, fw_0",1
 "Qatar","2017",76.6298227124569,"bhn_2, op_0, fw_0",1
-"Réunion","2014",NA,"bhn_4, op_4, fw_4",1
-"Réunion","2015",NA,"bhn_3, op_4, fw_4",1
-"Réunion","2016",NA,"bhn_3, op_4, fw_4",1
-"Réunion","2017",NA,"bhn_3, op_4, fw_4",1
+"R<e9>union","2014",NA,"bhn_4, op_4, fw_4",1
+"R<e9>union","2015",NA,"bhn_3, op_4, fw_4",1
+"R<e9>union","2016",NA,"bhn_3, op_4, fw_4",1
+"R<e9>union","2017",NA,"bhn_3, op_4, fw_4",1
 "Romania","2014",71.9125,NA,0
 "Romania","2015",72.6933333333333,NA,0
 "Romania","2016",73.7366666666667,NA,0

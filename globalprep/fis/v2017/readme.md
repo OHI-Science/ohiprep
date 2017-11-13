@@ -9,7 +9,7 @@ If using these data, please see our [citation policy](http://ohi-science.org/cit
 
 
 ### Additional information
-A description of some of the files so far:
+A description of files:
 
 * `clean_cells.R` cleans up the half-degree cell data, removing overlaps between land and oceanic regions, and calculates the total proportion of each cell within each OHI region. The output of this script is `cells.csv`
 

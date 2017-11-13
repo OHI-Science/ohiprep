@@ -223,7 +223,7 @@ health <- data %>%
   dplyr::mutate(year = as.numeric(year)) %>%
   dplyr::mutate(health = ifelse(health > 1, 1, health))
 
-write.csv(health, sprintf("output/hab_ice_health_eez.csv"), row.names=FALSE)
+write.csv(health, "output/hab_ice_health_eez.csv", row.names=FALSE)
 
 
 ## trend data
@@ -238,7 +238,7 @@ trend <- data %>%
   dplyr::mutate(trend = ifelse(trend<(-1), -1, trend))
 
 
-write.csv(trend, sprintf("output/hab_ice_trend_eez.csv"), row.names=FALSE)
+write.csv(trend, "output/hab_ice_trend_eez.csv", row.names=FALSE)
 
 
 ### get extent data
@@ -248,7 +248,7 @@ extent <- data %>%
    dplyr::mutate(year = 2016) %>%
   dplyr::select(rgn_id, habitat, year, km2)
 
-write.csv(extent, sprintf("output/hab_ice_extent_eez.csv"), row.names=FALSE)
+write.csv(extent, "output/hab_ice_extent_eez.csv", row.names=FALSE)
 
 
 ```
@@ -262,15 +262,21 @@ write.csv(extent, sprintf("output/hab_ice_extent_eez.csv"), row.names=FALSE)
 ```{r}
 
 ## Health
+
+health <- read.csv("output/hab_ice_health_eez.csv")
 # compare to last year's data to make sure everything looks basically fine
 old <- read.csv("../v2016/output/hab_ice_health_eez_updated.csv") %>%
   dplyr::rename(old_health = health) %>%
   dplyr::left_join(health, by = c("rgn_id", "habitat", "year"))
 
+
+
 plot(old$old_health, old$health)
 abline(0, 1, col="red")
 
 ## Trend
+
+trend <- read.csv("output/hab_ice_trend_eez.csv")
 old <- read.csv("../v2016/output/hab_ice_trend_eez_updated.csv") %>%
   dplyr::rename(old_trend = trend) %>%
   dplyr::left_join(trend, by = c("rgn_id", "habitat", "year"))
@@ -280,6 +286,8 @@ abline(0, 1, col="red")
 
 ## Extent
 # compare to last year's data to make sure everything looks basically fine
+extent <- read.csv("output/hab_ice_extent_eez.csv")
+
 old <- read.csv("../v2016/output/hab_ice_extent_eez_updated.csv") %>%
   dplyr::rename(old_km2 = km2) %>%
   dplyr::left_join(extent, by = c("rgn_id", "year", "habitat"))
