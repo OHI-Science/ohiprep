@@ -1,4 +1,4 @@
-## Ocean Health Index: [NAME OF GOAL/DATA LAYER/SCENARIO YEAR]
+## Ocean Health Index: World Governance Indicator
 
 See full data prep details [here](https://rawgit.com/OHI-Science/ohiprep/master/globalprep/prs_res_wgi/v2017/WGI_dataprep.html).
 

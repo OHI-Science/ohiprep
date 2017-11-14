@@ -2,8 +2,6 @@
 
 This folder includes the extent, health, and trend data for soft-bottom habitat.
 
-These data are then combined using the scripts from the hab_combined folder.
-
 More information about the habitat subgoal (biodiversity goal) is available [here](http://ohi-science.org/goals/#biodiversity).
 
 The folders in this file include the metadata, R scripts, and data for each assessement year (i.e., the year the assessment was conducted).  The most current year represents the best available data and methods, and previous years are maintained for archival purposes.

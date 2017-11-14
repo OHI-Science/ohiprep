@@ -1,11 +1,6 @@
-## Ocean Health Index: Coral data for the habitat subgoal, coastal protection goal, and carbon storage goal
+## Ocean Health Index: Convention on International Trade in Endangered Species of Wild Fauna and Flora (CITES) signatories
 
-This folder includes the extent, health, and trend data for coral.  These data have not been updated since the 2012 assessment because no suitable updates are available. 
-
-More information about the goals is available:
-* [habitat subgoal/biodiversity goal](http://ohi-science.org/goals/#biodiversity)
-* [coastal protection](http://ohi-science.org/goals/#coastal-protection)
-* [carbon storage](http://ohi-science.org/goals/#carbon-storage)
+This folder has data for the signatories of the Convention on International Trade in Endangered Species of Wild Fauna and Flora (CITES). These data are used to calculate resilience.
 
 The folders in this file include the metadata, R scripts, and data for each assessement year (i.e., the year the assessment was conducted).  The most current year represents the best available data and methods, and previous years are maintained for archival purposes.
 

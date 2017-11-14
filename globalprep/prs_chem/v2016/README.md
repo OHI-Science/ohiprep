@@ -4,7 +4,7 @@ These data were prepared for the global 2016 assessment.
 
 The Status of chemical pollution was measured via four global datasets: land-based organic from agricultural pesticide use (reported to FAO), inorganic pollution from runoff from impervious surfaces, and ocean-based pollution from commercial shipping and ports.
 
-The shipping, ports and harbors, and inorganic pollution have  not changed over time.  However, the organic (pesticide) pollution is updated yearly, with the most recent data from 2013.
+The shipping, ports and harbors, and inorganic pollution have  not changed over time.  However, the organic (pesticide) pollution is updated yearly, with the most recent data.
 
 The shipping, ports and harbors, and inorganic pollution data are located [here](https://knb.ecoinformatics.org/#view/doi:10.5063/F1S180FS).  
 

@@ -2,8 +2,6 @@
 
 This folder includes the extent, health, and trend data for saltmarsh. These data have not been updated since the 2012 assessment because no suitable updates are available. 
 
-These data are then combined using the scripts from the hab_combined folder.
-
 More information about the goals is available:
 * [habitat subgoal/biodiversity goal](http://ohi-science.org/goals/#biodiversity)
 * [coastal protection](http://ohi-science.org/goals/#coastal-protection)
