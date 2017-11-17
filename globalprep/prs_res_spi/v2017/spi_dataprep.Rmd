@@ -104,6 +104,7 @@ In this case, we use relationships between the subindicators to estimate missing
 
 ```{r}
 
+set.seed(227)
 bhn_subs <- all_spi %>%
   dplyr::filter(subcategory %in% c("bhn")) %>%
   spread(category, score)
@@ -179,7 +180,7 @@ bhn_data <- bhn_tmp_long %>%
 ### Gapfill op indicator 
 
 ```{r}
-
+set.seed(227)
 op_subs <- all_spi %>%
   dplyr::filter(subcategory %in% c("op")) %>%
   spread(category, score)
@@ -256,7 +257,7 @@ op_data <- op_tmp_long %>%
 ### Gapfill fw indicator 
 
 ```{r}
-
+set.seed(227)
 fw_subs <- all_spi %>%
   dplyr::filter(subcategory %in% c("fw")) %>%
   spread(category, score)
@@ -368,9 +369,9 @@ write.csv(spi_calc, "int/Country_spi.csv", row.names=FALSE)
 
 spi_calc <- read.csv("int/Country_spi.csv", stringsAsFactors = FALSE)
 spi_calc <- spi_calc %>%
-  mutate(Country = ifelse(Country=="C\xf4te d'Ivoire", "Cote d'Ivoire", Country),
-         Country = ifelse(Country=="Réunion", "Reunion", Country),
-         Country = ifelse(Country=="Curaçao", "Curacao", Country),
+  mutate(Country = ifelse(Country=="C<f4>te d'Ivoire", "Cote d'Ivoire", Country),
+         Country = ifelse(Country=="R<e9>union", "Reunion", Country),
+         Country = ifelse(Country=="Cura<e7>ao", "Curacao", Country),
          Country = ifelse(Country=="Korea, Democratic Republic of", "North Korea", Country),
          Country = ifelse(Country=="St. Helena", "Saint Helena", Country),
          Country = ifelse(Country=="St. Martin", "Northern Saint-Martin", Country))
