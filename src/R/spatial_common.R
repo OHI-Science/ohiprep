@@ -5,15 +5,12 @@
 #library(rgdal)
 #library(sf)
 #library(raster)
-devtools::install_github("krlmlr/rprojroot")
-library(rprojroot)
 
 ## set the mazu and neptune data_edit share based on operating system
 dir_M             <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
                        'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
                        'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
 
-ohiprep_root <- rprojroot::find_rstudio_root_file()
 
 ## OHI region files
 
@@ -33,15 +30,14 @@ zones <- raster::raster(file.path(dir_M, "git-annex/globalprep/spatial/v2017/reg
 ### Dataframes
 ## csv file with region names and ID variables that match the OHI region file
 ohiprep_root <- rprojroot::find_rstudio_root_file()
-rgns_global <- read.csv(file.path(ohiprep_root, "globalprep/spatial/v2017/output/regionData.csv"))
-UNgeorgn_id <- read.csv(file.path(ohiprep_root, "globalprep/spatial/v2017/output/georegions.csv")) 
-UNgeorgn_nm <- read.csv(file.path(ohiprep_root, "globalprep/spatial/v2017/output/georegion_labels.csv")) 
-rgn_syns <- read.csv(file.path(ohiprep_root, "globalprep/spatial/v2017/output/rgn_eez_v2013a_synonyms.csv")) 
-low_pop <- read.csv(file.path(ohiprep_root, "globalprep/spatial/v2017/output/rgn_uninhabited_islands.csv"))
+rgns_global <- read.csv("https://raw.githubusercontent.com/OHI-Science/ohiprep/master/globalprep/spatial/v2017/output/regionData.csv")
+UNgeorgn_id <- read.csv("https://raw.githubusercontent.com/OHI-Science/ohiprep/master/globalprep/spatial/v2017/output/georegions.csv") 
+UNgeorgn_nm <- read.csv("https://raw.githubusercontent.com/OHI-Science/ohiprep/master/globalprep/spatial/v2017/output/georegion_labels.csv") 
+rgn_syns <- read.csv("https://raw.githubusercontent.com/OHI-Science/ohiprep/master/globalprep/spatial/v2017/output/rgn_eez_v2013a_synonyms.csv") 
+low_pop <- read.csv("https://raw.githubusercontent.com/OHI-Science/ohiprep/master/globalprep/spatial/v2017/output/rgn_uninhabited_islands.csv")
 
 
-ohi_global_root <- sub("/[^/]*$","", ohiprep_root) 
-territory <- read.csv(file.path(ohi_global_root, "ohi-global/eez/spatial/rgns_list.csv"))
+territory <- read.csv("https://raw.githubusercontent.com/OHI-Science/ohi-global/draft/eez/spatial/regions_list.csv")
 
 ### Ocean raster
 
