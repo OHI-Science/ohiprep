@@ -291,7 +291,7 @@ for(i in 2007:2014){ # i = 2007
 
 }
 
-ref_hb <- quantile(vals, prob = 0.9999, na.rm=T)  #9.48
+ref_hb <- quantile(vals, prob = 0.9999, na.rm=T)  #8.67
 
 
 #LOW BYCATCH
@@ -311,10 +311,9 @@ for(i in 2007:2014){
 
 }
 
-ref_lb <- quantile(lb_vals, prob = 0.9999, na.rm=TRUE) #10.24
+ref_lb <- quantile(lb_vals, prob = 0.9999, na.rm=TRUE) #9.41
 
 #Artisanal
-#LOW BYCATCH
 
 #get data across all years
 art_vals <- c()
@@ -331,7 +330,7 @@ for(i in 2007:2014){
 
 }
 
-ref_art <- quantile(art_vals, prob = 0.9999, na.rm=TRUE) #6.89
+ref_art <- quantile(art_vals, prob = 0.9999, na.rm=TRUE) #5.98
 
 ```
 
@@ -397,8 +396,6 @@ plot(s, col=cols, axes=FALSE, box=FALSE)
 # Extract the data by OHI region
 
 ```{r extract, eval = F}
-
-setwd('globalprep/prs_fish/v2017')
 
 # raster/zonal data
 
