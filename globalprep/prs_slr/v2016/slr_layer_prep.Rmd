@@ -180,13 +180,12 @@ three_nm <- readOGR(dsn= file.path(dir_anx,'spatial/d2014/data'),layer = 'region
     projection(r) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
     
     r_3nm_mask <- mask(r,three_nm, progress='text')
-    writeRaster(r_3nm_mask,filename = file.path(dir_git,'globalprep/prs_slr/v2016/int/rast_3nm_mask.tif'))
-    
+    writeRaster(r_3nm_mask,filename = file.path(dir_M,  'git-annex/globalprep/prs_slr/v2016/int/rast_3nm_mask.tif'))
 ```
 
 ```{r plot_mask}
 
-s <- raster(file.path(dir_git,'globalprep/prs_slr/v2016/int/rast_3nm_mask.tif'))
+s <- raster(file.path(dir_M,'git-annex/globalprep/prs_slr/v2016/int/rast_3nm_mask.tif'))
 plot(ocean, col='cornsilk2', axes=F, box=F, main = 'Coastal cells mask', legend=F)		
 plot(s,col='black',axes=F, box=F,legend=F,add=T)
 
@@ -210,10 +209,10 @@ months_coast <- function(x){
   #define projection of the raster before reprojecting
   projection(r) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
   
-  r_mask <- mask(r,r_3nm_mask,progress='text')
+  r_mask <- mask(r, r_3nm_mask, progress='text')
 
   
-  writeRaster(r_mask,filename=paste0(dir_git,'/globalprep/prs_slr/v2016/int/msla_monthly_coast/msla_monthly_coast_',m_yr,'.tif'),overwrite=T)
+  writeRaster(r_mask, filename= file.path(dir_M, sprintf('git-annex/globalprep/prs_slr/v2016/int/msla_monthly_coast/msla_monthly_coast_%s.tif', m_yr), overwrite=TRUE))
 
 }
 
@@ -229,7 +228,7 @@ Annual mean sea level anomaly rasters are derived from the monthly data.
 
 ``` {r msla_monthly_to_annual, eval=F}
 
-month_files <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_monthly_coast'),full.names=T)
+month_files <- list.files(file.path(dir_M,'git-annex/globalprep/prs_slr/v2016/int/msla_monthly_coast'),full.names=T)
 
 all_yrs <- c(1993:2015)
 
@@ -244,7 +243,7 @@ foreach (j = all_yrs) %dopar% {
   ### stack all rasters for this year, and calc annual mean, then write as raster
   rast_annual_mean <- stack(msla_yr)%>%
                       calc(mean,na.rm=T)%>%
-                      writeRaster(filename = paste0(file.path(dir_git),'/globalprep/prs_slr/v2016/int/msla_annual_mean/rast_msla_annual_',j,'.tif'),overwrite=T)
+                      writeRaster(filename = file.path(dir_M, sprintf('git-annex/globalprep/prs_slr/v2016/int/msla_annual_mean/rast_msla_annual_%s.tif', j)), overwrite=T)
 
 }
 
@@ -256,7 +255,7 @@ The reference point is the 99.99th quantile of the entire data distribution from
 
 ```{r ref, eval=F}
 
-annual_means <- list.files(file.path(dir_git,'globalprep/prs_slr/v2016/int/msla_annual_mean'), pattern = '*.tif', full.names=TRUE)
+annual_means <- list.files(file.path(dir_M, 'git-annex/globalprep/prs_slr/v2016/int/msla_annual_mean'), pattern = '*.tif', full.names=TRUE)
 
 #get data across all years
 vals <- c()
@@ -308,7 +307,7 @@ resc_slr <- function(file){
       calc(fun=function(x){ifelse(x<0, 0, x)}) %>% #set all negative values to 0
       calc(fun=function(x){ifelse(x>ref, 1, x/ref)}) %>%
       projectRaster(crs = mollCRS, over=TRUE)%>%
-      resample(ocean,method = 'ngb', filename = paste0(file.path(dir_anx), '/prs_slr/v2016/output/slr_', yr, '.tif'), overwrite=TRUE)
+      resample(ocean, method = 'ngb', filename = file.path(dir_M, sprintf('git-annex/globalprep/prs_slr/v2016/output/slr_%s.tif', yr)), overwrite=TRUE)
 
 }
 
@@ -320,7 +319,7 @@ mclapply(annual_means,resc_slr, mc.cores = 3)
 
 ```{r plot_results}
 
-r <- raster(file.path(dir_anx,'prs_slr/v2016/output/slr_2015.tif'))
+r <- raster(file.path(dir_M,'git_annex/globalprep/prs_slr/v2016/output/slr_2015.tif'))
 
 plot(ocean, col='cornsilk2', axes=FALSE, box=FALSE, main='Sea Level Rise Pressure 2015', legend=F)		
 plot(r, col=cols, axes=FALSE, box=FALSE, add=TRUE)
