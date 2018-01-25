@@ -56,9 +56,11 @@ Cortadv5_weeklySST.nc =  SST, weekly data for all years, degrees Kelvin
 
 knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'figs/',message = FALSE, warning = FALSE)
 
+# setwd("globalprep/prs_sst/v2016")
 #source('~/github/ohiprep/src/R/common.R')
 
-source('../../../src/R/common.R')
+# source('../../../src/R/common.R')
+
 
 library(raster)
 library(RColorBrewer)
@@ -66,17 +68,15 @@ library(tidyverse)
 library(rgdal)
 library(doParallel)
 library(foreach)
+library(sf)
+
+# load spatial files (ocean raster and regions shapefile)
+source('../../../src/R/spatial_common.R')
 
 cols = rev(colorRampPalette(brewer.pal(11, 'Spectral'))(255)) # rainbow color scheme
 
-#ocean raster at 1km
-ocean = raster(file.path(dir_M, 'model/GL-NCEAS-Halpern2008/tmp/ocean.tif'))
-ocean_shp <- readOGR(file.path(dir_M,'git-annex/globalprep/spatial/d2014/data'),layer = 'regions_gcs')
-land      <- ocean_shp%>%
-              subset(rgn_typ %in% c('land','land-disputed','land-noeez'))
-
-#set mollweide projection CRS
-  mollCRS=crs('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs')
+land      <- regions %>%
+              subset(rgn_type %in% c('land','land-disputed','land-noeez'))
 
 # setwd if not running entire Rmd
   #setwd("globalprep/prs_sst/v2016")
@@ -89,11 +89,13 @@ land      <- ocean_shp%>%
 
   l   <- list.files(file.path(dir_M,'git-annex/globalprep/prs_sst/v2015/tmp'),pattern='annual_pos_anomalies',full.names=TRUE)
   
+plot(raster(l[1]))
 
 # Get 5 year aggregates
 ref_years <- c(grep(c('1985'), l), grep(c('1986'), l), grep(c('1987'), l), grep(c('1988'), l), grep(c('1989'), l))
 
-  ref <- stack(l[ref_years])%>%sum(.) # This is the time period we are using for historical comparison (1985 - 1989)
+  ref <- stack(l[ref_years]) %>% 
+    sum(.) # This is the time period we are using for historical comparison (1985 - 1989)
 
   
   registerDoParallel(10)  
@@ -104,12 +106,14 @@ foreach(i = 1986:2008)%dopar%{ #i=2005
   
   yrs <- c(i:(i+4))
   
-  s   <- stack(l[substr(l,81,84)%in%yrs])%>%sum(.)
+  s   <- stack(l[substr(l,81,84) %in% yrs]) %>% 
+    sum(.)
   
-  diff = overlay(s,ref,fun=function(x,y){x-y})%>% #calculate difference between recent 5 year cumulative sum and historical (1985-1989)
-          mask(land,inverse=T)
+  diff = overlay(s, ref, fun=function(x,y){x-y}) %>% #calculate difference between recent 5 year cumulative sum and historical (1985-1989)
+          mask(land, inverse=TRUE)
   
-  writeRaster(diff,filename = paste0('int/sst_diff_ocean_',yrs[1], '-', yrs[5],'.tif'),overwrite=T)
+  writeRaster(diff,
+              filename = paste0('int/sst_diff_ocean_',yrs[1], '-', yrs[5],'.tif'), overwrite=TRUE)
    
 }
 ```
@@ -167,13 +171,13 @@ foreach(i = 1:length(diffs)) %dopar%{
 
   r             <- raster(diffs[i])
   
-  yrs           <- substr(diffs[i],20,28)
+  yrs           <- substr(diffs[i], 20, 28)
   
   projection(r) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
   
-  out = projectRaster(r, crs=mollCRS,over=T)%>%
-        calc(.,fun=function(x){ifelse(x>0,ifelse(x>resc_num,1,x/resc_num),0)})%>%
-        resample(.,ocean,method='ngb',filename=paste0(dir_M,'/git-annex/globalprep/prs_sst/v2016/output/sst_',yrs,'_1985-1989.tif'),overwrite=T)
+  out = projectRaster(r, crs=mollCRS, over=TRUE) %>%
+        calc(., fun=function(x){ifelse(x>0, ifelse(x>resc_num, 1, x/resc_num), 0)}) %>%
+        resample(., ocean, method='ngb', filename=paste0(dir_M, '/git-annex/globalprep/prs_sst/v2016/output/sst_',yrs,'_1985-1989.tif'), overwrite=TRUE)
 
 }
 ```
@@ -183,9 +187,9 @@ foreach(i = 1:length(diffs)) %dopar%{
 #Results
 
 ```{r results}
-res <- list.files(file.path(dir_M,'git-annex/globalprep/prs_sst/v2016/output'),full.names=T)
+res <- list.files(file.path(dir_M, 'git-annex/globalprep/prs_sst/v2016/output'), full.names = TRUE)
 
-plot(raster(res[23]),col=cols,axes=F,main = 'Sea Surface Temperature Pressure Layer \n OHI 2016')
+plot(raster(res[23]), col=cols, axes=F, main = 'Sea Surface Temperature Pressure Layer \n OHI 2016')
 
 ```
 

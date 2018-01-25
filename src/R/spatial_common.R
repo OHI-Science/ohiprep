@@ -12,6 +12,10 @@ dir_M             <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
                        'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
 
 
+## standard projection for OHI global data
+mollCRS=crs('+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs')
+
+
 ## OHI region files
 
 ### Shapefile:
@@ -29,7 +33,6 @@ zones <- raster::raster(file.path(dir_M, "git-annex/globalprep/spatial/v2017/reg
 
 ### Dataframes
 ## csv file with region names and ID variables that match the OHI region file
-ohiprep_root <- rprojroot::find_rstudio_root_file()
 rgns_global <- read.csv("https://raw.githubusercontent.com/OHI-Science/ohiprep/master/globalprep/spatial/v2017/output/regionData.csv")
 UNgeorgn_id <- read.csv("https://raw.githubusercontent.com/OHI-Science/ohiprep/master/globalprep/spatial/v2017/output/georegions.csv") 
 UNgeorgn_nm <- read.csv("https://raw.githubusercontent.com/OHI-Science/ohiprep/master/globalprep/spatial/v2017/output/georegion_labels.csv") 
