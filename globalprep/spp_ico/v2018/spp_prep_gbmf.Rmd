@@ -218,7 +218,7 @@ if(!file.exists(tot_sum_gbmf_file)) {
   gav_bbox <- raster::extent(-121.5, -119, 33.5, 35)
   
   am_cell_area <- read_tsv(file.path(dir_data_am, 'csv/hcaf_v6.csv')) %>%
-      select(loiczid = LOICZID, cell_area = CellArea)
+      select(loiczid = LOICZID, cell_area = CellArea, ocean_area = OceanArea)
   
   gav_cells <- data.frame(rgn_id = 1000,
                           rgn_name = 'Gaviota', 
@@ -283,13 +283,13 @@ spp_basic_info <- read_csv(file.path(dir_goal, 'int', 'spp_list_scored.csv'),
   select(-year, -map_subpop)
 
 am_spp_gbmf <- read_csv(file.path(dir_goal_anx, 'int', 'am_cells_spp_gbmf.csv'),
-                        col_types = 'cddcdd') %>%
+                        col_types = 'cddcddd') %>%
   group_by(am_sid, rgn_id, rgn_name) %>%
-  summarize(rgn_range_km2 = sum(proportionArea * cell_area)) %>%
+  summarize(rgn_range_km2 = sum(proportionArea * cell_area * ocean_area)) %>%
   left_join(spp_basic_info, by = 'am_sid')
 
 iucn_spp_gbmf <- read_csv(file.path(dir_goal_anx, 'int', 'iucn_cells_spp_gbmf.csv'),
-                          col_types = 'cddcdddcdd') %>%
+                          col_types = 'cddcdddcddd') %>%
   rename(map_iucn_sid = iucn_sid) %>%
   group_by(map_iucn_sid, rgn_id, rgn_name) %>%
   summarize(rgn_range_km2 = sum(proportionArea * cell_area)) %>%
@@ -306,11 +306,34 @@ write_csv(spp_list_all, file.path(dir_goal, 'summary/spp_list_gbmf.csv'))
 #        Cuba     Gaviota       Japan New Zealand 
 #        1600         595        2743        1173 
 
+ggplot(spp_list_all, aes(x = cat_score)) +
+  theme_bw() +
+  theme(panel.border = element_blank()) +
+  geom_bar() +
+  facet_wrap( ~ rgn_name, scales = 'free_y') +
+  labs(x = 'Extinction risk (0 = Least Concern, 1 = Extinct)',
+       y = 'Number of species in rgn')
+ggsave(file.path(dir_goal, 'gbmf_maps/risk_spp_barchart.png'))
+
 ```
 
 -----
 
-## Map mean risk scores, spp scores, and n_spp for each region
+## Map mean risk scores, spp status, and n_spp for each region
+
+``` {r calc_status_for_gaviota}
+
+am_cell_area <- read_tsv(file.path(dir_data_am, 'csv/hcaf_v6.csv')) %>%
+    select(loiczid = LOICZID, cell_area = CellArea, ocean_area = OceanArea)
+
+gaviota_status <- read_csv(file.path(dir_goal, 'summary/spp_summary_gbmf.csv')) %>%
+  left_join(am_cell_area, by = 'loiczid') %>%
+  filter(rgn_id == 1000) %>%
+  group_by(rgn_name) %>%
+  summarize(rgn_mean_risk = sum(mean_risk * ocean_area) / sum(ocean_area),
+            rgn_status = 100 * (.75 - rgn_mean_risk) / .75)
+
+```
 
 ``` {r make some damn maps}
 
@@ -321,7 +344,7 @@ ca_shp   <- rnaturalearth::ne_states(geounit = 'United States of America', retur
   filter(woe_name == 'California')
 
 cells_sum <- read_csv(file.path(dir_goal, 'summary/spp_summary_gbmf.csv')) %>%
-  mutate(score = 100 * (.75 - mean_risk) / .75)
+  mutate(status = 100 * (.75 - mean_risk) / .75)
 
 rgns <- cells_sum$rgn_id %>%
   unique() %>%
@@ -367,7 +390,7 @@ plot_rast_map <- function(shp, cells_df, land_shp, column) {
 }
 
 for(rgn in rgns) {
-  # rgn <- 162
+  # rgn <- 1000
   if(rgn == 1000) {
     shp <- gav_shp
     land_shp <- ca_shp
@@ -386,25 +409,25 @@ for(rgn in rgns) {
          fill = '# of spp')
   map_risk <- plot_rast_map(shp, df, land_shp, column = 'mean_risk') +
     scale_fill_distiller(palette = 'Spectral', 
-                         limits = c(0, .15)) +
+                         limits = c(0, .12)) +
     labs(title = sprintf('%s, mean extinction risk', rgn_nm),
          fill = 'Risk: 0 = LC, 1 = EX')
-  map_score <- plot_rast_map(shp, df, land_shp, column = 'score') +
+  map_status <- plot_rast_map(shp, df, land_shp, column = 'status') +
     scale_fill_distiller(palette = 'RdYlGn', direction = 1, 
-                         limits = c(85, 100)) +
-    labs(title = sprintf('%s, OHI Species score', rgn_nm),
-         fill = 'Score: 0 - 100')
+                         limits = c(84, 100)) +
+    labs(title = sprintf('%s, OHI Species status', rgn_nm),
+         fill = 'Status: 0 - 100')
   
   print(map_nspp)
   print(map_risk)
-  print(map_score)
+  print(map_status)
   
   ggsave(file.path(dir_goal, 'gbmf_maps', sprintf('%s_nspp.png', tolower(rgn_nm))), 
                    dpi = 300, plot = map_nspp)
   ggsave(file.path(dir_goal, 'gbmf_maps', sprintf('%s_risk.png', tolower(rgn_nm))), 
                    dpi = 300, plot = map_risk)
-  ggsave(file.path(dir_goal, 'gbmf_maps', sprintf('%s_score.png', tolower(rgn_nm))), 
-                   dpi = 300, plot = map_score)
+  ggsave(file.path(dir_goal, 'gbmf_maps', sprintf('%s_status.png', tolower(rgn_nm))), 
+                   dpi = 300, plot = map_status)
 }
 
 
@@ -415,7 +438,7 @@ for(rgn in rgns) {
 # loiczid_rast <- get_loiczid_raster()
 
 cells_sum <- read_csv(file.path(dir_goal, 'summary/spp_summary_gbmf.csv')) %>%
-  mutate(score = 100 * (.75 - mean_risk) / .75)
+  mutate(status = 100 * (.75 - mean_risk) / .75)
 
 nspp_rast  <- subs(loiczid_rast, cells_sum, by = 'loiczid', which = 'n_spp',
                    filename = file.path(dir_goal, 'gbmf_maps/raster_nspp.tif'),
@@ -423,8 +446,8 @@ nspp_rast  <- subs(loiczid_rast, cells_sum, by = 'loiczid', which = 'n_spp',
 risk_rast  <- subs(loiczid_rast, cells_sum, by = 'loiczid', which = 'mean_risk',
                    filename = file.path(dir_goal, 'gbmf_maps/raster_mean_risk.tif'),
                    overwrite = TRUE)
-score_rast <- subs(loiczid_rast, cells_sum, by = 'loiczid', which = 'score',
-                   filename = file.path(dir_goal, 'gbmf_maps/raster_score.tif'),
+status_rast <- subs(loiczid_rast, cells_sum, by = 'loiczid', which = 'status',
+                   filename = file.path(dir_goal, 'gbmf_maps/raster_status.tif'),
                    overwrite = TRUE)
 
 ```
