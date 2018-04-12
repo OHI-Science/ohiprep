@@ -1,0 +1,438 @@
+---
+title: 'OHI: Species subgoal for GBMF'
+author: "*Compiled on `r date()` by `r Sys.info()['user']`*"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 3
+    toc_float: yes
+    number_sections: true
+    theme: cerulean
+    highlight: haddock
+    includes: 
+      in_header: '~/github/ohiprep/src/templates/ohi_hdr.html'
+  pdf_document:
+    toc: true
+---
+
+``` {r setup, echo = TRUE, message = FALSE, warning = FALSE}
+
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = 'Figs/',
+                      echo = TRUE, message = FALSE, warning = FALSE)
+
+library(rgdal)
+library(raster)
+library(data.table)
+
+source('~/github/ohiprep/src/R/common.R')
+library(tidyverse) ### why not in common.R?
+library(stringr)
+library(sf)
+
+goal     <- 'globalprep/spp_ico'
+scenario <- 'v2018'
+dir_goal_anx <- file.path(dir_M, 'git-annex', goal, scenario) 
+dir_goal  <- file.path('~/github/ohiprep', goal, scenario)
+
+dir_data_am <- file.path(dir_M, 'git-annex/globalprep', '_raw_data/aquamaps/d2017')
+
+### set up provenance tracking for this script:
+# library(provRmd); prov_setup()
+
+source(file.path(dir_goal, 'spp_fxn.R'))
+
+```
+
+# Summary
+
+Spatial data from IUCN and Aquamaps is combined with extinction risk information from IUCN to generate regional scores for the Species subgoal.  A region's status is based upon an area-weighted average of species health across each global reporting region.
+
+From Halpern et al (2012):
+
+> The target for the Species sub-goal is to have all species at a risk status of Least Concern. We scaled the lower end of the biodiversity goal to be 0 when 75% species are extinct, a level comparable to the five documented mass extinctions and would constitute a catastrophic loss of biodiversity. The Status of assessed species was calculated as the area- and threat status-weighted average of the number of threatened species within each 0.5 degree grid cell.
+
+**Mean risk status per cell:**
+
+$$\bar{R}_{cell} = \frac{\displaystyle\sum_{species}(Risk)}{n_{spp}}$$
+
+**Species goal model**
+
+$$X_{SPP} = \frac{((1 - \bar{R}_{SPP}) - 0.25)}{(1 - 0.25)} * 100%$$
+
+where:
+
+* $X_{SPP}$ is Species goal status
+* $\bar{R}_{cell}$ is mean extinction risk for one cell
+* $\bar{R}_{SPP}$ is area-weighted mean extinction risk for a region
+* $A_{cell}$ is cell area
+* $pA_{cell-rgn}$ is percent of cell area included in region
+* *Risk* is scaled value for species extinction risk category, based on: 
+    * 'LC' = 0.0, 'NT' = 0.2, 'VU' = 0.4, 'EN' = 0.6, 'CR' = 0.8, 'EX' = 1.0
+* SPP trend will be calculated using time series of categories based on current and past assessments.
+
+
+-----
+
+# Data Sources
+
+IUCN:
+
+* __Reference__: 
+    * IUCN 2016. The IUCN Red List of Threatened Species. Version 2016-3. <http://www.iucnredlist.org>.
+        * Shapefiles available from: http://www.iucnredlist.org/technical-documents/spatial-data
+        * __Downloaded__: 16 December 2016.
+    * BirdLife International and NatureServe (2016) Bird species distribution maps of the world. BirdLife International, Cambridge, UK and NatureServe, Arlington, USA.
+        * Zipped shapefile available from BirdLife International.  
+        * __Downloaded__: 23 December 2016.
+* __Description__:  Shapefiles containing polygons of assessed species ranges; each shapefile represents all assessed species within a comprehensively-assessed (i.e. >90% assessed) taxonomic group.
+* __Native data resolution__: NA
+* __Time range__: NA
+* __Format__:  Shapefile
+
+AquaMaps:
+
+* __Reference__: 
+    * Kaschner, K., J. Rius-Barile, K. Kesner-Reyes, C.Garilao, S.O. Kullander, T. Rees and R. Froese (2015). AquaMaps: Predicted range maps for aquatic species. World wide web electronic publication, www.aquamaps.org, Version 08/2015.
+        * __Downloaded__: August 2015.
+* __Description__:  .sql files containing information to recreate rasters of cell attributes and cell-by-cell probability of occurrence for 22889 marine species.
+* __Native data resolution__: 0.5° latitude and longitude  
+* __Time range__: NA
+* __Format__:  SQL database files converted into .csv
+
+-----
+  
+# Methods
+
+## Spatialize species information using AquaMaps and IUCN spatial data
+
+Each dataset is now set up to denote species presence in half-degree cells; for each cell we identify the species present, and can calculate a mean risk category for the cell.
+
+### Assemble species list with most recent IUCN scores
+
+``` {r score_spp_list, echo = TRUE}
+
+spp_scored_file <- file.path(dir_goal, 'int', 'spp_list_scored.csv')
+
+if(!file.exists(spp_scored_file)) {
+  ### get time series of categories and trends.
+  ### NOTE: risk_trend is positive for increasing risk, not increasing health.
+  ###   It is the *annual* change in category score, not five-year-adjusted.
+  spp_cat_ts_complete <- read_csv(file.path(dir_goal, 'int', 'spp_cat_timeseries_raw.csv')) %>%
+    select(iucn_sid, year, cat_ts, cat_ts_score) %>%
+    complete(year = full_seq(year, 1), nesting(iucn_sid)) %>%
+    arrange(iucn_sid, year) %>%
+    group_by(iucn_sid) %>%
+    fill(cat_ts, cat_ts_score) %>%                    
+      ### fills forward to most recent assessment year; older category valid til new assessment
+    fill(cat_ts, cat_ts_score, .direction = 'up') %>% 
+      ### fills back from first non-NE or DD assessment; assume early status is same as first assessment
+    ungroup() %>%
+    filter(year >= 2000)
+  
+  ### set up a quick lookup to score the unmatched species
+  cat_scores <- spp_cat_ts_complete %>%
+    select(cat = cat_ts, score = cat_ts_score) %>%
+    distinct() %>%
+    arrange(score)
+  cat_scores <- cat_scores$score %>%
+    setNames(cat_scores$cat)
+  
+  spp_scored <- read_csv(file.path(dir_goal, 'int/spp_list.csv')) %>%
+    filter(!(is.na(map_iucn_sid) & is.na(am_sid))) %>%
+    mutate(spatial_source = ifelse(!is.na(map_iucn_sid), 'iucn', NA),
+           spatial_source = ifelse(is.na(spatial_source) & !is.na(am_sid), 'am', spatial_source)) %>%
+    left_join(spp_cat_ts_complete, by = 'iucn_sid') 
+  
+  ### need to tidy up species from AM with no IUCN match.
+  ### * set up the years
+  spp_scored <- spp_scored %>%
+    mutate(year = ifelse(is.na(year), list(unique(year)), year)) %>% 
+    unnest(year) %>%
+    filter(!is.na(year)) %>%
+    mutate(assess_year  = year + 1,
+           cat_ts       = ifelse(is.na(cat_ts), category, cat_ts),
+           cat_ts_score = ifelse(is.na(cat_ts_score), cat_scores[cat_ts], cat_ts_score)) %>% 
+      ### using the lookup from above
+      ### * set up the category scores
+    filter(!is.na(cat_ts_score)) %>% ### ditch any DD and NE species
+    select(-category, -sciname, -spp_group, -cat_ts, -assess_year) %>%
+    distinct()
+  
+  write_csv(spp_scored, spp_scored_file)
+}
+
+```
+
+### Generate cell-by-cell summary of species
+
+``` {r generate_cell_summaries_am_and_iucn}
+
+tot_sum_gbmf_file <- file.path(dir_goal, 'summary/spp_summary_gbmf.csv')
+
+if(!file.exists(tot_sum_gbmf_file)) {
+
+  spp_scored <- read_csv(file.path(dir_goal, 'int', 'spp_list_scored.csv'),
+                         col_types = 'cddccdd') %>%
+      rename(cat_score   = cat_ts_score) %>%
+    filter(year == 2016) %>%
+    select(-year)
+  
+  ### read in AquaMaps species-cell file
+  am_cells_spp_file <- file.path(dir_goal_anx, 'int', 'am_spp_cells_d2017.csv')
+  if(!file.exists(am_cells_spp_file)) {
+    am_cells_spp <- read_csv(file.path(dir_data_am, 'csv/hcaf_species_native.csv')) 
+    
+    am_cells <- read_tsv(file.path(dir_data_am, 'csv/hcaf_v6.csv')) %>%
+      select(loiczid = LOICZID, CsquareCode)
+    
+    am_cells_spp <- am_cells_spp %>%
+      left_join(am_cells, by = 'CsquareCode') %>%
+      # filter(probability > 0) %>%
+      select(am_sid = SpeciesID, loiczid) %>%
+      distinct()
+    write_csv(am_cells_spp, am_cells_spp_file)
+  } else {
+    if(!exists('am_cells_spp')) am_cells_spp <- read_csv(am_cells_spp_file)
+  }
+  
+  ### read in IUCN species-cell file
+  if(!exists('iucn_cells_spp')) {
+    iucn_cells_spp <- read_csv(file.path(dir_goal_anx, '../v2017/int', 'iucn_spp_cells_d2016.csv')) %>%
+      distinct()
+  }
+  
+  
+  rgn_cell_lookup <- extract_cell_id_per_region(reload = FALSE)
+  # x <- get_rgn_names()
+  loiczid_rast <- get_loiczid_raster()
+  # gav <- readOGR(dsn = file.path(dir_M, 'git-annex/globalprep/_raw_data', 
+  #                                    'Geology_OffshoreGaviota'), 
+  #                    layer = 'Geology_OffshoreGaviota') %>%
+  #   spTransform(proj4string(loiczid_rast)) %>%
+  #   rgeos::gUnaryUnion()
+  # bbox(gav)
+  #          min        max
+  # x -120.37975 -120.18518
+  # y   34.40583   34.47089
+  gav_bbox <- raster::extent(-121.5, -119, 33.5, 35)
+  
+  am_cell_area <- read_tsv(file.path(dir_data_am, 'csv/hcaf_v6.csv')) %>%
+      select(loiczid = LOICZID, cell_area = CellArea)
+  
+  gav_cells <- data.frame(rgn_id = 1000,
+                          rgn_name = 'Gaviota', 
+                          loiczid = loiczid_rast %>%
+                            raster::extract(gav_bbox) %>%
+                            unlist(),
+                          proportionArea = 1) %>%
+    left_join(am_cell_area, by = 'loiczid')
+  
+  gbmf_cell_lookup <- rgn_cell_lookup %>%
+    filter(rgn_id %in% c('japan' = 210, 'nz' = 162, 'cuba' = 112)) %>%
+    bind_rows(gav_cells)
+  
+  am_c_s_g_file <- file.path(dir_goal_anx, 'int', 'am_cells_spp_gbmf.csv')
+  
+  if(!file.exists(am_c_s_g_file)) { ### test for the AquaMaps one; assume IUCN is same
+    am_cells_spp_gbmf <- am_cells_spp %>%
+      inner_join(gbmf_cell_lookup, by = 'loiczid')
+    iucn_cells_spp_gbmf <- iucn_cells_spp %>%
+      inner_join(gbmf_cell_lookup, by = 'loiczid')
+    
+    write_csv(am_cells_spp_gbmf,   am_c_s_g_file)
+    write_csv(iucn_cells_spp_gbmf, file.path(dir_goal_anx, 'int', 'iucn_cells_spp_gbmf.csv'))
+  }
+
+  iucn_cells_spp_sum <- iucn_cells_spp_gbmf %>%
+    inner_join(spp_scored %>% 
+                 filter(!is.na(map_iucn_sid)),
+               by = 'iucn_sid') %>%
+    group_by(loiczid, rgn_id, rgn_name) %>%
+    summarize(n_spp = n(), mean_risk = mean(cat_score))
+  
+  am_cells_spp_sum <- am_cells_spp_gbmf %>%
+    inner_join(spp_scored %>% 
+                 filter(is.na(map_iucn_sid)), ### Presumably any spp w/o IUCN IDs will be from AM
+               by = 'am_sid') %>%
+    group_by(loiczid, rgn_id, rgn_name) %>%
+    summarize(n_spp = n(), mean_risk = mean(cat_score))
+  
+  tot_cells_spp_sum <- bind_rows(iucn_cells_spp_sum, am_cells_spp_sum) %>%
+    group_by(loiczid, rgn_id, rgn_name) %>%
+    summarize(mean_risk = sum(mean_risk * n_spp) / sum(n_spp),
+              n_spp = sum(n_spp))
+  
+  write_csv(tot_cells_spp_sum, tot_sum_gbmf_file)
+}
+```
+
+-----
+
+## Determine species by region
+
+``` {r species_by_region, eval = TRUE}
+
+spp_basic_info <- read_csv(file.path(dir_goal, 'int', 'spp_list_scored.csv'),
+                       col_types = 'cddccdd') %>%
+  rename(cat_score   = cat_ts_score) %>%
+  filter(year == 2016) %>%
+  left_join(read_csv(file.path(dir_goal, 'int', 'spp_list.csv')) %>%
+              select(iucn_sid, am_sid, sciname),
+            by = c('iucn_sid', 'am_sid')) %>%
+  select(-year, -map_subpop)
+
+am_spp_gbmf <- read_csv(file.path(dir_goal_anx, 'int', 'am_cells_spp_gbmf.csv'),
+                        col_types = 'cddcdd') %>%
+  group_by(am_sid, rgn_id, rgn_name) %>%
+  summarize(rgn_range_km2 = sum(proportionArea * cell_area)) %>%
+  left_join(spp_basic_info, by = 'am_sid')
+
+iucn_spp_gbmf <- read_csv(file.path(dir_goal_anx, 'int', 'iucn_cells_spp_gbmf.csv'),
+                          col_types = 'cddcdddcdd') %>%
+  rename(map_iucn_sid = iucn_sid) %>%
+  group_by(map_iucn_sid, rgn_id, rgn_name) %>%
+  summarize(rgn_range_km2 = sum(proportionArea * cell_area)) %>%
+  left_join(spp_basic_info, by = c('map_iucn_sid'))
+
+spp_list_all <- am_spp_gbmf %>%
+  filter(spatial_source == 'am') %>%
+  bind_rows(iucn_spp_gbmf) %>%
+  filter(!is.na(cat_score))
+
+write_csv(spp_list_all, file.path(dir_goal, 'summary/spp_list_gbmf.csv'))
+
+# spp_list_all$rgn_name %>% table()
+#        Cuba     Gaviota       Japan New Zealand 
+#        1600         595        2743        1173 
+
+```
+
+-----
+
+## Map mean risk scores, spp scores, and n_spp for each region
+
+``` {r make some damn maps}
+
+loiczid_rast <- get_loiczid_raster()
+ctrys50m <- rnaturalearth::ne_countries(scale = 10, type = 'countries', returnclass = 'sf') %>%
+  select(iso_a3, iso_n3, admin)
+ca_shp   <- rnaturalearth::ne_states(geounit = 'United States of America', returnclass = 'sf') %>%
+  filter(woe_name == 'California')
+
+cells_sum <- read_csv(file.path(dir_goal, 'summary/spp_summary_gbmf.csv')) %>%
+  mutate(score = 100 * (.75 - mean_risk) / .75)
+
+rgns <- cells_sum$rgn_id %>%
+  unique() %>%
+  set_names(cells_sum$rgn_name %>% unique())
+
+ohi_rgns_shp <- st_read(file.path(dir_M, 'git-annex/globalprep/spatial/v2017/regions_2017_update.shp')) %>%
+  filter(rgn_type == 'eez' & rgn_id %in% rgns) %>%
+  select(rgn_id, rgn_name, geometry) %>%
+  st_transform(4326)
+gav_shp <- st_read(file.path(dir_M, 'git-annex/globalprep/_raw_data', 
+                             'Geology_OffshoreGaviota',
+                             'Geology_OffshoreGaviota_mol_v_court.shp')) %>%
+  st_transform(4326) %>%
+  select(geometry) %>%
+  mutate(rgn_id = 1000, rgn_name = 'Gaviota')
+
+plot_rast_map <- function(shp, cells_df, land_shp, column) {
+  ### cells_df <- tot_cells_spp_sum %>% filter(rgn_id == 162)
+  ### column <- 'n_spp'
+  ### shp <- ohi_rgns_shp %>% filter(rgn_id == 162)
+  
+  rast <- subs(loiczid_rast, cells_df, by = 'loiczid', which = column) %>%
+    raster::trim()
+  
+  ext <- extent(rast)
+  rast_df <- rast %>%
+    rasterToPoints() %>%
+    as.data.frame()
+
+  tmp_plot <- ggplot() +
+    theme_bw() +
+    geom_raster(data = rast_df, aes(x, y, fill = layer)) +
+    geom_sf(data = shp, aes(), fill = NA, color = 'yellow', size = .25) +
+    geom_sf(data = land_shp, aes(), color = 'grey30', size = .25) +
+    xlim(c(ext[1:2])) +
+    ylim(c(ext[3:4])) +
+    theme(axis.title = element_blank(),
+          axis.text  = element_blank(),
+          axis.ticks = element_blank(),
+          panel.border = element_blank())
+  
+  return(tmp_plot)
+}
+
+for(rgn in rgns) {
+  # rgn <- 162
+  if(rgn == 1000) {
+    shp <- gav_shp
+    land_shp <- ca_shp
+  } else {
+    shp <- ohi_rgns_shp %>%
+      filter(rgn_id == rgn)
+    land_shp <- ctrys50m
+  }
+  df <- cells_sum %>% filter(rgn_id == rgn)
+  rgn_nm <- df$rgn_name[1]
+  
+  map_nspp <- plot_rast_map(shp, df, land_shp, column = 'n_spp') +
+    scale_fill_distiller(palette = 'Greens', direction = 1,
+                         limits = c(0, NA)) +
+    labs(title = sprintf('%s, # of assessed species', rgn_nm),
+         fill = '# of spp')
+  map_risk <- plot_rast_map(shp, df, land_shp, column = 'mean_risk') +
+    scale_fill_distiller(palette = 'Spectral', 
+                         limits = c(0, .15)) +
+    labs(title = sprintf('%s, mean extinction risk', rgn_nm),
+         fill = 'Risk: 0 = LC, 1 = EX')
+  map_score <- plot_rast_map(shp, df, land_shp, column = 'score') +
+    scale_fill_distiller(palette = 'RdYlGn', direction = 1, 
+                         limits = c(85, 100)) +
+    labs(title = sprintf('%s, OHI Species score', rgn_nm),
+         fill = 'Score: 0 - 100')
+  
+  print(map_nspp)
+  print(map_risk)
+  print(map_score)
+  
+  ggsave(file.path(dir_goal, 'gbmf_maps', sprintf('%s_nspp.png', tolower(rgn_nm))), 
+                   dpi = 300, plot = map_nspp)
+  ggsave(file.path(dir_goal, 'gbmf_maps', sprintf('%s_risk.png', tolower(rgn_nm))), 
+                   dpi = 300, plot = map_risk)
+  ggsave(file.path(dir_goal, 'gbmf_maps', sprintf('%s_score.png', tolower(rgn_nm))), 
+                   dpi = 300, plot = map_score)
+}
+
+
+```
+
+``` {r make some damn rasters}
+
+# loiczid_rast <- get_loiczid_raster()
+
+cells_sum <- read_csv(file.path(dir_goal, 'summary/spp_summary_gbmf.csv')) %>%
+  mutate(score = 100 * (.75 - mean_risk) / .75)
+
+nspp_rast  <- subs(loiczid_rast, cells_sum, by = 'loiczid', which = 'n_spp',
+                   filename = file.path(dir_goal, 'gbmf_maps/raster_nspp.tif'),
+                   overwrite = TRUE)
+risk_rast  <- subs(loiczid_rast, cells_sum, by = 'loiczid', which = 'mean_risk',
+                   filename = file.path(dir_goal, 'gbmf_maps/raster_mean_risk.tif'),
+                   overwrite = TRUE)
+score_rast <- subs(loiczid_rast, cells_sum, by = 'loiczid', which = 'score',
+                   filename = file.path(dir_goal, 'gbmf_maps/raster_score.tif'),
+                   overwrite = TRUE)
+
+```
+
+-----
+
+``` {r results = 'asis'}
+
+# prov_wrapup(commit_outputs = FALSE)
+
+```
