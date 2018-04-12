@@ -377,8 +377,8 @@ plot_rast_map <- function(shp, cells_df, land_shp, column) {
   tmp_plot <- ggplot() +
     theme_bw() +
     geom_raster(data = rast_df, aes(x, y, fill = layer)) +
-    geom_sf(data = shp, aes(), fill = NA, color = 'yellow', size = .25) +
-    geom_sf(data = land_shp, aes(), color = 'grey30', size = .25) +
+    geom_sf(data = shp, aes(), fill = NA, color = 'grey30', size = .5) +
+    geom_sf(data = land_shp, aes(), fill = 'grey40', color = 'grey30', size = .5) +
     xlim(c(ext[1:2])) +
     ylim(c(ext[3:4])) +
     theme(axis.title = element_blank(),
@@ -390,7 +390,7 @@ plot_rast_map <- function(shp, cells_df, land_shp, column) {
 }
 
 for(rgn in rgns) {
-  # rgn <- 1000
+  # rgn <- 112
   if(rgn == 1000) {
     shp <- gav_shp
     land_shp <- ca_shp
