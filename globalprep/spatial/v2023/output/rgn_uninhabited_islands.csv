@@ -1,6 +1,6 @@
 rgn_id,rgn_nam,Southern_Island,Inhabited,est_population,source,data_year,notes
 4,Macquarie Island,1,0,NA,https://www.britannica.com/place/Macquarie-Island,2023,"no human population, but meteorologic and geologic research station is there and many botanists and biologists do studies"
-12,Wake Island,0,1,100,https://worldpopulationreview.com/regions/wake-island-population,2023,"technically uninhabited, but has about 100 workers at any given time"
+12,Wake Island,0,1,100,https://worldpopulationreview.com/regions/wake-island-population; https://www.cia.gov/the-world-factbook/countries/wake-island/,2023,"technically uninhabited, but has about 100 workers at any given time"
 30,Glorioso Islands,1,0,NA,https://www.indexmundi.com/glorioso_islands/population.html,2023,"uninhabited, so no population as of 2023"
 33,Juan de Nova Island,1,0,NA,https://www.cia.gov/the-world-factbook/countries/french-southern-and-antarctic-lands/,2023,"states a small French military garrison and a few meteorologists inhabit, but for our purposes we will call this 0/uninhabited as of 2023"
 34,Bassas da India,1,0,NA,https://www.cia.gov/the-world-factbook/countries/french-southern-and-antarctic-lands/,2023,considered uninhabitable as of 2023
@@ -18,5 +18,7 @@ rgn_id,rgn_nam,Southern_Island,Inhabited,est_population,source,data_year,notes
 144,Jan Mayen,0,0,NA,https://www.cia.gov/the-world-factbook/countries/jan-mayen/,2023,"technically uninhabited, some military personnel sometimes"
 149,Jarvis Island,1,0,NA,https://www.britannica.com/place/Jarvis-Island; https://www.cia.gov/the-world-factbook/countries/united-states-pacific-island-wildlife-refuges/,2023,"uninhabited, so no population as of 2023"
 150,Palmyra Atoll,0,0,NA,https://www.britannica.com/place/Palmyra-Atoll; https://www.cia.gov/the-world-factbook/countries/united-states-pacific-island-wildlife-refuges/,2023,"uninhabited, so no population as of 2023. some staff/researchers mentioned in cia source"
+154,Niue,0,1,1881,https://datareportal.com/reports/digital-2023-tokelau,2023,"seemed to be the most stable source; from January 2023"
+156,Tokelau,0,1,1936,https://datareportal.com/reports/digital-2023-niue,2023,"seemed to be the most stable source; from January 2023"
 158,Howland Island and Baker Island,0,0,NA,https://www.britannica.com/place/Baker-Island; https://www.cia.gov/the-world-factbook/countries/united-states-pacific-island-wildlife-refuges,2023,"uninhabited, but some scientists visit"
 159,Johnston Atoll,0,0,NA,https://www.britannica.com/place/Johnston-Atoll; https://www.cia.gov/the-world-factbook/countries/united-states-pacific-island-wildlife-refuges/,2023,"uninhabited, so no population as of 2023"
